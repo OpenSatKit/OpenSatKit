@@ -1,0 +1,69 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR      = "CFE_SB"
+  @HK_TLM_MID_STR      = "CFE_SB_HK_TLM_MID"
+  @STATS_TLM_MID_STR   = "CFE_SB_STATS_TLM_MID"
+  @ALLSUBS_TLM_MID_STR = "CFE_SB_ALLSUBS_TLM_MID"
+  @ONESUB_TLM_MID_STR  = "CFE_SB_ONESUB_TLM_MID"
+
+  #TODO - Add configuration parameters
+  
+%>  
+
+TELEMETRY CFE_SB HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Software Bus task housekeeping Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT "Count of valid commands received."
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT "Count of invalid commands received."
+  APPEND_ITEM NOSUBSCRIBERSCNT 8 UINT "Count pkts sent with no subscribers."
+  APPEND_ITEM MSGSENDERRCNT 8 UINT "Count of message send errors."
+  APPEND_ITEM MSGRECEIVEERRCNT 8 UINT "Count of message receive errors."
+  APPEND_ITEM INTERNALERRCNT 8 UINT "Count of queue read or write errors."
+  APPEND_ITEM CREATEPIPEERRCNT 8 UINT "Count of errors in create pipe API."
+  APPEND_ITEM SUBSCRIBEERRCNT 8 UINT "Count of errors in subscribe API."
+  APPEND_ITEM SPARE 8 UINT "Spare Byte."
+  APPEND_ITEM DUPSUBSCRIPTIONSCNT 8 UINT "Count of duplicate subscriptions."
+  APPEND_ARRAY_ITEM SPARE2ALIGN 8 UINT 16 "Spare bytes to ensure alignment."
+  APPEND_ITEM PIPEOVERFLOWERRCNT 16 UINT "Count of pipe overflow errors."
+  APPEND_ITEM MSGLIMERRCNT 16 UINT "Count of msg id to pipe errors."
+  APPEND_ITEM MEMPOOLHANDLE 32 UINT "Handle to SB's Memory Pool."
+  APPEND_ITEM MEMINUSE 32 UINT "Memory in use."
+  APPEND_ITEM UNMARKEDMEM 32 UINT "cfg param CFE_SB_BUF_MEMORY_BYTES minus Peak Memory in use"
+
+# TODO - CFE_SB PREV_SUBSCRIBE_TLM_PKT  fix bitfield for LITTLE_ENDIAN
+TELEMETRY CFE_SB PREV_SUBSCRIBE_TLM_PKT BIG_ENDIAN "SB Previous Subscriptions Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @ALLSUBS_TLM_MID_STR) %>
+  APPEND_ITEM PKTSEGMENT 32 UINT "Pkt number(starts at 1) in the series."
+  APPEND_ITEM TOTALSEGMENTS 32 UINT "Total number of pkts needed to complete the request."
+  APPEND_ITEM ENTRIES 32 UINT "Number of entries in the pkt."
+  APPEND_ARRAY_ITEM ENTRY 40 UINT 800 "Array of CFE_SB_SubEntries_t entries."
+
+# TODO - CFE_SB STATISTICS_TLM_PKT fix bitfield for LITTLE_ENDIAN
+TELEMETRY CFE_SB STATISTICS_TLM_PKT <%= CfsKitConfig.processor_endian %> "SB Statistics Telemetry Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @STATS_TLM_MID_STR) %>
+  APPEND_ITEM MSGIDSINUSE 32 UINT "Current number of MsgIds with a destination."
+  APPEND_ITEM PEAKMSGIDSINUSE 32 UINT "Peak number of MsgIds with a destination."
+  APPEND_ITEM MAXMSGIDSALLOWED 32 UINT "cFE Cfg Param CFE_SB_MAX_MSG_IDS"
+  APPEND_ITEM PIPESINUSE 32 UINT "Number of pipes currently in use."
+  APPEND_ITEM PEAKPIPESINUSE 32 UINT "Peak number of pipes since last reboot."
+  APPEND_ITEM MAXPIPESALLOWED 32 UINT "cFE Cfg Param CFE_SB_MAX_PIPES"
+  APPEND_ITEM MEMINUSE 32 UINT "Memory bytes currently in use for SB msg transfers."
+  APPEND_ITEM PEAKMEMINUSE 32 UINT "Peak memory bytes in use for SB msg transfers."
+  APPEND_ITEM MAXMEMALLOWED 32 UINT "cFE Cfg Param CFE_SB_BUF_MEMORY_BYTES"
+  APPEND_ITEM SUBSCRIPTIONSINUSE 32 UINT "Number of current subscriptions."
+  APPEND_ITEM PEAKSUBSCRIPTIONSINUSE 32 UINT "Peak number of subscriptions."
+  APPEND_ITEM MAXSUBSCRIPTIONSALLOWED 32 UINT "product of CFE_SB_MAX_MSG_IDS and CFE_SB_MAX_DEST_PER_PKT"
+  APPEND_ITEM SBBUFFERSINUSE 32 UINT "Number of SB message buffers currently in use."
+  APPEND_ITEM PEAKSBBUFFERSINUSE 32 UINT "Max number of SB message buffers in use."
+  APPEND_ITEM MAXPIPEDEPTHALLOWED 32 UINT "cFE Cfg Param CFE_SB_MAX_PIPE_DEPTH"
+  APPEND_ARRAY_ITEM PIPEDEPTHSTATS 64 UINT 192 "Pipe Depth Statistics CFE_SB_PipeDepthStats_t."
+
+# TODO - CFE_SB SUBSCRIBE_REPORT_TLM_PKT not verified
+TELEMETRY CFE_SB SUBSCRIBE_REPORT_TLM_PKT <%= CfsKitConfig.processor_endian %> "SB Subscription Report Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @ONESUB_TLM_MID_STR) %>
+  APPEND_ITEM SUBTYPE 8 UINT "Subscription or Unsubscription."
+  APPEND_ITEM MSGID 16 UINT "MsgId subscribed or unsubscribe to."
+  APPEND_ITEM QOS_PRIORITY 8 UINT "Specify high(1) or low(0) message priority for off-board routing, currently unused. (Parent: Quality of Service, used only for interprocessor communication.)"
+  APPEND_ITEM QOS_RELIABILITY 8 UINT "Specify high(1) or low(0) message transfer reliability for off-board routing, currently unused. (Parent: Quality of Service, used only for interprocessor communication.)"
+  APPEND_ITEM PIPE 8 UINT "Destination pipe id to send above msg id."
+

@@ -1,0 +1,564 @@
+        -:    0:Source:/home/aschoening/pwned/apps/cs/fsw/src/cs_memory_cmds.c
+        -:    0:Graph:cs_memory_cmds.gcno
+        -:    0:Data:cs_memory_cmds.gcda
+        -:    0:Runs:1
+        -:    0:Programs:6
+        -:    1:/************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: cs_memory_cmds.c.gcov 1.6 2012/09/14 17:20:43EDT aschoeni Exp  $
+        -:    4: **
+        -:    5: ** Purpose: 
+        -:    6: **   The CFS Checksum (CS) Application's commands for checking Memory
+        -:    7: **
+        -:    8: **   $Log: cs_memory_cmds.c.gcov  $
+        -:    8: **   Revision 1.6 2012/09/14 17:20:43EDT aschoeni 
+        -:    8: **   Updated for fix to disable error in def table command
+        -:    9: **   Revision 1.6 2011/09/06 14:39:20EDT jmdagost 
+        -:   10: **   Changed local data structures to pointers and updated code accordingly.
+        -:   11: **   Revision 1.5 2011/06/15 16:19:16EDT jmdagost 
+        -:   12: **   Initialized all local variables except local structures and some strings.
+        -:   13: **   Revision 1.4 2010/03/29 16:57:18EDT jmdagost 
+        -:   14: **   Modified enable/disable commands to update the definitions table as well as the results table.
+        -:   15: **   Revision 1.3 2010/03/09 14:58:42EST jmdagost 
+        -:   16: **   Corrected event messages (Max ID parameter).
+        -:   17: **   Revision 1.2 2008/10/17 08:39:52EDT njyanchik 
+        -:   18: **   Updated Event messages
+        -:   19: **   Revision 1.1 2008/07/23 15:27:04BST njyanchik 
+        -:   20: **   Initial revision
+        -:   21: **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
+        -:   22: **
+        -:   23: *************************************************************************/
+        -:   24:
+        -:   25:/**************************************************************************
+        -:   26: **
+        -:   27: ** Include section
+        -:   28: **
+        -:   29: **************************************************************************/
+        -:   30:#include "cfe.h"
+        -:   31:#include "cs_tbldefs.h"
+        -:   32:#include "cs_app.h"
+        -:   33:#include "cs_events.h"
+        -:   34:#include "cs_compute.h"
+        -:   35:#include "cs_memory_cmds.h"
+        -:   36:#include "cs_utils.h"
+        -:   37:
+        -:   38:/**************************************************************************
+        -:   39: **
+        -:   40: ** Functions
+        -:   41: **
+        -:   42: **************************************************************************/
+        -:   43:
+        -:   44:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   45:/*                                                                 */
+        -:   46:/* CS Disable background checking of Memory command                */
+        -:   47:/*                                                                 */
+        -:   48:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   49:void CS_DisableMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+function CS_DisableMemoryCmd called 1 returned 100% blocks executed 100%
+        1:   50:{
+        -:   51:    /* command verification variables */
+        1:   52:    uint16                                  ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:   53:    
+        -:   54:    /* Verify command packet length */
+        1:   55:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:   56:    {
+        1:   57:        CS_AppData.MemoryCSState = CS_STATE_DISABLED;
+        1:   58:        CS_ZeroMemoryTempValues();
+call    0 returned 100%
+        -:   59:        
+        1:   60:        CFE_EVS_SendEvent (CS_DISABLE_MEMORY_INF_EID,
+call    0 returned 100%
+        -:   61:                           CFE_EVS_INFORMATION,
+        -:   62:                           "Checksumming of Memory is Disabled");
+        -:   63:        
+        1:   64:        CS_AppData.CmdCounter++;
+        -:   65:    }
+        -:   66:    return;
+        -:   67:} /* End of CS_DisableMemoryCmd () */
+        -:   68:
+        -:   69:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   70:/*                                                                 */
+        -:   71:/* CS Enable background checking of Memory command                 */
+        -:   72:/*                                                                 */
+        -:   73:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   74:void CS_EnableMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+function CS_EnableMemoryCmd called 4 returned 100% blocks executed 100%
+        4:   75:{
+        -:   76:    /* command verification variables */
+        4:   77:    uint16                                  ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:   78:    
+        -:   79:    /* Verify command packet length */
+        4:   80:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:   81:    {
+        4:   82:        CS_AppData.MemoryCSState = CS_STATE_ENABLED;
+        -:   83:        
+        4:   84:        CFE_EVS_SendEvent (CS_ENABLE_MEMORY_INF_EID,
+call    0 returned 100%
+        -:   85:                           CFE_EVS_INFORMATION,
+        -:   86:                           "Checksumming of Memory is Enabled");
+        -:   87:        
+        4:   88:        CS_AppData.CmdCounter++;
+        -:   89:    }
+        -:   90:    return;
+        -:   91:} /* End of CS_EnableMemoryCmd () */
+        -:   92:
+        -:   93:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   94:/*                                                                 */
+        -:   95:/* CS Report the baseline checksum of an entry in the Memory table */
+        -:   96:/*                                                                 */
+        -:   97:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   98:void CS_ReportBaselineEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+function CS_ReportBaselineEntryIDMemoryCmd called 4 returned 100% blocks executed 100%
+        4:   99:{
+        -:  100:    /* command verification variables */
+        4:  101:    uint16                                  ExpectedLength = sizeof(CS_EntryCmd_t);
+        4:  102:    CS_EntryCmd_t                         * CmdPtr         = NULL;
+        4:  103:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry   = NULL; 
+        4:  104:    uint32                                  Baseline       = 0;
+        4:  105:    uint16                                  EntryID        = 0;
+        4:  106:    uint16                                  State          = CS_STATE_EMPTY;
+        -:  107:    
+        -:  108:    /* Verify command packet length */
+        4:  109:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  110:    {
+        4:  111:        CmdPtr = (CS_EntryCmd_t *) MessagePtr;
+        4:  112:        EntryID = CmdPtr -> EntryID;
+        -:  113:        
+        6:  114:        if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
+branch  0 taken 75% (fallthrough)
+branch  1 taken 25%
+branch  2 taken 67% (fallthrough)
+branch  3 taken 33%
+        -:  115:            (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_STATE_EMPTY) )
+        -:  116:        {
+        2:  117:            ResultsEntry = &CS_AppData.ResMemoryTblPtr[EntryID];
+        -:  118:            
+        2:  119:            if (ResultsEntry->ComputedYet == TRUE)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  120:            {
+        1:  121:                Baseline = ResultsEntry->ComparisonValue;
+        -:  122:                
+        1:  123:                CFE_EVS_SendEvent (CS_BASELINE_MEMORY_INF_EID,
+call    0 returned 100%
+        -:  124:                                   CFE_EVS_INFORMATION,
+        -:  125:                                   "Report baseline of Memory Entry %d is 0x%08X", 
+        -:  126:                                   EntryID,
+        -:  127:                                   Baseline);
+        -:  128:            }
+        -:  129:            else
+        -:  130:            {
+        1:  131:                CFE_EVS_SendEvent (CS_NO_BASELINE_MEMORY_INF_EID,
+call    0 returned 100%
+        -:  132:                                   CFE_EVS_INFORMATION,
+        -:  133:                                   "Report baseline of Memory Entry %d has not been computed yet", 
+        -:  134:                                   EntryID);   
+        -:  135:            }
+        2:  136:            CS_AppData.CmdCounter++;
+        -:  137:        }
+        -:  138:        else
+        -:  139:        {
+        2:  140:            if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  141:            {
+        1:  142:                State = CS_STATE_UNDEFINED;
+        -:  143:            }
+        -:  144:            else
+        -:  145:            {
+        1:  146:                State = CS_AppData.ResMemoryTblPtr[EntryID].State;
+        -:  147:            }
+        -:  148:            
+        2:  149:            CFE_EVS_SendEvent (CS_BASELINE_INVALID_ENTRY_MEMORY_ERR_EID,
+call    0 returned 100%
+        -:  150:                               CFE_EVS_ERROR,
+        -:  151:                               "Memory report baseline failed, Entry ID invalid: %d, State: %d Max ID: %d",
+        -:  152:                               EntryID,
+        -:  153:                               State,
+        -:  154:                               (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
+        2:  155:            CS_AppData.CmdErrCounter++;
+        -:  156:        }
+        -:  157:    }
+        -:  158:    return;
+        -:  159:} /* End of CS_ReportBaselineEntryIDCmd () */
+        -:  160:
+        -:  161:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  162:/*                                                                 */
+        -:  163:/* CS Recompute the baseline of an entry in the Memory table cmd   */
+        -:  164:/*                                                                 */
+        -:  165:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  166:void CS_RecomputeBaselineMemoryCmd (CFE_SB_MsgPtr_t MessagePtr)
+function CS_RecomputeBaselineMemoryCmd called 6 returned 100% blocks executed 100%
+        6:  167:{
+        -:  168:    /* command verification variables */
+        6:  169:    uint16                                  ExpectedLength = sizeof(CS_EntryCmd_t);
+        6:  170:    uint32                                  ChildTaskID    = 0;
+        6:  171:    int32                                   Status         = -1;  /* Init to OS error */
+        6:  172:    CS_EntryCmd_t                         * CmdPtr         = NULL;
+        6:  173:    uint16                                  EntryID        = 0;
+        6:  174:    uint16                                  State          = CS_STATE_EMPTY;
+        -:  175:    
+        -:  176:    /* Verify command packet length */
+        6:  177:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  178:    {
+        6:  179:        CmdPtr = (CS_EntryCmd_t *) MessagePtr;
+        6:  180:        EntryID = CmdPtr -> EntryID;
+        -:  181:        
+        6:  182:        if (CS_AppData.ChildTaskInUse == FALSE)
+branch  0 taken 67% (fallthrough)
+branch  1 taken 33%
+        -:  183:        {
+        -:  184:
+        -:  185:            
+        -:  186:            /* make sure the entry is a valid number and is defined in the table */
+        6:  187:            if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
+branch  0 taken 75% (fallthrough)
+branch  1 taken 25%
+branch  2 taken 67% (fallthrough)
+branch  3 taken 33%
+        -:  188:                (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_STATE_EMPTY) )
+        -:  189:            {
+        -:  190:
+        -:  191:                /* There is no child task running right now, we can use it*/
+        2:  192:                CS_AppData.ChildTaskInUse                = TRUE;
+        2:  193:                CS_AppData.OneShotTaskInUse              = FALSE;
+        -:  194:                
+        -:  195:                /* fill in child task variables */
+        2:  196:                CS_AppData.ChildTaskTable                = CS_MEMORY_TABLE;
+        2:  197:                CS_AppData.ChildTaskEntryID              = EntryID;
+        -:  198:                
+        -:  199:                
+        2:  200:                CS_AppData.RecomputeEepromMemoryEntryPtr = &CS_AppData.ResMemoryTblPtr[EntryID];
+        -:  201:                
+        2:  202:                Status= CFE_ES_CreateChildTask(&ChildTaskID,
+call    0 returned 100%
+        -:  203:                                               CS_RECOMP_MEMORY_TASK_NAME,
+        -:  204:                                               CS_RecomputeEepromMemoryChildTask,
+        -:  205:                                               NULL,
+        -:  206:                                               CFE_ES_DEFAULT_STACK_SIZE,
+        -:  207:                                               CS_CHILD_TASK_PRIORITY,
+        -:  208:                                               0);
+        2:  209:                if (Status ==CFE_SUCCESS)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  210:                {
+        1:  211:                    CFE_EVS_SendEvent (CS_RECOMPUTE_MEMORY_STARTED_DBG_EID,
+call    0 returned 100%
+        -:  212:                                       CFE_EVS_DEBUG,
+        -:  213:                                       "Recompute baseline of Memory Entry ID %d started", 
+        -:  214:                                       EntryID);
+        1:  215:                    CS_AppData.CmdCounter++;
+        -:  216:                }
+        -:  217:                else/* child task creation failed */
+        -:  218:                {
+        1:  219:                    CFE_EVS_SendEvent (CS_RECOMPUTE_MEMORY_CREATE_CHDTASK_ERR_EID,
+call    0 returned 100%
+        -:  220:                                       CFE_EVS_ERROR,
+        -:  221:                                       "Recompute baseline of Memory Entry ID %d failed, ES_CreateChildTask returned:  0x%08X",
+        -:  222:                                       EntryID,
+        -:  223:                                       Status);
+        1:  224:                    CS_AppData.CmdErrCounter++;
+        1:  225:                    CS_AppData.ChildTaskInUse = FALSE;
+        -:  226:                }
+        -:  227:            }
+        -:  228:            else
+        -:  229:            {
+        2:  230:                if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  231:                {
+        1:  232:                    State = CS_STATE_UNDEFINED;
+        -:  233:                }
+        -:  234:                else
+        -:  235:                {
+        1:  236:                    State = CS_AppData.ResMemoryTblPtr[EntryID].State;
+        -:  237:                }
+        -:  238:            
+        2:  239:                CFE_EVS_SendEvent (CS_RECOMPUTE_INVALID_ENTRY_MEMORY_ERR_EID,
+call    0 returned 100%
+        -:  240:                                   CFE_EVS_ERROR,
+        -:  241:                                   "Memory recompute baseline of entry failed, Entry ID invalid: %d, State: %d, Max ID: %d",
+        -:  242:                                   EntryID,
+        -:  243:                                   State,
+        -:  244:                                   (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
+        -:  245:                
+        2:  246:                CS_AppData.CmdErrCounter++;
+        -:  247:            }
+        -:  248:        }
+        -:  249:        else
+        -:  250:        {
+        -:  251:            /*send event that we can't start another task right now */
+        2:  252:            CFE_EVS_SendEvent (CS_RECOMPUTE_MEMORY_CHDTASK_ERR_EID,
+call    0 returned 100%
+        -:  253:                               CFE_EVS_ERROR,
+        -:  254:                               "Recompute baseline of Memory Entry ID %d failed: a child task is in use",
+        -:  255:                               EntryID);
+        2:  256:            CS_AppData.CmdErrCounter++;
+        -:  257:        }
+        -:  258:    }    
+        -:  259:    return;
+        -:  260:}/* end CS_RecomputeBaselineMemoryCmd */
+        -:  261:
+        -:  262:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  263:/*                                                                 */
+        -:  264:/* CS Enable a specific entry in the Memory table command          */
+        -:  265:/*                                                                 */
+        -:  266:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  267:void CS_EnableEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+function CS_EnableEntryIDMemoryCmd called 4 returned 100% blocks executed 100%
+        4:  268:{
+        -:  269:    /* command verification variables */
+        4:  270:    uint16                                  ExpectedLength = sizeof(CS_EntryCmd_t);
+        4:  271:    CS_EntryCmd_t                         * CmdPtr         = NULL;
+        4:  272:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry   = NULL; 
+        4:  273:    uint16                                  EntryID        = 0;
+        4:  274:    uint16                                  State          = CS_STATE_EMPTY;
+        -:  275:
+        -:  276:    /* Verify command packet length */
+        4:  277:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  278:    {
+        4:  279:        CmdPtr = (CS_EntryCmd_t *) MessagePtr;
+        4:  280:        EntryID = CmdPtr -> EntryID;
+        -:  281:                
+        6:  282:        if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
+branch  0 taken 75% (fallthrough)
+branch  1 taken 25%
+branch  2 taken 67% (fallthrough)
+branch  3 taken 33%
+        -:  283:            (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_STATE_EMPTY) )
+        -:  284:        {
+        2:  285:            ResultsEntry = &CS_AppData.ResMemoryTblPtr[EntryID]; 
+        -:  286:             
+        2:  287:            ResultsEntry -> State = CS_STATE_ENABLED;
+        -:  288:            
+        2:  289:            CFE_EVS_SendEvent (CS_ENABLE_MEMORY_ENTRY_INF_EID,
+call    0 returned 100%
+        -:  290:                               CFE_EVS_INFORMATION,
+        -:  291:                               "Checksumming of Memory Entry ID %d is Enabled", 
+        -:  292:                                EntryID);
+        -:  293:            
+        2:  294:            if (CS_AppData.DefMemoryTblPtr[EntryID].State != CS_STATE_EMPTY)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  295:            {
+        1:  296:                CS_AppData.DefMemoryTblPtr[EntryID].State = CS_STATE_ENABLED;
+        -:  297:
+        1:  298:                CFE_TBL_Modified(CS_AppData.DefMemoryTableHandle);
+call    0 returned 100%
+        -:  299:            }
+        -:  300:            else 
+        -:  301:            {
+        1:  302:                CFE_EVS_SendEvent (CS_ENABLE_MEMORY_DEF_EMPTY_DBG_EID,
+call    0 returned 100%
+        -:  303:                                   CFE_EVS_DEBUG,
+        -:  304:                                   "CS unable to update memory definition table for entry %d, State: %d",
+        -:  305:                                   EntryID,
+        -:  306:                                   State);
+        -:  307:            }
+        -:  308:            
+        2:  309:            CS_AppData.CmdCounter++;
+        -:  310:        }
+        -:  311:        else
+        -:  312:        {
+        2:  313:            if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  314:            {
+        1:  315:                State = CS_STATE_UNDEFINED;
+        -:  316:            }
+        -:  317:            else
+        -:  318:            {
+        1:  319:                State = CS_AppData.ResMemoryTblPtr[EntryID].State;
+        -:  320:            }
+        -:  321:            
+        2:  322:            CFE_EVS_SendEvent (CS_ENABLE_MEMORY_INVALID_ENTRY_ERR_EID,
+call    0 returned 100%
+        -:  323:                               CFE_EVS_ERROR,
+        -:  324:                               "Enable Memory entry failed, invalid Entry ID:  %d, State: %d, Max ID: %d",
+        -:  325:                               EntryID,
+        -:  326:                               State,
+        -:  327:                               (CS_MAX_NUM_MEMORY_TABLE_ENTRIES - 1));
+        2:  328:            CS_AppData.CmdErrCounter++;
+        -:  329:        }
+        -:  330:    }
+        -:  331:    return;
+        -:  332:} /* End of CS_EnableCSEntryIDMemoryCmd () */
+        -:  333:
+        -:  334:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  335:/*                                                                 */
+        -:  336:/* CS Disable a specific entry in the Memory table command         */
+        -:  337:/*                                                                 */
+        -:  338:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  339:void CS_DisableEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+function CS_DisableEntryIDMemoryCmd called 4 returned 100% blocks executed 100%
+        4:  340:{
+        -:  341:    /* command verification variables */
+        4:  342:    uint16                                  ExpectedLength = sizeof(CS_EntryCmd_t);
+        4:  343:    CS_EntryCmd_t                         * CmdPtr         = NULL;
+        4:  344:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry   = NULL;
+        4:  345:    uint16                                  EntryID        = 0;
+        4:  346:    uint16                                  State          = CS_STATE_EMPTY;
+        -:  347:
+        -:  348:    /* Verify command packet length */
+        4:  349:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  350:    {
+        4:  351:        CmdPtr = (CS_EntryCmd_t *) MessagePtr;
+        4:  352:        EntryID = CmdPtr -> EntryID;
+        -:  353:        
+        6:  354:        if ((EntryID < CS_MAX_NUM_MEMORY_TABLE_ENTRIES) &&
+branch  0 taken 75% (fallthrough)
+branch  1 taken 25%
+branch  2 taken 67% (fallthrough)
+branch  3 taken 33%
+        -:  355:            (CS_AppData.ResMemoryTblPtr[EntryID].State != CS_STATE_EMPTY) )
+        -:  356:        {
+        2:  357:            ResultsEntry = & CS_AppData.ResMemoryTblPtr[EntryID]; 
+        -:  358:            
+        2:  359:            ResultsEntry -> State = CS_STATE_DISABLED;
+        2:  360:            ResultsEntry -> TempChecksumValue = 0;
+        2:  361:            ResultsEntry -> ByteOffset = 0;
+        -:  362:            
+        2:  363:            CFE_EVS_SendEvent (CS_DISABLE_MEMORY_ENTRY_INF_EID,
+call    0 returned 100%
+        -:  364:                               CFE_EVS_INFORMATION,
+        -:  365:                               "Checksumming of Memory Entry ID %d is Disabled", 
+        -:  366:                               EntryID);
+        -:  367:            
+        2:  368:            if (CS_AppData.DefMemoryTblPtr[EntryID].State != CS_STATE_EMPTY)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  369:            {
+        1:  370:                CS_AppData.DefMemoryTblPtr[EntryID].State = CS_STATE_DISABLED;
+        -:  371:                
+        1:  372:                CFE_TBL_Modified(CS_AppData.DefMemoryTableHandle);
+call    0 returned 100%
+        -:  373:            }
+        -:  374:            else 
+        -:  375:            {
+        1:  376:                CFE_EVS_SendEvent (CS_DISABLE_MEMORY_DEF_EMPTY_DBG_EID,
+call    0 returned 100%
+        -:  377:                                   CFE_EVS_DEBUG,
+        -:  378:                                   "CS unable to update memory definition table for entry %d, State: %d",
+        -:  379:                                   EntryID,
+        -:  380:                                   State);
+        -:  381:            }
+        -:  382:            
+        2:  383:            CS_AppData.CmdCounter++;
+        -:  384:        }
+        -:  385:        else
+        -:  386:        {
+        2:  387:            if (EntryID >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  388:            {
+        1:  389:                State = CS_STATE_UNDEFINED;
+        -:  390:            }
+        -:  391:            else
+        -:  392:            {
+        1:  393:                State = CS_AppData.ResMemoryTblPtr[EntryID].State;
+        -:  394:            }
+        -:  395:            
+        2:  396:            CFE_EVS_SendEvent (CS_DISABLE_MEMORY_INVALID_ENTRY_ERR_EID,
+call    0 returned 100%
+        -:  397:                               CFE_EVS_ERROR,
+        -:  398:                               "Disable Memory entry failed, invalid Entry ID:  %d, State: %d, Max ID: %d",
+        -:  399:                               EntryID,
+        -:  400:                               State,
+        -:  401:                               (CS_MAX_NUM_MEMORY_TABLE_ENTRIES -1));
+        -:  402:            
+        2:  403:            CS_AppData.CmdErrCounter++;
+        -:  404:        }
+        -:  405:    }
+        -:  406:    return;
+        -:  407:} /* End of CS_DisableCSEntryIDMemoryCmd () */
+        -:  408:
+        -:  409:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  410:/*                                                                 */
+        -:  411:/* CS Retrieve an EntryID based on Address from Memory table cmd   */
+        -:  412:/*                                                                 */
+        -:  413:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  414:void CS_GetEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+function CS_GetEntryIDMemoryCmd called 2 returned 100% blocks executed 100%
+        2:  415:{
+        -:  416:    /* command verification variables */
+        2:  417:    uint16                                  ExpectedLength      = sizeof(CS_GetEntryIDCmd_t);
+        2:  418:    CS_GetEntryIDCmd_t                    * CmdPtr              = NULL;
+        2:  419:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable = NULL; 
+        2:  420:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry        = NULL;
+        2:  421:    uint16                                  Loop                = 0;
+        2:  422:    boolean                                 EntryFound          = FALSE;
+        -:  423:    
+        -:  424:    /* Verify command packet length */
+        2:  425:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  426:    {
+        2:  427:        CmdPtr = (CS_GetEntryIDCmd_t *) MessagePtr;
+        -:  428:        
+        2:  429:        StartOfResultsTable = CS_AppData.ResMemoryTblPtr;   
+        -:  430:        
+       34:  431:        for ( Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop ++)
+branch  0 taken 94%
+branch  1 taken 6% (fallthrough)
+        -:  432:        {
+       32:  433:            ResultsEntry = & StartOfResultsTable[Loop];
+        -:  434:            
+       32:  435:            if ( (ResultsEntry->StartAddress <= CmdPtr -> Address) &&
+branch  0 taken 3% (fallthrough)
+branch  1 taken 97%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+        -:  436:                CmdPtr -> Address <= (ResultsEntry->StartAddress + ResultsEntry->NumBytesToChecksum) &&
+        -:  437:                ResultsEntry->State != CS_STATE_EMPTY)
+        -:  438:            {
+        -:  439:                
+        1:  440:                CFE_EVS_SendEvent (CS_GET_ENTRY_ID_MEMORY_INF_EID,
+call    0 returned 100%
+        -:  441:                                   CFE_EVS_INFORMATION,
+        -:  442:                                   "Memory Found Address 0x%08X in Entry ID %d", 
+        -:  443:                                   CmdPtr -> Address,
+        -:  444:                                   Loop);
+        1:  445:                EntryFound = TRUE;
+        -:  446:            }
+        -:  447:        }
+        -:  448:        
+        2:  449:        if (EntryFound == FALSE)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  450:        {
+        1:  451:            CFE_EVS_SendEvent (CS_GET_ENTRY_ID_MEMORY_NOT_FOUND_INF_EID,
+call    0 returned 100%
+        -:  452:                               CFE_EVS_INFORMATION,
+        -:  453:                               "Address 0x%08X was not found in Memory table",
+        -:  454:                               CmdPtr -> Address);
+        -:  455:        }
+        2:  456:        CS_AppData.CmdCounter++;
+        -:  457:    }
+        -:  458:    return;
+        -:  459:    
+        -:  460:} /* End of CS_GetEntryIDMemoryCmd () */
+        -:  461:
+        -:  462:/************************/
+        -:  463:/*  End of File Comment */
+        -:  464:/************************/

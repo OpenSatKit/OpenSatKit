@@ -1,0 +1,902 @@
+        -:    0:Source:../src/sc_loads.c
+        -:    0:Programs:7
+        -:    1: /*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: sc_loads.c.gcov 1.3.1.1 2016/10/21 17:37:28EDT sstrege Exp  $
+        -:    4: **
+        -:    5: **  Copyright � 2007-2014 United States Government as represented by the 
+        -:    6: **  Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **  All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **  This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **  used, distributed and modified only pursuant to the terms of that 
+        -:   12: **  agreement. 
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   This file contains functions to handle validation of TBL tables,
+        -:   16: **   as well as setting up Stored Command's internal data structures for
+        -:   17: **   those tables
+        -:   18: **
+        -:   19: ** References:
+        -:   20: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   21: **   CFS Development Standards Document
+        -:   22: ** Notes:
+        -:   23: **
+        -:   24: **   $Log: sc_loads.c.gcov  $ 
+        -:   24: **   Revision 1.3.1.1 2016/10/21 17:37:28EDT sstrege  
+        -:   24: **   Applying DCR 145914 change packages 
+        -:   24: **   Revision 1.4 2016/10/21 15:19:46EDT mdeschu  
+        -:   24: **   Updated gcov results 
+        -:   25: **   Revision 1.7 2016/10/21 14:51:58EDT mdeschu  
+        -:   26: **   Revert argument checks, change parameters to uint32 from int32 
+        -:   27: **   Revision 1.6 2016/10/21 12:20:42EDT mdeschu  
+        -:   28: **   SC_Loads : SC_Insert: Adds validation of arguments passed in. Otherwise an index out of bounds condition could occur 
+        -:   29: **   Revision 1.5 2016/09/09 16:32:08EDT mdeschu  
+        -:   30: **   Arguements in CFE_EVS_SendEvent causing format warnings have been explicitly cast to (unsigned int) and (int) same as cFE. 
+        -:   31: **   Revision 1.4 2015/12/08 14:56:32EST czogby  
+        -:   32: **   Move function prototypes into .h files 
+        -:   33: **   Revision 1.3 2015/10/08 16:18:08EDT sstrege  
+        -:   34: **   Restoration from MKS 2009 Trunk 
+        -:   35: **   Revision 1.19 2015/03/02 12:58:29EST sstrege  
+        -:   36: **   Added copyright information 
+        -:   37: **   Revision 1.18 2014/06/06 14:10:33EDT sjudy  
+        -:   38: **   Initialized NewCmdTime=0 in SC_Insert. 
+        -:   39: **   Revision 1.17 2011/11/16 10:59:10GMT-08:00 lwalling  
+        -:   40: **   Removed local var NumberOfCommands from function SC_ParseRts() 
+        -:   41: **   Revision 1.16 2011/02/09 13:29:00EST lwalling  
+        -:   42: **   Process append command references wrong ATS buffer 
+        -:   43: **   Revision 1.15 2011/02/01 11:38:02EST lwalling  
+        -:   44: **   Remove command checksum test from ATS table verify -- no requirement 
+        -:   45: **   Revision 1.14 2011/01/28 18:02:04EST lwalling  
+        -:   46: **   Fix test for duplicate ATS command ID numbers 
+        -:   47: **   Revision 1.13 2010/09/28 10:33:52EDT lwalling  
+        -:   48: **   Update list of included header files 
+        -:   49: **   Revision 1.12 2010/05/18 15:31:38EDT lwalling  
+        -:   50: **   Change AtsId/RtsId to AtsIndex/RtsIndex or AtsNumber/RtsNumber 
+        -:   51: **   Revision 1.11 2010/05/18 14:13:29EDT lwalling  
+        -:   52: **   Change AtsCmdIndexBuffer contents from entry pointer to entry index 
+        -:   53: **   Revision 1.10 2010/05/05 11:22:03EDT lwalling  
+        -:   54: **   Use common ATS verify events and return code definitions, 
+        -:   55: **   Revision 1.9 2010/04/21 15:42:19EDT lwalling  
+        -:   56: **   Changed local storage of Append ATS table use from bytes to words, wrote process Append function 
+        -:   57: **   Revision 1.8 2010/04/16 15:29:09EDT lwalling  
+        -:   58: **   Create function to update Append ATS table data 
+        -:   59: **   Revision 1.7 2010/04/15 15:22:16EDT lwalling  
+        -:   60: **   Create function to verify one ATS entry, create function to verify Append ATS table data 
+        -:   61: **   Revision 1.6 2010/04/05 11:51:16EDT lwalling  
+        -:   62: **   Create stub functions for validate, update and process Append ATS tables 
+        -:   63: **   Revision 1.5 2010/03/26 18:02:50EDT lwalling  
+        -:   64: **   Remove pad from ATS and RTS structures, change 32 bit ATS time to two 16 bit values 
+        -:   65: **   Revision 1.4 2010/03/26 11:27:45EDT lwalling  
+        -:   66: **   Fixed packet length calculation to support odd byte length ATS and RTS commands 
+        -:   67: **   Revision 1.3 2009/01/26 14:44:46EST nyanchik  
+        -:   68: **   Check in of Unit test 
+        -:   69: **   Revision 1.2 2009/01/05 08:26:52EST nyanchik  
+        -:   70: **   Check in after code review changes 
+        -:   71: *************************************************************************/
+        -:   72:
+        -:   73:/**************************************************************************
+        -:   74: **
+        -:   75: ** Include section
+        -:   76: **
+        -:   77: **************************************************************************/
+        -:   78:
+        -:   79:#include "cfe.h"
+        -:   80:#include "sc_app.h"
+        -:   81:#include "sc_loads.h"
+        -:   82:#include "sc_atsrq.h"
+        -:   83:#include "sc_utils.h"
+        -:   84:#include "sc_events.h"
+        -:   85:
+        -:   86:/**************************************************************************
+        -:   87: **
+        -:   88: ** Local #defines
+        -:   89: **
+        -:   90: **************************************************************************/
+        -:   91:
+        -:   92:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   93:/*                                                                 */
+        -:   94:/* Load the ATS from its table to memory                           */
+        -:   95:/*                                                                 */
+        -:   96:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        8:   97:void SC_LoadAts (uint16 AtsIndex)
+        -:   98:{
+        -:   99:    uint16                  AtsEntryWords;      /* current ats entry length in words */
+        -:  100:    uint16                  AtsCmdNum;          /* current ats entry command number */
+        -:  101:    uint16                  AtsEntryIndex;      /* index into the load for current ats entry */
+        -:  102:    CFE_SB_MsgPtr_t         AtsCmd;             /* a pointer to an ats command */
+        -:  103:    SC_AtsEntryHeader_t    *AtsEntryPtr;        /* a pointer to an ats entry header */
+        -:  104:    uint16                 *AtsTablePtr;        /* pointer to the start of the Ats table */
+        -:  105:
+        8:  106:    int32   Result = CFE_SUCCESS;
+        8:  107:    boolean StillProcessing = TRUE;
+        -:  108:
+        -:  109:    /*
+        -:  110:     ** Initialize all structrures
+        -:  111:     */
+        8:  112:    SC_InitAtsTables (AtsIndex);
+        -:  113: 
+        -:  114:    /* initialize pointers and counters */
+        8:  115:    AtsTablePtr = SC_OperData.AtsTblAddr[AtsIndex];
+        8:  116:    AtsEntryIndex = 0;
+        -:  117:  
+      151:  118:        while (StillProcessing)
+        -:  119:    {
+        -:  120:        /*
+        -:  121:         ** Make sure that the pointer as well as the primary packet
+        -:  122:         ** header fit in the buffer, so a G.P fault is not caused.
+        -:  123:         */
+      135:  124:        if (AtsEntryIndex < SC_ATS_BUFF_SIZE)
+        -:  125:        {
+        -:  126:            /* get the next command number from the buffer */
+      134:  127:            AtsCmdNum = ((SC_AtsEntryHeader_t *)&AtsTablePtr[AtsEntryIndex]) ->CmdNumber;
+        -:  128:    
+      134:  129:            if (AtsCmdNum == 0)
+        -:  130:            {   
+        -:  131:                /* end of the load reached */
+        3:  132:                Result = CFE_SUCCESS;
+        3:  133:                StillProcessing = FALSE;
+        -:  134:            }
+        -:  135:           
+        -:  136:                    /* make sure the CmdPtr can fit in a whole Ats Cmd Header at the very least */
+      131:  137:            else if (AtsEntryIndex > (SC_ATS_BUFF_SIZE - (sizeof(SC_AtsEntryHeader_t)/SC_BYTES_IN_WORD)))
+        -:  138:            {
+        -:  139:                /* even the smallest command will not fit in the buffer */
+        1:  140:                Result = SC_ERROR;
+        1:  141:                StillProcessing = FALSE;
+        -:  142:            }  /* else if the cmd number is valid and the command */
+        -:  143:            /* has not already been loaded                     */
+        -:  144:            else
+      388:  145:                if (AtsCmdNum <= SC_MAX_ATS_CMDS &&
+      129:  146:                    SC_OperData.AtsCmdStatusTblAddr[AtsIndex][AtsCmdNum - 1] == SC_EMPTY)
+        -:  147:                {
+        -:  148:                    /* get a pointer to the ats command in the table */
+      129:  149:                    AtsEntryPtr = (SC_AtsEntryHeader_t *) &AtsTablePtr[AtsEntryIndex];
+      129:  150:                    AtsCmd = (CFE_SB_MsgPtr_t) AtsEntryPtr->CmdHeader;
+        -:  151:                                       
+        -:  152:                    /* if the length of the command is valid */
+      385:  153:                    if (CFE_SB_GetTotalMsgLength(AtsCmd) >= SC_PACKET_MIN_SIZE && 
+      128:  154:                        CFE_SB_GetTotalMsgLength(AtsCmd) <= SC_PACKET_MAX_SIZE)
+        -:  155:                    {
+        -:  156:                        /* get the length of the entry in WORDS (plus 1 to round byte len up to word len) */
+      128:  157:                        AtsEntryWords = (CFE_SB_GetTotalMsgLength(AtsCmd) + 1 + SC_ATS_HEADER_SIZE) / SC_BYTES_IN_WORD; 
+        -:  158:                        
+        -:  159:                        /* if the command does not run off of the end of the buffer */
+      128:  160:                        if (AtsEntryIndex + AtsEntryWords <= SC_ATS_BUFF_SIZE)
+        -:  161:                        {
+        -:  162:                            /* set the command pointer in the command index table */
+        -:  163:                            /* CmdNum starts at one....                          */
+        -:  164:                            
+      127:  165:                            SC_AppData.AtsCmdIndexBuffer[AtsIndex][AtsCmdNum -1] = AtsEntryIndex;
+        -:  166:                            
+        -:  167:                            /* set the command status to loaded in the command status table */
+      127:  168:                            SC_OperData.AtsCmdStatusTblAddr[AtsIndex][AtsCmdNum - 1] = SC_LOADED;
+        -:  169:                            
+        -:  170:                            /* increment the number of commands loaded */
+      127:  171:                            SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands++;
+        -:  172:                            
+        -:  173:                            /* increment the ats_entry index to the next ats entry */
+      127:  174:                            AtsEntryIndex = AtsEntryIndex + AtsEntryWords;
+        -:  175:                        }
+        -:  176:                        else
+        -:  177:                        { /* the command runs off the end of the buffer */
+        1:  178:                            Result = SC_ERROR;
+        1:  179:                            StillProcessing = FALSE;
+        -:  180:                        } /* end if */
+        -:  181:                    }
+        -:  182:                    else
+        -:  183:                    { /* the command length was invalid */
+        1:  184:                        Result = SC_ERROR;
+        1:  185:                        StillProcessing = FALSE;
+        -:  186:                    } /* end if */
+        -:  187:                }
+        -:  188:                else
+        -:  189:                { /* the cmd number is invalid */                    
+        1:  190:                    Result = SC_ERROR;
+        1:  191:                    StillProcessing = FALSE;
+        -:  192:                } /* end if */
+        -:  193:        }
+        -:  194:        else
+        -:  195:        {
+        1:  196:            if (AtsEntryIndex == SC_ATS_BUFF_SIZE)
+        -:  197:            {
+        -:  198:                /* we encountered a load exactly as long as the buffer */
+        1:  199:                Result = CFE_SUCCESS;
+        1:  200:                StillProcessing = FALSE;
+        -:  201:
+        -:  202:            }
+        -:  203:            else
+        -:  204:            { /* the pointer is over the end of the buffer */
+        -:  205:                
+    #####:  206:                Result = SC_ERROR;
+    #####:  207:                StillProcessing = FALSE;
+        -:  208:            } /* end if */
+        -:  209:        }/*end else */
+        -:  210:    } /* end while */
+        -:  211:    
+        -:  212:    /*
+        -:  213:     **   Now the commands are parsed through, need to build the tables
+        -:  214:     **   if the load was a sucess, need to build the tables
+        -:  215:     */
+        -:  216:    
+        -:  217:    /* if the load finished without errors and there was at least one command */
+       10:  218:    if ((Result == CFE_SUCCESS) && (SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands > 0))
+        -:  219:    {  
+        -:  220:        /* record the size of the load in the ATS info table */
+        2:  221:        SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize = AtsEntryIndex;  /* size in WORDS */
+        -:  222:             
+        -:  223:        /* build the time index table */
+        2:  224:        SC_BuildTimeIndexTable(AtsIndex);   
+        -:  225:    }
+        -:  226:    else
+        -:  227:    { /* there was an error */
+        6:  228:        SC_InitAtsTables (AtsIndex);
+        -:  229:    } /* end if */ 
+        -:  230:
+        8:  231:} /* end SC_LoadAts */
+        -:  232:
+        -:  233:
+        -:  234:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  235:/*                                                                 */
+        -:  236:/* Builds the time table for the ATS buffer                        */
+        -:  237:/*                                                                 */
+        -:  238:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  239:void SC_BuildTimeIndexTable (uint16 AtsIndex)
+        -:  240:{
+        -:  241:    int32 i;
+        -:  242:    int32 ListLength;
+        -:  243:
+        -:  244:    /* initialize sorted list contents */
+     4004:  245:    for (i = 0; i < SC_MAX_ATS_CMDS; i++)
+        -:  246:    {
+     4000:  247:        SC_AppData.AtsTimeIndexBuffer[AtsIndex][i] = SC_ERROR;
+        -:  248:    }
+        -:  249:    
+        -:  250:    /* initialize sorted list length */
+        4:  251:    ListLength = 0;
+        -:  252:
+        -:  253:    /* create time sorted list */
+     4004:  254:    for (i = 0; i < SC_MAX_ATS_CMDS; i++)
+        -:  255:    {
+        -:  256:        /* add in-use command entries to time sorted list */
+     4000:  257:        if (SC_AppData.AtsCmdIndexBuffer[AtsIndex][i] != SC_ERROR)
+        -:  258:        { 
+     2064:  259:            SC_Insert(AtsIndex, i, ListLength);
+     2064:  260:            ListLength++;   
+        -:  261:        }
+        -:  262:    }
+        -:  263:
+        4:  264:} /* end SC_BuildTimeIndexTable */
+        -:  265:
+        -:  266:
+        -:  267:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  268:/*                                                                 */
+        -:  269:/*  Inserts and element into a sorted list                         */
+        -:  270:/*                                                                 */
+        -:  271:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+     2066:  272:void SC_Insert (uint16 AtsIndex, uint32 NewCmdIndex, uint32 ListLength)
+        -:  273:{
+        -:  274:    SC_AtsEntryHeader_t *Entry;         /* ATS table entry pointer */
+     2066:  275:    SC_AbsTimeTag_t      NewCmdTime=0;    /* new command execution time */
+        -:  276:    SC_AbsTimeTag_t      ListCmdTime;   /* list entry execution time */
+        -:  277:    uint32               CmdIndex;      /* ATS command index (cmd num - 1) */
+        -:  278:    uint32               EntryIndex;    /* ATS entry location in table */
+        -:  279:    int32                TimeBufIndex;  /* this must be signed */  
+        -:  280:
+        -:  281:    /* get execution time for new list entry */
+     2066:  282:    if (ListLength > 0)
+        -:  283:    { 
+        -:  284:        /* first get the entry index in the selected ATS table for the new command */
+     2062:  285:        EntryIndex = SC_AppData.AtsCmdIndexBuffer[AtsIndex][NewCmdIndex];
+        -:  286:        /* then get a pointer to the ATS entry */
+     2062:  287:        Entry = (SC_AtsEntryHeader_t *) &SC_OperData.AtsTblAddr[AtsIndex][EntryIndex];
+        -:  288:        /* then get the execution time from the ATS entry for the new command */
+     2062:  289:        NewCmdTime = SC_GetAtsEntryTime(Entry);
+        -:  290:    }
+        -:  291:
+        -:  292:    /* start at last element in the sorted by time list */
+     2066:  293:    TimeBufIndex = ListLength - 1;
+        -:  294:
+     4133:  295:    while (TimeBufIndex >= 0)
+        -:  296:    {
+        -:  297:        /* first get the cmd index for this list entry */
+     2062:  298:        CmdIndex = SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeBufIndex];
+        -:  299:        /* then get the entry index from the ATS table */
+     2062:  300:        EntryIndex = SC_AppData.AtsCmdIndexBuffer[AtsIndex][CmdIndex];
+        -:  301:        /* then get a pointer to the ATS entry data */
+     2062:  302:        Entry = (SC_AtsEntryHeader_t *) &SC_OperData.AtsTblAddr[AtsIndex][EntryIndex];
+        -:  303:        /* then get cmd execution time from the ATS entry */
+     2062:  304:        ListCmdTime = SC_GetAtsEntryTime(Entry);
+        -:  305:
+        -:  306:        /* compare time for this list entry to time for new cmd */
+     2062:  307:        if (SC_CompareAbsTime(ListCmdTime, NewCmdTime))
+        -:  308:        {
+        -:  309:            /* new cmd will execute before this list entry */
+        -:  310:
+        -:  311:            /* move this list entry to make room for new cmd */
+        2:  312:            SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeBufIndex + 1] =
+        1:  313:               SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeBufIndex];
+        -:  314:
+        -:  315:            /* back up to previous list entry (ok if -1) */
+        1:  316:            TimeBufIndex--;
+        -:  317:        }
+        -:  318:        else
+        -:  319:        {
+        -:  320:            /* new cmd will execute at same time or after this list entry */
+     2061:  321:            break;
+        -:  322:        }
+        -:  323:    }
+        -:  324:
+        -:  325:    /*
+        -:  326:    ** TimeBufIndex is now one slot before the target slot...
+        -:  327:    **   if new cmd time is earlier than all other entries
+        -:  328:    **     then TimeBufIndex is -1 and all others have been moved
+        -:  329:    **   else only entries with later times have been moved
+        -:  330:    ** In either case, there is an empty slot next to TimeBufIndex
+        -:  331:    */    
+     2066:  332:    SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeBufIndex + 1] = NewCmdIndex;
+     2066:  333:} /* end SC_Insert */
+        -:  334:
+        -:  335:
+        -:  336:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  337:/*                                                                 */
+        -:  338:/*  Clears out Ats Tables before a load                            */
+        -:  339:/*                                                                 */
+        -:  340:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       14:  341:void SC_InitAtsTables (uint16 AtsIndex)
+        -:  342:{
+        -:  343:    int32 i; 
+        -:  344:        
+        -:  345:    /* loop through and set the ATS tables to zero */
+    14014:  346:    for (i = 0; i < SC_MAX_ATS_CMDS; i++)
+        -:  347:    {
+    14000:  348:        SC_AppData.AtsCmdIndexBuffer[AtsIndex][i]    = SC_ERROR;
+    14000:  349:        SC_OperData.AtsCmdStatusTblAddr[AtsIndex][i] = SC_EMPTY;
+    14000:  350:        SC_AppData.AtsTimeIndexBuffer[AtsIndex][i]   = SC_ERROR;
+        -:  351:    }
+        -:  352:    
+        -:  353:    /* initialize the pointers and counters   */
+       14:  354:    SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize = 0;
+       14:  355:    SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands = 0;
+        -:  356:
+       14:  357:} /* end SC_InitAtsTables */
+        -:  358:
+        -:  359:
+        -:  360:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  361:/*                                                                 */
+        -:  362:/* Load an RTS into memory                                         */
+        -:  363:/*                                                                 */
+        -:  364:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       21:  365:void SC_LoadRts (uint16 RtsIndex)
+        -:  366:{    
+        -:  367:    /* Clear out the RTS info table */
+       21:  368:    SC_OperData.RtsInfoTblAddr[RtsIndex].RtsStatus = SC_LOADED;
+       21:  369:    SC_OperData.RtsInfoTblAddr[RtsIndex].UseCtr = 0;
+       21:  370:    SC_OperData.RtsInfoTblAddr[RtsIndex].CmdCtr = 0;
+       21:  371:    SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr = 0;
+       21:  372:    SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandTime = 0;
+       21:  373:    SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandPtr = 0;
+        -:  374:       
+        -:  375:    /* Make sure the RTS is disabled */
+       21:  376:    SC_OperData.RtsInfoTblAddr[RtsIndex].DisabledFlag = TRUE;
+        -:  377:        
+       21:  378:} /* SC_LoadRts */
+        -:  379:
+        -:  380:
+        -:  381:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  382:/*                                                                 */
+        -:  383:/*  Validate ATS table data                                        */
+        -:  384:/*                                                                 */
+        -:  385:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  386:int32 SC_ValidateAts (void *TableData)
+        -:  387:{
+        -:  388:    int32 Result;
+        -:  389:
+        -:  390:    /* Common ATS table verify function needs size of this table */
+        1:  391:    Result = SC_VerifyAtsTable((uint16 *) TableData, SC_ATS_BUFF_SIZE);
+        -:  392:        
+        1:  393:    return(Result);
+        -:  394:    
+        -:  395:} /* end SC_ValidateAts */
+        -:  396:
+        -:  397:
+        -:  398:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  399:/*                                                                 */
+        -:  400:/* Parses the RTS to make sure it looks good                       */
+        -:  401:/*                                                                 */
+        -:  402:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        9:  403:boolean SC_ParseRts (uint16 Buffer[])
+        -:  404:{
+        -:  405:    uint16                          i;
+        -:  406:    boolean                         Done;
+        -:  407:    boolean                         Error;
+        -:  408:    CFE_SB_MsgPtr_t                 RtsCmd;
+        -:  409:    SC_RtsEntryHeader_t            *RtsEntryPtr;
+        -:  410:    uint16                          RtsCmdSize;
+        -:  411:
+        9:  412:    i = 0;
+        9:  413:    Done = Error = FALSE;
+        -:  414:        
+       33:  415:    while (Error == FALSE && Done == FALSE)
+        -:  416:    {
+        -:  417:        
+        -:  418:        /*
+        -:  419:         ** Check to see if a minimum command fits within an RTS
+        -:  420:         */
+       15:  421:        if (i <= (SC_RTS_BUFF_SIZE - (sizeof(SC_RtsEntryHeader_t) / SC_BYTES_IN_WORD)))
+        -:  422:        {
+        -:  423:            
+        -:  424:            /*
+        -:  425:             ** Cast a header to the RTS buffer current location
+        -:  426:             ** and get the size of the packet
+        -:  427:             */
+        -:  428:            
+       13:  429:            RtsEntryPtr  = (SC_RtsEntryHeader_t *) &Buffer[i];
+       13:  430:            RtsCmd = (CFE_SB_MsgPtr_t) RtsEntryPtr->CmdHeader; 
+        -:  431:            
+       13:  432:            RtsCmdSize = CFE_SB_GetTotalMsgLength(RtsCmd) + SC_RTS_HEADER_SIZE;
+        -:  433:               
+       14:  434:            if ( (RtsEntryPtr->TimeTag == 0) && (CFE_SB_GetMsgId(RtsCmd) == 0))
+        -:  435:            {
+        1:  436:                Done = TRUE;     /* assumed end of file */
+        -:  437:            }
+       12:  438:            else if (CFE_SB_GetMsgId(RtsCmd) == 0)
+        -:  439:            {
+        1:  440:                CFE_EVS_SendEvent (SC_RTS_INVLD_MID_ERR_EID,
+        -:  441:                                   CFE_EVS_ERROR,
+        -:  442:                                   "RTS cmd loaded with invalid MID at %d",
+        -:  443:                                   i);
+        -:  444:                                   
+        1:  445:                Error = TRUE;     /* invalid message id */
+        -:  446:            }
+        -:  447:            else
+        -:  448:            {
+        -:  449:                 /* check to see if the length field in the RTS is valid */
+       23:  450:                if (CFE_SB_GetTotalMsgLength(RtsCmd) < SC_PACKET_MIN_SIZE ||
+        9:  451:                    CFE_SB_GetTotalMsgLength(RtsCmd) > SC_PACKET_MAX_SIZE) 
+        -:  452:                {
+        3:  453:                CFE_EVS_SendEvent (SC_RTS_LEN_ERR_EID,
+        -:  454:                                   CFE_EVS_ERROR,
+        -:  455:                                   "RTS cmd loaded with invalid length at %d, len: %d",
+        -:  456:                                   i,
+        3:  457:                                   CFE_SB_GetTotalMsgLength(RtsCmd));
+        -:  458:                                   
+        3:  459:                    Error = TRUE;  /* Length error */
+        -:  460:                    
+        -:  461:                }
+        8:  462:                else if ((i + ((RtsCmdSize + 1) / SC_BYTES_IN_WORD)) > SC_RTS_BUFF_SIZE)
+        -:  463:                {
+        1:  464:                     CFE_EVS_SendEvent (SC_RTS_LEN_BUFFER_ERR_EID,
+        -:  465:                                        CFE_EVS_ERROR,
+        -:  466:                                       "RTS cmd at %d runs off end of buffer",
+        -:  467:                                        i);
+        1:  468:                    Error = TRUE; /* command runs off of the end of the buffer */   
+        -:  469:                }
+        7:  470:                else if ((i + ((RtsCmdSize + 1) / SC_BYTES_IN_WORD)) == SC_RTS_BUFF_SIZE)
+        -:  471:                {
+        1:  472:                    Done = TRUE;
+        -:  473:                }
+        -:  474:                else
+        -:  475:                {  /* command fits in buffer */
+        -:  476:                    
+        6:  477:                    i += ((RtsCmdSize + 1) / SC_BYTES_IN_WORD);   /* remember 'i' is expressed in words */
+        -:  478:                    
+        -:  479:                } /* end if */
+        -:  480:                
+        -:  481:            } /* endif */    
+        -:  482:        }
+        -:  483:        else
+        -:  484:        {  /* command does not fit in the buffer */
+        -:  485:
+        -:  486:            /*
+        -:  487:             ** If it looks like there is data, reject the load,
+        -:  488:             ** if it looks empty then we are done
+        -:  489:             */
+        2:  490:            if (Buffer[i] == 0)
+        -:  491:            {
+        1:  492:                Done = TRUE;
+        -:  493:            }
+        -:  494:            else
+        -:  495:            {
+        1:  496:                CFE_EVS_SendEvent (SC_RTS_LEN_TOO_LONG_ERR_EID,
+        -:  497:                                   CFE_EVS_ERROR,
+        -:  498:                                   "RTS cmd loaded won't fit in buffer at %d",
+        -:  499:                                   i);
+        1:  500:                Error = TRUE;
+        -:  501:            }
+        -:  502:        } /* endif */
+        -:  503:        
+        -:  504:    } /* endwhile */
+        -:  505:        
+        -:  506:    /*
+        -:  507:     ** finished, report results
+        -:  508:     */
+        -:  509:     
+        -:  510:    /* If Error was TRUE, then SC_ParseRts must return FALSE */
+        9:  511:    return (!Error);
+        -:  512:
+        -:  513:} /* end SC_ParseRts */
+        -:  514:
+        -:  515:
+        -:  516:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  517:/*                                                                 */
+        -:  518:/* Validate an RTS                                                 */
+        -:  519:/*                                                                 */
+        -:  520:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  521:int32 SC_ValidateRts (void *TableData)
+        -:  522:{
+        -:  523:
+        -:  524:    uint16 *TableDataPtr;
+        1:  525:    int32   Result = CFE_SUCCESS;
+        -:  526:    
+        1:  527:    TableDataPtr = (uint16 *)TableData;
+        -:  528:    
+        -:  529:    /*
+        -:  530:     ** make a rough check on the first command to see if there is
+        -:  531:     ** something in the buffer
+        -:  532:     */
+        1:  533:    if (SC_ParseRts (TableDataPtr) == FALSE)
+        -:  534:    {
+        -:  535:        /* event message is put out by Parse RTS */
+        1:  536:        Result = SC_ERROR;
+        -:  537:    }
+        -:  538:
+        1:  539:    return (Result);
+        -:  540:
+        -:  541:} /* end SC_ValidateRts */
+        -:  542:
+        -:  543:
+        -:  544:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  545:/*                                                                 */
+        -:  546:/*  Validate Append ATS table data                                 */
+        -:  547:/*                                                                 */
+        -:  548:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  549:int32 SC_ValidateAppend (void *TableData)
+        -:  550:{
+        -:  551:    int32 Result;
+        -:  552:
+        -:  553:    /* Common ATS table verify function needs size of this table */
+        1:  554:    Result = SC_VerifyAtsTable((uint16 *) TableData, SC_APPEND_BUFF_SIZE);
+        -:  555:        
+        1:  556:    return(Result);
+        -:  557:    
+        -:  558:} /* end SC_ValidateAppend */
+        -:  559:
+        -:  560:
+        -:  561:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  562:/*                                                                 */
+        -:  563:/* Have new Append ATS table data, update Append ATS Info table    */
+        -:  564:/*                                                                 */
+        -:  565:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        8:  566:void SC_UpdateAppend (void)
+        -:  567:{
+        -:  568:    SC_AtsEntryHeader_t *Entry;
+        -:  569:    CFE_SB_MsgPtr_t  CmdPacket;
+        -:  570:    int32 CommandBytes;
+        -:  571:    int32 CommandWords;
+        8:  572:    int32 EntryIndex = 0;
+        8:  573:    int32 EntryCount = 0;
+        8:  574:    boolean StillProcessing = TRUE;
+        -:  575:
+        -:  576:    /* Count Append ATS table entries and get total size */
+       88:  577:    while (StillProcessing)
+        -:  578:    {
+       72:  579:        if (EntryIndex >= SC_APPEND_BUFF_SIZE)
+        -:  580:        {
+        -:  581:            /* End of Append ATS table buffer */
+        1:  582:            StillProcessing = FALSE;
+        -:  583:        }
+        -:  584:        else
+        -:  585:        {
+       71:  586:            Entry = (SC_AtsEntryHeader_t *) &SC_OperData.AppendTblAddr[EntryIndex];
+        -:  587:
+       75:  588:            if ((Entry->CmdNumber == 0) || (Entry->CmdNumber > SC_MAX_ATS_CMDS))
+        -:  589:            {
+        -:  590:                /* End of valid command numbers */
+        4:  591:                StillProcessing = FALSE;
+        -:  592:            }
+        -:  593:            else
+        -:  594:            {
+        -:  595:                /* Compute entry command packet length */
+       67:  596:                CmdPacket = (CFE_SB_MsgPtr_t) Entry->CmdHeader;
+       67:  597:                CommandBytes = CFE_SB_GetTotalMsgLength(CmdPacket);
+       67:  598:                CommandWords = (CommandBytes + 1) / 2;
+        -:  599:
+       69:  600:                if ((CommandBytes < SC_PACKET_MIN_SIZE) || (CommandBytes > SC_PACKET_MAX_SIZE))
+        -:  601:                {
+        -:  602:                    /* Entry command packet must have a valid length */
+        2:  603:                    StillProcessing = FALSE;
+        -:  604:                }
+       65:  605:                else if ((EntryIndex + SC_ATS_HDR_NOPKT_WORDS + CommandWords) > SC_APPEND_BUFF_SIZE)
+        -:  606:                {
+        -:  607:                    /* Entry command packet must fit within ATS append table buffer */
+        1:  608:                    StillProcessing = FALSE;
+        -:  609:                }
+        -:  610:                else
+        -:  611:                {
+        -:  612:                    /* Compute buffer index for next Append ATS table entry */
+       64:  613:                    EntryIndex += (SC_ATS_HDR_NOPKT_WORDS + CommandWords);
+       64:  614:                    EntryCount++;
+        -:  615:                }
+        -:  616:            }
+        -:  617:        }
+        -:  618:    }
+        -:  619:
+        -:  620:    /* Results will also be reported in HK */
+        8:  621:    SC_AppData.AppendLoadCount++;
+        8:  622:    SC_AppData.AppendEntryCount = EntryCount;
+        8:  623:    SC_AppData.AppendWordCount = EntryIndex;
+        -:  624:
+       16:  625:    CFE_EVS_SendEvent(SC_UPDATE_APPEND_EID, CFE_EVS_INFORMATION,
+        -:  626:           "Update Append ATS Table: load count = %d, command count = %d, byte count = %d",
+        8:  627:                      SC_AppData.AppendLoadCount, (int)EntryCount, (int)EntryIndex * 2);
+        8:  628:    return;
+        -:  629:
+        -:  630:} /* end SC_UpdateAppend */
+        -:  631:
+        -:  632:
+        -:  633:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  634:/*                                                                 */
+        -:  635:/* Append contents of Append ATS table to indicated ATS table      */
+        -:  636:/*                                                                 */
+        -:  637:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  638:void SC_ProcessAppend (uint16 AtsIndex)
+        -:  639:{
+        -:  640:    SC_AtsEntryHeader_t *Entry;
+        -:  641:    CFE_SB_MsgPtr_t  CmdPacket;
+        -:  642:
+        -:  643:    int32 CommandBytes;
+        -:  644:    int32 CommandWords;
+        -:  645:    int32  EntryIndex;
+        -:  646:    int32  i;
+        -:  647:    uint16 CmdIndex;
+        -:  648:
+        -:  649:    /* save index of free area at end of ATS table data */
+        2:  650:    EntryIndex = SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize;
+        -:  651:
+        -:  652:    /* copy Append table data to end of ATS table data */
+        4:  653:    CFE_PSP_MemCpy(&SC_OperData.AtsTblAddr[AtsIndex][EntryIndex],
+        4:  654:                    SC_OperData.AppendTblAddr, SC_AppData.AppendWordCount * 2);
+        -:  655:
+        -:  656:    /* update size of ATS table data */
+        2:  657:    SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize += SC_AppData.AppendWordCount;
+        -:  658:
+        -:  659:    /* add appended entries to ats process tables */
+        4:  660:    for (i = 0; i < SC_AppData.AppendEntryCount; i++)
+        -:  661:    {
+        -:  662:        /* get pointer to next appended entry */
+        2:  663:        Entry = (SC_AtsEntryHeader_t *) &SC_OperData.AtsTblAddr[AtsIndex][EntryIndex];
+        -:  664:
+        -:  665:        /* convert base one cmd number to base zero index */
+        2:  666:        CmdIndex = Entry->CmdNumber - 1;
+        -:  667:
+        -:  668:        /* count only new commands, not replaced commands */
+        2:  669:        if (SC_OperData.AtsCmdStatusTblAddr[AtsIndex][CmdIndex] == SC_EMPTY)
+        -:  670:        {
+        2:  671:            SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands++;
+        -:  672:        }
+        -:  673:
+        -:  674:        /* update array of pointers to ats entries */
+        2:  675:        SC_AppData.AtsCmdIndexBuffer[AtsIndex][CmdIndex] = EntryIndex;
+        2:  676:        SC_OperData.AtsCmdStatusTblAddr[AtsIndex][CmdIndex] = SC_LOADED;
+        -:  677:
+        -:  678:        /* update entry index to point to the next entry */
+        2:  679:        CmdPacket = (CFE_SB_MsgPtr_t) Entry->CmdHeader;
+        2:  680:        CommandBytes = CFE_SB_GetTotalMsgLength(CmdPacket);
+        2:  681:        CommandWords = (CommandBytes + 1) / 2;
+        2:  682:        EntryIndex += (SC_ATS_HDR_NOPKT_WORDS + CommandWords);
+        -:  683:    }
+        -:  684:
+        -:  685:    /* rebuild time sorted list of commands */
+        2:  686:    SC_BuildTimeIndexTable(AtsIndex);
+        -:  687:
+        -:  688:    /* did we just append to an ats that was executing? */
+        3:  689:    if ((SC_OperData.AtsCtrlBlckAddr->AtpState == SC_EXECUTING) &&
+        1:  690:        (SC_OperData.AtsCtrlBlckAddr->AtsNumber == (AtsIndex + 1)))
+        -:  691:    {
+        -:  692:        /*
+        -:  693:        ** re-start the ats -- this will go thru the process of skipping
+        -:  694:        **  past due entries (all of the old entries that had already
+        -:  695:        **  been executed and all of the new entries with an old time)
+        -:  696:        */
+        1:  697:        if (SC_BeginAts(AtsIndex, 0))
+        -:  698:        {
+        1:  699:            SC_OperData.AtsCtrlBlckAddr->AtpState = SC_EXECUTING;
+        -:  700:        }
+        -:  701:    }                            
+        -:  702:
+        -:  703:    /* notify cFE that we have modified the ats table */
+        2:  704:    CFE_TBL_Modified(SC_OperData.AtsTblHandle[AtsIndex]);
+        -:  705:
+        2:  706:    return;
+        -:  707:
+        -:  708:} /* end SC_ProcessAppend */
+        -:  709:
+        -:  710:
+        -:  711:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  712:/*                                                                 */
+        -:  713:/*  Verify contents of ATS table data                              */
+        -:  714:/*                                                                 */
+        -:  715:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  716:int32 SC_VerifyAtsTable (uint16 *Buffer, int32 BufferWords)
+        -:  717:{
+        5:  718:    int32   Result = CFE_SUCCESS;
+        5:  719:    int32   BufferIndex = 0;
+        5:  720:    int32   CommandCount = 0;
+        -:  721:    int32   i;
+        -:  722:
+        5:  723:    boolean StillProcessing = TRUE;
+        -:  724:
+        -:  725:
+        -:  726:    /* Initialize all command numbers as unused */
+     5005:  727:    for (i = 0; i < SC_MAX_ATS_CMDS; i++)
+        -:  728:    {
+     5000:  729:        SC_OperData.AtsDupTestArray[i] = SC_DUP_TEST_UNUSED;
+        -:  730:    }
+        -:  731:
+       16:  732:    while (StillProcessing)
+        -:  733:    {
+        -:  734:        /* Verify the ATS table entry at the current buffer index */
+        6:  735:        Result = SC_VerifyAtsEntry(Buffer, BufferIndex, BufferWords);
+        -:  736:
+        6:  737:        if (Result == SC_ERROR)
+        -:  738:        {
+        -:  739:            /* Entry at current buffer index is invalid */
+        1:  740:            StillProcessing = FALSE;
+        -:  741:        }
+        5:  742:        else if (Result == CFE_SUCCESS)
+        -:  743:        {
+        -:  744:            /* No more entries -- end of buffer or cmd num = 0 */
+        4:  745:            StillProcessing = FALSE;
+        -:  746:        }
+        -:  747:        else
+        -:  748:        {
+        -:  749:            /* Result is size (in words) of this entry */
+        1:  750:            BufferIndex += Result;
+        1:  751:            CommandCount++;
+        -:  752:        }
+        -:  753:    }
+        -:  754:
+        5:  755:    if (Result == CFE_SUCCESS)
+        -:  756:    {
+        4:  757:        if (CommandCount == 0)
+        -:  758:        {
+        -:  759:            /* Table must contain at least one valid entry */
+        3:  760:            Result = SC_ERROR;
+        -:  761:
+        3:  762:            CFE_EVS_SendEvent(SC_VERIFY_ATS_MPT_ERR_EID, CFE_EVS_ERROR,
+        -:  763:                             "Verify ATS Table error: table is empty");
+        -:  764:        }
+        -:  765:        else
+        -:  766:        {
+        1:  767:            CFE_EVS_SendEvent(SC_VERIFY_ATS_EID, CFE_EVS_INFORMATION,
+        -:  768:               "Verify ATS Table: command count = %d, byte count = %d",
+        -:  769:                              (int)CommandCount, (int)BufferIndex * 2);
+        -:  770:        }
+        -:  771:    }
+        -:  772:        
+        5:  773:    return(Result);
+        -:  774:    
+        -:  775:} /* end SC_VerifyAtsTable */
+        -:  776:
+        -:  777:
+        -:  778:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  779:/*                                                                 */
+        -:  780:/* Verify contents of one ATS table entry                          */
+        -:  781:/*                                                                 */
+        -:  782:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       14:  783:int32 SC_VerifyAtsEntry(uint16 *Buffer, int32 EntryIndex, int32 BufferWords)
+        -:  784:{
+       14:  785:    SC_AtsEntryHeader_t *Entry = (SC_AtsEntryHeader_t *) &Buffer[EntryIndex];
+        -:  786:    CFE_SB_MsgPtr_t  CmdPacket;
+        -:  787:
+        -:  788:    int32 CommandBytes;
+        -:  789:    int32 CommandWords;
+       14:  790:    int32 Result = CFE_SUCCESS;
+        -:  791:
+        -:  792:    /*
+        -:  793:    ** Verify the ATS table entry located at the indicated buffer offset
+        -:  794:    */
+       14:  795:    if (EntryIndex >= BufferWords)
+        -:  796:    {
+        -:  797:        /*
+        -:  798:        ** The process logic will prevent the index from ever exceeding
+        -:  799:        **  the size of the buffer due to bad table data content.  Still,
+        -:  800:        **  we must include the "greater than" in the test above to
+        -:  801:        **  protect against our own potential coding errors.
+        -:  802:        */
+        -:  803:
+        -:  804:        /* All done -- end of ATS buffer */
+        1:  805:        Result = CFE_SUCCESS;
+        -:  806:    }
+       13:  807:    else if (Entry->CmdNumber == 0)
+        -:  808:    {
+        -:  809:        /*
+        -:  810:        ** If there is at least one word remaining in the buffer then it
+        -:  811:        **  is OK to test the command number without fear of accessing
+        -:  812:        **  past the end of valid data because the command number is the
+        -:  813:        **  first element in an ATS entry structure.
+        -:  814:        */
+        -:  815:
+        -:  816:        /* All done -- end of in-use portion of buffer */
+        4:  817:        Result = CFE_SUCCESS;
+        -:  818:    }
+        9:  819:    else if (Entry->CmdNumber > SC_MAX_ATS_CMDS)
+        -:  820:    {
+        -:  821:        /* Error -- invalid command number */
+        2:  822:        Result = SC_ERROR;
+        -:  823:
+        2:  824:        CFE_EVS_SendEvent(SC_VERIFY_ATS_NUM_ERR_EID, CFE_EVS_ERROR,
+        -:  825:           "Verify ATS Table error: invalid command number: buf index = %d, cmd num = %d",
+        2:  826:                          (int)EntryIndex, Entry->CmdNumber);
+        -:  827:    }
+        7:  828:    else if ((EntryIndex + SC_ATS_HDR_WORDS) > BufferWords)
+        -:  829:    {
+        -:  830:        /* Error -- not enough room for smallest possible ATS entry */
+        1:  831:        Result = SC_ERROR;
+        -:  832:
+        1:  833:        CFE_EVS_SendEvent(SC_VERIFY_ATS_END_ERR_EID, CFE_EVS_ERROR,
+        -:  834:           "Verify ATS Table error: buffer full: buf index = %d, cmd num = %d, buf words = %d",
+        1:  835:                          (int)EntryIndex, Entry->CmdNumber, (int)BufferWords);
+        -:  836:    }
+        -:  837:    else
+        -:  838:    {
+        -:  839:        /* Now it is OK to de-reference ATS cmd packet */
+        6:  840:        CmdPacket = (CFE_SB_MsgPtr_t) Entry->CmdHeader;
+        -:  841:
+        -:  842:        /* Start with the byte length of the command packet */
+        6:  843:        CommandBytes = CFE_SB_GetTotalMsgLength(CmdPacket);
+        -:  844:
+        -:  845:        /* Convert packet byte length to word length (round up odd bytes) */
+        6:  846:        CommandWords = (CommandBytes + 1) / 2;
+        -:  847:
+        8:  848:        if ((CommandBytes < SC_PACKET_MIN_SIZE) || (CommandBytes > SC_PACKET_MAX_SIZE))
+        -:  849:        {
+        -:  850:            /* Error -- invalid command packet byte length */
+        2:  851:            Result = SC_ERROR;
+        -:  852:
+        2:  853:            CFE_EVS_SendEvent(SC_VERIFY_ATS_PKT_ERR_EID, CFE_EVS_ERROR,
+        -:  854:               "Verify ATS Table error: invalid length: buf index = %d, cmd num = %d, pkt len = %d",
+        2:  855:                              (int)EntryIndex, Entry->CmdNumber, (int)CommandBytes);
+        -:  856:        }
+        4:  857:        else if ((EntryIndex + SC_ATS_HDR_NOPKT_WORDS + CommandWords) > BufferWords)
+        -:  858:        {
+        -:  859:            /* Error -- packet must fit within buffer */
+        1:  860:            Result = SC_ERROR;
+        -:  861:
+        1:  862:            CFE_EVS_SendEvent(SC_VERIFY_ATS_BUF_ERR_EID, CFE_EVS_ERROR,
+        -:  863:               "Verify ATS Table error: buffer overflow: buf index = %d, cmd num = %d, pkt len = %d",
+        1:  864:                              (int)EntryIndex, Entry->CmdNumber, (int)CommandBytes);
+        -:  865:        }
+        3:  866:        else if (SC_OperData.AtsDupTestArray[Entry->CmdNumber -1] != SC_DUP_TEST_UNUSED)
+        -:  867:        {
+        -:  868:            /* Entry with duplicate command number is invalid */
+        1:  869:            Result = SC_ERROR;
+        -:  870:
+        1:  871:            CFE_EVS_SendEvent(SC_VERIFY_ATS_DUP_ERR_EID, CFE_EVS_ERROR,
+        -:  872:               "Verify ATS Table error: dup cmd number: buf index = %d, cmd num = %d, dup index = %d",
+        1:  873:                              (int)EntryIndex, Entry->CmdNumber,
+        1:  874:                              (int)SC_OperData.AtsDupTestArray[Entry->CmdNumber -1]);
+        -:  875:        }
+        -:  876:        else
+        -:  877:        {
+        -:  878:            /* Compute length (in words) for this ATS table entry */
+        2:  879:            Result = SC_ATS_HDR_NOPKT_WORDS + CommandWords;
+        -:  880:
+        -:  881:            /* Mark this ATS command ID as in use at this table index */
+        2:  882:            SC_OperData.AtsDupTestArray[Entry->CmdNumber -1] = EntryIndex;
+        -:  883:        }
+        -:  884:    }
+        -:  885:
+       14:  886:    return(Result);
+        -:  887:
+        -:  888:} /* End of SC_VerifyAtsEntry */
+        -:  889:
+        -:  890:
+        -:  891:/************************/
+        -:  892:/*  End of File Comment */
+        -:  893:/************************/
+        -:  894:
+        -:  895:
+        -:  896:

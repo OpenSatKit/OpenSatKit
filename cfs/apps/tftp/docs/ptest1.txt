@@ -1,0 +1,20 @@
+tftp-put-test.txt
+This is a test file line 01
+This is a test file line 02
+This is a test file line 03
+This is a test file line 04
+This is a test file line 05
+This is a test file line 06
+This is a test file line 07
+This is a test file line 08
+This is a test file line 09
+This is a test file line 10
+This is a test file line 11
+This is a test file line 12
+This is a test file line 13
+This is a test file line 14
+This is a test file line 15
+This is a test file line 16
+This is a test file line 17
+This is a test file line 18
+This is a test file line 19

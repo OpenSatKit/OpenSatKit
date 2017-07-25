@@ -1,0 +1,1594 @@
+##############################################################################
+## $Id: sc_test_log.txt 1.4 2016/10/15 16:21:26EDT mdeschu Exp  $
+##
+## Purpose: CFS SC application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+## $Log: sc_test_log.txt  $
+## Revision 1.4 2016/10/15 16:21:26EDT mdeschu 
+## Update unit test readme and log file for SC 2.5.0.0
+## Revision 1.3 2016/09/09 19:29:10EDT czogby 
+## Update based on code inspection log
+## Revision 1.2 2016/03/03 21:46:48EST czogby 
+## Update log file & readme for run with official release of SC 2.4.0
+## Revision 1.1 2016/02/05 18:40:05EST czogby 
+## Initial revision
+## Member added to project /CFS-APPs-PROJECT/sc/fsw/unit_test/project.pj
+##############################################################################
+
+SC 2.5.0.0 Unit Test Output:
+
+./sc_testrunner.exe
+
+Running Test: SC_AppMain_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+INFO EVENT ID=9 SC Initialized. Version 2.5.0.0
+PKT: 18 A9 C0 00 00 03 00 04 02 00 
+PKT: 08 AA C0 00 00 45 00 00 00 00 00 00 00 02 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 80 3E 00 00 80 3E 00 00 FF FF FF FF FF FF FF FF 00 00 1D 00 
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_AppMain_Test_RegisterAppError
+ERROR EVENT ID=1 App terminating, Result = 0xFFFFFFFF
+SYSTEM LOG: SC App terminating, Result = 0xFFFFFFFF
+
+PASS: App terminating, Result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: SC App terminating, Result = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: SC_AppMain_Test_AppInitError
+SYSTEM LOG: Event Services Register returned: 0xFFFFFFFF
+
+ERROR EVENT ID=1 App terminating, Result = 0xFFFFFFFF
+SYSTEM LOG: SC App terminating, Result = 0xFFFFFFFF
+
+PASS: App terminating, Result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: SC App terminating, Result = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 2
+
+Running Test: SC_AppMain_Test_RcvMsgError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=9 SC Initialized. Version 2.5.0.0
+ERROR EVENT ID=1 App terminating, Result = 0xFFFFFFFF
+SYSTEM LOG: SC App terminating, Result = 0xFFFFFFFF
+
+PASS: App terminating, Result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+PASS: SC App terminating, Result = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: SC_AppInit_Test_NominalPowerOnReset
+INFO EVENT ID=21 RTS table file load count = 0
+INFO EVENT ID=9 SC Initialized. Version 2.5.0.0
+PASS: ReturnValue == CFE_SUCCESS
+PASS: SC_AppData == Expected_SC_AppData
+PASS: 1
+PASS: 2
+PASS: 4
+PASS: 6
+PASS: 8
+PASS: AtsInfoHandle
+PASS: AppendInfoHandle
+PASS: 13
+PASS: RtsCtrlBlckHandle
+PASS: AtsCtrlBlckHandle
+PASS: AtsCmdStatusHandle
+PASS: 21
+PASS: 22
+PASS: 23
+PASS: SC Initialized. Version 2.5.0.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_AppInit_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+INFO EVENT ID=9 SC Initialized. Version 2.5.0.0
+PASS: ReturnValue == CFE_SUCCESS
+PASS: SC_AppData == Expected_SC_AppData
+PASS: 1
+PASS: 2
+PASS: 4
+PASS: 6
+PASS: 8
+PASS: AtsInfoHandle
+PASS: AppendInfoHandle
+PASS: 13
+PASS: RtsCtrlBlckHandle
+PASS: AtsCtrlBlckHandle
+PASS: AtsCmdStatusHandle
+PASS: 21
+PASS: 22
+PASS: 23
+PASS: SC Initialized. Version 2.5.0.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_AppInit_Test_EVSRegisterError
+SYSTEM LOG: Event Services Register returned: 0xFFFFFFFF
+
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Event Services Register returned: 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: SC_AppInit_Test_SBCreatePipeError
+ERROR EVENT ID=3 Software Bus Create Pipe returned: 0xFFFFFFFF
+PASS: Software Bus Create Pipe returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_AppInit_Test_SBSubscribeHKError
+ERROR EVENT ID=4 Software Bus subscribe to housekeeping returned: 0xFFFFFFFF
+PASS: Software Bus subscribe to housekeeping returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_AppInit_Test_SBSubscribeToCmdError
+ERROR EVENT ID=6 Software Bus subscribe to command returned: 0xFFFFFFFF
+PASS: Software Bus subscribe to command returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_AppInit_Test_SubscribeTo1HzError
+ERROR EVENT ID=5 Software Bus subscribe to 1 Hz cycle returned: 0xFFFFFFFF
+PASS: Software Bus subscribe to 1 Hz cycle returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_AppInit_Test_InitTablesError
+ERROR EVENT ID=16 RTS info table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_InitTables_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+PASS: ReturnValue == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_InitTables_Test_ErrorRegisterAllTables
+ERROR EVENT ID=16 RTS info table register failed, returned: 0xFFFFFFFF
+PASS: RTS info table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_InitTables_Test_ErrorGetDumpTablePointers
+ERROR EVENT ID=65 RTS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: RTS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_InitTables_Test_ErrorGetLoadTablePointers
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ATS table 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_RegisterAllTables_Test_Nominal
+PASS: ReturnValue == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterRTSInformation
+ERROR EVENT ID=16 RTS info table register failed, returned: 0xFFFFFFFF
+PASS: RTS info table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterRTPControl
+ERROR EVENT ID=17 RTS control block table register failed, returned: 0xFFFFFFFF
+PASS: RTS control block table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterATSInformation
+ERROR EVENT ID=18 ATS Info table register failed, returned: 0xFFFFFFFF
+PASS: ATS Info table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterAppendATSInformation
+ERROR EVENT ID=90 Append ATS Info table register failed, returned: 0xFFFFFFFF
+PASS: Append ATS Info table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterATPControl
+ERROR EVENT ID=19 ATS control block table register failed, returned: 0xFFFFFFFF
+PASS: ATS control block table register failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterATSCommandStatus
+ERROR EVENT ID=20 ATS command status table register failed for ATS 1, returned: 0xFFFFFFFF
+PASS: ATS command status table register failed for ATS 1, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterLoadableRTS
+ERROR EVENT ID=10 RTS Table Registration Failed for RTS 1, returned: 0xFFFFFFFF
+PASS: RTS Table Registration Failed for RTS 1, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterLoadableATS
+ERROR EVENT ID=11 ATS Table Registration Failed for ATS 1, returned: 0xFFFFFFFF
+PASS: ATS Table Registration Failed for ATS 1, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_RegisterAllTables_Test_ErrorRegisterLoadableAppendATS
+ERROR EVENT ID=93 Append ATS Table Registration Failed, returned: 0xFFFFFFFF
+PASS: Append ATS Table Registration Failed, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetDumpTablePointers_Test_Nominal
+PASS: ReturnValue == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: SC_GetDumpTablePointers_Test_ErrorGetAddressRTSInformation
+ERROR EVENT ID=65 RTS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: RTS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetDumpTablePointers_Test_ErrorGetAddressRTPControl
+ERROR EVENT ID=66 RTS Ctrl Blck table failed Getting Address, returned: 0xFFFFFFFF
+PASS: RTS Ctrl Blck table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetDumpTablePointers_Test_ErrorGetAddressATSInformation
+ERROR EVENT ID=67 ATS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ATS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetDumpTablePointers_Test_ErrorGetAddressAppendATSInformation
+ERROR EVENT ID=91 Append ATS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: Append ATS Info table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetDumpTablePointers_Test_ErrorGetAddressATPControl
+ERROR EVENT ID=68 ATS Ctrl Blck table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ATS Ctrl Blck table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetDumpTablePointers_Test_ErrorGetAddressATSCommandStatus
+ERROR EVENT ID=69 ATS Cmd Status table for ATS 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ATS Cmd Status table for ATS 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetLoadTablePointers_Test_Nominal
+PASS: ReturnValue == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: SC_GetLoadTablePointers_Test_ErrorGetAddressLoadableATS
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ATS table 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetLoadTablePointers_Test_ErrorGetAddressLoadableATSAppend
+ERROR EVENT ID=92 Append ATS table failed Getting Address, returned: 0xFFFFFFFF
+PASS: Append ATS table failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_GetLoadTablePointers_Test_ErrorGetAddressLoadableRTS
+ERROR EVENT ID=70 RTS table 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: RTS table 1 failed Getting Address, returned: 0xFFFFFFFF
+PASS: ReturnValue == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_LoadDefaultTables_Test
+INFO EVENT ID=21 RTS table file load count = 1
+PASS: RTS table file load count = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_ProcessAtpCmd_Test_SwitchCmd
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=30 ATS started, skipped 0 commands
+INFO EVENT ID=37 ATS Switched from A to B
+PASS: SC_AppData.AtsCmdCtr == 1
+PASS: SC_AppData.AtsCmdErrCtr == 0
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[0][0] == SC_EXECUTED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_NonSwitchCmd
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PKT: 00 00 00 00 00 00 00 
+INFO EVENT ID=87 ATS A Execution Completed
+PASS: SC_AppData.AtsCmdCtr == 1
+PASS: SC_AppData.AtsCmdErrCtr == 0
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[0][0] == SC_EXECUTED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessAtpCmd_Test_InlineSwitchError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=38 Switch ATS Failure: Destination ATS Not Loaded
+INFO EVENT ID=87 ATS A Execution Completed
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[0][0] == SC_FAILED_DISTRIB
+PASS: SC_AppData.LastAtsErrSeq == 1
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_SBErrorAtsA
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=46 ATS Command Distribution Failed, Cmd Number: 1, SB returned: 0xFFFFFFFF
+ERROR EVENT ID=45 ATS A Aborted
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[0][0] == SC_FAILED_DISTRIB
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSA
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: ATS Command Distribution Failed, Cmd Number: 1, SB returned: 0xFFFFFFFF
+PASS: ATS A Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_SBErrorAtsB
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=46 ATS Command Distribution Failed, Cmd Number: 1, SB returned: 0xFFFFFFFF
+ERROR EVENT ID=45 ATS B Aborted
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[1][0] == SC_FAILED_DISTRIB
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSB
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: ATS Command Distribution Failed, Cmd Number: 1, SB returned: 0xFFFFFFFF
+PASS: ATS B Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_ChecksumFailedAtsA
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=44 ATS Command Failed Checksum: Command #1 Skipped
+ERROR EVENT ID=45 ATS A Aborted
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSA
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[1][0] == SC_FAILED_CHECKSUM
+PASS: ATS Command Failed Checksum: Command #1 Skipped
+PASS: ATS A Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_ChecksumFailedAtsB
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=44 ATS Command Failed Checksum: Command #1 Skipped
+ERROR EVENT ID=45 ATS B Aborted
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSB
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[1][0] == SC_FAILED_CHECKSUM
+PASS: ATS Command Failed Checksum: Command #1 Skipped
+PASS: ATS B Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_CmdNumberMismatchAtsA
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=47 ATS Command Number Mismatch: Command Skipped, expected: 1 received: 3
+ERROR EVENT ID=45 ATS A Aborted
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSA
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[0][0] == SC_SKIPPED
+PASS: ATS Command Number Mismatch: Command Skipped, expected: 1 received: 3
+PASS: ATS A Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_CmdNumberMismatchAtsB
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=47 ATS Command Number Mismatch: Command Skipped, expected: 1 received: 3
+ERROR EVENT ID=45 ATS B Aborted
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSB
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: SC_OperData.AtsCmdStatusTblAddr[1][0] == SC_SKIPPED
+PASS: ATS Command Number Mismatch: Command Skipped, expected: 1 received: 3
+PASS: ATS B Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessAtpCmd_Test_CmdNotLoaded
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=48 Invalid ATS Command Status: Command Skipped, Status: 0
+INFO EVENT ID=87 ATS A Execution Completed
+PASS: SC_AppData.AtsCmdCtr == 0
+PASS: SC_AppData.AtsCmdErrCtr == 1
+PASS: SC_AppData.LastAtsErrSeq == SC_ATSA
+PASS: SC_AppData.LastAtsErrCmd == 1
+PASS: Invalid ATS Command Status: Command Skipped, Status: 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessRtpCommand_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PKT: 18 A9 C0 00 00 01 00 00 00 00 50 01 00 00 F4 0F 71 00 B8 40 7F 09 48 3F 01 00 28 B5 D8 FF 66 10 5F 00 20 6C 6F 61 64 20 63 6F 75 6E 74 20 3D 20 31 00 70 C8 5D 00 AD 47 66 00 46 00 54 53 08 40 75 F7 70 C8 5D 00 AD 47 66 00 00 00 00 00 AD 47 66 00 F4 0F 71 00 08 40 75 F7 01 00 00 00 00 00 00 00 00 00 00 00 68 B5 D8 FF 9F 52 66 00 AA 08 00 00 8D 19 6B 00 01 00 00 00 D2 85 05 
+PASS: SC_AppData.RtsCmdCtr == 1
+PASS: SC_AppData.RtsCmdErrCtr == 0
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdCtr == 1
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdErrCtr == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ProcessRtpCommand_Test_BadSoftwareBusReturn
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=49 RTS 001 Command Distribution Failed: RTS Stopped. SB returned 0xFFFFFFFF
+PASS: SC_AppData.RtsCmdCtr == 0
+PASS: SC_AppData.RtsCmdErrCtr == 1
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdErrCtr == 1
+PASS: SC_AppData.LastRtsErrSeq == 1
+PASS: SC_AppData.LastRtsErrCmd == 0
+PASS: RTS 001 Command Distribution Failed: RTS Stopped. SB returned 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessRtpCommand_Test_BadChecksum
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=50 RTS 001 Command Failed Checksum: RTS Stopped
+PASS: SC_AppData.RtsCmdCtr == 0
+PASS: SC_AppData.RtsCmdErrCtr == 1
+PASS: SC_OperData.NumCmdsSec == 1
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdErrCtr == 1
+PASS: SC_AppData.LastRtsErrSeq == 1
+PASS: SC_AppData.LastRtsErrCmd == 0
+PASS: RTS 001 Command Failed Checksum: RTS Stopped
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_SendHkPacket_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PKT: 08 AA C0 00 00 45 00 00 00 00 00 00 11 12 01 01 02 00 00 00 14 00 15 00 04 00 03 00 05 00 06 00 07 00 08 00 09 00 0A 00 0B 00 0C 00 0D 00 0E 00 1E 00 10 00 14 00 00 00 80 3E 00 00 80 3E 00 00 00 00 00 00 00 00 00 00 1F 00 1F 00 
+PASS: SC_OperData.HkPacket.CmdErrCtr == 1
+PASS: SC_OperData.HkPacket.CmdCtr == 2
+PASS: SC_OperData.HkPacket.RtsActiveErrCtr == 3
+PASS: SC_OperData.HkPacket.RtsActiveCtr == 4
+PASS: SCSC_OperData.HkPacket.AtsCmdCtr == 5
+PASS: SC_OperData.HkPacket.AtsCmdErrCtr == 6
+PASS: SC_OperData.HkPacket.RtsCmdCtr == 7
+PASS: SC_OperData.HkPacket.RtsCmdErrCtr == 8
+PASS: SC_OperData.HkPacket.LastAtsErrSeq == 9
+PASS: SC_OperData.HkPacket.LastAtsErrCmd == 10
+PASS: SC_OperData.HkPacket.LastRtsErrSeq == 11
+PASS: SC_OperData.HkPacket.LastRtsErrCmd == 12
+PASS: SC_OperData.HkPacket.AppendCmdArg == 13
+PASS: SC_OperData.HkPacket.AppendEntryCount == 14
+PASS: SC_OperData.HkPacket.AppendByteCount == 30
+PASS: SC_OperData.HkPacket.AppendLoadCount == 16
+PASS: SC_OperData.HkPacket.AtpFreeBytes[0] == (SC_ATS_BUFF_SIZE * SC_BYTES_IN_WORD)
+PASS: SC_OperData.HkPacket.AtpFreeBytes[1] == (SC_ATS_BUFF_SIZE * SC_BYTES_IN_WORD)
+PASS: SC_OperData.HkPacket.AtsNumber == 17
+PASS: SC_OperData.HkPacket.AtpState == 18
+PASS: SC_OperData.HkPacket.AtpCmdNumber == 20
+PASS: SC_OperData.HkPacket.SwitchPendFlag == 0
+PASS: SC_OperData.HkPacket.NextAtsTime == 0
+PASS: SC_OperData.HkPacket.NumRtsActive == 20
+PASS: SC_OperData.HkPacket.RtsNumber == 21
+PASS: SC_OperData.HkPacket.NextRtsTime == 0
+PASS: SC_OperData.HkPacket.ContinueAtsOnFailureFlag == 1
+PASS: SC_OperData.HkPacket.RtsExecutingStatus[0] == 31
+PASS: SC_OperData.HkPacket.RtsDisabledStatus[0] == 31
+PASS: SC_OperData.HkPacket.RtsExecutingStatus[((SC_NUMBER_OF_RTS+15)/16) / 2] == 31
+PASS: SC_OperData.HkPacket.RtsDisabledStatus[((SC_NUMBER_OF_RTS+15)/16) / 2] == 31
+PASS: SC_OperData.HkPacket.RtsExecutingStatus[((SC_NUMBER_OF_RTS+15)/16) - 1] == 31
+PASS: SC_OperData.HkPacket.RtsDisabledStatus[((SC_NUMBER_OF_RTS+15)/16) - 1] == 31
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ProcessRequest_Test_CmdMID
+INFO EVENT ID=52 No-op command. Version 2.5.0.0
+PASS: SC_AppData.CmdCtr == 1
+PASS: SC_AppData.CmdErrCtr == 0
+PASS: No-op command. Version 2.5.0.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_ProcessRequest_Test_HkMID
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PKT: 18 A9 C0 00 00 03 00 04 01 00 
+PKT: 08 AA C0 00 00 45 00 00 00 00 00 00 00 02 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 80 3E 00 00 80 3E 00 00 FF FF FF FF FF FF FF FF 00 00 1F 00 
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ProcessRequest_Test_1HzWakeupNONE
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.NumCmdsSec == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ProcessRequest_Test_1HzWakeupAtpNotExecutionTime
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=36 Switch ATS Rejected: ATP is idle
+PASS: SC_OperData.NumCmdsSec == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessRequest_Test_1HzWakeupRtpExecutionTime
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=48 Invalid ATS Command Status: Command Skipped, Status: 0
+INFO EVENT ID=87 ATS A Execution Completed
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ProcessRequest_Test_1HzWakeupRtpExecutionTimeTooManyCmds
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.NumCmdsSec == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ProcessRequest_Test_MIDError
+ERROR EVENT ID=63 Invalid command pipe message ID: 0x000000FF
+PASS: CmdCtr == 0
+PASS: CmdErrCtr == 1
+PASS: Invalid command pipe message ID: 0x000000FF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_ProcessCommand_Test_NoOp
+INFO EVENT ID=52 No-op command. Version 2.5.0.0
+PASS: SC_AppData.CmdCtr == 1
+PASS: SC_AppData.CmdErrCtr == 0
+PASS: No-op command. Version 2.5.0.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_ProcessCommand_Test_ResetCounters
+DEBUG EVENT ID=51 Reset counters command
+PASS: CmdCtr == 0
+PASS: CmdErrCtr == 0
+PASS: AtsCmdCtr == 0
+PASS: AtsCmdErrCtr == 0
+PASS: RtsCmdCtr == 0
+PASS: RtsCmdErrCtr == 0
+PASS: RtsActiveCtr == 0
+PASS: RtsActiveErrCtr == 0
+PASS: Reset counters command
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: SC_ProcessCommand_Test_StartAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=24 Start ATS Rejected: ATS A Not Loaded
+
+Running Test: SC_ProcessCommand_Test_StopAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=28 There is no ATS running to stop
+
+Running Test: SC_ProcessCommand_Test_StartRts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 4, Len = 8, Expected = 10
+
+Running Test: SC_ProcessCommand_Test_StopRts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 5, Len = 8, Expected = 10
+
+Running Test: SC_ProcessCommand_Test_DisableRts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 6, Len = 8, Expected = 10
+
+Running Test: SC_ProcessCommand_Test_EnableRts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 7, Len = 8, Expected = 10
+
+Running Test: SC_ProcessCommand_Test_SwitchAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=33 Switch ATS Rejected: ATP is idle
+
+Running Test: SC_ProcessCommand_Test_JumpAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 9, Len = 8, Expected = 12
+
+Running Test: SC_ProcessCommand_Test_ContinueAtsOnFailure
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 10, Len = 8, Expected = 10
+
+Running Test: SC_ProcessCommand_Test_AppendAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 11, Len = 8, Expected = 10
+
+Running Test: SC_ProcessCommand_Test_TableManageAtsTableNominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageAtsTableGetAddressError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=113 ATS table manage process error: ATS = 1, Result = 0xFFFFFFFF
+PASS: ATS table manage process error: ATS = 1, Result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessCommand_Test_TableManageAppendTableNominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+
+Running Test: SC_ProcessCommand_Test_TableManageAppendTableGetAddressError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=114 ATS Append table manage process error: Result = 0xFFFFFFFF
+PASS: ATS Append table manage process error: Result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessCommand_Test_TableManageRtsTableNominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageRtsTableGetAddressError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=112 RTS table manage process error: RTS = 1, Result = 0xFFFFFFFF
+PASS: RTS table manage process error: RTS = 1, Result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessCommand_Test_TableManageRtsInfo
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageRtpCtrl
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageAtsInfo
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageAppendInfo
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageAtpCtrl
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageAtsCmdStatus
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+
+Running Test: SC_ProcessCommand_Test_TableManageInvalidTableID
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=111 Table manage command packet error: table ID = 999
+PASS: Table manage command packet error: table ID = 999
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessCommand_Test_StartRtsGrp
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 13, Len = 8, Expected = 12
+
+Running Test: SC_ProcessCommand_Test_StopRtsGrp
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 14, Len = 8, Expected = 12
+
+Running Test: SC_ProcessCommand_Test_DisableRtsGrp
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 15, Len = 8, Expected = 12
+
+Running Test: SC_ProcessCommand_Test_EnableRtsGrp
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 16, Len = 8, Expected = 12
+
+Running Test: SC_ProcessCommand_Test_InvalidCmdError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=64 Invalid Command Code: MID =  0x18A9 CC =  99
+PASS: CmdCtr == 0
+PASS: CmdErrCtr == 1
+PASS: Invalid Command Code: MID =  0x18A9 CC =  99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyCmdLength_Test_LenError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=2 Invalid msg length: ID = 0x18A9, CC = 0, Len = 8, Expected = 999
+PASS: Result == FALSE
+PASS: SC_AppData.CmdCtr == 0
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Invalid msg length: ID = 0x18A9, CC = 0, Len = 8, Expected = 999
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GetNextRtsTime_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.RtsCtrlBlckAddr->RtsNumber == 1
+PASS: SC_AppData.NextCmdTime[1] == SC_MAX_TIME
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_GetNextRtsTime_Test_InvalidRtsNumber
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.RtsCtrlBlckAddr->RtsNumber == SC_INVALID_RTS_NUMBER
+PASS: SC_AppData.NextCmdTime[SC_RTP] == SC_MAX_TIME
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_UpdateNextTime_TestAtp
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_AppData.NextProcNumber == SC_ATP
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_UpdateNextTime_TestRtp
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_AppData.NextProcNumber == SC_RTP
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_GetNextRtsCommand_Test_GetNextCommand
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PKT: 18 A9 C0 00 00 01 00 00 
+PASS: SC_OperData.RtsInfoTblAddr[0].NextCommandPtr == (SC_PACKET_MIN_SIZE + SC_RTS_HEADER_SIZE + 1) / SC_BYTES_IN_WORD
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_GetNextRtsCommand_Test_RtsLengthError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PKT: 71 00 03 00 00 00 47 00 00 00 7C B5 D8 FF 9F 52 41 54 53 20 74 61 62 6C 65 20 31 20 66 61 70 C8 5D 00 AD 47 66 00 74 69 6E 67 AD 47 66 00 F4 0F 71 00 08 40 75 F7 01 00 00 00 00 00 00 00 00 00 00 00 68 B5 D8 FF 9F 52 66 00 AA 08 00 00 8D 19 6B 00 01 00 00 00 D2 85 05 08 74 05 0A 08 00 00 00 00 4C 00 00 00 9F 52 66 00 AD 47 66 00 01 0F 71 00 4C 00 75 F7 AA 08 05 08 00 00 00 00 00 00 00 00 98 B5 D8 FF 9F 52 00 00 4C 00 00 00 01 00 00 00 98 B5 D8 FF 45 7C 05 08 74 05 0A 08 AA 08 00 00 4C 00 00 00 01 00 00 00 00 00 00 00 01 00 00 00 4C 00 D8 FF AA 08 66 00 00 00 00 00 E6 7B 05 08 C8 B5 D8 FF 96 03 05 08 74 05 0A 08 AA 08 00 00 4C 00 00 00 01 00 00 00 00 A8 09 08 01 00 00 00 4C 00 00 00 AA 08 66 00 00 00 00 00 F4 0F 71 00 E8 B5 D8 FF AA A9 07 08 
+ERROR EVENT ID=84 Cmd Runs passed end of table, RTS 001 Aborted
+PASS: SC_AppData.RtsCmdErrCtr == 1
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdErrCtr == 1
+PASS: SC_AppData.LastRtsErrSeq == SC_OperData.RtsCtrlBlckAddr->RtsNumber
+PASS: SC_AppData.LastRtsErrCmd == SC_OperData.RtsInfoTblAddr[0].NextCommandPtr + ((SC_PACKET_MAX_SIZE + SC_RTS_HEADER_SIZE + 1) / SC_BYTES_IN_WORD)
+PASS: Cmd Runs passed end of table, RTS 001 Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GetNextRtsCommand_Test_CommandLengthError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=85 Invalid Length Field in RTS Command, RTS 001 Aborted. Length: 350, Max: 250
+PASS: SC_AppData.RtsCmdErrCtr == 1
+PASS: SC_OperData.RtsInfoTblAddr[0].CmdErrCtr == 1
+PASS: SC_AppData.LastRtsErrSeq == SC_OperData.RtsCtrlBlckAddr -> RtsNumber
+PASS: SC_AppData.LastRtsErrCmd == SC_OperData.RtsInfoTblAddr[0].NextCommandPtr + ((SC_PACKET_MAX_SIZE + SC_RTS_HEADER_SIZE + 1) / SC_BYTES_IN_WORD)
+PASS: Invalid Length Field in RTS Command, RTS 001 Aborted. Length: 350, Max: 250
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GetNextRtsCommand_Test_ZeroCommandLength
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=86 RTS 001 Execution Completed
+PASS: RTS 001 Execution Completed
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GetNextRtsCommand_Test_EndOfBuffer
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=86 RTS 001 Execution Completed
+PASS: RTS 001 Execution Completed
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GetNextAtsCommand_Test_Starting
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_EXECUTING
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_GetNextAtsCommand_Test_GetNextCommand
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.AtsCtrlBlckAddr->TimeIndexPtr == 1
+PASS: SC_OperData.AtsCtrlBlckAddr->CmdNumber == SC_AppData.AtsTimeIndexBuffer[0][1];
+PASS: SC_AppData.NextCmdTime[SC_ATP] == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_GetNextAtsCommand_Test_ExecutionCompleted
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=87 ATS A Execution Completed
+PASS: ATS A Execution Completed
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartAtsCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=30 ATS started, skipped 0 commands
+INFO EVENT ID=23 ATS A Execution Started
+PASS: SC_OperData.AtsCtrlBlckAddr->AtpState == SC_EXECUTING
+PASS: SC_AppData.CmdCtr == 1
+PASS: ATS A Execution Started
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_StartAtsCmd_Test_CouldNotStart
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=29 All ATS commands were skipped, ATS stopped
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: All ATS commands were skipped, ATS stopped
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartAtsCmd_Test_NoCommands
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=24 Start ATS Rejected: ATS A Not Loaded
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Start ATS Rejected: ATS A Not Loaded
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartAtsCmd_Test_InUse
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=25 Start ATS Rejected: ATP is not Idle
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Start ATS Rejected: ATP is not Idle
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartAtsCmd_Test_InvalidAtsId
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=26 Start ATS 99 Rejected: Invalid ATS ID
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Start ATS 99 Rejected: Invalid ATS ID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopAtsCmd_Test_NominalA
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=27 ATS A stopped
+PASS: ATS A stopped
+PASS: SC_AppData.CmdCtr == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopAtsCmd_Test_NominalB
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=27 ATS B stopped
+PASS: ATS B stopped
+PASS: SC_AppData.CmdCtr == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopAtsCmd_Test_NoRunningAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=28 There is no ATS running to stop
+PASS: There is no ATS running to stop
+PASS: SC_AppData.CmdCtr == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_BeginAts_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=30 ATS started, skipped 0 commands
+PASS: Result == TRUE
+PASS: SC_OperData.AtsCtrlBlckAddr->AtsNumber == 1
+PASS: SC_OperData.AtsCtrlBlckAddr->CmdNumber == SC_AppData.AtsTimeIndexBuffer[AtsIndex][0]
+PASS: SC_OperData.AtsCtrlBlckAddr->TimeIndexPtr == 0
+PASS: SC_AppData.NextCmdTime[SC_ATP] == 0
+PASS: ATS started, skipped 0 commands
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_BeginAts_Test_AllCommandsSkipped
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=29 All ATS commands were skipped, ATS stopped
+PASS: Result == FALSE
+PASS: SC_OperData.AtsCmdStatusTblAddr[0][0] == SC_SKIPPED
+PASS: All ATS commands were skipped, ATS stopped
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_KillAts_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.AtsInfoTblAddr[0].AtsUseCtr == 1
+PASS: SC_OperData.AtsCtrlBlckAddr->AtpState == SC_IDLE
+PASS: SC_AppData.NextCmdTime[SC_ATP] == SC_MAX_TIME
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_GroundSwitchCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=31 Switch ATS is Pending
+PASS: Switch ATS is Pending
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == TRUE
+PASS: SC_AppData.CmdCtr == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GroundSwitchCmd_Test_DestinationAtsNotLoaded
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=32 Switch ATS Failure: Destination ATS Not Loaded
+PASS: Switch ATS Failure: Destination ATS Not Loaded
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_GroundSwitchCmd_Test_AtpIdle
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=33 Switch ATS Rejected: ATP is idle
+PASS: Switch ATS Rejected: ATP is idle
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ServiceSwitchPend_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=30 ATS started, skipped 0 commands
+INFO EVENT ID=34 ATS Switched from A to B
+PASS: ATS Switched from A to B
+PASS: SC_OperData.AtsCtrlBlckAddr->AtpState == SC_EXECUTING
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_ServiceSwitchPend_Test_AtsEmpty
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=35 Switch ATS Failure: Destination ATS is empty
+PASS: Switch ATS Failure: Destination ATS is empty
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ServiceSwitchPend_Test_AtpIdle
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=36 Switch ATS Rejected: ATP is idle
+PASS: Switch ATS Rejected: ATP is idle
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_InlineSwitch_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=30 ATS started, skipped 0 commands
+INFO EVENT ID=37 ATS Switched from A to B
+PASS: Result == TRUE
+PASS: SC_OperData.AtsCtrlBlckAddr->AtpState == SC_STARTING
+PASS: ATS Switched from A to B
+PASS: SC_AppData.CmdCtr == 1
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_InlineSwitch_Test_AllCommandsSkipped
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=29 All ATS commands were skipped, ATS stopped
+PASS: Result == FALSE
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_InlineSwitch_Test_DestinationAtsNotLoaded
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=38 Switch ATS Failure: Destination ATS Not Loaded
+PASS: Result == FALSE
+PASS: Switch ATS Failure: Destination ATS Not Loaded
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: SC_OperData.AtsCtrlBlckAddr->SwitchPendFlag == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_JumpAtsCmd_Test_SkipOneCmd
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=40 Next ATS command time in the ATP was set to 1980-001-00:00:00.00000
+DEBUG EVENT ID=88 Jump Cmd: Skipped 1 ATS commands
+PASS: SC_OperData.AtsCmdStatusTblAddr[AtsIndex][0] == SC_SKIPPED
+PASS: SC_OperData.AtsCmdStatusTblAddr[AtsIndex][1] == SC_LOADED
+PASS: SC_OperData.AtsCtrlBlckAddr->CmdNumber == SC_AppData.AtsTimeIndexBuffer[AtsIndex][0]
+PASS: SC_OperData.AtsCtrlBlckAddr->TimeIndexPtr == 1
+PASS: SC_AppData.NextCmdTime[0] == 0
+PASS: SC_AppData.CmdCtr == 1
+PASS: Next ATS command time in the ATP was set to 1980-001-00:00:00.00000
+PASS: Jump Cmd: Skipped 1 ATS commands
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: SC_JumpAtsCmd_Test_AllCommandsSkipped
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=39 Jump Cmd: All ATS commands were skipped, ATS stopped
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Jump Cmd: All ATS commands were skipped, ATS stopped
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_JumpAtsCmd_Test_NoRunningAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=41 ATS Jump Failed: No active ATS
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: ATS Jump Failed: No active ATS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: ContinueAtsOnFailureCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=43 Continue-ATS-On-Failure command, State: 1
+PASS: SC_AppData.ContinueAtsOnFailureFlag == TRUE
+PASS: SC_AppData.CmdCtr == 1
+PASS: Continue-ATS-On-Failure command, State: 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: ContinueAtsOnFailureCmd_Test_InvalidState
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=42 Continue ATS On Failure command  failed, invalid state: 99
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Continue ATS On Failure command  failed, invalid state: 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_AppendAtsCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=98 Append ATS A command: 1 ATS entries appended
+PASS: SC_AppData.AppendCmdArg == 1
+PASS: SC_AppData.CmdCtr == 1
+PASS: Append ATS A command: 1 ATS entries appended
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_AppendAtsCmd_Test_InvalidAtsId
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=99 Append ATS error: invalid ATS ID = 99
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Append ATS error: invalid ATS ID = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_AppendAtsCmd_Test_AtsTableEmpty
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=100 Append ATS A error: ATS table is empty
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Append ATS A error: ATS table is empty
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_AppendAtsCmd_Test_AppendTableEmpty
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=101 Append ATS A error: Append table is empty
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Append ATS A error: Append table is empty
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_AppendAtsCmd_Test_NoRoomForAppendInAts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=102 Append ATS A error: ATS size = 8000, Append size = 8000, ATS buffer = 8000
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Append ATS A error: ATS size = 8000, Append size = 8000, ATS buffer = 8000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=73 RTS Number 001 Started
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsStatus == SC_EXECUTING
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandPtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].UseCtr == 1
+PASS: SC_OperData.RtsCtrlBlckAddr->NumRtsActive == 1
+PASS: SC_AppData.RtsActiveCtr == 1
+PASS: SC_AppData.CmdCtr == 1
+PASS: RTS Number 001 Started
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsCmd_Test_StartRtsNoEvents
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=72 Start RTS #5 command
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsStatus == SC_EXECUTING
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandPtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].UseCtr == 1
+PASS: SC_OperData.RtsCtrlBlckAddr->NumRtsActive == 1
+PASS: SC_AppData.RtsActiveCtr == 1
+PASS: SC_AppData.CmdCtr == 1
+PASS: Start RTS #5 command
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsCmd_Test_InvalidCommandLength
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=74 Start RTS 001 Rejected: Invld Len Field for 1st Cmd in Sequence. Invld Cmd Length = 49159
+PASS: Start RTS 001 Rejected: Invld Len Field for 1st Cmd in Sequence. Invld Cmd Length = 49159
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsCmd_Test_RtsNotLoadedOrInUse
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=75 Start RTS 001 Rejected: RTS Not Loaded or In Use, Status: 2
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr == 1
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsActiveErrCtr == 1
+PASS: Start RTS 001 Rejected: RTS Not Loaded or In Use, Status: 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsCmd_Test_RtsDisabled
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=76 Start RTS 001 Rejected: RTS Disabled
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr == 1
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsActiveErrCtr == 1
+PASS: Start RTS 001 Rejected: RTS Disabled
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsCmd_Test_InvalidRtsId
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=77 Start RTS 010 Rejected: Invalid RTS ID
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr == 1
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsActiveErrCtr == 1
+PASS: Start RTS 010 Rejected: Invalid RTS ID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsGrpCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=115 Start RTS group: FirstID=1, LastID=1, Modified=1
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsStatus == SC_EXECUTING
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].CmdErrCtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandPtr == 0
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].UseCtr == 1
+PASS: SC_OperData.RtsCtrlBlckAddr->NumRtsActive == 1
+PASS: SC_AppData.RtsActiveCtr == 1
+PASS: SC_AppData.CmdCtr == 2
+PASS: Start RTS group: FirstID=1, LastID=1, Modified=1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StartRtsGrpCmd_Test_StartRtsGroupError
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=116 Start RTS group error: FirstID=10, LastID=10
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Start RTS group error: FirstID=10, LastID=10
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopRtsCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=78 RTS 001 Aborted
+PASS: SC_AppData.CmdCtr == 1
+PASS: RTS 001 Aborted
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopRtsCmd_Test_InvalidRts
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=79 Stop RTS 010 rejected: Invalid RTS ID
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Stop RTS 010 rejected: Invalid RTS ID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopRtsGrpCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=117 Stop RTS group: FirstID=1, LastID=1, Modified=1
+PASS: SC_AppData.CmdCtr == 1
+PASS: Stop RTS group: FirstID=1, LastID=1, Modified=1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_StopRtsGrpCmd_Test_Error
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=118 Stop RTS group error: FirstID=10, LastID=10
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Stop RTS group error: FirstID=10, LastID=10
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_DisableRtsCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=80 Disabled RTS 001
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].DisabledFlag == TRUE
+PASS: SC_AppData.CmdCtr == 1
+PASS: Disabled RTS 001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_DisableRtsCmd_Test_InvalidRtsID
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=81 Disable RTS 010 Rejected: Invalid RTS ID
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Disable RTS 010 Rejected: Invalid RTS ID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_DisableRtsGrpCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=119 Disable RTS group: FirstID=1, LastID=1, Modified=1
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].DisabledFlag == TRUE
+PASS: SC_AppData.CmdCtr == 1
+PASS: Disable RTS group error: FirstID=1, LastID=1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_DisableRtsGrpCmd_Test_Error
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=120 Disable RTS group error: FirstID=10, LastID=10
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Disable RTS group error: FirstID=10, LastID=10
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_EnableRtsCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=82 Enabled RTS 001
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].DisabledFlag == FALSE
+PASS: SC_AppData.CmdCtr == 1
+PASS: Enabled RTS 001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_EnableRtsCmd_Test_InvalidRtsID
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=83 Enable RTS 010 Rejected: Invalid RTS ID
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Enable RTS 010 Rejected: Invalid RTS ID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_EnableRtsGrpCmd_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=121 Enable RTS group: FirstID=1, LastID=1, Modified=1
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].DisabledFlag == FALSE
+PASS: SC_AppData.CmdCtr == 1
+PASS: Enable RTS group: FirstID=1, LastID=1, Modified=1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_EnableRtsGrpCmd_Test_Error
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=122 Enable RTS group error: FirstID=10, LastID=10
+PASS: SC_AppData.CmdErrCtr == 1
+PASS: Enable RTS group error: FirstID=10, LastID=10
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_KillRts_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].RtsStatus == SC_LOADED
+PASS: SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandTime == SC_MAX_TIME
+PASS: SC_OperData.RtsCtrlBlckAddr->NumRtsActive == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_AppData.AtsCmdIndexBuffer[AtsIndex][0] == 0
+PASS: SC_OperData.AtsCmdStatusTblAddr[AtsIndex][0] == SC_LOADED
+PASS: SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands == 1
+PASS: SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize == 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_CmdRunOffEndOfBuffer
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_CmdLengthInvalid
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_CmdNumberInvalid
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_EndOfLoadReached
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_AtsBufferTooSmall
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_LoadAts_Test_LoadExactlyBufferLength
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize == SC_ATS_BUFF_SIZE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_Insert_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_AppData.AtsTimeIndexBuffer[AtsIndex][1] == SC_AppData.AtsTimeIndexBuffer[AtsIndex][0]
+PASS: SC_AppData.AtsTimeIndexBuffer[AtsIndex][1] == NewCmdIndex
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_Insert_Test_MiddleOfList
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: SC_AppData.AtsTimeIndexBuffer[AtsIndex][1] == SC_AppData.AtsTimeIndexBuffer[AtsIndex][0]
+PASS: SC_AppData.AtsTimeIndexBuffer[AtsIndex][1] == NewCmdIndex
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ValidateAts_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=110 Verify ATS Table error: table is empty
+PASS: Result == SC_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ValidateAppend_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=110 Verify ATS Table error: table is empty
+PASS: Result == SC_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ValidateRts_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=60 RTS cmd loaded with invalid length at 0, len: 7
+PASS: Result == SC_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ParseRts_Test_EndOfFile
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ParseRts_Test_InvalidMsgId
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=59 RTS cmd loaded with invalid MID at 0
+PASS: RTS cmd loaded with invalid MID at 0
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ParseRts_Test_LengthErrorTooShort
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=60 RTS cmd loaded with invalid length at 0, len: 0
+PASS: RTS cmd loaded with invalid length at 0, len: 0
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ParseRts_Test_LengthErrorTooLong
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=60 RTS cmd loaded with invalid length at 0, len: 251
+PASS: RTS cmd loaded with invalid length at 0, len: 251
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ParseRts_Test_CmdRunsOffEndOfBuffer
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=61 RTS cmd at 126 runs off end of buffer
+PASS: RTS cmd at 126 runs off end of buffer
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ParseRts_Test_CmdLengthEqualsBufferLength
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ParseRts_Test_CmdDoesNotFitBufferEmpty
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_ParseRts_Test_CmdDoesNotFitBufferNotEmpty
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=62 RTS cmd loaded won't fit in buffer at 146
+PASS: RTS cmd loaded won't fit in buffer at 146
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 1, byte count = 56
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 1
+PASS: SC_AppData.AppendWordCount == 28
+PASS: Update Append ATS Table: load count = 1, command count = 1, byte count = 56
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_CmdNumberZero
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 0
+PASS: SC_AppData.AppendWordCount == 0
+PASS: Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_CmdNumberTooHigh
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 0
+PASS: SC_AppData.AppendWordCount == 0
+PASS: Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_CmdDoesNotFitBuffer
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 31, byte count = 7936
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 31
+PASS: SC_AppData.AppendWordCount == 3968
+PASS: Update Append ATS Table: load count = 1, command count = 31, byte count = 7936
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_EndOfBuffer
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 32, byte count = 8000
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 32
+PASS: SC_AppData.AppendWordCount == 4000
+PASS: Update Append ATS Table: load count = 1, command count = 32, byte count = 8000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_InvalidCmdLengthTooLow
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 0
+PASS: SC_AppData.AppendWordCount == 0
+PASS: Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_UpdateAppend_Test_InvalidCmdLengthTooHigh
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=97 Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: SC_AppData.AppendLoadCount == 1
+PASS: SC_AppData.AppendEntryCount == 0
+PASS: SC_AppData.AppendWordCount == 0
+PASS: Update Append ATS Table: load count = 1, command count = 0, byte count = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_ProcessAppend_Test
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+DEBUG EVENT ID=30 ATS started, skipped 0 commands
+PASS: SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize == 1
+PASS: SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands == 1
+PASS: SC_AppData.AtsCmdIndexBuffer[AtsIndex][0] == 0
+PASS: SC_OperData.AtsCmdStatusTblAddr[AtsIndex][0] == SC_LOADED
+PASS: SC_OperData.AtsCtrlBlckAddr->AtpState = SC_EXECUTING
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsTable_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+INFO EVENT ID=103 Verify ATS Table: command count = 1, byte count = 256
+PASS: SC_OperData.AtsDupTestArray[1] == SC_DUP_TEST_UNUSED
+PASS: SC_OperData.AtsDupTestArray[SC_MAX_ATS_CMDS / 2] == SC_DUP_TEST_UNUSED
+PASS: SC_OperData.AtsDupTestArray[SC_MAX_ATS_CMDS - 1] == SC_DUP_TEST_UNUSED
+PASS: Result == CFE_SUCCESS
+PASS: Verify ATS Table: command count = 1, byte count = 256
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsTable_Test_InvalidEntry
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=104 Verify ATS Table error: invalid command number: buf index = 0, cmd num = 5000
+PASS: Result == SC_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsTable_Test_EmptyTable
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=110 Verify ATS Table error: table is empty
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: table is empty
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsEntry_Test_Nominal
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Result == SC_ATS_HDR_NOPKT_WORDS + (SC_PACKET_MAX_SIZE + 1) / 2
+PASS: SC_OperData.AtsDupTestArray[0] == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_VerifyAtsEntry_Test_EndOfBuffer
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: SC_VerifyAtsEntry_Test_InvalidCmdNumber
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=104 Verify ATS Table error: invalid command number: buf index = 0, cmd num = 5000
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: invalid command number: buf index = 0, cmd num = 5000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsEntry_Test_BufferFull
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=105 Verify ATS Table error: buffer full: buf index = 0, cmd num = 1, buf words = 2
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: buffer full: buf index = 0, cmd num = 1, buf words = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsEntry_Test_InvalidCmdLengthTooLow
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=106 Verify ATS Table error: invalid length: buf index = 0, cmd num = 1, pkt len = 7
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: invalid length: buf index = 0, cmd num = 1, pkt len = 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsEntry_Test_InvalidCmdLengthTooHigh
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=106 Verify ATS Table error: invalid length: buf index = 0, cmd num = 1, pkt len = 500
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: invalid length: buf index = 0, cmd num = 1, pkt len = 500
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsEntry_Test_BufferOverflow
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=107 Verify ATS Table error: buffer overflow: buf index = 0, cmd num = 1, pkt len = 250
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: buffer overflow: buf index = 0, cmd num = 1, pkt len = 250
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: SC_VerifyAtsEntry_Test_DuplicateCmdNumber
+INFO EVENT ID=21 RTS table file load count = 0
+ERROR EVENT ID=71 ATS table 1 failed Getting Address, returned: 0x00000000
+ERROR EVENT ID=109 Verify ATS Table error: dup cmd number: buf index = 0, cmd num = 1, dup index = 99
+PASS: Result == SC_ERROR
+PASS: Verify ATS Table error: dup cmd number: buf index = 0, cmd num = 1, dup index = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Tests Executed:    192
+Assert Pass Count: 680
+Assert Fail Count: 0
+
+gcov: '../src/sc_state.c' 100.00%  80
+gcov: '../src/sc_atsrq.c' 100.00%  184
+gcov: '../src/sc_app.c' 100.00%  213
+gcov: '../src/sc_cmds.c' 100.00%  292
+gcov: '../src/sc_rtsrq.c' 100.00%  179
+gcov: '../src/sc_utils.c' 100.00%  36
+

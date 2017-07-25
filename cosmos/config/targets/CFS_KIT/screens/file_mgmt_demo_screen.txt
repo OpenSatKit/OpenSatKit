@@ -1,0 +1,70 @@
+###############################################################################
+# File Management Demo Screen
+#
+# Notes:
+#   1. Written by David McComas, licensed under the copyleft GNU
+#      General Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+
+TITLE "File Management Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+HORIZONTAL
+  VERTICAL
+    VERTICALBOX "File Manager Housekeeping"
+      LABELVALUE FM HK_TLM_PKT CMD_VALID_COUNT
+      LABELVALUE FM HK_TLM_PKT CMD_ERROR_COUNT
+      LABELVALUE FM HK_TLM_PKT CHILDCMDCOUNTER
+      LABELVALUE FM HK_TLM_PKT CHILDCMDERRCOUNTER
+    END # Vertical Box HK
+    VERTICALBOX "File Manager Directory Listing"
+      LABELVALUE FM DIR_LIST_PKT DIRNAME
+      LABELVALUE FM DIR_LIST_PKT TOTALFILES
+      LABELVALUE FM DIR_LIST_PKT PACKETFILES
+      LABELVALUE FM DIR_LIST_PKT FIRSTFILE
+    END # Vertical Box Dir Listing
+  END
+  VERTICALBOX "File Manager Directory Listing"
+    LABELVALUE FM DIR_LIST_PKT FILE01_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE02_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE03_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE04_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE05_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE06_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE07_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE08_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE10_NAME
+    LABELVALUE FM DIR_LIST_PKT FILE11_NAME
+  END # Vertical Box Dir Listing
+END # Horizontal
+ 
+VERTICALBOX
+  # These labels contain instructions to the user
+  NAMED_WIDGET Label1  LABEL "This demo shows some basic file management features. It uses the Trivial File "
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Label2  LABEL "Transport Protocol (TFTP) App to transfer files between COSMOS and the cFS. It "
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Label3  LABEL "uses the File Manager (FM) App to manage flight directories and files. Click..."
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Label4  LABEL " "
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Label5  LABEL "  <More Info> to obtain more information about the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Label6  LABEL "  <Next> to move to the next step"
+  SETTING TEXTCOLOR 0 0 153
+  LABEL ""
+  HORIZONTALLINE
+  HORIZONTAL
+    BUTTON "More Info"  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_demo_screen.rb"; file_mgmt_demo(self, "INFO")'
+    BUTTON "Next ->"    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_demo_screen.rb"; file_mgmt_demo(self, "NEXT")'
+  END
+END # Vertical instruction box    
+
+  
+HORIZONTALLINE
+LABEL "Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

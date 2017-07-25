@@ -1,0 +1,112 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "CFE_ES"
+  @CMD_MID_STR     = "CFE_ES_CMD_MID"
+  
+%>  
+COMMAND CFE_ES NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND CFE_ES RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset command counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND CFE_ES RESET <%= CfsKitConfig.processor_endian %> "This command restarts the cFE in one of two modes. The Power-On Reset will cause the cFE to restart as though the power were first applied to the processor. The Processor Reset will attempt to retain the contents of the volatile disk and the contents of the Critical Data Store. NOTE: If a requested Processor Reset should cause the Processor Reset Counter ($sc_$cpu_ES_ProcResetCnt) to exceed OR EQUAL the limit CFE_ES_MAX_PROCESSOR_RESETS (which is reported in housekeeping telemetry as $sc_$cpu_ES_MaxProcResets), the command is AUTOMATICALLY upgraded to a Power-On Reset."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  APPEND_PARAMETER RESTART_TYPE 16 UINT MIN_UINT16 MAX_UINT16 0 "CFE_ES_PROCESSOR_RESET=Processor Reset or CFE_ES_POWERON_RESET=Power-On Reset"
+
+COMMAND CFE_ES SHELL <%= CfsKitConfig.processor_endian %> "This command passes an ASCII string as a command line to the underlying realtime operating system shell. Any response to the command is both written to the shell command output file and sent as a series of shell command output telemetry packets."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 128) %>
+  APPEND_ARRAY_PARAMETER CMDSTRING 8 UINT 512 "ASCII text string containing shell command to be executed."
+  APPEND_PARAMETER OUTPUTFILENAME 512 STRING "default" "Filename where shell command output is to be written."
+
+COMMAND CFE_ES START_APP <%= CfsKitConfig.processor_endian %> "This command starts the specified application with the specified start address, stack size, etc options."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 112) %>
+  APPEND_PARAMETER APPLICATION 160 STRING "APPNAME" "Name of Application to be started."
+  APPEND_PARAMETER APPENTRYPOINT 160 STRING "APPNAME_AppMain" "Symbolic name of Application's entry point."
+  APPEND_PARAMETER APPFILENAME 512 STRING "/cf/appname.so" "Full path and filename of Application's executable image."
+  APPEND_PARAMETER STACKSIZE 32 UINT MIN_UINT32 MAX_UINT32 8192 "Desired stack size for the new application."
+  APPEND_PARAMETER EXCEPTIONACTION 16 UINT MIN_UINT16 MAX_UINT16 0 "CFE_ES_APP_EXCEPTION_RESTART_APP=On exception, restart Application, CFE_ES_APP_EXCEPTION_PROC_RESTART=On exception, perform a Processor Reset"
+  APPEND_PARAMETER PRIORITY 16 UINT MIN_UINT16 MAX_UINT16 0 "The new Applications runtime priority."
+
+COMMAND CFE_ES STOP_APP <%= CfsKitConfig.processor_endian %> "This command halts and removes the specified Application from the system. NOTE: This command should never be used on the Command Ingest application. This would prevent further commands from entering the system. If Command Ingest needs to be stopped and restarted, use CFE_ES_RESTART_APP_CC or CFE_ES_RELOAD_APP_CC."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 20) %>
+  APPEND_PARAMETER APPLICATION 160 STRING "APPNAME" "ASCII text string containing Application Name."
+
+COMMAND CFE_ES RESTART_APP <%= CfsKitConfig.processor_endian %> "This command halts and restarts the specified Application. This command does NOT reload the application from the onboard filesystem."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 20) %>
+  APPEND_PARAMETER APPLICATION 160 STRING "default" "ASCII text string containing Application Name."
+
+COMMAND CFE_ES RELOAD_APP <%= CfsKitConfig.processor_endian %> "This command halts and removes the specified Application from the system. Then it immediately loads the Application from the command specified file and restarts it. This command is especially useful for restarting a Command Ingest Application since once it has been stopped, no further commands can come in to restart it."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 84) %>
+  APPEND_PARAMETER APPLICATION 160 STRING "default" "ASCII text string containing Application Name."
+  APPEND_PARAMETER APPFILENAME 512 STRING "default" "Full path and filename of Application's executable image."
+
+COMMAND CFE_ES QUERY_APP <%= CfsKitConfig.processor_endian %> "This command takes the information kept by Executive Services on the specified application and telemeters it to the ground."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 20) %>
+  APPEND_PARAMETER APPLICATION 160 STRING "default" "ASCII text string containing Application Name."
+
+COMMAND CFE_ES QUERY_ALL_APPS <%= CfsKitConfig.processor_endian %> "This command takes the information kept by Executive Services on all of the registered applications and writes it to the specified file."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 64) %>
+  APPEND_PARAMETER QUERYALLFILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which Application data is to be dumped."
+  
+COMMAND CFE_ES CLEAR_SYSLOG <%= CfsKitConfig.processor_endian %> "This command clears the contents of the Executive Services System Log."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
+
+COMMAND CFE_ES WRITE_SYSLOG_TO_FILE <%= CfsKitConfig.processor_endian %> "This command causes the contents of the Executive Services System Log to be written to a log file."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 64) %>
+  APPEND_PARAMETER SYSLOGFILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which System Log is to be dumped."
+
+COMMAND CFE_ES CLEAR_ERLOG <%= CfsKitConfig.processor_endian %> "This command causes the contents of the Executive Services Exception and Reset Log to be cleared."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 0) %>
+
+COMMAND CFE_ES WRITE_ERLOG_TO_FILE <%= CfsKitConfig.processor_endian %> "This command causes the contents of the Executive Services Exception and Reset Log to be written to the specified file."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 64) %>
+  APPEND_PARAMETER ERLOGFILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which ER Log is to be dumped."
+
+COMMAND CFE_ES START_LA_DATA <%= CfsKitConfig.processor_endian %> "This command causes the Performance Analyzer to begin collecting data using the specified trigger mode."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 4) %>
+  APPEND_PARAMETER TRIGGERMODE 32 UINT MIN_UINT32 MAX_UINT32 0 "Desired trigger position (Start, Center, End)."
+
+COMMAND CFE_ES STOP_LA_DATA <%= CfsKitConfig.processor_endian %> "This command stops the Performance Analyzer from collecting any more data."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 64) %>
+  APPEND_PARAMETER DATAFILENAME 512 STRING "default" "ASCII text string of full path and filename of file Performance Analyzer data is to be written."
+
+COMMAND CFE_ES SET_LA_FILTER_MASK <%= CfsKitConfig.processor_endian %> "This command sets the Performance Analyzer's Filter Masks."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 8) %>
+  APPEND_PARAMETER FILTERMASKNUM 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into array of Filter Masks."
+  APPEND_PARAMETER FILTERMASK 32 UINT MIN_UINT32 MAX_UINT32 0 "New Mask for specified entry in array of Filter Masks."
+
+COMMAND CFE_ES SET_LA_TRIG_MASK <%= CfsKitConfig.processor_endian %> "This command sets the Performance Analyzer's Trigger Masks."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 8) %>
+  APPEND_PARAMETER TRIGGERMASKNUM 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into array of Trigger Masks."
+  APPEND_PARAMETER TRIGGERMASK 32 UINT MIN_UINT32 MAX_UINT32 0 "New Mask for specified entry in array of Trigger Masks."
+
+COMMAND CFE_ES OVERWRITE_SYSLOG_MODE <%= CfsKitConfig.processor_endian %> "This command allows the user to configure the Executive Services to either discard new System Log messages when it is full or to overwrite the oldest messages."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 4) %>
+  APPEND_PARAMETER MODE 32 UINT MIN_UINT32 MAX_UINT32 0 "CFE_ES_LOG_DISCARD=Throw away most recent messages, CFE_ES_LOG_OVERWRITE=Overwrite oldest with most recent"
+
+COMMAND CFE_ES RESET_PR_CNT <%= CfsKitConfig.processor_endian %> "This command allows the user to reset the Processor Reset Counter to zero. The Processor Reset Counter counts the number of Processor Resets that have occurred so as to identify when a Processor Reset should automatically be upgraded to a full Power-On Reset."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 0) %>
+
+COMMAND CFE_ES SET_MAX_PR_CNT <%= CfsKitConfig.processor_endian %> "This command allows the user to specify the number of Processor Resets that are allowed before the next Processor Reset is upgraded to a Power-On Reset."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 20, 2) %>
+  APPEND_PARAMETER MAXPRCOUNT 16 UINT MIN_UINT16 MAX_UINT16 0 "New maximum number of Processor Resets before an automatic Power-On Reset is performed."
+
+COMMAND CFE_ES DELETE_CDS <%= CfsKitConfig.processor_endian %> "This command allows the user to delete a Critical Data Store that was created by an Application that is now no longer executing."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 21, 38) %>
+  APPEND_PARAMETER CDSNAME 304 STRING "default" "ASCII text string containing name of CDS to delete."
+
+COMMAND CFE_ES TLM_POOL_STATS <%= CfsKitConfig.processor_endian %> "This command allows the user to obtain a snapshot of the statistics maintained for a specified memory pool."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 22, 24) %>
+  APPEND_PARAMETER APPLICATION 160 STRING "default" "RESERVED - should be all zeroes"
+  APPEND_PARAMETER POOLHANDLE 32 UINT MIN_UINT32 MAX_UINT32 0 "Handle of Pool whose statistics are to be telemetered."
+
+COMMAND CFE_ES DUMP_CDS_REG <%= CfsKitConfig.processor_endian %> "This command allows the user to dump the Critical Data Store Registry to an onboard file."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 23, 64) %>
+  APPEND_PARAMETER DUMPFILENAME 512 STRING "default" "ASCII text string of full path and filename of file CDS Registry is to be written."
+
+COMMAND CFE_ES WRITE_TASK_INFO_TO_FILE <%= CfsKitConfig.processor_endian %> "This command takes the information kept by Executive Services on all of the registered tasks and writes it to the specified file."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 24, 64) %>
+  APPEND_PARAMETER QUERYALLFILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which Application data is to be dumped."
+

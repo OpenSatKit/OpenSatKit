@@ -1,0 +1,38 @@
+/*
+** $Id: $
+**
+** Title: CFS Heater Control (HC) Macro Definitions File
+**
+** Purpose: Value definitions
+**
+** Author: Lindsay A. Walton, Summer Intern for Code 582 NASA GSFC
+**
+** Notes:
+**    Added HC_TYPE enabled and disabled - July 17
+**
+** References:
+**    Flight Software Branch C Coding Standard Version 1.0a
+**
+** $Log: $
+**
+*/
+
+#ifndef _hc_defs_h_
+#define _hc_defs_h_
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* HC free space table entry state definitions                     */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+//#define HC_TYPE_DISABLED              0
+//#define HC_TYPE_ENABLED               1
+
+
+#endif /* _hc_defs_h_ */
+
+/************************/
+/*  End of File Comment */
+/************************/
+

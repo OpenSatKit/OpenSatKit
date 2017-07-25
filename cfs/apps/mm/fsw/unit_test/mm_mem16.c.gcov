@@ -1,0 +1,338 @@
+        -:    0:Source:../src/mm_mem16.c
+        -:    0:Programs:7
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: mm_mem16.c.gcov 1.3 2016/10/31 22:10:57EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**   Copyright © 2007-2014 United States Government as represented by the 
+        -:    6:**   Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**   All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**   This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**   used, distributed and modified only pursuant to the terms of that 
+        -:   12:**   agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   Provides CFS Memory Manager functions that are used
+        -:   16:**   for the conditionally compiled MM_MEM16 optional memory type.
+        -:   17:**
+        -:   18:**   $Log: mm_mem16.c.gcov  $
+        -:   18:**   Revision 1.3 2016/10/31 22:10:57EDT mdeschu 
+        -:   18:**   Update gcov results, README and log file for MM unit tests for 2.4.1
+        -:   19:**   Revision 1.2 2016/10/30 00:48:51EDT mdeschu 
+        -:   20:**   Use c-style casts to clean up compiler warnings in calls to CFE_EVS_SendEvent
+        -:   21:**   Revision 1.1 2015/07/28 12:21:49EDT rperera 
+        -:   22:**   Initial revision
+        -:   23:**   Member added to project /CFS-APPs-PROJECT/mm/fsw/src/project.pj
+        -:   24:**   Revision 1.15 2015/04/14 15:29:04EDT lwalling 
+        -:   25:**   Removed unnecessary backslash characters from string format definitions
+        -:   26:**   Revision 1.14 2015/04/06 15:41:25EDT lwalling 
+        -:   27:**   Verify results of calls to PSP memory read/write/copy/set functions
+        -:   28:**   Revision 1.13 2015/04/02 09:10:56EDT lwalling 
+        -:   29:**   Added Valid = TRUE for MM_LoadMem8/16/32FromFile()
+        -:   30:**   Revision 1.12 2015/04/01 11:41:15EDT lwalling 
+        -:   31:**   Add ptr type to ioBuffer name, fix code indentation, change if (=) to if (==)
+        -:   32:**   Revision 1.11 2015/03/30 17:34:01EDT lwalling 
+        -:   33:**   Create common process to maintain and report last action statistics
+        -:   34:**   Revision 1.10 2015/03/20 14:16:12EDT lwalling 
+        -:   35:**   Add last peek/poke/fill command data value to housekeeping telemetry
+        -:   36:**   Revision 1.9 2015/03/02 14:27:09EST sstrege 
+        -:   37:**   Added copyright information
+        -:   38:**   Revision 1.8 2011/12/05 15:17:21EST jmdagost 
+        -:   39:**   Added check for zero bytes read from file load (with event message on error)
+        -:   40:**   Revision 1.7 2011/06/23 12:02:39EDT jmdagost 
+        -:   41:**   Corrected type for local BytesRead, initialized local variables.
+        -:   42:**   Revision 1.6 2010/11/29 13:35:23EST jmdagost 
+        -:   43:**   Replaced ifdef tests with if-true tests.
+        -:   44:**   Revision 1.5 2009/06/12 14:37:27EDT rmcgraw 
+        -:   45:**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+        -:   46:**   Revision 1.4 2008/09/05 14:23:52EDT dahardison 
+        -:   47:**   Updated references to local HK variables
+        -:   48:**   Revision 1.3 2008/05/19 15:23:20EDT dahardison 
+        -:   49:**   Version after completion of unit testing
+        -:   50:** 
+        -:   51:*************************************************************************/
+        -:   52:
+        -:   53:/*************************************************************************
+        -:   54:** Includes
+        -:   55:*************************************************************************/
+        -:   56:#include "mm_mem16.h"
+        -:   57:#include "mm_app.h"
+        -:   58:#include "mm_events.h"
+        -:   59:#include "mm_utils.h"
+        -:   60:#include <string.h>
+        -:   61:
+        -:   62:/*
+        -:   63:** The code in this file is optional.
+        -:   64:** See mm_platform_cfg.h to set this compiler switch.
+        -:   65:*/
+        -:   66:#if (MM_OPT_CODE_MEM16_MEMTYPE == TRUE)
+        -:   67:
+        -:   68:/*************************************************************************
+        -:   69:** External Data
+        -:   70:*************************************************************************/
+        -:   71:extern MM_AppData_t MM_AppData;
+        -:   72:
+        -:   73:
+        -:   74:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   75:/*                                                                 */
+        -:   76:/* Load memory from a file using only 16 bit wide writes           */
+        -:   77:/*                                                                 */
+        -:   78:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        5:   79:boolean MM_LoadMem16FromFile(uint32                   FileHandle, 
+        -:   80:                             char                    *FileName,
+        -:   81:                             MM_LoadDumpFileHeader_t *FileHeader, 
+        -:   82:                             uint32                   DestAddress)
+        -:   83:{
+        5:   84:   uint32    i              = 0;
+        5:   85:   int32     ReadLength     = 0;
+        5:   86:   int32     PSP_Status     = CFE_PSP_SUCCESS;
+        5:   87:   int32     BytesProcessed = 0;
+        5:   88:   int32     BytesRemaining = FileHeader->NumOfBytes;
+        5:   89:   uint16   *DataPointer16  = (uint16 *) DestAddress;
+        5:   90:   uint16   *ioBuffer16     = (uint16 *) &MM_AppData.LoadBuffer[0];
+        5:   91:   uint32    SegmentSize    = MM_MAX_LOAD_DATA_SEG;
+        5:   92:   boolean   Valid          = FALSE;
+        -:   93:
+       16:   94:   while (BytesRemaining != 0)
+        -:   95:   {
+        6:   96:      if (BytesRemaining < MM_MAX_LOAD_DATA_SEG)
+        -:   97:      {
+        4:   98:         SegmentSize = BytesRemaining;
+        -:   99:      }
+        -:  100:
+        -:  101:      /* Read file data into i/o buffer */
+        6:  102:      if ((ReadLength = OS_read(FileHandle, ioBuffer16, SegmentSize)) != SegmentSize)
+        -:  103:      {
+        1:  104:         MM_AppData.ErrCounter++;
+        1:  105:         BytesRemaining = 0;
+        1:  106:         CFE_EVS_SendEvent(MM_OS_READ_ERR_EID, CFE_EVS_ERROR,
+        -:  107:                           "OS_read error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  108:                           (unsigned int)ReadLength, (int)SegmentSize, FileName);
+        -:  109:      }
+        -:  110:      else
+        -:  111:      {
+        -:  112:         /* Load memory from i/o buffer using 16 bit wide writes */
+      416:  113:         for (i = 0; i < (SegmentSize / sizeof(uint16)); i++)
+        -:  114:         {
+      204:  115:            PSP_Status = CFE_PSP_MemWrite16((uint32) DataPointer16, ioBuffer16[i]);
+      204:  116:            if (PSP_Status == CFE_PSP_SUCCESS)
+        -:  117:            {
+      203:  118:               DataPointer16++;
+        -:  119:            }
+        -:  120:            else
+        -:  121:            {
+        -:  122:               /* CFE_PSP_MemWrite16 error */
+        1:  123:               BytesRemaining = 0;
+        1:  124:               MM_AppData.ErrCounter++;
+        1:  125:               CFE_EVS_SendEvent(MM_PSP_WRITE_ERR_EID, CFE_EVS_ERROR,
+        -:  126:                                "PSP write memory error: RC=0x%08X, Address=0x%08X, MemType=MEM16", 
+        -:  127:                                 (unsigned int)PSP_Status, (unsigned int)DataPointer16);
+        -:  128:               /* Stop load segment loop */
+        1:  129:               break;
+        -:  130:            }
+        -:  131:         }
+        -:  132:
+        5:  133:         if (PSP_Status == CFE_PSP_SUCCESS)
+        -:  134:         {
+        4:  135:            BytesProcessed += SegmentSize;
+        4:  136:            BytesRemaining -= SegmentSize;
+        -:  137:               
+        -:  138:            /* Prevent CPU hogging between load segments */
+        4:  139:            if (BytesRemaining != 0)
+        -:  140:            {
+        1:  141:               MM_SegmentBreak();
+        -:  142:            }
+        -:  143:         }
+        -:  144:      }      
+        -:  145:   }
+        -:  146:   
+        -:  147:   /* Update last action statistics */
+        5:  148:   if (BytesProcessed == FileHeader->NumOfBytes)
+        -:  149:   {
+        3:  150:      Valid = TRUE;
+        3:  151:      MM_AppData.LastAction = MM_LOAD_FROM_FILE;
+        3:  152:      MM_AppData.MemType    = MM_MEM16;
+        3:  153:      MM_AppData.Address    = DestAddress;
+        3:  154:      MM_AppData.BytesProcessed = BytesProcessed;
+        3:  155:      strncpy(MM_AppData.FileName, FileName, OS_MAX_PATH_LEN);
+        -:  156:   }      
+        -:  157:
+        5:  158:   return(Valid);   
+        -:  159:    
+        -:  160:} /* end MM_LoadMem16FromFile */
+        -:  161:
+        -:  162:
+        -:  163:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  164:/*                                                                 */
+        -:  165:/* Dump the requested number of bytes from memory to a file using  */
+        -:  166:/* only 16 bit wide reads                                          */
+        -:  167:/*                                                                 */
+        -:  168:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        5:  169:boolean MM_DumpMem16ToFile(uint32                    FileHandle, 
+        -:  170:                           char                     *FileName, 
+        -:  171:                           MM_LoadDumpFileHeader_t  *FileHeader)
+        -:  172:{
+        5:  173:   boolean   Valid          = TRUE;
+        5:  174:   int32     OS_Status      = OS_ERROR;
+        5:  175:   int32     PSP_Status     = CFE_PSP_SUCCESS;
+        5:  176:   uint32    i              = 0;
+        5:  177:   uint32    BytesProcessed = 0;
+        5:  178:   uint32    BytesRemaining = FileHeader->NumOfBytes;
+        5:  179:   uint16   *DataPointer16  = (uint16 *) FileHeader->SymAddress.Offset;
+        5:  180:   uint16   *ioBuffer16     = (uint16 *) &MM_AppData.DumpBuffer[0];
+        5:  181:   uint32    SegmentSize    = MM_MAX_DUMP_DATA_SEG;
+        -:  182:   
+       16:  183:   while (BytesRemaining != 0)
+        -:  184:   {
+        6:  185:      if (BytesRemaining < MM_MAX_DUMP_DATA_SEG)
+        -:  186:      {
+        4:  187:         SegmentSize = BytesRemaining;
+        -:  188:      }
+        -:  189:
+        -:  190:      /* Load RAM data into i/o buffer */
+      824:  191:      for (i = 0; i < SegmentSize; i++)
+        -:  192:      {
+      407:  193:         if ((PSP_Status = CFE_PSP_MemRead16((uint32) DataPointer16, &ioBuffer16[i])) == CFE_PSP_SUCCESS)
+        -:  194:         {
+      406:  195:            DataPointer16++;
+        -:  196:         }
+        -:  197:         else
+        -:  198:         {
+        -:  199:            /* CFE_PSP_MemRead16 error */
+        1:  200:            Valid = FALSE;
+        1:  201:            BytesRemaining = 0;
+        1:  202:            MM_AppData.ErrCounter++;
+        1:  203:            CFE_EVS_SendEvent(MM_PSP_READ_ERR_EID, CFE_EVS_ERROR,
+        -:  204:               "PSP read memory error: RC=0x%08X, Src=0x%08X, Tgt=0x%08X, Type=MEM16", 
+        1:  205:                (unsigned int)PSP_Status, (unsigned int)DataPointer16, (unsigned int)&ioBuffer16[i]);
+        -:  206:            /* Stop load i/o buffer loop */
+        1:  207:            break;
+        -:  208:         }
+        -:  209:      }
+        -:  210:
+        -:  211:      /* Check for error loading i/o buffer */
+        6:  212:      if (PSP_Status == CFE_PSP_SUCCESS)
+        -:  213:      {
+        -:  214:         /* Write i/o buffer contents to file */
+        5:  215:         if ((OS_Status = OS_write(FileHandle, ioBuffer16, SegmentSize)) == SegmentSize)
+        -:  216:         {
+        -:  217:            /* Update process counters */
+        4:  218:            BytesRemaining -= SegmentSize;         
+        4:  219:            BytesProcessed += SegmentSize;         
+        -:  220:
+        -:  221:            /* Prevent CPU hogging between dump segments */
+        4:  222:            if (BytesRemaining != 0)
+        -:  223:            {
+        1:  224:               MM_SegmentBreak();
+        -:  225:            }
+        -:  226:         }
+        -:  227:         else
+        -:  228:         {
+        -:  229:            /* OS_write error */
+        1:  230:            Valid = FALSE;
+        1:  231:            BytesRemaining = 0;
+        1:  232:            MM_AppData.ErrCounter++;
+        1:  233:            CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_ERROR,
+        -:  234:                              "OS_write error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  235:                               (unsigned int)OS_Status, (int)SegmentSize, FileName);
+        -:  236:         }
+        -:  237:      }
+        -:  238:   }
+        -:  239:
+        5:  240:   if (Valid)
+        -:  241:   {
+        -:  242:       /* Update last action statistics */
+        3:  243:       MM_AppData.LastAction = MM_DUMP_TO_FILE;
+        3:  244:       MM_AppData.MemType    = MM_MEM16;
+        3:  245:       MM_AppData.Address    = FileHeader->SymAddress.Offset;
+        3:  246:       strncpy(MM_AppData.FileName, FileName, OS_MAX_PATH_LEN);
+        3:  247:       MM_AppData.BytesProcessed = BytesProcessed;
+        -:  248:   }    
+        -:  249:
+        5:  250:   return(Valid);
+        -:  251:
+        -:  252:} /* end MM_DumpMem16ToFile */
+        -:  253:
+        -:  254:
+        -:  255:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  256:/*                                                                 */
+        -:  257:/* Fill memory with the command specified fill pattern using only  */
+        -:  258:/* 16 bit wide writes                                              */
+        -:  259:/*                                                                 */
+        -:  260:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        4:  261:void MM_FillMem16(uint32           DestAddress, 
+        -:  262:                  MM_FillMemCmd_t *CmdPtr)
+        -:  263:{
+        4:  264:   uint32    i              = 0;
+        4:  265:   int32     PSP_Status     = CFE_PSP_SUCCESS;
+        4:  266:   uint32    BytesProcessed = 0;
+        4:  267:   uint32    BytesRemaining = CmdPtr->NumOfBytes;
+        4:  268:   uint16    FillPattern16  = (uint16) CmdPtr->FillPattern;
+        4:  269:   uint16   *DataPointer16  = (uint16 *) DestAddress;
+        4:  270:   uint32    SegmentSize    = MM_MAX_FILL_DATA_SEG;
+        -:  271:
+       13:  272:   while (BytesRemaining != 0)
+        -:  273:   {
+        -:  274:      /* Set size of next segment */
+        5:  275:      if (BytesRemaining < MM_MAX_FILL_DATA_SEG)
+        -:  276:      {
+        3:  277:         SegmentSize = BytesRemaining;
+        -:  278:      }
+        -:  279:
+        -:  280:      /* Fill next segment */
+      414:  281:      for (i = 0; i < (SegmentSize / sizeof(uint16)); i++)
+        -:  282:      {
+      203:  283:         PSP_Status = CFE_PSP_MemWrite16((uint32) DataPointer16, FillPattern16);
+      203:  284:         if (PSP_Status == CFE_PSP_SUCCESS)
+        -:  285:         {
+      202:  286:            DataPointer16++;
+        -:  287:         }
+        -:  288:         else
+        -:  289:         {
+        -:  290:            /* CFE_PSP_MemWrite16 error */
+        1:  291:            BytesRemaining = 0;
+        1:  292:            MM_AppData.ErrCounter++;
+        1:  293:            CFE_EVS_SendEvent(MM_PSP_WRITE_ERR_EID, CFE_EVS_ERROR,
+        -:  294:                             "PSP write memory error: RC=0x%08X, Address=0x%08X, MemType=MEM16", 
+        -:  295:                              (unsigned int)PSP_Status, (unsigned int)DataPointer16);
+        -:  296:            /* Stop fill segment loop */
+        1:  297:            break;
+        -:  298:         }
+        -:  299:      }
+        -:  300:
+        5:  301:      if (PSP_Status == CFE_PSP_SUCCESS)
+        -:  302:      {
+        -:  303:         /* Update process counters */
+        4:  304:         BytesRemaining -= SegmentSize;         
+        4:  305:         BytesProcessed += SegmentSize;         
+        -:  306:
+        -:  307:         /* Prevent CPU hogging between fill segments */
+        4:  308:         if (BytesRemaining != 0)
+        -:  309:         {
+        1:  310:            MM_SegmentBreak();
+        -:  311:         }
+        -:  312:      }
+        -:  313:   }
+        -:  314:
+        -:  315:   /* Update last action statistics */
+        4:  316:   if (BytesProcessed == CmdPtr->NumOfBytes)
+        -:  317:   {
+        3:  318:      MM_AppData.LastAction = MM_FILL;
+        3:  319:      MM_AppData.MemType    = MM_MEM16;
+        3:  320:      MM_AppData.Address    = DestAddress;
+        3:  321:      MM_AppData.DataValue  = (uint32) FillPattern16;
+        3:  322:      MM_AppData.BytesProcessed = BytesProcessed;
+        -:  323:   }
+        -:  324:
+        4:  325:   return;
+        -:  326:   
+        -:  327:}/* End MM_FillMem16 */
+        -:  328:
+        -:  329:
+        -:  330:#endif /* MM_OPT_CODE_MEM16_MEMTYPE */
+        -:  331:
+        -:  332:/************************/
+        -:  333:/*  End of File Comment */
+        -:  334:/************************/

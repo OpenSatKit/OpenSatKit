@@ -1,0 +1,25 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "HC"
+  @CMD_MID_STR     = "HC_CMD_MID"
+
+%>  
+COMMAND MM NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND HC NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND HC RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset Counters and application to a default state"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND HC HEATER_CONTROL <%= CfsKitConfig.processor_endian %> "Enable or Disable Heater Control for a given Control Type"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  APPEND_PARAMETER HCTYPE   8 UINT 0 1 0 "HC_APP Heater Control Type"
+    STATE BATTERY 0
+    STATE PROPULSION 1
+  APPEND_PARAMETER HCSTATUS 8 UINT 0 1 0 "HC_APP Heater Control Status"
+    STATE DISABLED 0
+    STATE ENABLED 1
+

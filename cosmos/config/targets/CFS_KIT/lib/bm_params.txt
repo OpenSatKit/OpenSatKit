@@ -1,0 +1,259 @@
+###############################################################################
+# cFS Benchmarking Tool Parameter Definitions
+#
+# Notes:
+#   1. Written by DIan Wilmoth, licensed under the copyleft GNU
+#      General Public License (GPL).
+#
+# Structure of the definitions:
+# 
+# #BENCHMARK_NAMES
+#
+# BenchmarkName1
+# #DESCRIPTION "Description here"
+#
+#	#PARAM_NAMES
+#	
+#	ParamName1
+#	#OPTIONS_GO_HERE
+#	#MORE_OPTIONS
+#
+#	#END
+#
+#	#RESULT_NAMES
+#	
+#	ResultName1
+#	#OPTIONS_GO_HERE
+#	#MORE_OPTIONS
+#
+#	#END
+#
+# #END_BENCHMARK
+#
+# BenchmarkName2
+# #DESCRIPTION "Another one"
+# 
+# 	(More params and results)
+#
+# #END_BENCHMARK 
+#
+# #END
+#
+# Some things to note:
+#
+# All files that are overwritten will be placed in a directory called "File backup", in the
+# same directory that the script is in. They will have the date and time appended to their
+# names.
+#
+# Line spacing between these items should be as shown, results may vary otherwise.
+#
+# "BM_" will be prepended to all names.
+#
+# A parameter called BM_BenchmarkNameEnable is added for each benchmark and serves as a toggle
+# switch for the benchmark (0 to disable, 1 to enable).
+#
+# All names should be valid in both C and Ruby, as they will be used as variable identifiers.
+#
+# All parameters will also be added as telemetry items (for the telemetry screen to use), 
+# don't re-define them as telemetry items.
+#
+# Options for parameters and results:
+#
+# "#TYPE" CFS_TYPE on the line after a parameter or result to define types (translates to COSMOS
+# types), defaults to uint32. Supported: uint32 (COSMOS UINT), float (COSMOS FLOAT)
+#
+# "#DEFAULT" DEFAULT on the line after a parameter to define a default value (#define in BM App,
+# command default in COSMOS).
+#
+# "#RANGE" MIN MAX on the line after a parameter to define a COSMOS range (default is 0 to 1
+# for UINT, 0.0 to 1.0 for FLOAT).
+#
+# "#DESCRIPTION" "text here" on the line after a parameter to input a COSMOS description,
+# default is "".
+#
+# "#UNITS" Unit Abbreviation on the line after a parameter or result to input a COSMOS unit, 
+# default is no units.
+###############################################################################
+
+
+#BENCHMARK_NAMES
+
+SB_Benchmark
+#DESCRIPTION "Software Bus Benchmark"
+
+	#PARAM_NAMES
+
+	SB_ZeroCopyEnable
+	#TYPE uint32
+	#DEFAULT 0
+	#RANGE 0 1
+	#DESCRIPTION "Software Bus Benchmark zero copy enable"
+
+	SB_NumThreads
+	#TYPE uint32
+	#DEFAULT 1
+	#RANGE 1 8
+	#DESCRIPTION "Software Bus Benchmark thread count"
+	#UNITS Threads Threads
+
+	SB_Repetitions
+	#TYPE uint32
+	#DEFAULT 10
+	#RANGE 1 1000
+	#DESCRIPTION "Software Bus Benchmark repetitions"
+	#UNITS Times Times
+
+	SB_NumTestMsgs
+	#TYPE uint32
+	#DEFAULT 1000
+	#RANGE 1 1000000
+	#DESCRIPTION "Software Bus Benchmark test messages"
+	#UNITS Messages Msgs
+
+	SB_MessageDataSize
+	#TYPE uint32
+	#DEFAULT 4
+	#RANGE 1 100000
+	#DESCRIPTION "Software Bus Benchmark message data size"
+	#UNITS Bytes Bytes
+
+	SB_MsgTimeout
+	#TYPE uint32
+	#DEFAULT 100000
+	#RANGE 100000 1000000
+	#DESCRIPTION "Software Bus Benchmark message timeout"
+	#UNITS Milliseconds ms
+
+	#END
+
+	#RESULT_NAMES
+
+	SB_BestTime
+	#TYPE float
+	#DESCRIPTION "Software Bus Benchmark best time"
+	#UNITS Seconds s
+
+	SB_WorstTime
+	#TYPE float
+	#DESCRIPTION "Software Bus Benchmark worst time"
+	#UNITS Seconds s
+
+	SB_AverageTime
+	#TYPE float
+	#DESCRIPTION "Software Bus Benchmark average time"
+	#UNITS Seconds s
+
+	SB_MessagesPerSecond
+	#TYPE float
+	#DESCRIPTION "Software Bus Benchmark messages per second"
+	#UNITS Messages/Second Msgs/s
+
+	#END
+
+#END_BENCHMARK
+
+FS_Benchmark
+#DESCRIPTION "File System Sequential Benchmark"
+
+	#PARAM_NAMES
+
+	FS_Repetitions
+	#TYPE uint32
+	#DEFAULT 1
+	#RANGE 1 1000
+	#DESCRIPTION "File System Benchmark repetitions"
+	#UNITS Times Times
+
+	FS_Sequential_Size
+	#TYPE uint32
+	#DEFAULT 100000000
+	#RANGE 1 9999999999
+	#DESCRIPTION "File System Benchmark sequential size"
+	#UNITS Bytes Bytes
+
+	#END
+
+	#RESULT_NAMES
+
+	FS_BestSequentialReadTime
+	#TYPE float
+	#DESCRIPTION "File System Benchmark best sequential read time"
+	#UNITS Seconds s
+
+	FS_WorstSequentialReadTime
+	#TYPE float
+	#DESCRIPTION "File System Benchmark worst sequential read time"
+	#UNITS Seconds s
+
+	FS_AverageSequentialReadTime
+	#TYPE float
+	#DESCRIPTION "File System Benchmark average sequential read time"
+	#UNITS Seconds s
+
+	FS_BestSequentialWriteTime
+	#TYPE float
+	#DESCRIPTION "File System Benchmark best sequential write time"
+	#UNITS Seconds s
+
+	FS_WorstSequentialWriteTime
+	#TYPE float
+	#DESCRIPTION "File System Benchmark worst sequential write time"
+	#UNITS Seconds s
+
+	FS_AverageSequentialWriteTime
+	#TYPE float
+	#DESCRIPTION "File System Benchmark average sequential write time"
+	#UNITS Seconds s
+
+	FS_SequentialReadAverageMegabytesPerSecond
+	#TYPE float
+	#DESCRIPTION "File System Benchmark average sequential read speed"
+	#UNITS Megabytes/Second MB/s
+
+	FS_SequentialWriteAverageMegabytesPerSecond
+	#TYPE float
+	#DESCRIPTION "File System Benchmark average sequential write speed"
+	#UNITS Megabytes/Second MB/s
+
+	#END
+
+#END_BENCHMARK
+
+CPU_Benchmark
+#DESCRIPTION "CPU Benchmark"
+
+	#PARAM_NAMES
+
+	CPU_DhrystoneRepetitions
+	#TYPE uint32
+	#DEFAULT 100000
+	#RANGE 1 10000000
+	#DESCRIPTION "CPU Benchmark Dhrystone repetitions"
+	#UNITS Times Times
+
+	CPU_WhetstoneRepetitions
+	#TYPE uint32
+	#DEFAULT 200
+	#RANGE 1 10000000
+	#DESCRIPTION "CPU Benchmark Whetstone repetitions"
+	#UNITS Times Times
+
+	#END
+
+	#RESULT_NAMES
+
+	CPU_DhrystonesPerSecond
+	#TYPE float
+	#DESCRIPTION "CPU Benchmark Dhrystones per second"
+	#UNITS Dhrystones/Second Ds/s
+
+	CPU_WhetstonesPerSecond
+	#TYPE float
+	#DESCRIPTION "CPU Benchmark Whetstones per second"
+	#UNITS Whetstones/Second Ws/s
+
+	#END
+
+#END_BENCHMARK
+
+#END

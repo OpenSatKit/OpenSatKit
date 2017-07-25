@@ -1,0 +1,26 @@
+#    APPEND_ITEM FILE_AGE     32   UINT  "File age in seconds"
+#    APPEND_ITEM FILE_SIZE    32   UINT  "File size in bytes"
+#    APPEND_ITEM FILE_RATE    32   UINT  "Average data rate since HK"
+#    APPEND_ITEM FILE_SEQ_CNT 32   UINT  "Sequence count portion of filename"
+#    APPEND_ITEM FILE_ENABLE  16   UINT  "File op state: 0=Disabled, 1=Enabled"
+#    APPEND_ITEM FILE_OPEN    16   UINT  "0=Closed, 1=Open"
+#    APPEND_ITEM FILE_NAME   512 STRING  "Name of filter table file"
+#item_id = "item" + item_counter.to_s
+#item_id = "item#{item_counter}"
+
+    FILE_INFO_STRUCT = %Q(
+      APPEND_ITEM \<%= @file %\>_AGE     32   UINT \"File age in seconds\"
+      APPEND_ITEM \<%= @file %\>_SIZE    32   UINT \"File size in bytes\"
+      APPEND_ITEM \<%= @file %\>_RATE    32   UINT \"Average data rate since HK\"
+      APPEND_ITEM \<%= @file %\>_SEQ_CNT 32   UINT \"Sequence count portion of filename\"
+      APPEND_ITEM \<%= @file %\>_ENABLE  16   UINT \"File op state: 0=Disabled, 1=Enabled\"
+      APPEND_ITEM \<%= @file %\>_OPEN    16   UINT \"0=Closed, 1=Open\"
+      APPEND_ITEM \<%= @file %\>_NAME   512 STRING \"Name of filter table file\")
+
+      APPEND_ITEM FILE_AGE     32   UINT \"File age in seconds\"
+      APPEND_ITEM FILE_SIZE    32   UINT \"File size in bytes\"
+      APPEND_ITEM FILE_RATE    32   UINT \"Average data rate since HK\"
+      APPEND_ITEM FILE_SEQ_CNT 32   UINT \"Sequence count portion of filename\"
+      APPEND_ITEM FILE_ENABLE  16   UINT \"File op state: 0=Disabled, 1=Enabled\"
+      APPEND_ITEM FILE_OPEN    16   UINT \"0=Closed, 1=Open\"
+      APPEND_ITEM FILE_NAME   512 STRING \"Name of filter table file\"

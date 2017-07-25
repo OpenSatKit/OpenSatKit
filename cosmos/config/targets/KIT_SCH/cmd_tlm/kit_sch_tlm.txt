@@ -1,0 +1,32 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "KIT_SCH"
+  @HK_TLM_MID_STR = "KIT_SCH_HK_TLM_MID"
+  
+%>  
+
+TELEMETRY KIT_SCH HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Scheduler Housekeeping Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM CMD_VALID_COUNT 16 UINT        "Command Count"
+  APPEND_ITEM CMD_ERROR_COUNT 16 UINT        "Error Count"
+  APPEND_ITEM MSG_TBL_LOAD_STATUS 8 UINT     "0=Undefined, 1=Invalid, 1=Valid"
+  APPEND_ITEM SCH_TBL_LOAD_STATUS 8 UINT     "0=Undefined, 1=Invalid, 1=Valid"
+  APPEND_ITEM MSG_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last msg table load"
+  APPEND_ITEM SCH_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last msg table load"
+  APPEND_ITEM SLOTS_PROCESSED_CNT      32 UINT "Total # of Schedule Slots (Minor Frames) Processed."
+  APPEND_ITEM SCH_ACTIVITY_SUCCESS_CNT 32 UINT "Number of successfully performed activities."
+  APPEND_ITEM SCH_ACTIVITY_FAILURE_CNT 32 UINT "Number of unsuccessful activities attempted."
+  APPEND_ITEM VALID_MAJOR_FRAME_CNT    32 UINT "Number of valid major frames processed."
+  APPEND_ITEM MISSED_MAJOR_FRAME_CNT   32 UINT "Number of missing Major Frame tones"
+  APPEND_ITEM UNEXPECT_MAJOR_FRAME_CNT 32 UINT "Number of unexpected Major Frame tones"
+  APPEND_ITEM SCH_TBL_PASS_CNT         32 UINT "Number of times Schedule Table has been processed"
+  APPEND_ITEM CONSEC_NOISY_FRAME_CNT   32 UINT "Number of times tone arrives in wrong slot?"
+  APPEND_ITEM SKIPPED_SLOT_CNT         16 UINT "Number of times that slots were skipped."
+  APPEND_ITEM MULTIPLE_SLOTS_CNT       16 UINT "Number of times that multiple slots processed."
+  APPEND_ITEM SAME_SLOT_CNT            16 UINT "Number of times SCH woke up in the same slot as last time"
+  APPEND_ITEM SYNC_ATTEMPTS_LEFT       16 UINT "Remaining attempts to resynch major frame?"
+  APPEND_ITEM LAST_SYNC_MET_SLOT       16 UINT "Slot number where Time Sync last occurred."
+  APPEND_ITEM IGNORE_MAJOR_FRAME        8 UINT "Major Frame too noisy to trust."
+  APPEND_ITEM UNEXPECTED_MAJOR_FRAME    8 UINT ""
+

@@ -1,0 +1,1 @@
+exec 'targetname=$(zenity --entry --text="New target name(app name):") && python scripts/gen_app_config_files/gen_app_config_files.py OUTDIR ./config/targets/ APPS $targetname'

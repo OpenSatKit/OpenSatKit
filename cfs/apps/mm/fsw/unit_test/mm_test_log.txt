@@ -1,0 +1,1787 @@
+##############################################################################
+## $Id: mm_test_log.txt 1.5 2016/10/31 22:10:58EDT mdeschu Exp  $
+##
+## Purpose: CFS MM application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+## $Log: mm_test_log.txt  $
+## Revision 1.5 2016/10/31 22:10:58EDT mdeschu 
+## Update gcov results, README and log file for MM unit tests for 2.4.1
+## Revision 1.4 2016/10/24 18:35:24EDT czogby 
+## Code Walkthough Updates
+## Revision 1.3 2016/03/04 20:07:42EST czogby 
+## Update log file for run with official release of MM 2.4.0
+## Revision 1.2 2016/02/08 16:50:33EST czogby 
+## Add MKS Header to mm_test_log.txt
+##############################################################################
+
+MM 2.4.1.0 Unit Test Output:
+
+./mm_testrunner.exe
+
+Running Test: MM_AppMain_Test_Nominal
+INFO EVENT ID=1 MM Initialized. Version 2.4.1.0
+PKT: 08 87 C0 00 00 55 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PASS: MM_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppMain_Test_AppInitError
+SYSTEM LOG: MM App: Error Registering For Event Services, RC = 0xFFFFFFFF
+
+PASS: MM_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_AppMain_Test_SBError
+INFO EVENT ID=1 MM Initialized. Version 2.4.1.0
+ERROR EVENT ID=15 SB Pipe Read Error, App will exit. RC = 0xFFFFFFFF
+PASS: MM_AppData.CmdCounter == 1
+PASS: SB Pipe Read Error, App will exit. RC = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MM_AppInit_Test_Nominal
+INFO EVENT ID=1 MM Initialized. Version 2.4.1.0
+PASS: Result == CFE_SUCCESS
+PASS: MM_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 0
+PASS: strncmp(MM_AppData.PipeName, 'MM_CMD_PIPE', 16) == 0
+PASS: MM_AppData.PipeDepth == MM_CMD_PIPE_DEPTH
+PASS: MM_AppData.LimitHK == MM_HK_LIMIT
+PASS: MM_AppData.LimitCmd == MM_CMD_LIMIT
+PASS: MM Initialized. Version 2.4.1.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppInit_Test_EVSRegisterError
+SYSTEM LOG: MM App: Error Registering For Event Services, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: MM_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 0
+PASS: strncmp(MM_AppData.PipeName, 'MM_CMD_PIPE', 16) == 0
+PASS: MM_AppData.PipeDepth == MM_CMD_PIPE_DEPTH
+PASS: MM_AppData.LimitHK == MM_HK_LIMIT
+PASS: MM_AppData.LimitCmd == MM_CMD_LIMIT
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MM App: Error Registering For Event Services, RC = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MM_AppInit_Test_SBCreatePipeError
+SYSTEM LOG: MM App: Error Creating SB Pipe, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: MM_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 0
+PASS: strncmp(MM_AppData.PipeName, 'MM_CMD_PIPE', 16) == 0
+PASS: MM_AppData.PipeDepth == MM_CMD_PIPE_DEPTH
+PASS: MM_AppData.LimitHK == MM_HK_LIMIT
+PASS: MM_AppData.LimitCmd == MM_CMD_LIMIT
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MM App: Error Creating SB Pipe, RC = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MM_AppInit_Test_SBSubscribeHKError
+SYSTEM LOG: MM App: Error Subscribing to HK Request, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: MM_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 0
+PASS: strncmp(MM_AppData.PipeName, 'MM_CMD_PIPE', 16) == 0
+PASS: MM_AppData.PipeDepth == MM_CMD_PIPE_DEPTH
+PASS: MM_AppData.LimitHK == MM_HK_LIMIT
+PASS: MM_AppData.LimitCmd == MM_CMD_LIMIT
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MM App: Error Subscribing to HK Request, RC = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MM_AppInit_Test_SBSubscribeMMError
+SYSTEM LOG: MM App: Error Subscribing to MM Command, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: MM_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 0
+PASS: strncmp(MM_AppData.PipeName, 'MM_CMD_PIPE', 16) == 0
+PASS: MM_AppData.PipeDepth == MM_CMD_PIPE_DEPTH
+PASS: MM_AppData.LimitHK == MM_HK_LIMIT
+PASS: MM_AppData.LimitCmd == MM_CMD_LIMIT
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MM App: Error Subscribing to MM Command, RC = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_Noop
+INFO EVENT ID=2 No-op command. Version 2.4.1.0
+PASS: No-op command. Version 2.4.1.0
+PASS: MM_AppData.LastAction == MM_NOOP
+PASS: MM_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_Reset
+DEBUG EVENT ID=3 Reset counters command received
+PASS: Reset counters command received
+PASS: MM_AppData.LastAction == MM_RESET
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_Peek
+ERROR EVENT ID=22 Data size in bits invalid: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_Poke
+ERROR EVENT ID=22 Data size in bits invalid: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_LoadMemWID
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LoadMemFromFile
+ERROR EVENT ID=39 Command specified filename invalid: Name = ''
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_DumpMemToFile
+ERROR EVENT ID=39 Command specified filename invalid: Name = ''
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_DumpInEvent
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_FillMem
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_LookupSymbol
+ERROR EVENT ID=46 NUL (empty) string specified as symbol name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_SymTblToFile
+ERROR EVENT ID=48 NUL (empty) string specified as symbol dump file name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_EnableEepromWrite
+INFO EVENT ID=51 EEPROM bank 0 write enabled, cFE_Status= 0x0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_DisableEepromWrite
+INFO EVENT ID=53 EEPROM bank 0 write disabled, cFE_Status= 0x0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_InvalidCommandCode
+ERROR EVENT ID=17 Invalid ground command code: ID = 0x1888, CC = 99
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid ground command code: ID = 0x1888, CC = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_AppPipe_Test_InvalidCommandPipeMessageID
+ERROR EVENT ID=16 Invalid command pipe message ID: 0xF
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid command pipe message ID: 0xF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_HousekeepingCmd_Test
+PKT: 00 00 00 00 00 00 00 
+PASS: MM_AppData.HkPacket.CmdCounter == 1
+PASS: MM_AppData.HkPacket.ErrCounter == 2
+PASS: MM_AppData.HkPacket.LastAction == 3
+PASS: MM_AppData.HkPacket.MemType == 4
+PASS: MM_AppData.HkPacket.Address == 5
+PASS: MM_AppData.HkPacket.DataValue == 6
+PASS: MM_AppData.HkPacket.BytesProcessed == 7
+PASS: strncmp(MM_AppData.HkPacket.FileName, MM_AppData.FileName, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LookupSymbolCmd_Test_Nominal
+INFO EVENT ID=45 Symbol Lookup Command: Name = 'name' Addr = 0x00000000
+PASS: MM_AppData.LastAction == MM_SYM_LOOKUP
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.CmdCounter == 1
+PASS: Symbol Lookup Command: Name = 'name' Addr = 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LookupSymbolCmd_Test_SymbolNameNull
+ERROR EVENT ID=46 NUL (empty) string specified as symbol name
+PASS: MM_AppData.ErrCounter == 1
+PASS: NUL (empty) string specified as symbol name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LookupSymbolCmd_Test_SymbolLookupError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_SymTblToFileCmd_Test_Nominal
+INFO EVENT ID=47 Symbol Table Dump to File Started: Name = 'name'
+PASS: MM_AppData.LastAction == MM_SYMTBL_SAVE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.CmdCounter == 1
+PASS: Symbol Table Dump to File Started: Name = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_SymTblToFileCmd_Test_SymbolFilenameNull
+ERROR EVENT ID=48 NUL (empty) string specified as symbol dump file name
+PASS: MM_AppData.ErrCounter == 1
+PASS: NUL (empty) string specified as symbol dump file name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_SymTblToFileCmd_Test_SymbolTableDumpError
+ERROR EVENT ID=49 Error dumping symbol table, OS_Status= 0xFFFFFFFF, File='name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Error dumping symbol table, OS_Status= 0xFFFFFFFF, File='name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_SymTblToFileCmd_Test_IllegalCharacters
+ERROR EVENT ID=50 Illegal characters in target filename, File='***name***'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Illegal characters in target filename, File='***name***'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_EepromWriteEnaCmd_Test_Nominal
+INFO EVENT ID=51 EEPROM bank 1 write enabled, cFE_Status= 0x0
+PASS: MM_AppData.LastAction == MM_EEPROMWRITE_ENA
+PASS: MM_AppData.MemType == MM_EEPROM
+PASS: MM_AppData.CmdCounter == 1
+PASS: EEPROM bank 1 write enabled, cFE_Status= 0x0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_EepromWriteEnaCmd_Test_Error
+ERROR EVENT ID=52 Error requesting EEPROM bank 1 write enable, cFE_Status= 0xFFFFFFFF
+PASS: MM_AppData.ErrCounter == 1
+PASS: Error requesting EEPROM bank 1 write enable, cFE_Status= 0xF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_EepromWriteDisCmd_Test_Nominal
+INFO EVENT ID=53 EEPROM bank 1 write disabled, cFE_Status= 0x0
+PASS: MM_AppData.LastAction == MM_EEPROMWRITE_DIS
+PASS: MM_AppData.MemType == MM_EEPROM
+PASS: MM_AppData.CmdCounter == 1
+PASS: EEPROM bank 1 write disabled, cFE_Status= 0x0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_EepromWriteDisCmd_Test_Error
+ERROR EVENT ID=54 Error requesting EEPROM bank 1 write disable, cFE_Status= 0xFFFFFFFF
+PASS: MM_AppData.ErrCounter == 1
+PASS: Error requesting EEPROM bank 1 write edisable, cFE_Status= 0xF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeCmd_Test_EEPROM
+INFO EVENT ID=12 Poke Command: Addr = 0x00000000, Size = 32 bits, Data = 0x00000000
+PASS: Poke Command: Addr = 0x00000000, Size = 32 bits, Data = 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeCmd_Test_NonEEPROM
+INFO EVENT ID=12 Poke Command: Addr = 0x00000000, Size = 32 bits, Data = 0x00000000
+PASS: Poke Command: Addr = 0x00000000, Size = 32 bits, Data = 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeCmd_Test_SymNameError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeMem_Test_8bit
+INFO EVENT ID=10 Poke Command: Addr = 0x00000001, Size = 8 bits, Data = 0x05
+PASS: Poke Command: Addr = 0x00000001, Size = 8 bits, Data = 0x05
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_POKE
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue  == 5
+PASS: MM_AppData.BytesProcessed == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeMem_Test_8bitError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeMem_Test_16bit
+INFO EVENT ID=11 Poke Command: Addr = 0x00000001, Size = 16 bits, Data = 0x0005
+PASS: Poke Command: Addr = 0x00000001, Size = 16 bits, Data = 0x05
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_POKE
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue  == 5
+PASS: MM_AppData.BytesProcessed == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeMem_Test_16bitError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeMem_Test_32bit
+INFO EVENT ID=12 Poke Command: Addr = 0x00000001, Size = 32 bits, Data = 0x00000005
+PASS: Poke Command: Addr = 0x00000001, Size = 32 bits, Data = 0x05
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_POKE
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue  == 5
+PASS: MM_AppData.BytesProcessed == 4
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeMem_Test_32bitError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeEeprom_Test_8bit
+INFO EVENT ID=10 Poke Command: Addr = 0x00000001, Size = 8 bits, Data = 0x05
+PASS: Poke Command: Addr = 0x00000001, Size = 8 bits, Data = 0x05
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_POKE
+PASS: MM_AppData.MemType == MM_EEPROM
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue  == 5
+PASS: MM_AppData.BytesProcessed == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeEeprom_Test_8bitError
+ERROR EVENT ID=28 CFE_PSP_EepromWrite8 error received: RC = 0xFFFFFFFF, Addr = 0x00000001
+PASS: CFE_PSP_EepromWrite8 error received: RC = 0xFFFFFFFF, Addr = 0x00000001
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeEeprom_Test_16bit
+INFO EVENT ID=11 Poke Command: Addr = 0x00000001, Size = 16 bits, Data = 0x0005
+PASS: Poke Command: Addr = 0x00000001, Size = 16 bits, Data = 0x05
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_POKE
+PASS: MM_AppData.MemType == MM_EEPROM
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue  == 5
+PASS: MM_AppData.BytesProcessed == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeEeprom_Test_16bitError
+ERROR EVENT ID=29 CFE_PSP_EepromWrite16 error received: RC = 0xFFFFFFFF, Addr = 0x00000001
+PASS: CFE_PSP_EepromWrite16 error received: RC = 0xFFFFFFFF, Addr = 0x00000001
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeEeprom_Test_32bit
+INFO EVENT ID=12 Poke Command: Addr = 0x00000001, Size = 32 bits, Data = 0x00000005
+PASS: Poke Command: Addr = 0x00000001, Size = 32 bits, Data = 0x05
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_POKE
+PASS: MM_AppData.MemType == MM_EEPROM
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue  == 5
+PASS: MM_AppData.BytesProcessed == 4
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PokeEeprom_Test_32bitError
+ERROR EVENT ID=30 CFE_PSP_EepromWrite32 error received: RC = 0xFFFFFFFF, Addr = 0x00000001
+PASS: CFE_PSP_EepromWrite32 error received: RC = 0xFFFFFFFF, Addr = 0x00000001
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemWIDCmd_Test_Nominal
+INFO EVENT ID=4 Load Memory WID Command: Wrote 2 bytes to address: 0x00000001
+PASS: MM_AppData.CmdCounter == 1
+PASS: Load Memory WID Command: Wrote 2 bytes to address: 0x00000001
+PASS: MM_AppData.LastAction == MM_LOAD_WID
+PASS: MM_AppData.Address == 1
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.BytesProcessed == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemWIDCmd_Test_CopyError
+ERROR EVENT ID=58 PSP copy memory error: RC=0xFFFFFFFF, Src=0xFF8493F8, Tgt=0x00000001, Size=0x00000002
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP copy memory error: RC=0xFFFFFFFF, Src=0xFF8493F8, Tgt=0x00000001, Size=0x00000002
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemWIDCmd_Test_CRCError
+ERROR EVENT ID=27 Interrupts Disabled Load CRC failure: Expected = 0x1 Calculated = 0x0
+PASS: MM_AppData.ErrCounter == 1
+PASS: Interrupts Disabled Load CRC failure: Expected = 0x1 Calculated = 0x0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemWIDCmd_Test_SymNameErr
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyLoadWIDParams_Test_Nominal
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyLoadWIDParams_Test_MemValidateError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyLoadWIDParams_Test_DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyLoadWIDParams_Test_DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 201
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 201
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_RAM
+INFO EVENT ID=5 Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: MM_AppData.CmdCounter == 1
+PASS: Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_EEPROM
+INFO EVENT ID=5 Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: MM_AppData.CmdCounter == 1
+PASS: Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_MEM32
+INFO EVENT ID=5 Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: MM_AppData.CmdCounter == 1
+PASS: Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_MEM16
+INFO EVENT ID=5 Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: MM_AppData.CmdCounter == 1
+PASS: Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_MEM8
+INFO EVENT ID=5 Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: MM_AppData.CmdCounter == 1
+PASS: Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_LoadParamsError
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 99
+ERROR EVENT ID=41 Load file failed parameters check: File = 'name'
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid memory type specified: MemType = 99
+PASS: Load file failed parameters check: File = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MM_LoadMemFromFileCmd_Test_SymNameError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_LoadFileCRCError
+ERROR EVENT ID=26 Load file CRC failure: Expected = 0x63 Calculated = 0x0 File = 'name'
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: Load file CRC failure: Expected = 0x63 Calculated = 0x0 File = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_ComputeCRCError
+ERROR EVENT ID=38 CFS_ComputeCRCFromFile error received: RC = 0xFFFFFFFF File = 'name'
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFS_ComputeCRCFromFile error received: RC = 0xFFFFFFFF File = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_CloseError
+INFO EVENT ID=5 Load Memory From File Command: Loaded 4 bytes to address 0x00000000 from file 'name'
+ERROR EVENT ID=33 OS_close error received: RC = 0xFFFFFFFF File = 'name'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_close error received: RC = 0xFFFFFFFF File = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MM_LoadMemFromFileCmd_Test_OpenError
+ERROR EVENT ID=32 OS_open error received: RC = 0xFFFFFFFF File = 'name'
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_open error received: RC = 0xFFFFFFFF File = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFileCmd_Test_InvalidFilename
+ERROR EVENT ID=39 Command specified filename invalid: Name = '***name***'
+PASS: MM_AppData.CmdCounter == 0
+PASS: MM_AppData.ErrCounter == 1
+PASS: Command specified filename invalid: Name = '***name***'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFile_Test_PreventCPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_EEPROM
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == 2*MM_MAX_LOAD_DATA_SEG
+PASS: strncmp(MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMemFromFile_Test_MemCpyError
+ERROR EVENT ID=58 PSP copy memory error: RC=0xFFFFFFFF, Src=0x080AC5EC, Tgt=0x00000000, Size=0x00000002
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP copy memory error: RC=0xFFFFFFFF, Src=0x080AC5EC, Tgt=0x00000000, Size=0x00000002
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMemFromFile_Test_ReadError
+ERROR EVENT ID=34 OS_read error received: RC = 0x00000000 Expected = 2 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_read error received: RC = 0x00000000 Expected = 2 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_RAMValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_RAMDataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_RAMDataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_EEPROMValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_EEPROMDataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_EEPROMDataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 131073
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 131073
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM32ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM32DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM32DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM32AlignmentError
+ERROR EVENT ID=23 Data and address not 32 bit aligned: Addr = 0x00000000 Size = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 32 bit aligned: Addr = 0x00000000 Size = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM16ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM16DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM16DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM16AlignmentError
+ERROR EVENT ID=24 Data and address not 16 bit aligned: Addr = 0x00000000 Size = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 16 bit aligned: Addr = 0x00000000 Size = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM8ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM8DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_MEM8DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileLoadParams_Test_InvalidMemTypeError
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 99
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid memory type specified: MemType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyLoadFileSize_Test_StatError
+ERROR EVENT ID=37 OS_stat error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_stat error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyLoadFileSize_Test_SizeError
+ERROR EVENT ID=40 Load file size error: Reported by OS = 148 Expected = 144 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Load file size error: Reported by OS = 148 Expected = 144 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_ReadFileHeaders_Test_ReadHeaderError
+ERROR EVENT ID=42 CFE_FS_ReadHeader error received: RC = 0x00000000 Expected = 64 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_FS_ReadHeader error received: RC = 0x00000000 Expected = 64 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_ReadFileHeaders_Test_ReadError
+ERROR EVENT ID=35 OS_read error received: RC = 0xFFFFFFFF Expected = 80 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_read error received: RC = 0xFFFFFFFF Expected = 80 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMemCmd_Test_RAM
+INFO EVENT ID=6 Fill Memory Command: Filled 1 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: MM_AppData.CmdCounter == 1
+PASS: Fill Memory Command: Filled 1 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMemCmd_Test_EEPROM
+INFO EVENT ID=6 Fill Memory Command: Filled 1 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: MM_AppData.CmdCounter == 1
+PASS: Fill Memory Command: Filled 1 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMemCmd_Test_MEM32
+INFO EVENT ID=6 Fill Memory Command: Filled 4 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: MM_AppData.CmdCounter == 1
+PASS: Fill Memory Command: Filled 4 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMemCmd_Test_MEM16
+INFO EVENT ID=6 Fill Memory Command: Filled 2 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: MM_AppData.CmdCounter == 1
+PASS: Fill Memory Command: Filled 2 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMemCmd_Test_MEM8
+INFO EVENT ID=6 Fill Memory Command: Filled 1 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: MM_AppData.CmdCounter == 1
+PASS: Fill Memory Command: Filled 1 bytes at address: 0x00000000 with pattern: 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMemCmd_Test_SymNameError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMem_Test_Nominal
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem_Test_MemCpyError
+ERROR EVENT ID=58 PSP copy memory error: RC=0xFFFFFFFF, Src=0x080AC77C, Tgt=0x00000000, Size=0x00000002
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP copy memory error: RC=0xFFFFFFFF, Src=0x080AC77C, Tgt=0x00000000, Size=0x00000002
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_RAMValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_RAMDataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_RAMDataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_EEPROMValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 1 MemType = 2
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 1 MemType = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_EEPROMDataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_EEPROMDataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 131073
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 131073
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM32ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 4 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 4 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM32DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM32DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM32AlignmentError
+ERROR EVENT ID=23 Data and address not 32 bit aligned: Addr = 0x00000001 Size = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 32 bit aligned: Addr = 0x00000001 Size = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM16ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 2 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 2 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM16DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM16DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM16AlignmentError
+ERROR EVENT ID=24 Data and address not 16 bit aligned: Addr = 0x00000001 Size = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 16 bit aligned: Addr = 0x00000001 Size = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM8ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000001 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM8DataSizeErrorTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_MEM8DataSizeErrorTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFillParams_Test_InvalidMemTypeError
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 99
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid memory type specified: MemType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMem8FromFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_MEM8
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMem8FromFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_MEM8
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMem8FromFile_Test_ReadError
+ERROR EVENT ID=34 OS_read error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_read error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMem8FromFile_Test_WriteError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMem8ToFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == MM_MEM8
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMem8ToFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == MM_MEM8
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMem8ToFile_Test_ReadError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Src=0xF76EF008, Tgt=0x080AC6B4, Type=MEM8
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP read memory error: RC=0xFFFFFFFF, Src=0xF76EF008, Tgt=0x080AC6B4, Type=MEM8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMem8ToFile_Test_WriteError
+ERROR EVENT ID=36 OS_write error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_write error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMem8_Test_Nominal
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == MM_MEM8
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem8_Test_CPUHogging
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == MM_MEM8
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem8_Test_WriteError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMem16FromFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_MEM16
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMem16FromFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_MEM16
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMem16FromFile_Test_ReadError
+ERROR EVENT ID=34 OS_read error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_read error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMem16FromFile_Test_WriteError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMem16ToFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == MM_MEM16
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMem16ToFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == MM_MEM16
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMem16ToFile_Test_ReadError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Src=0xF76EF008, Tgt=0x080AC6B4, Type=MEM16
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP read memory error: RC=0xFFFFFFFF, Src=0xF76EF008, Tgt=0x080AC6B4, Type=MEM16
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMem16ToFile_Test_WriteError
+ERROR EVENT ID=36 OS_write error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_write error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMem16_Test_Nominal
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == MM_MEM16
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem16_Test_CPUHogging
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == MM_MEM16
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem16_Test_WriteError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMem32FromFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_MEM32
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMem32FromFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_LOAD_FROM_FILE
+PASS: MM_AppData.MemType == MM_MEM32
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_LoadMem32FromFile_Test_ReadError
+ERROR EVENT ID=34 OS_read error received: RC = 0xFFFFFFFF Expected = 4 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_read error received: RC = 0xFFFFFFFF Expected = 4 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_LoadMem32FromFile_Test_WriteError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMem32ToFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == MM_MEM32
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMem32ToFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == MM_MEM32
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == FileHeader.NumOfBytes
+PASS: MM_AppData.FileName, 'filename', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMem32ToFile_Test_ReadError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Src=0xF76EF008, Tgt=0x080AC6B4, Type=MEM32
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP read memory error: RC=0xFFFFFFFF, Src=0xF76EF008, Tgt=0x080AC6B4, Type=MEM32
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMem32ToFile_Test_WriteError
+ERROR EVENT ID=36 OS_write error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_write error received: RC = 0xFFFFFFFF Expected = 2 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillMem32_Test_Nominal
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == MM_MEM32
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem32_Test_CPUHogging
+PASS: MM_AppData.LastAction == MM_FILL
+PASS: MM_AppData.MemType == MM_MEM32
+PASS: MM_AppData.Address == DestAddress
+PASS: MM_AppData.DataValue == CmdPacket.FillPattern
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillMem32_Test_WriteError
+ERROR EVENT ID=57 PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP write memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekCmd_Test_Nominal
+INFO EVENT ID=9 Peek Command: Addr = 0x00000000 Size = 32 bits Data = 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekCmd_Test_SymNameError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekMem_Test_Byte
+INFO EVENT ID=7 Peek Command: Addr = 0x00000001 Size = 8 bits Data = 0x00
+PASS: Peek Command: Addr = 0x00000001 Size = 8 bits Data = 0x00
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_PEEK
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == 1
+PASS: MM_AppData.BytesProcessed == 1
+PASS: MM_AppData.DataValue == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekMem_Test_ByteError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: PSP read memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekMem_Test_Word
+INFO EVENT ID=8 Peek Command: Addr = 0x00000001 Size = 16 bits Data = 0x0000
+PASS: Peek Command: Addr = 0x00000001 Size = 16 bits Data = 0x0000
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_PEEK
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == 1
+PASS: MM_AppData.BytesProcessed == 2
+PASS: MM_AppData.DataValue == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekMem_Test_WordError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: PSP read memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM16
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekMem_Test_DWord
+INFO EVENT ID=9 Peek Command: Addr = 0x00000001 Size = 32 bits Data = 0x00000000
+PASS: Peek Command: Addr = 0x00000001 Size = 32 bits Data = 0x00000000
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_PEEK
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == 1
+PASS: MM_AppData.BytesProcessed == 4
+PASS: MM_AppData.DataValue == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_PeekMem_Test_DWordError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: PSP read memory error: RC=0xFFFFFFFF, Address=0x00000001, MemType=MEM32
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_RAM
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_EEPROM
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_MEM32
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 4 bytes from address 0x00000000 to file 'filename'
+PASS: Dump Memory To File Command: Dumped 4 bytes from address 0x00000000 to file 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_MEM16
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 2 bytes from address 0x00000000 to file 'filename'
+PASS: Dump Memory To File Command: Dumped 2 bytes from address 0x00000000 to file 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_MEM8
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_ComputeCRCError
+ERROR EVENT ID=38 CFS_ComputeCRCFromFile error received: RC = 0xFFFFFFFF File = 'filename'
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: CFS_ComputeCRCFromFile error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MM_DumpMemToFileCmd_Test_CloseError
+INFO EVENT ID=13 Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+ERROR EVENT ID=33 OS_close error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: Dump Memory To File Command: Dumped 1 bytes from address 0x00000000 to file 'filename'
+PASS: OS_close error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: MM_AppData.CmdCounter == 1
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: strncmp(MM_AppData.FileName, CmdPacket.FileName, OS_MAX_PATH_LEN) == 0
+PASS: MM_AppData.MemType == CmdPacket.MemType
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == CmdPacket.NumOfBytes
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MM_DumpMemToFileCmd_Test_CreatError
+ERROR EVENT ID=31 OS_creat error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: OS_creat error received: RC = 0xFFFFFFFF File = 'filename'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_SymNameError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'SymName'
+PASS: Symbolic address can't be resolved: Name = 'SymName'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFileCmd_Test_FilenameError
+ERROR EVENT ID=39 Command specified filename invalid: Name = '***'
+PASS: Command specified filename invalid: Name = '***'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFile_Test_Nominal
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == FileHeader.MemType
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == 1
+PASS: strncmp(MM_AppData.FileName, FileName, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMemToFile_Test_CPUHogging
+PASS: Result == TRUE
+PASS: MM_AppData.LastAction == MM_DUMP_TO_FILE
+PASS: MM_AppData.MemType == FileHeader.MemType
+PASS: MM_AppData.Address == FileHeader.SymAddress.Offset
+PASS: MM_AppData.BytesProcessed == 2 * MM_MAX_DUMP_DATA_SEG
+PASS: strncmp(MM_AppData.FileName, FileName, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_DumpMemToFile_Test_WriteError
+ERROR EVENT ID=36 OS_write error received: RC = 0xFFFFFFFF, Expected = 1, File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_write error received: RC = 0xFFFFFFFF, Expected = 1, File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpMemToFile_Test_CopyError
+ERROR EVENT ID=58 PSP copy memory error: RC=0xFFFFFFFF, Src=0x00000001, Tgt=0x080AC6B4, Size=0x00000001
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP copy memory error: RC=0xFFFFFFFF, Src=0x00000001, Tgt=0x080AC6B4, Size=0x00000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_RAM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyFileDumpParams_Test_EEPROM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM32
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM16
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM8
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyFileDumpParams_Test_RAMRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_RAMInvalidSizeTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_RAMInvalidSizeTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_EEPROMRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_EEPROMInvalidSizeTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_EEPROMInvalidSizeTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 131073
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 131073
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM32RangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 4 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 4 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM32InvalidSizeTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM32InvalidSizeTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM32AlignmentError
+ERROR EVENT ID=23 Data and address not 32 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 32 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM16RangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 2 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 2 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM16InvalidSizeTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM16InvalidSizeTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM16AlignmentError
+ERROR EVENT ID=24 Data and address not 16 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 16 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM8RangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM8InvalidSizeTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_MEM8InvalidSizeTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 1048577
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyFileDumpParams_Test_InvalidMemoryType
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 99
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid memory type specified: MemType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_WriteFileHeaders_Test_Nominal
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_WriteFileHeaders_Test_WriteHeaderError
+ERROR EVENT ID=43 CFE_FS_WriteHeader error received: RC = 0xFFFFFFFF Expected = 64 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_FS_WriteHeader error received: RC = 0xFFFFFFFF Expected = 64 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_WriteFileHeaders_Test_WriteError
+ERROR EVENT ID=36 OS_write error received: RC = 0xFFFFFFFF Expected = 80 File = 'filename'
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: OS_write error received: RC = 0xFFFFFFFF Expected = 80 File = 'filename'
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpInEventCmd_Test_Nominal
+INFO EVENT ID=14 Memory Dump: 0x00 from address: 0x00000000
+PASS: Memory Dump: 0x00 from address: 0x00000000
+PASS: MM_AppData.LastAction == MM_DUMP_INEVENT
+PASS: MM_AppData.MemType == MM_RAM
+PASS: MM_AppData.Address == 0
+PASS: MM_AppData.BytesProcessed == 1
+PASS: MM_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_DumpInEventCmd_Test_SymNameError
+ERROR EVENT ID=20 Symbolic address can't be resolved: Name = 'name'
+PASS: Symbolic address can't be resolved: Name = 'name'
+PASS: MM_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_RAM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyDumpInEventParams_Test_EEPROM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM32
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM16
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM8
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyDumpInEventParams_Test_InvalidDataSizeTooSmall
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_InvalidDataSizeTooLarge
+ERROR EVENT ID=21 Data size in bytes invalid or exceeds limits: Data Size = 16
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bytes invalid or exceeds limits: Data Size = 16
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_RAMRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_EEPROMRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM32RangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 4 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 4 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM32AlignmentError
+ERROR EVENT ID=23 Data and address not 32 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 32 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM16RangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 2 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 2 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM16AlignmentError
+ERROR EVENT ID=24 Data and address not 16 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 16 bit aligned: Addr = 0x00000000 Size = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_MEM8RangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyDumpInEventParams_Test_InvalidMemType
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 99
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid memory type specified: MemType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillDumpInEventBuffer_Test_RAM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillDumpInEventBuffer_Test_EEPROM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillDumpInEventBuffer_Test_MEM32
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillDumpInEventBuffer_Test_MEM16
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillDumpInEventBuffer_Test_MEM8
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_FillDumpInEventBuffer_Test_EEPROMCopyError
+ERROR EVENT ID=58 PSP copy memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Size=0x00000001
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP copy memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Size=0x00000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillDumpInEventBuffer_Test_MEM32ReadError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Type=MEM32
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP read memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Type=MEM32
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillDumpInEventBuffer_Test_MEM16ReadError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Type=MEM16
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP read memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Type=MEM16
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_FillDumpInEventBuffer_Test_MEM8ReadError
+ERROR EVENT ID=56 PSP read memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Type=MEM8
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: PSP read memory error: RC=0xFFFFFFFF, Src=0x00000000, Tgt=0x080AC6B4, Type=MEM8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_ResetHk_Test
+PASS: MM_AppData.LastAction == MM_NOACTION
+PASS: MM_AppData.MemType == MM_NOMEMTYPE
+PASS: MM_AppData.Address == MM_CLEAR_ADDR
+PASS: MM_AppData.DataValue == MM_CLEAR_PATTERN
+PASS: MM_AppData.BytesProcessed == 0
+PASS: MM_AppData.FileName[0] == MM_CLEAR_FNAME
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyCmdLength_Test_Nominal
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyCmdLength_Test_HKRequestLengthError
+ERROR EVENT ID=44 Invalid HK request msg length: ID = 0x1889, CC = 2, Len = 80, Expected = 99
+PASS: Result == FALSE
+PASS: Invalid HK request msg length: ID = 0x1889, CC = 2, Len = 80, Expected = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyCmdLength_Test_LengthError
+ERROR EVENT ID=18 Invalid msg length: ID = 0x0005, CC = 2, Len = 80, Expected = 99
+PASS: Result == FALSE
+PASS: Invalid msg length: ID = 0x0005, CC = 2, Len = 80, Expected = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_ByteWidthRAM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyPeekPokeParams_Test_WordWidthMEM16
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyPeekPokeParams_Test_DWordWidthMEM32
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyPeekPokeParams_Test_WordWidthAlignmentError
+ERROR EVENT ID=24 Data and address not 16 bit aligned: Addr = 0x00000001 Size = 2
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 16 bit aligned: Addr = 0x00000001 Size = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_DWordWidthAlignmentError
+ERROR EVENT ID=23 Data and address not 32 bit aligned: Addr = 0x00000001 Size = 4
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data and address not 32 bit aligned: Addr = 0x00000001 Size = 4
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_InvalidDataSize
+ERROR EVENT ID=22 Data size in bits invalid: Data Size = 55
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bits invalid: Data Size = 55
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_EEPROM
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM8
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MM_VerifyPeekPokeParams_Test_RAMValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_EEPROMValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM32ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 4 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 4 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM32InvalidDataSize
+ERROR EVENT ID=22 Data size in bits invalid: Data Size = 8
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bits invalid: Data Size = 8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM16ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 2 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 2 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM16InvalidDataSize
+ERROR EVENT ID=22 Data size in bits invalid: Data Size = 8
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bits invalid: Data Size = 8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM8ValidateRangeError
+ERROR EVENT ID=25 CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: CFE_PSP_MemValidateRange error received: RC = 0xFFFFFFFF Addr = 0x00000000 Size = 1 MemType = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_MEM8InvalidDataSize
+ERROR EVENT ID=22 Data size in bits invalid: Data Size = 32
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Data size in bits invalid: Data Size = 32
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MM_VerifyPeekPokeParams_Test_InvalidMemType
+ERROR EVENT ID=19 Invalid memory type specified: MemType = 99
+PASS: Result == FALSE
+PASS: MM_AppData.ErrCounter == 1
+PASS: Invalid memory type specified: MemType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Tests Executed:    249
+Assert Pass Count: 1035
+Assert Fail Count: 0
+
+
+gcov: '../src/mm_mem32.c' 100.00%  109
+gcov: '../src/mm_mem8.c' 100.00%  108
+gcov: '../src/mm_dump.c' 100.00%  343
+gcov: '../src/mm_app.c' 100.00%  192
+gcov: '../src/mm_load.c' 100.00%  432
+gcov: '../src/mm_mem16.c' 100.00%  108
+gcov: '../src/mm_utils.c' 100.00%  93
+
+

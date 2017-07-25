@@ -1,0 +1,66 @@
+TABLE "FM Free Space" "Identifies file systems and configures whether free computation is enabled" ONE_DIMENSIONAL BIG_ENDIAN 1
+
+# CFE_FS_Header_t defined in cfe_fs.h
+PARAMETER "Content Type"    "Header identifier. This file defines a CFE1 header" STRING 32 STRING 0 4 "UNDEF"
+PARAMETER "Subtype"         "See CFE_FS_ES_ERLOG_SUBTYPE defined in cfe_fs.h" UINT 32 DEC 0 1024 999
+PARAMETER "Length"          "Length of primary header in bytes" UINT 32 DEC  0 1024 999
+PARAMETER "Spacecraft ID"   "Identifier of spacecraft that generated/received the file" UINT 32 DEC  0 1024 999
+PARAMETER "Processor ID"    "Identifier of the processor on the spacecraft that generated/received the file" UINT 32 DEC 0 1024 999
+PARAMETER "Application ID"  "Application identifier" UINT 32 DEC 0 1024 999
+PARAMETER "Time Seconds"    "File creation timestamp (seconds)" UINT 32 DEC 0 4294967295 0
+PARAMETER "Time Subseconds" "File creation timestamp (sub-seconds)" UINT 32 DEC 0 4294967295 0
+PARAMETER "Description"     "Description of table contents" STRING 256 STRING 0 32 "UNDEF"
+
+# CFE_TBL_File_Hdr_t defined in cfe_tbl_filedef.h
+PARAMETER "Reserved"        "Reserved for future use" UINT 32 DEC 0 4294967295 0
+PARAMETER "Offset"          "Byte offset from start of table" UINT 32 DEC 0 4294967295 0
+PARAMETER "Number of Bytes" "Number of bytes in the table" UINT 32 DEC 0 4294967295 0
+PARAMETER "Table Name"      "Fully qualified table name" STRING 320 STRING 0 32 "UNDEF"
+
+PARAMETER "File Sys 1 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 1 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 2 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 2 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 3 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 3 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 4 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 4 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 5 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 5 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 6 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 6 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 7 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 7 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"
+
+PARAMETER "File Sys 8 Config" "Enable/Disable configuration" UINT 32 STATE 0 4294967295 0
+  STATE DISABLE 0
+  STATE ENABLE  1
+  STATE UNUSED  2
+PARAMETER "File Sys 8 Name"   "File system name (logical mount point)" STRING 512 STRING 0 64 "UNDEF"

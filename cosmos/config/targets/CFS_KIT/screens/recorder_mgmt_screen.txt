@@ -1,0 +1,115 @@
+###############################################################################
+# Recorder Management Screen
+#
+# Notes:
+#   1. This is essentially a Data Recorder application screen since DS is the
+#      only app that manages the recorder files.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU
+#   General Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Recorder Management"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+  
+VERTICALBOX "Data Storage App Status"
+  HORIZONTAL
+    BUTTON 'Enable/Disable' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "APP_STATE")'
+    BUTTON 'Dest File 1..4 Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILES_1_4_INFO")'
+    BUTTON 'Dest File 5..8 Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILES_5_8_INFO")'
+  END # Horizontal
+  MATRIXBYCOLUMNS 6
+    LABEL "Cmd Valid Cnt"
+    VALUE DS HK_TLM_PKT CMD_VALID_COUNT
+    LABEL "Cmd Error Cnt"
+    VALUE DS HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "State"
+    VALUE DS HK_TLM_PKT APP_ENA_STATE
+  END # Matrix
+END # Vertical App Status
+
+VERTICALBOX "Set Destination File Configuration"
+  MATRIXBYCOLUMNS 3
+    BUTTON 'Enable/Disable'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_STATE")'
+    BUTTON 'Sequence Count'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_COUNT")'
+    BUTTON 'Filename Type'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_TYPE")'
+    BUTTON 'File Path Name'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_PATH")'
+    BUTTON 'File Base Name'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_BASE")'
+    BUTTON 'File Extension'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_EXTENSION")'
+    BUTTON 'Max File Size'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_SIZE")'
+    BUTTON 'Max File Age'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_AGE")'
+    BUTTON 'Close 1/All Files' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILE_CLOSE")'
+  END # Matrix
+  LABEL "  "
+  MATRIXBYCOLUMNS 4
+    LABEL "Tbl Load Count"
+    VALUE DS HK_TLM_PKT DEST_TBL_LOAD_CTR
+    LABEL "Tbl Access Err Cnt"
+    VALUE DS HK_TLM_PKT DEST_TBL_ERR_CTR
+    LABEL "File Write Valid Cnt"
+    VALUE DS HK_TLM_PKT FILE_WRITE_CTR
+    LABEL "File Write Invalid Cnt"
+    VALUE DS HK_TLM_PKT FILE_WRITE_ERR_CTR
+    LABEL "Hdr Update Valid Cnt"
+    VALUE DS HK_TLM_PKT FILE_UPDATE_CTR
+    LABEL "Hdr Update Invalid Cnt"
+    VALUE DS HK_TLM_PKT FILE_UPDATE_ERR_CTR
+  END # Matrix
+END # Vertical Destination File Configuration
+
+VERTICALBOX "Set Packet Filter Configuration"
+  MATRIXBYCOLUMNS 4
+    BUTTON 'Dest File'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILTER_FILE")'
+    BUTTON 'Add Message'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILTER_ADD_MSG")'
+    BUTTON 'Algorithm'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILTER_ALGORITHM")'
+    BUTTON 'Filter Type'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_screen.rb"; recorder_mgmt_send_cmd(self, "FILTER_TYPE")'
+  END # Matrix
+  MATRIXBYCOLUMNS 4
+    LABEL "Tbl Load Cnt"
+    VALUE DS HK_TLM_PKT FILTER_TBL_LOAD_CTR
+    LABEL "Tbl Access Err Cnt"
+    VALUE DS HK_TLM_PKT FILTER_TBL_ERR_CTR
+    LABEL "Pkt Discard Cnt"
+    VALUE DS HK_TLM_PKT DIS_PKT_CTR
+    LABEL "Pkt Ignored Cnt"
+    VALUE DS HK_TLM_PKT IGNORED_PKT_CTR
+    LABEL "Pkt Filtered Cnt"
+    VALUE DS HK_TLM_PKT FILTERED_PKT_CTR
+    LABEL "Pkt Stored Cnt"
+    VALUE DS HK_TLM_PKT PASSED_PKT_CTR
+  END # Matrix
+  HORIZONTAL
+     LABEL "Packet Filter File"
+     FORMATVALUE DS HK_TLM_PKT FILTER_TBL_FILENAME %-s FORMATTED 48
+  END
+END # Vertical Packet Filter Configuration
+
+VERTICALBOX "File Transfer"
+  MATRIXBYCOLUMNS 2
+    # Use table_mgmt because table file needs to be manipulated after transferred
+    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_set_work_dir(self); file_mgmt_send_cmd(self, "PUT_FILE")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_set_work_dir(self); file_mgmt_send_cmd(self, "GET_FILE")'
+    LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
+    LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
+  END # Matrix
+  LABEL 'Ground Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET gnd_work_dir TEXTFIELD 256
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+  LABEL 'Flight Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET flt_work_dir TEXTFIELD 256
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+END # Vertical File Transfer
+HORIZONTALLINE
+LABEL "Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

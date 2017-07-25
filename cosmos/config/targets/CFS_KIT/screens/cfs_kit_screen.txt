@@ -1,0 +1,155 @@
+################################################################################
+# cFS Kit Main Screen ruby scripts
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+################################################################################
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING LABELVALUELIMITSBAR COLORBLIND TRUE
+VERTICAL
+  NAMED_WIDGET heading TITLE "cFS Starter Kit"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+  GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  TABBOOK
+    TABITEM "Home"
+      VERTICALBOX System 5
+        MATRIXBYCOLUMNS 4
+          BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFS")'
+          SETTING BACKCOLOR 0 200 0
+          LABEL "          "
+          LABEL "               Time(secs)"
+          VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
+        END
+        LABEL ""
+        MATRIXBYCOLUMNS 3
+          BUTTON 'Enable Telemetry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TO_ENA_TELEMETRY")'
+          BUTTON 'Reset Time' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TIME_SET_CLOCK_ZERO")'
+          BUTTON 'App Summary' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # Box      
+      HORIZONTALBOX cFS-Functions 5
+        MATRIXBYCOLUMNS 3
+          BUTTON 'Manage Files' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_FILES")'
+          BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_TABLES")'
+          BUTTON 'Manage Memory' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_MEMORY")'
+          BUTTON 'Manage Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_RECORDER")'
+          BUTTON 'Manage Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_AUTONOMY")'
+          BUTTON 'Manage Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APPS")'
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # BOX
+      HORIZONTALBOX Kit-Tools 5
+        MATRIXBYCOLUMNS 3
+          BUTTON 'Verify cFS Config' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "RUN_TEST_SCRIPT")'
+          BUTTON 'Run Performance Monitor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PERF_MON")'
+          BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
+          BUTTON 'Add Application' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "TODO")'
+          SETTING BACKCOLOR 128 128 128
+          BUTTON 'Manage Hardware Targets' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "TODO")'
+          SETTING BACKCOLOR 128 128 128
+          SETTING GRAY_TOLERANCE 0.1
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # BOX
+      HORIZONTALLINE
+      LABEL "Event Messages"
+      #SCROLLWINDOW
+        #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
+        #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
+        #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
+        NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50
+      #End # Scroll Window
+    END # Tab Item Getting Started
+
+    TABITEM "Demos"
+      VERTICALBOX "" 5
+        
+        # Button order to the same as the Home tab "cFS-Functions" left to right button order
+        # Play with whitespace to get buttons and text to align
+        
+        # File Management
+        HORIZONTAL 10
+          BUTTON 'Files' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "FILE_MGMT_DEMO")'
+          LABEL "Manage onboard directories/files using File Manager (FM) and transfer files"
+        END # Horizontal
+        HORIZONTAL 10
+          LABEL "   "
+          LABEL "between COSMOS and the cFS using Trivial File Transfer Protocol (TFTP).     "
+        END # Horizontal
+        
+        # Table Management
+        HORIZONTAL 10
+          BUTTON 'Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TABLE_DEMO")'
+          SETTING BACKCOLOR 128 128 128
+          LABEL "Load, dump, and display tables using the cFE Table (TBL) Service.               "
+        End # Horizontal
+
+        # Memory Management
+        HORIZONTAL 10
+          BUTTON 'Memory' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "MEMORY_DEMO")'
+          LABEL "Load, dump, and monitor memory locations using Memory Manager (MM)  "
+        End # Horizontal
+        HORIZONTAL 10
+          LABEL "   "
+          LABEL "and Memory Dwell (MD).                                                                               "
+        END # Horizontal
+
+        # Recorder Management
+        HORIZONTAL 10
+          BUTTON 'Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "RECORDER_DEMO")'
+          SETTING BACKCOLOR 128 128 128
+          LABEL "Manage onboard data recorder using Data Storage (DS).                             "
+        END # Horizontal
+
+        # Autonomy
+        HORIZONTAL 10
+          BUTTON 'Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "AUTONOMY_DEMO")'
+          LABEL "Heater Control (HC) controls heaters simulated by Heater Sim (HSIM).        "
+        END # Horizontal
+        HORIZONTAL 10
+          LABEL "   "
+          LABEL "Limit Checker (LC) monitors HSIM tlm and cmds Stored Command (SC)      "
+        END # Horizontal
+        HORIZONTAL 10
+          LABEL "   "
+          LABEL "to run stored command sequences when limits are exceeded.                    "
+        END # Horizontal
+
+        # Apps
+        HORIZONTAL 10
+          BUTTON 'Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "APP_DEMO")'
+          SETTING BACKCOLOR 128 128 128
+          LABEL "Stop, start, and load apps using the cFE Executive Services.                        "
+        END # Horizontal
+
+        # Performance Monitor 
+        HORIZONTAL 10
+          BUTTON 'PerfMon' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "PERF_MON_DEMO")'
+          LABEL "Configure & capture performance data using the cFE Executive Service      "
+        END # Horizontal
+        HORIZONTAL 10
+          LABEL "    "
+          LABEL "performance monitor. Transfer data file to COSMOS and display using the   "
+        END # Horizontal
+        HORIZONTAL 10
+          LABEL "    "
+          LABEL "performance monitor tool.                                                                             "
+        END # Horizontal
+
+        # Command Prototype 
+        #HORIZONTAL 10
+        #  BUTTON 'Proto New Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "PROTO_NEW_CMD")'
+        #  BUTTON 'Proto New Cmd' 'Cosmos.open_in_text_editor("Test")'
+        #  LABEL "                                                                             "
+        #END # Horizontal
+        LABEL ""
+        LABEL "Note debug events are enabled during demos"
+      END # Vertical Box
+    END # Tab Demos
+    SETTING BACKCOLOR 162 181 205
+  END # Tab Book
+END # Vertical

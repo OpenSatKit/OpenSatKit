@@ -1,0 +1,80 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "BM"
+  @HK_TLM_MID_STR = "BM_HK_TLM_MID"
+  
+%>  
+
+TELEMETRY BM HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "BM Housekeeping Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT        "Command Count"
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT        "Error Count"
+  APPEND_ITEM SPARE2          16 UINT        "Spare Data"
+  APPEND_ITEM BM_RUNNINGBENCHMARKS 32 UINT "Benchmarking status"
+#WRITEPARAMS
+  APPEND_ITEM BM_SB_BENCHMARKENABLE 32 UINT "Enable Software Bus Benchmark"
+  APPEND_ITEM BM_SB_ZEROCOPYENABLE 32 UINT "Software Bus Benchmark zero copy enable"
+  APPEND_ITEM BM_SB_NUMTHREADS 32 UINT "Software Bus Benchmark thread count"
+    UNITS Threads Threads
+  APPEND_ITEM BM_SB_REPETITIONS 32 UINT "Software Bus Benchmark repetitions"
+    UNITS Times Times
+  APPEND_ITEM BM_SB_NUMTESTMSGS 32 UINT "Software Bus Benchmark test messages"
+    UNITS Messages Msgs
+  APPEND_ITEM BM_SB_MESSAGEDATASIZE 32 UINT "Software Bus Benchmark message data size"
+    UNITS Bytes Bytes
+  APPEND_ITEM BM_SB_MSGTIMEOUT 32 UINT "Software Bus Benchmark message timeout"
+    UNITS Milliseconds ms
+  APPEND_ITEM BM_FS_BENCHMARKENABLE 32 UINT "Enable File System Sequential Benchmark"
+  APPEND_ITEM BM_FS_REPETITIONS 32 UINT "File System Benchmark repetitions"
+    UNITS Times Times
+  APPEND_ITEM BM_FS_SEQUENTIAL_SIZE 32 UINT "File System Benchmark sequential size"
+    UNITS Bytes Bytes
+  APPEND_ITEM BM_CPU_BENCHMARKENABLE 32 UINT "Enable CPU Benchmark"
+  APPEND_ITEM BM_CPU_DHRYSTONEREPETITIONS 32 UINT "CPU Benchmark Dhrystone repetitions"
+    UNITS Times Times
+  APPEND_ITEM BM_CPU_WHETSTONEREPETITIONS 32 UINT "CPU Benchmark Whetstone repetitions"
+    UNITS Times Times
+  APPEND_ITEM BM_SB_BESTTIME 32 FLOAT "Software Bus Benchmark best time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_SB_WORSTTIME 32 FLOAT "Software Bus Benchmark worst time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_SB_AVERAGETIME 32 FLOAT "Software Bus Benchmark average time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_SB_MESSAGESPERSECOND 32 FLOAT "Software Bus Benchmark messages per second"
+    UNITS Messages/Second Msgs/s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_BESTSEQUENTIALREADTIME 32 FLOAT "File System Benchmark best sequential read time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_WORSTSEQUENTIALREADTIME 32 FLOAT "File System Benchmark worst sequential read time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_AVERAGESEQUENTIALREADTIME 32 FLOAT "File System Benchmark average sequential read time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_BESTSEQUENTIALWRITETIME 32 FLOAT "File System Benchmark best sequential write time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_WORSTSEQUENTIALWRITETIME 32 FLOAT "File System Benchmark worst sequential write time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_AVERAGESEQUENTIALWRITETIME 32 FLOAT "File System Benchmark average sequential write time"
+    UNITS Seconds s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_SEQUENTIALREADAVERAGEMEGABYTESPERSECOND 32 FLOAT "File System Benchmark average sequential read speed"
+    UNITS Megabytes/Second MB/s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_FS_SEQUENTIALWRITEAVERAGEMEGABYTESPERSECOND 32 FLOAT "File System Benchmark average sequential write speed"
+    UNITS Megabytes/Second MB/s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_CPU_DHRYSTONESPERSECOND 32 FLOAT "CPU Benchmark Dhrystones per second"
+    UNITS Dhrystones/Second Ds/s
+    FORMAT_STRING "%f"
+  APPEND_ITEM BM_CPU_WHETSTONESPERSECOND 32 FLOAT "CPU Benchmark Whetstones per second"
+    UNITS Whetstones/Second Ws/s
+    FORMAT_STRING "%f"
+#END

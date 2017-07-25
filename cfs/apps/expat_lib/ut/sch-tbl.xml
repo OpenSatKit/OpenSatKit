@@ -1,0 +1,6 @@
+<schedule>
+   <slot id="0"  enable="true" frequency="1" msg_id="0" />
+   <slot id="10" enable="true" frequency="1" msg_id="1" />
+   <slot id="20" enable="true" frequency="2" msg_id="2" />
+   <slot id="30" enable="true" frequency="3" msg_id="3" />
+</schedule>

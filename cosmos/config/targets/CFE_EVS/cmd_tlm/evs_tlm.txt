@@ -1,0 +1,39 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR     = "CFE_EVS"
+  @HK_TLM_MID_STR     = "CFE_EVS_HK_TLM_MID"
+  @EVENT_MSG_MID_STR  = "CFE_EVS_EVENT_MSG_MID"
+  
+  #TODO - Add configuration parameters
+  
+%>
+
+TELEMETRY CFE_EVS HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Event Services Housekeeping Telemetry Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT "EVS Command Counter."
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT "EVS Command Error Counter."
+  APPEND_ITEM MESSAGEFORMATMODE 8 UINT "Event message format mode (short/long)."
+  APPEND_ITEM MESSAGETRUNCCOUNTER 8 UINT "Event message truncation counter."
+  APPEND_ITEM UNREGISTEREDAPPCOUNTER 8 UINT "Unregistered application message send counter."
+  APPEND_ITEM OUTPUTPORT 8 UINT "Output port mask."
+  APPEND_ITEM LOGFULLFLAG 8 UINT "Local event log full flag."
+  APPEND_ITEM LOGMODE 8 UINT "Local event logging mode (overwrite/discard)."
+  APPEND_ITEM MESSAGESENDCOUNTER 16 UINT "Event message send counter."
+  APPEND_ITEM LOGOVERFLOWCOUNTER 16 UINT "Local event log overflow counter."
+  APPEND_ITEM LOGENABLED 8 UINT "Current event log enable/disable state."
+  APPEND_ITEM SPARE1 8 UINT "Padding for 32 bit boundary."
+  APPEND_ITEM SPARE2 8 UINT "Padding for 32 bit boundary."
+  APPEND_ITEM SPARE3 8 UINT "Padding for 32 bit boundary."
+  APPEND_ARRAY_ITEM APPDATA 64 UINT 2048 "Array of registered application table data."
+  
+TELEMETRY CFE_EVS EVENT_MSG_PKT <%= CfsKitConfig.processor_endian %> "Event Message Telemetry Packet"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @EVENT_MSG_MID_STR) %>
+  APPEND_ITEM PACKETID_APPNAME 160 STRING "Application name. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_EVENTID 16 UINT "Numerical event identifier. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_EVENTTYPE 16 UINT "Numerical event type identifier. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_SPACECRAFTID 32 UINT "Spacecraft identifier. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_PROCESSORID 32 UINT "Numerical processor identifier. (Parent: Event packet information.)"
+  APPEND_ITEM MESSAGE 976 STRING "Event message string."
+  APPEND_ITEM SPARE1 8 UINT "Structure padding."
+  APPEND_ITEM SPARE2 8 UINT "Structure padding."

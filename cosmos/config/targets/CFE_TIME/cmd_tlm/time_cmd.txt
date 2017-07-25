@@ -1,0 +1,79 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "CFE_TIME"
+  @CMD_MID_STR    = "CFE_TIME_CMD_MID"
+  
+%>  
+
+COMMAND CFE_TIME NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND CFE_TIME RESET_CTRS <%= CfsKitConfig.processor_endian %> "This command resets the following counters within the Time Services Housekeeping Telemetry: Command Execution Counter ($sc_$cpu_TIME_CMDPC)Command Error Counter ($sc_$cpu_TIME_CMDEC) This command also resets the following counters within the Time Services Diagnostic Telemetry :Tone Signal Detected Software Bus Message Counter ($sc_$cpu_TIME_DTSDetCNT)Time at the Tone Data Software Bus Message Counter ($sc_$cpu_TIME_DTatTCNT)Tone Signal/Data Verify Counter ($sc_$cpu_TIME_DVerifyCNT)Tone Signal/Data Error Counter ($sc_$cpu_TIME_DVerifyER)Tone Signal Interrupt Counter ($sc_$cpu_TIME_DTsISRCNT)Tone Signal Interrupt Error Counter ($sc_$cpu_TIME_DTsISRERR)Tone Signal Task Counter ($sc_$cpu_TIME_DTsTaskCNT)Local 1 Hz Interrupt Counter ($sc_$cpu_TIME_D1HzISRCNT)Local 1 Hz Task Counter ($sc_$cpu_TIME_D1HzTaskCNT)Reference Time Version Counter ($sc_$cpu_TIME_DVersionCNT)"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND CFE_TIME REQUEST_DIAG <%= CfsKitConfig.processor_endian %> "This command requests that the Time Service generate a message containing various data values not included in the normal Time Service housekeeping message. The command requests only a single copy of the diagnostic message. Refer to CFE_TIME_DiagPacket_t for a description of the Time Service diagnostic message contents."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 0) %>
+
+COMMAND CFE_TIME SET_SOURCE <%= CfsKitConfig.processor_endian %> "This command selects the Time Service clock source. Although the list of potential clock sources is mission specific and defined via configuration parameters, this command provides a common method for switching between the local processor clock and an external source for time data. When commanded to accept external time data (GPS, MET, spacecraft time, etc.), the Time Server will enable input via an API function specific to the configuration definitions for the particular source. When commanded to use internal time data, the Time Server will ignore the external data. However, the Time Server will continue to use the API function as the trigger to generate a 'time at the tone' command packet regardless of the internal/external command selection. \n\nNotes: \n\tOperating in FLYWHEEL mode is not considered a choice related to clock source, but rather an element of the clock state. See below for a description of the CFE_TIME_SET_STATE_CC command.This command is only valid when the CFE_TIME_CFG_SOURCE configuration parameter in the cfe_platform_cfg.h file has been set to TRUE."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 2) %>
+  APPEND_PARAMETER TIMESOURCE 16 INT MIN_INT16 MAX_INT16 0 "CFE_TIME_USE_INTERN=Internal Source, CFE_TIME_USE_EXTERN=External Source"
+
+COMMAND CFE_TIME SET_STATE <%= CfsKitConfig.processor_endian %> "This command indirectly affects the Time Service on-board determination of clock state. Clock state is a combination of factors, most significantly whether the spacecraft time has been accurately set, and whether Time Service is operating in FLYWHEEL mode.\nThis command may be used to notify the Time Server that spacecraft time is now correct, or that time is no longer correct. This information will be distributed to Time Clients, and in turn, to any interested sub-systems.\nAlso, this command may be used to force a Time Server or Time Client into FLYWHEEL mode. Use of FLYWHEEL mode is mainly for debug purposes although in extreme circumstances, it may be of value to force Time Service not to rely on normal time updates. Note that when commanded into FLYWHEEL mode, the Time Service will remain so until receipt of another 'set state' command setting the state into a mode other than FLYWHEEL. \nNote also that setting the clock state to VALID or INVALID on a Time Client that is currently getting time updates from the Time Server will have very limited effect. As soon as the Time Client receives the next time update, the VALID/INVALID selection will be set to that of the Time Server. However, setting a Time Client to FLYWHEEL cannot be overridden by the Time Server since the Time Client will ignore time updates from the Time Server while in FLYWHEEL mode."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
+  APPEND_PARAMETER CLOCKSTATE 16 INT MIN_INT16 MAX_INT16 0 "CFE_TIME_INVALID=Spacecraft time has not been accurately set, CFE_TIME_VALID=Spacecraft clock has been accurately set, CFE_TIME_FLYWHEEL=Force into FLYWHEEL mode"
+
+COMMAND CFE_TIME ADD_CLOCK_LAT <%= CfsKitConfig.processor_endian %> "This command is used to factor out a known, predictable latency between the Time Server and a particular Time Client. The correction is applied (added) to the current time calculation for Time Clients, so this command has no meaning for Time Servers. Each Time Client can have a unique latency setting. The latency value is a positive number of seconds and microseconds that represent the deviation from the time maintained by the Time Server."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SUB_CLOCK_LAT <%= CfsKitConfig.processor_endian %> "This command is used to factor out a known, predictable latency between the Time Server and a particular Time Client. The correction is applied (subtracted) to the current time calculation for Time Clients, so this command has no meaning for Time Servers. Each Time Client can have a unique latency setting. The latency value is a positive number of seconds and microseconds that represent the deviation from the time maintained by the Time Server. \nNote that it is unimaginable that the seconds value will ever be anything but zero."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SET_CLOCK <%= CfsKitConfig.processor_endian %> "This command sets the spacecraft clock to a new value, regardless of the current setting (time jam). The new time value represents the desired offset from the mission-defined time epoch and takes effect immediately upon execution of this command. Time Service will calculate a new STCF value based on the current MET and the desired new time using one of the following: \n\nIf Time Service is configured to compute current time as TAI\n\nSTCF = (new time) - (current MET)  (current time) = (current MET) + STCF \n\nIf Time Service is configured to compute current time as UTC STCF = ((new time) - (current MET)) + (Leap Seconds)  (current time) = ((curent MET) + STCF) - (Leap Seconds) "
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SET_CLOCK_MET <%= CfsKitConfig.processor_endian %> "This command sets the Mission Elapsed Timer (MET) to the specified value. Note that the MET (as implemented for cFE Time Service) is a logical representation and not a physical timer. Thus, setting the MET is not dependent on whether the hardware supports a MET register that can be written to. Note also that Time Service 'assumes' that during normal operation, the MET is synchronized to the tone signal. Therefore, unless operating in FLYWHEEL mode, the sub-seconds portion of the MET will be set to zero at the next tone signal interrupt. The new MET takes effect immediately upon execution of this command."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SET_CLOCK_STCF <%= CfsKitConfig.processor_endian %> "This command sets the Spacecraft Time Correlation Factor (STCF) to the specified value. This command differs from the previously described SET CLOCK in the nature of the command argument. This command sets the STCF value directly, rather than extracting the STCF from a value representing the total of MET, STCF and optionally, Leap Seconds. The new STCF takes effect immediately upon execution of this command."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+  
+COMMAND CFE_TIME SET_CLOCK_LEAP <%= CfsKitConfig.processor_endian %> "This command sets the spacecraft Leap Seconds to the specified value. Leap Seconds may be positive or negative, and there is no limit to the value except, of course, the limit imposed by the 16 bit signed integer data type. The new Leap Seconds value takes effect immediately upon execution of this command."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME ADD_STCF_ADJ <%= CfsKitConfig.processor_endian %> "This command adjusts the Spacecraft Time Correlation Factor (STCF) by adding the specified value. The new STCF takes effect immediately upon execution of this command."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SUB_STCF_ADJ <%= CfsKitConfig.processor_endian %> "This command adjusts the Spacecraft Time Correlation Factor (STCF) by subtracting the specified value. The new STCF takes effect immediately upon execution of this command."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER MICROSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME ADD_1HZ_STCF_ADJ <%= CfsKitConfig.processor_endian %> "This command has been updated to take actual sub-seconds (1/2^32 seconds) rather than micro-seconds as an input argument. This change occurred after the determination was made that one micro-second is too large an increment for a constant 1Hz adjustment. This command continuously adjusts the Spacecraft Time Correlation Factor (STCF) every second, by adding the specified value. The adjustment to the STCF is applied in the Time Service local 1Hz interrupt handler. As the local 1Hz interrupt is not synchronized to the tone signal, one cannot say when the adjustment will occur, other than once a second, at about the same time relative to the tone. There was some debate about whether the maximum 1Hz clock drift correction factor would ever need to exceed some small fraction of a second. But, the decision was made to provide the capability to make 1Hz adjustments greater than one second and leave it to the ground system to provide mission specific limits."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER SUBSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SUB_1HZ_STCF_ADJ <%= CfsKitConfig.processor_endian %> "This command has been updated to take actual sub-seconds (1/2^32 seconds) rather than micro-seconds as an input argument. This change occurred after the determination was made that one micro-second is too large an increment for a constant 1Hz adjustment. This command continuously adjusts the Spacecraft Time Correlation Factor (STCF) every second, by subtracting the specified value. The adjustment to the STCF is applied in the Time Service local 1Hz interrupt handler. As the local 1Hz interrupt is not synchronized to the tone signal, one cannot say when the adjustment will occur, other than once a second, at about the same time relative to the tone. There was some debate about whether the maximum 1Hz clock drift correction factor would to ever need exceed some small fraction of a second. But, the decision was made to provide the capability to make 1Hz adjustments greater than one second and leave it to the ground system to provide mission specific limits."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 8) %>
+  APPEND_PARAMETER SECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 ""
+  APPEND_PARAMETER SUBSECONDS 32 UINT MIN_UINT32 MAX_UINT32 0 " "
+
+COMMAND CFE_TIME SET_SIGNAL <%= CfsKitConfig.processor_endian %> "This command selects the Time Service tone signal source. Although the list of potential tone signal sources is mission specific, a common choice is the selection of primary or redundant tone signal. The selection may be available to both the Time Server and Time Clients, depending on hardware configuration. \nNotes:\n\tThis command is only valid when the CFE_TIME_CFG_SIGNAL configuration parameter in the cfe_platform_cfg.h file has been set to TRUE."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 2) %>
+  APPEND_PARAMETER TONESOURCE 16 INT MIN_INT16 MAX_INT16 0 "CFE_TIME_TONE_PRI=Primary Source, CFE_TIME_TONE_RED=Redundant Source"
+

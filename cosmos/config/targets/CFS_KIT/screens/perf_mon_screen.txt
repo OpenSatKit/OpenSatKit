@@ -1,0 +1,70 @@
+###############################################################################
+# Performance Monitor Screen
+#
+# Notes:
+#   1. Written by David McComas, licensed under the copyleft GNU
+#      General Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Performance Monitor"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+HORIZONTALBOX "Commands"
+  MATRIXBYCOLUMNS 2
+    BUTTON 'Set Filter Mask' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "SET_FILTER_MASK")'
+    BUTTON 'Set Trigger Mask' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "SET_TRIGGER_MASK")'
+    BUTTON 'Start Data Collect' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "START_DATA_COLLECT")'
+    BUTTON 'Stop Data Collect' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "STOP_DATA_COLLECT")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "GET_FILE")'
+    BUTTON 'Launch Analysis Tool' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_launch_app(self, "PERF_MONITOR_TOOL")'
+    LABEL ""
+  END # Matrix
+END # Box      
+  
+HORIZONTALBOX "Status" 5
+  MATRIXBYCOLUMNS 6
+  LABEL "State" 
+  VALUE CFE_ES HK_TLM_PKT PERFSTATE WITH_UNITS 8
+  LABEL "Mode"
+  VALUE CFE_ES HK_TLM_PKT PERFMODE WITH_UNITS 8
+  LABEL "Trigger Count"
+  VALUE CFE_ES HK_TLM_PKT PERFTRIGGERCOUNT WITH_UNITS 8
+  END # Matrix
+END # Box      
+
+HORIZONTALBOX "Masks" 4
+  MATRIXBYCOLUMNS 5
+    LABEL "Filter "
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK3 %08X CONVERTED 8
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK2 %08X CONVERTED 8
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK1 %08X CONVERTED 8
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK0 %08X CONVERTED 8
+    LABEL "Trigger"
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK3 %08X CONVERTED 8
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK2 %08X CONVERTED 8
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK1 %08X CONVERTED 8
+    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK0 %08X CONVERTED 8
+  END # Matrix
+END # Box
+
+HORIZONTALBOX "Log Stats" 4
+  MATRIXBYCOLUMNS 4
+    LABEL "Start"
+    VALUE CFE_ES HK_TLM_PKT PERFDATASTART
+    LABEL "                       End"
+    VALUE CFE_ES HK_TLM_PKT PERFDATAEND
+    LABEL "Count"
+    VALUE CFE_ES HK_TLM_PKT PERFDATACOUNT
+    LABEL "Remaining to Write"
+    VALUE CFE_ES HK_TLM_PKT PERFDATATOWRITE
+  END # Matrix
+END # Box
+
+HORIZONTALLINE
+LABEL "Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

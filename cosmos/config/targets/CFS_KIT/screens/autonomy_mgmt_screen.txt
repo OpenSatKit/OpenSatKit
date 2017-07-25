@@ -1,0 +1,88 @@
+###############################################################################
+# Autonomy Management Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Autonomy Management"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+HORIZONTALBOX "Relative Time Sequence(RTS) Stored Commands"
+  MATRIXBYCOLUMNS 4
+    BUTTON 'Start RTS'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "START_RTS")'
+    BUTTON 'Stop RTS'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "STOP_RTS")'
+    BUTTON 'Enable RTS'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "ENABLE_RTS")'
+    BUTTON 'Disable RTS'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "DISABLE_RTS")'
+    BUTTON 'Start Group'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "START_GROUP")'
+    BUTTON 'Stop Group'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "STOP_GROUP")'
+    BUTTON 'Enable Group'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "ENABLE_GROUP")'
+    BUTTON 'Disable Group' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "DISABLE_GROUP")'
+    LABEL "Cmd Valid Cnt"
+    VALUE SC HK_TLM_PKT CMD_VALID_COUNT
+    LABEL "Cmd Error Cnt"
+    VALUE SC HK_TLM_PKT CMD_ERROR_COUNT
+  END # Matrix
+END # Box      
+
+VERTICALBOX "RTS Status" 4
+  
+  MATRIXBYCOLUMNS 7
+
+    LABEL "     RTS"
+    LABEL "  64 .. 49"
+    LABEL "  48 .. 33"
+    LABEL "  32 .. 17"
+    LABEL "  16 .. 1"
+    LABEL "  Start Cnt"
+    FORMATVALUE SC HK_TLM_PKT NUM_RTS_ACTIVE %04u FORMATTED 8
+
+    LABEL "EXECUTING"
+    FORMATVALUE SC HK_TLM_PKT RTS_W4_EXE_STATUS %04X FORMATTED 6
+    FORMATVALUE SC HK_TLM_PKT RTS_W3_EXE_STATUS %04X FORMATTED 6
+    FORMATVALUE SC HK_TLM_PKT RTS_W2_EXE_STATUS %04X FORMATTED 6
+    FORMATVALUE SC HK_TLM_PKT RTS_W1_EXE_STATUS %04X FORMATTED 6
+    LABEL "  Start Err Cnt"
+    FORMATVALUE SC HK_TLM_PKT RTS_ACTIVE_ERR_CTR %04u FORMATTED 8
+  
+    LABEL "DISABLED"
+    FORMATVALUE SC HK_TLM_PKT RTS_W4_DIS_STATUS %04X FORMATTED 6
+    FORMATVALUE SC HK_TLM_PKT RTS_W3_DIS_STATUS %04X FORMATTED 6
+    FORMATVALUE SC HK_TLM_PKT RTS_W2_DIS_STATUS %04X FORMATTED 6
+    FORMATVALUE SC HK_TLM_PKT RTS_W1_DIS_STATUS %04X FORMATTED 6
+    LABEL "  Next Time"
+    FORMATVALUE SC HK_TLM_PKT NEXT_RTS_TIME %08x FORMATTED 8
+
+  END # Matrix
+ 
+  HORIZONTALLINE
+  
+  MATRIXBYCOLUMNS 6
+ 
+    LABEL " Active Cnt"
+    FORMATVALUE SC HK_TLM_PKT NUM_RTS_ACTIVE %04u FORMATTED 6
+    LABEL " Next RTS Num"
+    FORMATVALUE SC HK_TLM_PKT RTS_NUMBER %04u FORMATTED 6
+    LABEL " RTS CMD Cnt"
+    FORMATVALUE SC HK_TLM_PKT RTS_CMD_CTR %06u FORMATTED 6
+    
+    LABEL " CMD Err Cnt"
+    FORMATVALUE SC HK_TLM_PKT RTS_CMD_ERR_CTR %04u FORMATTED 6
+    LABEL " Err RTS#"
+    FORMATVALUE SC HK_TLM_PKT LAST_RTS_ERR_SEQ %04u FORMATTED 6
+    LABEL " Err RTS Offset"
+    FORMATVALUE SC HK_TLM_PKT LAST_RTS_ERR_CMD %04u FORMATTED 6
+
+
+  END # Matrix
+END # Box
+
+HORIZONTALLINE
+LABEL "Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

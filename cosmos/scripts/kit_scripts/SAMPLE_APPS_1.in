@@ -1,0 +1,22 @@
+#========================================================================================
+# File:    SAMPLE_APPS_1.in
+# Author:  Tam Ngo
+# Date:    2012-02-22
+# Desc:    This file contains keys that are used to auto-generate code template for a
+#          CFS application.
+# Modification History:
+#   Date | Author | Description
+#   ---------------------------
+#   06/29/16 | Jose F Martinez | Modified to be used to generate cosmos config files
+#========================================================================================
+
+# Output directory, no spaces or environment variables in path
+OUTDIR  .
+
+# List of application names, separated by spaces
+APPS  foo bar
+
+#========================================================================================
+# End of file - SAMPLE_APPS_1.in 
+#========================================================================================
+

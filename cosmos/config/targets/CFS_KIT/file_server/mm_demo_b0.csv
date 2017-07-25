@@ -1,0 +1,30 @@
+File Definition, /vagrant/cosmos/config/targets/CFS_KIT/file_server/mm_dump.txt
+File Binary, /vagrant/cosmos/config/targets/CFS_KIT/file_server/mm_demo_b0.dat
+
+MM MEMORY DUMP
+Label, Value
+CONTENT TYPE, cFE1, 
+SUBTYPE, 1296913236, 
+LENGTH, 64, 
+SPACECRAFT ID, 42, 
+PROCESSOR ID, 1, 
+APPLICATION ID, 11, 
+TIME SECONDS, 1001613, 
+TIME SUBSECONDS, 2542235648, 
+DESCRIPTION, Memory Manager dump file, 
+OFFSET, 4147311428, 
+SYMBOL NAME, , 
+NUMBER OF BYTES, 8, 
+CRC, 1714, 
+MEMORY TYPE, 1, 
+SPARE_8, 0, 
+SPARE_16, 0, 
+DATA BYTE 0, 176, 
+DATA BYTE 1, 176, 
+DATA BYTE 2, 176, 
+DATA BYTE 3, 176, 
+DATA BYTE 4, 176, 
+DATA BYTE 5, 176, 
+DATA BYTE 6, 176, 
+DATA BYTE 7, 176, 
+

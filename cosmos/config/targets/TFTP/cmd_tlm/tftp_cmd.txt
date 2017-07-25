@@ -1,0 +1,25 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "TFTP"
+  @CMD_MID_STR     = "TFTP_CMD_MID"
+  
+%>  
+
+COMMAND TFTP NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND TFTP RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset Counters and application to a default state"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+  
+COMMAND TFTP GET_FILE <%= CfsKitConfig.processor_endian %> "Get a file from the FSW"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 130) %>
+  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 6969
+  APPEND_PARAMETER SOURCE_FILE 512 STRING "/cf/tftp-get-test1.txt"  
+  APPEND_PARAMETER DEST_FILE   512 STRING "tftp-get-test1.txt"
+
+COMMAND TFTP PUT_FILE <%= CfsKitConfig.processor_endian %> "Put a file to the FSW"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 130) %>
+  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 6969
+  APPEND_PARAMETER SOURCE_FILE 512 STRING "tftp-put-test1.txt"  
+  APPEND_PARAMETER DEST_FILE   512 STRING "/cf/tftp-put-test1.txt"

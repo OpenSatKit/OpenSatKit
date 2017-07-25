@@ -1,0 +1,96 @@
+###############################################################################
+# Table Management Screen
+#
+# Notes:
+#   1. Written by David McComas, licensed under the copyleft GNU
+#      General Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Table Management"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX "Table Management"
+  MATRIXBYCOLUMNS 3
+    BUTTON 'Load Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "LOAD_TABLE")'
+    BUTTON 'Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "VALIDATE")'
+    BUTTON 'Activate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "ACTIVATE")'
+    BUTTON 'Abort Load' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "ABORT_TABLE_LOAD")'
+    BUTTON 'Dump Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "DUMP_TABLE")'
+    BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "DISPLAY_TABLE")'
+  END # Matrix
+END # Vertical Table Management
+
+HORIZONTAL
+  
+  VERTICAL
+
+    VERTICALBOX "Table Registry"
+      MATRIXBYCOLUMNS 2
+      BUTTON 'Display Registry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "DISPLAY_ONE_REGISTRY")'
+      BUTTON 'Write Registry to File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "WRITE_REGISTRY_TO_FILE")'
+      END # Matrix
+    End # Vertical Box
+    VERTICALBOX "Table Manager Housekeeping"
+      MATRIXBYCOLUMNS 2
+      LABEL "Cmd Valid Cnt"
+      VALUE CFE_TBL HK_TLM_PKT CMD_VALID_COUNT
+      LABEL "Cmd Error Cnt"
+      VALUE CFE_TBL HK_TLM_PKT CMD_ERROR_COUNT
+      LABEL "Last Updated Table"
+      VALUE CFE_TBL HK_TLM_PKT LASTUPDATEDTBL
+      LABEL "Last File Loaded"
+      VALUE CFE_TBL HK_TLM_PKT LASTFILELOADED
+      LABEL "Last File Dumped"
+      VALUE CFE_TBL HK_TLM_PKT LASTFILEDUMPED
+      LABEL "Last Table Loaded"
+      VALUE CFE_TBL HK_TLM_PKT LASTTABLELOADED
+      END # Matrix
+    End # HK Vertical Box
+    
+  END # Vertical Left
+  
+  VERTICALBOX "Table Registry Listing"
+    
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT NAME
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT SIZE
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT CRITICAL
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT TABLELOADEDONCE
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT LOADPENDING
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT DUMPONLY
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT DBLBUFFERED
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT TIMEOFLASTUPDATE_SECONDS
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT FILECREATETIMESECS
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT LASTFILELOADED
+    LABELVALUE CFE_TBL TBL_REGISTRY_PKT OWNERAPPNAME
+   
+  End # Vertical Right
+
+END # Horizontal
+ 
+VERTICALBOX "File Transfer"
+  MATRIXBYCOLUMNS 2
+    # Use table_mgmt because table file needs to be manipulated after transferred
+    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_set_work_dir(self); file_mgmt_send_cmd(self, "PUT_FILE")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; file_mgmt_set_work_dir(self); table_mgmt_send_cmd(self, "GET_FILE")'
+    LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
+    LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
+  END # Matrix
+  LABEL 'Ground Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET gnd_work_dir TEXTFIELD 256
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+  LABEL 'Flight Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET flt_work_dir TEXTFIELD 256
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+END # Vertical File Transfer
+HORIZONTALLINE
+LABEL "Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 600 50

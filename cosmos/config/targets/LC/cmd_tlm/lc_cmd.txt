@@ -1,0 +1,38 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "LC"
+  @CMD_MID_STR     = "LC_CMD_MID"
+  
+%>  
+
+COMMAND LC NOOP <%= CfsKitConfig.processor_endian %> "Implements the Noop command that insures the LC task is alive"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND LC RESET_CTRS <%= CfsKitConfig.processor_endian %> "Resets the LC housekeeping counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND LC SET_LC_STATE <%= CfsKitConfig.processor_endian %> "Sets the operational state of the LC application"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 4) %>
+  APPEND_PARAMETER NEWLCSTATE 16 UINT MIN_UINT16 MAX_UINT16 0 "New LC application state."
+  APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding."
+
+COMMAND LC SET_AP_STATE <%= CfsKitConfig.processor_endian %> "Set actionpoint state"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 4) %>
+  APPEND_PARAMETER APNUMBER 16 UINT MIN_UINT16 MAX_UINT16 0 "Which actionpoint(s) to change."
+  APPEND_PARAMETER NEWAPSTATE 16 UINT MIN_UINT16 MAX_UINT16 0 "New actionpoint state."
+
+COMMAND LC SET_AP_PERM_OFF <%= CfsKitConfig.processor_endian %> "Set the specified actionpoint's state to LC_APSTATE_PERMOFF"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 4) %>
+  APPEND_PARAMETER APNUMBER 16 UINT MIN_UINT16 MAX_UINT16 0 "Which actionpoint to change."
+  APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding."
+
+COMMAND LC RESET_AP_STATS <%= CfsKitConfig.processor_endian %> "Resets actionpoint statistics"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 4) %>
+  APPEND_PARAMETER APNUMBER 16 UINT MIN_UINT16 MAX_UINT16 0 "Which actionpoint(s) to change."
+  APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding."
+
+COMMAND LC RESET_WP_STATS <%= CfsKitConfig.processor_endian %> "Resets watchpoint statistics"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
+  APPEND_PARAMETER WPNUMBER 16 UINT MIN_UINT16 MAX_UINT16 0 "Which watchpoint(s) to change."
+  APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding."

@@ -1,0 +1,126 @@
+/*
+** $Id: $
+**
+** Title: CFS Simulator (SIM) Application Command and Telemetry
+**        Packet Header File
+**
+** Purpose: Specification for the CFS SIM command and telemetry messages.
+**
+** Author: Lindsay A. Walton, Summer 2015 Intern for Code 582 NASA GSFC
+**
+** Notes:
+**
+** References:
+**    Flight Software Branch C Coding Standard Version 1.0a
+**
+** $Log: $
+*/
+
+#ifndef _sim_msg_h_
+#define _sim_msg_h_
+
+#include "cfe.h"
+#include "sim_platform_cfg.h"
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM -- command packet structures                                */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
+**  \brief Housekeeping Request command packet structure
+*/
+typedef struct
+{
+    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB cmd hdr */
+
+} SIM_HousekeepingCmd_t;
+
+
+/*
+**  \brief No-Operation command packet structure
+**
+**  For command details see #SIM_NOOP_CC
+*/
+typedef struct
+{
+    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB cmd hdr */
+
+} SIM_NoopCmd_t;
+
+
+/*
+**  \brief Reset Counters command packet structure
+**
+**  For command details see #SIM_RESET_CC
+*/
+typedef struct
+{
+    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB cmd hdr */
+
+} SIM_ResetCmd_t;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM -- housekeeping telemetry structure                         */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/**
+** \simtlm Housekeeping telemetry packet
+**/
+typedef struct
+{
+    uint8   TlmHeader[CFE_SB_TLM_HDR_SIZE]; /**< \brief cFE SB tlm hdr */
+
+    uint8   CommandCounter;		    /**< \simtlmmnemonic \SIM_CMDPC
+                                                 \brief Application command counter */
+    uint8   CommandErrCounter;	            /**< \simtlmmnemonic \SIM_CMDEC
+                                                 \brief Application command error counter */
+
+    /* These uint8's are only to show the status of the heaters in the GUI */
+    /* These can be taken out if not using the GUI (make sure to remove if statements
+           from SIM_ReceiveCmd() if you remove these)*/
+    uint8   Heater0;                        /**< \brief Current status of heater 0 */
+                                            
+    uint8   Heater1;                        /**< \brief Current status of heater 1 */
+                                            
+    uint8   Heater2;                        /**< \brief Current status of heater 2 */
+                                            
+} SIM_HousekeepingPkt_t;
+
+
+/**
+** \simtlm Heater Control telemetry packet
+**/
+typedef struct
+{
+    uint8   TlmHeader[CFE_SB_TLM_HDR_SIZE]; /**< \brief cFE SB tlm hdr */
+
+    boolean StaleFlag;                      /**< \brief Stale data flag */
+
+    uint8   Temps[SIM_NUM_THERMS];          /**< \brief Array of temperature data */
+
+} SIM_HeaterControlPkt_t;
+
+
+/**
+** Command from Heater Control packet
+**/
+typedef struct
+{
+    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB tlm hdr */
+
+    uint8   Heater;                         /**< \brief Heater to be controlled */
+
+    boolean TurnOn;                         /**< \brief Turn on or off */ 
+ 
+} SIM_CmdPkt_t;
+
+#endif /* _sim_msg_h_ */
+
+/************************/
+/*  End of File Comment */
+/************************/

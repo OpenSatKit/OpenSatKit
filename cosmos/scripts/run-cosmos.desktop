@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=Cosmos
+Icon=/vagrant/cosmos/scripts/icon.png
+Exec=/vagrant/cosmos/scripts/run-cosmos.sh

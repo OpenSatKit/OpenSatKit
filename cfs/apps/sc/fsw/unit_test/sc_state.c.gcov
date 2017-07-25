@@ -1,0 +1,407 @@
+        -:    0:Source:../src/sc_state.c
+        -:    0:Programs:7
+        -:    1: /*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: sc_state.c.gcov 1.3 2016/10/15 16:18:20EDT mdeschu Exp  $
+        -:    4: **
+        -:    5: **  Copyright © 2007-2014 United States Government as represented by the 
+        -:    6: **  Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **  All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **  This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **  used, distributed and modified only pursuant to the terms of that 
+        -:   12: **  agreement. 
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   This file contains functions to handle getting the next time of
+        -:   16: **   commands for the ATP and RTP  as well as updating the time for
+        -:   17: **   Stored Command.
+        -:   18: **
+        -:   19: ** References:
+        -:   20: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   21: **   CFS Development Standards Document
+        -:   22: ** Notes:
+        -:   23: **
+        -:   24: **   $Log: sc_state.c.gcov  $
+        -:   24: **   Revision 1.3 2016/10/15 16:18:20EDT mdeschu 
+        -:   24: **   Update gcov files with results from SC 2.5.0 unit testing.
+        -:   25: **   Revision 1.2 2015/10/08 15:21:06EDT sstrege 
+        -:   26: **   Restoration from MKS 2009 Trunk
+        -:   27: **   Revision 1.10 2015/03/02 12:59:13EST sstrege 
+        -:   28: **   Added copyright information
+        -:   29: **   Revision 1.9 2014/06/06 11:37:59EDT sjudy 
+        -:   30: **   Changed event msgs to have 'RTS' or 'ATS' instead of "Real Time Sequence", etc.
+        -:   31: **   Revision 1.8 2010/09/28 06:33:10GMT-08:00 lwalling 
+        -:   32: **   Update list of included header files
+        -:   33: **   Revision 1.7 2010/05/18 15:30:39EDT lwalling 
+        -:   34: **   Change AtsId/RtsId to AtsIndex/RtsIndex or AtsNumber/RtsNumber
+        -:   35: **   Revision 1.6 2010/05/18 14:13:12EDT lwalling 
+        -:   36: **   Change AtsCmdIndexBuffer contents from entry pointer to entry index
+        -:   37: **   Revision 1.5 2010/03/26 18:03:32EDT lwalling 
+        -:   38: **   Remove pad from ATS and RTS structures, change 32 bit ATS time to two 16 bit values
+        -:   39: **   Revision 1.4 2010/03/26 11:28:07EDT lwalling 
+        -:   40: **   Fixed packet length calculation to support odd byte length ATS and RTS commands
+        -:   41: **   Revision 1.3 2009/01/26 14:47:15EST nyanchik 
+        -:   42: **   Check in of Unit test
+        -:   43: **   Revision 1.2 2009/01/05 08:26:57EST nyanchik 
+        -:   44: **   Check in after code review changes
+        -:   45: *************************************************************************/
+        -:   46:
+        -:   47:/**************************************************************************
+        -:   48: **
+        -:   49: ** Include section
+        -:   50: **
+        -:   51: **************************************************************************/
+        -:   52:
+        -:   53:#include "cfe.h"
+        -:   54:#include "sc_app.h"
+        -:   55:#include "sc_atsrq.h"
+        -:   56:#include "sc_rtsrq.h"
+        -:   57:#include "sc_state.h"
+        -:   58:#include "sc_utils.h"
+        -:   59:#include "sc_events.h"
+        -:   60:#include "sc_msgdefs.h"
+        -:   61:#include "sc_tbldefs.h"
+        -:   62:
+        -:   63:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   64:/*                                                                 */
+        -:   65:/*  Gets the time of the next RTS command                          */
+        -:   66:/*                                                                 */
+        -:   67:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        9:   68:void SC_GetNextRtsTime (void)
+        -:   69:{
+        -:   70:    
+        -:   71:    int16               i;          /* loop counter MUST be SIGNED !*/
+        -:   72:    uint16              NextRts;    /* the next rts to schedule */
+        -:   73:    SC_AbsTimeTag_t     NextTime;   /* the next time for the RTS */
+        -:   74:
+        9:   75:    NextRts = 0xFFFF;
+        9:   76:    NextTime = SC_MAX_TIME;
+        -:   77:        
+        -:   78:    /*
+        -:   79:     ** Go through the table backwards to account for the RTS priority 
+        -:   80:     ** Lower number RTS's get higher priority
+        -:   81:     */
+       54:   82:    for (i = SC_NUMBER_OF_RTS - 1; i >= 0; i--)
+        -:   83:    {
+       45:   84:        if (SC_OperData.RtsInfoTblAddr[i].RtsStatus == SC_EXECUTING)
+        -:   85:        {   
+        2:   86:            if (SC_OperData.RtsInfoTblAddr[i].NextCommandTime <= NextTime)
+        -:   87:            {       
+        2:   88:                NextTime = SC_OperData.RtsInfoTblAddr[i].NextCommandTime;
+        2:   89:                NextRts = i;   
+        -:   90:            } /* end if */ 
+        -:   91:        } /* end if */ 
+        -:   92:    } /* end for */
+        -:   93:    
+        9:   94:    if (NextRts == 0xFFFF)
+        -:   95:    {
+        7:   96:        SC_OperData.RtsCtrlBlckAddr -> RtsNumber = SC_INVALID_RTS_NUMBER;
+        7:   97:        SC_AppData.NextCmdTime[SC_RTP] = SC_MAX_TIME;
+        -:   98:    }
+        -:   99:    else
+        -:  100:    {
+        2:  101:        SC_OperData.RtsCtrlBlckAddr -> RtsNumber = NextRts + 1;
+        2:  102:        SC_AppData.NextCmdTime[SC_RTP] = NextTime;
+        -:  103:    } /* end if */
+        -:  104:    
+        -:  105:    
+        9:  106:} /* end SC_GetNextRtsTime */
+        -:  107:
+        -:  108:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  109:/*                                                                 */
+        -:  110:/* Decides whether an RTS or ATS command gets scheduled next       */
+        -:  111:/*                                                                 */
+        -:  112:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        7:  113:void SC_UpdateNextTime (void)
+        -:  114:{
+        -:  115:    /*
+        -:  116:     ** First, find out which RTS needs to run next
+        -:  117:     */
+        7:  118:    SC_GetNextRtsTime();
+        -:  119:    
+        -:  120:    /*
+        -:  121:     ** Start out with a default, no processors need to run next
+        -:  122:     */
+        7:  123:    SC_AppData.NextProcNumber = SC_NONE;
+        -:  124:    
+        -:  125:    
+        -:  126:    /*
+        -:  127:     ** Check to see if the ATP needs to schedule commands
+        -:  128:     */
+        7:  129:    if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_EXECUTING)
+        -:  130:    {
+        3:  131:        SC_AppData.NextProcNumber = SC_ATP;
+        -:  132:    }
+        -:  133:    /*
+        -:  134:     ** Last, check to see if there is an RTS that needs to schedule commands
+        -:  135:     ** This is determined by the RTS number in the RTP control block
+        -:  136:     ** If it is zero, there is no RTS that needs to run
+        -:  137:     */
+        8:  138:    if (SC_OperData.RtsCtrlBlckAddr -> RtsNumber > 0 &&
+        1:  139:        SC_OperData.RtsCtrlBlckAddr -> RtsNumber <= SC_NUMBER_OF_RTS)
+        -:  140:    { 
+        -:  141:        /*
+        -:  142:         ** If the RTP needs to send commands, only send them if
+        -:  143:         ** the RTP time is less than the ATP time. Otherwise
+        -:  144:         ** the ATP has priority
+        -:  145:         */
+        1:  146:        if (SC_AppData.NextCmdTime[SC_RTP] < SC_AppData.NextCmdTime[SC_ATP])
+        -:  147:        {
+        1:  148:            SC_AppData.NextProcNumber = SC_RTP;
+        -:  149:        }       
+        -:  150:    } /* end if */
+        7:  151:} /* end SC_UpdateNextTime */
+        -:  152:
+        -:  153:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  154:/*                                                                 */
+        -:  155:/* Gets the next RTS Command                                       */
+        -:  156:/*                                                                 */
+        -:  157:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  158:void SC_GetNextRtsCommand(void)
+        -:  159:{ 
+        -:  160:    uint16                      RtsNum;
+        -:  161:    uint16                      CmdOffset;
+        -:  162:    CFE_SB_MsgPtr_t             CmdPtr;
+        -:  163:    SC_RtsEntryHeader_t        *RtsEntryPtr;
+        -:  164:    uint16                      CmdLength;
+        -:  165:       
+        -:  166:    /*
+        -:  167:     ** Make sure that the RTP is executing some RTS
+        -:  168:     */
+        -:  169:     
+       12:  170:    if ((SC_OperData.RtsCtrlBlckAddr -> RtsNumber > 0) &&
+        6:  171:         (SC_OperData.RtsCtrlBlckAddr -> RtsNumber <= SC_NUMBER_OF_RTS))
+        -:  172:    {
+        -:  173:        /* Get the number of the rts that is running */
+        6:  174:        RtsNum = SC_OperData.RtsCtrlBlckAddr -> RtsNumber - 1;
+        -:  175:        /*
+        -:  176:         ** Find out if the RTS is EXECUTING or just STARTED
+        -:  177:         */
+        6:  178:        if (SC_OperData.RtsInfoTblAddr[RtsNum].RtsStatus == SC_EXECUTING)
+        -:  179:        {
+        -:  180:            /*
+        -:  181:             ** Get the information needed to find the next command
+        -:  182:             */
+        6:  183:            CmdOffset = SC_OperData.RtsInfoTblAddr[RtsNum].NextCommandPtr;
+        -:  184:                 
+        -:  185:            
+        6:  186:            RtsEntryPtr = (SC_RtsEntryHeader_t *) &SC_OperData.RtsTblAddr[RtsNum][CmdOffset];
+        6:  187:            CmdPtr = (CFE_SB_MsgPtr_t) RtsEntryPtr->CmdHeader;
+        -:  188:            
+        6:  189:            CmdLength = CFE_SB_GetTotalMsgLength(CmdPtr) + SC_RTS_HEADER_SIZE;
+        -:  190:         
+        -:  191:            
+        -:  192:            /*
+        -:  193:             ** calculate the new command offset and new command length
+        -:  194:             ** Cmd Length is in bytes, so we convert it to words
+        -:  195:             ** (plus 1 to round byte len up to word len)
+        -:  196:             */
+        6:  197:            CmdOffset = CmdOffset + ((CmdLength + 1) / SC_BYTES_IN_WORD);
+        -:  198:
+        -:  199:            /*
+        -:  200:             ** if the end of the buffer is not reached.
+        -:  201:             ** This check is made to make sure that at least the minimum
+        -:  202:             ** Sized packet fits in the buffer. It assures we are not reading
+        -:  203:             ** bogus length info from other data.
+        -:  204:             */
+        -:  205:
+        -:  206:            /* If at least the header for a command plus the RTS header can fit in the buffer */
+        6:  207:            if (CmdOffset <  (SC_RTS_BUFF_SIZE - (sizeof(SC_RtsEntryHeader_t) / SC_BYTES_IN_WORD)))
+        -:  208:            {
+        -:  209:                /*
+        -:  210:                 ** Get a pointer to the next RTS command
+        -:  211:                 */
+        5:  212:                RtsEntryPtr = (SC_RtsEntryHeader_t *) &SC_OperData.RtsTblAddr[RtsNum][CmdOffset];
+        5:  213:                CmdPtr = (CFE_SB_MsgPtr_t) RtsEntryPtr->CmdHeader;
+        -:  214:                
+        -:  215:                /*
+        -:  216:                 ** get the length of the new command
+        -:  217:                 */
+        5:  218:                CmdLength = CFE_SB_GetTotalMsgLength(CmdPtr) + SC_RTS_HEADER_SIZE;
+        -:  219:
+        -:  220:                /*
+        -:  221:                 ** Check to see if the command length is less than the size of a header.
+        -:  222:                 ** This indicates that there are no more commands
+        -:  223:                 */
+        -:  224:                
+        5:  225:                if ((CmdLength - SC_RTS_HEADER_SIZE) >= (SC_PACKET_MIN_SIZE))
+        -:  226:                {
+        -:  227:                    /*
+        -:  228:                     ** Check to see if the command length is too big
+        -:  229:                     ** If it is , then there is an error with the command
+        -:  230:                     */
+        4:  231:                    if ((CmdLength - SC_RTS_HEADER_SIZE) <= SC_PACKET_MAX_SIZE )
+        -:  232:                    { 
+        -:  233:                        /*
+        -:  234:                         ** Last Check is to check to see if the command
+        -:  235:                         ** runs off of the end of the buffer
+        -:  236:                         ** (plus 1 to round byte len up to word len)
+        -:  237:                         */
+        3:  238:                        if (CmdOffset + ((CmdLength + 1) / SC_BYTES_IN_WORD) <= SC_RTS_BUFF_SIZE)
+        -:  239:                        {
+        -:  240:                            /*
+        -:  241:                             ** Everything passed!
+        -:  242:                             ** Update the proper next command time for that RTS
+        -:  243:                             */
+        4:  244:                            SC_OperData.RtsInfoTblAddr[RtsNum].NextCommandTime = 
+        2:  245:                            SC_ComputeAbsTime(RtsEntryPtr->TimeTag);
+        -:  246:                            
+        -:  247:                            /*
+        -:  248:                             ** Update the appropriate RTS info table current command pointer
+        -:  249:                             */
+        2:  250:                            SC_OperData.RtsInfoTblAddr[RtsNum].NextCommandPtr = CmdOffset;
+        -:  251:                            
+        -:  252:                        }
+        -:  253:                        else
+        -:  254:                        { /* the command runs past the end of the buffer */
+        -:  255:                            
+        -:  256:                            /*
+        -:  257:                             ** Having a command that runs off of the end of the buffer
+        -:  258:                             ** is an error condition, so record it
+        -:  259:                             */
+        1:  260:                            SC_AppData.RtsCmdErrCtr++;
+        1:  261:                            SC_OperData.RtsInfoTblAddr[RtsNum].CmdErrCtr++;
+        1:  262:                            SC_AppData.LastRtsErrSeq = SC_OperData.RtsCtrlBlckAddr -> RtsNumber;
+        1:  263:                            SC_AppData.LastRtsErrCmd = CmdOffset;
+        -:  264:                            
+        -:  265:                            /*
+        -:  266:                             ** Stop the RTS from executing
+        -:  267:                             */
+        1:  268:                            SC_KillRts (RtsNum);
+        1:  269:                            CFE_EVS_SendEvent (SC_RTS_LNGTH_ERR_EID,
+        -:  270:                                               CFE_EVS_ERROR,
+        -:  271:                                               "Cmd Runs passed end of table, RTS %03d Aborted",
+        1:  272:                                               SC_OperData.RtsCtrlBlckAddr -> RtsNumber);
+        -:  273:                            
+        -:  274:                        } /* end if the command runs off the end of the buffer */
+        -:  275:                        
+        -:  276:                    }
+        -:  277:                    else
+        -:  278:                    { /* the command length is too large */
+        -:  279:
+        -:  280:                        /* update the error information */
+        1:  281:                        SC_AppData.RtsCmdErrCtr++;
+        1:  282:                        SC_OperData.RtsInfoTblAddr[RtsNum].CmdErrCtr++;
+        1:  283:                        SC_AppData.LastRtsErrSeq = SC_OperData.RtsCtrlBlckAddr -> RtsNumber;
+        1:  284:                        SC_AppData.LastRtsErrCmd = CmdOffset;
+        -:  285:                        
+        -:  286:                        /* Stop the RTS from executing */
+        1:  287:                        SC_KillRts (RtsNum);
+        2:  288:                        CFE_EVS_SendEvent (SC_RTS_CMD_LNGTH_ERR_EID,
+        -:  289:                                           CFE_EVS_ERROR,
+        -:  290:                                           "Invalid Length Field in RTS Command, RTS %03d Aborted. Length: %d, Max: %d",
+        1:  291:                                           SC_OperData.RtsCtrlBlckAddr -> RtsNumber,
+        -:  292:                                           (CmdLength - SC_RTS_HEADER_SIZE),
+        -:  293:                                           SC_PACKET_MAX_SIZE);
+        -:  294:                        
+        -:  295:                    } /* end if the command length is invalid */
+        -:  296:                }
+        -:  297:                else
+        -:  298:                { /* The command length is zero indicating no more cmds */
+        -:  299:                    
+        -:  300:                    /*
+        -:  301:                     **  This is not an error condition, so stop the RTS
+        -:  302:                     */
+        -:  303:
+        -:  304:                    /* Stop the RTS from executing */
+        1:  305:                    SC_KillRts (RtsNum);
+        1:  306:                    if ((RtsNum + 1) <= SC_LAST_RTS_WITH_EVENTS)
+        -:  307:                    {
+        1:  308:                        CFE_EVS_SendEvent (SC_RTS_COMPL_INF_EID,
+        -:  309:                                           CFE_EVS_INFORMATION,
+        -:  310:                                           "RTS %03d Execution Completed",
+        -:  311:                                           RtsNum + 1);
+        -:  312:                    }
+        -:  313:                }
+        -:  314:            }
+        -:  315:            else
+        -:  316:            {  /* The end of the RTS buffer has been reached... */
+        -:  317:                
+        -:  318:                /* Stop the RTS from executing */
+        1:  319:                SC_KillRts (RtsNum);
+        1:  320:                if ((RtsNum + 1) <= SC_LAST_RTS_WITH_EVENTS)
+        -:  321:                {
+        1:  322:                    CFE_EVS_SendEvent (SC_RTS_COMPL_INF_EID,
+        -:  323:                                       CFE_EVS_INFORMATION,
+        -:  324:                                       "RTS %03d Execution Completed",
+        -:  325:                                       RtsNum + 1);
+        -:  326:                }
+        -:  327:                
+        -:  328:            } /* end if */
+        -:  329:            
+        -:  330:        } /* end if the RTS status is EXECUTING */
+        -:  331:        
+        -:  332:    } /* end if the RTS number is valid */
+        -:  333:    
+        6:  334:} /* end SC_GetNextRtsCommand */
+        -:  335:
+        -:  336:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  337:/*                                                                 */
+        -:  338:/* Gets the next ATS Command                                       */
+        -:  339:/*                                                                 */
+        -:  340:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       14:  341:void SC_GetNextAtsCommand(void)
+        -:  342:{
+        -:  343:    
+        -:  344:    uint16      AtsIndex;         /* ats array index */
+        -:  345:    uint16      TimeIndex;     /* a time index pointer */
+        -:  346:
+        -:  347:    
+       14:  348:    if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_EXECUTING)
+        -:  349:    {
+        -:  350:        
+        -:  351:        /*
+        -:  352:         ** Get the information that is needed to find the next command
+        -:  353:         */
+        6:  354:        AtsIndex = SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1;
+        6:  355:        TimeIndex = SC_OperData.AtsCtrlBlckAddr -> TimeIndexPtr + 1;
+        -:  356:        
+        -:  357:        /*
+        -:  358:         ** Check to see if there are more ATS commands
+        -:  359:         */
+        6:  360:        if (TimeIndex < SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands)
+        -:  361:        {
+        -:  362:
+        -:  363:            
+        -:  364:            /* get the information for the next command in the ATP control block */
+        1:  365:            SC_OperData.AtsCtrlBlckAddr -> TimeIndexPtr = TimeIndex;
+        1:  366:            SC_OperData.AtsCtrlBlckAddr -> CmdNumber = SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeIndex];
+        -:  367:            
+        -:  368:            /* update the next command time */
+        3:  369:            SC_AppData.NextCmdTime[SC_ATP] = SC_GetAtsEntryTime((SC_AtsEntryHeader_t *)
+        3:  370:               &SC_OperData.AtsTblAddr[AtsIndex][SC_AppData.AtsCmdIndexBuffer[AtsIndex][SC_OperData.AtsCtrlBlckAddr->CmdNumber]]);
+        -:  371:        }
+        -:  372:        else
+        -:  373:        { /* the end is near... of the ATS buffer that is */
+        -:  374:            
+        -:  375:            /* stop the ATS */
+        5:  376:            SC_KillAts();
+        5:  377:            CFE_EVS_SendEvent (SC_ATS_COMPL_INF_EID,
+        -:  378:                               CFE_EVS_INFORMATION,
+        -:  379:                               "ATS %c Execution Completed",
+        -:  380:                               (AtsIndex ? 'B' : 'A'));
+        -:  381:
+        -:  382:            
+        -:  383:            /* stop any switch that is pending */
+        -:  384:            /* because we just ran out of commands and are stopping the ATS */
+        -:  385:            /* and for the safe switch pend, that is a no-no */
+        5:  386:            SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = FALSE;
+        -:  387:            
+        -:  388:        } /* end if */
+        -:  389:        
+        -:  390:    }
+        8:  391:    else if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_STARTING)
+        -:  392:    {        
+        2:  393:        SC_OperData.AtsCtrlBlckAddr -> AtpState = SC_EXECUTING;
+        -:  394:        
+        -:  395:    } /* end if ATS is EXECUTING*/
+        -:  396:    
+       14:  397:} /* end SC_GetNextAtsCommand */
+        -:  398:
+        -:  399:
+        -:  400:/************************/
+        -:  401:/*  End of File Comment */
+        -:  402:/************************/
+        -:  403:

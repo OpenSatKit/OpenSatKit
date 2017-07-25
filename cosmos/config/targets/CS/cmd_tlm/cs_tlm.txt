@@ -1,0 +1,40 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR      = "CS"
+  @HK_TLM_MID_STR      = "CS_HK_TLM_MID"
+  
+  #TODO - Add configuration parameters
+  
+%>  
+
+TELEMETRY CS HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Housekeeping Packet Structure"
+  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT "CS Application Command Counter."
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT "CS Application Command Error Counter."
+  APPEND_ITEM CHECKSUMSTATE 8 UINT "CS Application global checksum state."
+  APPEND_ITEM EEPROMCSSTATE 8 UINT "CS Eeprom table checksum stat e."
+  APPEND_ITEM MEMORYCSSTATE 8 UINT "CS Memory table checksum state."
+  APPEND_ITEM APPCSSTATE 8 UINT "CS App table checksum state."
+  APPEND_ITEM TABLESCSSTATE 8 UINT "CS Tables table checksum stat e."
+  APPEND_ITEM OSCSSTATE 8 UINT "OS code segment checksum state."
+  APPEND_ITEM CFECORECSSTATE 8 UINT "cFE Core code segment checksum stat e"
+  APPEND_ITEM CHILDTASKINUSE 8 UINT "CS 'Child Task In Use' flag."
+  APPEND_ITEM ONESHOTTASKINUSE 8 UINT "CS 'OneShot Task In Use' flag."
+  APPEND_ITEM FILLER8 8 UINT "8 bit padding"
+  APPEND_ITEM EEPROMCSERRCOUNTER 16 UINT "Eeprom miscompare counte r."
+  APPEND_ITEM MEMORYCSERRCOUNTER 16 UINT "Memory miscompare counter."
+  APPEND_ITEM APPCSERRCOUNTER 16 UINT "App miscompare counter."
+  APPEND_ITEM TABLESCSERRCOUNTER 16 UINT "Tables miscompare counter."
+  APPEND_ITEM CFECORECSERRCOUNTER 16 UINT "cFE core miscompare counter"
+  APPEND_ITEM OSCSERRCOUNTER 16 UINT "OS code segment miscopmare counter."
+  APPEND_ITEM CURRENTCSTABLE 16 UINT "Current table being checksummed."
+  APPEND_ITEM CURRENTENTRYINTABLE 16 UINT "Current entry ID in the table being checksummed."
+  APPEND_ITEM EEPROMBASELINE 32 UINT "Baseline checksum for all of Eeprom."
+  APPEND_ITEM OSBASELINE 32 UINT "Baseline checksum for the OS code segment."
+  APPEND_ITEM CFECOREBASELINE 32 UINT "Basline checksum for the cFE core."
+  APPEND_ITEM LASTONESHOTADDRESS 32 UINT "Address used in last one shot checksum command."
+  APPEND_ITEM LASTONESHOTSIZE 32 UINT "Size used in the last one shot checksum command."
+  APPEND_ITEM LASTONESHOTCHECKSUM 32 UINT "Checksum of the last one shot checksum command."
+  APPEND_ITEM PASSCOUNTER 32 UINT "Number of times CS has passed through all of its tables."
+

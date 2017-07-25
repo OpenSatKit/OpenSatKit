@@ -1,0 +1,39 @@
+TITLE 'cFS Command and Telemetry Server'
+
+PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
+
+#AUTO_INTERFACE_TARGETS # Use cmd_tlm_server.txt from all targets declared in system.txt
+
+INTERFACE CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
+  TARGET SAMPLE
+  TARGET CFE_ES
+  TARGET CFE_EVS
+  TARGET CFE_SB
+  TARGET CFE_TBL
+  TARGET CFE_TIME
+  TARGET CS
+  TARGET DS
+  TARGET FM
+  TARGET HS
+  TARGET LC
+  TARGET MD
+  TARGET MM
+  TARGET SC
+  # Kit Apps
+  TARGET BM
+  TARGET CFS_KIT
+  TARGET FW_DEMO
+  TARGET HC
+  TARGET HSIM
+  TARGET KIT_CI
+  TARGET KIT_SCH
+  TARGET KIT_TO
+  TARGET TFTP
+#<cfs_kit>appgen tool will add target between the cfs_kit tags
+#  TARGET TEST2
+#  TARGET TEST1
+#</cfs_kit>
+  
+INTERFACE COSMOSINT cmd_tlm_server_interface.rb
+  TARGET COSMOS
+  DISABLE_DISCONNECT

@@ -1,0 +1,54 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "CFE_SB"
+  @CMD_MID_STR     = "CFE_SB_CMD_MID"
+  
+%>  
+COMMAND CFE_SB NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND CFE_SB RESET_CTRS <%= CfsKitConfig.processor_endian %> "This command resets the following counters within the Software Bus housekeeping telemetry: Command Execution Counter ($sc_$cpu_SB_CMDPC)Command Error Counter ($sc_$cpu_SB_CMDEC)"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+  APPEND_ID_PARAMETER CCSDS_STREAMID 16 UINT MIN_UINT16 MAX_UINT16 0x1803 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_PARAMETER CCSDS_SEQUENCE 16 UINT MIN_UINT16 MAX_UINT16 0xC000 "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_PARAMETER CCSDS_LENGTH 16 UINT MIN_UINT16 MAX_UINT16 1 "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_PARAMETER CCSDS_CHECKSUM 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Checksum"
+  APPEND_PARAMETER CCSDS_FC 8 UINT MIN_UINT8 MAX_UINT8 1 "CCSDS Command Function Code"
+
+COMMAND CFE_SB DUMP_STATS <%= CfsKitConfig.processor_endian %> "This command will cause the SB task to send a statistics packet containing current utilization figures and high water marks which may be useful for checking the margin of the SB platform configuration settings."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 0) %>
+
+COMMAND SB WRITE_ROUTING_TO_FILE <%= CfsKitConfig.processor_endian %> "This command will create a file containing the software bus routing information. The routing information contains information about every subscription that has been received through the SB subscription APIs. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_ROUTING_FILENAME."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 64) %>
+  APPEND_PARAMETER FILENAME 512 STRING "default" "Path and Filename of data to be loaded."
+
+COMMAND CFE_SB ENA_ROUTE <%= CfsKitConfig.processor_endian %> "This command will enable a particular destination. The destination is specified in terms of MsgID and PipeID. The MsgId and PipeID are parmaters in the command. All destinations are enabled by default. This command is needed only after a CFE_SB_DISABLE_ROUTE_CC command is used."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 0) %>
+  APPEND_PARAMETER MSGID 16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of route to be enabled or disabled CFE_SB_MsgId_t."
+  APPEND_PARAMETER PIPE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pipe ID of route to be enabled or disabled CFE_SB_PipeId_t."
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Spare byte to make command even number of bytes."
+
+COMMAND CFE_SB DIS_ROUTE <%= CfsKitConfig.processor_endian %> "This command will disable a particular destination. The destination is specified in terms of MsgID and PipeID. The MsgId and PipeID are parmaters in the command. All destinations are enabled by default."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 4) %>
+  APPEND_PARAMETER MSGID 16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of route to be enabled or disabled CFE_SB_MsgId_t."
+  APPEND_PARAMETER PIPE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pipe ID of route to be enabled or disabled CFE_SB_PipeId_t."
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Spare byte to make command even number of bytes."
+
+COMMAND CFE_SB WRITE_PIPE_TO_FILE <%= CfsKitConfig.processor_endian %> "This command will create a file containing the software bus pipe information. The pipe information contains information about every pipe that has been created through the CFE_SB_CreatePipe API. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_PIPE_FILENAME."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 64) %>
+  APPEND_PARAMETER FILENAME 512 STRING "default" "Path and Filename of data to be loaded."
+
+COMMAND CFE_SB WRITE_MAP_TO_FILE <%= CfsKitConfig.processor_endian %> "map information. The message map is a lookup table (an array of uint16s)that allows fast access to the correct routing table element during a softeware bus send operation. This is diasgnostic information that may be needed due to the dynamic nature of the cFE software bus. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_MAP_FILENAME."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 64) %>
+  APPEND_PARAMETER FILENAME 512 STRING "default" "Path and Filename of data to be loaded."
+
+COMMAND CFE_SB ENA_SUB_REPORTING <%= CfsKitConfig.processor_endian %> "be used only by the CFS SBN (Software Bus Networking) Application. It is not intended to be sent from the ground or used by operations. When subscription reporting is enabled, SB will generate and send a software bus packet for each subscription received. The software bus packet that is sent contains the information received in the subscription API. This subscription report is neeeded by SBN if offboard routing is required."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 0) %>
+
+COMMAND CFE_SB DIS_SUB_REPORTING <%= CfsKitConfig.processor_endian %> "be used only by the CFS SBN (Software Bus Networking) Application. It is not intended to be sent from the ground or used by operations. When subscription reporting is enabled, SB will generate and send a software bus packet for each subscription received. The software bus packet that is sent contains the information received in the subscription API. This subscription report is neeeded by SBN if offboard routing is required."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
+
+COMMAND CFE_SB SEND_PREV_SUBS <%= CfsKitConfig.processor_endian %> "regarding all subscriptions previously received by SB. This command is intended to be used only by the CFS SBN(Software Bus Networking) Application. It is not intended to be sent from the ground or used by operations. When this command is received the software bus will generate and send a series of packets containing information about all subscription previously received."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 0) %>
+

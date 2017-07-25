@@ -1,0 +1,10 @@
+<!-- Slots are based on 5 slots per second and 10 entries per slot -->
+<sch-tbl>
+  <slot id="1" entry="0" enable="true" frequency="1" offset="0" msg_id="6" />
+  <slot id="1" entry="1" enable="true" frequency="1" offset="0" msg_id="7" />
+  <slot id="4" entry="0" enable="true" frequency="1" offset="0" msg_id="1" />
+  <slot id="4" entry="1" enable="true" frequency="1" offset="0" msg_id="2" />
+  <slot id="4" entry="2" enable="true" frequency="1" offset="0" msg_id="3" />
+  <slot id="4" entry="3" enable="true" frequency="1" offset="0" msg_id="4" />
+  <slot id="4" entry="4" enable="true" frequency="1" offset="0" msg_id="5" />
+</sch-tbl>

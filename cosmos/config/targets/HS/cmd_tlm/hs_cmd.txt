@@ -1,0 +1,44 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "HS"
+  @CMD_MID_STR     = "HS_CMD_MID"
+  
+%>
+  
+COMMAND HS NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND HS RESET_CTRS <%= CfsKitConfig.processor_endian %> "Resets the HS housekeeping counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND HS ENABLE_APP_MON <%= CfsKitConfig.processor_endian %> "Enables the Critical Applications Monitor"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 0) %>
+
+COMMAND HS DISABLE_APP_MON <%= CfsKitConfig.processor_endian %> "Disables the Critical Applications Monitor"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 0) %>
+
+COMMAND HS ENABLE_EVENT_MON <%= CfsKitConfig.processor_endian %> "Enables the Critical Events Monitor"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 0) %>
+
+COMMAND HS DISABLE_EVENT_MON <%= CfsKitConfig.processor_endian %> "Disables the Critical Events Monitor"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
+
+COMMAND HS ENABLE_ALIVENESS <%= CfsKitConfig.processor_endian %> "Enables the Aliveness Indicator UART output"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
+
+COMMAND HS DISABLE_ALIVENESS <%= CfsKitConfig.processor_endian %> "Disables the Aliveness Indicator UART output"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>
+
+COMMAND HS RESET_RESETS_PERFORMED <%= CfsKitConfig.processor_endian %> "Resets the count of HS performed resets maintained by HS"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
+
+COMMAND HS SET_MAX_RESETS <%= CfsKitConfig.processor_endian %> "Sets the max allowable count of processor resets to the provided value"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 2) %>
+  APPEND_PARAMETER MAXRESETS 16 UINT MIN_UINT16 MAX_UINT16 0 " "
+
+COMMAND HS ENABLE_CPU_HOG <%= CfsKitConfig.processor_endian %> "Enables the CPU Hogging Indicator Event Message"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
+
+COMMAND HS DISABLE_CPU_HOG <%= CfsKitConfig.processor_endian %> "Disables the CPU Hogging Indicator Event Message"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 0) %>

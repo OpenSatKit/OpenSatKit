@@ -1,0 +1,12 @@
+TELEMETRY TEST2 HK_TLM_PKT LITTLE_ENDIAN "Test2 Housekeeping Packet"
+  APPEND_ID_ITEM CCSDS_STREAMID 16 UINT 0x0885 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SEQUENCE  16 UINT "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM CCSDS_LENGTH    16 UINT "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SECONDS   32 UINT "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM CCSDS_SUBSECS   16 UINT "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM CMD_VALID_COUNT 16 UINT "Count of valid commands received since startup or the last reset counter command"
+  APPEND_ITEM CMD_ERROR_COUNT 16 UINT "Count of invalid commands received since startup or the last reset counter command"
+  APPEND_ITEM TBL_LOAD_VALID   8 UINT "Last table load valid flag: 0=Invalid, 1=Valid"
+  APPEND_ITEM TBL_LOAD_ERRS    8 UINT "Count of table load line errors"
+  APPEND_ITEM EXOBJ_EXEC_CNT  16 UINT "Count of example object executions"
+

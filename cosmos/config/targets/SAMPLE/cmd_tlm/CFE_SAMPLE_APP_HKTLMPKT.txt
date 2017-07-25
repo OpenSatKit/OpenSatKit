@@ -1,0 +1,10 @@
+TELEMETRY SAMPLE CFE_SAMPLE_HKTLMPKT LITTLE_ENDIAN "Telemetry Output Lab Version Housekeeping Packet"
+  APPEND_ID_ITEM CCSDS_STREAMID 16 UINT 0x0883 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SEQUENCE 16 UINT "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM CCSDS_LENGTH 16 UINT "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SECONDS 32 UINT "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM CCSDS_SUBSECS 16 UINT "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM    ERROR_COUNT     8 UINT        "Error Count"
+  APPEND_ITEM    COMMAND_COUNT   8 UINT        "Command Count"
+  APPEND_ITEM    ALIGN           8 UINT        "Spare to Align"
+  APPEND_ITEM    SPARE1          8 UINT        "Spare - not sure why this is needed"

@@ -1,0 +1,819 @@
+        -:    0:Source:../src/sc_atsrq.c
+        -:    0:Programs:7
+        -:    1: /*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: sc_atsrq.c.gcov 1.3.1.1 2016/10/21 17:37:27EDT sstrege Exp  $
+        -:    4: **
+        -:    5: **  Copyright © 2007-2014 United States Government as represented by the 
+        -:    6: **  Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **  All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **  This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **  used, distributed and modified only pursuant to the terms of that 
+        -:   12: **  agreement. 
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **     This file contains functions to handle all of the ATS
+        -:   16: **     executive requests and internal reuqests to control
+        -:   17: **     the ATP and ATSs.
+        -:   18: **
+        -:   19: ** References:
+        -:   20: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   21: **   CFS Development Standards Document
+        -:   22: ** Notes:
+        -:   23: **
+        -:   24: **   $Log: sc_atsrq.c.gcov  $
+        -:   24: **   Revision 1.3.1.1 2016/10/21 17:37:27EDT sstrege 
+        -:   24: **   Applying DCR 145914 change packages
+        -:   24: **   Revision 1.4 2016/10/21 15:19:45EDT mdeschu 
+        -:   24: **   Updated gcov results
+        -:   25: **   Revision 1.6 2016/10/06 07:56:47EDT mdeschu 
+        -:   26: **   Fix Format warning in SendEvent with event ID SC_APPEND_CMD_FIT_ERR_EID
+        -:   27: **   
+        -:   28: **   Cast SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize to (int)
+        -:   29: **   Revision 1.5 2016/08/28 00:26:38EDT mdeschu 
+        -:   30: **   Compiling under GCC 4.4.7 does not cause unitialized warnings for these variables.
+        -:   31: **   Revision 1.4 2016/08/18 11:28:05EDT mdeschu 
+        -:   32: **   Fix formatting only
+        -:   33: **   Revision 1.3 2016/08/05 18:08:30EDT mdeschu 
+        -:   34: **   Initialize CmdIndex in SC_JumpAts and SC_BeginAts
+        -:   35: **   Revision 1.2 2015/10/08 15:20:27EDT sstrege 
+        -:   36: **   Restoration from MKS 2009 Trunk
+        -:   37: **   Revision 1.14 2015/03/02 12:58:54EST sstrege 
+        -:   38: **   Added copyright information
+        -:   39: **   Revision 1.13 2014/06/06 11:37:49EDT sjudy 
+        -:   40: **   Changed event msgs to have 'RTS' or 'ATS' instead of "Real Time Sequence", etc.
+        -:   41: **   Revision 1.12 2011/01/28 13:20:15GMT-08:00 lwalling 
+        -:   42: **   Store ATS selection from most recent ATS Append command
+        -:   43: **   Revision 1.11 2010/09/28 10:34:34EDT lwalling 
+        -:   44: **   Update list of included header files
+        -:   45: **   Revision 1.10 2010/05/18 15:32:06EDT lwalling 
+        -:   46: **   Change AtsId/RtsId to AtsIndex/RtsIndex or AtsNumber/RtsNumber
+        -:   47: **   Revision 1.9 2010/05/18 14:13:59EDT lwalling 
+        -:   48: **   Change AtsCmdIndexBuffer contents from entry pointer to entry index
+        -:   49: **   Revision 1.8 2010/05/05 11:16:40EDT lwalling 
+        -:   50: **   Cleanup function return code definitions, create error specific event numbers
+        -:   51: **   Revision 1.7 2010/04/21 15:38:24EDT lwalling 
+        -:   52: **   Moved prototype for SC_BeginAts to header file, added cmd handler for Append ATS
+        -:   53: **   Revision 1.6 2010/04/15 15:19:17EDT lwalling 
+        -:   54: **   Fix typo - remove ampersand from arg in call to get ATS time value
+        -:   55: **   Revision 1.5 2010/03/26 18:02:13EDT lwalling 
+        -:   56: **   Remove pad from ATS and RTS structures, change 32 bit ATS time to two 16 bit values
+        -:   57: **   Revision 1.4 2009/01/27 08:46:01EST nyanchik 
+        -:   58: **   Continue SC unit test
+        -:   59: **   Revision 1.3 2009/01/26 14:44:42EST nyanchik 
+        -:   60: **   Check in of Unit test
+        -:   61: **   Revision 1.2 2009/01/05 08:26:50EST nyanchik 
+        -:   62: **   Check in after code review changes
+        -:   63: 
+        -:   64: *************************************************************************/
+        -:   65: 
+        -:   66: 
+        -:   67:
+        -:   68:/**************************************************************************
+        -:   69: **
+        -:   70: ** Include section
+        -:   71: **
+        -:   72: **************************************************************************/
+        -:   73:
+        -:   74:#include "cfe.h"
+        -:   75:#include "sc_atsrq.h"
+        -:   76:#include "sc_loads.h"
+        -:   77:#include "sc_utils.h"
+        -:   78:#include "sc_events.h"
+        -:   79:
+        -:   80:/**************************************************************************
+        -:   81: **
+        -:   82: ** Functions
+        -:   83: **
+        -:   84: **************************************************************************/
+        -:   85:
+        -:   86:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   87:/*                                                                 */
+        -:   88:/* Starts an ATS                                                   */
+        -:   89:/*                                                                 */
+        -:   90:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:   91:void SC_StartAtsCmd (CFE_SB_MsgPtr_t CmdPacket)
+        -:   92:{
+        -:   93:    uint16         AtsIndex;           /* ATS array index */
+        -:   94:
+        6:   95:    if (SC_VerifyCmdLength(CmdPacket, sizeof(SC_StartAtsCmd_t)))
+        -:   96:    {
+        -:   97:        
+        -:   98:        /* convert ATS ID to array index */
+        6:   99:        AtsIndex = (((SC_StartAtsCmd_t*)CmdPacket) -> AtsId) - 1;
+        -:  100:        
+        -:  101:        /* validate ATS array index */
+        6:  102:        if (AtsIndex < SC_NUMBER_OF_ATS)
+        -:  103:        { 
+        -:  104:            /* make sure that there is no ATS running on the ATP */
+        5:  105:            if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_IDLE)
+        -:  106:            {       
+        -:  107:                /* make sure the specified ATS is ready */
+        4:  108:                if (SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands > 0)
+        -:  109:                {
+        -:  110:                    /* start the ats */
+        2:  111:                    if (SC_BeginAts (AtsIndex, 0))
+        -:  112:                    {           
+        -:  113:                        /* finish the ATP control block .. */
+        1:  114:                        SC_OperData.AtsCtrlBlckAddr -> AtpState = SC_EXECUTING;
+        -:  115:                        
+        -:  116:                        /* increment the command request counter */
+        1:  117:                        SC_AppData.CmdCtr++;
+        -:  118:                        
+        1:  119:                        CFE_EVS_SendEvent(SC_STARTATS_CMD_INF_EID,
+        -:  120:                                          CFE_EVS_INFORMATION,
+        -:  121:                                          "ATS %c Execution Started",
+        -:  122:                                          (AtsIndex ? 'B' : 'A'));
+        -:  123:                    }
+        -:  124:                    else
+        -:  125:                    {  /* could not start the ats, all commands were skipped */
+        -:  126:                        /* event message was sent from SC_BeginAts */
+        -:  127:                        /* increment the command request error counter */
+        1:  128:                        SC_AppData.CmdErrCtr++;
+        -:  129:
+        -:  130:                    }  /* end if */   
+        -:  131:                }
+        -:  132:                else
+        -:  133:                {  /* the ats didn't have any commands in it */
+        -:  134:                    
+        2:  135:                    CFE_EVS_SendEvent(SC_STARTATS_CMD_NOT_LDED_ERR_EID,
+        -:  136:                                      CFE_EVS_ERROR,
+        -:  137:                                      "Start ATS Rejected: ATS %c Not Loaded",
+        -:  138:                                      (AtsIndex ? 'B' : 'A'));
+        -:  139:                    
+        -:  140:                    /* increment the command request error counter */
+        2:  141:                    SC_AppData.CmdErrCtr++;
+        -:  142:                    
+        -:  143:                } /* end if */
+        -:  144:                
+        -:  145:            }
+        -:  146:            else
+        -:  147:            { /* the ATS is being used */
+        -:  148:                
+        1:  149:                CFE_EVS_SendEvent(SC_STARTATS_CMD_NOT_IDLE_ERR_EID,
+        -:  150:                                  CFE_EVS_ERROR,
+        -:  151:                                  "Start ATS Rejected: ATP is not Idle");
+        -:  152:                /* increment the command request error counter */
+        1:  153:                SC_AppData.CmdErrCtr++;
+        -:  154:                
+        -:  155:            } /* end if */
+        -:  156:        }
+        -:  157:        else
+        -:  158:        { /* the specified ATS id is not valid */
+        -:  159:            
+        1:  160:            CFE_EVS_SendEvent(SC_STARTATS_CMD_INVLD_ID_ERR_EID,
+        -:  161:                              CFE_EVS_ERROR,
+        -:  162:                              "Start ATS %d Rejected: Invalid ATS ID",
+        1:  163:                              ((SC_StartAtsCmd_t*)CmdPacket) -> AtsId);
+        -:  164:            
+        -:  165:            /* increment the command request error counter */
+        1:  166:            SC_AppData.CmdErrCtr++;
+        -:  167:            
+        -:  168:        } /* end if */ 
+        -:  169:    }
+        6:  170:} /* end SC_StartAtsCmd */
+        -:  171:
+        -:  172:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  173:/*                                                                 */
+        -:  174:/*   Stop the currently executing ATS                              */
+        -:  175:/*                                                                 */
+        -:  176:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  177:void SC_StopAtsCmd (CFE_SB_MsgPtr_t CmdPacket)
+        -:  178:{  
+        4:  179:    uint16  TempAtsChar = ' ';
+        4:  180:    int32   Result  =  SC_ERROR;
+        -:  181:
+        4:  182:    if (SC_VerifyCmdLength(CmdPacket, sizeof(SC_NoArgsCmd_t)))
+        -:  183:    {       
+        -:  184:        /*
+        -:  185:         ** Set the temp ATS ID if it is valid
+        -:  186:         */
+        4:  187:        if (SC_OperData.AtsCtrlBlckAddr -> AtsNumber == SC_ATSA)
+        -:  188:        {
+        1:  189:            TempAtsChar = 'A';
+        1:  190:            Result = CFE_SUCCESS;
+        -:  191:        }
+        -:  192:        else 
+        -:  193:        {
+        3:  194:          if (SC_OperData.AtsCtrlBlckAddr -> AtsNumber == SC_ATSB)
+        -:  195:          {
+        1:  196:            TempAtsChar = 'B';
+        1:  197:            Result = CFE_SUCCESS;
+        -:  198:          }
+        -:  199:
+        -:  200:        }
+        -:  201:        
+        4:  202:        if (Result == CFE_SUCCESS)
+        -:  203:        {
+        2:  204:            CFE_EVS_SendEvent(SC_STOPATS_CMD_INF_EID,
+        -:  205:                              CFE_EVS_INFORMATION,
+        -:  206:                              "ATS %c stopped",
+        -:  207:                              TempAtsChar);
+        -:  208:        }
+        -:  209:        else
+        -:  210:        {
+        2:  211:            CFE_EVS_SendEvent(SC_STOPATS_NO_ATS_INF_EID,
+        -:  212:                              CFE_EVS_INFORMATION,
+        -:  213:                             "There is no ATS running to stop");
+        -:  214:        }
+        -:  215:            
+        -:  216:        
+        -:  217:        /* Stop the ATS from executing */
+        4:  218:        SC_KillAts();
+        -:  219:        
+        -:  220:        /* clear the global switch pend flag */
+        4:  221:        SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = FALSE;
+        -:  222:        
+        4:  223:        SC_AppData.CmdCtr++;
+        -:  224:        
+        -:  225:    }
+        -:  226:    
+        4:  227:} /* end SC_StopAtsCmd */
+        -:  228:
+        -:  229:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  230:/*                                                                 */
+        -:  231:/* Function for stating an ATS                                     */
+        -:  232:/*                                                                 */
+        -:  233:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        9:  234:boolean SC_BeginAts (uint16 AtsIndex, uint16 TimeOffset)
+        -:  235:{
+        -:  236:    SC_AtsEntryHeader_t   *Entry;         /* ATS table entry pointer */
+        -:  237:    int32                  EntryIndex;    /* ATS entry location in table */
+        -:  238:    SC_AbsTimeTag_t        ListCmdTime;   /* list entry execution time */
+        -:  239:    int32                  TimeIndex;     /* the current time buffer index */
+        -:  240:    int32                  CmdIndex;      /* ATS command index (cmd num - 1) */
+        -:  241:    boolean                ReturnCode;
+        -:  242:    SC_AbsTimeTag_t        TimeToStartAts;    /* the REAL time to start the ATS */
+        9:  243:    uint16                 CmdsSkipped = 0;
+        -:  244:    
+        9:  245:    TimeToStartAts = SC_ComputeAbsTime (TimeOffset);
+        -:  246:    
+        -:  247:    /*
+        -:  248:     ** Loop through the commands until a time tag is found that
+        -:  249:     ** has a time greater than or equal to the current time OR
+        -:  250:     ** all of the commands have been skipped
+        -:  251:     */
+        9:  252:    TimeIndex = 0;   /* pointer into the time index table */
+        -:  253:    
+       21:  254:    while (TimeIndex < SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands)
+        -:  255:    {
+        -:  256:        /* first get the cmd index at this list entry */
+        9:  257:        CmdIndex = SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeIndex];
+        -:  258:        /* then get the entry index from the cmd index table */
+        9:  259:        EntryIndex = SC_AppData.AtsCmdIndexBuffer[AtsIndex][CmdIndex];
+        -:  260:        /* then get a pointer to the ATS entry data */
+        9:  261:        Entry = (SC_AtsEntryHeader_t *) &SC_OperData.AtsTblAddr[AtsIndex][EntryIndex];
+        -:  262:        /* then get cmd execution time from the ATS entry */
+        9:  263:        ListCmdTime = SC_GetAtsEntryTime(Entry);
+        -:  264:
+        -:  265:        /* compare ATS start time to this list entry time */
+        9:  266:        if (SC_CompareAbsTime(TimeToStartAts, ListCmdTime))
+        -:  267:        {
+        -:  268:            /* start time is greater than this list entry time */
+        -:  269:
+        3:  270:            SC_OperData.AtsCmdStatusTblAddr[AtsIndex][CmdIndex] = SC_SKIPPED;
+        3:  271:            CmdsSkipped++;
+        3:  272:            TimeIndex++;
+        -:  273:        }
+        -:  274:        else
+        -:  275:        {
+        -:  276:            /* start time is less than or equal to this list entry */
+        6:  277:            break;
+        -:  278:        }
+        -:  279:    }
+        -:  280:    
+        -:  281:    /*
+        -:  282:     ** Check to see if the whole ATS was skipped
+        -:  283:     */
+        9:  284:    if (TimeIndex == SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands)
+        -:  285:    {
+        -:  286:        
+        3:  287:        CFE_EVS_SendEvent(SC_ATS_SKP_ALL_ERR_EID,
+        -:  288:                          CFE_EVS_ERROR,
+        -:  289:                          "All ATS commands were skipped, ATS stopped");
+        -:  290:        
+        -:  291:        /* stop the ats */
+        3:  292:        SC_KillAts();
+        -:  293:        
+        3:  294:        ReturnCode = FALSE;
+        -:  295:        
+        -:  296:    }
+        -:  297:    else
+        -:  298:    {  /* there is at least one command to execute */
+        -:  299:        
+        -:  300:        /*
+        -:  301:         ** Initialize the ATP Control Block.
+        -:  302:         */
+        -:  303:        /* leave the atp state alone, it will be updated by the caller */
+        6:  304:        SC_OperData.AtsCtrlBlckAddr -> AtsNumber = AtsIndex + 1;
+        6:  305:        SC_OperData.AtsCtrlBlckAddr -> CmdNumber = CmdIndex;
+        6:  306:        SC_OperData.AtsCtrlBlckAddr -> TimeIndexPtr = TimeIndex;
+        -:  307:
+        -:  308:        /* send an event for number of commands skipped */
+        6:  309:        CFE_EVS_SendEvent(SC_ATS_ERR_SKP_DBG_EID,
+        -:  310:                          CFE_EVS_DEBUG,
+        -:  311:                          "ATS started, skipped %d commands",
+        -:  312:                          CmdsSkipped);
+        -:  313:        /*
+        -:  314:         ** Set the next command time for the ATP
+        -:  315:         */
+        6:  316:        SC_AppData.NextCmdTime[SC_ATP] = ListCmdTime;
+        -:  317:
+        6:  318:        ReturnCode = TRUE;
+        -:  319:        
+        -:  320:    }  /* end if */
+        -:  321:    
+        9:  322:    return (ReturnCode);
+        -:  323:    
+        -:  324:} /* end SC_BeginAts */
+        -:  325:
+        -:  326:
+        -:  327:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  328:/*                                                                 */
+        -:  329:/*  Function for stopping the running ATS  & clearing data         */
+        -:  330:/*                                                                 */
+        -:  331:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       24:  332:void SC_KillAts (void)
+        -:  333:{
+        -:  334:
+        -:  335:    
+       24:  336:    if (SC_OperData.AtsCtrlBlckAddr -> AtpState !=  SC_IDLE)
+        -:  337:    {
+        -:  338:        /* Increment the ats use counter */
+       15:  339:        SC_OperData.AtsInfoTblAddr[SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1].AtsUseCtr++;
+        -:  340:    }
+        -:  341:    /*
+        -:  342:     ** Reset the state in the atp control block
+        -:  343:     */
+       24:  344:    SC_OperData.AtsCtrlBlckAddr -> AtpState = SC_IDLE;
+        -:  345:    
+        -:  346:    /* reset the time of the next ats command */
+       24:  347:    SC_AppData.NextCmdTime[SC_ATP] = SC_MAX_TIME;
+        -:  348:    
+       24:  349:} /* end SC_KillAts */
+        -:  350:
+        -:  351:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  352:/*                                                                 */
+        -:  353:/* Process an ATS Switch                                           */
+        -:  354:/*                                                                 */
+        -:  355:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  356:void SC_GroundSwitchCmd (CFE_SB_MsgPtr_t CmdPacket)
+        -:  357:{
+        -:  358:    
+        -:  359:    uint16         CurrAtsNum;
+        -:  360:    uint16         NewAtsNum;      /* the number of the ats to switch to*/
+        -:  361:
+        4:  362:    if (SC_VerifyCmdLength(CmdPacket, sizeof(SC_NoArgsCmd_t)))
+        -:  363:    {
+        -:  364:        /* make sure that an ATS is running on the ATP */
+        4:  365:        if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_EXECUTING)
+        -:  366:        {
+        -:  367:            /* get the current ATS number range 0..1 */
+        2:  368:            CurrAtsNum = SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1;
+        -:  369:            
+        -:  370:            /* get the ATS to switch to */
+        2:  371:            NewAtsNum = 1 - CurrAtsNum;
+        -:  372:            
+        -:  373:            /* Now check to see if the new ATS has commands in it */
+        2:  374:            if (SC_OperData.AtsInfoTblAddr[NewAtsNum].NumberOfCommands > 0)
+        -:  375:            {
+        -:  376:                
+        -:  377:                /* set the global switch pend flag */
+        1:  378:                SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = TRUE;
+        -:  379:                
+        -:  380:                /* update the command counter */
+        1:  381:                SC_AppData.CmdCtr++;
+        -:  382:                
+        1:  383:                CFE_EVS_SendEvent(SC_SWITCH_ATS_CMD_INF_EID,
+        -:  384:                                  CFE_EVS_INFORMATION,
+        -:  385:                                  "Switch ATS is Pending");  
+        -:  386:            }
+        -:  387:            else
+        -:  388:            { /* the other ATS does not have any commands in it */     
+        -:  389:                
+        1:  390:                CFE_EVS_SendEvent(SC_SWITCH_ATS_CMD_NOT_LDED_ERR_EID,
+        -:  391:                                  CFE_EVS_ERROR,
+        -:  392:                                  "Switch ATS Failure: Destination ATS Not Loaded");
+        -:  393:                
+        -:  394:                /* update command error counter */
+        1:  395:                SC_AppData.CmdErrCtr++;
+        -:  396:                
+        1:  397:                SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = FALSE;
+        -:  398:                
+        -:  399:            } /* end if */           
+        -:  400:        }
+        -:  401:        else
+        -:  402:        {  /* the ATP is not currently executing any commands */
+        -:  403:            
+        2:  404:            CFE_EVS_SendEvent(SC_SWITCH_ATS_CMD_IDLE_ERR_EID,
+        -:  405:                              CFE_EVS_ERROR,
+        -:  406:                              "Switch ATS Rejected: ATP is idle");
+        -:  407:            
+        -:  408:            /* update the command error counter */
+        2:  409:            SC_AppData.CmdErrCtr++;
+        -:  410:            
+        2:  411:            SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = FALSE;
+        -:  412:            
+        -:  413:        } /* end if */
+        -:  414:    }  
+        4:  415:} /* end SC_GroundSwitchCmd */
+        -:  416:
+        -:  417:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  418:/*                                                                 */
+        -:  419:/* Function for switching ATS's when each have commands in to      */
+        -:  420:/* execute in the same second.                                     */
+        -:  421:/*                                                                 */
+        -:  422:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  423:void SC_ServiceSwitchPend (void)
+        -:  424:{
+        -:  425:    uint16    NewAtsNum;    /* the ats that we are switching to */
+        -:  426:    uint16    OldAtsNum;    /* the ats we are switching from */
+        -:  427:
+        -:  428:    /*
+        -:  429:     **  See if it is time to switch the ATS
+        -:  430:     */
+        5:  431:    if (SC_CompareAbsTime (SC_AppData.NextCmdTime[SC_ATP], SC_AppData.CurrentTime))
+        -:  432:    {
+        -:  433:        
+        -:  434:        /* make sure that an ATS is still running on the ATP */
+        4:  435:        if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_EXECUTING)
+        -:  436:        {
+        -:  437:            
+        -:  438:            /* get the ATS number to switch to and from */
+        2:  439:            OldAtsNum = SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1;
+        2:  440:            NewAtsNum = 1 - (SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1);
+        -:  441:            
+        -:  442:            /* Now check to see if the new ATS has commands in it */
+        2:  443:            if (SC_OperData.AtsInfoTblAddr[NewAtsNum].NumberOfCommands > 0)
+        -:  444:            {
+        -:  445:                
+        -:  446:                /* stop the current ATS */
+        1:  447:                SC_KillAts();
+        -:  448:                
+        -:  449:                /*
+        -:  450:                 ** Start the new ATS: Notice that we are starting the new
+        -:  451:                 ** ATS with a one second offset from the current second,
+        -:  452:                 ** This prevents commands that were executed the same
+        -:  453:                 ** second that this command was received from being repeated.
+        -:  454:                 */
+        1:  455:                if (SC_BeginAts (NewAtsNum, 1))
+        -:  456:                {
+        -:  457:                    
+        1:  458:                    SC_OperData.AtsCtrlBlckAddr -> AtpState = SC_EXECUTING;
+        -:  459:                    
+        1:  460:                    CFE_EVS_SendEvent(SC_ATS_SERVICE_SWTCH_INF_EID,
+        -:  461:                                      CFE_EVS_INFORMATION ,
+        -:  462:                                      "ATS Switched from %c to %c",
+        -:  463:                                      (OldAtsNum?'B':'A'), (NewAtsNum?'B':'A'));
+        -:  464:                    
+        -:  465:                }  /* end if */
+        -:  466:            }
+        -:  467:            else
+        -:  468:            { /* the other ATS does not have any commands in it */
+        -:  469:                
+        1:  470:                CFE_EVS_SendEvent(SC_SERVICE_SWITCH_ATS_CMD_LDED_ERR_EID,
+        -:  471:                                  CFE_EVS_ERROR,
+        -:  472:                                  "Switch ATS Failure: Destination ATS is empty");   
+        -:  473:            } /* end if */
+        -:  474:        }
+        -:  475:        else
+        -:  476:        {   /* the ATP is not currently executing any commands */
+        -:  477:            /* this should only happen if the switch flag gets */
+        -:  478:            /* corrupted some how                              */
+        -:  479:            
+        2:  480:            CFE_EVS_SendEvent(SC_ATS_SERVICE_SWITCH_IDLE_ERR_EID,
+        -:  481:                              CFE_EVS_ERROR ,
+        -:  482:                              "Switch ATS Rejected: ATP is idle");            
+        -:  483:        } /* end if */
+        -:  484:        
+        -:  485:        /* in any case, this flag will need to be cleared */
+        4:  486:        SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = FALSE;
+        -:  487:        
+        -:  488:    } /* end if */
+        -:  489:    
+        5:  490:} /* end SC_ServiceSwitchPend */
+        -:  491:
+        -:  492:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  493:/*                                                                 */
+        -:  494:/* Switches from one ATS to the other when there are no commands   */
+        -:  495:/* to be executed in the same second of the switch                 */
+        -:  496:/*                                                                 */
+        -:  497:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  498:boolean SC_InlineSwitch (void)
+        -:  499:{
+        -:  500:
+        -:  501:    uint16         NewAtsNum;      /* the number of the ats to switch to*/
+        -:  502:    uint16         OldAtsNum;      /* the number of the ats to switch from*/
+        -:  503:    boolean        ReturnCode;      /* return code for function */
+        -:  504:
+        -:  505:    
+        -:  506:    /* figure out which ATS to switch to */
+        5:  507:    NewAtsNum = 1 - (SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1);
+        -:  508:    
+        -:  509:    /* Save the ATS number to switch FROM */
+        5:  510:    OldAtsNum = SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1;
+        -:  511:
+        -:  512:    
+        -:  513:    /* Now check to see if the new ATS has commands in it */
+        5:  514:    if (SC_OperData.AtsInfoTblAddr[NewAtsNum].NumberOfCommands > 0)
+        -:  515:    {
+        -:  516:        /*
+        -:  517:         ** Stop the current ATS
+        -:  518:         */
+        3:  519:        SC_KillAts();
+        -:  520:        
+        -:  521:        /*
+        -:  522:         ** Start up the other ATS
+        -:  523:         */
+        3:  524:        if (SC_BeginAts (NewAtsNum , 0))
+        -:  525:        {
+        2:  526:            SC_OperData.AtsCtrlBlckAddr -> AtpState = SC_STARTING;
+        -:  527:            
+        2:  528:            CFE_EVS_SendEvent(SC_ATS_INLINE_SWTCH_INF_EID,
+        -:  529:                              CFE_EVS_INFORMATION ,
+        -:  530:                              "ATS Switched from %c to %c",
+        -:  531:                              (OldAtsNum?'B':'A'), (NewAtsNum?'B':'A'));
+        -:  532:            
+        -:  533:            /*
+        -:  534:             **  Update the command counter and return code
+        -:  535:             */
+        2:  536:            SC_AppData.CmdCtr++;
+        2:  537:            ReturnCode = TRUE;  
+        -:  538:        }
+        -:  539:        else
+        -:  540:        { /* all of the commands in the new ats were skipped */
+        -:  541:            
+        -:  542:            /*
+        -:  543:             ** update the command error counter
+        -:  544:             */
+        1:  545:            SC_AppData.CmdErrCtr++;
+        1:  546:            ReturnCode = FALSE;
+        -:  547:            
+        -:  548:        }  /* end if */
+        -:  549:    }
+        -:  550:    else
+        -:  551:    { /* the other ATS does not have any commands in it */
+        2:  552:        CFE_EVS_SendEvent(SC_ATS_INLINE_SWTCH_NOT_LDED_ERR_EID,
+        -:  553:                          CFE_EVS_ERROR  ,
+        -:  554:                          "Switch ATS Failure: Destination ATS Not Loaded");
+        -:  555:        /*
+        -:  556:         ** update the ATS error counter
+        -:  557:         */
+        2:  558:        SC_AppData.CmdErrCtr++;
+        2:  559:        ReturnCode = FALSE;
+        -:  560:        
+        -:  561:    }  /* end if */
+        -:  562:    
+        -:  563:    /* clear out the global ground-switch pend flag */
+        5:  564:    SC_OperData.AtsCtrlBlckAddr -> SwitchPendFlag = FALSE;
+        -:  565:    
+        5:  566:    return (ReturnCode);
+        -:  567:    
+        -:  568:} /* end function */
+        -:  569:
+        -:  570:
+        -:  571:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  572:/*                                                                 */
+        -:  573:/* Jump an ATS forward in time                                     */
+        -:  574:/*                                                                 */
+        -:  575:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  576:void SC_JumpAtsCmd (CFE_SB_MsgPtr_t CmdPacket)
+        -:  577:{
+        -:  578:    SC_AtsEntryHeader_t   *Entry;         /* ATS table entry pointer */
+        -:  579:    int32                  EntryIndex;    /* ATS entry location in table */
+        -:  580:    SC_AbsTimeTag_t        JumpTime;      /* the time to jump to in the ATS */
+        -:  581:    SC_AbsTimeTag_t        ListCmdTime;   /* list entry execution time */
+        -:  582:    uint16                 AtsIndex;      /* index of the ATS that is running */
+        -:  583:    int32                  TimeIndex;     /* the current time buffer index */
+        -:  584:    int32                  CmdIndex;      /* ATS command index (cmd num - 1) */
+        -:  585:    char                   TimeBuffer[CFE_TIME_PRINTED_STRING_SIZE];
+        -:  586:    CFE_TIME_SysTime_t     NewTime;
+        -:  587:    uint16                 NumSkipped;
+        -:  588:
+        4:  589:    if (SC_VerifyCmdLength(CmdPacket, sizeof(SC_JumpAtsCmd_t)))
+        -:  590:    { 
+        3:  591:        if (SC_OperData.AtsCtrlBlckAddr -> AtpState == SC_EXECUTING)
+        -:  592:        {        
+        2:  593:            JumpTime = ((SC_JumpAtsCmd_t *)CmdPacket) -> NewTime ;
+        2:  594:            AtsIndex = SC_OperData.AtsCtrlBlckAddr -> AtsNumber - 1;
+        -:  595:            
+        -:  596:            /*
+        -:  597:             ** Loop through the commands until a time tag is found
+        -:  598:             ** that has a time greater than or equal to the current time OR
+        -:  599:             ** all of the commands have been skipped
+        -:  600:             */
+        2:  601:            TimeIndex = 0;
+        2:  602:            NumSkipped = 0;
+        -:  603:            
+        6:  604:            while (TimeIndex < SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands)
+        -:  605:            {
+        -:  606:                /* first get the cmd index at this list entry */
+        3:  607:                CmdIndex = SC_AppData.AtsTimeIndexBuffer[AtsIndex][TimeIndex];
+        -:  608:                /* then get the entry index from the cmd index table */
+        3:  609:                EntryIndex = SC_AppData.AtsCmdIndexBuffer[AtsIndex][CmdIndex];
+        -:  610:                /* then get a pointer to the ATS entry data */
+        3:  611:                Entry = (SC_AtsEntryHeader_t *) &SC_OperData.AtsTblAddr[AtsIndex][EntryIndex];
+        -:  612:                /* then get cmd execution time from the ATS entry */
+        3:  613:                ListCmdTime = SC_GetAtsEntryTime(Entry);
+        -:  614:
+        -:  615:                /* compare ATS jump time to this list entry time */
+        3:  616:                if (SC_CompareAbsTime(JumpTime, ListCmdTime))
+        -:  617:                {
+        -:  618:                    /* jump time is greater than this list entry time */
+        -:  619:
+        -:  620:                    /*
+        -:  621:                    ** If the ATS command is loaded and ready to run, then
+        -:  622:                    **  mark the command as being skipped
+        -:  623:                    **  if the command has any other status, SC_SKIPPED, SC_EXECUTED,
+        -:  624:                    **   etc, then leave the status alone.
+        -:  625:                    */
+        2:  626:                    if (SC_OperData.AtsCmdStatusTblAddr[AtsIndex][CmdIndex] == SC_LOADED)
+        -:  627:                    {
+        2:  628:                        SC_OperData.AtsCmdStatusTblAddr[AtsIndex][CmdIndex] = SC_SKIPPED;
+        2:  629:                        NumSkipped++;
+        -:  630:                    }
+        -:  631:
+        2:  632:                    TimeIndex++;
+        -:  633:                }
+        -:  634:                else
+        -:  635:                {
+        -:  636:                    /* jump time is less than or equal to this list entry */
+        1:  637:                    break;
+        -:  638:                }
+        -:  639:            }
+        -:  640:            
+        -:  641:            /*
+        -:  642:             ** Check to see if the whole ATS was skipped
+        -:  643:             */
+        2:  644:            if (TimeIndex == SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands)
+        -:  645:            {
+        1:  646:                CFE_EVS_SendEvent(SC_JUMPATS_CMD_STOPPED_ERR_EID,
+        -:  647:                                  CFE_EVS_ERROR,
+        -:  648:                                  "Jump Cmd: All ATS commands were skipped, ATS stopped");
+        -:  649:                
+        1:  650:                SC_AppData.CmdErrCtr++;
+        -:  651:                
+        -:  652:                /* stop the ats */
+        1:  653:                SC_KillAts();  
+        -:  654:            }
+        -:  655:            else
+        -:  656:            {  /* there is at least one command to execute */
+        -:  657:                
+        -:  658:                /*
+        -:  659:                 ** Update the ATP Control Block entries.
+        -:  660:                 */
+        1:  661:                SC_OperData.AtsCtrlBlckAddr -> CmdNumber = CmdIndex;
+        1:  662:                SC_OperData.AtsCtrlBlckAddr -> TimeIndexPtr = TimeIndex;
+        -:  663:                
+        -:  664:                /*
+        -:  665:                 ** Set the next command time for the ATP
+        -:  666:                 */
+        1:  667:                SC_AppData.NextCmdTime[SC_ATP] = ListCmdTime;
+        -:  668:                
+        1:  669:                SC_AppData.CmdCtr++;
+        -:  670:                
+        -:  671:                /* print out the date in a readable format */
+        1:  672:                NewTime.Seconds = ListCmdTime;
+        1:  673:                NewTime.Subseconds = 0;
+        -:  674:                
+        1:  675:                CFE_TIME_Print( (char *)&TimeBuffer, NewTime);
+        -:  676:                
+        1:  677:                CFE_EVS_SendEvent(SC_JUMP_ATS_INF_EID,
+        -:  678:                                  CFE_EVS_INFORMATION,
+        -:  679:                                  "Next ATS command time in the ATP was set to %s",
+        -:  680:                                  TimeBuffer); 
+        1:  681:                if (NumSkipped > 0)
+        -:  682:                {
+        -:  683:                    /* We skipped come commands, but not all of them */
+        1:  684:                    CFE_EVS_SendEvent(SC_JUMP_ATS_SKIPPED_DBG_EID,
+        -:  685:                                     CFE_EVS_DEBUG,
+        -:  686:                                     "Jump Cmd: Skipped %d ATS commands",
+        -:  687:                                     NumSkipped); 
+        -:  688:                    
+        -:  689:                }                  
+        -:  690:                                  
+        -:  691:            }  /* end if */
+        -:  692:        }
+        -:  693:        else
+        -:  694:        { /*  There is not a running ATS */
+        -:  695:            
+        1:  696:            CFE_EVS_SendEvent(SC_JUMPATS_CMD_NOT_ACT_ERR_EID,
+        -:  697:                              CFE_EVS_ERROR,
+        -:  698:                              "ATS Jump Failed: No active ATS");
+        1:  699:            SC_AppData.CmdErrCtr++;
+        -:  700:            
+        -:  701:        } /* end if */
+        -:  702:    } 
+        4:  703:} /* end SC_JumpAtsCmd */
+        -:  704:
+        -:  705:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  706:/*                                                                 */
+        -:  707:/* Continue ATS on Checksum Failure Cmd                            */
+        -:  708:/*                                                                 */
+        -:  709:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  710:void SC_ContinueAtsOnFailureCmd(CFE_SB_MsgPtr_t CmdPacket)
+        -:  711:{
+        -:  712:    uint16 State;
+        -:  713:   
+        -:  714:    
+        3:  715:    if (SC_VerifyCmdLength(CmdPacket, sizeof(SC_SetContinueAtsOnFailureCmd_t)))
+        -:  716:    {
+        2:  717:        State = ((SC_SetContinueAtsOnFailureCmd_t *) CmdPacket) -> ContinueState;
+        -:  718:        
+        3:  719:        if (State != TRUE && State != FALSE)
+        -:  720:        {
+        1:  721:            SC_AppData.CmdErrCtr++;
+        -:  722:                
+        1:  723:            CFE_EVS_SendEvent(SC_CONT_CMD_ERR_EID,
+        -:  724:                              CFE_EVS_ERROR,
+        -:  725:                              "Continue ATS On Failure command  failed, invalid state: %d",
+        -:  726:                              State);
+        -:  727:        }
+        -:  728:        else
+        -:  729:        {
+        1:  730:            SC_AppData.ContinueAtsOnFailureFlag = State;    
+        -:  731:            
+        1:  732:            SC_AppData.CmdCtr++;
+        -:  733:                
+        1:  734:            CFE_EVS_SendEvent(SC_CONT_CMD_DEB_EID,
+        -:  735:                              CFE_EVS_DEBUG,
+        -:  736:                              "Continue-ATS-On-Failure command, State: %d",
+        -:  737:                              State);
+        -:  738:        }
+        -:  739:                
+        -:  740:     }
+        3:  741:}/* end SC_ContinueAtsOnFailureCmd */
+        -:  742:
+        -:  743:
+        -:  744:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  745:/*                                                                 */
+        -:  746:/* Append to selected ATS                                          */
+        -:  747:/*                                                                 */
+        -:  748:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  749:void SC_AppendAtsCmd (CFE_SB_MsgPtr_t CmdPacket)
+        -:  750:{
+        6:  751:    SC_AppendAtsCmd_t *AppendCmd = (SC_AppendAtsCmd_t *) CmdPacket;
+        -:  752:    uint16  AtsIndex;  /* index (not ID) of target ATS */
+        -:  753:
+        6:  754:    if (SC_VerifyCmdLength(CmdPacket, sizeof(SC_AppendAtsCmd_t)))
+        -:  755:    {
+        -:  756:        /* create base zero array index from base one ID value */
+        5:  757:        AtsIndex = AppendCmd->AtsId - 1;
+        -:  758:        
+        5:  759:        if (AtsIndex >= SC_NUMBER_OF_ATS)
+        -:  760:        {
+        -:  761:            /* invalid target ATS selection */
+        1:  762:            SC_AppData.CmdErrCtr++;
+        -:  763:            
+        1:  764:            CFE_EVS_SendEvent(SC_APPEND_CMD_ARG_ERR_EID, CFE_EVS_ERROR,
+        1:  765:                             "Append ATS error: invalid ATS ID = %d", AppendCmd->AtsId);
+        -:  766:        }
+        4:  767:        else if (SC_OperData.AtsInfoTblAddr[AtsIndex].NumberOfCommands == 0)
+        -:  768:        {
+        -:  769:            /* target ATS table is empty */
+        1:  770:            SC_AppData.CmdErrCtr++;
+        -:  771:
+        1:  772:            CFE_EVS_SendEvent(SC_APPEND_CMD_TGT_ERR_EID, CFE_EVS_ERROR,
+        -:  773:                             "Append ATS %c error: ATS table is empty", 'A' + AtsIndex);
+        -:  774:        }
+        3:  775:        else if (SC_AppData.AppendEntryCount == 0)
+        -:  776:        { 
+        -:  777:            /* append table is empty */
+        1:  778:            SC_AppData.CmdErrCtr++;
+        -:  779:            
+        1:  780:            CFE_EVS_SendEvent(SC_APPEND_CMD_SRC_ERR_EID, CFE_EVS_ERROR,
+        -:  781:                             "Append ATS %c error: Append table is empty", 'A' + AtsIndex);
+        -:  782:        }
+        2:  783:        else if ((SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize + SC_AppData.AppendWordCount) > SC_ATS_BUFF_SIZE)
+        -:  784:        { 
+        -:  785:            /* not enough room in ATS buffer for Append table data */
+        1:  786:            SC_AppData.CmdErrCtr++;
+        -:  787:            
+        2:  788:            CFE_EVS_SendEvent(SC_APPEND_CMD_FIT_ERR_EID, CFE_EVS_ERROR,
+        -:  789:                             "Append ATS %c error: ATS size = %d, Append size = %d, ATS buffer = %d",
+        1:  790:                             'A' + AtsIndex, (int)SC_OperData.AtsInfoTblAddr[AtsIndex].AtsSize,
+        1:  791:                              SC_AppData.AppendWordCount, SC_ATS_BUFF_SIZE);
+        -:  792:        }
+        -:  793:        else
+        -:  794:        { 
+        -:  795:            /* store ATS selection from most recent ATS Append command */
+        1:  796:            SC_AppData.AppendCmdArg = AppendCmd->AtsId;
+        -:  797:
+        -:  798:            /* copy append data and re-calc timing data */
+        1:  799:            SC_ProcessAppend(AtsIndex);
+        -:  800:
+        -:  801:            /* increment command success counter */
+        1:  802:            SC_AppData.CmdCtr++;
+        -:  803:                        
+        1:  804:            CFE_EVS_SendEvent(SC_APPEND_CMD_INF_EID, CFE_EVS_INFORMATION,
+        -:  805:                             "Append ATS %c command: %d ATS entries appended",
+        1:  806:                             'A' + AtsIndex, SC_AppData.AppendEntryCount);
+        -:  807:        }
+        -:  808:    }
+        6:  809:} /* end SC_AppendAtsCmd */
+        -:  810:
+        -:  811:/************************/
+        -:  812:/*  End of File Comment */
+        -:  813:/************************/

@@ -1,0 +1,720 @@
+        -:    0:Source:../src/mm_app.c
+        -:    0:Programs:7
+        -:    1:/************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: mm_app.c.gcov 1.3 2016/10/31 22:11:02EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**   Copyright © 2007-2014 United States Government as represented by the 
+        -:    6:**   Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**   All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**   This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**   used, distributed and modified only pursuant to the terms of that 
+        -:   12:**   agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   The CFS Memory Manager (MM) Application provides onboard hardware
+        -:   16:**   and software maintenance services by processing commands for memory 
+        -:   17:**   operations and read and write accesses to memory mapped hardware.
+        -:   18:**
+        -:   19:**   $Log: mm_app.c.gcov  $
+        -:   19:**   Revision 1.3 2016/10/31 22:11:02EDT mdeschu 
+        -:   19:**   Update gcov results, README and log file for MM unit tests for 2.4.1
+        -:   20:**   Revision 1.3 2016/10/30 00:48:50EDT mdeschu 
+        -:   21:**   Use c-style casts to clean up compiler warnings in calls to CFE_EVS_SendEvent
+        -:   22:**   Revision 1.2 2015/12/29 15:22:45EST czogby 
+        -:   23:**   Move function prototypes from .c files into .h files
+        -:   24:**   Revision 1.1 2015/07/28 12:21:35EDT rperera 
+        -:   25:**   Initial revision
+        -:   26:**   Member added to project /CFS-APPs-PROJECT/mm/fsw/src/project.pj
+        -:   27:**   Revision 1.17 2015/04/14 15:29:04EDT lwalling 
+        -:   28:**   Removed unnecessary backslash characters from string format definitions
+        -:   29:**   Revision 1.16 2015/03/30 17:34:00EDT lwalling 
+        -:   30:**   Create common process to maintain and report last action statistics
+        -:   31:**   Revision 1.15 2015/03/20 14:16:55EDT lwalling 
+        -:   32:**   Add last peek/poke/fill command data value to housekeeping telemetry
+        -:   33:**   Revision 1.14 2015/03/02 14:26:42EST sstrege 
+        -:   34:**   Added copyright information
+        -:   35:**   Revision 1.13 2011/11/30 15:58:34EST jmdagost 
+        -:   36:**   Removed unused local variable and function call, initialized local variables.
+        -:   37:**   Revision 1.12 2010/12/08 14:38:59EST jmdagost 
+        -:   38:**   Added filename validation for symbol table dump command.
+        -:   39:**   Revision 1.11 2010/11/29 08:47:30EST jmdagost 
+        -:   40:**   Added support for EEPROM write-enable/disable commands
+        -:   41:**   Revision 1.10 2010/11/26 13:04:49EST jmdagost 
+        -:   42:**   Included mm_platform_cfg.h to access mission revision number.
+        -:   43:**   Revision 1.9 2010/11/24 17:09:20EST jmdagost 
+        -:   44:**   Implemented the MM Write Symbol Table to File command
+        -:   45:**   Revision 1.8 2009/04/18 15:29:37EDT dkobe 
+        -:   46:**   Corrected doxygen comments
+        -:   47:**   Revision 1.7 2008/09/06 15:33:57EDT dahardison 
+        -:   48:**   Added support for new init and noop event strings with version information
+        -:   49:**   Revision 1.6 2008/09/06 15:01:15EDT dahardison 
+        -:   50:**   Updated to support the symbol lookup ground command
+        -:   51:**   Revision 1.5 2008/09/05 14:27:44EDT dahardison 
+        -:   52:**   Updated references of local HK variables and the MM_HousekeepingCmd
+        -:   53:**   function accordingly for changes related to DCR 3611
+        -:   54:**   Revision 1.4 2008/05/22 15:15:05EDT dahardison 
+        -:   55:**   Added header includes for mm_msgids.h and mm_perfids.h
+        -:   56:**   Revision 1.3 2008/05/19 15:22:53EDT dahardison 
+        -:   57:**   Version after completion of unit testing
+        -:   58:** 
+        -:   59:*************************************************************************/
+        -:   60:
+        -:   61:/************************************************************************
+        -:   62:** Includes
+        -:   63:*************************************************************************/
+        -:   64:#include "mm_app.h"
+        -:   65:#include "mm_perfids.h"
+        -:   66:#include "mm_msgids.h"
+        -:   67:#include "mm_load.h"
+        -:   68:#include "mm_dump.h"
+        -:   69:#include "mm_utils.h"
+        -:   70:#include "mm_events.h"
+        -:   71:#include "mm_verify.h"
+        -:   72:#include "mm_version.h"
+        -:   73:#include "mm_platform_cfg.h"
+        -:   74:#include <string.h>
+        -:   75:
+        -:   76:/************************************************************************
+        -:   77:** MM global data
+        -:   78:*************************************************************************/
+        -:   79:MM_AppData_t MM_AppData;
+        -:   80:
+        -:   81:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   82:/*                                                                 */
+        -:   83:/* MM application entry point and main process loop                */
+        -:   84:/*                                                                 */
+        -:   85:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:   86:void MM_AppMain(void)
+        -:   87:{
+        3:   88:   int32 Status = CFE_SUCCESS;
+        -:   89:    
+        -:   90:   /*
+        -:   91:   **  Register the application with Executive Services 
+        -:   92:   */
+        3:   93:   CFE_ES_RegisterApp();
+        -:   94:
+        -:   95:   /* 
+        -:   96:   ** Create the first Performance Log entry
+        -:   97:   */
+        3:   98:   CFE_ES_PerfLogEntry(MM_APPMAIN_PERF_ID);
+        -:   99:
+        -:  100:   /*
+        -:  101:   ** Perform application specific initialization
+        -:  102:   */
+        3:  103:   Status = MM_AppInit();
+        3:  104:   if (Status != CFE_SUCCESS)
+        -:  105:   {
+        1:  106:      MM_AppData.RunStatus = CFE_ES_APP_ERROR;
+        -:  107:   }
+        -:  108:
+        -:  109:   /*
+        -:  110:   ** Application main loop
+        -:  111:   */
+        8:  112:   while(CFE_ES_RunLoop(&MM_AppData.RunStatus) == TRUE)
+        -:  113:   {
+        -:  114:      /* 
+        -:  115:      ** Performance Log exit stamp 
+        -:  116:      */
+        2:  117:      CFE_ES_PerfLogExit(MM_APPMAIN_PERF_ID);
+        -:  118:       
+        -:  119:      /* 
+        -:  120:      ** Pend on the arrival of the next Software Bus message 
+        -:  121:      */
+        2:  122:      Status = CFE_SB_RcvMsg(&MM_AppData.MsgPtr, MM_AppData.CmdPipe, CFE_SB_PEND_FOREVER);
+        -:  123:       
+        -:  124:      /* 
+        -:  125:      ** Performance Log entry stamp 
+        -:  126:      */
+        2:  127:      CFE_ES_PerfLogEntry(MM_APPMAIN_PERF_ID);       
+        -:  128:
+        -:  129:      /*
+        -:  130:      ** Check the return status from the software bus
+        -:  131:      */ 
+        2:  132:      if (Status == CFE_SUCCESS)
+        -:  133:      {
+        -:  134:         /* Process Software Bus message */
+        1:  135:         MM_AppPipe(MM_AppData.MsgPtr);
+        -:  136:      }
+        -:  137:      else
+        -:  138:      {
+        -:  139:         /* 
+        -:  140:         ** Exit on pipe read error
+        -:  141:         */
+        1:  142:         CFE_EVS_SendEvent(MM_PIPE_ERR_EID, CFE_EVS_ERROR,
+        -:  143:                           "SB Pipe Read Error, App will exit. RC = 0x%08X", (unsigned int)Status);         
+        -:  144:          
+        1:  145:         MM_AppData.RunStatus = CFE_ES_APP_ERROR;
+        -:  146:          
+        -:  147:      }
+        -:  148:   } /* end CFS_ES_RunLoop while */
+        -:  149:
+        -:  150:   /* 
+        -:  151:   ** Performance Log exit stamp 
+        -:  152:   */
+        3:  153:   CFE_ES_PerfLogExit(MM_APPMAIN_PERF_ID);
+        -:  154:   
+        -:  155:   /* 
+        -:  156:   ** Exit the application 
+        -:  157:   */
+        3:  158:   CFE_ES_ExitApp(MM_AppData.RunStatus); 
+        -:  159:
+        3:  160:} /* end MM_AppMain */
+        -:  161:
+        -:  162:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  163:/*                                                                 */
+        -:  164:/* MM initialization                                               */
+        -:  165:/*                                                                 */
+        -:  166:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        8:  167:int32 MM_AppInit(void)
+        -:  168:{
+        8:  169:   int32  Status = CFE_SUCCESS;
+        -:  170:
+        -:  171:   /*
+        -:  172:   ** MM doesn't use the critical data store and
+        -:  173:   ** doesn't need to identify power on vs. processor resets.
+        -:  174:   ** If this changes add it here as shown in the qq_app.c template
+        -:  175:   */
+        -:  176:    
+        -:  177:   /*
+        -:  178:   ** Setup the RunStatus variable
+        -:  179:   */
+        8:  180:   MM_AppData.RunStatus = CFE_ES_APP_RUN;
+        -:  181:    
+        -:  182:   /*
+        -:  183:   ** Initialize application command execution counters
+        -:  184:   */
+        8:  185:   MM_AppData.CmdCounter = 0;
+        8:  186:   MM_AppData.ErrCounter = 0;
+        -:  187:    
+        -:  188:   /*
+        -:  189:   ** Initialize application configuration data
+        -:  190:   */
+        8:  191:   strcpy(MM_AppData.PipeName, "MM_CMD_PIPE");
+        8:  192:   MM_AppData.PipeDepth = MM_CMD_PIPE_DEPTH;
+        -:  193:    
+        8:  194:   MM_AppData.LimitHK  = MM_HK_LIMIT;
+        8:  195:   MM_AppData.LimitCmd = MM_CMD_LIMIT;
+        -:  196:    
+        -:  197:   /*
+        -:  198:   ** Register for event services
+        -:  199:   */
+        8:  200:   Status = CFE_EVS_Register(NULL, 0, CFE_EVS_BINARY_FILTER);
+        -:  201:   
+        8:  202:   if (Status != CFE_SUCCESS)
+        -:  203:   {
+        2:  204:      CFE_ES_WriteToSysLog("MM App: Error Registering For Event Services, RC = 0x%08X\n", (unsigned int)Status);
+        2:  205:      return (Status);
+        -:  206:   }
+        -:  207:    
+        -:  208:   /*
+        -:  209:   ** Initialize the local housekeeping telemetry packet (clear user data area) 
+        -:  210:   */
+        6:  211:   CFE_SB_InitMsg(&MM_AppData.HkPacket, MM_HK_TLM_MID, sizeof(MM_HkPacket_t), TRUE);
+        -:  212:
+        -:  213:   /* 
+        -:  214:   ** Create Software Bus message pipe 
+        -:  215:   */
+        6:  216:   Status = CFE_SB_CreatePipe(&MM_AppData.CmdPipe, MM_AppData.PipeDepth, MM_AppData.PipeName);
+        6:  217:   if (Status != CFE_SUCCESS)
+        -:  218:   {
+        1:  219:      CFE_ES_WriteToSysLog("MM App: Error Creating SB Pipe, RC = 0x%08X\n", (unsigned int)Status);
+        1:  220:      return (Status);
+        -:  221:   }    
+        -:  222:
+        -:  223:   /* 
+        -:  224:   ** Subscribe to Housekeeping request commands 
+        -:  225:   */
+        5:  226:   Status = CFE_SB_Subscribe(MM_SEND_HK_MID, MM_AppData.CmdPipe);
+        5:  227:   if (Status != CFE_SUCCESS)
+        -:  228:   {
+        1:  229:      CFE_ES_WriteToSysLog("MM App: Error Subscribing to HK Request, RC = 0x%08X\n", (unsigned int)Status);
+        1:  230:      return (Status);
+        -:  231:   }    
+        -:  232:
+        -:  233:   /* 
+        -:  234:   ** Subscribe to MM ground command packets 
+        -:  235:   */
+        4:  236:   Status = CFE_SB_Subscribe(MM_CMD_MID, MM_AppData.CmdPipe);
+        4:  237:   if (Status != CFE_SUCCESS)
+        -:  238:   {
+        1:  239:      CFE_ES_WriteToSysLog("MM App: Error Subscribing to MM Command, RC = 0x%08X\n", (unsigned int)Status);
+        1:  240:      return (Status);
+        -:  241:   }    
+        -:  242:
+        -:  243:   /*
+        -:  244:   ** MM doesn't use tables. If this changes add table registration
+        -:  245:   ** and initialization here as shown in the qq_app.c template
+        -:  246:   */
+        -:  247:   
+        -:  248:   /*
+        -:  249:   ** MM doesn't use the critical data store. If this changes add CDS 
+        -:  250:   ** creation here as shown in the qq_app.c template
+        -:  251:   */
+        -:  252:    
+        -:  253:   /* 
+        -:  254:   ** Initialize MM housekeeping information 
+        -:  255:   */
+        3:  256:   MM_ResetHk();
+        -:  257:
+        -:  258:   /* 
+        -:  259:   ** Application startup event message 
+        -:  260:   */
+        3:  261:   CFE_EVS_SendEvent(MM_INIT_INF_EID, CFE_EVS_INFORMATION, 
+        -:  262:                    "MM Initialized. Version %d.%d.%d.%d",
+        -:  263:                     MM_MAJOR_VERSION,
+        -:  264:                     MM_MINOR_VERSION,
+        -:  265:                     MM_REVISION,
+        -:  266:                     MM_MISSION_REV);
+        -:  267:
+        3:  268:   return(CFE_SUCCESS);
+        -:  269:
+        -:  270:} /* end MM_AppInit */
+        -:  271:
+        -:  272:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  273:/*                                                                 */
+        -:  274:/* Process a command pipe message                                  */
+        -:  275:/*                                                                 */
+        -:  276:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       16:  277:void MM_AppPipe(CFE_SB_MsgPtr_t msg)
+        -:  278:{
+       16:  279:   CFE_SB_MsgId_t MessageID = 0;
+       16:  280:   uint16 CommandCode = 0;
+        -:  281:    
+       16:  282:   MessageID = CFE_SB_GetMsgId(msg);
+       16:  283:   switch (MessageID)
+        -:  284:   {
+        -:  285:      /* 
+        -:  286:      ** Housekeeping telemetry request 
+        -:  287:      */
+        -:  288:      case MM_SEND_HK_MID:
+        1:  289:         MM_HousekeepingCmd(msg);
+        1:  290:         break;
+        -:  291:
+        -:  292:      /* 
+        -:  293:      ** MM ground commands
+        -:  294:      */
+        -:  295:      case MM_CMD_MID:
+       14:  296:         MM_ResetHk(); /* Clear all "Last Action" data */
+       14:  297:         CommandCode = CFE_SB_GetCmdCode(msg);
+       14:  298:         switch (CommandCode)
+        -:  299:         {
+        -:  300:            case MM_NOOP_CC:
+        1:  301:               MM_NoopCmd(msg);
+        1:  302:               break;
+        -:  303:
+        -:  304:            case MM_RESET_CC:
+        1:  305:               MM_ResetCmd(msg);
+        1:  306:               break;
+        -:  307:            
+        -:  308:            case MM_PEEK_CC:
+        1:  309:               MM_PeekCmd(msg);
+        1:  310:               break;
+        -:  311:             
+        -:  312:            case MM_POKE_CC:
+        1:  313:               MM_PokeCmd(msg);
+        1:  314:               break;
+        -:  315:             
+        -:  316:            case MM_LOAD_MEM_WID_CC:
+        1:  317:               MM_LoadMemWIDCmd(msg);
+        1:  318:               break;
+        -:  319:         
+        -:  320:            case MM_LOAD_MEM_FROM_FILE_CC:
+        1:  321:               MM_LoadMemFromFileCmd(msg);
+        1:  322:               break;
+        -:  323:         
+        -:  324:            case MM_DUMP_MEM_TO_FILE_CC:
+        1:  325:               MM_DumpMemToFileCmd(msg);
+        1:  326:               break;
+        -:  327:                 
+        -:  328:            case MM_DUMP_IN_EVENT_CC:
+        1:  329:               MM_DumpInEventCmd(msg);
+        1:  330:               break;
+        -:  331:             
+        -:  332:            case MM_FILL_MEM_CC:
+        1:  333:               MM_FillMemCmd(msg);
+        1:  334:               break; 
+        -:  335:
+        -:  336:            case MM_LOOKUP_SYM_CC:
+        1:  337:               MM_LookupSymbolCmd(msg);
+        1:  338:               break; 
+        -:  339:
+        -:  340:            case MM_SYMTBL_TO_FILE_CC:
+        1:  341:               MM_SymTblToFileCmd(msg);
+        1:  342:               break; 
+        -:  343:               
+        -:  344:            case MM_ENABLE_EEPROM_WRITE_CC:
+        1:  345:               MM_EepromWriteEnaCmd(msg);
+        1:  346:               break; 
+        -:  347:               
+        -:  348:            case MM_DISABLE_EEPROM_WRITE_CC:
+        1:  349:               MM_EepromWriteDisCmd(msg);
+        1:  350:               break; 
+        -:  351:               
+        -:  352:            default:
+        1:  353:               MM_AppData.ErrCounter++;
+        1:  354:               CFE_EVS_SendEvent(MM_CC1_ERR_EID, CFE_EVS_ERROR,
+        -:  355:                                 "Invalid ground command code: ID = 0x%X, CC = %d",
+        -:  356:                                 MessageID, CommandCode);
+        -:  357:             break;
+        -:  358:         } 
+       14:  359:         break;
+        -:  360:
+        -:  361:      /*
+        -:  362:      ** Unrecognized Message ID
+        -:  363:      */    
+        -:  364:      default:
+        1:  365:         MM_AppData.ErrCounter++;
+        1:  366:         CFE_EVS_SendEvent(MM_MID_ERR_EID, CFE_EVS_ERROR,
+        -:  367:                           "Invalid command pipe message ID: 0x%X", MessageID);
+        -:  368:         break;
+        -:  369:   
+        -:  370:   } /* end switch */
+        -:  371:
+       16:  372:   return;
+        -:  373:
+        -:  374:} /* End MM_AppPipe */
+        -:  375:
+        -:  376:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  377:/*                                                                 */
+        -:  378:/* Housekeeping request                                            */
+        -:  379:/*                                                                 */
+        -:  380:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  381:void MM_HousekeepingCmd(CFE_SB_MsgPtr_t msg)
+        -:  382:{
+        2:  383:   uint16 ExpectedLength = sizeof (MM_NoArgsCmd_t);
+        -:  384:   
+        -:  385:   /*
+        -:  386:   ** Verify command packet length 
+        -:  387:   */
+        2:  388:   if (MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  389:   {
+        -:  390:      /*
+        -:  391:      ** Copy local housekeeping variables to packet structure
+        -:  392:      */   
+        2:  393:      MM_AppData.HkPacket.CmdCounter     = MM_AppData.CmdCounter;               
+        2:  394:      MM_AppData.HkPacket.ErrCounter     = MM_AppData.ErrCounter;
+        2:  395:      MM_AppData.HkPacket.LastAction     = MM_AppData.LastAction;
+        2:  396:      MM_AppData.HkPacket.MemType        = MM_AppData.MemType;
+        2:  397:      MM_AppData.HkPacket.Address        = MM_AppData.Address;
+        2:  398:      MM_AppData.HkPacket.DataValue      = MM_AppData.DataValue;
+        2:  399:      MM_AppData.HkPacket.BytesProcessed = MM_AppData.BytesProcessed;
+        -:  400:
+        2:  401:      strncpy(MM_AppData.HkPacket.FileName, MM_AppData.FileName, OS_MAX_PATH_LEN);      
+        -:  402:      
+        -:  403:      /* 
+        -:  404:      ** Send housekeeping telemetry packet 
+        -:  405:      */
+        2:  406:      CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &MM_AppData.HkPacket);
+        2:  407:      CFE_SB_SendMsg((CFE_SB_Msg_t *) &MM_AppData.HkPacket);
+        -:  408:      
+        -:  409:      /*
+        -:  410:      ** This command does not affect the command execution counter
+        -:  411:      */
+        -:  412:
+        -:  413:   } /* end if */
+        -:  414:   
+        2:  415:   return;
+        -:  416:
+        -:  417:} /* end MM_HousekeepingCmd */
+        -:  418:
+        -:  419:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  420:/*                                                                 */
+        -:  421:/* Noop command                                                    */
+        -:  422:/*                                                                 */
+        -:  423:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  424:void MM_NoopCmd(CFE_SB_MsgPtr_t msg)
+        -:  425:{
+        1:  426:   uint16 ExpectedLength = sizeof(MM_NoArgsCmd_t);
+        -:  427:   
+        -:  428:   /* 
+        -:  429:   ** Verify command packet length 
+        -:  430:   */
+        1:  431:   if(MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  432:   {
+        1:  433:      MM_AppData.LastAction = MM_NOOP;
+        1:  434:      MM_AppData.CmdCounter++;
+        -:  435:      
+        1:  436:      CFE_EVS_SendEvent(MM_NOOP_INF_EID, CFE_EVS_INFORMATION,
+        -:  437:                       "No-op command. Version %d.%d.%d.%d",
+        -:  438:                        MM_MAJOR_VERSION,
+        -:  439:                        MM_MINOR_VERSION,
+        -:  440:                        MM_REVISION,
+        -:  441:                        MM_MISSION_REV);
+        -:  442:   }
+        -:  443:
+        1:  444:   return;
+        -:  445:
+        -:  446:} /* end MM_NoopCmd */
+        -:  447:
+        -:  448:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  449:/*                                                                 */
+        -:  450:/* Reset counters command                                          */
+        -:  451:/*                                                                 */
+        -:  452:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  453:void MM_ResetCmd(CFE_SB_MsgPtr_t msg)
+        -:  454:{
+        1:  455:   uint16 ExpectedLength = sizeof(MM_NoArgsCmd_t);
+        -:  456:   
+        -:  457:   /* 
+        -:  458:   ** Verify command packet length 
+        -:  459:   */
+        1:  460:   if(MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  461:   {
+        1:  462:      MM_AppData.LastAction = MM_RESET;
+        1:  463:      MM_AppData.CmdCounter = 0;
+        1:  464:      MM_AppData.ErrCounter = 0;
+        -:  465:      
+        1:  466:      CFE_EVS_SendEvent(MM_RESET_DBG_EID, CFE_EVS_DEBUG,
+        -:  467:                        "Reset counters command received");
+        -:  468:   }
+        -:  469:   
+        1:  470:   return;
+        -:  471:
+        -:  472:} /* end MM_ResetCmd */
+        -:  473:
+        -:  474:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  475:/*                                                                 */
+        -:  476:/* Lookup symbol name command                                      */
+        -:  477:/*                                                                 */
+        -:  478:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  479:void MM_LookupSymbolCmd(CFE_SB_MsgPtr_t msg)
+        -:  480:{
+        4:  481:   int32   OS_Status = OS_ERROR;  /* Set to error instead of success since we explicitly test for success */
+        4:  482:   uint32  ResolvedAddr = 0;
+        4:  483:   MM_LookupSymCmd_t  *CmdPtr = NULL;
+        4:  484:   uint16 ExpectedLength = sizeof(MM_LookupSymCmd_t);
+        -:  485:   
+        -:  486:   /* 
+        -:  487:   ** Verify command packet length 
+        -:  488:   */
+        4:  489:   if(MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  490:   {
+        4:  491:      CmdPtr = ((MM_LookupSymCmd_t *) msg);
+        -:  492:       
+        -:  493:      /* 
+        -:  494:      ** NUL terminate the very end of the symbol name string as a
+        -:  495:      ** safety measure
+        -:  496:      */
+        4:  497:      CmdPtr->SymName[OS_MAX_SYM_LEN - 1] = '\0';
+        -:  498:       
+        -:  499:      /* 
+        -:  500:      ** Check if the symbol name string is a nul string
+        -:  501:      */ 
+        4:  502:      if(strlen(CmdPtr->SymName) == 0)
+        -:  503:       {
+        2:  504:          MM_AppData.ErrCounter++;
+        2:  505:          CFE_EVS_SendEvent(MM_SYMNAME_NUL_ERR_EID, CFE_EVS_ERROR,
+        -:  506:                            "NUL (empty) string specified as symbol name");   
+        -:  507:       }
+        -:  508:      else
+        -:  509:      {
+        -:  510:         /* 
+        -:  511:         ** If symbol name is not an empty string look it up using the OSAL API 
+        -:  512:         */
+        2:  513:         OS_Status = OS_SymbolLookup(&ResolvedAddr, CmdPtr->SymName);
+        2:  514:         if (OS_Status == OS_SUCCESS)
+        -:  515:          {
+        -:  516:             /* Update telemetry */
+        1:  517:             MM_AppData.LastAction = MM_SYM_LOOKUP;
+        1:  518:             MM_AppData.Address    = ResolvedAddr;
+        1:  519:             MM_AppData.CmdCounter++;
+        -:  520:             
+        1:  521:             CFE_EVS_SendEvent(MM_SYM_LOOKUP_INF_EID, CFE_EVS_INFORMATION,
+        -:  522:                               "Symbol Lookup Command: Name = '%s' Addr = 0x%08X",
+        -:  523:                               CmdPtr->SymName, (unsigned int)ResolvedAddr);
+        -:  524:          }
+        -:  525:         else
+        -:  526:         {
+        1:  527:             MM_AppData.ErrCounter++;
+        1:  528:             CFE_EVS_SendEvent(MM_SYMNAME_ERR_EID, CFE_EVS_ERROR,
+        -:  529:                               "Symbolic address can't be resolved: Name = '%s'", 
+        -:  530:                               CmdPtr->SymName);   
+        -:  531:         }
+        -:  532:
+        -:  533:      } /* end strlen(CmdPtr->SymName) == 0 else */
+        -:  534:      
+        -:  535:   } /* end MM_VerifyCmdLength if */
+        -:  536:   
+        4:  537:   return;
+        -:  538:
+        -:  539:} /* end MM_LookupSymbolCmd */
+        -:  540:
+        -:  541:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  542:/*                                                                 */
+        -:  543:/* Dump symbol table to file command                               */
+        -:  544:/*                                                                 */
+        -:  545:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  546:void MM_SymTblToFileCmd(CFE_SB_MsgPtr_t msg)
+        -:  547:{
+        5:  548:   boolean                Valid = TRUE;
+        5:  549:   int32                  OS_Status = OS_ERROR;  /* Set to error instead of success since we explicitly test for success */
+        5:  550:   MM_SymTblToFileCmd_t  *CmdPtr = NULL;
+        5:  551:   uint16                 ExpectedLength = sizeof(MM_SymTblToFileCmd_t);
+        -:  552:   
+        -:  553:   /* 
+        -:  554:   ** Verify command packet length 
+        -:  555:   */
+        5:  556:   if(MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  557:   {
+        5:  558:      CmdPtr = ((MM_SymTblToFileCmd_t *) msg);
+        -:  559:       
+        -:  560:      /* 
+        -:  561:      ** NUL terminate the very end of the filename string as a
+        -:  562:      ** safety measure
+        -:  563:      */
+        5:  564:      CmdPtr->FileName[OS_MAX_PATH_LEN - 1] = '\0';
+        -:  565:       
+        -:  566:      /* 
+        -:  567:      ** Check if the filename string is a nul string
+        -:  568:      */ 
+        5:  569:      if(strlen(CmdPtr->FileName) == 0)
+        -:  570:       {
+        2:  571:          MM_AppData.ErrCounter++;
+        2:  572:          CFE_EVS_SendEvent(MM_SYMFILENAME_NUL_ERR_EID, CFE_EVS_ERROR,
+        -:  573:                            "NUL (empty) string specified as symbol dump file name");   
+        -:  574:       }
+        -:  575:      else
+        -:  576:      {
+        3:  577:         Valid = CFS_IsValidFilename(CmdPtr->FileName, strlen(CmdPtr->FileName));
+        -:  578:         
+        3:  579:         if (Valid == TRUE)
+        -:  580:         {
+        -:  581:             /* 
+        -:  582:             ** If filename is good pass it to the OSAL API 
+        -:  583:             */
+        2:  584:             OS_Status = OS_SymbolTableDump(CmdPtr->FileName, MM_MAX_DUMP_FILE_DATA_SYMTBL);
+        2:  585:             if (OS_Status == OS_SUCCESS)
+        -:  586:             {
+        -:  587:                 /* Update telemetry */
+        1:  588:                 MM_AppData.LastAction = MM_SYMTBL_SAVE;
+        1:  589:                 strncpy(MM_AppData.FileName, CmdPtr->FileName, OS_MAX_PATH_LEN);
+        1:  590:                 MM_AppData.CmdCounter++;
+        -:  591:             
+        1:  592:                 CFE_EVS_SendEvent(MM_SYMTBL_TO_FILE_INF_EID, CFE_EVS_INFORMATION,
+        -:  593:                                   "Symbol Table Dump to File Started: Name = '%s'",
+        -:  594:                                   CmdPtr->FileName);
+        -:  595:              }
+        -:  596:              else
+        -:  597:             {
+        1:  598:                 MM_AppData.ErrCounter++;
+        1:  599:                 CFE_EVS_SendEvent(MM_SYMTBL_TO_FILE_FAIL_ERR_EID, CFE_EVS_ERROR,
+        -:  600:                                   "Error dumping symbol table, OS_Status= 0x%X, File='%s'", 
+        -:  601:                                   (unsigned int)OS_Status, CmdPtr->FileName);   
+        -:  602:             }
+        -:  603:         }
+        -:  604:         else
+        -:  605:         {
+        1:  606:             MM_AppData.ErrCounter++;
+        1:  607:             CFE_EVS_SendEvent(MM_SYMTBL_TO_FILE_INVALID_ERR_EID, CFE_EVS_ERROR,
+        -:  608:                               "Illegal characters in target filename, File='%s'", 
+        -:  609:                               CmdPtr->FileName);   
+        -:  610:         }
+        -:  611:
+        -:  612:      } /* end strlen(CmdPtr->FileName) == 0 else */
+        -:  613:      
+        -:  614:   } /* end MM_VerifyCmdLength if */
+        -:  615:   
+        5:  616:   return;
+        -:  617:
+        -:  618:} /* end MM_SymTblToFileCmd */
+        -:  619:
+        -:  620:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  621:/*                                                                 */
+        -:  622:/* EEPROM write-enable command                                     */
+        -:  623:/*                                                                 */
+        -:  624:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  625:void MM_EepromWriteEnaCmd(CFE_SB_MsgPtr_t msg)
+        -:  626:{
+        3:  627:   int32                    cFE_Status = CFE_PSP_ERROR;  /* Set to error since we explicitly test for success */
+        3:  628:   MM_EepromWriteEnaCmd_t  *CmdPtr = NULL;
+        3:  629:   uint16                   ExpectedLength = sizeof(MM_EepromWriteEnaCmd_t);
+        -:  630:   
+        -:  631:   /* 
+        -:  632:   ** Verify command packet length 
+        -:  633:   */
+        3:  634:   if(MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  635:   {
+        3:  636:      CmdPtr = ((MM_EepromWriteEnaCmd_t *) msg);
+        -:  637:       
+        -:  638:         /* 
+        -:  639:         ** Call the cFE to write-enable the requested bank 
+        -:  640:         */
+        3:  641:         cFE_Status = CFE_PSP_EepromWriteEnable(CmdPtr->Bank);
+        3:  642:         if (cFE_Status == CFE_PSP_SUCCESS)
+        -:  643:          {
+        -:  644:             /* Update telemetry */
+        2:  645:             MM_AppData.LastAction = MM_EEPROMWRITE_ENA;
+        2:  646:             MM_AppData.MemType    = MM_EEPROM;
+        2:  647:             MM_AppData.CmdCounter++;
+        -:  648:             
+        2:  649:             CFE_EVS_SendEvent(MM_EEPROM_WRITE_ENA_INF_EID, CFE_EVS_INFORMATION,
+        -:  650:                               "EEPROM bank %d write enabled, cFE_Status= 0x%X",
+        -:  651:                               (int)CmdPtr->Bank, (unsigned int)cFE_Status);
+        -:  652:          }
+        -:  653:         else
+        -:  654:         {
+        1:  655:             MM_AppData.ErrCounter++;
+        1:  656:             CFE_EVS_SendEvent(MM_EEPROM_WRITE_ENA_ERR_EID, CFE_EVS_ERROR,
+        -:  657:                               "Error requesting EEPROM bank %d write enable, cFE_Status= 0x%X", 
+        -:  658:                               (int)CmdPtr->Bank, (unsigned int)cFE_Status);   
+        -:  659:         }
+        -:  660:      
+        -:  661:   } /* end MM_VerifyCmdLength if */
+        -:  662:   
+        3:  663:   return;
+        -:  664:
+        -:  665:} /* end MM_EepromWriteEnaCmd */
+        -:  666:
+        -:  667:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  668:/*                                                                 */
+        -:  669:/* EEPROM write-disable command                                    */
+        -:  670:/*                                                                 */
+        -:  671:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  672:void MM_EepromWriteDisCmd(CFE_SB_MsgPtr_t msg)
+        -:  673:{
+        3:  674:   int32                    cFE_Status = CFE_PSP_ERROR;  /* Set to error since we explicitly test for success */
+        3:  675:   MM_EepromWriteDisCmd_t  *CmdPtr = NULL;
+        3:  676:   uint16                   ExpectedLength = sizeof(MM_EepromWriteDisCmd_t);
+        -:  677:   
+        -:  678:   /* 
+        -:  679:   ** Verify command packet length 
+        -:  680:   */
+        3:  681:   if(MM_VerifyCmdLength(msg, ExpectedLength))
+        -:  682:   {
+        3:  683:      CmdPtr = ((MM_EepromWriteDisCmd_t *) msg);
+        -:  684:       
+        -:  685:         /* 
+        -:  686:         ** Call the cFE to write-enable the requested bank 
+        -:  687:         */
+        3:  688:         cFE_Status = CFE_PSP_EepromWriteDisable(CmdPtr->Bank);
+        3:  689:         if (cFE_Status == CFE_PSP_SUCCESS)
+        -:  690:          {
+        -:  691:             /* Update telemetry */
+        2:  692:             MM_AppData.LastAction = MM_EEPROMWRITE_DIS;
+        2:  693:             MM_AppData.MemType    = MM_EEPROM;
+        2:  694:             MM_AppData.CmdCounter++;
+        -:  695:             
+        2:  696:             CFE_EVS_SendEvent(MM_EEPROM_WRITE_DIS_INF_EID, CFE_EVS_INFORMATION,
+        -:  697:                               "EEPROM bank %d write disabled, cFE_Status= 0x%X",
+        -:  698:                               (int)CmdPtr->Bank, (unsigned int)cFE_Status);
+        -:  699:          }
+        -:  700:         else
+        -:  701:         {
+        1:  702:             MM_AppData.ErrCounter++;
+        1:  703:             CFE_EVS_SendEvent(MM_EEPROM_WRITE_DIS_ERR_EID, CFE_EVS_ERROR,
+        -:  704:                               "Error requesting EEPROM bank %d write disable, cFE_Status= 0x%X", 
+        -:  705:                               (int)CmdPtr->Bank, (unsigned int)cFE_Status);
+        -:  706:         }
+        -:  707:      
+        -:  708:   } /* end MM_VerifyCmdLength if */
+        -:  709:   
+        3:  710:   return;
+        -:  711:
+        -:  712:} /* end MM_EepromWriteDisCmd */
+        -:  713:
+        -:  714:/************************/
+        -:  715:/*  End of File Comment */
+        -:  716:/************************/

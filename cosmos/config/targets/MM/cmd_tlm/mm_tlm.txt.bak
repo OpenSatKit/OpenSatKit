@@ -1,0 +1,15 @@
+TELEMETRY MM MM_HKPACKET BIG_ENDIAN "Housekeeping Packet Structure"
+  APPEND_ID_ITEM CCSDS_STREAMID 16 UINT 0x0887 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SEQUENCE 16 UINT "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM CCSDS_LENGTH 16 UINT "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SECONDS 32 UINT "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM CCSDS_SUBSECS 16 UINT "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM CMDCOUNTER 8 UINT "MM Application Command Counter."
+  APPEND_ITEM ERRCOUNTER 8 UINT "MM Application Command Error Counter."
+  APPEND_ITEM LASTACTION 8 UINT "Last command action executed."
+  APPEND_ITEM MEMTYPE 8 UINT "Memory type for last command."
+  APPEND_ITEM ADDRESS 32 UINT "Fully resolved address used for last command."
+  APPEND_ITEM FILLPATTERN 32 UINT "Fill pattern used if memory fill command was issued."
+  APPEND_ITEM BYTESPROCESSED 32 UINT "Bytes processed for last command."
+  APPEND_ITEM FILENAME 512 STRING "Name of the data file used for last command, where applicable."
+

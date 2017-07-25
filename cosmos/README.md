@@ -1,0 +1,1 @@
+This is an example COSMOS Mission Setup with a very basic CFS Database that might not be accurate, but does work for a simple starting point.

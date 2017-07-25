@@ -1,0 +1,4 @@
+AUTO_START
+
+COMPONENT "cFS Event Messages" evs_msg_viewer.rb
+   PACKET EVS EVENT_MSG_PKT

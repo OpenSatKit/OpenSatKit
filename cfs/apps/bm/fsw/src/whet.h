@@ -1,0 +1,1 @@
+int runWhetstone(int loops);

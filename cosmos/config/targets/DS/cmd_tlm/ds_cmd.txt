@@ -1,0 +1,100 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "DS"
+  @CMD_MID_STR     = "DS_CMD_MID"
+  
+  @DS_PATHNAME_BUFSIZE  = "DS_PATHNAME_BUFSIZE"
+  @DS_BASENAME_BUFSIZE  = "DS_BASENAME_BUFSIZE"
+  @DS_EXTENSION_BUFSIZE = "DS_EXTENSION_BUFSIZE"
+
+%>  
+COMMAND DS NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND DS RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND DS SET_APP_STATE <%= CfsKitConfig.processor_endian %> "Enable/Disable the DS application packet storing"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  APPEND_PARAMETER APP_STATE 16 UINT MIN_UINT16 MAX_UINT16 1 "0=Disable, 1=Enable packet storing"
+
+COMMAND DS SET_FILTER_FILE <%= CfsKitConfig.processor_endian %> "Modify the Destination File selection for the commanded entry in the Packet Filter Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 6) %>
+  APPEND_PARAMETER MSG_ID           16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of existing entry in Packet Filter Table"
+  APPEND_PARAMETER FILTER_PARAM_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Filter Parmeter Array"
+  APPEND_PARAMETER FILE_TBL_IDX     16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Destination File Table"
+
+COMMAND DS SET_FILTER_TYPE <%= CfsKitConfig.processor_endian %> "Modify the Filter Type (pkt count or time) for the commanded entry in the Packet Filter Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 6) %>
+  APPEND_PARAMETER MSG_ID           16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of existing entry in Packet Filter Table."
+  APPEND_PARAMETER FILTER_PARAM_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Filter Parameter Array"
+  APPEND_PARAMETER FILTER_TYPE      16 UINT MIN_UINT16 MAX_UINT16 0 "Filter type (packet sequence count or time)."
+
+COMMAND DS SET_FILTER_PARAM <%= CfsKitConfig.processor_endian %> "Modify the Algorithm Parameters for the commanded entry in the Packet Filter Table. N of X messages will be stored starting at offset O"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 4) %>
+  APPEND_PARAMETER MSG_ID           16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of existing entry in Packet Filter Table."
+  APPEND_PARAMETER FILTER_PARAM_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Filter Parameter Array"
+  APPEND_PARAMETER Algorithm_N      16 UINT MIN_UINT16 MAX_UINT16 0 "Algorithm value N (pass this many)"
+  APPEND_PARAMETER Algorithm_X      16 UINT MIN_UINT16 MAX_UINT16 0 "Algorithm value X (out of this many)"
+  APPEND_PARAMETER Algorithm_O      16 UINT MIN_UINT16 MAX_UINT16 0 "Algorithm value O (at this offset)"
+
+COMMAND DS SET_FILE_TYPE <%= CfsKitConfig.processor_endian %> "Set file name to use sequence count or time in the name for commanded entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
+  APPEND_PARAMETER FILE_TBL_IDX  16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Destination File Table"
+  APPEND_PARAMETER FILENAME_TYPE 16 UINT MIN_UINT16 MAX_UINT16 0 "1=Count, 2=Time"
+
+COMMAND DS SET_FILE_STATE <%= CfsKitConfig.processor_endian %> "Default to enable for the indicated entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 8) %>
+  APPEND_PARAMETER FILE_TBL_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Destination File Table"
+  APPEND_PARAMETER FILE_STATE   16 UINT MIN_UINT16 MAX_UINT16 1 "0=Disable, 1=Enable destination storage file"
+
+COMMAND DS SET_FILE_PATH_NAME <%= CfsKitConfig.processor_endian %> "Modify the Pathname portion of the filename for the commanded entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
+  APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table"
+  APPEND_PARAMETER PATH_NAME    <%= CfsKitConfig.get_fsw_cfg_str_param(@APP_PREFIX_STR, @DS_PATHNAME_BUFSIZE)*8 %> STRING "default" "Path name portion of filename."
+
+COMMAND DS SET_FILE_BASE_NAME <%= CfsKitConfig.processor_endian %> "Modify the Basename portion of the filename for the commanded entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 0) %>
+  APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table"
+  APPEND_PARAMETER BASE_NAME    <%= CfsKitConfig.get_fsw_cfg_str_param(@APP_PREFIX_STR, @DS_BASENAME_BUFSIZE)*8 %> STRING "default" "Base name portion of filename"
+
+COMMAND DS SET_FILE_EXT <%= CfsKitConfig.processor_endian %> "Modify the Extension portion of the filename for the indicated entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 12) %>
+  APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table"
+  APPEND_PARAMETER EXTENSION    <%= CfsKitConfig.get_fsw_cfg_str_param(@APP_PREFIX_STR, @DS_BASENAME_BUFSIZE)*8 %> STRING "default" "Extension portion of filename"
+
+COMMAND DS SET_FILE_MAX_SIZE <%= CfsKitConfig.processor_endian %> "Modify the max file size for the commanded entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 8) %>
+  APPEND_PARAMETER FILE_TBL_IDX  32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table."
+  APPEND_PARAMETER MAX_FILE_SIZE 32 UINT MIN_UINT32 MAX_UINT32 0 "Max file size (bytes) before re-open"
+  
+COMMAND DS SET_FILE_MAX_AGE <%= CfsKitConfig.processor_endian %> "Modify the max file age for the commanded entry in the Destination File Table."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 8) %>
+  APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table."
+  APPEND_PARAMETER MAX_FILE_AGE 32 UINT MIN_UINT32 MAX_UINT32 0 "Max file age (seconds) before re-open"
+
+COMMAND DS SET_FILE_COUNT <%= CfsKitConfig.processor_endian %> "Set the sequence count value for the commanded entry in the Destination File Table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 8) %>
+  APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table"
+  APPEND_PARAMETER SEQUENCE_CNT 32 UINT MIN_UINT32 MAX_UINT32 0 "Sequence count portion of filename"
+
+COMMAND DS CLOSE_FILE <%= CfsKitConfig.processor_endian %> "Close the commanded Destination File."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 4) %>
+  APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table"
+
+COMMAND DS GET_FILE_INFO <%= CfsKitConfig.processor_endian %> "This command will send the DS File Info Packet."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 0) %>
+
+COMMAND DS ADD_FILTER_MID <%= CfsKitConfig.processor_endian %> "Insert the commanded Message ID to an unused Packet Filter Table entry"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 2) %>
+  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID to add to Packet Filter Table"
+
+COMMAND DS CLOSE_ALL <%= CfsKitConfig.processor_endian %> "Close all open Destination Files. NOTE: Using this command may incur a performance hit based upon the number and size of the files being closed."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 0) %>
+
+  
+  
+
+  
+  

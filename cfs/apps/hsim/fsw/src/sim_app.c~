@@ -1,0 +1,530 @@
+/*
+** $Id: $
+**
+** Title: Core Flight System (CFS) Simulator (SIM) Application
+**
+** Purpose: The Simulator (SIM) Application provides onboard heater control services.
+**          When the Simulator application receives a housekeeping request
+**          (scheduled within the scheduler application), SIM reports its housekeeping
+**          status values via telemetry messaging.
+**
+** Author: Lindsay A. Walton, Summer 2015 Intern for Code 582 NASA GSFC
+**
+** Notes:
+**
+** $Log: $
+*/
+
+#include "sim_app.h"
+#include "cfe.h"
+#include "sim_msgdefs.h"
+#include "sim_msgids.h"
+#include "sim_cmds.h"
+#include "sim_cmd_utils.h"
+#include "sim_events.h"
+#include "sim_perfids.h"
+#include "sim_platform_cfg.h"
+#include "sim_version.h"
+#include "sim_verify.h"
+#include "hc_msgids.h"
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application global data                                     */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+SIM_GlobalData_t  SIM_GlobalData;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- entry point and main loop processor          */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void SIM_AppMain(void)
+{
+    uint32 RunStatus = CFE_ES_APP_RUN;
+    CFE_SB_MsgPtr_t MsgPtr;
+    int32 Result;
+
+    /* Register application */
+    Result = CFE_ES_RegisterApp();
+
+    /* Performance Log (start time counter) */
+    CFE_ES_PerfLogEntry(SIM_APPMAIN_PERF_ID);
+
+    /*
+    ** Perform application specific initialization...
+    */
+    if (Result == CFE_SUCCESS)
+    {
+        Result = SIM_AppInit();
+    }
+
+    /*
+    ** Check for start-up error...
+    */
+    if (Result != CFE_SUCCESS)
+    {
+        /*
+        ** Set request to terminate main loop...
+        */
+       RunStatus = CFE_ES_APP_ERROR;
+    }
+
+    /*
+    ** Main process loop...
+    */
+    while (CFE_ES_RunLoop(&RunStatus) == TRUE)
+    {
+        /* Performance Log (stop time counter) */
+        CFE_ES_PerfLogExit(SIM_APPMAIN_PERF_ID);
+
+        /* Wait for the next Software Bus message */
+        Result = CFE_SB_RcvMsg(&MsgPtr, SIM_GlobalData.CmdPipe, CFE_SB_PEND_FOREVER); 
+
+        /* Performance Log (start time counter) */
+        CFE_ES_PerfLogEntry(SIM_APPMAIN_PERF_ID);
+
+        if (Result == CFE_SUCCESS)
+        {
+            /* Process Software Bus message */
+            SIM_ProcessPkt(MsgPtr);
+        }
+        else
+        {
+            /* Process Software Bus error */
+            CFE_EVS_SendEvent(SIM_SB_RECEIVE_ERR_EID, CFE_EVS_ERROR,
+               "Main loop error: SB receive: result = 0x%08X", Result);
+
+            /* Set request to terminate main loop */
+            RunStatus = CFE_ES_APP_ERROR;
+        }
+    }
+
+    /*
+    ** Send an event describing the reason for the termination...
+    */
+    CFE_EVS_SendEvent(SIM_EXIT_ERR_EID, CFE_EVS_ERROR,
+       "Application terminating: result = 0x%08X", Result);
+
+    /*
+    ** In case cFE Event Services is not working...
+    */
+    CFE_ES_WriteToSysLog("SIM application terminating: result = 0x%08X\n", Result); 
+
+    /*
+    ** Performance Log (stop time counter)...
+    */
+    CFE_ES_PerfLogExit(SIM_APPMAIN_PERF_ID);
+
+    /*
+    ** Let cFE kill the task...
+    */
+    CFE_ES_ExitApp(RunStatus);
+
+}
+/* End SIM_AppMain */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- startup initialization processor             */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+int32 SIM_AppInit(void)
+{
+    char *ErrText = "Initialization error:";
+    int32 Result = CFE_SUCCESS;
+
+    /* Initialize global data  */
+    CFE_PSP_MemSet(&SIM_GlobalData, 0, sizeof(SIM_GlobalData_t));
+
+    /* Set the global data */
+    SIM_SetData();
+
+    /* Register for event services */
+    Result = CFE_EVS_Register(NULL, 0, CFE_EVS_BINARY_FILTER);
+
+    if (Result != CFE_SUCCESS)
+    {
+        CFE_EVS_SendEvent(SIM_STARTUP_EVENTS_ERR_EID, CFE_EVS_ERROR,
+           "%s register for event services: result = 0x%08X", ErrText, Result);
+    }
+    else
+    {
+        /* Create Software Bus message pipe */
+        Result = CFE_SB_CreatePipe(&SIM_GlobalData.CmdPipe,
+                                    SIM_APP_PIPE_DEPTH, SIM_APP_PIPE_NAME);
+        if (Result != CFE_SUCCESS)
+        {
+            CFE_EVS_SendEvent(SIM_STARTUP_CREAT_PIPE_ERR_EID, CFE_EVS_ERROR,
+               "%s create SB input pipe: result = 0x%08X", ErrText, Result);
+        }
+        else
+        {
+            /* Subscribe to Housekeeping request commands */
+            Result = CFE_SB_Subscribe(SIM_SEND_HK_MID, SIM_GlobalData.CmdPipe);
+
+            if (Result != CFE_SUCCESS)
+            {
+                CFE_EVS_SendEvent(SIM_STARTUP_SUBSCRIB_HK_ERR_EID, CFE_EVS_ERROR,
+                   "%s subscribe to HK request: result = 0x%08X", ErrText, Result);
+            }
+
+            /* Subscribe to scheduler request commands */
+            Result = CFE_SB_Subscribe(SIM_SEND_DATA_MID, SIM_GlobalData.CmdPipe);
+
+            if (Result != CFE_SUCCESS)
+            { 
+                CFE_EVS_SendEvent(SIM_STARTUP_SUBSCRIB_SCH_ERR_EID, CFE_EVS_ERROR,
+                   "%s subscribe to SCH request: result = 0x%08X", ErrText, Result);
+            }
+
+        }
+
+    }
+
+    /* Keep indentation from getting too deep */
+    if (Result == CFE_SUCCESS)
+    {
+        /* Subscribe to SIM ground command packets */
+        Result = CFE_SB_Subscribe(SIM_CMD_MID, SIM_GlobalData.CmdPipe);
+
+        if (Result != CFE_SUCCESS)
+        {
+            CFE_EVS_SendEvent(SIM_STARTUP_SUBSCRIB_GCMD_ERR_EID, CFE_EVS_ERROR,
+               "%s subscribe to SIM commands: result = 0x%08X", ErrText, Result);
+        }
+        else
+        {
+             /* Application startup event message */
+             CFE_EVS_SendEvent(SIM_STARTUP_EID, CFE_EVS_INFORMATION,
+                   "Initialization complete: version %d.%d.%d.%d",
+                    SIM_MAJOR_VERSION, SIM_MINOR_VERSION, SIM_REVISION, SIM_MISSION_REV);
+        }
+    }
+
+    return(Result);
+
+}
+/* End of SIM_AppInit() */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- input packet processor                       */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void SIM_ProcessPkt(CFE_SB_MsgPtr_t MessagePtr)
+{
+    CFE_SB_MsgId_t MessageID;
+
+    MessageID = CFE_SB_GetMsgId(MessagePtr);
+
+    switch(MessageID)
+    {
+        /* Housekeeping request */
+        case SIM_SEND_HK_MID:
+            SIM_ReportHK(MessagePtr);
+            break;
+
+        /* SIM ground commands */
+        case SIM_CMD_MID:
+            SIM_ProcessCmd(MessagePtr);
+            break;
+       
+        /* Scheduler wakeup to send data */
+        case SIM_SEND_DATA_MID:
+            SIM_SendTlmData();
+            break;
+
+        default:
+            CFE_EVS_SendEvent(SIM_MID_ERR_EID, CFE_EVS_ERROR,
+               "Main loop error: invalid message ID: mid = 0x%04X", MessageID);
+            break;
+
+    }
+
+    return;
+
+}
+/* End of SIM_ProcessPkt */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- command packet processor                     */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void SIM_ProcessCmd(CFE_SB_MsgPtr_t MessagePtr)
+{
+    boolean Result = TRUE;
+    uint16 CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+
+    /* Invoke specific command handler */
+    switch (CommandCode)
+    {
+        case SIM_NOOP_CC:
+            Result = SIM_NoopCmd(MessagePtr);
+            break;
+
+        case SIM_RESET_CC:
+            Result = SIM_ResetCountersCmd(MessagePtr);
+            break;
+
+        case SIM_CTRL_HEATER_CC:
+            Result = SIM_ReceiveCmd(MessagePtr);
+            break;
+
+        default:
+            Result = FALSE;
+            CFE_EVS_SendEvent(SIM_CC_ERR_EID, CFE_EVS_ERROR,
+               "Main loop error: invalid command code: cc = %d", CommandCode);
+            break;
+    }
+
+    if (Result == TRUE)
+    {
+        /* Increment command success counter */
+        if (CommandCode != SIM_RESET_CC)
+        {
+            SIM_GlobalData.HousekeepingPkt.CommandCounter++;
+        }
+    }
+    else
+    {
+        /* Increment command error counter */
+        SIM_GlobalData.HousekeepingPkt.CommandErrCounter++;
+    }
+
+    return;
+
+}
+/* End of SIM_ProcessCmd */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- housekeeping request packet processor        */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void SIM_ReportHK(CFE_SB_MsgPtr_t MessagePtr)
+{
+    char *CmdText = "HK Request";
+    boolean Result;
+
+    /* Verify command packet length */
+    Result = SIM_IsValidCmdPktLength(MessagePtr, sizeof(SIM_HousekeepingCmd_t),
+                                    SIM_HK_REQ_ERR_EID, CmdText);
+
+    /* Report SIM housekeeping telemetry data */
+    if (Result == TRUE)
+    {
+
+        /* Initialize housekeeping telemetry message */
+        CFE_SB_InitMsg(&SIM_GlobalData.HousekeepingPkt, SIM_HK_TLM_MID,
+                       sizeof(SIM_HousekeepingPkt_t), FALSE);
+
+        /* Timestamp and send housekeeping telemetry packet */
+        CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &SIM_GlobalData.HousekeepingPkt);
+        CFE_SB_SendMsg((CFE_SB_Msg_t *) &SIM_GlobalData.HousekeepingPkt);
+    }
+
+    return;
+
+} /* End of SIM_ReportHK */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- HC Command packet processor                  */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+boolean SIM_ReceiveCmd(CFE_SB_MsgPtr_t MessagePtr)
+{
+    char *CmdText = "Receive Cmd";
+    SIM_CmdPkt_t *DataPtr = (SIM_CmdPkt_t *) MessagePtr;
+    boolean Result;
+    uint8 HeaterIndex;
+    boolean TurnOnFlag;
+
+    /* Verify command packet length */
+    Result = SIM_IsValidCmdPktLength(MessagePtr, sizeof(SIM_CmdPkt_t),
+                                    SIM_RCV_CMD_ERR_EID, CmdText);
+
+    /* Send event */
+    if (Result == TRUE)
+    {
+        /* Get data from packet */
+        HeaterIndex = DataPtr->Heater;
+        TurnOnFlag = DataPtr->TurnOn;
+
+        /* Turn the heater off or on */
+        SIM_GlobalData.Heaters[HeaterIndex] = TurnOnFlag;
+
+        /* This section is only to update the telemetry in the GUI */
+        /* This can be taken out if you don't want to display the status
+               of the heaters in the GUI */
+        if (HeaterIndex == 0)
+        {
+            if (TurnOnFlag == TRUE)
+            {
+                /* Set the value of the demo heater to on */
+                SIM_GlobalData.HousekeepingPkt.Heater0 = 1;
+            }
+            else
+            {
+                /* Set the value of the demo heater to off*/
+                SIM_GlobalData.HousekeepingPkt.Heater0 = 0;
+            }
+        }
+        else if (HeaterIndex == 1)
+        {
+            if (TurnOnFlag == TRUE)
+            {
+                /* Set the value of the demo heater to on */
+                SIM_GlobalData.HousekeepingPkt.Heater1 = 1;
+            }
+            else
+            {
+                /* Set the value of the demo heater to off*/
+                SIM_GlobalData.HousekeepingPkt.Heater1 = 0;
+            }
+        }
+        else if (HeaterIndex == 2)
+        {
+            if (TurnOnFlag == TRUE)
+            {
+                /* Set the value of the demo heater to on */
+                SIM_GlobalData.HousekeepingPkt.Heater2 = 1;
+            }
+            else
+            {
+                /* Set the value of the demo heater to off*/
+                SIM_GlobalData.HousekeepingPkt.Heater2 = 0;
+            }
+        }
+        else 
+        {
+            /* No corresponding heater in the housekeeping packet */
+            printf("Invalid heater index.\n");
+        }
+        
+
+        /* Send event to signal command completion */
+        CFE_EVS_SendEvent(SIM_RCV_CMD_EID, CFE_EVS_DEBUG,
+                         "%s command: HC Command Received", CmdText);
+    }
+
+    return(Result);
+
+}
+ /* End of SIM_ReceiveCmd */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- Send thermal telemetry packets               */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void SIM_SendTlmData(void)
+{
+    boolean ErrorFlag;
+    uint8 j;
+ 
+    /* If all data packets have already been sent */
+    if (SIM_GlobalData.i == SIM_NUM_DATA_PKTS)
+    {
+        /* Reset i to zero to loop it */
+        SIM_GlobalData.i = 0;
+    }
+    
+    /* Make it look cleaner */
+    j = SIM_GlobalData.i;
+
+    /* Get the error flag */
+    ErrorFlag = SIM_GlobalData.TlmData[j].StaleFlag;
+
+    /* Call the function to send the data */
+    SIM_SendDataPktCmd(SIM_GlobalData.TlmData[j].Temps, ErrorFlag);
+
+    /* Increment i so that the next array gets sent the next time */
+    SIM_GlobalData.i++;
+
+    return;
+
+} /* End SIM_SendTlmData */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* SIM application -- Hard code the thermal telemetry              */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void SIM_SetData(void)
+{
+    /* Initialize i to send data packets */
+    SIM_GlobalData.i = 0;
+
+    /* First packet */
+    SIM_GlobalData.TlmData[0].Temps[0] = 55;
+    SIM_GlobalData.TlmData[0].Temps[1] = 55;
+    SIM_GlobalData.TlmData[0].Temps[2] = 10;
+    SIM_GlobalData.TlmData[0].Temps[3] = 10;
+    SIM_GlobalData.TlmData[0].Temps[4] = 20;
+    SIM_GlobalData.TlmData[0].Temps[5] = 20;
+    SIM_GlobalData.TlmData[0].StaleFlag = FALSE;
+
+    /* Second packet */
+    SIM_GlobalData.TlmData[1].Temps[0] = 60;
+    SIM_GlobalData.TlmData[1].Temps[1] = 60;
+    SIM_GlobalData.TlmData[1].Temps[2] = 30;
+    SIM_GlobalData.TlmData[1].Temps[3] = 30;
+    SIM_GlobalData.TlmData[1].Temps[4] = 10;
+    SIM_GlobalData.TlmData[1].Temps[5] = 10;
+    SIM_GlobalData.TlmData[1].StaleFlag = FALSE;
+
+    /* Third packet */
+    SIM_GlobalData.TlmData[2].Temps[0] = 10;
+    SIM_GlobalData.TlmData[2].Temps[1] = 20;
+    SIM_GlobalData.TlmData[2].Temps[2] = 70;
+    SIM_GlobalData.TlmData[2].Temps[3] = 50;
+    SIM_GlobalData.TlmData[2].Temps[4] = 30;
+    SIM_GlobalData.TlmData[2].Temps[5] = 40;
+    SIM_GlobalData.TlmData[2].StaleFlag = FALSE;
+
+    /* Fourth packet */
+    SIM_GlobalData.TlmData[3].Temps[0] = 10;
+    SIM_GlobalData.TlmData[3].Temps[1] = 10;
+    SIM_GlobalData.TlmData[3].Temps[2] = 70;
+    SIM_GlobalData.TlmData[3].Temps[3] = 60;
+    SIM_GlobalData.TlmData[3].Temps[4] = 60;
+    SIM_GlobalData.TlmData[3].Temps[5] = 70;
+    SIM_GlobalData.TlmData[3].StaleFlag = FALSE; 
+
+    /* Fifth packet */
+    SIM_GlobalData.TlmData[4].Temps[0] = 25;
+    SIM_GlobalData.TlmData[4].Temps[1] = 25;
+    SIM_GlobalData.TlmData[4].Temps[2] = 50;
+    SIM_GlobalData.TlmData[4].Temps[3] = 50;
+    SIM_GlobalData.TlmData[4].Temps[4] = 40;
+    SIM_GlobalData.TlmData[4].Temps[5] = 50;
+    SIM_GlobalData.TlmData[4].StaleFlag = FALSE; 
+
+
+} /* End SIM_SetData */
+
+
+/************************/
+/*  End of File Comment */
+/************************/
+

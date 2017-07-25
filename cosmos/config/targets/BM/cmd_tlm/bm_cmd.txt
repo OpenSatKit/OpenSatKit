@@ -1,0 +1,43 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "BM"
+  @CMD_MID_STR     = "BM_CMD_MID"
+  
+%>  
+
+COMMAND BM NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND BM RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset application counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND BM RUN_ALL <%= CfsKitConfig.processor_endian %> "Run all benchmarks"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 0) %>
+
+COMMAND BM SET_PARAMS <%= CfsKitConfig.processor_endian %> "Set software bus benchmark parameters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 104) %>
+#WRITEPARAMS
+  APPEND_PARAMETER BM_SB_BENCHMARKENABLE 32 UINT 0 1 1 "Enable Software Bus Benchmark"
+  APPEND_PARAMETER BM_SB_ZEROCOPYENABLE 32 UINT 0 1 0 "Software Bus Benchmark zero copy enable"
+  APPEND_PARAMETER BM_SB_NUMTHREADS 32 UINT 1 8 1 "Software Bus Benchmark thread count"
+    UNITS Threads Threads
+  APPEND_PARAMETER BM_SB_REPETITIONS 32 UINT 1 1000 10 "Software Bus Benchmark repetitions"
+    UNITS Times Times
+  APPEND_PARAMETER BM_SB_NUMTESTMSGS 32 UINT 1 1000000 1000 "Software Bus Benchmark test messages"
+    UNITS Messages Msgs
+  APPEND_PARAMETER BM_SB_MESSAGEDATASIZE 32 UINT 1 100000 4 "Software Bus Benchmark message data size"
+    UNITS Bytes Bytes
+  APPEND_PARAMETER BM_SB_MSGTIMEOUT 32 UINT 100000 1000000 100000 "Software Bus Benchmark message timeout"
+    UNITS Milliseconds ms
+  APPEND_PARAMETER BM_FS_BENCHMARKENABLE 32 UINT 0 1 1 "Enable File System Sequential Benchmark"
+  APPEND_PARAMETER BM_FS_REPETITIONS 32 UINT 1 1000 1 "File System Benchmark repetitions"
+    UNITS Times Times
+  APPEND_PARAMETER BM_FS_SEQUENTIAL_SIZE 32 UINT 1 9999999999 100000000 "File System Benchmark sequential size"
+    UNITS Bytes Bytes
+  APPEND_PARAMETER BM_CPU_BENCHMARKENABLE 32 UINT 0 1 1 "Enable CPU Benchmark"
+  APPEND_PARAMETER BM_CPU_DHRYSTONEREPETITIONS 32 UINT 1 10000000 100000 "CPU Benchmark Dhrystone repetitions"
+    UNITS Times Times
+  APPEND_PARAMETER BM_CPU_WHETSTONEREPETITIONS 32 UINT 1 10000000 200 "CPU Benchmark Whetstone repetitions"
+    UNITS Times Times
+#END

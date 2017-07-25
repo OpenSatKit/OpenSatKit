@@ -1,0 +1,58 @@
+/*
+** $Id: $
+**
+** Title: Heater Control (HC) Heaters Used Table Data
+**
+** Purpose: Default table contents
+**
+** Author: Lindsay A. Walton, Code 582 NASA GSFC
+**
+** Notes:
+**
+** $Log: $
+**
+*/
+
+/*************************************************************************
+**
+** Include section
+**
+**************************************************************************/
+#include "cfe.h"
+#include "cfe_tbl_filedef.h"
+#include "hc_platform_cfg.h"
+#include "hc_tbl.h"
+#include "hc_msg.h"
+#include "hc_app.h"
+
+/*
+** HC heaters used table header
+*/
+static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
+{
+    "HC_HeatersUsedTable", HC_HU_TABLE_NAME,
+    HC_HU_TABLE_DEF_DESC, HC_HU_TABLE_FILENAME, sizeof(HC_HeatersUsedTable_t)
+};
+
+/*
+** HC file system heaters used table data
+**
+** -- Enabled or disabled state
+** -- Number of heaters
+** -- Number of thermistors
+*/
+//TODO: change data in this table
+HC_HeatersUsedTable_t HC_HeatersUsedTable =
+{
+  {
+    {                                   /* - 0 - */
+        ENABLED,                        /* Enable/disable flag (enabled, disabled) */
+        1,                              /* Number of heaters */
+        2,                              /* Number of thermistors */
+    },
+  },
+};
+
+/************************/
+/*  End of File Comment */
+/************************/
