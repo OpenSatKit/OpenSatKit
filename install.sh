@@ -45,11 +45,11 @@ main()
   echo 'gem: --no-ri --no-rdoc' >> ~/.gemrc
 
   announce "Installing COSMOS gem"
-  gem install COSMOS
+  gem install cosmos
   rbenv rehash
 
   announce "Building CFS"
-  cd ../cfs
+  cd ./cfs/
 	make distclean
 	make prep
 	make
