@@ -47,6 +47,10 @@ main()
   announce "Installing COSMOS gem"
   gem install cosmos
   rbenv rehash
+  cd ./cosmos/
+  gem install bundler
+  bundle install
+  cd ..
 
   announce "Building CFS"
   cd ./cfs/
@@ -57,6 +61,8 @@ main()
 	cp apps/kit_sch/fsw/tables/* build/exe/cpu1/cf/
 	cp apps/kit_to/fsw/tables/kit_to_pkttbl.xml build/exe/cpu1/cf/
 	cd ..
+
+	exec $SHELL
 
 	announce "Finished. Launching COSMOS with 'ruby cosmos/Launcher'"
 	ruby cosmos/Launcher
