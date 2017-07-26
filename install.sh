@@ -62,7 +62,8 @@ main()
   cp apps/kit_to/fsw/tables/kit_to_pkttbl.xml build/exe/cpu1/cf/
   cd ..
 
-  announce "Finished. Launch COSMOS with 'ruby cosmos/Launcher'"
+  announce "Finished. Launching COSMOS with 'ruby ./cosmos/Launcher'"
+  ruby ./cosmos/Launcher &
 }
 
 # ask the user to confirm an action
