@@ -12,7 +12,7 @@ main()
   confirm "Continue?" 1
 
   announce "Downloading archive zip file from \"https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz\""
-  curl -LO https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz
+  wget https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz
   tar -xzf master.tar.gz
   rm master.tar.gz
   cd OpenSatKit-master
