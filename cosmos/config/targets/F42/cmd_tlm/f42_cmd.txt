@@ -1,0 +1,20 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "F42"
+  @CMD_MID_STR     = "F42_CMD_MID"
+  
+%>  
+
+COMMAND F42 NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND F42 RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset Counters and application to a default state"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+  
+COMMAND F42 SET_CTRL_MODE <%= CfsKitConfig.processor_endian %> "Set the 42 Sim FSW control mode"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  APPEND_PARAMETER NEW_MODE 16 UINT MIN_UINT16 MAX_UINT16 1 "Current demo supports: 1-Init"
+
+
+

@@ -1,0 +1,21 @@
+###############################################################################
+# App Management Demo More Information Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 1200
+
+TITLE "App Management Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+ 
+VERTICALBOX
+  NAMED_WIDGET msg_box TEXTBOX CFS_KIT PSEUDO_MSG_PKT TXT_MSG 512 300
+  BUTTON 'Press for More Information' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_demo_screen.rb"; app_mgmt_demo_more_info(self)'
+END # Vertical Box
+  

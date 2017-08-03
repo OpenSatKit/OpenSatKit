@@ -1,0 +1,103 @@
+<!-- Slots are based on 5 slots per second and 10 entries per slot -->
+<!-- Table is populated based on app role. A flight table would be based on real-time needs
+ -->
+<sch-tbl>
+
+  <!--*****************-->
+  <!-- Slot 0 cFE Apps -->
+  <!--*****************-->
+
+  <!-- ES -->
+  <slot id="0" entry="0" enable="true" frequency="4" offset="0" msg_id="0" />
+
+  <!-- EVS -->
+  <slot id="0" entry="1" enable="true" frequency="4" offset="0" msg_id="1" />
+
+  <!-- SB -->
+  <slot id="0" entry="2" enable="true" frequency="4" offset="0" msg_id="2" />
+
+  <!-- TBL -->
+  <slot id="0" entry="3" enable="true" frequency="4" offset="0" msg_id="3" />
+
+  <!-- TIME -->
+  <slot id="0" entry="4" enable="true" frequency="4" offset="0" msg_id="4" />
+
+  <!--*****************-->
+  <!-- Slot 1 cFS Apps -->
+  <!--*****************-->
+  
+  <!-- CS -->
+  <slot id="1" entry="0" enable="true" frequency="5" offset="0" msg_id="10" />
+  <slot id="1" entry="1" enable="true" frequency="2" offset="0" msg_id="11" />
+  
+  <!-- DS -->
+  <slot id="1" entry="2" enable="true" frequency="5" offset="0" msg_id="12" />
+  
+  <!-- FM -->
+  <slot id="1" entry="3" enable="true" frequency="5" offset="0" msg_id="13" />
+  
+  <!-- HS -->
+  <slot id="1" entry="4" enable="true" frequency="5" offset="1" msg_id="14" />
+  <slot id="1" entry="5" enable="true" frequency="2" offset="1" msg_id="15" />
+
+  <!-- LC -->
+  <slot id="1" entry="6" enable="true" frequency="5" offset="2" msg_id="16" />
+  <slot id="1" entry="7" enable="true" frequency="1" offset="2" msg_id="17" />
+
+  <!--*****************-->
+  <!-- Slot 2 cFS Apps -->
+  <!--*****************-->
+
+  <!-- MD -->
+  <slot id="2" entry="0" enable="true" frequency="5" offset="0" msg_id="18" />
+  <slot id="2" entry="1" enable="true" frequency="1" offset="0" msg_id="19" />
+
+  <!-- MM -->
+  <slot id="2" entry="2" enable="true" frequency="5" offset="0" msg_id="20" />
+
+  <!-- SC -->
+  <slot id="2" entry="3" enable="true" frequency="5" offset="1" msg_id="21" />
+  <slot id="2" entry="4" enable="true" frequency="1" offset="1" msg_id="22" />
+
+  <!--*****************-->
+  <!-- Slot 3 Kit Apps -->
+  <!--*****************-->
+
+  <!-- BM -->
+  <slot id="3" entry="0" enable="true" frequency="5" offset="0" msg_id="30" />
+  <slot id="3" entry="1" enable="true" frequency="2" offset="0" msg_id="31" />
+
+  <!-- HC -->
+  <slot id="3" entry="2" enable="true" frequency="5" offset="0"  msg_id="32" />
+  <slot id="3" entry="3" enable="true" frequency="10" offset="0" msg_id="33" />
+
+  <!-- HSIM -->
+  <slot id="3" entry="4" enable="true" frequency="5" offset="0" msg_id="34" />
+  <slot id="3" entry="5" enable="true" frequency="1" offset="0" msg_id="35" />
+
+  <!-- F42 -->
+  <slot id="3" entry="6" enable="true"  frequency="3" offset="0" msg_id="40" />
+
+  <!-- I42 -->
+  <slot id="3" entry="7" enable="true"  frequency="3" offset="0" msg_id="41" />
+
+  <!--*****************-->
+  <!-- Slot 4 Kit Apps -->
+  <!--*****************-->
+
+  <!-- KIT_CI -->
+  <slot id="4" entry="0" enable="true" frequency="5" offset="0" msg_id="36" />
+
+  <!-- KIT_SCH -->
+  <slot id="4" entry="1" enable="true" frequency="5" offset="0" msg_id="37" />
+
+  <!-- KIT_TO -->
+  <slot id="4" entry="2" enable="true" frequency="5" offset="0" msg_id="38" />
+
+  <!-- TFTP -->
+  <slot id="4" entry="3" enable="true" frequency="5" offset="0" msg_id="39" />
+
+  <!-- TEST -->
+  <slot id="4" entry="4" enable="true" frequency="5" offset="0" msg_id="100" />
+
+</sch-tbl>

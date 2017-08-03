@@ -123,9 +123,19 @@ module MessageIds
  
   # Benchmark
   
-  BM_CMD_MID    = "0x19D2"
-  BM_HK_TLM_MID	= "0x09CA"
+  BM_CMD_MID    = "0x19F0"
+  BM_HK_TLM_MID	= "0x09F0"
 
+  # F42 - 42 Simulator FSW
+  
+  F42_CMD_MID      = "0x19D0"
+
+  F42_HK_TLM_MID   = "0x09D0"
+  F42_CONTROL_MID  = "0x09D1"
+
+  F42_SENSOR_MID   = "0x09E0"
+  F42_ACTUATOR_MID = "0x09E1"
+  
   # Framework Demo 
   
   FW_DEMO_CMD_MID    = "0x1866"
@@ -142,6 +152,12 @@ module MessageIds
   HSIM_HK_TLM_MID   = "0x09B1"
   HSIM_HC_DATA_MID  = "0x19B4"
   
+  # I42 - 42 Simulator Interface
+  
+  I42_CMD_MID      = "0x19D2"
+
+  I42_HK_TLM_MID   = "0x09D2"
+
   # Kit Command Ingest
   
   KIT_CI_CMD_MID    = "0x1884"

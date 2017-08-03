@@ -2,7 +2,7 @@
 # cFS Kit File Management 
 #
 # Notes:
-#   1. TODO - Update FILE_MGMT_FLT_WORK_DIR & FILE_MGMT_GND_WORK_DIR with user changes
+#   1. TODO - Update FILE_MGMT_FLT_SRV_DIR & FILE_MGMT_GND_SRV_DIR with user changes
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General 
@@ -17,8 +17,8 @@ require 'file_transfer'
 ## Global Variables
 ################################################################################
 
-FILE_MGMT_FLT_WORK_DIR = FLT_WORK_DIR
-FILE_MGMT_GND_WORK_DIR = GND_WORK_DIR
+FILE_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
+FILE_MGMT_GND_SRV_DIR = GND_SRV_DIR
 
 $file_xfer = FileTransfer.new()
 
@@ -29,10 +29,10 @@ $file_xfer = FileTransfer.new()
 def file_mgmt_set_work_dir(screen)
 
   gnd_work_dir_widget = screen.get_named_widget("gnd_work_dir")
-  gnd_work_dir_widget.text = FILE_MGMT_GND_WORK_DIR
+  gnd_work_dir_widget.text = FILE_MGMT_GND_SRV_DIR
 
   flt_work_dir_widget = screen.get_named_widget("flt_work_dir")
-  flt_work_dir_widget.text = FILE_MGMT_FLT_WORK_DIR
+  flt_work_dir_widget.text = FILE_MGMT_FLT_SRV_DIR
 
 end # file_mgmt_set_work_dir()
 
@@ -45,11 +45,11 @@ def file_mgmt_send_cmd(screen, cmd)
 	if (cmd == "GET_FILE")
     flt_full_file_name = ask_string("Enter full FSW path/filename.")
     gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
-    gnd_full_file_name = "#{GND_WORK_DIR}/#{gnd_file_name}"
+    gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
     $file_xfer.get(flt_full_file_name,gnd_full_file_name)
 	elsif (cmd == "PUT_FILE")
     gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
-    gnd_full_file_name = "#{GND_WORK_DIR}/#{gnd_file_name}"
+    gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
     flt_full_file_name = ask_string("Enter full FSW path/filename.")
     $file_xfer.put(gnd_full_file_name,flt_full_file_name)
   elsif (cmd == "CREATE_DIR")

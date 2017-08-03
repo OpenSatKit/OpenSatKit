@@ -1,9 +1,9 @@
 ################################################################################
 # Performance Monitor (PM) Screen Scripts
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ################################################################################
 
@@ -17,7 +17,7 @@ PERF_MON_TRIG_POS_START   = 0
 PERF_MON_TRIG_POS_CENTER  = 1
 PERF_MON_TRIG_POS_END     = 2
 
-PERF_MON_DATA_FILE = "#{FLT_WORK_DIR}/perf_mon.dat"
+PERF_MON_DATA_FILE = "#{FLT_SRV_DIR}/perf_mon.dat"
 
 ################################################################################
 ## Launch Apps
@@ -26,7 +26,7 @@ PERF_MON_DATA_FILE = "#{FLT_WORK_DIR}/perf_mon.dat"
 def perf_mon_launch_app(screen, app)
 
   if (app == "PERF_MONITOR_TOOL")
-    spawn("java -jar #{Cosmos::USERPATH}/config/targets/CFS_KIT/tools/perf-monitor/CPM.jar")
+    spawn("java -jar #{CFS_KIT_PERF_MON_DIR}/CPM.jar")
     #spawn("java -jar #{Cosmos::USERPATH}/../cfs/tools/perfutils-java/CPM.jar")
   else
     prompt("Error in screen definition file. Undefined commmand sent to perf_mon_launch_app()")

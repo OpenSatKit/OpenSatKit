@@ -3,9 +3,11 @@
 # integration test.
 #
 # Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
 #   2. TODO - Define common COSMOS DB strings in a separate file
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ###############################################################################
 

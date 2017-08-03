@@ -1,14 +1,16 @@
 ###############################################################################
 # Top-level function that manages the starter kit integration tests.
 # 
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ################################################################################
 
 require 'cosmos'
 require 'cosmos/script'
+
+require 'message_ids'
 
 require 'kit_test_cfe_es'
 require 'kit_test_cfe_evs'
@@ -26,32 +28,15 @@ require 'kit_test_mm'
 require 'kit_test_sc'
 
 require 'kit_test_bm'
+require 'kit_test_f42'
 require 'kit_test_hc'
 require 'kit_test_hsim'
+require 'kit_test_i42'
 require 'kit_test_kit_ci'
 require 'kit_test_kit_sch'
 require 'kit_test_kit_to'
 require 'kit_test_tftp'
 
-# Single source definitions of app info for apps being tested
-# TODO - Read definitions from a file & actually use it!
-@@cmd_stream_ids = { 
-  "CFE_ES"   => 0x1806,  # cFE Apps
-  "CFE_EVS"  => 0X1801,
-  "CFE_SB"   => 0X1803,
-  "CFE_TBL"  => 0X1804,
-  "CFE_TIME" => 0X1805, 
-  "DS"       => 0x18BB,  # cFS Apps
-  "FM"       => 0x188C,
-  "HS"       => 0x18AE,
-  "LC"       => 0x18A4,
-  "SC"       => 0x18A9,
-  "BM"       => 0x19D2,   # Kit Custom Apps
-  "KIT_CI"   => 0x1884,
-  "TFTP_APP" => 0x18B5,
-  "HC_APP"   => 0x19A5,
-  "KIT_TO"   => 0x1880,
-}
 puts 'cFS Starter Kit Integration script initiated'
 
 ###############################################################################
@@ -103,14 +88,20 @@ sc_test = KitTestSc.new(sc)
 
 # Custom Starter Kit Apps
 
-bm      = App.new("BM_APP","BM","HK_TLM_PKT","0x19D2")
+bm      = App.new("BM_APP","BM","HK_TLM_PKT",MessageIds::BM_CMD_MID)
 bm_test = KitTestBm.new(bm)
+
+f42      = App.new("F42_APP","F42","HK_TLM_PKT",MessageIds::F42_CMD_MID)
+f42_test = KitTestF42.new(f42)
 
 hc      = App.new("HC_APP","HC","HK_TLM_PKT","0x19A5")
 hc_test = KitTestHc.new(hc)
 
 hsim      = App.new("HSIM_APP","HSIM","HK_TLM_PKT","0x19B1")
 hsim_test = KitTestHsim.new(hsim)
+
+i42      = App.new("I42_APP","I42","HK_TLM_PKT",MessageIds::I42_CMD_MID)
+i42_test = KitTestI42.new(i42)
 
 kit_ci      = App.new("KIT_CI_APP","KIT_CI","HK_TLM_PKT","0x1884")
 kit_ci_test = KitTestKitCi.new(kit_ci)
@@ -178,11 +169,17 @@ puts sc.name + " " + sc_test.result_str
 bm_test.run
 puts bm.name + " " + bm_test.result_str
 
+f42_test.run
+puts f42.name + " " + f42_test.result_str
+
 hc_test.run
 puts hc.name + " " + hc_test.result_str
 
 hsim_test.run
 puts hsim.name + " " + hsim_test.result_str
+
+i42_test.run
+puts i42.name + " " + i42_test.result_str
 
 kit_ci_test.run
 puts kit_ci.name + " " + kit_ci_test.result_str

@@ -1,0 +1,19 @@
+# Exported from Wings 3D 1.5.2
+newmtl Grey_1
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 0.7 0.7 0.7
+Ke 0.0 0.0 0.0
+
+newmtl SOLAR_CELL
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+

@@ -2,9 +2,10 @@
 # cFS Kit Memory Management Demo (MMD)
 #
 # Notes:
-#   1. MMD_LABEL_x variables are used to put text on the demo screen's
-#      text box. The MMD_INFO_x variables are used for extra detailed
+#   1. MMD_INSTRUCT_x variables are used to put text on the demo screen's
+#      instruction text box. The MMD_INFO_x variables are used for extra detailed
 #      information that is displayed on a separate screen.
+#   2. Debug events are enabled for the apps used during the demo.
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -35,12 +36,14 @@ MMD_OFFSET_W2 = 264
 MMD_OFFSET_W3 = 268
 
 MMD_DMP_FILE = "mm_demo_dmp.dat"
-MMD_FLT_DMP_FILE = "#{FLT_WORK_DIR}/#{MMD_DMP_FILE}"
-MMD_GND_DMP_FILE = "#{GND_WORK_DIR}/#{MMD_DMP_FILE}"
+MMD_DMP_DEF_NAME = "mm_dump.txt"  # COSMOS table definition file
 
-MMD_B0_FILE = "mm_demo_b0.dat"
-MMD_FLT_B0_FILE = "#{FLT_WORK_DIR}/#{MMD_B0_FILE}"
-MMD_GND_B0_FILE = "#{GND_WORK_DIR}/#{MMD_B0_FILE}"
+MMD_FLT_FILE = "#{FLT_SRV_DIR}/#{MMD_DMP_FILE}"
+MMD_GND_FILE = "#{GND_SRV_TBL_DIR}/#{MMD_DMP_FILE}" # Use table directory since using Table tool
+
+#MMD_B0_FILE = "mm_demo_b0.dat"
+#MMD_FLT_B0_FILE = "#{FLT_SRV_DIR}/#{MMD_B0_FILE}"
+#MMD_GND_B0_FILE = "#{GND_SRV_DIR}/#{MMD_B0_FILE}"
 
 MMD_INFO_DEF = "\n\nNo additional information for this demo step."
 
@@ -52,77 +55,112 @@ MMD_INFO_DEF = "\n\nNo additional information for this demo step."
 # 1 - Lookup symbol
 # 2 - Jam & start memory dwell
 # 3 - Poke, Peek, and dump in event 
-# 4 - Dump to file and display it
-# 5 - Fill memory with pattern from command
-# 6 = Load memory from file containing a different pattern
+# 4 - Dump memory to a file and transfer file to the ground
+# 5 - Display memory dump file using COSMOS table manager tool
+# 6 - Fill memory with pattern from command
+# 7 = Load memory from dump file to restore values
 #
 
-# Label 0 text is in the file demo screen text file.  It's here to help with the info text.
-MMD_LABEL_0 = ["This demo shows some basic memory management features. It uses the Memory",
-               "Management(MM) app to peek/load and poke/dump memory. It uses the Memory",
-               "Dwell(MD) app to autonomously monitor and telemeter memory locations. Click...",
-               " ",
-               "   <More Info> to obtain more information about the current step",
-               "   <Next> to move to the next step"]
+# Instruct 0 text is in the file demo screen text file.  It's here to help with the info text.
+MMD_INSTRUCT_0 = ["This demo shows some basic memory management features. It uses the Memory",
+                  "Management(MM) app to peek/load and poke/dump memory. It uses the Memory",
+                  "Dwell(MD) app to autonomously monitor and telemeter memory locations. Click...",
+                  " ",
+                  "  <More Info> to obtain more information about the current step",
+                  "  <Demo> to issue commands to demonstrate a feature in the current step",
+                  "  <Next> to move to the next step"]
               
 MMD_INFO_0 = MMD_INFO_DEF
 
-MMD_LABEL_1 = ["The memory management and a memory dwell screen have been opened. This",
-               "demo manipulates 16 bytes starting at an offset of #{MMD_OFFSET_W0} bytes",
-               "from the symbol #{MMD_SYMBOL}",
-               "",
-               "<Demo> Send MM LOOKUP_SYMBOL(#{MMD_SYMBOL}) cmd. The address is shown",
-               "                in the MM telemetry screen."]
+MMD_INSTRUCT_1 = ["The memory management and a memory dwell screens have been opened. This",
+                  "demo manipulates 16 bytes starting at an offset of #{MMD_OFFSET_W0} bytes",
+                  "from the symbol #{MMD_SYMBOL}",
+                  "",
+                  "<Demo> Send MM LOOKUP_SYMBOL(#{MMD_SYMBOL}) cmd. The address is shown",
+                  "                in the MM telemetry screen.",
+                  ""]
 
 MMD_INFO_1 = MMD_INFO_DEF
 
 
 # 2 - Jam & start memory dwell
-MMD_LABEL_2 = ["Configure memory dwell screen have been opened.",
-               "",
-               "<Demo> Send 4 MD JAM_DWELL commands to configure dwell tabel 1 to ",
-               "                monitor 4 32-bit words starting at #{MMD_SYMBOL}+256",
-               "",
-               "<Demo> Send MD START_DWELL "]
+MMD_INSTRUCT_2 = ["Configure memory dwell screen have been opened.",
+                  "",
+                  "<Demo> Send 4 MD JAM_DWELL commands to configure dwell tabel 1 to ",
+                  "                monitor 4 32-bit words starting at #{MMD_SYMBOL}+256",
+                  "",
+                  "<Demo> Send MD START_DWELL ",
+                  ""]
                
 MMD_INFO_2 = MMD_INFO_DEF
 
 # 3 - Poke, Peek, and dump in event 
-MMD_LABEL_3 = ["'Poke' values into memory. Display using MD pkt, Peek, Dump-in-Event",
-               "",
-               "<Demo> MM POKE_MEM at #{MMD_SYMBOL}+#{MMD_OFFSET_W0} with incrementing pattern",
-               "<Demo> MM PEEK_MEM at #{MMD_SYMBOL}+#{MMD_OFFSET_W0} with 8, 16, and 32 bit data sizes",
-               "<Demo> MM DUMP_IN_EVENT 8 bytes starting at #{MMD_SYMBOL}+#{MMD_OFFSET_W0}", 
-               ""]
+MMD_INSTRUCT_3 = ["'Poke' values into memory. The values are automatically displayed in the Memory Dwell",
+                  " packet. Use Peek and Dump-in-Event commands to also display values.",
+                  "",
+                  "<Demo> MM POKE_MEM at #{MMD_SYMBOL}+#{MMD_OFFSET_W0} with incrementing pattern",
+                  "<Demo> MM PEEK_MEM at #{MMD_SYMBOL}+#{MMD_OFFSET_W0} with 8, 16, and 32 bit data sizes",
+                  "<Demo> MM DUMP_IN_EVENT 8 bytes starting at #{MMD_SYMBOL}+#{MMD_OFFSET_W0}",
+                  ""]
 MMD_INFO_3 = MMD_INFO_DEF
 
                     
-# 4 - Dump memory to file and display it
-MMD_LABEL_4 = ["Dump memory to file and display the contents",
-               "",
-               "<Demo> MM DUMP_MEM_TO_FILE 16 bytes to #{MMD_FLT_DMP_FILE} and transfer",
-               "                to #{MMD_GND_DMP_FILE}",
-               "<Demo> Display #{MMD_GND_DMP_FILE}",
-               ""]
+# 4 - Dump memory to a file and transfer file to the ground
+MMD_INSTRUCT_4 = ["Dump memory to file and transfer it to the ground",
+                  "",
+                  "<Demo> MM DUMP_MEM_TO_FILE 16 bytes to #{MMD_FLT_FILE}",
+                  "",
+                  "<Demo> Send TFTP get cmd to transfer the file to #{MMD_GND_FILE}",
+                  "",
+                  ""]
 MMD_INFO_4 = MMD_INFO_DEF
 
-# 5 - Fill memory with pattern from command
-MMD_LABEL_5 = ["Fill the middle 8 bytes of the demo memory with a data pattern.",
-               "",
-               "<Demo> MM FILL_MEM 8 bytes with #{MMD_PAT_A0_STR} starting at #{MMD_SYMBOL}+#{MMD_OFFSET_W1}",
-               "",
-               "",
-               ""]
+# 5 - Display memory dump file using COSMOS table manager tool
+MMD_INSTRUCT_5 = ["Display the memory dump file using COSMOS Table Manager tool.",
+                  "",
+                  "<Demo> Launch Table Manager", 
+                  "",
+                  "1. Within tool select File->Open->file_server/table, then select #{MMD_DMP_FILE}",
+                  "2. Within table definition dialog navigate to #{GND_SRV_TBL_DIR}",
+                  "   and select #{MMD_DMP_DEF_NAME}"]
 MMD_INFO_5 = MMD_INFO_DEF
 
-# 6 = Load memory from file containing a different pattern
-MMD_LABEL_6 = ["Load memory from file to overwrite fill pattern from previous step",
-               "",
-               "<Demo> MM LOAD_MEM_FROM_FILE #{MMD_FLT_B0_FILE}",
-               "",
-               "",
-               "<Next> will close the windows and exit the demo"]
+# 6 - Fill memory with pattern from command
+MMD_INSTRUCT_6 = ["Fill the middle 8 bytes of the demo memory with a data pattern.",
+                  "",
+                  "<Demo> MM FILL_MEM 8 bytes with #{MMD_PAT_A0_STR} starting at #{MMD_SYMBOL}+#{MMD_OFFSET_W1}",
+                  "",
+                  "",
+                  "",
+                  ""]
 MMD_INFO_6 = MMD_INFO_DEF
+
+# 7 = Load memory from dump file to restore values
+MMD_INSTRUCT_7 = ["Load memory from dump file to restore memory values",
+                  "",
+                  "<Demo> MM LOAD_MEM_FROM_FILE #{MMD_DMP_FILE}",
+                  "",
+                  "",
+                  "<Next> will close the windows and exit the demo",
+                  ""]
+MMD_INFO_7 = MMD_INFO_DEF
+
+MMD_INSTRUCT_ARRAY = [MMD_INSTRUCT_0, MMD_INSTRUCT_1, MMD_INSTRUCT_2, MMD_INSTRUCT_3, MMD_INSTRUCT_4, MMD_INSTRUCT_5, MMD_INSTRUCT_6, MMD_INSTRUCT_7]
+MMD_LAST_STEP = 7
+
+def mmd_set_instruct_text(num)
+
+  new_instruct = MMD_INSTRUCT_ARRAY[num]
+  
+  $instruct1.text = new_instruct[0]
+  $instruct2.text = new_instruct[1]
+  $instruct3.text = new_instruct[2]
+  $instruct4.text = new_instruct[3]
+  $instruct5.text = new_instruct[4]
+  $instruct6.text = new_instruct[5]
+  $instruct7.text = new_instruct[6]
+
+end # mmd_set_instruct_text()
 
 ################################################################################
 ## Demo Flow Control
@@ -134,12 +172,13 @@ $mmd_demo = 0   # Issue command(s) to perform the current demo step
 
 def memory_mgmt_demo(screen, button)
 
-  line1  = screen.get_named_widget("Label1")
-  line2  = screen.get_named_widget("Label2")
-  line3  = screen.get_named_widget("Label3")
-  line4  = screen.get_named_widget("Label4")
-  line5  = screen.get_named_widget("Label5")
-  line6  = screen.get_named_widget("Label6")
+  $instruct1  = screen.get_named_widget("Instruct1")
+  $instruct2  = screen.get_named_widget("Instruct2")
+  $instruct3  = screen.get_named_widget("Instruct3")
+  $instruct4  = screen.get_named_widget("Instruct4")
+  $instruct5  = screen.get_named_widget("Instruct5")
+  $instruct6  = screen.get_named_widget("Instruct6")
+  $instruct7  = screen.get_named_widget("Instruct7")
 
   if (button == "INFO")
   
@@ -150,6 +189,10 @@ def memory_mgmt_demo(screen, button)
     $mmd_step += 1
     $mmd_demo  = 0
     
+    if ($mmd_step <= MMD_LAST_STEP)
+      mmd_set_instruct_text($mmd_step)
+    end
+
     case $mmd_step
       when 1
         display("CFS_KIT MEMORY_MGMT_SCREEN",500,50)    
@@ -157,53 +200,8 @@ def memory_mgmt_demo(screen, button)
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME MM, BITMASK 0x01") # Enable debug events
         wait (1)
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME MD, BITMASK 0x01") # Enable debug events
-        line1.text = MMD_LABEL_1[0]
-        line2.text = MMD_LABEL_1[1]
-        line3.text = MMD_LABEL_1[2]
-        line4.text = MMD_LABEL_1[3]
-        line5.text = MMD_LABEL_1[4]
-        line6.text = MMD_LABEL_1[5]
-        
-      when 2
-        line1.text = MMD_LABEL_2[0]
-        line2.text = MMD_LABEL_2[1]
-        line3.text = MMD_LABEL_2[2]
-        line4.text = MMD_LABEL_2[3]
-        line5.text = MMD_LABEL_2[4]
-        line6.text = MMD_LABEL_2[5]
-        
-      when 3
-        line1.text = MMD_LABEL_3[0]
-        line2.text = MMD_LABEL_3[1]
-        line3.text = MMD_LABEL_3[2]
-        line4.text = MMD_LABEL_3[3]
-        line5.text = MMD_LABEL_3[4]
-        line6.text = MMD_LABEL_3[5]
-        
-      when 4
-        line1.text = MMD_LABEL_4[0]
-        line2.text = MMD_LABEL_4[1]
-        line3.text = MMD_LABEL_4[2]
-        line4.text = MMD_LABEL_4[3]
-        line5.text = MMD_LABEL_4[4]
-        line6.text = MMD_LABEL_4[5]
-        
-      when 5
-        line1.text = MMD_LABEL_5[0]
-        line2.text = MMD_LABEL_5[1]
-        line3.text = MMD_LABEL_5[2]
-        line4.text = MMD_LABEL_5[3]
-        line5.text = MMD_LABEL_5[4]
-        line6.text = MMD_LABEL_5[5]
-
-      when 6
-        line1.text = MMD_LABEL_6[0]
-        line2.text = MMD_LABEL_6[1]
-        line3.text = MMD_LABEL_6[2]
-        line4.text = MMD_LABEL_6[3]
-        line5.text = MMD_LABEL_6[4]
-        line6.text = MMD_LABEL_6[5]
-    
+      when 2..MMD_LAST_STEP
+        # Keep case statement for maintenance
       else
         cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME MM, BITMASK 0x01") # Disable debug events
         cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME MD, BITMASK 0x01") # Disable debug events
@@ -212,7 +210,7 @@ def memory_mgmt_demo(screen, button)
         clear("MD DWELL_PKT_SCREEN")    
         clear("CFS_KIT MEMORY_MGMT_DEMO_SCREEN")
         clear("CFS_KIT MEMORY_MGMT_DEMO_INFO_SCREEN")
-    end # Case
+    end # Step Case
         
   elsif (button == "DEMO")
   
@@ -256,32 +254,37 @@ def memory_mgmt_demo(screen, button)
           # Don't increment mmd_demo and repeatedly send send dump in event. 
         end
 
-      # 4 - Dump to file and display it
+      # 4 - Dump memory to a file and transfer file to the ground
       when 4
         if ($mmd_demo == 0)
-          cmd("MM DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILE_NAME #{MMD_FLT_DMP_FILE}")
-          wait (2)
-          $file_xfer.get("#{MMD_FLT_DMP_FILE}","#{MMD_GND_DMP_FILE}")
+          cmd("MM DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILE_NAME #{MMD_FLT_FILE}")
           $mmd_demo += 1
         elsif ($mmd_demo == 1)
-          #TODO - Implement display memory dump file
-          prompt("Display memory dump file not implemented")
+          $file_xfer.get("#{MMD_FLT_FILE}","#{MMD_GND_FILE}")
+          # Don't increment mmd_demo; okay to repeat last command
+        end
+
+      # 5 - Display memory dump file using COSMOS table manager tool
+      when 5
+        if ($mmd_demo == 0)
+          Cosmos.run_process("ruby tools/TableManager")
           $mmd_demo += 1
         end
 
-      # 5 - Fill memory with pattern from command
-      when 5
-        if ($mmd_demo == 0)
-          cmd("MM FILL_MEM with MEM_TYPE 1, NUM_BYTES 8, FILL_PATTERN #{MMD_PAT_A0}, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-        end
-
-      # 6 = Load memory from file containing a different pattern
+      # 6 - Fill memory with pattern from command
       when 6
         if ($mmd_demo == 0)
-          $file_xfer.put("#{MMD_GND_B0_FILE}","#{MMD_FLT_B0_FILE}")
-          cmd("MM LOAD_MEM_FROM_FILE with FILE_NAME #{MMD_FLT_B0_FILE}")
+          cmd("MM FILL_MEM with MEM_TYPE 1, NUM_BYTES 8, FILL_PATTERN #{MMD_PAT_A0}, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+          # Don't increment mmd_demo; okay to repeat last command
         end
-    end # Case
+
+      # 7 = Load memory from dump file to restore values
+      when 7
+        if ($mmd_demo == 0)
+          cmd("MM LOAD_MEM_FROM_FILE with FILE_NAME #{MMD_FLT_FILE}")
+          # Don't increment mmd_demo; okay to repeat last command
+        end
+    end # Step Case
   end # Demo
    
 end # memory_mgmt_demo()
@@ -302,6 +305,10 @@ def memory_mgmt_demo_more_info(screen)
       msg_widget.text = MMD_INFO_4
     when 5
       msg_widget.text = MMD_INFO_5
+    when 6
+      msg_widget.text = MMD_INFO_6
+    when 7
+      msg_widget.text = MMD_INFO_6
     else
       msg_widget.text = MMD_INFO_DEF
     end # Case

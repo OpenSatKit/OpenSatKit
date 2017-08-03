@@ -3,9 +3,9 @@
 # starter kit's integration test.  This representation includes both ground 
 # and FSW information.
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ################################################################################
 

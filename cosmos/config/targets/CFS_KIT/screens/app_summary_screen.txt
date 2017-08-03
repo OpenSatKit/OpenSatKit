@@ -1,9 +1,9 @@
 ###############################################################################
 # App Summary Screen
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ###############################################################################
 
@@ -91,6 +91,10 @@ VERTICALBOX "Kit Apps"
     VALUE BM HK_TLM_PKT CCSDS_SEQUENCE
     VALUE BM HK_TLM_PKT CMD_VALID_COUNT
     VALUE BM HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "F42 - 42 Simulator FSW Controller"
+    VALUE F42 HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE F42 HK_TLM_PKT CMD_VALID_COUNT
+    VALUE F42 HK_TLM_PKT CMD_ERROR_COUNT
     LABEL "HC - Heater Control"
     VALUE HC HK_TLM_PKT CCSDS_SEQUENCE
     VALUE HC HK_TLM_PKT CMD_VALID_COUNT
@@ -99,6 +103,10 @@ VERTICALBOX "Kit Apps"
     VALUE HSIM HK_TLM_PKT CCSDS_SEQUENCE
     VALUE HSIM HK_TLM_PKT CMD_VALID_COUNT
     VALUE HSIM HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "I42 - 42 Simulator Interface"
+    VALUE I42 HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE I42 HK_TLM_PKT CMD_VALID_COUNT
+    VALUE I42 HK_TLM_PKT CMD_ERROR_COUNT
     LABEL "KIT_CI - Command Ingest"
     VALUE KIT_CI HK_TLM_PKT CCSDS_SEQUENCE
     VALUE KIT_CI HK_TLM_PKT CMD_VALID_COUNT
@@ -117,7 +125,7 @@ VERTICALBOX "Kit Apps"
     VALUE TFTP HK_TLM_PKT CMD_ERROR_COUNT
   END # Matrix
   HORIZONTALBOX
-    NAMED_WIDGET KIT_APPS COMBOBOX BM HC HSIM KIT_CI KIT_SCH KIT_TO TFTP
+    NAMED_WIDGET KIT_APPS COMBOBOX BM F42 HC HSIM I42 KIT_CI KIT_SCH KIT_TO TFTP
     BUTTON 'Noop'           'cmd("#{get_named_widget("KIT_APPS").text} NOOP")'
     BUTTON 'Reset Counters' 'cmd("#{get_named_widget("KIT_APPS").text} RESET_CTRS")'
   END

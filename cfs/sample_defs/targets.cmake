@@ -35,7 +35,7 @@
 # The MISSION_NAME will be compiled into the target build data structure
 # as well as being passed to "git describe" to filter the tags when building
 # the version string.
-SET(MISSION_NAME "SampleMission")
+SET(MISSION_NAME "OpenSatKit")
 
 # SPACECRAFT_ID gets compiled into the build data structure and the PSP may use it.
 # should be an integer.
@@ -50,9 +50,10 @@ SET(UI_INSTALL_SUBDIR "host/ui")
 SET(FT_INSTALL_SUBDIR "host/functional-test")
 
 # Each target board can have its own HW arch selection and set of included apps
-SET(TGT1_NAME cpu1)
-SET(TGT1_APPLIST app_fw_lib bm cfs_lib cs fw_demo ds expat_lib fm hc hs hsim kit_ci kit_sch kit_to lc md mm sc sample_app tftp)
-SET(TGT1_FILELIST cfe_es_startup.scr)
+SET(TGT1_NAME cpu1) 
+SET(TGT1_APPLIST app_fw_lib bm cfs_lib cs ds expat_lib fm fw_demo hc hs hsim kit_ci kit_sch kit_to lc md mm sample_app sample_lib sc tftp f42 i42)
+SET(TGT1_FILELIST cfe_es_startup.scr kit_sch_msgtbl.xml kit_sch_schtbl.xml kit_to_pkttbl.xml)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 
 # CPU2/3 are duplicates of CPU1.  These are not built by default anymore but are
 # commented out to serve as an example of how one would configure multiple cpus.

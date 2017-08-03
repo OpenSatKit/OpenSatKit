@@ -68,43 +68,43 @@ end
 def send_parameters(screen)
 
 	cmd("BM SEND_HK")
-  	wait_packet("BM", "HK_TLM_PKT", 1, 5)
-  	parameter_cmd_str = "BM SET_PARAMS with"
+  wait_packet("BM", "HK_TLM_PKT", 1, 5)
+  parameter_cmd_str = "BM SET_PARAMS with"
 
-  	$enable_param_widget_names.each {|widget_name|
+  $enable_param_widget_names.each {|widget_name|
   		
-		widget = screen.get_named_widget(widget_name)
-		text_widget = screen.get_named_widget(widget_name + "_text")
+	  widget = screen.get_named_widget(widget_name)
+	  text_widget = screen.get_named_widget(widget_name + "_text")
 
-		if (text_widget.text == "")
-			parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{widget.value.split.first},"
-		else
-			parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{text_widget.text},"
-			text_widget.text = ""
-		end
-  	}
+    if (text_widget.text == "")
+      parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{widget.value.split.first},"
+    else
+      parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{text_widget.text},"
+      text_widget.text = ""
+    end
+  }
 
 	$param_widget_names.each_key {|widget_name|
 
-		widget = screen.get_named_widget(widget_name)
-		text_widget = screen.get_named_widget(widget_name + "_text")
+    widget = screen.get_named_widget(widget_name)
+    text_widget = screen.get_named_widget(widget_name + "_text")
 
-		if (text_widget.text == "")
-			parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{widget.value.split.first},"
-		else
-			parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{text_widget.text},"
-			text_widget.text = ""
-		end
-	}
+    if (text_widget.text == "")
+      parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{widget.value.split.first},"
+    else
+      parameter_cmd_str = parameter_cmd_str + " #{widget_name.upcase} #{text_widget.text},"
+      text_widget.text = ""
+    end
+  }
 
-	parameter_cmd_str.chop!
-    cmd(parameter_cmd_str)
+  parameter_cmd_str.chop!
+  cmd(parameter_cmd_str)
 end
 
 def run_benchmarks(screen)
 
 	cmd("BM SEND_HK")
-  	wait_packet("BM", "HK_TLM_PKT", 1, 5)
+  wait_packet("BM", "HK_TLM_PKT", 1, 5)
 	wait_check_expression("tlm('BM HK_TLM_PKT BM_RUNNINGBENCHMARKS') == 0", 1000)
 	cmd("BM RUN_ALL")
 	text_widget = screen.get_named_widget("benchmark_multi_status")
@@ -117,7 +117,7 @@ end
 def run_benchmarks_multi(screen)
 
 	cmd("BM SEND_HK")
-  	wait_packet("BM", "HK_TLM_PKT", 1, 5)
+  wait_packet("BM", "HK_TLM_PKT", 1, 5)
 	wait_check_expression("tlm('BM HK_TLM_PKT BM_RUNNINGBENCHMARKS') == 0", 1000)
 
 	text_widget = screen.get_named_widget("benchmark_datapoints")
@@ -235,18 +235,18 @@ def run_benchmarks_multi(screen)
 		}
 
 		parameter_cmd_str.chop!
-	    cmd(parameter_cmd_str)
-	    cmd("BM SEND_HK")
-  		wait_packet("BM", "HK_TLM_PKT", 1, 5)
-		cmd("BM RUN_ALL")
-		wait_check_expression("tlm('BM HK_TLM_PKT BM_RUNNINGBENCHMARKS') == 1", 1000)
-		wait_check_expression("tlm('BM HK_TLM_PKT BM_RUNNINGBENCHMARKS') == 0", 1000)
+	  cmd(parameter_cmd_str)
+    cmd("BM SEND_HK")
+    wait_packet("BM", "HK_TLM_PKT", 1, 5)
+    cmd("BM RUN_ALL")
+    wait_check_expression("tlm('BM HK_TLM_PKT BM_RUNNINGBENCHMARKS') == 1", 1000)
+    wait_check_expression("tlm('BM HK_TLM_PKT BM_RUNNINGBENCHMARKS') == 0", 1000)
 		
-		benchmark_data.each_pair {|key, value|
-			value[i] = tlm("BM HK_TLM_PKT #{key.upcase}")
-		}
+    benchmark_data.each_pair {|key, value|
+      value[i] = tlm("BM HK_TLM_PKT #{key.upcase}")
+    }
 
-	end
+  end
 
 	parameter_cmd_str = "BM SET_PARAMS with"
 

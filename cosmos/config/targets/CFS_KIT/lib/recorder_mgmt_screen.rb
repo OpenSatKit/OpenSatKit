@@ -24,8 +24,8 @@ FILTER_TBL_MAX_IDX = DS_PACKETS_IN_FILTER_TABLE - 1
 DS_FILTERS_PER_PACKET = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, "DS_PACKETS_IN_FILTER_TABLE")
 FILTER_PARAM_MAX_IDX = DS_FILTERS_PER_PACKET - 1
 
-RECORDER_MGMT_FLT_WORK_DIR = FLT_WORK_DIR
-RECORDER_MGMT_GND_WORK_DIR = GND_WORK_DIR
+RECORDER_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
+RECORDER_MGMT_GND_SRV_DIR = GND_SRV_DIR
 
 ################################################################################
 ## Send Commands
@@ -104,7 +104,7 @@ def recorder_mgmt_send_cmd(screen, cmd)
     filter_param_idx = ask_string("Enter index into message's array of filters: 0..#{FILTER_PARAM_MAX_IDX}","0")
     filter_type      = ask_string("Enter filter type: 1=Sequence Count, 2=Time","1")
     cmd("DS SET_FILTER_TYPE with MSG_ID #{msg_id}, FILTER_PARAM_IDX #{filter_param_idx}, FILER_TYPE #{filter_type}")
-  elsif (app == "TODO")
+  elsif (cmd == "TODO")
     mem_file_name = ask_string("Enter full FSW path/filename file to received the dump")
     prompt("Feature coming soon...")
   else

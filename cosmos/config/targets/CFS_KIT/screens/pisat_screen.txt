@@ -1,0 +1,73 @@
+#######################################################################
+# cFS - PiSat Sensor Data Screen
+#
+################################################################################
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING LABELVALUELIMITSBAR COLORBLIND TRUE
+NAMED_WIDGET heading TITLE "PiSat Sensor Data"
+SETTING BACKCOLOR 162 181 205
+SETTING TEXTCOLOR black
+HORIZONTAL
+  GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+  #TIMEGRAPH HB HK_TLM_PKT TEMP
+  #TIMEGRAPH HB HK_TLM_PKT ACCEL_X 400 400
+
+  HORIZONTALLINE
+
+  VERTICALBOX
+  	CANVAS 580 280
+  	  CANVASIMAGE "cosmos_logo.png" 0 0
+  	  CANVASIMAGE "cfs_logo.png" 240 0
+  	  CANVASIMAGE "rpi_logo.png" 420 0
+  	  CANVASIMAGE "adafruit_logo.png" 0 140
+  	  CANVASIMAGE "python_logo.png" 240 140
+  	  CANVASIMAGE "zmq_logo.png" 400 160 
+  	END
+  END
+
+  HORIZONTALLINE
+
+  VERTICALBOX
+    MATRIXBYCOLUMNS 4
+      LABEL "Temperature"
+      VALUE HB HK_TLM_PKT TEMP WITH_UNITS 10
+      LABEL "Pressure"
+      VALUE HB HK_TLM_PKT PRES WITH_UNITS 10
+      LABEL "Altitude"
+      VALUE HB HK_TLM_PKT ALT WITH_UNITS 10
+      LABEL "Sea Level Pressure"
+      VALUE HB HK_TLM_PKT SL_PRES WITH_UNITS 10
+    END
+    LABEL ""
+    MATRIXBYCOLUMNS 4
+      LABEL ""
+      LABEL "    X"
+      LABEL "    Y"
+      LABEL "    Z"
+      LABEL "Accelerometer"
+      VALUE HB HK_TLM_PKT ACCEL_X WITH_UNITS 10
+      VALUE HB HK_TLM_PKT ACCEL_Y WITH_UNITS 10
+      VALUE HB HK_TLM_PKT ACCEL_Z WITH_UNITS 10
+      LABEL "Gyroscope"
+      VALUE HB HK_TLM_PKT GYRO_X WITH_UNITS 10
+      VALUE HB HK_TLM_PKT GYRO_Y WITH_UNITS 10
+      VALUE HB HK_TLM_PKT GYRO_Z WITH_UNITS 10
+      LABEL "Magnetometer"
+      VALUE HB HK_TLM_PKT MAG_X WITH_UNITS 10
+      VALUE HB HK_TLM_PKT MAG_Y WITH_UNITS 10
+      VALUE HB HK_TLM_PKT MAG_Z WITH_UNITS 10
+    END
+
+    HORIZONTALLINE
+    LABEL ""
+
+    MATRIXBYCOLUMNS 4
+      BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_START")'
+      BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_STOP")'
+      BUTTON 'Shutdown Pi' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_SHUTDOWN")'
+      BUTTON 'Reboot Pi' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_REBOOT")'
+    END # Matrix
+
+SETTING BACKCOLOR 162 181 205
+END # Vertical

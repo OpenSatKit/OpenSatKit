@@ -1,9 +1,9 @@
 ################################################################################
 # cFE File Class
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ################################################################################
 

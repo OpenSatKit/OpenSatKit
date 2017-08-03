@@ -58,6 +58,7 @@ void CMDMGR_RegisterFunc(CMDMGR_Class* CmdMgr, uint16 FuncCode, void* ObjDataPtr
    if (FuncCode < CMDMGR_CMD_FUNC_TOTAL)
    {
 
+      if (DBG_CMDMGR) OS_printf("CMDMGR_RegisterFunc(): FuncCode %d, DataLen %d\n", FuncCode, UserDataLen);
       CmdMgr->Cmd[FuncCode].DataPtr = ObjDataPtr;
       CmdMgr->Cmd[FuncCode].FuncPtr = ObjFuncPtr;
       CmdMgr->Cmd[FuncCode].UserDataLen = UserDataLen;
@@ -96,6 +97,10 @@ boolean CMDMGR_DispatchFunc(CMDMGR_Class* CmdMgr, const CFE_SB_MsgPtr_t  MsgPtr)
    uint16 UserDataLen = CFE_SB_GetUserDataLength(MsgPtr);
    uint16 FuncCode    = CFE_SB_GetCmdCode(MsgPtr);
    uint32 Checksum    = CFE_SB_GetChecksum(MsgPtr);
+
+   if (DBG_CMDMGR) OS_printf("CMDMGR_DispatchFunc(): [0]=0x%X, [0]=0x%X, [0]=0x%X, [0]=0x%X\n",
+                             ((uint16*)MsgPtr)[0],((uint16*)MsgPtr)[1],((uint16*)MsgPtr)[2],((uint16*)MsgPtr)[3]);
+   if (DBG_CMDMGR) OS_printf("CMDMGR_DispatchFunc(): FuncCode %d, DataLen %d\n", FuncCode,UserDataLen);
 
    if (FuncCode < CMDMGR_CMD_FUNC_TOTAL)
    {

@@ -63,7 +63,7 @@ uint8 TBLMGR_RegisterTbl(TBLMGR_Class* TblMgr, TBLMGR_LoadTblFuncPtr LoadFuncPtr
    TBLMGR_Tbl*  NewTbl;
    TblMgr->LastActionTblId = TBLMGR_MAX_TBL_PER_APP;
    
-   OS_printf("TBLMGR_RegisterTbl() Entry\n");
+   if (DBG_TBLMGR) OS_printf("TBLMGR_RegisterTbl() Entry\n");
    if (TblMgr->NextAvailableId < TBLMGR_MAX_TBL_PER_APP)
    {
 
@@ -108,7 +108,7 @@ uint8 TBLMGR_RegisterTblWithDef(TBLMGR_Class* TblMgr, TBLMGR_LoadTblFuncPtr Load
    uint8 TblId = TBLMGR_RegisterTbl(TblMgr, LoadFuncPtr, DumpFuncPtr);
    TBLMGR_LoadTblCmdMsg LoadTblCmd;
 
-   OS_printf("TBLMGR_RegisterTblWithDef() Entry\n");
+   if (DBG_TBLMGR) OS_printf("TBLMGR_RegisterTblWithDef() Entry\n");
 
    if (TblId < TBLMGR_MAX_TBL_PER_APP)
    {
@@ -196,7 +196,7 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    TBLMGR_Class *TblMgr = (TBLMGR_Class *) ObjDataPtr;
    const  TBLMGR_LoadTblCmdMsg *LoadTblCmd = (const TBLMGR_LoadTblCmdMsg *) MsgPtr;
 
-   OS_printf("TBLMGR_LoadTblCmd() Entry\n");
+   if (DBG_TBLMGR) OS_printf("TBLMGR_LoadTblCmd() Entry\n");
 
    if (LoadTblCmd->Id < TblMgr->NextAvailableId)
    {
@@ -207,7 +207,7 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
       if (AppFw_VerifyFileForRead(LoadTblCmd->Filename))
       {
 
-         OS_printf("TBLMGR_LoadTblCmd() Before Tbl->LoadFuncPtr call\n");
+         if (DBG_TBLMGR) OS_printf("TBLMGR_LoadTblCmd() Before Tbl->LoadFuncPtr call\n");
          Tbl = &(TblMgr->Tbl[LoadTblCmd->Id]);
          RetStatus = (Tbl->LoadFuncPtr) (Tbl, LoadTblCmd->LoadType, LoadTblCmd->Filename);
          if (RetStatus) 

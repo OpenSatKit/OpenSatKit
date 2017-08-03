@@ -1,9 +1,9 @@
 ################################################################################
 # cFS Kit Main Screen ruby scripts
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ################################################################################
 SCREEN AUTO AUTO 0.5

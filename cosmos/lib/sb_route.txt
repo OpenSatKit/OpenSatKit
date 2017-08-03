@@ -1,0 +1,98 @@
+ 800         DS    12     DS_CMD_PIPE
+ 800         TO    10   TO_TLM_PIPE_0
+ 801         DS    12     DS_CMD_PIPE
+ 801         TO    10   TO_TLM_PIPE_0
+ 803         DS    12     DS_CMD_PIPE
+ 803         TO    10   TO_TLM_PIPE_0
+ 804         DS    12     DS_CMD_PIPE
+ 804         TO    10   TO_TLM_PIPE_0
+ 805         DS    12     DS_CMD_PIPE
+ 805         TO    10   TO_TLM_PIPE_0
+ 806         DS    12     DS_CMD_PIPE
+ 806         TO    10   TO_TLM_PIPE_0
+ 808         DS    12     DS_CMD_PIPE
+ 808         TO    10   TO_TLM_PIPE_0
+ 80a         DS    12     DS_CMD_PIPE
+ 80a         TO    10   TO_TLM_PIPE_0
+ 80b         DS    12     DS_CMD_PIPE
+ 80b         TO    10   TO_TLM_PIPE_0
+ 80c         DS    12     DS_CMD_PIPE
+ 80c         TO    10   TO_TLM_PIPE_0
+ 80d         DS    12     DS_CMD_PIPE
+ 80d         TO    10   TO_TLM_PIPE_0
+ 80e         DS    12     DS_CMD_PIPE
+ 80e         TO    10   TO_TLM_PIPE_0
+ 80f         DS    12     DS_CMD_PIPE
+ 80f         TO    10   TO_TLM_PIPE_0
+ 810         DS    12     DS_CMD_PIPE
+ 810         TO    10   TO_TLM_PIPE_0
+ 880         TO    10   TO_TLM_PIPE_0
+ 882         TO    10   TO_TLM_PIPE_0
+ 883         TO    10   TO_TLM_PIPE_0
+ 884         TO    10   TO_TLM_PIPE_0
+ 88a         TO    10   TO_TLM_PIPE_0
+ 88b         TO    10   TO_TLM_PIPE_0
+ 88c         TO    10   TO_TLM_PIPE_0
+ 88d         TO    10   TO_TLM_PIPE_0
+ 88e         TO    10   TO_TLM_PIPE_0
+ 8a7         TO    10   TO_TLM_PIPE_0
+ 8aa         TO    10   TO_TLM_PIPE_0
+ 8ad         TO    10   TO_TLM_PIPE_0
+ 8b0         TO    10   TO_TLM_PIPE_0
+ 8b8         DS    12     DS_CMD_PIPE
+ 8b8         TO    10   TO_TLM_PIPE_0
+ 8b9         TO    10   TO_TLM_PIPE_0
+ 9b1         TO    10   TO_TLM_PIPE_0
+ 9ca         TO    10   TO_TLM_PIPE_0
+ 9cb         TO    10   TO_TLM_PIPE_0
+ 9cc         TO    10   TO_TLM_PIPE_0
+ a40         LC    17     LC_CMD_PIPE
+ a40         TO    10   TO_TLM_PIPE_0
+1801    CFE_EVS     0    EVS_CMD_PIPE
+1803     CFE_SB     1     SB_CMD_PIPE
+1804    CFE_TBL     4    TBL_CMD_PIPE
+1805   CFE_TIME     3   TIME_CMD_PIPE
+1806     CFE_ES     2     ES_CMD_PIPE
+1808     CFE_ES     2     ES_CMD_PIPE
+1809    CFE_EVS     0    EVS_CMD_PIPE
+180b     CFE_SB     1     SB_CMD_PIPE
+180c    CFE_TBL     4    TBL_CMD_PIPE
+180d   CFE_TIME     3   TIME_CMD_PIPE
+1810   CFE_TIME     3   TIME_CMD_PIPE
+1811    SCH_LAB    11 SCH_LAB_CMD_PIPE
+1860   CFE_TIME     3   TIME_CMD_PIPE
+1861   CFE_TIME     3   TIME_CMD_PIPE
+1880         TO     9     TO_CMD_PIPE
+1881         TO     9     TO_CMD_PIPE
+1882         TO     8     TO_SCH_PIPE
+1882 SAMPLE_APP     5 SAMPLE_CMD_PIPE
+1883 SAMPLE_APP     5 SAMPLE_CMD_PIPE
+1884         CI     7     CI_CMD_PIPE
+1885         CI     7     CI_CMD_PIPE
+1886         CI     6     CI_SCH_PIPE
+188c         FM    13     FM_CMD_PIPE
+188d         FM    13     FM_CMD_PIPE
+18a4         LC    17     LC_CMD_PIPE
+18a5         LC    17     LC_CMD_PIPE
+18a6         LC    17     LC_CMD_PIPE
+18a9         SC    18     SC_CMD_PIPE
+18aa         SC    18     SC_CMD_PIPE
+18ab         SC    18     SC_CMD_PIPE
+18ae         HS    14     HS_CMD_PIPE
+18af         HS    14     HS_CMD_PIPE
+18b0         HS    16  HS_WAKEUP_PIPE
+18b5         FT    22     TF_CMD_PIPE
+18b6         FT    22     TF_CMD_PIPE
+18bb         DS    12     DS_CMD_PIPE
+18bc         DS    12     DS_CMD_PIPE
+19a5         HC    23     HC_CMD_PIPE
+19b1       HSIM    24    SIM_CMD_PIPE
+19b2       HSIM    24    SIM_CMD_PIPE
+19b3       HSIM    24    SIM_CMD_PIPE
+19b4         HC    23     HC_CMD_PIPE
+19ba         HC    23     HC_CMD_PIPE
+19c1         HC    23     HC_CMD_PIPE
+19d2         BM    20     BM_CMD_PIPE
+19d3         BM    20     BM_CMD_PIPE
+19d4         BM    19     BM_SCH_PIPE
+19d6         BM    19     BM_SCH_PIPE

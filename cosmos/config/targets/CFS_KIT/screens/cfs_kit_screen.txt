@@ -47,9 +47,9 @@ VERTICAL
           BUTTON 'Verify cFS Config' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "RUN_TEST_SCRIPT")'
           BUTTON 'Run Performance Monitor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PERF_MON")'
           BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
+          BUTTON 'Run 42 Simulator' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
+          BUTTON 'Start PiSat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
           BUTTON 'Add Application' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "TODO")'
-          SETTING BACKCOLOR 128 128 128
-          BUTTON 'Manage Hardware Targets' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "TODO")'
           SETTING BACKCOLOR 128 128 128
           SETTING GRAY_TOLERANCE 0.1
         END # Matrix
@@ -84,7 +84,6 @@ VERTICAL
         # Table Management
         HORIZONTAL 10
           BUTTON 'Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TABLE_DEMO")'
-          SETTING BACKCOLOR 128 128 128
           LABEL "Load, dump, and display tables using the cFE Table (TBL) Service.               "
         End # Horizontal
 
@@ -101,7 +100,6 @@ VERTICAL
         # Recorder Management
         HORIZONTAL 10
           BUTTON 'Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "RECORDER_DEMO")'
-          SETTING BACKCOLOR 128 128 128
           LABEL "Manage onboard data recorder using Data Storage (DS).                             "
         END # Horizontal
 
@@ -122,7 +120,6 @@ VERTICAL
         # Apps
         HORIZONTAL 10
           BUTTON 'Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "APP_DEMO")'
-          SETTING BACKCOLOR 128 128 128
           LABEL "Stop, start, and load apps using the cFE Executive Services.                        "
         END # Horizontal
 

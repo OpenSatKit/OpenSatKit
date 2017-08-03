@@ -1,0 +1,28 @@
+# Exported from Wings 3D 0.99.04a
+newmtl MTL0
+Ns 100.0
+d 1.0
+illum 2
+Kd 0.2 0.2 0.0
+Ka 0.2 0.2 0.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+
+newmtl MTL13
+Ns 100.0
+d 1.0
+illum 2
+Kd 0.878 0.949 1.0
+Ka 0.878 0.949 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+
+newmtl MTL9
+Ns 100.0
+d 1.0
+illum 2
+Kd 0.4 0.6 0.6
+Ka 0.4 0.6 0.6
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+

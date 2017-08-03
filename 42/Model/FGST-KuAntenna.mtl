@@ -1,0 +1,32 @@
+#
+# Wavefront material file: C:\Users\brcarter\Desktop\Glastmodel.working\FGST-B3.mtl
+#
+# Converted by the PolyTrans geometry converter from Okino Computer Graphics, Inc.
+# Date/time of export: 08/24/2011 09:41:12
+#
+# Bounding box of geometry = (-0.106756,-0.256921,-0.719201) to (0.05635,0.256921,0.05635).
+
+newmtl default
+	Ns 32
+	d 1
+	illum 2
+	Kd 0.4 0.4 0.4
+	Ks 0.7 0.7 0.7
+	Ka 0.3 0.3 0.3
+
+newmtl Gold_3
+	Ns 24
+	d 1
+	illum 2
+	Kd 0.4 0.268 0
+	Ks 0.7 0.7 0.7
+	Ka 0.3 0.201 0
+
+newmtl Grey_1
+	Ns 24
+	d 1
+	illum 2
+	Kd 0.4 0.4 0.4
+	Ks 0.7 0.7 0.7
+	Ka 0.3 0.3 0.3
+

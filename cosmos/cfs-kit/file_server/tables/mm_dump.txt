@@ -1,0 +1,53 @@
+<%
+
+  require 'cfs_kit_config' 
+
+%>
+TABLE "MM Memory Dump" LITTLE_ENDIAN ONE_DIMENSIONAL "Unformatted hex data display"
+
+# CFE_FS_Header_t defined in cfe_fs.h
+  APPEND_PARAMETER "Content Type"     32 STRING "UNDEF"  "Header identifier. This file defines a CFE1 header" BIG_ENDIAN
+  APPEND_PARAMETER "Subtype"          32   UINT 0 4294967295 0  "See CFE_FS_ES_ERLOG_SUBTYPE defined in cfe_fs.h" BIG_ENDIAN
+  APPEND_PARAMETER "Length"           32   UINT 0 4294967295 0  "Length of primary header in bytes" BIG_ENDIAN
+  APPEND_PARAMETER "Spacecraft ID"    32   UINT 0 4294967295 0  "Identifier of spacecraft that generated/received the file" BIG_ENDIAN
+  APPEND_PARAMETER "Processor ID"     32   UINT 0 4294967295 0  "Identifier of the processor on the spacecraft that generated/received the file" BIG_ENDIAN
+  APPEND_PARAMETER "Application ID"   32   UINT 0 4294967295 0  "Application identifier"  BIG_ENDIAN
+  APPEND_PARAMETER "Time Seconds"     32   UINT 0 4294967295 0  "File creation timestamp (seconds)"  BIG_ENDIAN
+  APPEND_PARAMETER "Time Subseconds"  32   UINT 0 4294967295 0  "File creation timestamp (sub-seconds)"  BIG_ENDIAN
+  APPEND_PARAMETER "Description"     256 STRING "UNDEF"  "Description of table contents" BIG_ENDIAN
+
+# MM_LoadDumpFileHeader_t defined in mm_filedefs.h
+  APPEND_PARAMETER "Offset"           32   UINT 0 4294967295 0 "Offset from symbol or absolute address if no symbol specified"
+  APPEND_PARAMETER "Symbol Name"     512 STRING "UNDEF"        "Symbol to be used as base address or empty string if no symbol"
+  APPEND_PARAMETER "Number of Bytes"  32   UINT 0 4294967295 0 "Number of bytes in the table"
+  APPEND_PARAMETER "CRC"              32   UINT 0 4294967295 0 "Cyclic Redundancy Check"
+  APPEND_PARAMETER "Memory Type"       8   UINT 0 8          0 "Fully qualified table name"
+  APPEND_PARAMETER "Spare_8"           8   UINT 0 0          0 "Spare byte"
+  APPEND_PARAMETER "Spare_16"         16   UINT 0 0          0 "Spare word"
+
+#  APPEND_PARAMETER "Data Word 0" 16 UINT  0 65536  0 ""
+#  APPEND_PARAMETER "Data Word 1" 16 UINT  0 65536  0 ""
+#  APPEND_PARAMETER "Data Word 2" 16 UINT  0 65536  0 ""
+#  APPEND_PARAMETER "Data Word 3" 16 UINT  0 65536  0 ""
+#  APPEND_PARAMETER "Data Long Word 0" 32 UINT  0 4294967295  0 ""
+#  APPEND_PARAMETER "Data Long Word 1" 32 UINT  0 4294967295  0 ""
+#  APPEND_PARAMETER "Data Long Word 2" 32 UINT  0 4294967295  0 ""
+#  APPEND_PARAMETER "Data Long Word 3" 32 UINT  0 4294967295  0 ""
+  APPEND_PARAMETER "Data Byte  0" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  1" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  2" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  3" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  4" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  5" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  6" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  7" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  8" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte  9" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte 10" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte 11" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte 12" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte 13" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte 14" 8 UINT  0 255 0 ""
+  APPEND_PARAMETER "Data Byte 15" 8 UINT  0 255 0 ""
+
+#ARRAY_PARAMETER "Data" 8 uint 128 

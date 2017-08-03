@@ -1,9 +1,9 @@
 ###############################################################################
 # cFS Kit App Management 
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 # 
 ################################################################################
 
@@ -23,7 +23,7 @@ def app_mgmt_launch_app(screen, app)
 	if (app == "Eclipse")
 		spawn("sudo #{Cosmos::USERPATH}/../eclipse/eclipse/eclipse")
   elsif (app == "AppGen")
-		spawn("java -jar #{Cosmos::USERPATH}/config/targets/CFS_KIT/tools/create-app/CreateApp.jar")
+		spawn("java -jar #{CFS_KIT_GEN_APP_DIR}/CreateApp.jar")
   elsif (app == "APP_SUMMARY")
     display("CFS_KIT APP_SUMMARY_SCREEN",50,50)
   else

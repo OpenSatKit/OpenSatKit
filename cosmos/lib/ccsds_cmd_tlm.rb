@@ -22,7 +22,7 @@ module CcsdsCmdTlm
     @stream_id = stream_id
     @func_code = func_code
     @ccsds_len = data_len + 1  # How CCSDS defines packet length
-    t = ERB.new(CFS_CMD_HDR)
+    t = ERB.new(CFS_CMD_HDR_3)
     t.result(binding)
   end
     
@@ -46,7 +46,35 @@ module CcsdsCmdTlm
   CCSDS_SECONDS  = "CCSDS_SECONDS"
   CCSDS_SUBSECS  = "CCSDS_SUBSECS"
       
-  CFS_CMD_HDR = %Q(
+  # CeRes
+  CFS_CMD_HDR_1 = %Q(
+    APPEND_ID_PARAMETER #{CCSDS_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  \<%= @func_code %\> \"Command Function Code\"   BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"  BIG_ENDIAN
+  )
+
+  # CeRes without Big Endian
+  CFS_CMD_HDR_2 = %Q(
+    APPEND_ID_PARAMETER #{CCSDS_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  \<%= @func_code %\> \"Command Function Code\"
+    APPEND_PARAMETER    #{CCSDS_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"
+  )
+
+  # My original with Big Endian
+  CFS_CMD_HDR_3 = %Q(
+    APPEND_ID_PARAMETER #{CCSDS_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"  BIG_ENDIAN
+    APPEND_PARAMETER    #{CCSDS_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  \<%= @func_code %\> \"Command Function Code\"   BIG_ENDIAN
+  )
+
+  # My original
+  CFS_CMD_HDR_4 = %Q(
     APPEND_ID_PARAMETER #{CCSDS_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
     APPEND_PARAMETER    #{CCSDS_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
     APPEND_PARAMETER    #{CCSDS_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
@@ -59,9 +87,9 @@ module CcsdsCmdTlm
       FORMAT_STRING \"0x%04X\"
     APPEND_ITEM       #{CCSDS_SEQUENCE} 16 UINT \"Packet Sequence Counter\"                    BIG_ENDIAN
     APPEND_ITEM       #{CCSDS_LENGTH}   16 UINT \"Packet Length"                               BIG_ENDIAN
-    APPEND_ITEM       #{CCSDS_SECONDS}  32 UINT \"Tlm Secondary Header - Seconds\"
+    APPEND_ITEM       #{CCSDS_SECONDS}  32 UINT \"Tlm Secondary Header - Seconds\"             BIG_ENDIAN
       FORMAT_STRING "0x%04X"
-    APPEND_ITEM       #{CCSDS_SUBSECS}  16 UINT \"Tlm Secondary Header - Subseconds\"
+    APPEND_ITEM       #{CCSDS_SUBSECS}  16 UINT \"Tlm Secondary Header - Subseconds\"          BIG_ENDIAN
       FORMAT_STRING "0x%04X"
   )
 

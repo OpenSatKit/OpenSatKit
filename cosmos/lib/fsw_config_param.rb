@@ -28,6 +28,7 @@ module FswConfigParam
   ## cFE ##
   #########
 
+  CFE_TBL_MAX_NAME_LENGTH = 16
   
   ########################
   ## App - Data Storage ##
@@ -41,12 +42,28 @@ module FswConfigParam
   DS_PACKETS_IN_FILTER_TABLE = 256
   DS_FILTERS_PER_PACKET  = 4
   
+  ########################
+  ## App - File Manager ##
+  ########################
+
+  FM_TABLE_ENTRY_COUNT = 8
+  
+  ##########################
+  ## App - Limit Checker  ##
+  ##########################
+
+  LC_MAX_WATCHPOINTS  = 176
+  LC_HKWR_NUM_BYTES   = (((LC_MAX_WATCHPOINTS  + 15) / 16) * 4)   # 2 bits per WP and keep array on longword boundary
+
+  LC_MAX_ACTIONPOINTS = 176
+  LC_HKAR_NUM_BYTES   = (((LC_MAX_ACTIONPOINTS +  7) /  8) * 4)   # 4 bits per AP and keep array on longword boundary
+  
+
   ##########################
   ## App - Stored Command ##
   ##########################
 
   SC_NUMBER_OF_RTS = 64
-  
   
   
   #####################

@@ -1,9 +1,9 @@
 ###############################################################################
 # File Management Demo More Information Screen
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ###############################################################################
 
@@ -16,6 +16,6 @@ TITLE "File Management Demo"
  
 VERTICALBOX
   NAMED_WIDGET msg_box TEXTBOX CFS_KIT PSEUDO_MSG_PKT TXT_MSG 512 300
-  BUTTON 'More Information' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_demo_screen.rb"; file_mgmt_demo_more_info(self)'
+  BUTTON 'Press for More Information' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_demo_screen.rb"; file_mgmt_demo_more_info(self)'
 END # Vertical Box
   

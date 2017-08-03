@@ -14,8 +14,8 @@ require 'file_transfer'
 ## Global Variables
 ################################################################################
 
-MEMORY_MGMT_FLT_WORK_DIR = FLT_WORK_DIR
-MEMORY_MGMT_GND_WORK_DIR = GND_WORK_DIR
+MEMORY_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
+MEMORY_MGMT_GND_SRV_DIR = GND_SRV_DIR
 
 ################################################################################
 ## Send Commands
@@ -80,7 +80,7 @@ def memory_mgmt_send_cmd(screen, cmd)
     cmd("MD JAM_DWELL with TABLE_ID #{table_id}, ENTRY_ID #{entry_id}, FIELD_LEN #{field_len}, ADDR_OFFSET #{addr_offset}, DELAY #{interval}, ADDR_SYMBOL_NAME #{addr_symbol_name}")
   elsif (cmd == "DWELL_TLM_PKT")
     display("MD DWELL_PKT_SCREEN",50,50)
-  elsif (app == "TODO")
+  elsif (cmd == "TODO")
     prompt("Feature coming soon...")
   else
     prompt("Error in screen definition file. Undefined commmand sent to memory_mgmt_send_cmd()")

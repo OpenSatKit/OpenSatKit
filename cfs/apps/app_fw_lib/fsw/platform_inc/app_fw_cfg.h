@@ -55,5 +55,15 @@
 #define TBLMGR_BASE_EID      10
 #define APP_FW_APP_BASE_EID  20 /* Starting ID for the App using the framework */
 
+/******************************************************************************
+** Debug macros
+**
+** Set debug macros to 1 to enable debug messgae outputs to the console
+*/
+
+
+#define DBG_CMDMGR  0
+#define DBG_TBLMGR  0
+
 
 #endif /* _app_fw_cfg_ */

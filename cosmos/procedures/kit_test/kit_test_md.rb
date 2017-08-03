@@ -2,9 +2,9 @@
 # Verify the cFS Memory Dwell application is operational within the starter 
 # kit.
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ################################################################################
 

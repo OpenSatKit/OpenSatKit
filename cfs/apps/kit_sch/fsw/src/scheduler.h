@@ -155,7 +155,7 @@ typedef struct
    uint16   EntryInSlot;
    boolean  ConfigFlag;   /* 0=Disable, 1=Enable */
 
-} SCHEDULER_ConfigSchCmd;
+} OS_PACK SCHEDULER_ConfigSchCmd;
 #define SCHEDULER_CFG_SCH_CMD_DATA_LEN  (sizeof(SCHEDULER_ConfigSchCmd) - CFE_SB_CMD_HDR_SIZE)
 
 /*

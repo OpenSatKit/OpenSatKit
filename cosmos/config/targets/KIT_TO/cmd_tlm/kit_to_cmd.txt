@@ -3,7 +3,8 @@
 
   @APP_PREFIX_STR = "KIT_TO"
   @CMD_MID_STR    = "KIT_TO_CMD_MID"
-  
+    
+    
 %>  
 
 COMMAND KIT_TO NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"

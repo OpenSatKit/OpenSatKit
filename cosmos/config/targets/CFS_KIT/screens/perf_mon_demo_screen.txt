@@ -1,9 +1,9 @@
 ###############################################################################
 # Performance Monitor Demo Screen
 #
-# Notes:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ###############################################################################
 
@@ -13,63 +13,27 @@ TITLE "Performance Monitor Demo"
   SETTING BACKCOLOR 162 181 205
   SETTING TEXTCOLOR black
 
-HORIZONTALBOX "Status" 5
-  MATRIXBYCOLUMNS 6
-  LABEL "State" 
-  VALUE CFE_ES HK_TLM_PKT PERFSTATE WITH_UNITS 8
-  LABEL "Mode"
-  VALUE CFE_ES HK_TLM_PKT PERFMODE WITH_UNITS 8
-  LABEL "Trigger Count"
-  VALUE CFE_ES HK_TLM_PKT PERFTRIGGERCOUNT WITH_UNITS 8
-  END # Matrix
-END # Box      
-
-HORIZONTALBOX "Masks" 4
-  MATRIXBYCOLUMNS 5
-    LABEL "Filter "
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK3 %08X CONVERTED 8
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK2 %08X CONVERTED 8
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK1 %08X CONVERTED 8
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFFILTERMASK0 %08X CONVERTED 8
-    LABEL "Trigger"
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK3 %08X CONVERTED 8
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK2 %08X CONVERTED 8
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK1 %08X CONVERTED 8
-    FORMATVALUE CFE_ES HK_TLM_PKT PERFTRIGGERMASK0 %08X CONVERTED 8
-  END # Matrix
-END # Box
-
-HORIZONTALBOX "Log Stats" 4
-  MATRIXBYCOLUMNS 4
-    LABEL "Start"
-    VALUE CFE_ES HK_TLM_PKT PERFDATASTART
-    LABEL "                       End"
-    VALUE CFE_ES HK_TLM_PKT PERFDATAEND
-    LABEL "Count"
-    VALUE CFE_ES HK_TLM_PKT PERFDATACOUNT
-    LABEL "Remaining to Write"
-    VALUE CFE_ES HK_TLM_PKT PERFDATATOWRITE
-  END # Matrix
-END # Box
-
 VERTICALBOX
   # These labels contain instructions to the user
-  NAMED_WIDGET Label1  LABEL "This demo shows how to use the cFS Performance Monitor functionality. Code execution"
+  NAMED_WIDGET Instruct1  LABEL "This demo shows how to use the cFS Performance Monitor (CPM) functionality. Code execution"
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label2  LABEL "markers are captured in FSW memory and transferred to a file. The file is dumped to"
+  NAMED_WIDGET Instruct2  LABEL "markers are captured in FSW memory and transferred to a file. The file is dumped to"
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label3  LABEL "the ground and the CPM tool is used to display the captured execution data. Click..."
+  NAMED_WIDGET Instruct3  LABEL "the ground and the CPM tool is used to display the captured execution data. Click..."
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label4  LABEL " "
+  NAMED_WIDGET Instruct4  LABEL " "
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label5  LABEL "  <More Info> to obtain more information about the current step"
+  NAMED_WIDGET Instruct5  LABEL "  <More Info> to obtain more information about the current step"
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label6  LABEL "  <Next> to move to the next step"
+  NAMED_WIDGET Instruct6  LABEL "  <Demo> to issue commands to demonstrate a feature in the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct7  LABEL "  <Next> to move to the next step"
   SETTING TEXTCOLOR 0 0 153
   LABEL ""
   HORIZONTALLINE
   HORIZONTAL
     BUTTON "More Info"  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_demo_screen.rb"; perf_mon_demo(self, "INFO")'
+    BUTTON "Demo"       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_demo_screen.rb"; perf_mon_demo(self, "DEMO")'
     BUTTON "Next ->"    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_demo_screen.rb"; perf_mon_demo(self, "NEXT")'
   END
 END # Vertical instruction box    

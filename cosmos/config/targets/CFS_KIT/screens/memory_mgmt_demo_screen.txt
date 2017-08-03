@@ -2,8 +2,8 @@
 # Memory Management Demo Screen
 #
 # License:
-#   1. Written by David McComas, licensed under the copyleft GNU
-#      General Public License (GPL).
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
 #
 ###############################################################################
 
@@ -15,17 +15,19 @@ TITLE "Memory Management Demo"
 
 VERTICALBOX
   # These labels contain instructions to the user
-  NAMED_WIDGET Label1  LABEL "This demo shows some basic memory management features. It uses the Memory"
+  NAMED_WIDGET Instruct1  LABEL "This demo shows some basic memory management features. It uses the Memory"
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label2  LABEL "Management(MM) app to peek/load and poke/dump memory. It uses the Memory"
+  NAMED_WIDGET Instruct2  LABEL "Management(MM) app to peek/load and poke/dump memory. It uses the Memory"
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label3  LABEL "Dwell(MD) app to autonomously monitor and telemeter memory locations. Click..."
+  NAMED_WIDGET Instruct3  LABEL "Dwell(MD) app to autonomously monitor and telemeter memory locations. Click..."
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label4  LABEL " "
+  NAMED_WIDGET Instruct4  LABEL " "
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label5  LABEL "  <More Info> to obtain more information about the current step"
+  NAMED_WIDGET Instruct5  LABEL "  <More Info> to obtain more information about the current step"
   SETTING TEXTCOLOR 0 0 153
-  NAMED_WIDGET Label6  LABEL "  <Next> to move to the next step"
+  NAMED_WIDGET Instruct6  LABEL "  <Demo> to issue commands to demonstrate a feature in the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct7  LABEL "  <Next> to move to the next step"
   SETTING TEXTCOLOR 0 0 153
   LABEL ""
   HORIZONTALLINE

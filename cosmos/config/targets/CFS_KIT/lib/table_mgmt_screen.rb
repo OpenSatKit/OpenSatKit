@@ -15,8 +15,8 @@ require 'file_mgmt_screen'
 ## Global Variables
 ################################################################################
 
-TABLE_MGMT_FLT_WORK_DIR = FLT_WORK_DIR
-TABLE_MGMT_GND_WORK_DIR = GND_WORK_DIR
+TABLE_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
+TABLE_MGMT_GND_SRV_DIR = GND_SRV_TBL_DIR
 
 ################################################################################
 ## Send Commands
@@ -67,8 +67,8 @@ def table_mgmt_send_cmd(screen, cmd)
     flt_full_file_name = ask_string("Enter full FSW path/filename.")
     gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
     gnd_file_name_no_hdr = gnd_file_name.split('.').first + "_no_hdr.dat" # Assumes one .
-    gnd_full_file_name = "#{GND_WORK_DIR}/#{gnd_file_name}"
-    gnd_full_file_name_no_hdr = "#{GND_WORK_DIR}/#{gnd_file_name_no_hdr}"
+    gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
+    gnd_full_file_name_no_hdr = "#{GND_SRV_DIR}/#{gnd_file_name_no_hdr}"
     if (file_xfer.get(flt_full_file_name,gnd_full_file_name) )
       IO.copy_stream(gnd_full_file_name,gnd_full_file_name_no_hdr,File.size(gnd_full_file_name)-64 ,64)
       prompt ("Created table file #{gnd_full_file_name_no_hdr} without the cFE header")

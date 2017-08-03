@@ -1,9 +1,9 @@
 ###############################################################################
 # cFS Benchmarking Tool COSMOS Telemetry Screen
 #
-# Notes:
-#   1. Written by Ian Wilmoth, updates by David McComas, licensed under the
-#      copyleft GNU General Public License (GPL).
+# License:
+#   Written by Ian Wilmoth, updates by David McComas, licensed under the
+#   copyleft GNU General Public License (GPL).
 #
 ###############################################################################
 

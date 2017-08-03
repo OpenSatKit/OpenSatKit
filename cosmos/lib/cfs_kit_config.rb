@@ -15,6 +15,7 @@
 require "erb"
 require "hw_target"
 require "ccsds_cmd_tlm"
+require "cfe_file"
 require "message_ids"
 require "performance_ids"
 require "fsw_config_param"
@@ -26,14 +27,20 @@ module CfsKitConfig
     return HwTarget::PROCESSOR_ENDIAN
   end
 
-  # @return CCSDS command header string 
+  # @return CCSDS command header string for COSMOS command definition file
   def self.cmd_hdr(app_prefix, msg_id, func_code, data_len)
     return CcsdsCmdTlm.renderCmdHdr(MessageIds.get_msg_val(msg_id), func_code, data_len)
   end
     
-  # @return CCSDS telemetry header string 
+  # @return CCSDS telemetry header string for COSMOS command definition file
   def self.tlm_hdr(app_prefix, msg_id)
     return CcsdsCmdTlm.renderTlmHdr(MessageIds.get_msg_val(msg_id))
+  end
+
+  # @return table header string for COSMOS table definition file
+  def self.tbl_hdr(app_prefix, tbl_name)
+    return " "
+    #return CfeFile.renderFileHdr + CfeFile.renderTblHdr
   end
   
   # @return cFS component's configuration parameter 

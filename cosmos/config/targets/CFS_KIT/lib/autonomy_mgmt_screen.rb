@@ -17,8 +17,11 @@ require 'file_transfer'
 
 MAX_RTS_ID = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, "SC_NUMBER_OF_RTS")
 
-AUTONOMY_MGMT_FLT_WORK_DIR = FLT_WORK_DIR
-AUTONOMY_MGMT_GND_WORK_DIR = GND_WORK_DIR
+MAX_AP_ID = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, "LC_MAX_ACTIONPOINTS") - 1
+MAX_WP_ID = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, "LC_MAX_WATCHPOINTS")  - 1
+
+AUTONOMY_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
+AUTONOMY_MGMT_GND_SRV_DIR = GND_SRV_DIR
 
 ################################################################################
 ## Send Commands
@@ -54,11 +57,27 @@ def autonomy_mgmt_send_cmd(screen, cmd)
     first_rts_id = ask_string("Enter first RTS ID in the group 1..#{MAX_RTS_ID}")
     last_rts_id = ask_string("Enter last RTS ID in the group 1..#{MAX_RTS_ID}")
     cmd("SC DISABLE_RTS_GROUP with FIRST_RTS_ID #{first_rts_id}, LAST_RTS_ID #{last_rts_id}")
-  elsif (app == "TODO")
+	elsif (cmd == "RESET_WP_STATS")
+    wp_id = ask_string("Enter Watch Point ID 0..#{MAX_WP_ID}")
+    cmd("LC RESET_WP_STATS with WP_ID #{wp_id}")
+	elsif (cmd == "RESET_AP_STATS")
+    ap_id = ask_string("Enter Action Point ID 0..#{MAX_AP_ID}")
+    cmd("LC RESET_AP_STATS with AP_ID #{ap_id}")
+	elsif (cmd == "SET_AP_STATE")
+    ap_id    = ask_string("Enter Action Point ID 0..#{MAX_AP_ID}")
+    ap_state = ask_string("Enter State: 1=Active, 2=Passive, 3=Disabled")
+    cmd("LC SET_AP_STATE with AP_ID #{ap_id}, NEW_STATE #{ap_state}")
+	elsif (cmd == "SET_AP_PERM_OFF")
+    ap_id = ask_string("Enter Action Point ID 0..#{MAX_AP_ID}")
+    cmd("LC SET_AP_PERM_OFF with AP_ID #{ap_id}")
+	elsif (cmd == "SET_APP_STATE")
+    app_state = ask_string("Enter State: 1=Active, 2=Passive, 3=Disabled")
+    cmd("LC SET_APP_STATE with NEW_STATE #{app_state}")
+  elsif (cmd == "TODO")
     prompt("Feature coming soon...")
   else
     prompt("Error in screen definition file. Undefined commmand sent to memory_mgmt_send_cmd()")
   end
   
-end # memory_mgmt_send_cmd()
+end # autonomy_mgmt_send_cmd()
 

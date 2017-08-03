@@ -1,0 +1,60 @@
+###############################################################################
+# 42 Simulator Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "42 Simulation"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX 
+  MATRIXBYCOLUMNS 2
+    BUTTON 'Run Sim'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RUN")'
+    BUTTON 'Connect to 42' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONNECT")'
+  END # Matrix
+  LABEL ' '
+  HORIZONTAL
+    LABEL 'Ctrl Exe Cnt' 
+    VALUE F42 HK_TLM_PKT CTRL_EXEC_COUNT
+    LABEL '42 Cycles'
+    VALUE I42 HK_TLM_PKT CONNECT_CYCLES
+    LABEL 'Sun Present' 
+    VALUE F42 CONTROL_PKT SUN_VALID
+  END # Horizontal
+  LABEL ' '
+  VERTICALBOX "CSS Counts"
+    MATRIXBYCOLUMNS 4
+      LABEL '  CSS 1'
+      LABEL '  CSS 2'
+      LABEL '  CSS 3'
+      LABEL '  CSS 4'
+      VALUE F42 CONTROL_PKT CSS_1_COUNT
+      VALUE F42 CONTROL_PKT CSS_2_COUNT
+      VALUE F42 CONTROL_PKT CSS_3_COUNT
+      VALUE F42 CONTROL_PKT CSS_4_COUNT
+    END # Matrix
+  END # Vertical Box
+  LABEL ' '
+  VERTICALBOX "Wheel Torque Commands"
+    MATRIXBYCOLUMNS 3
+      LABEL '  Whl 1'
+      LABEL '  Whl 2'
+      LABEL '  Whl 3'
+      VALUE F42 CONTROL_PKT TWHLCMD_1
+      VALUE F42 CONTROL_PKT TWHLCMD_2
+      VALUE F42 CONTROL_PKT TWHLCMD_3
+    END # Matrix
+  END # Vertical Box
+END # Vertical Box
+
+HORIZONTALLINE
+
+LABEL "Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50
