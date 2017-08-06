@@ -87,9 +87,9 @@ module CcsdsCmdTlm
       FORMAT_STRING \"0x%04X\"
     APPEND_ITEM       #{CCSDS_SEQUENCE} 16 UINT \"Packet Sequence Counter\"                    BIG_ENDIAN
     APPEND_ITEM       #{CCSDS_LENGTH}   16 UINT \"Packet Length"                               BIG_ENDIAN
-    APPEND_ITEM       #{CCSDS_SECONDS}  32 UINT \"Tlm Secondary Header - Seconds\"             BIG_ENDIAN
+    APPEND_ITEM       #{CCSDS_SECONDS}  32 UINT \"Tlm Secondary Header - Seconds\"
       FORMAT_STRING "0x%04X"
-    APPEND_ITEM       #{CCSDS_SUBSECS}  16 UINT \"Tlm Secondary Header - Subseconds\"          BIG_ENDIAN
+    APPEND_ITEM       #{CCSDS_SUBSECS}  16 UINT \"Tlm Secondary Header - Subseconds\"
       FORMAT_STRING "0x%04X"
   )
 

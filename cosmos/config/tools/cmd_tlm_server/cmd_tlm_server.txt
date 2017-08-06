@@ -4,6 +4,7 @@ PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
 
 #AUTO_INTERFACE_TARGETS # Use cmd_tlm_server.txt from all targets declared in system.txt
 
+#INTERFACE CFS_INT udp_cs_interface.rb 192.168.1.1 1234 1235 nil nil 128 nil nil
 INTERFACE CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
   TARGET SAMPLE
   TARGET CFE_ES
@@ -42,5 +43,5 @@ INTERFACE COSMOSINT cmd_tlm_server_interface.rb
   TARGET COSMOS
   DISABLE_DISCONNECT
 
-INTERFACE PICONTROL_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
+INTERFACE PICONTROL_INT udp_interface.rb 192.168.1.1 8080 8081 nil nil 128 10.0 nil
   TARGET PICONTROL

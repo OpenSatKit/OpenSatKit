@@ -53,6 +53,9 @@ not have any filtering feature.  Unused entries do not have to be populated.
   <!-- CFS Apps -->
   <!-- ******************************************************************** -->
   
+  <!-- CS_HK_TLM_MID 0x08A4 -->
+  <entry  stream-id="2212" priority="0" reliability="0" buf-limit="4"/>
+
   <!-- DS_HK_TLM_MID 0x08B8 -->
   <entry  stream-id="2232" priority="0" reliability="0" buf-limit="4"/>
 
@@ -80,6 +83,24 @@ not have any filtering feature.  Unused entries do not have to be populated.
   <!-- LC_HK_TLM_MID 0x08A7 -->
   <entry  stream-id="2215" priority="0" reliability="0" buf-limit="4"/>
 
+  <!-- MD_HK_TLM_MID 0x0890 -->
+  <entry  stream-id="2192" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- MD_HK_TLM_MID 0x0891 -->
+  <entry  stream-id="2193" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- MD_HK_TLM_MID 0x0892 -->
+  <entry  stream-id="2194" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- MD_HK_TLM_MID 0x0893 -->
+  <entry  stream-id="2195" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- MD_HK_TLM_MID 0x0894 -->
+  <entry  stream-id="2196" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- MM_HK_TLM_MID 0x0887 -->
+  <entry  stream-id="2183" priority="0" reliability="0" buf-limit="4"/>
+
   <!-- SAMPLE_APP_HK_TLM_MID 0x0883 -->
   <entry  stream-id="2179" priority="0" reliability="0" buf-limit="4"/>
 
@@ -89,15 +110,15 @@ not have any filtering feature.  Unused entries do not have to be populated.
   <!-- ******************************************************************** -->
   <!-- Custom Kit Apps -->
   <!-- ******************************************************************** -->
- 
-  <!-- BM_HK_TLM_MID 0x09CA -->
-  <entry  stream-id="2506" priority="0" reliability="0" buf-limit="4"/>
 
-  <!-- BM_TST_MID 0x09CB -->
-  <entry  stream-id="2507" priority="0" reliability="0" buf-limit="4"/>
+  <!-- BM_HK_TLM_MID 0x09F0 -->
+  <entry  stream-id="2544" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- BM_TST_MID 0x09F1 -->
+  <entry  stream-id="2545" priority="0" reliability="0" buf-limit="4"/>
               
-  <!-- BM_CHLD_MID 0x09CC  -->
-  <entry  stream-id="2508" priority="0" reliability="0" buf-limit="4"/>
+  <!-- BM_CHLD_MID 0x09F2  -->
+  <entry  stream-id="2546" priority="0" reliability="0" buf-limit="4"/>
 
   <!-- FW_DEMO_HK_TLM_MID 0x0F03 -->
   <entry  stream-id="3843" priority="0" reliability="0" buf-limit="4"/>
@@ -126,4 +147,20 @@ not have any filtering feature.  Unused entries do not have to be populated.
   <!-- TEST 0x0885 -->
   <entry  stream-id="2181" priority="0" reliability="0" buf-limit="4"/>
 
+  <!-- F42_HK_TLM_MID 0x09D0 -->
+  <entry  stream-id="2512" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- F42_CONTROL_MID 0x09D1 -->
+  <entry  stream-id="2513" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- I42_HK_TLM_MID 0x09D2 -->
+  <entry  stream-id="2514" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- F42_SENSOR_DATA 0x09E0 -->
+  <entry  stream-id="2528" priority="0" reliability="0" buf-limit="4"/>
+
+  <!-- F42_ACTUATOR_DATA 0x09E1 -->
+  <entry  stream-id="2529" priority="0" reliability="0" buf-limit="4"/>
+
+ 
 </pkt-tbl>

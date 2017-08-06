@@ -87,11 +87,11 @@ primary header that must be big endian:
   <!--**** Kit Apps ****-->
   <!--******************-->
 
-  <!-- BM_SEND_HK_MID 0x19D3(6611) => 0xD319(54041), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
-  <entry  id="30"  stream-id="54041" seq-seg="192" length="256" />
+  <!-- BM_SEND_HK_MID 0x19F1(6641) => 0xF119(61721), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="30"  stream-id="61721" seq-seg="192" length="256" />
 
-  <!-- BM_WAKEUP_MID 0x19D4(6612) => 0xD419(54297), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
-  <entry  id="31"  stream-id="54297" seq-seg="192" length="256" />
+  <!-- BM_WAKEUP_MID 0x19F2(6642) => 0xF219(61977), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="31"  stream-id="61977" seq-seg="192" length="256" />
 
   <!-- HC_SEND_HK_MID 0x19BA(6586) => 0xBA19(47641), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
   <entry  id="32"  stream-id="47641" seq-seg="192" length="256" />
@@ -117,7 +117,13 @@ primary header that must be big endian:
   <!-- TFTP_SEND_HK_MID 0x18B6(6326) => 0xB618(46616), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
   <entry  id="39"  stream-id="46616" seq-seg="192" length="256" />
 
+  <!-- F42_SEND_HK_MID 0x19D1(6609) => 0xD119(53529), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="40"  stream-id="53529" seq-seg="192" length="256" />
 
+  <!-- I42_SEND_HK_MID 0x19D3(6611) => 0xD319(54041), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="41"  stream-id="54041" seq-seg="192" length="256" />
+
+ 
   <!--***********************-->
   <!--**** Test Messages ****-->
   <!--***********************-->
@@ -127,7 +133,5 @@ primary header that must be big endian:
 
   <!-- Test packet 0x17FF(6143) => 0xFF17 (65303) with data 6 bytes of data Length of 7 0x0700(1792)-->
   <entry  id="101"  stream-id="65303" seq-seg="192" length="1792">0,1,2,3,4,5</entry>
-
-
 
 </msg-tbl>

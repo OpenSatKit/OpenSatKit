@@ -178,6 +178,15 @@ module MessageIds
   
   TFTP_CMD_MID    = "0x18B5"
   TFTP_HK_TLM_MID = "0x08B0" 
+
+  ###############
+  ## PiSat Kit ##
+  ###############
+
+  # Hardware Bus
+  
+  HB_CMD_MID    = "0x1882"
+  HB_HK_TLM_MID = "0x0885"
   
   #####################
   ## Utility Methods ##

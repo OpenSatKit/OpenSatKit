@@ -44,20 +44,20 @@
   <slot id="1" entry="6" enable="true" frequency="5" offset="2" msg_id="16" />
   <slot id="1" entry="7" enable="true" frequency="1" offset="2" msg_id="17" />
 
-  <!-- MD -->
-  <slot id="1" entry="8" enable="true" frequency="5" offset="3" msg_id="18" />
-  <slot id="1" entry="9" enable="true" frequency="1" offset="3" msg_id="19" />
-
   <!--*****************-->
   <!-- Slot 2 cFS Apps -->
   <!--*****************-->
 
+  <!-- MD -->
+  <slot id="2" entry="0" enable="true" frequency="5" offset="0" msg_id="18" />
+  <slot id="2" entry="1" enable="true" frequency="1" offset="0" msg_id="19" />
+
   <!-- MM -->
-  <slot id="2" entry="0" enable="true" frequency="5" offset="0" msg_id="20" />
+  <slot id="2" entry="2" enable="true" frequency="5" offset="0" msg_id="20" />
 
   <!-- SC -->
-  <slot id="2" entry="0" enable="true" frequency="5" offset="0" msg_id="21" />
-  <slot id="2" entry="0" enable="true" frequency="1" offset="0" msg_id="22" />
+  <slot id="2" entry="3" enable="true" frequency="5" offset="1" msg_id="21" />
+  <slot id="2" entry="4" enable="true" frequency="1" offset="1" msg_id="22" />
 
   <!--*****************-->
   <!-- Slot 3 Kit Apps -->
@@ -65,16 +65,21 @@
 
   <!-- BM -->
   <slot id="3" entry="0" enable="true" frequency="5" offset="0" msg_id="30" />
-  <slot id="3" entry="0" enable="true" frequency="2" offset="0" msg_id="31" />
+  <slot id="3" entry="1" enable="true" frequency="2" offset="0" msg_id="31" />
 
   <!-- HC -->
-  <slot id="3" entry="0" enable="true" frequency="5" offset="0"  msg_id="32" />
-  <slot id="3" entry="0" enable="true" frequency="10" offset="0" msg_id="33" />
+  <slot id="3" entry="2" enable="true" frequency="5" offset="0"  msg_id="32" />
+  <slot id="3" entry="3" enable="true" frequency="10" offset="0" msg_id="33" />
 
   <!-- HSIM -->
-  <slot id="3" entry="0" enable="true" frequency="5" offset="0" msg_id="34" />
-  <slot id="3" entry="0" enable="true" frequency="1" offset="0" msg_id="35" />
+  <slot id="3" entry="4" enable="true" frequency="5" offset="0" msg_id="34" />
+  <slot id="3" entry="5" enable="true" frequency="1" offset="0" msg_id="35" />
 
+  <!-- F42 -->
+  <slot id="3" entry="6" enable="true"  frequency="3" offset="0" msg_id="40" />
+
+  <!-- I42 -->
+  <slot id="3" entry="7" enable="true"  frequency="3" offset="0" msg_id="41" />
 
   <!--*****************-->
   <!-- Slot 4 Kit Apps -->
