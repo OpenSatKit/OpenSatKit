@@ -63,7 +63,7 @@ main()
   announce "Building 42"
   cd ./42/
   make
-  cd..
+  cd ..
   
   announce "Finished. Launching COSMOS with 'ruby ./cosmos/Launcher'"
   ruby ./cosmos/Launcher &
