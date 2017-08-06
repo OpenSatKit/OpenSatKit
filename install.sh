@@ -58,10 +58,13 @@ main()
   make prep
   make
   make install
-  cp apps/kit_sch/fsw/tables/* build/exe/cpu1/cf/
-  cp apps/kit_to/fsw/tables/kit_to_pkttbl.xml build/exe/cpu1/cf/
   cd ..
 
+  announce "Building 42"
+  cd ./42/
+  make
+  cd..
+  
   announce "Finished. Launching COSMOS with 'ruby ./cosmos/Launcher'"
   ruby ./cosmos/Launcher &
 }
