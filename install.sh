@@ -45,7 +45,7 @@ main()
   echo 'gem: --no-ri --no-rdoc' >> ~/.gemrc
 
   announce "Installing COSMOS gem"
-  gem install cosmos
+  gem install cosmos -v 3.9.2
   rbenv rehash
   cd ./cosmos/
   gem install bundler
