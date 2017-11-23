@@ -2,11 +2,14 @@
 ** Purpose: Network interface abstractions file transfer application. 
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
+**   None
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -25,6 +28,8 @@
 #include "common_types.h"
 #include "cfe.h"
 #include "app_cfg.h"
+
+#define NETIF_IP_STR_LEN  16
 
 /*
 ** Event Message IDs
@@ -56,6 +61,21 @@ typedef struct {
    boolean ClientSocketAddrCreated;
 
 } NETIF_Class;
+
+
+/******************************************************************************
+** Command Functions
+*/
+
+typedef struct
+{
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   int16   ServerPort;
+   char    IpAddrStr[NETIF_IP_STR_LEN];
+   
+}  OS_PACK NETIF_InitSocketCmdParam;
+#define NETIF_INIT_SOCKET_CMD_DATA_LEN  (sizeof(NETIF_InitSocketCmdParam) - CFE_SB_CMD_HDR_SIZE)
 
 /*
 ** Exported Functions
@@ -105,5 +125,12 @@ int32 NETIF_RcvFrom(const uint8 NetIFid, void *BufPtr, const uint16 BufSize, boo
 */
 int32 NETIF_SendTo (const uint8 NetIFid, const uint8 *BufPtr, uint16 len); 
 
+/******************************************************************************
+** Function: NETIF_InitSocketCmd
+**
+** Notes:
+**   1. Must match CMDMGR_CmdFuncPtr function signature
+*/
+boolean NETIF_InitSocketCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 #endif /* _netif_ */

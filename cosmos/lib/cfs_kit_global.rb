@@ -39,6 +39,6 @@ FLT_SRV_DIR = "/cf"
 CFS_KIT_LIB_DIR   = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
 CFS_KIT_DOCS_DIR  = "#{Cosmos::USERPATH}/cfs-kit/docs"
 CFS_KIT_TOOLS_DIR = "#{Cosmos::USERPATH}/cfs-kit/tools"
-CFS_KIT_PERF_MON_DIR = "#{CFS_KIT_TOOLS_DIR}/perf-monitor"
-CFS_KIT_GEN_APP_DIR  = "#{CFS_KIT_TOOLS_DIR}/create-app"
+CFS_KIT_PERF_MON_DIR    = "#{CFS_KIT_TOOLS_DIR}/perf-monitor"
+CFS_KIT_CREATE_APP_DIR  = "#{CFS_KIT_TOOLS_DIR}/create-app"
 

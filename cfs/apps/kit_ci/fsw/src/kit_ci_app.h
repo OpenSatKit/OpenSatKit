@@ -2,11 +2,14 @@
 ** Purpose: Define the OpenSat Kit Command Ingest application.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
+**   None
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -18,7 +21,6 @@
 */
 
 #include "app_cfg.h"
-#include "app_fw.h"
 
 #include "uplink.h"
 
@@ -27,9 +29,10 @@
 ** Macro Definitions
 */
 
-#define KIT_CI_INITSTATS_INF_EID       (KIT_CI_BASE_EID + 0)
-#define KIT_CI_APP_INVALID_MID_ERR_EID (KIT_CI_BASE_EID + 1)
-#define KIT_CI_APP_EXIT_EID            (KIT_CI_BASE_EID + 2)
+#define KIT_CI_INIT_APP_INFO_EID       (KIT_CI_BASE_EID + 0)
+#define KIT_CI_NOOP_INFO_EID           (KIT_CI_BASE_EID + 1)
+#define KIT_CI_APP_INVALID_MID_ERR_EID (KIT_CI_BASE_EID + 2)
+#define KIT_CI_APP_EXIT_EID            (KIT_CI_BASE_EID + 3)
 #define KIT_CI_TOTAL_EID  3
 
 

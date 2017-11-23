@@ -2,32 +2,27 @@
 # cFS - PiSat Sensor Data Screen
 #
 ################################################################################
+
 SCREEN AUTO AUTO 0.5
+
 GLOBAL_SETTING LABELVALUELIMITSBAR COLORBLIND TRUE
-NAMED_WIDGET heading TITLE "PiSat Sensor Data"
-SETTING BACKCOLOR 162 181 205
-SETTING TEXTCOLOR black
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+NAMED_WIDGET heading TITLE "PiSat Control"
+
 HORIZONTAL
-  GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+  #SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
 
   #TIMEGRAPH HB HK_TLM_PKT TEMP
   #TIMEGRAPH HB HK_TLM_PKT ACCEL_X 400 400
 
-  HORIZONTALLINE
-
-  VERTICALBOX
-  	CANVAS 580 280
-  	  CANVASIMAGE "cosmos_logo.png" 0 0
-  	  CANVASIMAGE "cfs_logo.png" 240 0
-  	  CANVASIMAGE "rpi_logo.png" 420 0
-  	  CANVASIMAGE "adafruit_logo.png" 0 140
-  	  CANVASIMAGE "python_logo.png" 240 140
-  	  CANVASIMAGE "zmq_logo.png" 400 160 
-  	END
+  CANVAS 250 250
+    CANVASIMAGE "cfs_logo.png"    20   0
+  	CANVASIMAGE "cosmos_logo.png" 20 160
   END
-
-  HORIZONTALLINE
-
+  
   VERTICALBOX
     MATRIXBYCOLUMNS 4
       LABEL "Temperature"
@@ -63,11 +58,23 @@ HORIZONTAL
     LABEL ""
 
     MATRIXBYCOLUMNS 4
-      BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_START")'
-      BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_STOP")'
-      BUTTON 'Shutdown Pi' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_SHUTDOWN")'
-      BUTTON 'Reboot Pi' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "PICONTROL_REBOOT")'
-    END # Matrix
+      BUTTON 'Start Pi cFS'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "START_CFS")'
+      BUTTON 'Stop Pi cFS'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "STOP_CFS")'
+      BUTTON 'Shutdown Pi'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "SHUTDOWN_PI")'
+      BUTTON 'Reboot Pi'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "REBOOT_PI")'
 
-SETTING BACKCOLOR 162 181 205
-END # Vertical
+      BUTTON 'Pi CFS_INT'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "CFS_PI")'
+      BUTTON 'Local CFS_INT' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "CFS_LOCAL")'
+      BUTTON 'Enable Tlm'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screen.rb"; pisat_send_cmd(self, "ENABLE_TLM")'
+
+    END # Matrix
+  End # Vertical
+  SETTING BACKCOLOR 162 181 205
+  
+  CANVAS 250 250
+    CANVASIMAGE "rpi_logo.png"  50    0
+  	CANVASIMAGE "zmq_logo.png"  50  160 
+  END
+
+  	
+END # Horizontal

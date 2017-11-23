@@ -41,7 +41,7 @@ COMMAND KIT_TO REMOVE_ALL_PKTS <%= CfsKitConfig.processor_endian %> "Remove all 
 
 COMMAND KIT_TO ENABLE_TELEMETRY <%= CfsKitConfig.processor_endian %> "Tell TO to start sending telemetry"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 16) %>
-  APPEND_PARAMETER DATA 128 STRING "127.0.0.1" "IP Address"
+  APPEND_PARAMETER IP_ADDR 128 STRING "127.0.0.1" "IP Address"
 
 COMMAND KIT_TO SEND_DATA_TYPE <%= CfsKitConfig.processor_endian %> "Send data type"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>

@@ -2,16 +2,18 @@
 ** Purpose: Manage KIT_TO's packet table.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. The tables are formatted using XML and reply on the open source EXPAT
+**   1. The tables are formatted using XML and reply on the open source EXPAT
 **      library.  This is a prototype and EXPAT has not been tested so it is
 **      not recommended that it be used on a flight project until it has been
 **      formally tested.
-**   3. The OpenSat application framework defines the table load/dump commands
+**   2. The OpenSat application framework defines the table load/dump commands
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */

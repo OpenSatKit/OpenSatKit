@@ -2,14 +2,16 @@
 ** Purpose: Define configurations for the OpenSat Kit Command Ingest application
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. These macros can only be built with the application and can't
+**   1. These macros can only be built with the application and can't
 **      have a platform scope because the same file name is used for
 **      all applications following the object-based application design pattern.
 **
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
+**
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -22,7 +24,7 @@
 */
 
 #include "kit_ci_platform_cfg.h"
-#include "app_fw_cfg.h"
+#include "osk_app_fw.h"
 
 
 /******************************************************************************

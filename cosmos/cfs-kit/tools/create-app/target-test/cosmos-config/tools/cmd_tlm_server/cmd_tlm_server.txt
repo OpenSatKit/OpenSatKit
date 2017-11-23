@@ -25,16 +25,8 @@ INTERFACE CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
   TARGET TFTP
   TARGET TO_UDP
 #<cfs_kit>appgen tool will add target between the cfs_kit tags
-  TARGET WHAT
-  TARGET TEST2
   TARGET TEST1
-  TARGET TEST2
-  TARGET TEST1
-  TARGET TEST2
-  TARGET TEST1
-  TARGET DEMO
-  TARGET TEST2
-  TARGET TEST1
+  TARGET TT
 #</cfs_kit>
   
 INTERFACE COSMOSINT cmd_tlm_server_interface.rb

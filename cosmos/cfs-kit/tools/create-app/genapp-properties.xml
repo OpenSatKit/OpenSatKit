@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<comment>
+
+The design and capabilities of appgen are intentionally very simple. AppGen
+is designed to create a shell cFS application using simple string substitution.
+It's not solving a complex problem so it should be very easy to use, configure,
+extend, and maintain. 
+
+AppGen is given a base directory where template source files are located and a
+base target directory where the instantiated files are created. This property
+provides default template and target directories. These directory paths are 
+relative to AppGen's working directory. The user can override these defaults.
+
+This file defines properties used by the cFS Application Generation tool. Key
+string constants are defined in the tool.Costants.java source file.
+
+The "template-var" entry defines case sensitive template variables that are
+replaced by AppGen with the new App's name. They template variables should 
+not need to change but are defined as a property just in case.
+
+Each template base directory must contain a file called. genapp-template.xml.
+This file tells appgen which subdirectories/files to instantiate. New 
+application templates are easy to add by creating a directory hierarchy
+containing template files and an appgen-template.xml.
+ 
+</comment>
+
+<entry key="version">1.0</entry>
+
+<entry key="template-dir">templates</entry>
+<entry key="!target-cfs-dir">c:\</entry>
+<entry key="target-cfs-dir">target-test</entry>
+<entry key="target-cosmos-dir">target-test\cosmos-config</entry>
+
+<entry key="!template-dir">..\\c</entry>
+<entry key="!target-cfs-dir">..\\c</entry>
+
+<entry key="template-var">@TEMPLATE@,@Template@,@template@</entry>
+
+</properties>
+

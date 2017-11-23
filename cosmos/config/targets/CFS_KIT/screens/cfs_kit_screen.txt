@@ -48,10 +48,10 @@ VERTICAL
           BUTTON 'Run Performance Monitor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PERF_MON")'
           BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
           BUTTON 'Run 42 Simulator' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
-          BUTTON 'Start PiSat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
-          BUTTON 'Add Application' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "TODO")'
-          SETTING BACKCOLOR 128 128 128
-          SETTING GRAY_TOLERANCE 0.1
+          BUTTON 'PiSat Control' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
+          BUTTON 'Create Application' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CREATE_APP")'
+          ##SETTING BACKCOLOR 128 128 128
+          ##SETTING GRAY_TOLERANCE 0.1
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # BOX

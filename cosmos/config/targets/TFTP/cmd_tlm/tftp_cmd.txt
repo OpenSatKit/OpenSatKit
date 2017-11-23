@@ -14,12 +14,17 @@ COMMAND TFTP RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset Counters and
   
 COMMAND TFTP GET_FILE <%= CfsKitConfig.processor_endian %> "Get a file from the FSW"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 130) %>
-  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 6969
+  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 69
   APPEND_PARAMETER SOURCE_FILE 512 STRING "/cf/tftp-get-test1.txt"  
   APPEND_PARAMETER DEST_FILE   512 STRING "tftp-get-test1.txt"
 
 COMMAND TFTP PUT_FILE <%= CfsKitConfig.processor_endian %> "Put a file to the FSW"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 130) %>
-  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 6969
+  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 69
   APPEND_PARAMETER SOURCE_FILE 512 STRING "tftp-put-test1.txt"  
   APPEND_PARAMETER DEST_FILE   512 STRING "/cf/tftp-put-test1.txt"
+
+COMMAND TFTP INIT_SOCKET <%= CfsKitConfig.processor_endian %> "Initialize the TFTP socket to the server"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 18) %>
+  APPEND_PARAMETER SERVER_PORT  16 UINT MIN_UINT16 MAX_UINT16 69
+  APPEND_PARAMETER IP_ADDR     128 STRING "127.0.0.1"  

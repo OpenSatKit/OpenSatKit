@@ -46,6 +46,7 @@ module FswConfigParam
   ## App - File Manager ##
   ########################
 
+  FM_TABLE_CFE_NAME    = "FreeSpace"
   FM_TABLE_ENTRY_COUNT = 8
   
   ##########################

@@ -55,7 +55,7 @@ module MessageIds
   CFE_TBL_REG_TLM_MID     = "0x080C"
   
   # Time Service
-  CFE_TIME_CMD_MID         = "0x1805"
+  CFE_TIME_CMD_MID        = "0x1805"
   
   CFE_TIME_HK_TLM_MID     = "0x0805"
   CFE_TIME_DIAG_TLM_MID   = "0x0806"
@@ -79,6 +79,7 @@ module MessageIds
   
   
   # File Manager  
+  
   FM_CMD_MID              = "0x188C"
   
   FM_HK_TLM_MID           = "0x088A"
@@ -99,6 +100,7 @@ module MessageIds
   LC_HK_TLM_MID           = "0x08A7"
   
   # Memory Dwell  
+  
   MD_CMD_MID              = "0x1890"
 
   MD_HK_TLM_MID           = "0x0890"
@@ -108,8 +110,8 @@ module MessageIds
   MD_DWELL_PKT_MID_4      = "0x0894"
 
   # Memory Manager
-  MM_CMD_MID              = "0x1888"
   
+  MM_CMD_MID              = "0x1888"
   MM_HK_TLM_MID           = "0x0887"
   
   # Stored Command
@@ -136,11 +138,6 @@ module MessageIds
   F42_SENSOR_MID   = "0x09E0"
   F42_ACTUATOR_MID = "0x09E1"
   
-  # Framework Demo 
-  
-  FW_DEMO_CMD_MID    = "0x1866"
-  FW_DEMO_HK_TLM_MID = "0x0F03"
-
   # Heater Control
   
   HC_CMD_MID    = "0x19A5"
@@ -173,6 +170,20 @@ module MessageIds
   KIT_TO_CMD_MID           = "0x1880"
   KIT_TO_HK_TLM_MID        = "0x0880"
   KIT_TO_DATA_TYPE_TLM_MID = "0x0881"
+
+  # OpenSatKit Demo App 
+  
+  OSK_DEMO_CMD_MID    = "0x1866"
+  OSK_DEMO_HK_TLM_MID = "0x0F03"
+
+  # OpenSatKit Create App tool
+  #
+  # - Use cFE's Sample App MIDs as defaults
+  #   for teh Create App tool  
+  #
+
+  OSK_GENAPP_CMD_MID    = "0x1883"
+  OSK_GENAPP_HK_TLM_MID = "0x0883"
 
   # Trivial File Transfer Protocol
   

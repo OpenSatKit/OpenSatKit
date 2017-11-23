@@ -2,19 +2,21 @@
 ** Purpose: cFS local file transfer application based on Trivial File Transfer Protocol (TFTP).
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. This is non-flight code so an attempt has been made to balance keeping
+**   1. This is non-flight code so an attempt has been made to balance keeping
 **      it simple while making it robust. Limiting the number of configuration
 **      parameters and integration items (message IDs, perf IDs, etc) was
 **      also taken into consideration.
-**   3. Event message filters are not used since this is for test environments.
+**   2. Event message filters are not used since this is for test environments.
 **      This may be reconsidered if event flooding ever becomes a problem.
-**   4. Performance traces are not included.
-**   5. Most functions are global to assist in unit testing
+**   3. Performance traces are not included.
+**   4. Most functions are global to assist in unit testing
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -42,8 +44,10 @@ TFTP_APP_Class  TftpApp;
 
 TFTP_APP_HkPkt  TftpAppHkPkt;
 
-#define  CMDMGR_OBJ  (&(TftpApp.CmdMgr))  /* Convenience macro */
-#define  TFTP_OBJ    (&(TftpApp.Tftp))    /* Convenience macro */
+/* Convenience macros */
+#define  CMDMGR_OBJ  (&(TftpApp.CmdMgr))  
+#define  TFTP_OBJ    (&(TftpApp.Tftp))
+#define  NETIF_OBJ   (&(TftpApp.Tftp.NetIf))
 
 /******************************************************************************
 ** Function: TFTP_AppMain
@@ -214,6 +218,7 @@ static int32 InitApp(void)
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, TFTP_APP_ResetAppCmd, 0);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, TFTP_GET_FILE_CMD_FC, TFTP_OBJ, TFTP_GetFileCmd, TFTP_GET_FILE_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, TFTP_PUT_FILE_CMD_FC, TFTP_OBJ, TFTP_PutFileCmd, TFTP_PUT_FILE_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, NETIF_INIT_SOCKET_CMD_FC, NETIF_OBJ, NETIF_InitSocketCmd, NETIF_INIT_SOCKET_CMD_DATA_LEN);
 
     CFE_SB_InitMsg(&TftpAppHkPkt, TFTP_HK_TLM_MID, TFTP_APP_TLM_HK_LEN, TRUE);
 

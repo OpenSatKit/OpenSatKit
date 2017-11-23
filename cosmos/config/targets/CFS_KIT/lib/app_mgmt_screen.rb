@@ -20,14 +20,14 @@ require 'cfs_kit_global'
 
 def app_mgmt_launch_app(screen, app)
 
-	if (app == "Eclipse")
+  if (app == "Eclipse")
 		spawn("sudo #{Cosmos::USERPATH}/../eclipse/eclipse/eclipse")
   elsif (app == "AppGen")
 		spawn("java -jar #{CFS_KIT_GEN_APP_DIR}/CreateApp.jar")
   elsif (app == "APP_SUMMARY")
     display("CFS_KIT APP_SUMMARY_SCREEN",50,50)
   else
-    prompt("Error in screen definition file. Undefined commmand sentto app_mgmt_launch_app()")
+    prompt("Error in screen definition file. Undefined commmand sent to app_mgmt_launch_app()")
   end
 
 end # app_mgmt_launch_app()
@@ -40,11 +40,11 @@ def app_mgmt_send_cmd(screen, cmd)
 
   if (cmd == "ES_DISPLAY_APPS")
     prompt(MSG_TBD_FEATURE)
-	elsif (cmd == "EVS_ENA_APP_EVENT_TYPE")
+  elsif (cmd == "EVS_ENA_APP_EVENT_TYPE")
     app_name = ask_string("Enter app name")
     bit_mask = ask_string("Enter event type bit mask (0..3) = (Debug, Info, Error, Critical)")
     cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME #{app_name}, BITMASK #{bit_mask}")
-	elsif (cmd == "EVS_DIS_APP_EVENT_TYPE")
+  elsif (cmd == "EVS_DIS_APP_EVENT_TYPE")
     app_name = ask_string("Enter app name")
     bit_mask = ask_string("Enter event type bit mask (0..3) = (Debug, Info, Error, Critical)")
     cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME #{app_name}, BITMASK #{bit_mask}")

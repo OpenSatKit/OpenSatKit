@@ -1,13 +1,16 @@
 /* 
 ** Purpose: Network interface abstractions for TFTP. 
 **
-** Notes
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
+** Notes:
+**   None
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. Core Flight Executive Application Developers Guide.
-**   2. OpenSat Object-based Programmer's Guide
+**   1. OpenSatKit Object-based Application Developer's Guide.
+**   2. cFS Application Developer's Guide.
 **
 */
 
@@ -29,7 +32,7 @@ static NETIF_Class* NetIf = NULL;
 */
 
 static void FlushSocket(int SocketId);
-
+static boolean InitSocket(const char* DefIpAddrStr, int16 DefServerPort);
 
 /******************************************************************************
 ** Function: NETIF_Constructor
@@ -42,41 +45,8 @@ void NETIF_Constructor(NETIF_Class*  NetIfPtr, char* DefIpAddrStr, int16 DefServ
 
    NetIf = NetIfPtr;
    
-   strcpy(NetIf->IpAddrStr, DefIpAddrStr);  
+   InitSocket(DefIpAddrStr,DefServerPort);
 
-   OS_printf("NETIF_Create: About to create socket\n");
-
-   if ( (NetIf->SocketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) >= 0) {
-     
-      NetIf->ServerPort = DefServerPort;
-      NetIf->ServerSocketAddr.sin_family      = AF_INET;
-      NetIf->ServerSocketAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-      NetIf->ServerSocketAddr.sin_port        = htons(NetIf->ServerPort);
-
-      if ( (bind(NetIf->SocketId, (struct sockaddr *) &(NetIf->ServerSocketAddr), sizeof(NetIf->ServerSocketAddr)) >= 0) ) {
-
-         OS_printf("NETIF_Create: Bound to port %d\n", NetIf->ServerPort);
-         
-         /* Set the socket to non-blocking. Not available in vxWorks, so conditionally compiled. */
-         #ifdef _HAVE_FCNTL_
-            fcntl(NetIf->SocketId, F_SETFL, O_NONBLOCK);
-         #endif
-
-         FlushSocket(NetIf->SocketId);
-
-      }/* End if successful bind */
-      else {
-
-        CFE_EVS_SendEvent(NETIF_BIND_SOCKET_ERR_EID, CFE_EVS_ERROR, "Socket bind failed. errno = %d\n", errno);
-      }
-
-    } /* End if successful socket creation */
-    else {
-
-         CFE_EVS_SendEvent(NETIF_CREATE_SOCKET_ERR_EID, CFE_EVS_ERROR, 
-	                         "Input socket creation failed. SocketId = %d, errno = %d\n", NetIf->SocketId, errno);
-    
-    } /* End if error creating socket */
 
 } /* NETIF_Constructor() */
 
@@ -205,6 +175,29 @@ int32 NETIF_SendTo (const uint8 NetIFid, const uint8 *BufPtr, uint16 len)
   		   
 } /* End NETIF_SendTo() */
 
+/******************************************************************************
+** Function: NETIF_InitSocketCmd
+**
+** Initialze the socket.
+**
+** Notes:
+**   1. Must match CMDMGR_CmdFuncPtr function signature
+*/
+boolean NETIF_InitSocketCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   boolean  RetStatus;
+
+   const NETIF_InitSocketCmdParam *InitSocketCmd = (const NETIF_InitSocketCmdParam *) MsgPtr;
+
+   close(NetIf->SocketId);
+   
+   RetStatus = InitSocket(InitSocketCmd->IpAddrStr,InitSocketCmd->ServerPort);
+
+   return RetStatus;
+
+} /* End NETIF_InitSocketCmd() */
+
 
 /******************************************************************************
 ** Function: FlushSocket
@@ -233,5 +226,58 @@ static void FlushSocket(int SocketId) {
 
 } /* End FlushSocket() */  
 
+
+/******************************************************************************
+** Function: InitSocket
+**
+** Initialize the socket.
+**
+*/
+static boolean InitSocket(const char* DefIpAddrStr, int16 DefServerPort)
+{
+
+   boolean RetStatus = FALSE;
+   
+   OS_printf("NETIF_Create: About to create socket\n");
+
+   strcpy(NetIf->IpAddrStr, DefIpAddrStr);  
+
+   if ( (NetIf->SocketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) >= 0) {
+     
+      NetIf->ServerPort = DefServerPort;
+      NetIf->ServerSocketAddr.sin_family      = AF_INET;
+      NetIf->ServerSocketAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+      NetIf->ServerSocketAddr.sin_port        = htons(NetIf->ServerPort);
+
+      if ( (bind(NetIf->SocketId, (struct sockaddr *) &(NetIf->ServerSocketAddr), sizeof(NetIf->ServerSocketAddr)) >= 0) ) {
+
+         OS_printf("NETIF_Create: Bound to port %d\n", NetIf->ServerPort);
+         
+         /* Set the socket to non-blocking. Not available in vxWorks, so conditionally compiled. */
+         #ifdef _HAVE_FCNTL_
+            fcntl(NetIf->SocketId, F_SETFL, O_NONBLOCK);
+         #endif
+
+         FlushSocket(NetIf->SocketId);
+         
+		 RetStatus = TRUE;
+		 
+      }/* End if successful bind */
+      else {
+
+        CFE_EVS_SendEvent(NETIF_BIND_SOCKET_ERR_EID, CFE_EVS_ERROR, "Socket bind failed. errno = %d\n", errno);
+      }
+
+    } /* End if successful socket creation */
+    else {
+
+         CFE_EVS_SendEvent(NETIF_CREATE_SOCKET_ERR_EID, CFE_EVS_ERROR, 
+	                         "Input socket creation failed. SocketId = %d, errno = %d\n", NetIf->SocketId, errno);
+    
+    } /* End if error creating socket */
+
+	return RetStatus;
+	
+} /* InitSocket() */
 
 /* end of file */

@@ -1,4 +1,4 @@
-###############################################################################
+################################################################################
 # cFS Kit Main Screen Scripts
 #
 # Notes:
@@ -44,7 +44,7 @@ def cfs_kit_launch_app(screen, app)
   if (app == "CFS")
     spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/../cfs/build/exe/cpu1"" --execute sudo ./core-cpu1""")
     wait(3)
-    cmd("KIT_TO ENABLE_TELEMETRY")
+    #cmd("KIT_TO ENABLE_TELEMETRY")
   elsif (app == "BENCHMARKS")
 	  prompt("Note this is a prototype application")
     display("CFS_KIT BENCHMARK_SCREEN",50,50) 
@@ -70,12 +70,16 @@ def cfs_kit_launch_app(screen, app)
   elsif (app == "SIM_42")
     display("CFS_KIT SIM_42_SCREEN",50,50)
   elsif (app == "PISAT")
-	  prompt("Please ensure you are connected to the PiSat network")
-    cmd("PICONTROL STARTCFS")
-    wait(2)
-    cmd("KIT_TO ENABLE_TELEMETRY")
+	#prompt("Please ensure you are connected to the PiSat network")
+    #cmd("PICONTROL STARTCFS")
+    #wait(2)
+    #cmd("KIT_TO ENABLE_TELEMETRY")
     spawn("ruby #{Cosmos::USERPATH}/tools/TlmGrapher")
     display("CFS_KIT PISAT_SCREEN", 1000, 0)
+  elsif (app == "CREATE_APP")
+    #prompt("Launching CreateApp...")
+    #spawn("java -jar /mnt/hgfs/OpenSatKit/cosmos/cfs-kit/tools/create-app/CreateApp.jar")
+    spawn("java -jar #{CFS_KIT_CREATE_APP_DIR}/CreateApp.jar")
   elsif (app == "TODO")
     prompt("Feature coming soon...")
   else

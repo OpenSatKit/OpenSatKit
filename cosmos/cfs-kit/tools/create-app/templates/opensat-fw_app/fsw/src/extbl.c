@@ -2,11 +2,14 @@
 ** Purpose: Implement example table.
 **
 ** Notes:
-**   1. Template written by David McComas and licensed under the GNU
-**      Lesser General Public License (LGPL).
+**   None
+**
+** License:
+**   Template written by David McComas and licensed under the GNU
+**   Lesser General Public License (LGPL).
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -35,24 +38,12 @@ static EXTBL_Class* ExTbl = NULL;
 */
 
 /******************************************************************************
-** Function: ParseLine
+** Function: EntryCallBack
 **
-** Parse a single line in a table load file. 
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-static void ParseLine(char *FileLineBuff);
-
-/******************************************************************************
-** Function: ParseLoadFile
-**
-** Read a user supplied file, verify the text syntax, remove extraneous 
-** white spaces and call the user supplied callback function for each 
-** non-comment line in the file.
-**
-** Filename includes the full path and the file name.
-**
-** Returns the number of file entries processed.
-*/
-static uint16 ParseLoadFile(const char* Filename);
+boolean EntryCallBack (int TokenIdx);
 
 
 /******************************************************************************
@@ -62,19 +53,19 @@ static uint16 ParseLoadFile(const char* Filename);
 **    1. This must be called prior to any other functions
 **
 */
-void EXTBL_Constructor(EXTBL_Class* TblObj, 
-                       EXTBL_LoadTblFunc LoadTblFunc, 
-                       EXTBL_LoadTblEntryFunc LoadTblEntryFunc,
-                       EXTBL_GetDataPtrFunc GetDataPtrFunc)
+void EXTBL_Constructor(EXTBL_Class* ObjPtr,
+                       EXTBL_GetTblPtr    GetTblPtrFunc,
+                       EXTBL_LoadTbl      LoadTblFunc, 
+                       EXTBL_LoadTblEntry LoadTblEntryFunc)
 {
 
-   ExTbl = TblObj;
+   ExTbl = ObjPtr;
 
    CFE_PSP_MemSet(ExTbl, 0, sizeof(EXTBL_Class));
 
+   ExTbl->GetTblPtrFunc    = GetTblPtrFunc;
    ExTbl->LoadTblFunc      = LoadTblFunc;
    ExTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
-   ExTbl->GetDataPtrFunc   = GetDataPtrFunc; 
 
 } /* End EXTBL_Constructor() */
 
@@ -86,10 +77,15 @@ void EXTBL_Constructor(EXTBL_Class* TblObj,
 void EXTBL_ResetStatus(void)
 {
 
-   ExTbl->AttrErrCnt = 0;
-   ExTbl->LastLoadStatus = TBLMGR_STATUS_UNDEF;
-   ExTbl->FileLineNum = 0;
+   int Entry;
 
+   ExTbl->LastLoadStatus    = TBLMGR_STATUS_UNDEF;
+   ExTbl->AttrErrCnt        = 0;
+   ExTbl->DataArrayEntryIdx = 0;
+   
+   for (Entry=0; Entry < EXTBL_MAX_ENTRY_ID; Entry++) ExTbl->Modified[Entry] = FALSE;
+   
+ 
 } /* End EXTBL_ResetStatus() */
 
 
@@ -105,62 +101,71 @@ boolean EXTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 {
 
    int Entry;
-   int EntriesProcessed;
-
+   
    OS_printf("EXTBL_LoadCmd() Entry\n");
 
    /*
-   ** Set all data and flags to zero.
+   ** Set all data and flags to zero. If a table replace is commanded and
+   ** all of the data is not defined the zeroes will be copied into the table. 
+   ** Real flight code would validate all data is loaded for a replace.
    */
-	
-   CFE_PSP_MemSet(&(ExTbl->Tbl), 0, sizeof(EXTBL_Struct));
-   EXTBL_ResetStatus();
    
-   EntriesProcessed = ParseLoadFile(Filename);
+   CFE_PSP_MemSet(&(ExTbl->Tbl), 0, sizeof(EXTBL_Struct));  /* Wouldn't do in flight but helps debug prototype */
    
-   if (EntriesProcessed > 0)
-   {
+   EXTBL_ResetStatus();  /* Reset status helps isolate errors if they occur */
 
-      if (LoadType == TBLMGR_LOAD_TBL_REPLACE)
-      {
-         OS_printf("EXTBL_LoadCmd() Call replace table callback function\n");
-         ExTbl->LastLoadStatus = ((ExTbl->LoadTblFunc)(&(ExTbl->Tbl)) == TRUE) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
+   JSON_Constructor(&(ExTbl->Json), ExTbl->JsonFileBuf, ExTbl->JsonFileTokens);
+   
+   if (JSON_OpenFile(&(ExTbl->Json), Filename)) {
+  
+      CFE_EVS_SendEvent(EXTBL_LOAD_CMD_DBG_EID,CFE_EVS_DEBUG,"EXTBL: Successfully prepared file %s\n", Filename);
+  
+      ExTbl->DataArrayEntryIdx = 0;
 
-      } /* End if replace entire table */
-      else if (LoadType == TBLMGR_LOAD_TBL_UPDATE)
-      {
+      JSON_RegContainerCallback(&(ExTbl->Json),"entry",EntryCallBack);
 
-         OS_printf("EXTBL_LoadCmd() Call replace entry callback function\n");
-         ExTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
-         for (Entry=0; Entry < EXTBL_MAX_ENTRY_ID; Entry++)
-         {
+      JSON_ProcessTokens(&(ExTbl->Json));
 
-            if (ExTbl->Modified[Entry])
-            {
-              
-               /* If any entry fails then set invlaid flag */
-               if ( !(ExTbl->LoadTblEntryFunc)(Entry, &(ExTbl->Tbl.Entry[Entry])) )
-                  ExTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
-                
-            }
+      if (ExTbl->DataArrayEntryIdx > 0) {
 
-         } /* End entry loop */
+         
+		 if (LoadType == TBLMGR_LOAD_TBL_REPLACE) {
+         
+            ExTbl->LastLoadStatus = ((ExTbl->LoadTblFunc)(&(ExTbl->Tbl)) == TRUE) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
 
-      } /* End if update individual records */
-      else
-      {
-         CFE_EVS_SendEvent(EXTBL_CMD_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"EXTBL: Invalid table command load type %d",LoadType);
+         } /* End if replace entire table */
+         else if (LoadType == TBLMGR_LOAD_TBL_UPDATE) {
+         
+		    ExTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
+   
+            for (Entry=0; Entry < EXTBL_MAX_ENTRY_ID; Entry++) {
+
+               if (ExTbl->Modified[Entry]) {
+                  if (!(ExTbl->LoadTblEntryFunc)(Entry, &(ExTbl->Tbl.Entry[Entry])))
+                     ExTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
+               }
+
+            } /* End entry loop */
+
+         } /* End if update individual records */
+         else {
+            CFE_EVS_SendEvent(EXTBL_LOAD_CMD_TYPE_ERR_EID,CFE_EVS_ERROR,"EXTBL: Invalid table command load type %d",LoadType);
+         }
+
+      } /* End if successful parse */
+      else {
+         CFE_EVS_SendEvent(EXTBL_LOAD_CMD_PARSE_ERR_EID,CFE_EVS_ERROR,"EXTBL: Table Parsing failure for file %s",Filename);
       }
-
-   } /* End if successful parse */
-   else
-   {
-      CFE_EVS_SendEvent(EXTBL_CMD_LOAD_PARSE_ERR_EID,CFE_EVS_ERROR,"EXTBL: Table Parsing failure for file %s",Filename);
+      
+   } /* End if valid file */
+   else {
+      CFE_EVS_SendEvent(EXTBL_LOAD_CMD_JSON_OPEN_ERR_EID,CFE_EVS_ERROR,"EXTBL: Table open failure for file %s. JSON Status = %d JSMN Status = %d",
+	                    Filename, ExTbl->Json.FileStatus, ExTbl->Json.JsmnStatus);
    }
+    
+   return (ExTbl->LastLoadStatus == TBLMGR_STATUS_VALID);
 
-   return ExTbl->LastLoadStatus;
-
-} /* End of EXTBL_LoadCmd() */
+} /* End of ExTBL_LoadCmd() */
 
 
 /******************************************************************************
@@ -181,30 +186,39 @@ boolean EXTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
    boolean  RetStatus = FALSE;
    int32    FileHandle;
-   int   i;
-   char  DumpRecord[256];
-   const EXTBL_Struct* ExTblPtr;
+   char     DumpRecord[256];
+   int      i;
+   const EXTBL_Struct *ExTblPtr;
 
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
    if (FileHandle >= OS_FS_SUCCESS)
    {
 
-      ExTblPtr = (ExTbl->GetDataPtrFunc)();
+      ExTblPtr = (ExTbl->GetTblPtrFunc)();
 
+      sprintf(DumpRecord,"\n{\n\"name\": \"Example Table\",\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      sprintf(DumpRecord,"\"description\": \"Example table for object-based application template.\",\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      sprintf(DumpRecord,"\"data-array\": [\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+      
       for (i=0; i < EXTBL_MAX_ENTRY_ID; i++)
       {
       
-         sprintf(DumpRecord,"%03d, %4d, %4d, %4d;\n", i,
-                 ExTblPtr->Entry[i].Data1, ExTblPtr->Entry[i].Data2, ExTblPtr->Entry[i].Data3);
+         sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d, \n},\n",
+                 i, ExTblPtr->Entry[i].Data1, ExTblPtr->Entry[i].Data2, ExTblPtr->Entry[i].Data3);
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
       } /* End Entry loop */
 
-      sprintf(DumpRecord,"!\n!Index, Data 1, Data 2, Data 3\n");
+      sprintf(DumpRecord,"]\n}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-      /* TODO - Add additional information: When file dumped, etc. */
+      /* TODO - Add addition meta data when file dumped */
       RetStatus = TRUE;
 
       OS_close(FileHandle);
@@ -224,139 +238,28 @@ boolean EXTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
 
 /******************************************************************************
-** Function: ParseLoadFile
+** Function: EntryCallBack
 **
+** Process a JSON entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-uint16 ParseLoadFile(const char* Filename)
+boolean EntryCallBack (int TokenIdx)
 {
 
-   char     FileLineBuff[EXTBL_MAX_FILE_LINE_LEN];
-   uint16   BuffLen = 0;
-   char     c;
-   int      FileHandle;
-   int32    ReadStatus;
-   boolean  LineTooLong = FALSE;
-   boolean  Done;
+   int  Index, Data1, Data2, Data3, EntryCnt=0;
 
-   ExTbl->AttrErrCnt = 0;
-   ExTbl->FileLineNum = 1;
-
-   FileHandle = OS_open(Filename, OS_READ_ONLY, 0);
+   ExTbl->DataArrayEntryIdx++;
+   CFE_EVS_SendEvent(EXTBL_LOAD_CMD_DBG_EID,CFE_EVS_DEBUG,
+      "EntryCallBack() for DataArrayEntryIdx %d and token index %d\n",ExTbl->DataArrayEntryIdx, TokenIdx);
       
-   if (FileHandle >= 0) {
-
-      Done = FALSE;
-      memset(FileLineBuff,0x0,EXTBL_MAX_FILE_LINE_LEN);
-      BuffLen = 0;
-
-      /*
-      ** Parse the lines from the file. If it has an error
-      ** or reaches EOF, then abort the loop.
-      */
-      while (!Done) {
-
-         ReadStatus = OS_read(FileHandle, &c, 1);
-
-         if ( ReadStatus == OS_FS_ERROR )
-         {
-            CFE_EVS_SendEvent(EXTBL_FILE_READ_ERR_EID, CFE_EVS_ERROR, "File read error, EC = 0x%08X",ReadStatus);
-            Done = TRUE;
-         }
-         else if ( ReadStatus == 0 ) /* Reached EOF */
-         {
-            Done = TRUE;
-         }
-         else if(c != '!')
-         {
-             if ( c <= ' ') 
-                /* Skip all white space in the file */
-                ;
-             else if ( c == ',' ) 
-             {
-         
-                /* Replace the field delimiter with a space to support sscanf string parsing */
-                if ( BuffLen < EXTBL_MAX_FILE_LINE_LEN )
-                {
-                   FileLineBuff[BuffLen] = ' ';
-                }
-                else
-                {
-                   LineTooLong = TRUE;
-                }
-                BuffLen++;
-         
-             } /* End if == ',' */
-             else if ( c != ';' ) 
-             {
-
-                /* Not EOL so copy data into buffer */
-                if ( BuffLen < EXTBL_MAX_FILE_LINE_LEN )
-                {
-                   FileLineBuff[BuffLen] = c;
-                }
-                else
-                {
-                   LineTooLong = TRUE;
-                }
-                BuffLen++;
-
-             }
-             else /* Must be ';' */
-             {
-                if ( LineTooLong == TRUE ) 
-                {
-                   CFE_EVS_SendEvent(EXTBL_LINE_LEN_ERR_EID, CFE_EVS_ERROR, "Error in file %s. Line %d is too long: %d bytes",
-                                     Filename, ExTbl->FileLineNum, BuffLen);
-                   LineTooLong = FALSE;
-                }
-                else
-                {
-                   ParseLine(FileLineBuff);
-                   ExTbl->FileLineNum++;
-                }
-
-                memset(FileLineBuff,0x0,EXTBL_MAX_FILE_LINE_LEN);
-                BuffLen = 0;
-
-             } /* End if ';' */
-
-         } /* End if != '!' */
-         else
-         {
-            /* DOne when EOF character '!' is reached */
-            Done = TRUE;
-         }
-
-      } /* End while !Done */
-     
-      OS_close(FileHandle);
-
-   } /* End if file opened */
-   else
-   {
-      
-      CFE_EVS_SendEvent(EXTBL_FILE_OPEN_ERR_EID, CFE_EVS_ERROR, "File open error for %s, Error = %d",
-                        Filename, FileHandle );
-   }
-
-   return (ExTbl->FileLineNum-1);
-
-} /* End EXTBL_ParseFile() */
-
-
-/******************************************************************************
-** Function: ParseLine
-**
-*/
-void ParseLine(char *FileLineBuff)
-{
-
-   int  ScanfCnt;
-   int  Index, Data1, Data2, Data3;  
-
-   ScanfCnt = sscanf(FileLineBuff,"%d %d %d %d", &Index, &Data1, &Data2, &Data3);
+   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "index", &Index)) EntryCnt++;
+   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "data1", &Data1)) EntryCnt++;
+   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "data2", &Data2)) EntryCnt++;
+   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "data3", &Data3)) EntryCnt++;
    
-   if (ScanfCnt == 4)
+   if (EntryCnt == 4)
    {
       if (Index < EXTBL_MAX_ENTRY_ID)
       {        
@@ -364,23 +267,26 @@ void ParseLine(char *FileLineBuff)
          ExTbl->Tbl.Entry[Index].Data2 = Data2;
          ExTbl->Tbl.Entry[Index].Data3 = Data3;
          ExTbl->Modified[Index] = TRUE;
-         OS_printf("EXTBL-ParseLine: %d, %d, %d, %d\n",Index, Data1, Data2, Data3);
+         CFE_EVS_SendEvent(EXTBL_LOAD_CMD_DBG_EID,CFE_EVS_DEBUG,
+		    "EntryCallBack() index, data1, data2, datat3: %d, %d, %d, %d\n",Index, Data1, Data2, Data3);
       }
       else
       {
          ExTbl->AttrErrCnt++;     
-         CFE_EVS_SendEvent(EXTBL_LOAD_INDEX_ERR_EID, CFE_EVS_ERROR, "Load file line %d error, invalid index %d",
-                           ExTbl->FileLineNum, Index);
+         CFE_EVS_SendEvent(EXTBL_LOAD_INDEX_ERR_EID, CFE_EVS_ERROR, "Load file data-array entry %d error, invalid index %d",
+                           ExTbl->DataArrayEntryIdx, Index);
       }
       
-   } /* Successful scanf() */
+   } /* Valid Entry */
    else
    {
       ExTbl->AttrErrCnt++;
-      CFE_EVS_SendEvent(EXTBL_LOAD_LINE_ERR_EID, CFE_EVS_ERROR, "Load file line %d error, invalid number of elements %d. Shoudl be 4.",
-                        ExTbl->FileLineNum, ScanfCnt);
-   } /* Unsuccessful scanf() */
+      CFE_EVS_SendEvent(EXTBL_LOAD_LINE_ERR_EID, CFE_EVS_ERROR, "Load file data-array entry %d error, invalid number of elements %d. Should be 4.",
+                        ExTbl->DataArrayEntryIdx, EntryCnt);
+   } /* Invalid Entry */
 
-} /* End ParseLine() */
+   return (EntryCnt == 4);
+
+} /* EntryCallBack() */
 
 /* end of file */

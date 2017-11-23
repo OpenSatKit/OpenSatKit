@@ -37,10 +37,14 @@ module CfsKitConfig
     return CcsdsCmdTlm.renderTlmHdr(MessageIds.get_msg_val(msg_id))
   end
 
+  # @return file header string for COSMOS table definition file used to represent a binary cFE file
+  def self.file_hdr
+    return CfeFile.renderFileHdr
+  end
+
   # @return table header string for COSMOS table definition file
   def self.tbl_hdr(app_prefix, tbl_name)
-    return " "
-    #return CfeFile.renderFileHdr + CfeFile.renderTblHdr
+    return CfeFile.renderFileHdr + CfeFile.renderTblHdr
   end
   
   # @return cFS component's configuration parameter 

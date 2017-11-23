@@ -1,0 +1,25 @@
+<!-- 
+Example table for object-based application template. Unused entries do not 
+have to be populated.
+
+This file is used by the unit test so any changes will impact the unit test.
+-->
+<objtbl>
+
+  <entry  index="0"  data1="0"  data2="1"  data3="2" />
+ 
+  <entry  index="1"  data1="3"  data2="4"  data3="5" />
+
+  <entry  index="2"  data1="6"  data2="7"  data3="8" />
+
+  <entry  index="3"  data1="9"  data2="10" data3="11" />
+
+  <entry  index="4"  data1="12" data2="13" data3="14" />
+
+  <entry  index="15" data1="15" data2="16" data3="17" />
+
+  <entry  index="16" data1="18" data2="19" data3="20" />
+
+  <entry  index="31" data1="21" data2="22" data3="23" />
+
+</objtbl>

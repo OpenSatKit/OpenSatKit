@@ -2,18 +2,20 @@
 ** Purpose: Manage receiving commands over a UDP socket and sending them on the SB.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. This is non-flight code so an attempt has been made to balance keeping
+**   1. This is non-flight code so an attempt has been made to balance keeping
 **      it simple while making it robust. Limiting the number of configuration
 **      parameters and integration items (message IDs, perf IDs, etc) was
 **      also taken into consideration.
-**   3. Event message filters are not used since this is for test environments.
+**   2. Event message filters are not used since this is for test environments.
 **      This may be reconsidered if event flooding ever becomes a problem.
-**   4. Performance traces are not included.
+**   3. Performance traces are not included.
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -109,7 +111,7 @@ void KIT_CI_AppMain(void)
 boolean KIT_CI_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (666,
+   CFE_EVS_SendEvent (KIT_CI_NOOP_INFO_EID,
                       CFE_EVS_INFORMATION,
                       "No operation command received for OpenSat Kit Command Ingest version %d.%d",
                       KIT_CI_MAJOR_VERSION,KIT_CI_MINOR_VERSION);
@@ -203,7 +205,7 @@ static int32 InitApp(void)
     /*
     ** Application startup event message
     */
-    Status = CFE_EVS_SendEvent(KIT_CI_INITSTATS_INF_EID,
+    Status = CFE_EVS_SendEvent(KIT_CI_INIT_APP_INFO_EID,
                                CFE_EVS_INFORMATION,
                                "KIT_CI Initialized. Version %d.%d.%d.%d",
                                KIT_CI_MAJOR_VERSION,

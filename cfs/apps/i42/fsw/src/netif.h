@@ -10,8 +10,8 @@
 **   2. cFS Application Developer's Guide.
 **
 ** License:
-**   Written by David McComas, licensed under the copyleft GNU
-**   General Public License (GPL). 
+**   Written by David McComas, licensed under the copyleft GNU General
+**   Public License (GPL). 
 */
 
 #ifndef _netif_

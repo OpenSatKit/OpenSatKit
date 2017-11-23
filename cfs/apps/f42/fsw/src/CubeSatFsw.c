@@ -112,16 +112,16 @@ void CssProc(struct FSWType *FSW)
       /* Z Component */
       FSW->svb[2] = SqrtHalf*(FSW->Css[1].Illum - FSW->Css[3].Illum);
       /* Y Component */
-      //dcmFSW->svb[1] = sqrt(1.0-FSW->svb[0]*FSW->svb[0]-FSW->svb[2]*FSW->svb[2]);
-      TempDbl = 1.0 - (FSW->svb[0]*FSW->svb[0]-FSW->svb[2]*FSW->svb[2]);
-      //OS_printf("TempDbl = %.10f\n",TempDbl);
-      if (TempDbl > 0.0000001) {
-         //FSW->svb[1] = sqrt(TempDbl); 
-         FSW->svb[1] = 1.0; 
-      }
-      else {
-         FSW->svb[1] = 1.0;
-      }
+      FSW->svb[1] = sqrt(1.0-FSW->svb[0]*FSW->svb[0]-FSW->svb[2]*FSW->svb[2]);
+      //dcmTempDbl = 1.0 - (FSW->svb[0]*FSW->svb[0]-FSW->svb[2]*FSW->svb[2]);
+      //dcmOS_printf("TempDbl = %.10f\n",TempDbl);
+      //dcmif (TempDbl > 0.0000001) {
+      //dcmFSW->svb[1] = sqrt(TempDbl); 
+      //dcm   FSW->svb[1] = 1.0; 
+      //dcm}
+      //dcmelse {
+      //dcm   FSW->svb[1] = 1.0;
+      //dcm}
 
 }
 /**********************************************************************/

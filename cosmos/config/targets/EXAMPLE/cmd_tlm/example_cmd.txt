@@ -1,0 +1,31 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "EXAMPLE"
+  @CMD_MID_STR    = "OSK_GENAPP_CMD_MID"  # Replace with your app's MID defined in message_ids.rb
+  
+%>  
+
+COMMAND EXAMPLE NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND EXAMPLE RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset command counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND EXAMPLE LOAD_EXOBJ_TBL <%= CfsKitConfig.processor_endian %> "Load example object table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID. 0 is first table registered"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
+  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/example_extbl.json" "Full path and file name of table to be loaded"
+
+COMMAND EXAMPLE DUMP_EXOBJ_TBL <%= CfsKitConfig.processor_endian %> "Dump example object table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
+  APPEND_PARAMETER ID   8 UINT 0 1 0 "Table ID. 0 is first table registered"
+  APPEND_PARAMETER TYPE 8 UINT 0 1 0 "Unused"
+  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/example_extbl_d.json" "Full path and file name to receive table dump"
+
+COMMAND EXAMPLE EXOBJ_STUB <%= CfsKitConfig.processor_endian %> "Stub command for the example object"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
+  APPEND_PARAMETER PARAMETER 16 UINT MIN_UINT16 MAX_UINT16 1 "Example integer parameter"
+
+

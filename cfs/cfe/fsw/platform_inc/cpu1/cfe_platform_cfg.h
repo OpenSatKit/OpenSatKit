@@ -622,7 +622,7 @@
 **       There is a lower limit of 512 and an upper limit of 16384 on this
 **       configuration paramater.
 */
-#define CFE_ES_SYSTEM_LOG_SIZE  3072
+#define CFE_ES_SYSTEM_LOG_SIZE  16384
 
 
 /**
@@ -945,7 +945,7 @@
 **       The length of each string, including the NULL terminator cannot exceed the
 **       #OS_MAX_PATH_LEN value.
 */
-#define CFE_ES_DEFAULT_APP_LOG_FILE   "/ram/cfe_es_app_info.log"
+#define CFE_ES_DEFAULT_APP_LOG_FILE   "/cf/cfe_es_app_info.log"
 
 /**
 **  \cfeescfg Default Application Information Filename

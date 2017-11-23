@@ -2,15 +2,17 @@
 ** Purpose: Implement the scheduler. Uses scheduler & message tables.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. Adopted from the GPM MCP750 scheduler application
-**   3. This design intentionally decouples the scheduler table from 
+**   1. Adopted from the GPM MCP750 scheduler application
+**   2. This design intentionally decouples the scheduler table from 
 **      application specific processing such as command callback 
 **      functions and file processing.
 **
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
+**
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */

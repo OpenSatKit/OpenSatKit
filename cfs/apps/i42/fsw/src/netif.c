@@ -5,13 +5,14 @@
 **   1. This is part of prototype effort to port a 42 simulator FSW controller
 **      component into a cFS-based application.
 **
-** References:
-**   1. OpenSat Object-based Application Developer's Guide.
-**   2. cFS Application Developer's Guide.
-**
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
 **   General Public License (GPL). 
+**
+** References:
+**   1. OpenSatKit Object-based Application Developer's Guide.
+**   2. cFS Application Developer's Guide.
+**
 */
 
 /*

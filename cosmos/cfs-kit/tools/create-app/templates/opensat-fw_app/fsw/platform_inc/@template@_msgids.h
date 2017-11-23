@@ -2,11 +2,14 @@
 ** Purpose: Define message IDs for the @Template@ application
 **
 ** Notes:
-**   1. Template written by David McComas and licensed under the GNU
-**      Lesser General Public License (LGPL).
+**   None
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU General
+**   Public License (GPL).
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -17,8 +20,8 @@
 ** Command Message IDs
 */
 
-#define  @TEMPLATE@_CMD_MID        0x1882
-#define  @TEMPLATE@_SEND_HK_MID    0x1883
+#define  @TEMPLATE@_CMD_MID        0x1883
+#define  @TEMPLATE@_SEND_HK_MID    0x1885  /* Same as KIT_CI to simplify integration */
 
 /*
 ** Telemetry Message IDs

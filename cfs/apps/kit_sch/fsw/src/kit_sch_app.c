@@ -2,26 +2,28 @@
 ** Purpose: Implement OPenSat Kit Scheduler application.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. This is non-flight code so an attempt has been made to balance keeping
+**   1. This is non-flight code so an attempt has been made to balance keeping
 **      it simple while making it robust. Limiting the number of configuration
 **      parameters and integration items (message IDs, perf IDs, etc) was
 **      also taken into consideration.
-**   3. Event message filters are not used since this is for test environments.
+**   2. Event message filters are not used since this is for test environments.
 **      This may be reconsidered if event flooding ever becomes a problem.
-**   4. Performance traces are not included.
-**   5. Most functions are global to assist in unit testing
-**   4. Functions I removed from original that need to be thought thru
+**   3. Performance traces are not included.
+**   4. Most functions are global to assist in unit testing
+**   5. Functions I removed from original that need to be thought thru
 **        SCH_ValidateMessageData()
 **        SCH_ValidateScheduleData()
 **        SCH_ProcessCommands()
 **        SCH_TblInit()
 **        InitEventFilters()
 **
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
+**
 ** References:
-**   1. Core Flight Executive Application Developers Guide.
-**   2. GN&C FSW Framework Programmer's Guide
+**   1. OpenSatKit Object-based Application Developer's Guide.
+**   2. cFS Application Developer's Guide.
 **
 */
 
@@ -58,8 +60,9 @@ KIT_SCH_HkPkt  KitSchHk;
 ** Function: KIT_SCH_Main
 **
 */
-void KIT_SCH_Main(void)
+void KIT_SCH_AppMain(void)
 {
+	
     int32  Status    = CFE_SEVERITY_ERROR;
     uint32 RunStatus = CFE_ES_APP_ERROR;
     CFE_SB_Msg_t* CmdMsgPtr;

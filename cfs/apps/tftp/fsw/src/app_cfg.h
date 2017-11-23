@@ -2,14 +2,16 @@
 ** Purpose: Define configurations for the Trivial File Transfer Protocol (TFTP) application
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL). 
-**   2. These macros can only be build with the application and can't
+**   1. These macros can only be build with the application and can't
 **      have a platform scope because the same file name is used for
 **      all applications following the object-based application design.
 **
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
+**
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -22,7 +24,7 @@
 */
 
 #include "tftp_platform_cfg.h"
-#include "app_fw.h"
+#include "osk_app_fw.h"
 
 /******************************************************************************
 ** TFTP Application Macros
@@ -40,8 +42,10 @@
 ** Command Macros
 */
 
-#define TFTP_GET_FILE_CMD_FC     (CMDMGR_APP_START_FC + 0)
-#define TFTP_PUT_FILE_CMD_FC     (CMDMGR_APP_START_FC + 1)
+#define TFTP_GET_FILE_CMD_FC       (CMDMGR_APP_START_FC + 0)
+#define TFTP_PUT_FILE_CMD_FC       (CMDMGR_APP_START_FC + 1)
+
+#define NETIF_INIT_SOCKET_CMD_FC   (CMDMGR_APP_START_FC + 2)
 
 
 /******************************************************************************

@@ -1,0 +1,108 @@
+<% 
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "CFE_EVS"
+  @CMD_MID_STR     = "CFE_EVS_CMD_MID"
+  
+%>  
+
+COMMAND CFE_EVS NOOP <%= CfsKitConfig.processor_endian %> "This command performs no other function than to increment the command execution counter. The command may be used to verify general aliveness of the Event Services task."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND CFE_EVS RESET_CTRS <%= CfsKitConfig.processor_endian %> "This command resets the following counters within the Event Services housekeeping telemetry: Command Execution Counter ($sc_$cpu_EVS_CMDPC)Command Error Counter ($sc_$cpu_EVS_CMDEC)"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND CFE_EVS ENA_EVENT_TYPE <%= CfsKitConfig.processor_endian %> "This command enables the command specified Event Type allowing event messages of this type to be sent through Event Service. An Event Type is defined to be a classification of an Event Message such as debug, informational, error and critical. This command is a global enable of a particular event type, it applies to all applications."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  APPEND_PARAMETER BITMASK 8 UINT MIN_UINT8 MAX_UINT8 0 "BitMask to use in the command"
+  APPEND_PARAMETER SPARE   8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte"
+
+COMMAND CFE_EVS DIS_EVENT_TYPE <%= CfsKitConfig.processor_endian %> "This command disables the command specified Event Type preventing event messages of this type to be sent through Event Service. An Event Type is defined to be a classification of an Event Message such as debug, informational, error and critical. This command is a global disable of a particular event type, it applies to all applications."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 2) %>
+  APPEND_PARAMETER BITMASK 8 UINT MIN_UINT8 MAX_UINT8 0 "BitMask to use in the command"
+  APPEND_PARAMETER SPARE   8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte"
+
+COMMAND CFE_EVS SET_EVENT_FMT <%= CfsKitConfig.processor_endian %> "This command sets the event format mode to the command specified value. The event format mode may be either short or long. A short event format detaches the Event Data from the event message and only includes the following information in the event packet: Processor ID, Application ID, Event ID, and Event Type. Refer to section 5.3.3.4 for a description of the Event Service event packet contents. Event Data is defined to be data describing an Event that is supplied to the cFE Event Service. ASCII text strings are used as the primary format for Event Data because heritage ground systems use string compares as the basis for their automated alert systems. Two systems, ANSR and SERS were looked at for interface definitions. The short event format is used to accommodate experiences with limited telemetry bandwidth. The long event format includes all event information included within the short format along with the Event Data."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
+  APPEND_PARAMETER MODE  8 UINT MIN_UINT8 MAX_UINT8 0 "Mode to use in the command"
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte"
+
+COMMAND CFE_EVS ENA_APP_EVENT_TYPE <%= CfsKitConfig.processor_endian %> "This command enables the command specified event type for the command specified application, allowing the application to send event messages of the command specified event type through Event Service. An Event Type is defined to be a classification of an Event Message such as debug, informational, critical, and error. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 22) %>
+  APPEND_PARAMETER APPNAME 160 STRING                   "default" "Application name to use in the command"
+  APPEND_PARAMETER BITMASK   8 UINT MIN_UINT8 MAX_UINT8 0x0F      "BitMask to use in the command"
+  APPEND_PARAMETER SPARE     8 UINT MIN_UINT8 MAX_UINT8 0         "Pad to even byte"
+
+COMMAND CFE_EVS DIS_APP_EVENT_TYPE <%= CfsKitConfig.processor_endian %> "This command disables the command specified event type for the command specified application, preventing the application from sending event messages of the command specified event type through Event Service. An Event Type is defined to be a classification of an Event Message such as debug, informational, critical, and error. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 22) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  APPEND_PARAMETER BITMASK 8 UINT MIN_UINT8 MAX_UINT8 0 "BitMask to use in the command."
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte."
+
+COMMAND CFE_EVS ENA_APP_EVENT_GEN <%= CfsKitConfig.processor_endian %> "This command enables the command specified application to send events through the Event Service. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 20) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+
+COMMAND CFE_EVS DIS_APP_EVENT_GEN <%= CfsKitConfig.processor_endian %> "This command disables the command specified application from sending events through Event Service. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 20) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  
+COMMAND CFE_EVS RESET_APP_CTRS <%= CfsKitConfig.processor_endian %> "This command sets the command specified application's event counter to zero. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 20) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+
+COMMAND CFE_EVS SET_FILTER_MASK <%= CfsKitConfig.processor_endian %> "This command sets the command specified application's event filter mask to the command specified value for the command specified event. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 24) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  APPEND_PARAMETER EVENTID 16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
+  APPEND_PARAMETER MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "Mask to use in the command."
+
+COMMAND CFE_EVS ENA_PORT <%= CfsKitConfig.processor_endian %> "This command enables the command specified port to output event messages"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 2) %>
+  APPEND_PARAMETER BITMASK 8 UINT MIN_UINT8 MAX_UINT8 0 "BitMask to use in the command."
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte."
+
+COMMAND CFE_EVS DIS_PORT <%= CfsKitConfig.processor_endian %> "This command disables the specified port from outputting event messages."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 2) %>
+  APPEND_PARAMETER BITMASK 8 UINT MIN_UINT8 MAX_UINT8 0 "BitMask to use in the command."
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte."
+
+# TODO - Unable to retrieve application ID for default: CC = 13
+COMMAND CFE_EVS RESET_FILTER_CTR <%= CfsKitConfig.processor_endian %> "This command resets the command specified application's event filter for the command specified event ID. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 22) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  APPEND_PARAMETER EVENTID 16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
+
+COMMAND CFE_EVS RESET_ALL_FILTERS <%= CfsKitConfig.processor_endian %> "This command resets all of the command specified applications event filters. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 20) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  
+COMMAND CFE_EVS ADD_EVENT_FILTER <%= CfsKitConfig.processor_endian %> "This command adds the given filter for the given application identifier and event identifier. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 24) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  APPEND_PARAMETER EVENTID 16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
+  APPEND_PARAMETER MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "Mask to use in the command."
+
+COMMAND CFE_EVS DEL_EVENT_FILTER <%= CfsKitConfig.processor_endian %> "This command removes the given filter for the given application identifier and event identifier. Note: In order for this command to take effect, applications must be registered for Event Service."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 24) %>
+  APPEND_PARAMETER APPNAME 160 STRING "default" "Application name to use in the command."
+  APPEND_PARAMETER EVENTID 16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
+  APPEND_PARAMETER MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "Mask to use in the command."
+
+COMMAND CFE_EVS WRITE_APP_DATA_TO_FILE <%= CfsKitConfig.processor_endian %> "This command writes all application data to a file for all applications that have registered with the EVS. The application data includes the Application ID, Active Flag, Event Count, Event Types Active Flag, and Filter Data."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 64) %>
+  APPEND_PARAMETER APPDATAFILENAME 512 STRING "default" "Filename where applicaton data is to be written."
+
+COMMAND CFE_EVS FILE_WRITE_LOG_TO_FILE <%= CfsKitConfig.processor_endian %> "This command requests the Event Service to generate a file containing the contents of the local event log."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 64) %>
+  APPEND_PARAMETER LOGFILENAME 512 STRING "default" "Filename where log data is to be written."
+
+COMMAND CFE_EVS SET_LOG_MODE <%= CfsKitConfig.processor_endian %> "This command sets the logging mode to the command specified value."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 2) %>
+  APPEND_PARAMETER MODE 8 UINT MIN_UINT8 MAX_UINT8 0 "Mode to use in the command."
+  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte."
+
+COMMAND CFE_EVS CLEAR_LOG <%= CfsKitConfig.processor_endian %> "This command clears the contents of the local event log."
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 20, 0) %>
+
+

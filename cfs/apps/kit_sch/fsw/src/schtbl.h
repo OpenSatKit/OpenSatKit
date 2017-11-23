@@ -3,18 +3,20 @@
 **          be performed by teh scheduler app.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. The tables are formatted using XML and reply on the open source EXPAT
+**   1. The tables are formatted using XML and reply on the open source EXPAT
 **      library.  This is a prototype and EXPAT has not been tested so it is
 **      not recommended that it be used on a flight project until it has been
 **      formally tested.
-**   3. This design intentionally decouples the scheduler table from application
+**   2. This design intentionally decouples the scheduler table from application
 **      specific processing such as command callback functions and file processing.
-**   4. The OpenSat application framework defines the table load/dump commands
+**   3. The OpenSat application framework defines the table load/dump commands
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */

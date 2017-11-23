@@ -5,19 +5,21 @@
 **          a UDP socket.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. This is non-flight code so an attempt has been made to balance keeping
+**   1. This is non-flight code so an attempt has been made to balance keeping
 **      it simple while making it robust. Limiting the number of configuration
 **      parameters and integration items (message IDs, perf IDs, etc) was
 **      also taken into consideration.
-**   3. Event message filters are not used since this is for test environments.
+**   2. Event message filters are not used since this is for test environments.
 **      This may be reconsidered if event flooding ever becomes a problem.
-**   4. Performance traces are not included.
-**   5. Most functions are global to assist in unit testing
+**   3. Performance traces are not included.
+**   4. Most functions are global to assist in unit testing
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */

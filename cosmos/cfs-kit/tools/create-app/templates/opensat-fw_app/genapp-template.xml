@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<comment>
+
+This file defines the directory and files containing templates to be 
+instantiated by the OpenSat AppGen tool.  Refer to the OpenSat USer's
+Guide or to appgen_properties.xml for more information.
+
+Each "entry" defines the directory path (relative to where this file
+resides) and the files to be instantiated.  The directory is specified
+in the "key" attribute. "dir-" is a prefix to tell appgen that a directory
+is being defined and all of the text following "dir-" will be converted
+to a directory path. A '/' is used as a directory path symbol because it
+is not allowed in a directory name on both Windows and Linux systems.
+The appropriate '/' or '\' platform specific character will be substituted.
+For example 
+
+   entry key="dir-fsw/for_build" 
+
+will result result in 'fsw\for_build' on a Windows platform.
+
+Files within a directory that a user wants instantiated are listed between
+the "entry" and "/entry" tags using commas to separate the file names.
+
+</comment>
+
+<entry key="title">OSK Framework App</entry>
+<entry key="version">1.0</entry>
+<entry key="descr">Creates an app using OpenSatKit's app framework design pattern</entry>
+
+<entry key="cfsapp-">CMakeLists.txt</entry>
+<entry key="cfsapp-fsw/mission_inc">@template@_mission_cfg.h</entry>
+<entry key="cfsapp-fsw/platform_inc">@template@_msgids.h,@template@_perfids.h,@template@_platform_cfg.h</entry>
+<entry key="cfsapp-fsw/src">@template@_app.c,@template@_app.h,app_cfg.h,exobj.c,exobj.h,extbl.c,extbl.h</entry>
+<entry key="cosmos-cmd_tlm">@template@_cmd.txt,@template@_tlm.txt</entry>
+
+</properties>

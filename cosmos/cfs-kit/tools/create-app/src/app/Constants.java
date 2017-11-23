@@ -11,15 +11,20 @@ public class Constants {
 
    static final public String PATH_CWD = System.getProperty("user.dir");
    static final public String PATH_SEP = System.getProperty("file.separator"); 
-
+   
+   /*****************************************************************************
+   ** Common strings
+   */
+   static final public String UNDEF_STR = "Undefined";
+   
    /*****************************************************************************
    ** AppGen default directory paths and files
    */
 
-   static final public String APP_PROP_FILE = PATH_CWD + PATH_SEP + "appgen-properties.xml";
-   static final public String TEMPLATE_PROP_FILE = "appgen-template.xml";
-   static final public String IMAGE_DIR    = PATH_CWD + PATH_SEP + "images" + PATH_SEP;
-   static final public String TEMPLATE_DIR = PATH_CWD + PATH_SEP + "templates";
+   static final public String APP_PROP_FILE = PATH_CWD + PATH_SEP + "genapp-properties.xml";
+   static final public String TMP_PROP_FILE = "genapp-template.xml";
+   static final public String IMAGE_DIR     = PATH_CWD + PATH_SEP + "images" + PATH_SEP;
+   static final public String TEMPLATE_DIR  = PATH_CWD + PATH_SEP + "templates";
    static final public String TARGET_CFS_DIR    = PATH_CWD + PATH_SEP + "target-test";
    static final public String TARGET_COSMOS_DIR = PATH_CWD + PATH_SEP + "target-test" + PATH_SEP + "cosmos-config";
    static final public String CFS_ICON_FILE = "cFS_logo_blue-_C100_M40_Y0_B15-300x220.png";
@@ -40,7 +45,11 @@ public class Constants {
    /*****************************************************************************
    ** Template Property file keywords
    */
-   
+
+   static final public String PROP_TEMPLATE_TITLE   = "title";    
+   static final public String PROP_TEMPLATE_VERSION = "version";    
+   static final public String PROP_TEMPLATE_DESCR   = "descr";    
+
    // Prefix keywords must end in a dash because the remaining part of the keyword is used as a directory
    static final public String PROP_TEMPLATE_CFS_APP_DIR_PREFIX = "cfsapp-";    
    static final public String PROP_TEMPLATE_COSMOS_DIR_PREFIX  = "cosmos-";

@@ -1,43 +1,31 @@
-COMMAND @TEMPLATE@ NOOP LITTLE_ENDIAN "Increment command counter and send event message with application version"
-  APPEND_ID_PARAMETER CCSDS_STREAMID 16 UINT MIN_UINT16 MAX_UINT16 0x1882 "CCSDS Packet Identification" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_SEQUENCE 16 UINT MIN_UINT16 MAX_UINT16 0xC000 "CCSDS Packet Sequence Control" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_LENGTH 16 UINT MIN_UINT16 MAX_UINT16 1 "CCSDS Packet Data Length" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_CHECKSUM 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Checksum"
-  APPEND_PARAMETER CCSDS_FC 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Function Code"
+<% 
+  require 'cfs_kit_config' 
 
-COMMAND @TEMPLATE@ RESET_CTRS LITTLE_ENDIAN "Reset commnad counters"
-  APPEND_ID_PARAMETER CCSDS_STREAMID 16 UINT MIN_UINT16 MAX_UINT16 0x1882 "CCSDS Packet Identification" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_SEQUENCE 16 UINT MIN_UINT16 MAX_UINT16 0xC000 "CCSDS Packet Sequence Control" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_LENGTH 16 UINT MIN_UINT16 MAX_UINT16 1 "CCSDS Packet Data Length" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_CHECKSUM 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Checksum"
-  APPEND_PARAMETER CCSDS_FC 8 UINT MIN_UINT8 MAX_UINT8 1 "CCSDS Command Function Code"
+  @APP_PREFIX_STR = "@TEMPLATE@"
+  @CMD_MID_STR    = "OSK_GENAPP_CMD_MID"  # Replace with your app's MID defined in message_ids.rb
+  
+%>  
 
-COMMAND @TEMPLATE@ LOAD_EXOBJ_TBL LITTLE_ENDIAN "Load example object table"
-  APPEND_ID_PARAMETER CCSDS_STREAMID 16 UINT MIN_UINT16 MAX_UINT16 0x1882 "CCSDS Packet Identification" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_SEQUENCE 16 UINT MIN_UINT16 MAX_UINT16 0xC000 "CCSDS Packet Sequence Control" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_LENGTH 16 UINT MIN_UINT16 MAX_UINT16 67 "CCSDS Packet Data Length" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_CHECKSUM 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Checksum"
-  APPEND_PARAMETER CCSDS_FC 8 UINT MIN_UINT8 MAX_UINT8 2 "CCSDS Command Function Code"
-  APPEND_PARAMETER ID   8 UINT 0 1 0 "Table ID. O is first table registered"
-  APPEND_PARAMETER TYPE 8 UINT 0 1 1 "0=Replace Table, 1=Update Records"
-  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/ExObjtbl.xml" "Full path and file name of table to be loaded"
+COMMAND @TEMPLATE@ NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND @TEMPLATE@ DUMP_EXOBJ_TBL LITTLE_ENDIAN "Dump example object table"
-  APPEND_ID_PARAMETER CCSDS_STREAMID 16 UINT MIN_UINT16 MAX_UINT16 0x1882 "CCSDS Packet Identification" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_SEQUENCE 16 UINT MIN_UINT16 MAX_UINT16 0xC000 "CCSDS Packet Sequence Control" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_LENGTH 16 UINT MIN_UINT16 MAX_UINT16 67 "CCSDS Packet Data Length" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_CHECKSUM 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Checksum"
-  APPEND_PARAMETER CCSDS_FC 8 UINT MIN_UINT8 MAX_UINT8 3 "CCSDS Command Function Code"
-  APPEND_PARAMETER ID   8 UINT 0 1 0 "Table ID. O is first table registered"
+COMMAND @TEMPLATE@ RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset command counters"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND @TEMPLATE@ LOAD_EXOBJ_TBL <%= CfsKitConfig.processor_endian %> "Load example object table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID. 0 is first table registered"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
+  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/@template@_extbl.json" "Full path and file name of table to be loaded"
+
+COMMAND @TEMPLATE@ DUMP_EXOBJ_TBL <%= CfsKitConfig.processor_endian %> "Dump example object table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
+  APPEND_PARAMETER ID   8 UINT 0 1 0 "Table ID. 0 is first table registered"
   APPEND_PARAMETER TYPE 8 UINT 0 1 0 "Unused"
-  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/ExObjtbl.txt" "Full path and file name to receive table dump"
+  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/@template@_extbl_d.json" "Full path and file name to receive table dump"
 
-COMMAND @TEMPLATE@ EXOBJ_STUB LITTLE_ENDIAN "Stub command for the example object"
-  APPEND_ID_PARAMETER CCSDS_STREAMID 16 UINT MIN_UINT16 MAX_UINT16 0x1882 "CCSDS Packet Identification" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_SEQUENCE 16 UINT MIN_UINT16 MAX_UINT16 0xC000 "CCSDS Packet Sequence Control" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_LENGTH 16 UINT MIN_UINT16 MAX_UINT16 3 "CCSDS Packet Data Length" BIG_ENDIAN
-  APPEND_PARAMETER CCSDS_CHECKSUM 8 UINT MIN_UINT8 MAX_UINT8 0 "CCSDS Command Checksum"
-  APPEND_PARAMETER CCSDS_FC 8 UINT MIN_UINT8 MAX_UINT8 4 "CCSDS Command Function Code"
+COMMAND @TEMPLATE@ EXOBJ_STUB <%= CfsKitConfig.processor_endian %> "Stub command for the example object"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
   APPEND_PARAMETER PARAMETER 16 UINT MIN_UINT16 MAX_UINT16 1 "Example integer parameter"
 
 

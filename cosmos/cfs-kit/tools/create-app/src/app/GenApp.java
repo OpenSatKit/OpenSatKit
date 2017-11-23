@@ -1,6 +1,6 @@
 package app;
 /**
- * This application provides tools to generate a new cFS application using 
+ * This application provides tools to generate a new cFS application using  
  * using the template files defined in the source template directory tree.
  * It's really a general purpose tool that instantiates template files
  * from the source directory tree to the destination tree. The appgen 
@@ -13,143 +13,84 @@ package app;
  * @license Licensed under the copyleft GNU General Public License (GPL).
  */
 
-import java.util.Properties; 
+import java.util.Properties;  
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-
-import static javax.swing.GroupLayout.Alignment.*;
 
 import tool.AppMap;
+import tool.AppTemplates;
 import tool.CreateApp;
 
 public class GenApp extends JFrame {
 
+   private boolean    propFileValid = false;
    private Properties appGenProp = new Properties();
-	private String errStr;
+   private String errStr = Constants.UNDEF_STR;
+
+   private int selectedTemplate=0;
+   private AppTemplates appTemplates;
 	
-	private JFrame appFrame;
-	
-   private JTree tree;
-   private JTextArea preview;
-   private JEditorPane previewPane;
+   private JFrame appFrame;
    
-   private String  templateDirStr, cfsDirStr, cosmosDirStr;
-   private JPanel  templatePanel, cfsPanel, cosmosPanel;
-   private JLabel  templateLabel, cfsLabel, cosmosLabel;
-   private JButton templateButton, cfsButton, cosmosButton, createButton;
-   private JTextField  templateText, cfsText, cosmosText;
+   // Template 
+   private String templateDirStr;
+   private JLabel templateLabel;
+   private JComboBox<String> templateCombo;
+   private JTextField templateVerText;
+   private JTextField templateDescrText;
+   private JCheckBox templateGenCfs;
+   private JCheckBox templateGenCosmos;
+   
+   // cfS & COSMOS destination directories have same UI
+   private String       cfsDirStr, cosmosDirStr;
+   private JPanel       cfsPanel,  cosmosPanel;
+   private JLabel       cfsLabel,  cosmosLabel;
+   private JButton      cfsButton, cosmosButton;
+   private JTextField   cfsText,   cosmosText;
+
+   // User action buttons
+   private JButton createButton;
+   private JButton installButton;
 
    private JFileChooser chooser;
     
    public GenApp() {
-	
+	   
       appFrame = (JFrame) SwingUtilities.getRoot(this);
       
-      configProperties();   // Must be called prior to GUI setup
+      // configProperties() must be called first and
+      // both functions must be called prior to GUI setup
+      configProperties();
+	  appTemplates = new AppTemplates(templateDirStr);
 
-      //////////// Create source panel: Instructions and template directory
-      JPanel sourcePanel = new JPanel();
-      sourcePanel.setLayout(new GridLayout(2,0));
+      // Create panels
+
+	  JPanel templatePanel = createTemplatePanel();
+      JPanel instructPanel = createInstructPanel();
+      JPanel buttonPanel   = createButtonPanel();
+      JPanel targetPanel   = createTargetPanel();
       
-      JPanel instructPanel = new JPanel();
-      createButton = new JButton("Create App");
-      addInstructPane(instructPanel, createButton );
-
-      templatePanel  = new JPanel();
-      templateLabel  = new JLabel(" Template Dir:");;
-      templateText   = new JTextField(templateDirStr);
-      templateButton = new JButton("Browse ...");
-      addDirPane(templatePanel, templateLabel, templateText, templateButton);
-
-      sourcePanel.add(instructPanel);
-      sourcePanel.add(templatePanel);
-      getContentPane().add(BorderLayout.PAGE_START,sourcePanel);
-
-      //////////// Create template directory panel
-
-      tree = new JTree(new FileSelectorModel(templateDirStr));
-
-      preview = new JTextArea();
-      preview.setWrapStyleWord(true);
-      preview.setLineWrap(true);
-      preview.setEditable(false);
-
-      
-      //////////// Create tree & split directory scroll pane
-
-      tree.addTreeSelectionListener(new TreeSelectionListener() {
-
-         public void valueChanged(TreeSelectionEvent e) {
-                
-            createButton.setEnabled(false);
-            preview.setText("\n\n\n   " + app.Constants.TEMPLATE_PROP_FILE +
-                  " doesn't exist in the current directory.");
-            FileNode selectedNode = (FileNode) tree.getLastSelectedPathComponent();
-            if (selectedNode.isDirectory()) {
-               templateText.setText(selectedNode.getAbsolutePath());
-               String templatePropFileStr = selectedNode.getAbsolutePath() + app.Constants.PATH_SEP + app.Constants.TEMPLATE_PROP_FILE;
-               File templatePropFile = new File(templatePropFileStr);
-               if (templatePropFile.exists()) {
-                  createButton.setEnabled(true);
-                  try {
-                     BufferedReader br = new BufferedReader(new FileReader(templatePropFileStr));
-                     String line = "";
-                     while ((line = br.readLine()) != null) {
-                        preview.append(line);
-                        preview.append(System.getProperty("line.separator"));
-                     }
-                     br.close();
-                  } catch (Exception exc) {
-                     exc.printStackTrace();
-                  }
-               } // End if template property file exists
-            } // End if selected a directory
-         
-         } // End valueChanged()
-         });
-
-      JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);       //Add the scroll panes to a split pane.
-      splitPane.setTopComponent(tree);
-      splitPane.setBottomComponent(preview);
-      //TODO - Decide vertical vs horizontal getContentPane().add(BorderLayout.CENTER, splitPane);
-        
-      getContentPane().add(BorderLayout.LINE_START, new JScrollPane(tree));
-      getContentPane().add(new JScrollPane(preview));
-
-      //////////// Create composite target directory panel
-      //getContentPane().add(BorderLayout.PAGE_END, status);
-      JPanel targetPanel = new JPanel();
-      targetPanel.setLayout(new GridLayout(2,0));
-
-      cfsPanel  = new JPanel();
-    	cfsLabel  = new JLabel(" cFS app Dir:               ");;
-    	cfsText   = new JTextField(cfsDirStr);
-    	cfsButton = new JButton("Browse ...");
-      addDirPane(cfsPanel, cfsLabel, cfsText, cfsButton );
-        
-      cosmosPanel  = new JPanel();
-    	cosmosLabel  = new JLabel(" COSMOS config Dir:");;
-    	cosmosText   = new JTextField(cosmosDirStr);
-    	cosmosButton = new JButton("Browse ...");
-      addDirPane(cosmosPanel, cosmosLabel, cosmosText, cosmosButton);
-        
-      targetPanel.add(cfsPanel);
-      targetPanel.add(cosmosPanel);
+      getContentPane().add(BorderLayout.NORTH,templatePanel);
+      getContentPane().add(BorderLayout.WEST,instructPanel);
+      getContentPane().add(BorderLayout.EAST,buttonPanel);
       getContentPane().add(BorderLayout.PAGE_END, targetPanel);
-        
+      
       createButtonListeners();  
          
-      createButton.setEnabled(false);
+      //**createButton.setEnabled(false);
       pack();
       setTitle("cFS Application Generation");
-      setSize(800, 600);
+      setSize(600, 300);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setVisible(true);
+
+      if (!propFileValid) {
+         JOptionPane.showMessageDialog(new JFrame(), errStr, "Property File Error", JOptionPane.ERROR_MESSAGE);
+      }
+       
 
    } // End GenApp()
 	
@@ -158,6 +99,7 @@ public class GenApp extends JFrame {
       try {
       
          appGenProp.loadFromXML(new FileInputStream(app.Constants.APP_PROP_FILE));
+         propFileValid = true;
          
       } catch (Exception e) {
 
@@ -190,119 +132,245 @@ public class GenApp extends JFrame {
       
       if (returnDirStr == null) {
          
-         System.out.println("Property file returned null for " + dirPropKey + " directory. Using " + dirDefaultStr);
+         System.out.println("Property file returned null for " + dirPropKey + " directory. Using default directory " + dirDefaultStr);
          returnDirStr = dirDefaultStr;
       }
       else if (returnDirStr.length() < 1) {
          
-         System.out.println("Property file string length of zero for " + dirPropKey + " directory. Using " +  dirDefaultStr);
+         System.out.println("Property file string length of zero for " + dirPropKey + " directory. Using default directory " +  dirDefaultStr);
          returnDirStr = dirDefaultStr;
       }
       else
       {
-         System.out.println("Property file supplied  " + dirPropKey + " directory " + returnDirStr);
-         returnDirStr = Constants.PATH_CWD + Constants.PATH_SEP + returnDirStr;
-      }
+         System.out.println("Property file key " + dirPropKey + " supplied directory " + returnDirStr);
+         if (returnDirStr.startsWith(Constants.PATH_SEP) || returnDirStr.contains(":")) {
+            
+            String  fileStr = new File(returnDirStr).getAbsolutePath();
+            System.out.println("**FILE string (user supplied abs path) = " + fileStr);
+            // No need to create returnDirStr because prop file supplied the full path            
+         
+         } // If property starts with 
+         else {
+         
+            String  fileStr = new File(returnDirStr).getAbsolutePath();
+            System.out.println("**FILE string (user supplied rel path) = " + fileStr);
+            returnDirStr = Constants.PATH_CWD + Constants.PATH_SEP + returnDirStr;
+         
+         }
+         
+      } // End if returned valid property file value
    
       return returnDirStr;
       
    } // End getDefaultDirStr()
    
    
-   private void addInstructPane(Container panel, JButton button) {
+   private JPanel createInstructPanel() {
 
-      panel.setLayout(new GridBagLayout());
+	  JPanel instructPanel = new JPanel();
+      instructPanel.setLayout(new GridBagLayout());
       GridBagConstraints c = new GridBagConstraints();
 
-      JLabel instructLabel = new JLabel(
-      "Select a template directory using window tree or browse button. " + app.Constants.TEMPLATE_PROP_FILE + 
-      " will be displayed when available.");
+      JTextArea instructTextArea = new JTextArea(5, 32);
+      instructTextArea.setEditable(false);
+      instructTextArea.append("\n  1. Select a template from the drop down menu\n");
+      instructTextArea.append("  2. Select the cFS and COSMOS destination directories\n");
+      instructTextArea.append("  3. Click <Create  App> to generate the code\n");
+      instructTextArea.append("  4. Click <Install App> to install the app into the kit\n");
       c.fill = GridBagConstraints.HORIZONTAL;
       c.weightx = 0.9;
       c.gridx = 0;
       c.gridy = 0;
-      panel.add(instructLabel, c);
+      instructPanel.add(instructTextArea, c);
+
+      return instructPanel;
+    		  
+   } // End createInstructPanel()
+
+   private JPanel createTemplatePanel() {
+
+      JPanel templatePanel = new JPanel();
+      templatePanel.setLayout(new GridBagLayout());
+      GridBagConstraints c = new GridBagConstraints();
+      
+	  // Line 1: Template Selection, Version
+      
+      templateLabel = new JLabel("   Template: ");
+	  templateCombo = new JComboBox<String>(appTemplates.getTitles());
+      templateCombo.setSelectedIndex(selectedTemplate);
+
+      JLabel templateVerLabel = new JLabel("   Version: ");
+	  templateVerText = new JTextField(appTemplates.getTemplate(selectedTemplate).getVersion());
+
+      // Line 2: What will be generated: cFS & COSMOS 
+
+	  templateGenCfs= new JCheckBox("Generates cFS App");
+      templateGenCfs.setSelected(appTemplates.getTemplate(selectedTemplate).hasCfs());
+	  
+      templateGenCosmos= new JCheckBox("Generates COSMOS cmd & tlm files");
+      templateGenCosmos.setSelected(appTemplates.getTemplate(selectedTemplate).hasCosmos());
+	  
+	  // Line 3: Description
+	  
+	  templateDescrText = new JTextField(appTemplates.getTemplate(selectedTemplate).getDescr());
+	  templateDescrText.setEditable(false);
 
       c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 0.1;
-      c.gridx = 2;
-      c.gridy = 0;
-      panel.add(button, c);
+     
+      c.weightx = 0; c.gridx = 0; c.gridy = 0;
+      templatePanel.add(templateLabel, c);
       
-   } // End addInstructPane()
+      c.weightx = 1; c.gridx = 1; c.gridy = 0;
+      templatePanel.add(templateCombo, c);
+
+      c.weightx = 0; c.gridx = 2; c.gridy = 0;
+      templatePanel.add(templateVerLabel, c);
+
+      c.weightx = 1; c.gridx = 3; c.gridy = 0;
+      templatePanel.add(templateVerText, c);
+      
+      c.weightx = 0; c.gridx = 0; c.gridy = 1;
+      templatePanel.add(templateGenCfs, c);
+
+      c.weightx = 0; c.gridx = 1; c.gridy = 1;
+      templatePanel.add(templateGenCosmos, c);
+
+      c.gridwidth = 2;
+      c.weightx = 0; c.gridx = 0; c.gridy = 2;
+      templatePanel.add(templateDescrText, c);
+
+      return templatePanel;
+    		  
+   } // End createTemplatePanel()
+
+   private JPanel createButtonPanel() {
+
+	  JLabel blankLabel = new JLabel("   ");
+      JPanel buttonPanel = new JPanel();
+	  //**buttonPanel.setLayout(new GridLayout(0,4));
+	  buttonPanel.setLayout(new GridBagLayout());
+      GridBagConstraints c = new GridBagConstraints();
+	  c.fill = GridBagConstraints.HORIZONTAL;
+	  c.weightx = 1; 
+      
+	  createButton  = new JButton("Create App");
+	  installButton = new JButton("Install App");
+	   	     
+      c.gridx = 0; c.gridy = 0;
+	  buttonPanel.add(createButton);
+
+	  c.gridx = 0; c.gridy = 1;
+	  buttonPanel.add(blankLabel);
+
+      c.gridx = 0; c.gridy = 2;
+	  buttonPanel.add(installButton);
+
+	  return buttonPanel;
+	      
+   } // End createButtonPanel()
+
    
+   private JPanel createTargetPanel() {
+
+      JPanel targetPanel = new JPanel();
+      targetPanel.setLayout(new GridLayout(3,0));
+   
+      cfsPanel  = new JPanel();
+      cfsLabel  = new JLabel(" cFS app Dir:               ");;
+      cfsText   = new JTextField(cfsDirStr);
+      cfsButton = new JButton("Browse ...");
+      addDirPane(cfsPanel, cfsLabel, cfsText, cfsButton );
+     
+      cosmosPanel  = new JPanel();
+      cosmosLabel  = new JLabel(" COSMOS config Dir:");;
+      cosmosText   = new JTextField(cosmosDirStr);
+      cosmosButton = new JButton("Browse ...");
+      addDirPane(cosmosPanel, cosmosLabel, cosmosText, cosmosButton);
+     
+      targetPanel.add(cfsPanel);
+      targetPanel.add(cosmosPanel);
+
+      return targetPanel;
+      
+   } // End createTargetPanel()
+
    private void addDirPane(Container panel, JLabel label, JTextField textField, JButton button) {
 
       panel.setLayout(new GridBagLayout());
       GridBagConstraints c = new GridBagConstraints();
 
       c.fill = GridBagConstraints.HORIZONTAL;
-	   c.weightx = 0.1;
-	   c.gridx = 0;
-	   c.gridy = 0;
-	   panel.add(label, c);
+      c.weightx = 0;
+      c.gridx = 0;
+      c.gridy = 0;
+      panel.add(label, c);
 
-	   c.fill = GridBagConstraints.HORIZONTAL;
-	   c.weightx = 0.8;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 1;
       c.gridx = 1;
       c.gridy = 0;
       panel.add(textField, c);
 
-    	c.fill = GridBagConstraints.HORIZONTAL;
-    	c.weightx = 0.1;
-    	c.gridx = 2;
-    	c.gridy = 0;
-    	panel.add(button, c);
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 0;
+      c.gridx = 2;
+      c.gridy = 0;
+      panel.add(button, c);
     	
    } // End addDirPane()
 
     
    private void createButtonListeners() {  
    
-      createButton.addActionListener(new ActionListener() {
-         
+      templateCombo.addActionListener(new ActionListener() {
+      
          public void actionPerformed(ActionEvent e) {
          
+         	selectedTemplate = templateCombo.getSelectedIndex();
+            System.out.println("Combo selection = " + selectedTemplate); 
+            templateVerText.setText(appTemplates.getTemplate(selectedTemplate).getVersion());
+            templateGenCfs.setSelected(appTemplates.getTemplate(selectedTemplate).hasCfs());
+            templateGenCosmos.setSelected(appTemplates.getTemplate(selectedTemplate).hasCosmos());
+            templateDescrText.setText(appTemplates.getTemplate(selectedTemplate).getDescr());
+            System.out.println(appTemplates.getTemplate(selectedTemplate).getVersion() + ", " +appTemplates.getTemplate(selectedTemplate).getDescr());
+         } // End actionPerformed()
+      });
+ 
+      createButton.addActionListener(new ActionListener() {
+          
+         public void actionPerformed(ActionEvent e) {
+          
             File cfsDest    = new File(cfsText.getText());
             File cosmosDest = new File(cosmosText.getText());
             if (cfsDest.isDirectory() && cosmosDest.isDirectory() ) {
-               System.out.println("Create App: templatetext:"+templateText.getText());
-               createApp(templateText.getText(), cfsDest.getAbsolutePath(), cosmosDest.getAbsolutePath());
+               System.out.println("Create App using template directory: " + appTemplates.getTemplate(selectedTemplate).getAbsDir());
+               createApp(appTemplates.getTemplate(selectedTemplate).getAbsDir(), cfsDest.getAbsolutePath(), cosmosDest.getAbsolutePath());
             } 
             else {
                Component component = (Component) e.getSource();
                JFrame frame = (JFrame) SwingUtilities.getRoot(component);
                JOptionPane.showMessageDialog(frame,
-                     "cFS and COSMOS targets must be directories",
-                     "Target Directory Error",
-                     JOptionPane.ERROR_MESSAGE);
+                  "cFS and COSMOS targets must be directories",
+                  "Target Directory Error",
+                  JOptionPane.ERROR_MESSAGE);
             }
          } // End actionPerformed()
       });
 
-      templateButton.addActionListener(new ActionListener() {
-      
+      installButton.addActionListener(new ActionListener() {
+          
          public void actionPerformed(ActionEvent e) {
-         
-            chooser = new JFileChooser(); 
-            chooser.setCurrentDirectory(new java.io.File(templateText.getText()));
-            chooser.setDialogTitle("Select Template Directory");
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setAcceptAllFileFilterUsed(false); // disable the "All files" option.
-             
+        	
             Component component = (Component) e.getSource();
             JFrame frame = (JFrame) SwingUtilities.getRoot(component);
-            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) { 
-               System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-               System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-               templateText.setText(chooser.getCurrentDirectory().getAbsolutePath());
-            }
-            else {
-               System.out.println("No Selection ");
-            }
-         } // End actionPerformed()
-      });
-   
+            JOptionPane.showMessageDialog(frame,
+                      "The install app feature has not been implemented.",
+                      "Coming soon...",
+                      JOptionPane.INFORMATION_MESSAGE);
+
+           
+          } // End actionPerformed()
+       });
       cfsButton.addActionListener(new ActionListener() {
          
          public void actionPerformed(ActionEvent e) {
@@ -318,7 +386,7 @@ public class GenApp extends JFrame {
             if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) { 
                System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-               cfsText.setText(chooser.getCurrentDirectory().getAbsolutePath());
+               cfsText.setText(chooser.getSelectedFile().getAbsolutePath());
             }
             else {
                System.out.println("No Selection ");
@@ -341,7 +409,7 @@ public class GenApp extends JFrame {
             if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) { 
                System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
                System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-               cosmosText.setText(chooser.getCurrentDirectory().getAbsolutePath());
+               cosmosText.setText(chooser.getSelectedFile().getAbsolutePath());
             }
             else {
                System.out.println("No Selection ");
@@ -366,7 +434,7 @@ public class GenApp extends JFrame {
         
          String lowAppName = appName.toLowerCase();
         
-         String templateFileStr =  srcTemplateDirStr+Constants.PATH_SEP+app.Constants.TEMPLATE_PROP_FILE;
+         String templateFileStr =  srcTemplateDirStr+Constants.PATH_SEP+app.Constants.TMP_PROP_FILE;
 
          try {
            
@@ -452,5 +520,4 @@ public class GenApp extends JFrame {
 	} // End main()
     
 } // End class GenApp
-
 

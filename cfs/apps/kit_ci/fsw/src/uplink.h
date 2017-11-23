@@ -2,16 +2,18 @@
 ** Purpose: Manage the uplink socket
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. The "message tunnel" is a simple feature that allows a user to intercept a message and replace the
+**   1. The "message tunnel" is a simple feature that allows a user to intercept a message and replace the
 **      message ID. This is handy for testing.  The new message can be routed to a test application that
 **      can manipulate the packet and if needed put back the original message IF so the modified packet gets
 **      routed to the original destination. An example would be testing a file transport protocol and the user
 **      needs to corrupt or drop specific packets.
 **
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
+**
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */

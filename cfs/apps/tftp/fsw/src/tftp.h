@@ -2,16 +2,18 @@
 ** Purpose: Implement the TFTP protocol.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
-**   2. This code is based on the following file: http://cnds.eecs.jacobs-university.de/courses/np-2012/src/tftp/tftp.c
+**   1. This code is based on the following file: http://cnds.eecs.jacobs-university.de/courses/np-2012/src/tftp/tftp.c
 **      In it's header it states "A TFTP (RFC 1350) over IPv4/IPv6 client. This code is intended to
 **      demonstrate (i) how to write encoding/decoding functions, (ii) how to implement a simple state
 **      machine, and (iii) how to use a select() main loop to implement timeouts and retransmissions.
 **
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
+**
 ** References:
-**   1. Core Flight Executive Application Developer's Guide.
-**   2. OpenSat Object-based Programmer's Guide
+**   1. OpenSatKit Object-based Application Developer's Guide.
+**   2. cFS Application Developer's Guide.
 **
 */
 

@@ -2,11 +2,14 @@
 ** Purpose: Define a @Template@ application.
 **
 ** Notes:
-**   1. Written by David McComas, licensed under the copyleft GNU
-**      General Public License (GPL).
+**   None
+**
+** License:
+**   Template written by David McComas and licensed under the GNU
+**   Lesser General Public License (LGPL).
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -18,8 +21,8 @@
 */
 
 #include "app_cfg.h"
-#include "app_fw.h"
 #include "exobj.h"
+#include "extbl.h"
 
 /*
 ** Macro Definitions
@@ -58,12 +61,14 @@ typedef struct
    uint16   InvalidCmdCnt;
 
    /*
-   ** EXTBL Data
+   ** Example Table Data 
+   ** - Loaded with status from the last table action 
    */
 
-   uint8    ExTblLastLoadStatus;
-   uint8    ExTblAttrErrCnt;       /* Attribute errors during the last load */
+   uint8    LastAction;
+   uint8    LastActionStatus;
 
+   
    /*
    ** EXOBJ Data
    */
@@ -85,9 +90,9 @@ extern @TEMPLATE@_Class  @Template@;
 */
 
 /******************************************************************************
-** Function: @TEMPLATE@_Main
+** Function: @TEMPLATE@_AppMain
 **
 */
-void @TEMPLATE@_Main(void);
+void @TEMPLATE@_AppMain(void);
 
 #endif /* _@template@_ */

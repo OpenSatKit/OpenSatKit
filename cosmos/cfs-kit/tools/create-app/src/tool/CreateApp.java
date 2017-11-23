@@ -58,14 +58,17 @@ public class CreateApp {
    */
    public boolean ProcessTemplateFile(Properties templateProp, String appName) {
 		  	  	  
-     File newDir = new File(targetCfsAppDir);
- 	  newDir.mkdir();
- 	  System.out.println("Created dir: " + newDir.toString());
   
+     targetCfsAppDir = targetCfsAppDir + Constants.PATH_SEP + appName.toLowerCase() + Constants.PATH_SEP;
  	  String targetCosmosCmdTlmDir = targetCosmosConfigDir + Constants.COSMOS_CONFIG_TARGETS_DIR + appName.toUpperCase() + Constants.PATH_SEP;
  	  
- 	  System.out.println("targetCfsAppDir: " + targetCfsAppDir);
+     System.out.println("targetCfsAppDir: " + targetCfsAppDir);
      System.out.println("targetCosmosCmdTlmDir: " + targetCosmosCmdTlmDir);
+
+     File newDir = new File(targetCfsAppDir);
+     newDir.mkdirs();
+     System.out.println("Created dir: " + newDir.toString());
+
  	 
 	  /*
 	   *  Loop through property file locating all template directory keys and
@@ -218,12 +221,24 @@ public class CreateApp {
          BufferedReader br = new BufferedReader(fr);
             
          System.out.println("********* ");
+         // Simple logic with many assumptions
+         //   Assumes user doesn't duplicate an existing target name
+         //   Assume one set of start/end tags in proper order in the file
+         // Logic won't duplicate new target if it exists between tags. 
+         boolean betweenTags = false, addNewTarget = true;
          while ((line = br.readLine()) != null) {
+            if (betweenTags && addNewTarget) {
+               if (line.contains(appName.toUpperCase())) addNewTarget = false;
+               if (line.contains(Constants.CFS_KIT_TAG_END)) {
+                  // Only get here if still need to add new target and finished with cfs_kit block
+                  lines.add("  TARGET " + appName.toUpperCase() + "\n");
+                  addNewTarget = false;
+               }
+            } // End if between tags & need to add target
+            else {
+               betweenTags = line.contains(Constants.CFS_KIT_TAG_START);
+            } // End if not between tags 
             lines.add(line+"\n");
-            if (line.contains(Constants.CFS_KIT_TAG_START)) {
-               System.out.println("***Found tag");
-               lines.add("  TARGET " + appName.toUpperCase() + "\n");
-            }
          } // End while
          fr.close();
          br.close();

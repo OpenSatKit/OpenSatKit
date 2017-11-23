@@ -2,11 +2,14 @@
 ** Purpose: Implement a @Template@ application.
 **
 ** Notes:
-**   1. Template written by David McComas and licensed under the GNU
-**      Lesser General Public License (LGPL).
+**   None
+**
+** License:
+**   Template written by David McComas and licensed under the GNU
+**   Lesser General Public License (LGPL).
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
+**   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
@@ -39,14 +42,14 @@ static void ProcessCommands(void);
 
 #define  CMDMGR_OBJ (&(@Template@.CmdMgr))
 #define  TBLMGR_OBJ (&(@Template@.TblMgr))
-#define  EXOBJ_OBJ  (&(@Template@.ExObj))
-#define  EXTBL_OBJ  (&(@Template@.ExTbl))
+#define  EX_OBJ     (&(@Template@.ExObj))
+#define  EX_TBL     (&(@Template@.ExTbl))
 
 /******************************************************************************
-** Function: @TEMPLATE@_Main
+** Function: @TEMPLATE@_AppMain
 **
 */
-void @TEMPLATE@_Main(void)
+void @TEMPLATE@_AppMain(void)
 {
 
    int32  Status    = CFE_SEVERITY_ERROR;
@@ -68,7 +71,8 @@ void @TEMPLATE@_Main(void)
 
    /*
    ** At this point many flight apps use CFE_ES_WaitForStartupSync() to
-   ** synchronize their startup timing with other apps. 
+   ** synchronize their startup timing with other apps. This is not
+   ** needed for this simple app.
    */
 
    if (Status == CFE_SUCCESS) RunStatus = CFE_ES_APP_RUN;
@@ -81,10 +85,10 @@ void @TEMPLATE@_Main(void)
 
       /*
       ** This is just a an example loop. There are many ways to control the
-      ** main loop execution.
+      ** main loop execution flow.
       */
-      
-      CFE_ES_PerfLogExit(@TEMPLATE@_MAIN_PERF_ID);
+	  
+	  CFE_ES_PerfLogExit(@TEMPLATE@_MAIN_PERF_ID);
       OS_TaskDelay(@TEMPLATE@_RUNLOOP_DELAY);
       CFE_ES_PerfLogEntry(@TEMPLATE@_MAIN_PERF_ID);
 
@@ -153,6 +157,10 @@ boolean @TEMPLATE@_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 void @TEMPLATE@_SendHousekeepingPkt(void)
 {
 
+   /* Good design practice in case app expands to more than on etable */
+   const TBLMGR_Tbl* LastTbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
+
+   
    /*
    ** CMDMGR Data
    */
@@ -160,14 +168,14 @@ void @TEMPLATE@_SendHousekeepingPkt(void)
    @Template@HkPkt.ValidCmdCnt   = @Template@.CmdMgr.ValidCmdCnt;
    @Template@HkPkt.InvalidCmdCnt = @Template@.CmdMgr.InvalidCmdCnt;
 
-
+   
    /*
-   ** EXOBJ Data
+   ** EXTABL/EXOBJ Data
    ** - At a minimum all OBJECT variables effected by a reset must be included
    */
 
-   @Template@HkPkt.ExTblLastLoadStatus = @Template@.ExTbl.LastLoadStatus;
-   @Template@HkPkt.ExTblAttrErrCnt     = @Template@.ExTbl.AttrErrCnt;
+   @Template@HkPkt.LastAction       = LastTbl->LastAction;
+   @Template@HkPkt.LastActionStatus = LastTbl->LastActionStatus;
 
    @Template@HkPkt.ExObjExecCnt = @Template@.ExObj.ExecCnt;
 
@@ -190,8 +198,8 @@ static int32 InitApp(void)
     ** Initialize 'entity' objects
     */
 
-    EXTBL_Constructor(EXTBL_OBJ,EXOBJ_LoadTbl,EXOBJ_LoadTblEntry,EXOBJ_GetTblDataPtr);
-    EXOBJ_Constructor(EXOBJ_OBJ);
+    EXTBL_Constructor(EX_TBL, EXOBJ_GetTblPtr, EXOBJ_LoadTbl, EXOBJ_LoadTblEntry);
+    EXOBJ_Constructor(EX_OBJ);
 
     /*
     ** Initialize cFE interfaces 
@@ -200,8 +208,6 @@ static int32 InitApp(void)
     CFE_SB_CreatePipe(&@Template@.CmdPipe, @TEMPLATE@_CMD_PIPE_DEPTH, @TEMPLATE@_CMD_PIPE_NAME);
     CFE_SB_Subscribe(@TEMPLATE@_CMD_MID, @Template@.CmdPipe);
     CFE_SB_Subscribe(@TEMPLATE@_SEND_HK_MID, @Template@.CmdPipe);
-
-    CFE_SB_InitMsg(&@Template@HkPkt, @TEMPLATE@_TLM_HK_MID, @TEMPLATE@_TLM_HK_LEN, TRUE);
 
     /*
     ** Initialize App Framework Components 
@@ -213,11 +219,13 @@ static int32 InitApp(void)
     
     CMDMGR_RegisterFunc(CMDMGR_OBJ, EXTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, EXTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, EXOBJ_DEMO_CMD_FC,  EXOBJ_OBJ,  EXOBJ_DemoCmd,     EXOBJ_DEMO_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, EXOBJ_DEMO_CMD_FC,  EX_OBJ,     EXOBJ_DemoCmd,     EXOBJ_DEMO_CMD_DATA_LEN);
 
     TBLMGR_Constructor(TBLMGR_OBJ);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, EXTBL_LoadCmd, EXTBL_DumpCmd, @TEMPLATE@_EXTBL_DEF_LOAD_FILE);
                          
+    CFE_SB_InitMsg(&@Template@HkPkt, @TEMPLATE@_TLM_HK_MID, @TEMPLATE@_TLM_HK_LEN, TRUE);
+
                         
     /*
     ** Application startup event message

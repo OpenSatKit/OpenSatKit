@@ -1,0 +1,9 @@
+<!-- 
+Unit test file that has a bad attribute name. The parser crashes
+if the XML is ill-formed, not quite flight worthy.
+-->
+<objtbl>
+
+  <entry  index="0"  data1="2"  data2="1"  data="0" />
+ 
+</objtbl>
