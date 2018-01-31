@@ -1,0 +1,34 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "CFE_SB"
+  @MAX_PIPES      = "CFE_SB_MAX_PIPES"
+  
+%>
+TABLE "CFE_SB Pipe Info" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Pipe Information"
+  <%= CfsKitConfig.file_hdr %>
+
+  <% 
+    max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPES)
+    append_items = ""
+    for i in 1..max_entries
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_IN_USE\"            8 UINT 0 MAX_UINT8  0  \"Is the pipe in use?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_ID\"                8 UINT 0 MAX_UINT8  0  \"Pipe Identifier\"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_NAME\"            160 STRING \"UNDEF\"     \"Name of the pipe\"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_OWNER_APP_NAME\"  160 STRING \"UNDEF\"     \"Name of app that owns the pipe\"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_PAD16_1\"          16 UINT 0 MAX_UINT16 0  \"Longword alignment\"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_APP_ID\"           32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_SYS_QUEUE_ID\"     32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_LAST_SENDER\"      32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_QUEUE_DEPTH\"      16 UINT 0 MAX_UINT16 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_SEND_ERRORS\"      16 UINT 0 MAX_UINT16 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_CURRENT_BUFF\"     32 UINT 0 MAX_UINT32 0  \"Address of current buffer\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"PIPE#{i}_TO_TRASH_BUFF\"    32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+    end
+  %>
+  <%= append_items %>

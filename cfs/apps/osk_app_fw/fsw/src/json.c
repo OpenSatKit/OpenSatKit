@@ -114,7 +114,7 @@ void JSON_Constructor(JSON_Class* Json, char* FileBuf, jsmntok_t* FileTokens) {
 **    1. Logic assumes JSON_MAX_FILE_CHAR > JSON_MAX_FILE_LINE_CHAR
 **
 */
-boolean JSON_OpenFile(JSON_Class* Json, char* Filename)
+boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
 {
   
    boolean RetStatus = FALSE;
@@ -450,13 +450,13 @@ boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* S
 
 
 /******************************************************************************
-** Function: JSON_GetValFloat
+** Function: JSON_GetValDouble
 **
 ** Notes:
 **   
 ** 
 */
-boolean JSON_GetValFloat(JSON_Class* Json, int ContainTokenIdx, char* Key, double* FloatVal)
+boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, double* DoubleVal)
 {
 
    int    i;
@@ -471,7 +471,7 @@ boolean JSON_GetValFloat(JSON_Class* Json, int ContainTokenIdx, char* Key, doubl
  
          TokenStr = JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[i+1]);
          if (Json->FileTokens[i+1].type == JSMN_PRIMITIVE) {
-            *FloatVal = strtod(TokenStr, &ErrCheck);
+            *DoubleVal = strtod(TokenStr, &ErrCheck);
 			if (ErrCheck == TokenStr) {
                CFE_EVS_SendEvent(JSON_FLT_CONV_ERR_EID,CFE_EVS_ERROR,"JSON float conversion error for key %s token %s at container token index %d.",
 			      Key, TokenStr, ContainTokenIdx);
@@ -493,7 +493,7 @@ boolean JSON_GetValFloat(JSON_Class* Json, int ContainTokenIdx, char* Key, doubl
    return FALSE;
 
 
-} /* End JSON_GetValFloat() */
+} /* End JSON_GetValDouble() */
 
 
 

@@ -1,0 +1,38 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR  = "CFE_EVS"
+  @LOG_MAX         = "CFE_EVS_LOG_MAX"
+  
+%>
+TABLE "CFE_EVS EventLog" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "Local Event Log"
+  <%= CfsKitConfig.file_hdr %>
+
+  <% 
+    max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
+    append_items = ""
+    for i in 1..max_entries
+
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_STREAM_ID\" 16 UINT 0 MAX_UINT16 0  \"CCSDS Header Stream ID\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%04X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SEQ_CNT\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Header Sequence Count\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_LEN\"       16 UINT 0 MAX_UINT16 0  \"CCSDS Header Packet Length\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SECONDS\"   32 UINT 0 MAX_UINT32 0  \"CCSDS Secondary Header Seconds\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SUBSECS\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Secondary Header Sub Seconds\"" << "\n"
+      
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_APP_NAME\" 160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_ID\"        16 UINT 0 MAX_UINT16 0  \"ID of event sent\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_TYPE\"      16 UINT 0 MAX_UINT16 0  \"1=Debug,2=Info,3=Err,4=Critical\"" << "\n"
+        append_items << "   STATE DEBUG    1" << "\n"
+        append_items << "   STATE INFO     2" << "\n"
+        append_items << "   STATE ERROR    3" << "\n"
+        append_items << "   STATE CRITICAL 4" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_SC_ID\"     32 UINT 0 MAX_UINT32 0  \"Spacecraft ID\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PROC_ID\"   32 UINT 0 MAX_UINT32 0  \"Processor ID\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_MESSAGE\"  976 STRING \"UNDEF\"     \"Text Message\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PAD\"       16 UINT 0 MAX_UINT16 0  \"Alignment pad\"" << "\n"
+    end
+  %>
+  <%= append_items %>
+  

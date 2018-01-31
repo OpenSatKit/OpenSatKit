@@ -28,7 +28,7 @@ def pisat_send_cmd(screen, cmd)
   elsif (cmd == "STOP_CFS")
     cmd("PICONTROL STOP_CFS"); 
   elsif (cmd == "SHUTDOWN_PI")
-	  cmd("PICONTROL SHUTDOWN_PI")
+   cmd("PICONTROL SHUTDOWN_PI")
   elsif (cmd == "REBOOT_PI")
     cmd("PICONTROL REBOOT_PI")
   elsif (cmd == "ENABLE_TLM")
@@ -54,7 +54,7 @@ def pisat_send_cmd(screen, cmd)
     #connect_interface("CFS_INT","udp_cs_interface.rb","127.0.0.1","1234","1235","nil","nil","128","nil","nil")
     #map_target_to_interface("CS","CFS_LOCAL_INT")
   else
-    prompt("Error in screen definition file. Undefined commmand sent to pisat_send_cmd()")
+    prompt("Error in screen definition file. Undefined command sent to pisat_send_cmd()")
   end
 end 
 

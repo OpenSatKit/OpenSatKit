@@ -15,6 +15,8 @@ require "erb"
 module HwTarget
 
   PROCESSOR_ENDIAN = "LITTLE_ENDIAN"
-    
+   
+  CPU_ADDR_SIZE = 4
+   
 end # module HwTarget
 

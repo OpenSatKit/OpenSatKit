@@ -2,8 +2,9 @@
 # Flight Software Configuration Parameters
 #
 # Notes:
-#   1. All parameters are contained in this file.
-#   2. TODO - Modularize files. Use dictionary? May wait until EDS available
+#   1. All configuration parameters are contained in this file.
+#   2. The names are identical to the FSW #define
+#   3. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -28,7 +29,22 @@ module FswConfigParam
   ## cFE ##
   #########
 
-  CFE_TBL_MAX_NAME_LENGTH = 16
+  CFE_ES_CDS_MAX_NUM_ENTRIES     =  512
+  CFE_ES_MAX_APPLICATIONS        =   32
+  CFE_ES_ER_LOG_ENTRIES          =   20
+  CFE_ES_ER_LOG_MAX_CONTEXT_SIZE =  128
+  CFE_ES_SYSTEM_LOG_SIZE         = 3072
+  
+  CFE_EVS_LOG_MAX            =   20
+  CFE_EVS_MAX_EVENT_FILTERS  =    8
+  CFE_EVS_MAX_MESSAGE_LENGTH =  122
+  
+  CFE_SB_MAX_PIPES = 64
+
+  CFE_TBL_MAX_FULL_NAME_LEN  =   40
+  CFE_TBL_MAX_NAME_LENGTH    =   16
+  CFE_TBL_MAX_NUM_TABLES     =  128
+
   
   ########################
   ## App - Data Storage ##

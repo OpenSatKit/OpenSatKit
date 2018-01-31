@@ -27,6 +27,11 @@ module CfsKitConfig
     return HwTarget::PROCESSOR_ENDIAN
   end
 
+  # @return Current hardware platform's cpu address size
+  def self.cpu_addr_size
+    return HwTarget::CPU_ADDR_SIZE
+  end
+
   # @return CCSDS command header string for COSMOS command definition file
   def self.cmd_hdr(app_prefix, msg_id, func_code, data_len)
     return CcsdsCmdTlm.renderCmdHdr(MessageIds.get_msg_val(msg_id), func_code, data_len)

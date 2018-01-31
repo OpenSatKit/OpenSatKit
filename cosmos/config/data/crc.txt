@@ -64,7 +64,7 @@ USER_MODIFIED
 "config/targets/CFS_KIT/lib/bm_param_gen.rb" 0xFB3A63DF
 "config/targets/CFS_KIT/lib/bm_utility.rb" 0xA5056D31
 "config/targets/CFS_KIT/lib/cfe_file.rb" 0xAF5427A9
-"config/targets/CFS_KIT/lib/cfs_kit_screen.rb" 0x5C8127BC
+"config/targets/CFS_KIT/lib/cfs_kit_screen.rb" 0x8F81B1A8
 "config/targets/CFS_KIT/lib/file_mgmt_demo_screen.rb" 0xCABB3523
 "config/targets/CFS_KIT/lib/file_mgmt_screen.rb" 0xD0228F14
 "config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb" 0x8DEF4D7E
@@ -82,10 +82,11 @@ USER_MODIFIED
 "config/targets/CFS_KIT/lib/table_mgmt_demo_screen.rb" 0xEC70B462
 "config/targets/CFS_KIT/lib/table_mgmt_screen.rb" 0x897400CA
 "config/targets/CFS_KIT/lib/temp.txt" 0x9460F298
+"config/targets/CFS_KIT/screens/app_cfs_summary_screen.txt" 0x0BDFC1EB
+"config/targets/CFS_KIT/screens/app_kit_summary_screen.txt" 0xB943BFA1
 "config/targets/CFS_KIT/screens/app_mgmt_demo_info_screen.txt" 0x83C6DAEF
 "config/targets/CFS_KIT/screens/app_mgmt_demo_screen.txt" 0x3F92F468
 "config/targets/CFS_KIT/screens/app_mgmt_screen.txt" 0x089E4F0D
-"config/targets/CFS_KIT/screens/app_summary_screen.txt" 0x96AEB843
 "config/targets/CFS_KIT/screens/autonomy_mgmt_screen.txt" 0x191997B8
 "config/targets/CFS_KIT/screens/benchmark_screen.txt" 0x614E9AE8
 "config/targets/CFS_KIT/screens/cfs_kit_screen - Copy.txt" 0x977FDAF5
@@ -332,7 +333,7 @@ USER_MODIFIED
 "config/targets/SC/cmd_tlm/sc_tlm.txt" 0x430AB639
 "config/targets/TFTP/cmd_tlm/tftp_cmd.txt" 0xD52349C5
 "config/targets/TFTP/cmd_tlm/tftp_tlm.txt" 0x45456420
-"config/tools/cmd_tlm_server/cmd_tlm_server.txt" 0x19778178
+"config/tools/cmd_tlm_server/cmd_tlm_server.txt" 0x23384AFC
 "config/tools/data_viewer/data_viewer.txt" 0x93F33C77
 "config/tools/handbook_creator/default_toc.xsl" 0x4122A040
 "config/tools/handbook_creator/handbook_creator.txt" 0x64E4B5CC

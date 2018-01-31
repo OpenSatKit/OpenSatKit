@@ -142,11 +142,11 @@ def recorder_mgmt_demo(screen, button)
     case $rmd_step
       when 1
         display("CFS_KIT RECORDER_MGMT_SCREEN",500,50)    
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME DS, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME DS, BITMASK 0x01") # Enable debug events
       when 2..RMD_LAST_STEP
         # Keep case statement for maintenance
       else
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME DS, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME DS, BITMASK 0x01") # Disable debug events
         $rmd_step = 0
         clear("CFS_KIT RECORDER_MGMT_SCREEN")    
         clear("CFS_KIT RECORDER_MGMT_DEMO_SCREEN")

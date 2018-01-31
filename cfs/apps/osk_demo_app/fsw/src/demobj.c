@@ -1,5 +1,5 @@
 /*
-** Purpose: Implement the demo object for teh demo app.
+** Purpose: Implement the demo object for the demo app.
 **
 ** Notes:
 **   1. This serves as an example object that uses a table. It does not perform

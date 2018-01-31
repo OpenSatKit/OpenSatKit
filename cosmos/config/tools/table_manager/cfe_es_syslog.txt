@@ -1,0 +1,29 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "CFE_ES"
+  
+%>
+TABLE "CFE_ES SysLog" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Array of characters, length CFE_ES_SYSTEM_LOG_SIZE"
+  <%= CfsKitConfig.file_hdr %>
+
+  # This was to much for the GUI. I think it tried to put it in one cell
+  #APPEND_PARAMETER MSG 24576 STRING "UNDEF" "Message Text"
+  #   FORMAT_STRING  "%s"
+  
+  # TODO - Messages are variable length. Haven't figured out how to get the table tool to handle this.
+  # 128 x 24 = 3072. 128 x 8 = 1024 bits. 
+  # 128 string wouldn't display as characters so I did 48 64 byte strings
+  # CFE_ES_MAX_SYSLOG_MSG_SIZE = CFE_EVS_MAX_MESSAGE_LENGTH + CFE_TIME_PRINTED_STRING_SIZE + 1
+  #                            = 122 + 24 + 1
+  <% 
+    #max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
+    max_entries = 10
+    append_items = ""
+    for i in 1..max_entries
+      append_items << "APPEND_PARAMETER \"MSG#{i}\" 1336 STRING \"UNDEF\"     \"Message Text\"" << "\n"
+      #append_items << "  FORMAT_STRING  \"%s\"" << "\n"
+    end
+  %>
+  <%= append_items %>

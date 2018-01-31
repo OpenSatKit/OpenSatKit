@@ -1,0 +1,24 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "CFE_ES"
+  @MAX_TASKS      = "OS_MAX_TASKS"
+  
+%>
+TABLE "CFE_ES TaskInfo" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "Task Info"
+  <%= CfsKitConfig.file_hdr %>
+
+  <% 
+    max_tasks = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_TASKS)
+    append_items = ""
+    for i in 1..max_tasks
+      append_items << "APPEND_PARAMETER \"TASK#{i}_ID\"            32 UINT 0 MAX_UINT32 0  \"ID assigned by ES when created\"" << "\n"
+      append_items << "APPEND_PARAMETER \"TASK#{i}_EXECUTION_CTR\" 32 UINT 0 MAX_UINT32 0  \"Execution counter\"" << "\n"
+      append_items << "APPEND_PARAMETER \"TASK#{i}_NAME\"         160 STRING \"UNDEF\"     \"Registered task Name\"" << "\n"
+      append_items << "APPEND_PARAMETER \"TASK#{i}_APP_ID\"        32 UINT 0 MAX_UINT32 0  \"Parent application ID\"" << "\n"
+      append_items << "APPEND_PARAMETER \"TASK#{i}_APP_NAME\"     160 STRING \"UNDEF\"     \"Parent application name\"" << "\n"
+    end
+  %>
+  <%= append_items %>
+  

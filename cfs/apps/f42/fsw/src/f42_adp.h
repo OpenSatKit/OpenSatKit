@@ -29,12 +29,22 @@
 #include "cfe.h"
 #include "fswtypes.h"  /* 42 FSW Types */
 #include "app_cfg.h"
+#include "ctrltbl.h"
 
 /*
 ** Event Message IDs
+** - Since this is an educational app many events are defined as informational. A
+**   flight app should minimize "event clutter" and define soem of these as debug.
 */
 
-#define F42_ADP_INVALID_MODE_ERR_EID  (F42_ADP_BASE_EID +  0)
+#define F42_ADP_SET_MODE_INFO_EID            (F42_ADP_BASE_EID + 0)
+#define F42_ADP_INVALID_MODE_ERR_EID         (F42_ADP_BASE_EID + 1)
+#define F42_ADP_SET_FAULT_INFO_EID           (F42_ADP_BASE_EID + 2)
+#define F42_ADP_INVALID_FAULT_STATE_ERR_EID  (F42_ADP_BASE_EID + 3)
+#define F42_ADP_INVALID_FAULT_ID_ERR_EID     (F42_ADP_BASE_EID + 4)
+#define F42_ADP_SET_SUN_TARGET_INFO_EID      (F42_ADP_BASE_EID + 5)
+#define F42_ADP_INVALID_SUN_TARGET_ERR_EID   (F42_ADP_BASE_EID + 6)
+
 
 /*
 ** Control Modes
@@ -42,6 +52,27 @@
 
 #define F42_ADP_MODE_INIT    1
 #define F42_ADP_MODE_SUN_ACQ 2
+
+/*
+** Fault Identifiers
+*/
+
+#define F42_ADP_FAULT_CSS    0
+#define F42_ADP_FAULT_SPARE  1
+#define F42_ADP_FAULT_ID_MAX 1
+#define F42_ADP_FAULT_ID_CNT 2
+
+/*
+** Sun Targets
+*/
+
+#define F42_ADP_SUN_TARGET_X_AXIS_PLUS    0
+#define F42_ADP_SUN_TARGET_X_AXIS_MINUS   1
+#define F42_ADP_SUN_TARGET_Y_AXIS_PLUS    2
+#define F42_ADP_SUN_TARGET_Y_AXIS_MINUS   3
+#define F42_ADP_SUN_TARGET_Z_AXIS_PLUS    4
+#define F42_ADP_SUN_TARGET_Z_AXIS_MINUS   5
+#define F42_ADP_SUN_TARGET_ID_MAX         5
 
 /*
 ** Type Definitions
@@ -111,7 +142,13 @@ typedef struct
 
 typedef struct {
 
+   boolean Fault[F42_ADP_FAULT_ID_CNT];   
+  
    uint16  ControlMode;
+   uint16  SunTargetAxis;
+
+   CTRLTBL_Class CtrlTbl;
+  
    F42_FSW Fsw;
    
    F42_ADP_ActuatorPkt  ActuatorPkt;
@@ -130,6 +167,26 @@ typedef struct
 
 }  OS_PACK F42_ADP_SetModeCmdPkt;
 #define F42_ADP_SET_MODE_CMD_DATA_LEN  (sizeof(F42_ADP_SetModeCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+
+typedef struct
+{
+
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   int8     Id;
+   boolean  State;
+
+}  OS_PACK F42_ADP_SetFaultCmdPkt;
+#define F42_ADP_SET_FAULT_CMD_DATA_LEN  (sizeof(F42_ADP_SetFaultCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+
+typedef struct
+{
+
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint16   Axis;
+
+}  OS_PACK F42_ADP_SetSunTargetCmdPkt;
+#define F42_ADP_SET_SUN_TARGET_CMD_DATA_LEN  (sizeof(F42_ADP_SetSunTargetCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+
 
 /*
 ** Exported Functions
@@ -172,4 +229,42 @@ void F42_ADP_ResetStatus(void);
 boolean F42_ADP_SetModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
-#endif /* _42fsw_adp_ */
+/******************************************************************************
+** Function: F42_ADP_SetFaultCmd
+**
+** Set/Clear the command specified fault (F42_ADP_FAULT_xxx).
+*/
+boolean F42_ADP_SetFaultCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: F42_ADP_SetSunTargetCmd
+**
+** Set the spacecraft body axis to be used as the sun target. See
+** F42_ADP_SUN_TARGET_xxx for axis definitions.
+*/
+boolean F42_ADP_SetSunTargetCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: F42_ADP_GetCtrlTblPtr
+**
+*/
+const CTRLTBL_Struct* F42_ADP_GetCtrlTblPtr();
+
+
+/******************************************************************************
+** Function: F42_ADP_LoadCtrlTbl
+**
+*/
+boolean F42_ADP_LoadCtrlTbl(CTRLTBL_Struct* NewTbl);
+
+
+/******************************************************************************
+** Function: F42_ADP_LoadCtrlTblEntry
+**
+*/
+boolean F42_ADP_LoadCtrlTblEntry(uint16 ObjId, void* ObjData);
+
+
+#endif /* _f42_adp_ */

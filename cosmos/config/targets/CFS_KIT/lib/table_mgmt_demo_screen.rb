@@ -145,11 +145,11 @@ def table_mgmt_demo(screen, button)
     case $tmd_step
       when 1
         display("CFS_KIT TABLE_MGMT_SCREEN",500,50)    
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME CFE_TBL, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_TBL, BITMASK 0x01") # Enable debug events
       when 2..TMD_LAST_STEP
         # Keep case statement for maintenance
       else
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME CFE_TBL, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_TBL, BITMASK 0x01") # Disable debug events
         $tmd_step = 0
         clear("CFS_KIT TABLE_MGMT_SCREEN")
         clear("CFS_KIT TABLE_MGMT_DEMO_SCREEN")
@@ -163,7 +163,7 @@ def table_mgmt_demo(screen, button)
       # 1 - Send table registry cmd
       when 1
         if ($tmd_demo == 0)
-          cmd("CFE_TBL TLM_REGISTRY with TABLENAME #{TMD_TBL_NAME}")
+          cmd("CFE_TBL TLM_REGISTRY with TABLE_NAME #{TMD_TBL_NAME}")
           # Don't increment tmd_demo; okay if user repeatedly sends the registry cmd
         end
       
@@ -173,7 +173,7 @@ def table_mgmt_demo(screen, button)
           cmd_valid_cnt = tlm("CFE_TBL HK_TLM_PKT CMD_VALID_COUNT")
           cmd_error_cnt = tlm("CFE_TBL HK_TLM_PKT CMD_ERROR_COUNT")
           seq_cnt = tlm("CFE_TBL HK_TLM_PKT CCSDS_SEQUENCE")
-          cmd("CFE_TBL DUMP_TBL with ACTIVETBLFLAG 1, TABLENAME #{TMD_TBL_NAME}, DUMPFILENAME #{TMD_FLT_TMP_FILE}")
+          cmd("CFE_TBL DUMP_TBL with ACTIVE_TBL_FLAG 1, TABLE_NAME #{TMD_TBL_NAME}, DUMP_FILENAME #{TMD_FLT_TMP_FILE}")
           wait("CFE_TBL HK_TLM_PKT CCSDS_SEQUENCE != #{seq_cnt}", 10)  # Delay until updated sequence count or timeout
           if ( (tlm("CFE_TBL HK_TLM_PKT CMD_VALID_COUNT") != (cmd_valid_cnt + 1)) || 
                (tlm("CFE_TBL HK_TLM_PKT CMD_ERROR_COUNT") !=  cmd_error_cnt))

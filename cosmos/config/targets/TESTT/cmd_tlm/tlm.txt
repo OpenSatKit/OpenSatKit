@@ -1,0 +1,4 @@
+TELEMETRY TESTT STATUS BIG_ENDIAN "Status telemetry"
+  APPEND_ID_ITEM OPCODE 16 UINT 0x1 "Opcode which identifies this packet"
+  APPEND_ITEM COUNT 16 UINT "Packet counter"
+  APPEND_ITEM VALUE 0 STRING "String which consumes the rest of the packet"

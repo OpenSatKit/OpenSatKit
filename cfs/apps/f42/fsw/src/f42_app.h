@@ -46,6 +46,8 @@ typedef struct
    CFE_SB_PipeId_t  SensorPipe;
 
    CMDMGR_Class     CmdMgr;
+   TBLMGR_Class     TblMgr;
+   
    F42_ADP_Class    F42Adp;
 
    uint32           ControllerExeCnt;
@@ -64,6 +66,14 @@ typedef struct
    uint16   InvalidCmdCnt;
 
    /*
+   ** TBLMGR Data 
+   ** - Loaded with status from the last table action 
+   */
+
+   uint8    LastAction;
+   uint8    LastActionStatus;
+   
+   /*
    ** Application Data
    */
    
@@ -74,6 +84,11 @@ typedef struct
    */
    
    uint16   ControlMode;
+   uint8    SunTargetAxis;
+   boolean  CssFault;
+
+   float    Kr[3];
+   float    Kp[3];
    
 } OS_PACK F42_APP_HkPkt;
 #define F42_APP_TLM_HK_LEN sizeof (F42_APP_HkPkt)

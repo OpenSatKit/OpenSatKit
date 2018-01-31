@@ -15,20 +15,52 @@ TITLE "42 Simulation"
   SETTING TEXTCOLOR black
 
 VERTICALBOX 
-  MATRIXBYCOLUMNS 2
-    BUTTON 'Run Sim'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RUN")'
-    BUTTON 'Connect to 42' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONNECT")'
+  MATRIXBYCOLUMNS 3
+    BUTTON 'Run Sim'          'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RUN")'
+    BUTTON 'Reconnect to 42'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONNECT")'
+    BUTTON 'Change Gains'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CHANGE_GAINS")'
+    BUTTON 'Set Ctrl Mode'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_CTRL_MODE")'
+    BUTTON 'Set Sun Axis'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_SUN_AXIS")'
+    BUTTON 'Config CSS Fault' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONFIG_CSS_FAULT")'
   END # Matrix
-  LABEL ' '
+
   HORIZONTAL
-    LABEL 'Ctrl Exe Cnt' 
-    VALUE F42 HK_TLM_PKT CTRL_EXEC_COUNT
-    LABEL '42 Cycles'
-    VALUE I42 HK_TLM_PKT CONNECT_CYCLES
-    LABEL 'Sun Present' 
-    VALUE F42 CONTROL_PKT SUN_VALID
+    VERTICALBOX I42 App
+      MATRIXBYCOLUMNS 2
+        LABEL 'Cmd Valid' 
+        VALUE I42 HK_TLM_PKT CMD_VALID_COUNT FORMATTED 8
+        LABEL 'Cmd Error' 
+        VALUE I42 HK_TLM_PKT CMD_ERROR_COUNT FORMATTED 8
+        LABEL '42 Connected' 
+        VALUE I42 HK_TLM_PKT CONNECTED FORMATTED 8
+        LABEL '42 Cycles'
+        VALUE I42 HK_TLM_PKT CONNECT_CYCLES FORMATTED 8
+        LABEL 'Sensor Pkts'
+        VALUE I42 HK_TLM_PKT SENSOR_PKT_CNT FORMATTED 8
+        LABEL 'Actuator Pkts'
+        VALUE I42 HK_TLM_PKT ACTUATOR_PKT_CNT FORMATTED 8
+      END # Matrix
+    END # Vertical Box
+    VERTICALBOX F42 App
+      MATRIXBYCOLUMNS 2
+        LABEL 'Cmd Valid' 
+        VALUE F42 HK_TLM_PKT CMD_VALID_COUNT FORMATTED 8
+        LABEL 'Cmd Error' 
+        VALUE F42 HK_TLM_PKT CMD_ERROR_COUNT FORMATTED 8
+        LABEL 'Control Exec Cnt' 
+        VALUE F42 HK_TLM_PKT CTRL_EXEC_COUNT FORMATTED 8
+        LABEL 'Ctrl Mode'
+        VALUE F42 HK_TLM_PKT CTRL_MODE FORMATTED 8
+        LABEL 'Sun Target'
+        VALUE F42 HK_TLM_PKT SUN_TARGET_AXIS FORMATTED 8
+        LABEL 'Sun Present' 
+        VALUE F42 CONTROL_PKT SUN_VALID FORMATTED 8
+        LABEL 'CSS Fault' 
+        VALUE F42 HK_TLM_PKT CSS_FAULT FORMATTED 8
+      END # Matrix
+    END # Vertical Box
   END # Horizontal
-  LABEL ' '
+
   VERTICALBOX "CSS Counts"
     MATRIXBYCOLUMNS 4
       LABEL '  CSS 1'
@@ -41,17 +73,32 @@ VERTICALBOX
       VALUE F42 CONTROL_PKT CSS_4_COUNT
     END # Matrix
   END # Vertical Box
-  LABEL ' '
+
+  VERTICALBOX "Theta Error"
+    MATRIXBYCOLUMNS 4
+      LABEL '   X-Axis'
+      LABEL '   Y-Axis'
+      LABEL '   Z-Axis'
+      LABEL '         '
+      VALUE F42 CONTROL_PKT THERR_1
+      VALUE F42 CONTROL_PKT THERR_2
+      VALUE F42 CONTROL_PKT THERR_3
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_THETA_ERR")'
+    END # Matrix
+  END # Vertical Box
   VERTICALBOX "Wheel Torque Commands"
-    MATRIXBYCOLUMNS 3
-      LABEL '  Whl 1'
-      LABEL '  Whl 2'
-      LABEL '  Whl 3'
+    MATRIXBYCOLUMNS 4
+      LABEL '   Wheel 1'
+      LABEL '   Wheel 2'
+      LABEL '   Wheel 3'
+      LABEL '          '
       VALUE F42 CONTROL_PKT TWHLCMD_1
       VALUE F42 CONTROL_PKT TWHLCMD_2
       VALUE F42 CONTROL_PKT TWHLCMD_3
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_WHEEL_CMD")'
     END # Matrix
   END # Vertical Box
+
 END # Vertical Box
 
 HORIZONTALLINE

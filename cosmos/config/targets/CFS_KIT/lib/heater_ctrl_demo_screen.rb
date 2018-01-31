@@ -96,15 +96,15 @@ def heater_demo(screen, button)
       line6.text = LABEL_3[5]
     end
   elsif (button == "ENABLE")
-    cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME LC, BITMASK 0x01") # Enable debug events
-    cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME SC, BITMASK 0x01") # Enable debug events
+    cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME LC, BITMASK 0x01") # Enable debug events
+    cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME SC, BITMASK 0x01") # Enable debug events
     cmd("HC HEATER_CONTROL with HCTYPE BATTERY, HCSTATUS ENABLED")
     cmd("HC HEATER_CONTROL with HCTYPE PROPULSION, HCSTATUS ENABLED")
     cmd("SC ENABLE_RTS with RTS_ID 3")
     cmd("SC START_RTS with RTS_ID 3")
   elsif (button == "DISABLE")
-    cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME LC, BITMASK 0x01") # Disable debug events
-    cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME SC, BITMASK 0x01") # Disable debug events
+    cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME LC, BITMASK 0x01") # Disable debug events
+    cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME SC, BITMASK 0x01") # Disable debug events
     cmd("HC HEATER_CONTROL with HCTYPE BATTERY, HCSTATUS DISABLED")
     cmd("HC HEATER_CONTROL with HCTYPE PROPULSION, HCSTATUS DISABLED")
     #cmd("SC DISABLE_RTS with RTS_ID 3")

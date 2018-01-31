@@ -177,15 +177,15 @@ def file_mgmt_demo(screen, button)
     case $fmd_step
       when 1
         display("CFS_KIT FILE_MGMT_SCREEN",500,50)    
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME FM, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01") # Enable debug events
         wait (1)
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME TFTP, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME TFTP, BITMASK 0x01") # Enable debug events
       when 2..FMD_LAST_STEP
         # Keep case statement for maintenance
       else
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME FM, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01") # Disable debug events
         wait (1)
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME TFTP, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME TFTP, BITMASK 0x01") # Disable debug events
         $fmd_step = 0
         clear("CFS_KIT FILE_MGMT_SCREEN")
         clear("CFS_KIT FILE_MGMT_DEMO_SCREEN")

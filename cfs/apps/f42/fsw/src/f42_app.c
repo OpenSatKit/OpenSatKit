@@ -39,9 +39,11 @@ F42_APP_Class   F42App;
 F42_APP_HkPkt   F42AppHkPkt;
 F42_APP_CtrlPkt F42AppCtrlPkt;
    
-
-#define  CMDMGR_OBJ  (&(F42App.CmdMgr))  /* Convenience macro */
-#define  F42_ADP_OBJ (&(F42App.F42Adp))  /* Convenience macro */
+/* Convenience macro */
+#define  CMDMGR_OBJ  (&(F42App.CmdMgr))  
+#define  TBLMGR_OBJ  (&(F42App.TblMgr))
+#define  F42_ADP_OBJ (&(F42App.F42Adp))
+#define  CTRLTBL_OBJ (&(F42App.F42Adp.CtrlTbl))
 
 /******************************************************************************
 ** Function: F42_AppMain
@@ -125,10 +127,12 @@ boolean F42_APP_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean F42_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
+   CMDMGR_ResetStatus(CMDMGR_OBJ);
+   TBLMGR_ResetStatus(TBLMGR_OBJ);
+
    F42App.ControllerExeCnt = 0;
    F42_ADP_ResetStatus();
-   CMDMGR_ResetStatus(CMDMGR_OBJ);
-
+	  
    return TRUE;
 
 } /* End F42_APP_ResetAppCmd() */
@@ -140,13 +144,18 @@ boolean F42_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 */
 void F42_APP_SendHousekeepingPkt(void)
 {
-
+   int i;
+   const TBLMGR_Tbl* LastTbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
+	  
    /*
    ** F42 Application Data
    */
 
    F42AppHkPkt.ValidCmdCnt   = F42App.CmdMgr.ValidCmdCnt;
    F42AppHkPkt.InvalidCmdCnt = F42App.CmdMgr.InvalidCmdCnt;
+
+   F42AppHkPkt.LastAction       = LastTbl->LastAction;
+   F42AppHkPkt.LastActionStatus = LastTbl->LastActionStatus;
 
    F42AppHkPkt.ControllerExeCnt = F42App.ControllerExeCnt;
 
@@ -155,6 +164,14 @@ void F42_APP_SendHousekeepingPkt(void)
    */
 
    F42AppHkPkt.ControlMode   = F42App.F42Adp.ControlMode;
+
+   F42AppHkPkt.SunTargetAxis = F42App.F42Adp.SunTargetAxis;
+   F42AppHkPkt.CssFault      = F42App.F42Adp.Fault[F42_ADP_FAULT_CSS];
+
+   for (i=0; i < 3; i++) {
+      F42AppHkPkt.Kr[i] = F42App.F42Adp.Fsw.Kr[i];
+      F42AppHkPkt.Kp[i] = F42App.F42Adp.Fsw.Kp[i];
+   }
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &F42AppHkPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &F42AppHkPkt);
@@ -189,7 +206,15 @@ static int32 InitApp(void)
     CMDMGR_Constructor(CMDMGR_OBJ);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, F42_APP_NoOpCmd,     0);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, F42_APP_ResetAppCmd, 0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_MODE_CMD_FC, F42_ADP_OBJ, F42_ADP_SetModeCmd, F42_ADP_SET_MODE_CMD_DATA_LEN);
+
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_TBL_LOAD_CMD_FC,       TBLMGR_OBJ, TBLMGR_LoadTblCmd,        TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_TBL_DUMP_CMD_FC,       TBLMGR_OBJ, TBLMGR_DumpTblCmd,        TBLMGR_DUMP_TBL_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_MODE_CMD_FC,       F42_ADP_OBJ, F42_ADP_SetModeCmd,      F42_ADP_SET_MODE_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_FAULT_CMD_FC,      F42_ADP_OBJ, F42_ADP_SetFaultCmd,     F42_ADP_SET_FAULT_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_SUN_TARGET_CMD_FC, F42_ADP_OBJ, F42_ADP_SetSunTargetCmd, F42_ADP_SET_SUN_TARGET_CMD_DATA_LEN);
+
+	TBLMGR_Constructor(TBLMGR_OBJ);
+    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, CTRLTBL_LoadCmd,  CTRLTBL_DumpCmd,  F42_APP_CTRL_TBL_DEF_LOAD_FILE);
 
     CFE_SB_CreatePipe(&F42App.SensorPipe,F42_SENSOR_PIPE_DEPTH, F42_SENSOR_PIPE_NAME);
     CFE_SB_Subscribe(F42_SENSOR_MID, F42App.SensorPipe);

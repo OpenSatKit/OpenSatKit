@@ -29,7 +29,7 @@ def perf_mon_launch_app(screen, app)
     spawn("java -jar #{CFS_KIT_PERF_MON_DIR}/CPM.jar")
     #spawn("java -jar #{Cosmos::USERPATH}/../cfs/tools/perfutils-java/CPM.jar")
   else
-    prompt("Error in screen definition file. Undefined commmand sent to perf_mon_launch_app()")
+    prompt("Error in screen definition file. Undefined command sent to perf_mon_launch_app()")
   end
 
 end # perf_mon_launch_app()

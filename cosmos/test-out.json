@@ -1,0 +1,13 @@
+{
+  "name": "CubeSat Controller",
+  "description": "Attitude Control Parameters",
+  "moment-of-inertia": {
+    "x": 0.1198352,
+    "y": 0.1477797,
+    "z": 0.0449084
+  },
+  "pd-gain-param": {
+    "w": 0.628,
+    "z": 0.7
+  }
+}

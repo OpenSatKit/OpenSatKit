@@ -83,7 +83,7 @@ def memory_mgmt_send_cmd(screen, cmd)
   elsif (cmd == "TODO")
     prompt("Feature coming soon...")
   else
-    prompt("Error in screen definition file. Undefined commmand sent to memory_mgmt_send_cmd()")
+    prompt("Error in screen definition file. Undefined command sent to memory_mgmt_send_cmd()")
   end
   
 end # memory_mgmt_send_cmd()

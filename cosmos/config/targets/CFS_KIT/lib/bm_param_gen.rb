@@ -2,7 +2,7 @@
 # cFS Benchmarking Tool Parameter Generation Script
 #
 # Notes:
-#   1. Written by DIan Wilmoth, licensed under the copyleft GNU
+#   1. Written by Ian Wilmoth, licensed under the copyleft GNU
 #      General Public License (GPL).
 #   2. Parameter definitions and notes can be found in params.txt
 #

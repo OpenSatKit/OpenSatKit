@@ -197,14 +197,14 @@ def memory_mgmt_demo(screen, button)
       when 1
         display("CFS_KIT MEMORY_MGMT_SCREEN",500,50)    
         display("MD DWELL_PKT_SCREEN",500,50)    
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME MM, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Enable debug events
         wait (1)
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME MD, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Enable debug events
       when 2..MMD_LAST_STEP
         # Keep case statement for maintenance
       else
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME MM, BITMASK 0x01") # Disable debug events
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME MD, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Disable debug events
         $mmd_step = 0
         clear("CFS_KIT MEMORY_MGMT_SCREEN")    
         clear("MD DWELL_PKT_SCREEN")    

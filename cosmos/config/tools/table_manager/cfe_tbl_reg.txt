@@ -1,0 +1,49 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "CFE_TBL"
+  @MAX_NUM_TABLES = "CFE_TBL_MAX_NUM_TABLES"
+  
+%>
+TABLE "CFE_TBL Registry" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Table Registry"
+  <%= CfsKitConfig.file_hdr %>
+
+  <% 
+    max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_TABLES)
+    append_items = ""
+    for i in 1..max_entries
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_SIZE\"              32 UINT 0 MAX_UINT32 0  \"Size in bytes\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_SYS_TIME_SECONDS\"  32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_SYS_TIME_SUBSECS\"  32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_NUM_USERS\"         32 UINT 0 MAX_UINT32 0  \"Number of apps sharing the table\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_LOAD_IN_PROGRESS\"  32  INT 0 MAX_INT32  0  \"Identifies inactive buffer and whether load is in progress\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_FILE_TIME_SECONDS\" 32 UINT 0 MAX_UINT32 0  \"File creation time from last file loaded into table\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_FILE_TIME_SUBSECS\" 32 UINT 0 MAX_UINT32 0  \"File creation time from last file loaded into table\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_CRC\"               32 UINT 0 MAX_UINT32 0  \"Most recent CRC computed by TBL Services on table contents\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_VALIDATION_FUNC\"    8 UINT 0 MAX_UINT8  0  \"Is there a validation function?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_LOADED_ONCE\"        8 UINT 0 MAX_UINT8  0  \"Has the table been loaded once?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_LOAD_PENDING\"       8 UINT 0 MAX_UINT8  0  \"Is an inactive buffer ready to be loaded?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DUMP_ONLY\"          8 UINT 0 MAX_UINT8  0  \"Is this dump-only?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DBL_BUFFERED\"       8 UINT 0 MAX_UINT8  0  \"Is this double buffered?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_NAME\"             320 STRING \"UNDEF\"     \"Table name\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_LAST_FILE_LOADED\" 512 STRING \"UNDEF\"     \"File name of last table load\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_OWNER_APP_NAME\"   160 STRING \"UNDEF\"     \"Name of app that registered the table\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_CRITICAL\"           8 UINT 0 MAX_UINT8  0  \"Is this a critical table?\"" << "\n"
+      append_items << "   STATE FALSE 0" << "\n"
+      append_items << "   STATE TRUE  1" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_PAD16_1\"            16 UINT 0 MAX_UINT16 0  \"Longword alignment\"" << "\n"
+    end
+  %>
+  <%= append_items %>

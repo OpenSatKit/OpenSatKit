@@ -1,0 +1,8 @@
+# Ignored Parameters
+IGNORE_PARAMETER OPCODE
+
+# Ignored Items
+IGNORE_ITEM OPCODE
+
+# Automatically substitute the target name in screen definitions
+AUTO_SCREEN_SUBSTITUTE

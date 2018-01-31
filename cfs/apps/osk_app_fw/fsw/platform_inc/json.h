@@ -124,7 +124,7 @@ void JSON_Constructor(JSON_Class* Json, char* FileBuf, jsmntok_t* FileTokens);
 **    
 **
 */
-boolean JSON_OpenFile(JSON_Class* Json, char* FileName);
+boolean JSON_OpenFile(JSON_Class* Json, const char* FileName);
 
 
 /******************************************************************************
@@ -215,12 +215,12 @@ boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* S
 
 
 /******************************************************************************
-** Function: JSON_GetValFloat
+** Function: JSON_GetValDouble
 **
 ** Notes:
 **    
 */
-boolean JSON_GetValFloat(JSON_Class* Json, int ContainTokenIdx, char* Key, double* FloatVal);
+boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, double* DoubleVal);
 
 
 /******************************************************************************

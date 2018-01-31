@@ -1,0 +1,21 @@
+{
+   "tutorials": [
+      {
+         "name":   "cFE",
+         "directory": "cfe",
+         "button": "cFE",
+         "description": "Core Flight Executive",
+		 "user-prompt": "Select tutorial",
+         "lessons": ["ES","TBL"]
+      },
+      {
+         "name":   "Operational Applications",
+         "directory": "op_apps",
+         "button": "Op Apps",
+         "description": "Apps that provide an operational runtime environment",		 
+         "user-prompt": "Select tutorial",
+	     "lessons": ["CI","SCH","TO","HK","SC","SBN"]
+      } 
+   ]
+}
+

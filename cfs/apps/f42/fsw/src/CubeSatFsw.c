@@ -5,7 +5,6 @@
 **   1. This is part of prototype effort to port a 42 simulator FSW controller
 **      component into a cFS-based application. The goal is to be able to port
 **      the 42 code code unchanged and have it run as a cFS app.
-**   2. 
 **
 ** References:
 **   1. See 42 open source repository at https://sourceforge.net/projects/fortytwospacecraftsimulation/
@@ -17,9 +16,11 @@
 #include "fswkit.h"
 #include "iokit.h"
 #include "mathkit.h"
+#include "CubeSatFsw.h"
 
 #define FALSE 0
 #define TRUE 1
+
 
 //#ifdef __cplusplus
 //namespace _42 {
@@ -92,7 +93,7 @@ void CssProc(struct FSWType *FSW)
       struct FswCssType *Css;
       double Threshold = 0.2; /* Min Illum threshold */
       double SqrtHalf = sqrt(0.5);
-      double TempDbl;  //dcm
+      //dcm double TempDbl;  
       long Nillum;
       long i;
 
@@ -113,6 +114,7 @@ void CssProc(struct FSWType *FSW)
       FSW->svb[2] = SqrtHalf*(FSW->Css[1].Illum - FSW->Css[3].Illum);
       /* Y Component */
       FSW->svb[1] = sqrt(1.0-FSW->svb[0]*FSW->svb[0]-FSW->svb[2]*FSW->svb[2]);
+      //Potential divide-by-zero protection
       //dcmTempDbl = 1.0 - (FSW->svb[0]*FSW->svb[0]-FSW->svb[2]*FSW->svb[2]);
       //dcmOS_printf("TempDbl = %.10f\n",TempDbl);
       //dcmif (TempDbl > 0.0000001) {
@@ -126,31 +128,63 @@ void CssProc(struct FSWType *FSW)
 }
 /**********************************************************************/
 /* Model of CubeSat FSW                                               */
-void CubeSatFSW(struct FSWType *FSW)
+//dcm void CubeSatFSW(struct FSWType *FSW)
+void CubeSatFSW(struct FSWType *FSW, unsigned SunTarget, unsigned CssFault)
 {
       long i;
 
       if (FSW->Init) {
          FSW->Init = FALSE;
-         for(i=0;i<3;i++) FindPDGains(FSW->MOI[i],0.1*6.28,0.7,
-            &FSW->Kr[i],&FSW->Kp[i]);
+         //dcm for(i=0;i<3;i++) FindPDGains(FSW->MOI[i],0.1*6.28,0.7,
+         //dcm    &FSW->Kr[i],&FSW->Kp[i]);
       }
 
       CssProc(FSW);
 
       /* Point +Y axis at Sun */
-      if (FSW->SunValid) {
+      if (FSW->SunValid && !CssFault) {
          FSW->wrn[0] = 0.0;
-         FSW->therr[0] = -FSW->svb[2];
-         FSW->therr[2] =  FSW->svb[0];
+		 switch (SunTarget) {
+		    case CUBESATFSW_SUN_TARGET_X_AXIS_PLUS:
+               FSW->therr[0] =  0.0;
+               FSW->therr[1] = -FSW->svb[2];
+               FSW->therr[2] =  FSW->svb[0];
+			   break;
+		    case CUBESATFSW_SUN_TARGET_X_AXIS_MINUS:
+               FSW->therr[0] =  0.0;
+               FSW->therr[1] =  FSW->svb[2];
+               FSW->therr[2] =  FSW->svb[0];
+			   break;
+		    case CUBESATFSW_SUN_TARGET_Y_AXIS_MINUS:
+               FSW->therr[0] =  FSW->svb[2];
+               FSW->therr[1] =  0.0;
+               FSW->therr[2] =  FSW->svb[0];
+			   break;
+		    case CUBESATFSW_SUN_TARGET_Z_AXIS_PLUS:
+               FSW->therr[0] = -FSW->svb[2];
+               FSW->therr[1] =  FSW->svb[0];
+               FSW->therr[2] =  0.0;
+			   break;
+		    case CUBESATFSW_SUN_TARGET_Z_AXIS_MINUS:
+               FSW->therr[0] =  FSW->svb[2];
+               FSW->therr[1] =  FSW->svb[0];
+               FSW->therr[2] =  0.0;
+			   break;
+		    case CUBESATFSW_SUN_TARGET_Y_AXIS_PLUS:
+			default:
+               FSW->therr[0] = -FSW->svb[2];
+               FSW->therr[1] =  0.0;
+               FSW->therr[2] =  FSW->svb[0];
+			   break;			
+		 } /* End SunTarget switch */
       }
       else {
          /* Sun-seeking slow roll */
          FSW->wrn[0] = 360.0/2600.0*3.1416/180.0;
          FSW->therr[0] = 0.0;
+         FSW->therr[1] = 0.0;
          FSW->therr[2] = 0.0;
       }
-      FSW->therr[1] = 0.0;
       FSW->wrn[1] = 0.0;
       FSW->wrn[2] = 0.0;
 
@@ -160,7 +194,9 @@ void CubeSatFSW(struct FSWType *FSW)
          FSW->Twhlcmd[i] = -FSW->Tcmd[i];
       }
 }
-/**********************************************************************
+
+
+/*DCM*****************************************************************
 long ReadSensorSignalsFromSocket(struct FSWType *FSW, FILE* Stream)
 {
       char line[512];
@@ -210,7 +246,7 @@ int main(int argc, char **argv)
       }
       return(0);
 }
-*/
+DCM*/
 
 //#ifdef __cplusplus
 //}

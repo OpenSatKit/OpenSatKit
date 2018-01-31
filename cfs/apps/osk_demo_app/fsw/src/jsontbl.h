@@ -20,8 +20,8 @@
 **   2. cFS Application Developer's Guide.
 **
 */
-#ifndef _jsonftbl_
-#define _jsonftbl_
+#ifndef _jsontbl_
+#define _jsontbl_
 
 /*
 ** Includes
@@ -120,7 +120,7 @@ typedef struct {
 **   1. The table values are not populated. This is done when the table is 
 **      registered with the table manager.
 */
-void JOSNTBL_Constructor(JSONTBL_Class* ObjPtr,
+void JSONTBL_Constructor(JSONTBL_Class* ObjPtr,
                          JSONTBL_GetTblPtr    GetTblPtrFunc,
                          JSONTBL_LoadTbl      LoadTblFunc, 
                          JSONTBL_LoadTblEntry LoadTblEntryFunc);

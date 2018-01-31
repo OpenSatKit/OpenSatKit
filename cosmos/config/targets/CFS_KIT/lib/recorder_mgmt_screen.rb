@@ -108,7 +108,7 @@ def recorder_mgmt_send_cmd(screen, cmd)
     mem_file_name = ask_string("Enter full FSW path/filename file to received the dump")
     prompt("Feature coming soon...")
   else
-    prompt("Error in screen definition file. Undefined commmand sent to recorder_mgmt_send_cmd()")
+    prompt("Error in screen definition file. Undefined command sent to recorder_mgmt_send_cmd()")
   end
   
 end # recorder_mgmt_send_cmd()

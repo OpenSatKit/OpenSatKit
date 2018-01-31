@@ -30,5 +30,6 @@
 
 #define  F42_APP_SENSOR_TIMEOUT   1500  /* Pend timeout (ms) for sensor data read */
  
+#define  F42_APP_CTRL_TBL_DEF_LOAD_FILE  "/cf/f42_ctrl_tbl.json"
 
 #endif /* _f42_platform_cfg_ */

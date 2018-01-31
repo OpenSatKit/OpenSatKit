@@ -26,10 +26,10 @@ def table_mgmt_send_cmd(screen, cmd)
 
 	if (cmd == "LOAD_TABLE")
     tbl_file_name = ask_string("Enter full FSW path/filename of table file to be loaded.")
-    cmd("CFE_TBL LOAD_TBL with LOADFILENAME #{tbl_file_name}")
+    cmd("CFE_TBL LOAD_TBL with LOAD_FILENAME #{tbl_file_name}")
 	elsif (cmd == "ABORT_TABLE_LOAD")
     tbl_name = ask_string("Enter complete table name (app.table) of load to be aborted.")
-    cmd("CFE_TBL ABORT_LOAD with TABLENAME #{tbl_name}")
+    cmd("CFE_TBL ABORT_LOAD with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "DUMP_TABLE")
     tbl_name = ask_string("Enter complete table name (app.table) of table to be dumped.")
     tbl_file_name = ask_string("Enter full FSW path/filename of file to received the table")
@@ -39,7 +39,7 @@ def table_mgmt_send_cmd(screen, cmd)
     else
       buffer_id = 0
     end
-    cmd("CFE_TBL DUMP_TBL with ACTIVETBLFLAG #{buffer_id}, TABLENAME #{tbl_name}, DUMPFILENAME #{tbl_file_name}")
+    cmd("CFE_TBL DUMP_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}, DUMP_FILENAME #{tbl_file_name}")
 	elsif (cmd == "VALIDATE")
     tbl_name = ask_string("Enter complete table name (app.table) of table to be validated.")
     buffer = combo_box("Select the buffer to be validated", 'Inactive','Active')
@@ -48,16 +48,16 @@ def table_mgmt_send_cmd(screen, cmd)
     else
       buffer_id = 0
     end
-    cmd("CFE_TBL VALIDATE_TBL with ACTIVETBLFLAG #{buffer_id}, TABLENAME #{tbl_name}")
+    cmd("CFE_TBL VALIDATE_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}")
 	elsif (cmd == "ACTIVATE")
     tbl_name = ask_string("Enter complete table name (app.table) of table to be activated.")
-    cmd("CFE_TBL ACTIVATE_TBL with TABLENAME #{tbl_name}")
+    cmd("CFE_TBL ACTIVATE_TBL with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "DISPLAY_ONE_REGISTRY")
     tbl_name = ask_string("Enter complete table name (app.table) of table registry to be telemetered.")
-    cmd("CFE_TBL TLM_REGISTRY with TABLENAME #{tbl_name}")
+    cmd("CFE_TBL TLM_REGISTRY with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "WRITE_REGISTRY_TO_FILE")
     rg_file_name = ask_string("Enter full FSW path/filename of file to received the registry data.")
-    cmd("CFE_TBL WRITE_REG_TO_FILE with DUMPFILENAME #{reg_file_name}")
+    cmd("CFE_TBL WRITE_REG_TO_FILE with DUMP_FILENAME #{reg_file_name}")
 	elsif (cmd == "DISPLAY_TABLE")
      Cosmos.run_process("ruby tools/TableManager")
 	elsif (cmd == "GET_FILE")
@@ -74,7 +74,7 @@ def table_mgmt_send_cmd(screen, cmd)
       prompt ("Created table file #{gnd_full_file_name_no_hdr} without the cFE header")
     end
   else
-    prompt("Error in screen definition file. Undefined commmand sent to table_mgmt_send_cmd()")
+    prompt("Error in screen definition file. Undefined command sent to table_mgmt_send_cmd()")
   end
   
 end # table_mgmt_send_cmd()

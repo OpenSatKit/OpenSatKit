@@ -1,0 +1,43 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR = "CFE_ES"
+  @ER_LOG_ENTRIES = "CFE_ES_ER_LOG_ENTRIES"
+  @ER_LOG_MAX_CONTEXT_SIZE = "CFE_ES_ER_LOG_MAX_CONTEXT_SIZE"
+
+  
+%>
+TABLE "CFE_ES ErLog" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Exception Reset Log"
+  <%= CfsKitConfig.file_hdr %>
+
+  <% 
+    max_entries     = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_ENTRIES)
+    #context_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_MAX_CONTEXT_SIZE) / 4
+    context_entries = 32
+    append_items = ""
+    for i in 1..max_entries
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_TYPE\"             32 UINT 0 MAX_UINT32 0  \"Power on, processor, app\"" << "\n"
+         append_items << "   STATE PROCESSOR    1" << "\n"
+         append_items << "   STATE POWER_ON     2" << "\n"
+         append_items << "   STATE APP_RESTART  3" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_RESET_TYPE\"       32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_RESET_SUBTYPE\"    32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_BOOT_SRC\"         32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_PROC_RST_CNT\"     32 UINT 0 MAX_UINT32 0  \"Number of processor resets\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_PROC_MAX_RST\"     32 UINT 0 MAX_UINT32 0  \"Max resets before a power on\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DEBUG_FLAG\"       32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_WATCHDOG_WR_FLAG\" 32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_PRINT_ENA_FLAG\"   32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_LAST_APP_ID\"      32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_SYS_TIME_SECONDS\" 32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_SYS_TIME_SUBSECS\" 32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DESCRIPTION\"     640 STRING \"UNDEF\"     \"Text description of reset\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_CONTEXT_SIZE\"     32 UINT 0 MAX_UINT32 0  \"Sanity check that log preserved correctly\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_APP_ID\"           32 UINT 0 MAX_UINT32 0        \" \"" << "\n"
+      for c in 1..context_entries
+        append_items << "APPEND_PARAMETER \"CONTEXT#{c}_APP_ID\"       32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      end      
+    end
+  %>
+  <%= append_items %>

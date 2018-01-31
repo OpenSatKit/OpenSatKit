@@ -5,8 +5,8 @@
 #   1. PMD_INSTRUCT_x variables are used to put text on the demo screen's
 #      text box. The PMD_INFO_x variables are used for extra detailed
 #      information that is displayed on a separate screen.
-#   2. The performoance monitor feature has been equated to a Logic 
-#      Analyzer (LA) so LA is in the comamnd names and in the code.
+#   2. The performance monitor feature has been equated to a Logic 
+#      Analyzer (LA) so LA is in the command names and in the code.
 #   3. Debug events are enabled for the apps used during the demo.
 # 
 # License:
@@ -197,11 +197,11 @@ def perf_mon_demo(screen, button)
     case $pmd_step
       when 1
         display("CFS_KIT PERF_MON_SCREEN",500,50)    
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME CFE_ES, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Enable debug events
       when 2..PMD_LAST_STEP
         # Keep case statement for maintenance
       else
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME CFE_ES, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Disable debug events
         $pmd_step = 0
         clear("CFS_KIT PERF_MON_SCREEN")
         clear("CFS_KIT PERF_MON_DEMO_SCREEN")
@@ -218,33 +218,33 @@ def perf_mon_demo(screen, button)
           # Performance IDs: MD 26, FM 39, FM_CHILD 44
           # [0] = 0x04000000
           # [1] = 0x00001080
-          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTERMASKNUM 0, FILTERMASK 0x04000000")  
+          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTER_MASK_NUM 0, FILTER_MASK 0x04000000")  
           wait(1)
-          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTERMASKNUM 1, FILTERMASK 0x00001080")  
+          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTER_MASK_NUM 1, FILTER_MASK 0x00001080")  
           wait(1)
-          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTERMASKNUM 2, FILTERMASK 0x00000000")  
+          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTER_MASK_NUM 2, FILTER_MASK 0x00000000")  
           wait(1)
-          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTERMASKNUM 3, FILTERMASK 0x00000000")  
+          cmd ("CFE_ES SET_LA_FILTER_MASK with FILTER_MASK_NUM 3, FILTER_MASK 0x00000000")  
           # Don't increment pmd_demo; okay if user repeats commands
         end
       
       # 2 - Configure the trigger masks
       when 2
         if ($pmd_demo == 0)
-          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIGGERMASKNUM 0, TRIGGERMASK 0x04000000")  
+          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIG_MASK_NUM 0, TRIG_MASK 0x04000000")  
           wait(1)
-          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIGGERMASKNUM 1, TRIGGERMASK 0x00000000")  
+          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIG_MASK_NUM 1, TRIG_MASK 0x00000000")  
           wait(1)
-          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIGGERMASKNUM 2, TRIGGERMASK 0x00000000")  
+          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIG_MASK_NUM 2, TRIG_MASK 0x00000000")  
           wait(1)
-          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIGGERMASKNUM 3, TRIGGERMASK 0x00000000")  
+          cmd ("CFE_ES SET_LA_TRIG_MASK with TRIG_MASK_NUM 3, TRIG_MASK 0x00000000")  
           # Don't increment pmd_demo; okay if user repeats commands
         end
 
       # 3 - Collect the data 
       when 3
         if ($pmd_demo == 0)
-          cmd ("CFE_ES START_LA_DATA with TRIGGERMODE 0")
+          cmd ("CFE_ES START_LA_DATA with TRIG_MODE 0")
           wait (3)
           cmd("FM SEND_DIR_PKT with DIRECTORY #{FLT_SRV_DIR}, DIRLISTOFFSET 0")
           wait (3)
@@ -255,7 +255,7 @@ def perf_mon_demo(screen, button)
           cmd_valid_cnt = tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT")
           cmd_error_cnt = tlm("CFE_ES HK_TLM_PKT CMD_ERROR_COUNT")
           seq_cnt = tlm("CFE_ES HK_TLM_PKT CCSDS_SEQUENCE")
-          cmd ("CFE_ES STOP_LA_DATA with DATAFILENAME #{PMD_FLT_DAT_FILE}")  
+          cmd ("CFE_ES STOP_LA_DATA with DATA_FILENAME #{PMD_FLT_DAT_FILE}")  
           wait("CFE_ES HK_TLM_PKT CMD_VALID_COUNT == #{cmd_valid_cnt}+1", 10)  # Delay until updated valid cmd count or timeout
           if ( (tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT") != (cmd_valid_cnt + 1)) || 
                (tlm("CFE_ES HK_TLM_PKT CMD_ERROR_COUNT") !=  cmd_error_cnt))
@@ -265,7 +265,7 @@ def perf_mon_demo(screen, button)
               prompt ("Executive Service had an error processing the command. See event message for details.")
             end
           else
-            prompt ("Successfully created #{PMD_FLT_DAT_FILE}. Click <Next> to transfer file to COSMOS and luanch the performance analyzer tool.")
+            prompt ("Successfully created #{PMD_FLT_DAT_FILE}. Click <Next> to transfer file to COSMOS and launch the performance analyzer tool.")
           end 
           # Don't increment pmd_demo; allow data repeat of data collection
        end

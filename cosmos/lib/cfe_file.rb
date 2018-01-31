@@ -26,7 +26,7 @@ module CfeFile
   end
   
   # CFE_FS_Header_t
-  CFS_FILE_HDR = %Q(
+  CFE_FILE_HDR = %Q(
     APPEND_PARAMETER "Content Type"     32 STRING "UNDEF"  "Header identifier. This file defines a CFE1 header" BIG_ENDIAN
     APPEND_PARAMETER "Subtype"          32   UINT 0 4294967295 0  "See CFE_FS_ES_ERLOG_SUBTYPE defined in cfe_fs.h" BIG_ENDIAN
     APPEND_PARAMETER "Length"           32   UINT 0 4294967295 0  "Length of primary header in bytes" BIG_ENDIAN
@@ -39,7 +39,7 @@ module CfeFile
   )
 
   # CFE_TBL_File_Hdr_t
-  CFS_TBL_HDR = %Q(
+  CFE_TBL_HDR = %Q(
     APPEND_PARAMETER "Reserved"  32   UINT 0 4294967295 0  "Future Use"  BIG_ENDIAN
     APPEND_PARAMETER "Offset"    32   UINT 0 4294967295 0  "Byte Offset at which load should commence"  BIG_ENDIAN
     APPEND_PARAMETER "NumByte"   32   UINT 0 4294967295 0  "Number of bytes to load into table"  BIG_ENDIAN

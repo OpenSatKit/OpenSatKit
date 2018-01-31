@@ -11,10 +11,31 @@ COMMAND F42 NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event me
 
 COMMAND F42 RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset Counters and application to a default state"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
-  
+
+COMMAND F42 LOAD_TBL <%= CfsKitConfig.processor_endian %> "Load controller table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 0 0 "Table ID: 0=CTRL"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
+  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/f42_ctrl_tbl.json" "Full path and file name of table to be loaded"
+
+COMMAND F42 DUMP_TBL <%= CfsKitConfig.processor_endian %> "Dump controller table"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 0 0 "Table ID: 0=CTRL"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
+  APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/f42_ctrl_tbl_d.json" "Full path and file name to receive table dump"
+
 COMMAND F42 SET_CTRL_MODE <%= CfsKitConfig.processor_endian %> "Set the 42 Sim FSW control mode"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
   APPEND_PARAMETER NEW_MODE 16 UINT MIN_UINT16 MAX_UINT16 1 "Current demo supports: 1-Init"
+
+COMMAND F42 SET_FAULT_STATE <%= CfsKitConfig.processor_endian %> "Set the state of a fault in 42 Sim FSW "
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
+  APPEND_PARAMETER ID    8 UINT MIN_UINT8 MAX_UINT8 0 "Fault identifier. See f42_adp.h file"
+  APPEND_PARAMETER STATE 8 UINT MIN_UINT8 MAX_UINT8 1 "Boolean state: 0 = No Fault, 1 = Fault"
+  
+COMMAND F42 SET_SUN_TARGET <%= CfsKitConfig.processor_endian %> "Set the target body axis"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 2) %>
+  APPEND_PARAMETER AXIS 16 UINT MIN_UINT16 MAX_UINT16 2 "Fault identifier. See f42_adp.h file. Default to +Y"
 
 
 

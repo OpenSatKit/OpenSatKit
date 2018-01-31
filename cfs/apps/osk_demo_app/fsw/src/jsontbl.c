@@ -158,7 +158,7 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
             CFE_EVS_SendEvent(JSONTBL_CMD_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"JSONTBL: Invalid table command load type %d",LoadType);
          }
 
-      } /* End if successful parse */
+      } /* End if successfully parsed entries */
       else {
          CFE_EVS_SendEvent(JSONTBL_CMD_LOAD_PARSE_ERR_EID,CFE_EVS_ERROR,"JSONTBL: Table Parsing failure for file %s",Filename);
       }

@@ -52,7 +52,7 @@ AMD_INSTRUCT_1 = ["The App Management and App Summary screens have been opened. 
                   "number of registered apps is less than the tasks because the cFE apps are",
                   "not part of the regsitered app count and some apps have child tasks.",
                   " ",
-                  "<Demo> Send CFE_ES QUERY_APP for #{AMD_INFO_APP} which is the same as the",
+                  "<Demo> Send CFE_ES SEND_APP_INFO for #{AMD_INFO_APP} which is the same as the",
                   "               'Get App Info' button the App Management screen.",
                   ""]
 
@@ -88,7 +88,7 @@ is displayed during the demoes.\n\n\n\
 AMD_INSTRUCT_3 = ["This step stops the #{AMD_LOAD_APP} app. Notice the Registered app",
                   "count decrements by one after the app is stopped.",
                   "",
-                  "<Demo> Send CFE_ES QUERY_APP for #{AMD_LOAD_APP}. Note priority.",
+                  "<Demo> Send CFE_ES SEND_APP_INFO for #{AMD_LOAD_APP}. Note priority.",
                   "<Demo> Send #{AMD_LOAD_APP} NOOP to show it's operational",
                   "<Demo> Send CFE_ES STOP_APP for #{AMD_LOAD_APP}",
                   "<Demo> Send #{AMD_LOAD_APP} NOOP to show no response"]
@@ -100,7 +100,7 @@ AMD_INSTRUCT_4 = ["This step starts the #{AMD_LOAD_APP} app. Notice the Register
                   "count increments by one after the app is stopped.",
                   "",
                   "<Demo> Send CFE_ES START_APP for #{AMD_LOAD_APP}",
-                  "<Demo> Send CFE_ES QUERY_APP for #{AMD_LOAD_APP}. Note new priority.",
+                  "<Demo> Send CFE_ES SEND_APP_INFO for #{AMD_LOAD_APP}. Note new priority.",
                   "<Demo> Send #{AMD_LOAD_APP} NOOP to show it's operational",
                   ""]
 AMD_INFO_4 = AMD_INFO_DEF
@@ -157,19 +157,19 @@ def app_mgmt_demo(screen, button)
     case $amd_step
       when 1
         display("CFS_KIT APP_MGMT_SCREEN",500,50)    
-        display("CFS_KIT APP_SUMMARY_SCREEN",500,50)    
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME CFE_ES, BITMASK 0x01") # Enable debug events
+        display("CFS_KIT APP_CFS_SUMMARY_SCREEN",500,50)    
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Enable debug events
         wait(2) 
-        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME CFE_EVS, BITMASK 0x01") # Enable debug events
+        cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_EVS, BITMASK 0x01") # Enable debug events
       when 2..AMD_LAST_STEP
         # Keep case statement for maintenance
       else
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME CFE_EVS, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_EVS, BITMASK 0x01") # Disable debug events
         wait(2) 
-        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME CFE_ES, BITMASK 0x01") # Disable debug events
+        cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Disable debug events
         $amd_step = 0
         clear("CFS_KIT APP_MGMT_SCREEN")    
-        clear("CFS_KIT APP_SUMMARY_SCREEN")    
+        clear("CFS_KIT APP_CFS_SUMMARY_SCREEN")   
         clear("CFS_KIT APP_MGMT_DEMO_SCREEN")
         clear("CFS_KIT APP_MGMT_DEMO_INFO_SCREEN")
     end # Step Case
@@ -181,7 +181,7 @@ def app_mgmt_demo(screen, button)
       # Lookup a symbol
       when 1
         if ($amd_demo == 0)
-          cmd("CFE_ES QUERY_APP with APPLICATION #{AMD_INFO_APP}")
+          cmd("CFE_ES SEND_APP_INFO with APP_NAME #{AMD_INFO_APP}")
 
           # Don't increment amd_demo; okay if user repeatedly sends lookup cmd
         end
@@ -190,13 +190,13 @@ def app_mgmt_demo(screen, button)
       when 2
         case $amd_demo
           when 0 
-            cmd("CFE_EVS DIS_APP_EVENT_TYPE with APPNAME #{AMD_INFO_APP}, BITMASK 0x02") # Disable info events
+            cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME #{AMD_INFO_APP}, BITMASK 0x02") # Disable info events
             $amd_demo += 1
           when 1 
             cmd("#{AMD_INFO_APP} NOOP")
             $amd_demo += 1
           when 2 
-            cmd("CFE_EVS ENA_APP_EVENT_TYPE with APPNAME #{AMD_INFO_APP}, BITMASK 0x02") # Enable info events
+            cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME #{AMD_INFO_APP}, BITMASK 0x02") # Enable info events
             $amd_demo += 1
           when 3
             cmd("#{AMD_INFO_APP} NOOP")
@@ -209,13 +209,13 @@ def app_mgmt_demo(screen, button)
       when 3
         case $amd_demo
           when 0
-            cmd("CFE_ES QUERY_APP with APPLICATION #{AMD_LOAD_APP}")
+            cmd("CFE_ES SEND_APP_INFO with APP_NAME #{AMD_LOAD_APP}")
             $amd_demo += 1
           when 1
             cmd("#{AMD_LOAD_APP} NOOP")
             $amd_demo += 1
           when 2
-            cmd("CFE_ES STOP_APP with APPLICATION #{AMD_LOAD_APP}")
+            cmd("CFE_ES STOP_APP with APP_NAME #{AMD_LOAD_APP}")
             $amd_demo += 1
           when 3
             cmd("#{AMD_LOAD_APP} NOOP")
@@ -225,16 +225,16 @@ def app_mgmt_demo(screen, button)
       # 4 - Start App
       when 4
         if ($amd_demo == 0)
-          cmd("CFE_ES START_APP with APPLICATION #{AMD_LOAD_APP}, \
-                                     APPENTRYPOINT MD_AppMain, \
-                                     APPFILENAME #{AMD_LOAD_APP_FILE}, \
-                                     STACKSIZE 16384,\
-                                     EXCEPTIONACTION 0, \
+          cmd("CFE_ES START_APP with APP_NAME #{AMD_LOAD_APP}, \
+                                     APP_ENTRY_POINT MD_AppMain, \
+                                     APP_FILENAME #{AMD_LOAD_APP_FILE}, \
+                                     STACK_SIZE 16384,\
+                                     EXCEPTION_ACTION 0, \
                                      PRIORITY 100")
                                      
           $amd_demo += 1
         elsif ($amd_demo == 1)
-          cmd("CFE_ES QUERY_APP with APPLICATION #{AMD_LOAD_APP}")
+          cmd("CFE_ES SEND_APP_INFO with APP_NAME #{AMD_LOAD_APP}")
           $amd_demo += 1
         elsif ($amd_demo == 2)
           cmd("#{AMD_LOAD_APP} NOOP")

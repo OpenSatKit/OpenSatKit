@@ -39,6 +39,7 @@ TOOL "Data Viewer" "LAUNCH DataViewer" "data_viewer.png"
 DIVIDER
 LABEL Utilities
 
+TOOL "Config Editor" "LAUNCH ConfigEditor" "config_editor.png"
 TOOL "Telemetry Extractor" "LAUNCH TlmExtractor" "tlm_extractor.png"
 TOOL "Command Extractor" "LAUNCH CmdExtractor" "cmd_extractor.png"
 TOOL "Handbook Creator" "LAUNCH HandbookCreator" "handbook_creator.png"

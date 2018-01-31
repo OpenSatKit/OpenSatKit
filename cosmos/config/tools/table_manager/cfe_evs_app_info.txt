@@ -1,0 +1,35 @@
+<%
+
+  require 'cfs_kit_config' 
+
+  @APP_PREFIX_STR    = "CFE_EVS"
+  @MAX_APPLICATIONS  = "CFE_ES_MAX_APPLICATIONS"
+  @MAX_EVENT_FILTERS = "CFE_EVS_MAX_EVENT_FILTERS"
+  
+%>
+TABLE "CFE_EVS AppInfo" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "App Info"
+  <%= CfsKitConfig.file_hdr %>
+
+  <% 
+    max_apps    = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_APPLICATIONS)
+    max_filters = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_EVENT_FILTERS)
+    append_items = ""
+    for i in 1..max_apps
+      append_items << "APPEND_PARAMETER \"APP#{i}_NAME\"           160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_ENABLED\"          8 UINT 0 MAX_UINT8  0  \"Are events enabled for this app?\"" << "\n"
+      append_items << "   STATE FALSE   0" << "\n"
+      append_items << "   STATE TRUE    1" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_ENA_BITMASK\"      8 UINT 0 MAX_UINT8  0  \"Bits 3..0: Critical, Err, Info, Debug\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%02X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_EVENT_CTR\"       16 UINT 0 MAX_UINT16 0  \"Number of events sent\"" << "\n"
+      for f in 1..max_filters
+        append_items << "APPEND_PARAMETER \"APP#{i}_FLTR#{f}_EVENT_ID\"  16 UINT 0 MAX_UINT16 0  \"Event ID being filtered\"" << "\n"
+        append_items << "APPEND_PARAMETER \"APP#{i}_FLTR#{f}_BITMASK\"   16 UINT 0 MAX_UINT16 0  \"Bits 3..0: Critical, Err, Info, Debug\"" << "\n"
+        append_items << "  FORMAT_STRING  \"0x%04X\"" << "\n"
+        append_items << "APPEND_PARAMETER \"APP#{i}_FLTR#{f}_COUNT\"     16 UINT 0 MAX_UINT16 0  \"Number of events filtered\"" << "\n"
+        append_items << "APPEND_PARAMETER \"APP#{i}_FLTR#{f}_PAD\"       16 UINT 0 MAX_UINT16 0  \"Pad to double word align\"" << "\n"
+      end
+    end
+  %>
+  <%= append_items %>
+  

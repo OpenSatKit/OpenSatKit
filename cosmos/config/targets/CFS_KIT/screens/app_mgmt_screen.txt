@@ -17,7 +17,7 @@ TITLE "App Management"
   HORIZONTALBOX
     VERTICALBOX
       BUTTON 'App Summary' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "APP_SUMMARY")'
-      BUTTON 'Display App Registry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_DISPLAY_APPS")'
+      BUTTON 'App/Task Registry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_APP_TASK_INFO")'
       BUTTON 'Enable App Events' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "EVS_ENA_APP_EVENT_TYPE")'
       BUTTON 'Disable App Events' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "EVS_DIS_APP_EVENT_TYPE")'
       BUTTON 'Add KIT_TO Msg' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "KIT_TO_ADD_PKT")'
@@ -27,7 +27,7 @@ TITLE "App Management"
       BUTTON 'Start App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_START_APP")'
       BUTTON 'Stop App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_STOP_APP")'
       BUTTON 'Reload App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_RELOAD_APP")'
-      BUTTON 'Get App Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_QUERY_APP")'
+      BUTTON 'Get App Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_SEND_APP_INFO")'
       HORIZONTALLINE
       #BUTTON 'Start Eclipse' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "Eclipse")'
       BUTTON 'Create App Tool' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "AppGen")'
@@ -40,9 +40,9 @@ TITLE "App Management"
           Label "Cmd Err Ctr"
           VALUE CFE_ES HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
           Label "Registered Apps"
-          VALUE CFE_ES HK_TLM_PKT REGISTEREDEXTERNALAPPS WITH_UNITS 8
+          VALUE CFE_ES HK_TLM_PKT REG_EXT_APPS WITH_UNITS 8
           Label "Registered Tasks"
-          VALUE CFE_ES HK_TLM_PKT REGISTEREDTASKS WITH_UNITS 8
+          VALUE CFE_ES HK_TLM_PKT REG_TASKS WITH_UNITS 8
         End # Matrix
       END # Vertical Box
       LABEL " "
@@ -51,31 +51,31 @@ TITLE "App Management"
           Label "Name"
           VALUE CFE_ES APP_INFO_TLM_PKT NAME
           Label "Entry Point"
-          VALUE CFE_ES APP_INFO_TLM_PKT ENTRYPOINT
+          VALUE CFE_ES APP_INFO_TLM_PKT ENTRY_POINT
           Label "Main Task Name"
-          VALUE CFE_ES APP_INFO_TLM_PKT MAINTASKNAME
+          VALUE CFE_ES APP_INFO_TLM_PKT MAIN_TASK_NAME
           Label "Main Task ID"
-          VALUE CFE_ES APP_INFO_TLM_PKT MAINTASKID
+          VALUE CFE_ES APP_INFO_TLM_PKT MAIN_TASK_ID
           Label "APP ID"
-          VALUE CFE_ES APP_INFO_TLM_PKT APPID
+          VALUE CFE_ES APP_INFO_TLM_PKT APP_ID
           Label "Priority"
           VALUE CFE_ES APP_INFO_TLM_PKT PRIORITY
           Label "Type"
           VALUE CFE_ES APP_INFO_TLM_PKT TYPE
           Label "# Child Tasks"
-          VALUE CFE_ES APP_INFO_TLM_PKT NUMOFCHILDTASKS
+          VALUE CFE_ES APP_INFO_TLM_PKT NUM_OF_CHILD_TASKS
           Label "File Name"
           VALUE CFE_ES APP_INFO_TLM_PKT FILENAME          
           Label "Exception"
-          VALUE CFE_ES APP_INFO_TLM_PKT EXCEPTIONACTION          
+          VALUE CFE_ES APP_INFO_TLM_PKT EXCEPTION_ACTION          
           Label "Code Size"
-          VALUE CFE_ES APP_INFO_TLM_PKT CODESIZE          
+          VALUE CFE_ES APP_INFO_TLM_PKT CODE_SIZE          
           Label "Data Size"
-          VALUE CFE_ES APP_INFO_TLM_PKT DATASIZE          
+          VALUE CFE_ES APP_INFO_TLM_PKT DATA_SIZE          
           Label "BSS Size"
-          VALUE CFE_ES APP_INFO_TLM_PKT BSSSIZE          
+          VALUE CFE_ES APP_INFO_TLM_PKT BSS_SIZE          
           Label "Stack Size"
-          VALUE CFE_ES APP_INFO_TLM_PKT STACKSIZE          
+          VALUE CFE_ES APP_INFO_TLM_PKT STACK_SIZE          
         End # Matrix
       END # Vertical Box
     END #Vertical

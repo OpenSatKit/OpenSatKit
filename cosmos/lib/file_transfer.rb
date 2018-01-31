@@ -5,6 +5,8 @@
 # Notes:
 #   1. Abstract file transfer services so different protocols can be used
 #      Currently hardcoded for TFTP.
+#   2. TODO - Pass in file transfer object to constructor that has standard
+#      method name. Test with CFDP. 
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public

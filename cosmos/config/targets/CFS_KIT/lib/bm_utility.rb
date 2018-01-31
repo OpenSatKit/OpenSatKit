@@ -2,7 +2,7 @@
 # cFS Benchmarking Tool Telemetry Screen Helper Script
 #
 # Notes:
-#   1. Written by DIan Wilmoth, licensed under the copyleft GNU
+#   1. Written by Ian Wilmoth, licensed under the copyleft GNU
 #      General Public License (GPL).
 #
 ################################################################################

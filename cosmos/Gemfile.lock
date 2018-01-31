@@ -1,27 +1,31 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    coderay (1.1.1)
-    cosmos (3.9.2)
+    coderay (1.1.2)
+    cosmos (4.1.1)
       bundler (~> 1.3)
+      httpclient (~> 2.8.3)
       json (>= 1.5, < 1.9)
       nokogiri (~> 1.6)
-      opengl (>= 0.7, < 0.10)
+      opengl (~> 0.10)
       pry (>= 0.9, < 0.11)
       pry-doc (>= 0.5, < 0.7)
+      puma (~> 3.10.0)
       qtbindings (~> 4.8.6, >= 4.8.6.2)
+      rack (~> 2.0.3)
       rake (>= 0, < 13)
       rdoc (>= 3, < 5)
-      rubyzip (~> 1.1.0)
+      rubyzip (~> 1.2.1)
       snmp (~> 1.0)
       uuidtools (~> 2.1.0)
       yard (>= 0.8, < 0.10)
+    httpclient (2.8.3)
     json (1.8.6)
     method_source (0.8.2)
-    mini_portile2 (2.2.0)
-    nokogiri (1.8.0)
-      mini_portile2 (~> 2.2.0)
-    opengl (0.9.2)
+    mini_portile2 (2.3.0)
+    nokogiri (1.8.1)
+      mini_portile2 (~> 2.3.0)
+    opengl (0.10.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -29,15 +33,17 @@ GEM
     pry-doc (0.6.0)
       pry (~> 0.9)
       yard (~> 0.8)
-    qtbindings (4.8.6.3)
-    rake (12.0.0)
+    puma (3.10.0)
+    qtbindings (4.8.6.4)
+    rack (2.0.3)
+    rake (12.3.0)
     rdoc (4.3.0)
     ruby-termios (0.9.6)
-    rubyzip (1.1.7)
+    rubyzip (1.2.1)
     slop (3.6.0)
     snmp (1.2.0)
     uuidtools (2.1.5)
-    yard (0.9.9)
+    yard (0.9.12)
 
 PLATFORMS
   ruby
@@ -47,4 +53,4 @@ DEPENDENCIES
   ruby-termios (~> 0.9)
 
 BUNDLED WITH
-   1.15.4
+   1.16.0
