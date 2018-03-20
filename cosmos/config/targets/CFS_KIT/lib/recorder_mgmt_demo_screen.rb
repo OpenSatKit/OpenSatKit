@@ -112,7 +112,7 @@ end # rmd_set_instruct_text()
 ## Demo Flow Control
 ################################################################################
 
-$file_xfer = FileTransfer.new()
+$file_xfer = nil
 $rmd_step = 0   # Demo step incremented by Next button
 $rmd_demo = 0   # Issue command(s) to perform the current demo step
 
@@ -141,6 +141,7 @@ def recorder_mgmt_demo(screen, button)
 
     case $rmd_step
       when 1
+        $file_xfer = Osk::system.file_transfer
         display("CFS_KIT RECORDER_MGMT_SCREEN",500,50)    
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME DS, BITMASK 0x01") # Enable debug events
       when 2..RMD_LAST_STEP

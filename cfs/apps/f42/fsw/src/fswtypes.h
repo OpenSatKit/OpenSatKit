@@ -1,10 +1,25 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 #ifndef __FSWTYPES_H__
 #define __FSWTYPES_H__
-#include <stdio.h>
 
-//#ifdef __cplusplus
-//namespace _42 {
-//#endif
+/*
+** #ifdef __cplusplus
+** namespace _42 {
+** #endif
+*/
 
 struct CmdVecType {
    long Mode;
@@ -52,15 +67,6 @@ struct FswGimType {
    double MaxTrq[3];
 };
 
-struct FswCssType {
-   double AmpsToCounts;
-   double CountsToIllum;
-   double Axis[3];
-   double Amps;
-   long Counts;
-   double Illum;
-};
-
 struct FSWType {
    long Init;
    long Tlm;
@@ -84,9 +90,6 @@ struct FSWType {
    long EphValid;
    double PosN[3],VelN[3];
    double svn[3],bvn[3];
-
-   /* Coarse Sun Sensors */
-   struct FswCssType Css[4];
 
    /* Gimbals */
    long Ngim;
@@ -144,6 +147,11 @@ struct FSWType {
    double Fmax;
    double wmax[3];
 
+   /* For RampCoastGlide */
+   double RcgWC;
+   double RcgAmax;
+   double RcgVmax;
+
    /* Intermediate Variables */
    double CRN[3][3],CBR[3][3],CBN[3][3];
    double qbr[4];
@@ -155,14 +163,12 @@ struct FSWType {
    double Hvb[3];
 
    double Bold1,Bold2,xold,yold;
-
-   /* For Inter Process Comm (IPC) */
-   int Socket;
-   FILE *Stream;
 };
 
-//#ifdef __cplusplus
-//}
-//#endif
+/*
+** #ifdef __cplusplus
+** }
+** #endif
+*/
 
 #endif /* __FSWTYPES_H__ */

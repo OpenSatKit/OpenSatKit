@@ -13,8 +13,8 @@
 # 
 ################################################################################
 
-require 'cfs_kit_global'
-require 'file_transfer'
+#require 'cfs_kit_global'
+require 'osk_system'
 
 ################################################################################
 ## Global Variables
@@ -127,7 +127,7 @@ end # amd_set_instruct_text()
 ## Demo Flow Control
 ################################################################################
 
-$file_xfer = FileTransfer.new()
+$file_xfer = nil
 $amd_step = 0   # Demo step incremented by Next button
 $amd_demo = 0   # Issue command(s) to perform the current demo step
 
@@ -161,6 +161,7 @@ def app_mgmt_demo(screen, button)
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Enable debug events
         wait(2) 
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_EVS, BITMASK 0x01") # Enable debug events
+        $file_xfer = Osk::system.file_transfer
       when 2..AMD_LAST_STEP
         # Keep case statement for maintenance
       else

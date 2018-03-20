@@ -1,8 +1,23 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 #include "envkit.h"
 
-//#ifdef __cplusplus
-//namespace Kit {
-//#endif
+/* #ifdef __cplusplus
+** namespace Kit {
+** #endif
+*/
 
 #define D2R 1.74532925199E-2
 #define PI 3.14159265358979323846
@@ -293,10 +308,10 @@ void IGRFMagField(const char *ModelPath, long N, long M, double pbn[3],double Pr
 
       MTxV(CEN,BVE,MagVecN);
 
-      //printf("r,phi,theta: %lf %lf %lf\n",r,phi,theta);
-      //printf("Br,Bth,Bph: %lf %lf %lf\n",Br,Bth,Bph);
-      //printf("BVE: %lf %lf %lf\n\n",BVE[0],BVE[1],BVE[2]);
-
+      /*printf("r,phi,theta: %lf %lf %lf\n",r,phi,theta);
+      **printf("Br,Bth,Bph: %lf %lf %lf\n",Br,Bth,Bph);
+      **printf("BVE: %lf %lf %lf\n\n",BVE[0],BVE[1],BVE[2]);
+      */
 }
 /**********************************************************************/
 /*  Computes planetary dipole magnetic field vector at S/C position.  */
@@ -457,9 +472,9 @@ double SimpleMSIS(double pbn[3], long Col)
 
       Alt = 1.0E-3*(MAGV(pbn)-EarthRad);
       if (Alt < 0.0) density = 1.2;
-      else if (Alt > 1500.0) density = 0.0;
+      else if (Alt >= 1500.0) density = 0.0;
       else {
-         i2 = 0;
+         i2 = 1;
          while (Alt > AltTable[i2]) i2++;
          i1 = i2-1;
          /* Interpolate density logarithmically */
@@ -876,6 +891,7 @@ void ECEFToWGS84(double p[3], double *glat, double *glong, double *alt)
       *glong = atan2(p[1],p[0]);
 }
 
-//#ifdef __cplusplus
-//}
-//#endif
+/* #ifdef __cplusplus
+** }
+** #endif
+*/

@@ -47,7 +47,8 @@
 ** Command Macros
 */
 
-#define I42_NETIF_CONNECT_TO_42_CMD_FC  (CMDMGR_APP_START_FC + 0)
+#define I42_NETIF_CONNECT_42_CMD_FC     (CMDMGR_APP_START_FC + 0)
+#define I42_NETIF_DISCONNECT_42_CMD_FC  (CMDMGR_APP_START_FC + 1)
 
 
 /******************************************************************************
@@ -61,6 +62,13 @@
 
 #define I42_APP_BASE_EID  (APP_FW_APP_BASE_EID +  0)
 #define NETIF_BASE_EID    (APP_FW_APP_BASE_EID + 10)
+
+/******************************************************************************
+** NET_IF Macros
+*/
+
+#define NETIF_RECV_BUFF_LEN 512
+
 
 
 #endif /* _app_cfg_ */

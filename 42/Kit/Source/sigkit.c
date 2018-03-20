@@ -1,8 +1,23 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 #include "sigkit.h"
 
-//#ifdef __cplusplus
-//namespace Kit {
-//#endif
+/* #ifdef __cplusplus
+** namespace Kit {
+** #endif
+*/
 
 #define IA 16807
 #define IM 2147483647
@@ -23,7 +38,7 @@ struct RandomProcessType *CreateRandomProcess(long Seed)
       long Value;
       struct RandomProcessType *RP;
 
-      RP = (struct RandomProcessType *) 
+      RP = (struct RandomProcessType *)
          calloc(1,sizeof(struct RandomProcessType));
 
       Value = Seed;
@@ -85,7 +100,7 @@ double UniformRandom(struct RandomProcessType *RP)
       k = Value/IQ;
       Value = IA*(Value-k*IQ)-IR*k;
       if (Value < 0) Value += IM;
-      
+
       /* Read from Table */
       ReadValue = RP->LookupTable[RP->Index];
 
@@ -104,14 +119,14 @@ double UniformRandom(struct RandomProcessType *RP)
 
 }
 
-#undef IA 
-#undef IM 
+#undef IA
+#undef IM
 #undef AM
-#undef IQ 
-#undef IR 
-#undef NTAB 
+#undef IQ
+#undef IR
+#undef NTAB
 #undef NDIV
-#undef EPS 
+#undef EPS
 #undef RNMX
 
 /**********************************************************************/
@@ -149,7 +164,7 @@ double PRN2D(long x, long y)
       int n;
       n = x + 57*y;
       n = (n<<13)^n;
-      return((double) (1.0-((n*(n*n*15731+789221)+1376312589) 
+      return((double) (1.0-((n*(n*n*15731+789221)+1376312589)
                       & 0x7fffffff)/1073741824.0));
 }
 /**********************************************************************/
@@ -161,7 +176,7 @@ double PRN3D(long x, long y, long z)
       long n;
       n = x + 57*(y+57*z);
       n = (n<<13)^n;
-      return((double) (1.0-((n*(n*n*15731+789221)+1376312589) 
+      return((double) (1.0-((n*(n*n*15731+789221)+1376312589)
                       & 0x7fffffff)/1073741824.0));
 }
 /**********************************************************************/
@@ -194,13 +209,40 @@ double CubicStep(double a, double b, double x)
       return(x*x*(3.0-2.0*x));
 }
 /**********************************************************************/
-/*  Discrete Filter by Pole-Zero Mapping                              */
-/*  See Franklin and Powell, sec 3.3                                  */
-struct FilterType *CreateFirstOrderLowpassFilter(double w, double T, 
+/*        (B[0] + B[1]*z^-1 + B[2]*z^-2...)                           */
+/* Y/X = -----------------------------------                          */
+/*        (A[0] + A[1]*z^-1 + A[2]*z^-2...)                           */
+struct FilterType *CreateGeneralFilter(long Ns, double *A, double *B,
    double dxmax, double ymin)
 {
       struct FilterType *F;
-      
+      long i;
+
+      F = (struct FilterType *) calloc(1,sizeof(struct FilterType));
+
+      F->A = (double *) calloc(Ns,sizeof(double));
+      F->B = (double *) calloc(Ns,sizeof(double));
+      F->x = (double *) calloc(Ns,sizeof(double));
+      F->y = (double *) calloc(Ns,sizeof(double));
+
+      F->Ns = Ns;
+      for(i=0;i<Ns;i++) {
+         F->A[i] = A[i];
+         F->B[i] = B[i];
+      }
+      F->dxmax = dxmax;
+      F->ymin = ymin;
+
+      return(F);
+}
+/**********************************************************************/
+/*  Discrete Filter by Pole-Zero Mapping                              */
+/*  See Franklin and Powell, sec 3.3                                  */
+struct FilterType *CreateFirstOrderLowpassFilter(double w, double T,
+   double dxmax, double ymin)
+{
+      struct FilterType *F;
+
       if (6.28/w < 10.0*T) {
          printf("Error in CreateSecondeOrderLowpassFilter.\n");
          printf("Filter break frequency is too high to be sampled at given sample rate.\n");
@@ -209,7 +251,7 @@ struct FilterType *CreateFirstOrderLowpassFilter(double w, double T,
       }
 
       F = (struct FilterType *) calloc(1,sizeof(struct FilterType));
-      
+
       F->Ns = 2;
       F->A = (double *) calloc(F->Ns,sizeof(double));
       F->B = (double *) calloc(F->Ns,sizeof(double));
@@ -219,17 +261,17 @@ struct FilterType *CreateFirstOrderLowpassFilter(double w, double T,
       F->B[0] = 0.5*(1.0-F->A[0]);
       F->dxmax = dxmax;
       F->ymin = ymin;
-      
+
       return(F);
 }
 /**********************************************************************/
 /*  Discrete Filter by Pole-Zero Mapping                              */
 /*  See Franklin and Powell, sec 3.3                                  */
-struct FilterType *CreateFirstOrderHighpassFilter(double w, double T, 
+struct FilterType *CreateFirstOrderHighpassFilter(double w, double T,
    double dxmax, double ymin)
 {
       struct FilterType *F;
-      
+
       if (6.28/w < 10.0*T) {
          printf("Error in CreateSecondeOrderLowpassFilter.\n");
          printf("Filter break frequency is too high to be sampled at given sample rate.\n");
@@ -238,7 +280,7 @@ struct FilterType *CreateFirstOrderHighpassFilter(double w, double T,
       }
 
       F = (struct FilterType *) calloc(1,sizeof(struct FilterType));
-      
+
       F->Ns = 2;
       F->A = (double *) calloc(F->Ns,sizeof(double));
       F->B = (double *) calloc(F->Ns,sizeof(double));
@@ -248,18 +290,18 @@ struct FilterType *CreateFirstOrderHighpassFilter(double w, double T,
       F->B[0] = 0.5*(1.0+F->A[0]);
       F->dxmax = dxmax;
       F->ymin = ymin;
-      
+
       return(F);
 }
 /**********************************************************************/
 /*  Discrete Filter by Pole-Zero Mapping                              */
 /*  See Franklin and Powell, sec 3.3                                  */
-struct FilterType *CreateSecondOrderLowpassFilter(double w, double z, 
+struct FilterType *CreateSecondOrderLowpassFilter(double w, double z,
    double T, double dxmax, double ymin)
 {
       struct FilterType *F;
       double a;
-      
+
       if (6.28/w < 10.0*T) {
          printf("Error in CreateSecondeOrderLowpassFilter.\n");
          printf("Filter break frequency is too high to be sampled at given sample rate.\n");
@@ -268,31 +310,31 @@ struct FilterType *CreateSecondOrderLowpassFilter(double w, double z,
       }
 
       F = (struct FilterType *) calloc(1,sizeof(struct FilterType));
-      
+
       F->Ns = 3;
       F->A = (double *) calloc(F->Ns,sizeof(double));
       F->B = (double *) calloc(F->Ns,sizeof(double));
       F->x = (double *) calloc(F->Ns,sizeof(double));
       F->y = (double *) calloc(F->Ns,sizeof(double));
-      
+
       a = exp(-z*w*T);
       F->A[0] = 2.0*a*cos(w*T);
       F->A[1] = -a*a;
       F->B[0] = 0.25*(1.0-2.0*a*cos(w*T)+a*a);
       F->dxmax = dxmax;
       F->ymin = ymin;
-      
+
       return(F);
 }
 /**********************************************************************/
 /*  Discrete Filter by Pole-Zero Mapping                              */
 /*  See Franklin and Powell, sec 3.3                                  */
-struct FilterType *CreateSecondOrderHighpassFilter(double w, double z, 
+struct FilterType *CreateSecondOrderHighpassFilter(double w, double z,
    double T, double dxmax, double ymin)
 {
       struct FilterType *F;
       double a;
-      
+
       if (6.28/w < 10.0*T) {
          printf("Error in CreateSecondeOrderLowpassFilter.\n");
          printf("Filter break frequency is too high to be sampled at given sample rate.\n");
@@ -301,24 +343,24 @@ struct FilterType *CreateSecondOrderHighpassFilter(double w, double z,
       }
 
       F = (struct FilterType *) calloc(1,sizeof(struct FilterType));
-      
+
       F->Ns = 3;
       F->A = (double *) calloc(F->Ns,sizeof(double));
       F->B = (double *) calloc(F->Ns,sizeof(double));
       F->x = (double *) calloc(F->Ns,sizeof(double));
       F->y = (double *) calloc(F->Ns,sizeof(double));
-      
+
       a = exp(-z*w*T);
       F->A[0] = 2.0*a*cos(w*T);
       F->A[1] = -a*a;
       F->B[0] = 0.25*(1.0+a*cos(w*T));
       F->dxmax = dxmax;
       F->ymin = ymin;
-      
+
       return(F);
 }
 /**********************************************************************/
-void DestroyFilter(struct FilterType *F) 
+void DestroyFilter(struct FilterType *F)
 {
       free(F->A);
       free(F->B);
@@ -327,20 +369,53 @@ void DestroyFilter(struct FilterType *F)
       free(F);
 }
 /**********************************************************************/
-/*  Discrete Filter by Pole-Zero Mapping                              */
-/*  See Franklin and Powell, sec 3.3                                  */
-double FirstOrderLowpassFilter(struct FilterType *F, double x)
+/*  y(k) = (B[0]*x(k)+B[1]*x(k-1)+...+B[Ns-1]*x(k-Ns+1)               */
+/*                  - A[1]*y(k-1)-...-A[Ns-1]*y(k-Ns+1))/A[0]         */
+double GeneralFilter(struct FilterType *F, double x)
 {
       double Xmax,Xmin;
+      double Bx,Ay;
       long k;
-      
+
       /* Clamp spikes */
       F->x[0] = x;
       Xmax = F->x[1] + F->dxmax;
       if (F->x[0] > Xmax) F->x[0] = Xmax;
       Xmin = F->x[1] - F->dxmax;
       if (F->x[0] < Xmin) F->x[0] = Xmin;
-      
+
+      /* Filter */
+      Bx = 0.0;
+      Ay = 0.0;
+      for(k=0;k<F->Ns;k++) Bx += F->B[k]*F->x[k];
+      for(k=1;k<F->Ns;k++) Ay += F->A[k]*F->y[k];
+      F->y[0] = (Bx-Ay)/F->A[0];
+
+      /* Trap underflow */
+      if (fabs(F->y[0]) < F->ymin) F->y[0] = 0.0;
+
+      for(k=F->Ns-1;k>0;k--) {
+         F->x[k] = F->x[k-1];
+         F->y[k] = F->y[k-1];
+      }
+
+      return(F->y[0]);
+}
+/**********************************************************************/
+/*  Discrete Filter by Pole-Zero Mapping                              */
+/*  See Franklin and Powell, sec 3.3                                  */
+double FirstOrderLowpassFilter(struct FilterType *F, double x)
+{
+      double Xmax,Xmin;
+      long k;
+
+      /* Clamp spikes */
+      F->x[0] = x;
+      Xmax = F->x[1] + F->dxmax;
+      if (F->x[0] > Xmax) F->x[0] = Xmax;
+      Xmin = F->x[1] - F->dxmax;
+      if (F->x[0] < Xmin) F->x[0] = Xmin;
+
       /* Filter */
       F->y[0] = F->A[0]*F->y[1] + F->B[0]*(F->x[0]+F->x[1]);
 
@@ -361,14 +436,14 @@ double FirstOrderHighpassFilter(struct FilterType *F, double x)
 {
       double Xmax,Xmin;
       long k;
-      
+
       /* Clamp spikes */
       F->x[0] = x;
       Xmax = F->x[1] + F->dxmax;
       if (F->x[0] > Xmax) F->x[0] = Xmax;
       Xmin = F->x[1] - F->dxmax;
       if (F->x[0] < Xmin) F->x[0] = Xmin;
-      
+
       /* Filter */
       F->y[0] = F->A[0]*F->y[1] + F->B[0]*(F->x[0] - F->x[1]);
 
@@ -389,16 +464,17 @@ double SecondOrderLowpassFilter(struct FilterType *F, double x)
 {
       double Xmax,Xmin;
       long k;
-      
+
       /* Clamp spikes */
       F->x[0] = x;
       Xmax = F->x[1] + F->dxmax;
       if (F->x[0] > Xmax) F->x[0] = Xmax;
       Xmin = F->x[1] - F->dxmax;
       if (F->x[0] < Xmin) F->x[0] = Xmin;
-      
+
       /* Filter */
-      F->y[0] = F->A[0]*F->y[1]+F->A[1]*F->y[2]+F->B[0]*(F->x[0]+2.0*F->x[1]+F->x[2]);
+      F->y[0] = F->A[0]*F->y[1]+F->A[1]*F->y[2]
+               +F->B[0]*(F->x[0]+2.0*F->x[1]+F->x[2]);
 
       /* Trap underflow */
       if (fabs(F->y[0]) < F->ymin) F->y[0] = 0.0;
@@ -417,14 +493,14 @@ double SecondOrderHighpassFilter(struct FilterType *F, double x)
 {
       double Xmax,Xmin;
       long k;
-      
+
       /* Clamp spikes */
       F->x[0] = x;
       Xmax = F->x[1] + F->dxmax;
       if (F->x[0] > Xmax) F->x[0] = Xmax;
       Xmin = F->x[1] - F->dxmax;
       if (F->x[0] < Xmin) F->x[0] = Xmin;
-      
+
       /* Filter */
       F->y[0] = F->A[0]*F->y[1]+F->A[1]*F->y[2]+F->B[0]*(F->x[0]-2.0*F->x[1]+F->x[2]);
 
@@ -439,6 +515,7 @@ double SecondOrderHighpassFilter(struct FilterType *F, double x)
       return(F->y[0]);
 }
 
-//#ifdef __cplusplus
-//}
-//#endif
+/* #ifdef __cplusplus
+** }
+** #endif
+*/

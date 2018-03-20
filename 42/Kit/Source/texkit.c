@@ -1,3 +1,17 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 /*  Procedural Texturing functions cribbed from:                      */
 /*  Ebert, Musgrave, Peachey, Perlin, Worley.                         */
 /*  "Texturing & Modeling: A Procedural Approach", 3rd edition        */
@@ -20,7 +34,7 @@ static unsigned char perm[TABSIZE] = {
    162,115, 44, 43, 124, 94,150, 16, 141,247, 32, 10, 198,223,255, 72,
     53,131, 84, 57, 220,197, 58, 50, 208, 11,241, 28,   3,192, 62,202,
     18,215,153, 24,  76, 41, 15,179,  39, 46, 55,  6, 128,167, 23,188,
-   106, 34,187,140, 164, 73,112,182, 244,195,227, 13,  35, 77,196,185,   
+   106, 34,187,140, 164, 73,112,182, 244,195,227, 13,  35, 77,196,185,
     26,200,226,119,  31,123,168,125, 249, 68,183,230, 177,135,160,180,
     12,  1,243,148, 102,166, 38,238, 251, 37,240,126,  64, 74,161, 40,
    184,149,171,178, 101, 66, 29, 59, 146, 61,254,107,  42, 86,154,  4,
@@ -102,7 +116,7 @@ double vnoise(double x, double y, double z)
       double fx,fy,fz;
       double xknots[4],yknots[4],zknots[4];
       static long First = 1;
-      
+
       if (First) {
          First = 0;
          InitValRandomTable(665);
@@ -113,7 +127,7 @@ double vnoise(double x, double y, double z)
       fy = y - iy;
       iz = FLOOR(z);
       fz = z - iz;
-      
+
       for(k=-1;k<=2;k++) {
          for(j=-1;j<=2;j++) {
             for(i=-1;i<=2;i++) {
@@ -158,7 +172,7 @@ double gnoise(double x, double y, double z)
       double wx, wy, wz;
       double vx0,vx1,vy0,vy1,vz0,vz1;
       static long First = 1;
-      
+
       if (First) {
          First = 0;
          InitGradRandomTable(665);
@@ -175,7 +189,7 @@ double gnoise(double x, double y, double z)
       fz0 = z-iz;
       fz1 = fz0-1.0;
       wz = SMOOTHSTEP(fz0);
-      
+
       vx0 = glattice(ix,iy,iz,fx0,fy0,fz0);
       vx1 = glattice(ix+1,iy,iz,fx1,fy0,fz0);
       vy0 = LERP(wx,vx0,vx1);
@@ -190,12 +204,12 @@ double gnoise(double x, double y, double z)
       vx1 = glattice(ix+1,iy+1,iz+1,fx1,fy1,fz1);
       vy1 = LERP(wx,vx0,vx1);
       vz1 = LERP(wy,vy0,vy1);
-      
+
       return LERP(wz,vz0,vz1);
 }
 /**********************************************************************/
 /* Ref p. 86                                                          */
-double turbulence(double x, double y, double z, 
+double turbulence(double x, double y, double z,
                  double MinFreq, double MaxFreq)
 {
       double t = 0.0;
@@ -213,7 +227,7 @@ double FractalWorley(double p[3], long octaves, double lacunarity,
       double scale = 1.0;
       double at[3],F,delta[3];
       unsigned long ID;
-      
+
       for(k=0;k<3;k++) at[k] = p[k];
       for(i=0;i<octaves;i++) {
          Worley(at,1,&F,&delta,&ID,DistanceType);
@@ -232,7 +246,7 @@ double FractalWorley2(double p[3], long octaves, double lacunarity,
       double scale = 1.0;
       double at[3],F[2],delta[2][3];
       unsigned long ID[2];
-      
+
       for(k=0;k<3;k++) at[k] = p[k];
       for(i=0;i<octaves;i++) {
          Worley(at,2,F,delta,ID,DistanceType);
@@ -250,7 +264,7 @@ double ProcTex2D(double x, double y, double Xunit, double Yunit, long Noct)
       double kx,ky,fx,fy;
       double z = 0.0;
 
-      for(k=1;k<=Noct;k++) {      
+      for(k=1;k<=Noct;k++) {
          kx = ((double) k)*x/Xunit;
          ky = ((double) k)*y/Yunit;
          ix = (long) kx;
@@ -263,11 +277,11 @@ double ProcTex2D(double x, double y, double Xunit, double Yunit, long Noct)
       }
       z = 0.5+0.5*z;
       if (z > 1.0) z = 1.0;
-      if (z < 0.0) z = 0.0;  
-      return(z);       
+      if (z < 0.0) z = 0.0;
+      return(z);
 }
 /*********************************************************************/
-double ProcTex3D(double x, double y, double z, 
+double ProcTex3D(double x, double y, double z,
                 double Xunit, double Yunit, double Zunit,
                 long Noct, double Persist)
 {
@@ -278,7 +292,7 @@ double ProcTex3D(double x, double y, double z,
       double Scale = Persist;
       double SumScale = 0.0;
 
-      for(k=1;k<=Noct;k++) {      
+      for(k=1;k<=Noct;k++) {
          kx = ((double) k)*x/Xunit;
          ky = ((double) k)*y/Yunit;
          kz = ((double) k)*z/Zunit;
@@ -299,11 +313,11 @@ double ProcTex3D(double x, double y, double z,
       }
       PT3D = 0.5+0.5*PT3D/SumScale;
       if (PT3D > 1.0) PT3D = 1.0;
-      if (PT3D < 0.0) PT3D = 0.0;  
-      return(PT3D);       
+      if (PT3D < 0.0) PT3D = 0.0;
+      return(PT3D);
 }
 /**********************************************************************/
-double SphereTex(double lng, double lat, 
+double SphereTex(double lng, double lat,
    double Xunit, double Yunit, double Zunit, long Noct, double Persist)
 {
       double clat = cos(lat);

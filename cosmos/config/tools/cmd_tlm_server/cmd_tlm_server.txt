@@ -8,8 +8,11 @@ PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
 #  TARGET HB
 #INTERFACE CFS_LOCAL_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
 
-#INTERFACE CFS_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
-INTERFACE CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
+# Can't map same target to two interfaces. Current strategy is to always connect locally
+# and allow a switch to a PiSat interface. Another option may be to start both interfaces
+# and then remap the targets.
+#INTERFACE PISAT_CFS_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
+INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
   TARGET CFE_ES
   TARGET CFE_EVS
   TARGET CFE_SB
@@ -35,6 +38,7 @@ INTERFACE CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
   TARGET TFTP
   TARGET F42
   TARGET I42
+  # PiSat Apps
   TARGET HB
   # User Apps
 
@@ -46,5 +50,5 @@ INTERFACE COSMOSINT cmd_tlm_server_interface.rb
   TARGET COSMOS
   DISABLE_DISCONNECT
 
-INTERFACE PI_CONTROL_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
+INTERFACE PISAT_CONTROL_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
   TARGET PICONTROL

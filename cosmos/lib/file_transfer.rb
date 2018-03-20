@@ -1,12 +1,9 @@
-
 ###############################################################################
 # File Transfer
 #
 # Notes:
 #   1. Abstract file transfer services so different protocols can be used
 #      Currently hardcoded for TFTP.
-#   2. TODO - Pass in file transfer object to constructor that has standard
-#      method name. Test with CFDP. 
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -17,48 +14,66 @@
 require 'cfs_kit_global'
 require 'tftp'
 
+module Osk
 
-class FileTransfer
+   class FileTransfer
 
-  attr_reader :tftp
+      def initialize ()
+      end
   
-  def initialize ()
-    @tftp = TFTP.new(DEF_IP_ADDR)
-  end
+      def get(flt_filename, gnd_filename)
+      end # get()
+
+      def put (gnd_filename, flt_filename)
+      end # put()
+ 
+   end # Class FileTransfer
+   
+   class TftpFileTransfer < FileTransfer
+
+      attr_reader :tftp
   
-  def get(flt_filename, gnd_filename)
+      def initialize (ip_addr = LOCAL_IP_ADDR)
+         @tftp = TFTP.new(ip_addr)
+      end
   
-    got_file = true
-    # TFTP uses UDP directly without cmd interface so can't use cmd counters to verify execution
-    get_file_cnt = tlm("TFTP HK_TLM_PKT GET_FILE_COUNT")
-    seq_cnt = tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE")
-    @tftp.getbinaryfile(flt_filename, gnd_filename)
-    wait("TFTP HK_TLM_PKT GET_FILE_COUNT == #{get_file_cnt}+1", 10)  # Delay until get file count increments or timeout
-    if (tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
-      prompt ("No telemetry received to verify the error. Verify connection and telemetry output filter table.");
-      got_file = false  
-    end
+      def get(flt_filename, gnd_filename)
+  
+         got_file = true
+         # TFTP uses UDP directly without cmd interface so can't use cmd counters to verify execution
+         get_file_cnt = tlm("TFTP HK_TLM_PKT GET_FILE_COUNT")
+         seq_cnt = tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE")
+         @tftp.getbinaryfile(flt_filename, gnd_filename)
+         wait("TFTP HK_TLM_PKT GET_FILE_COUNT == #{get_file_cnt}+1", 10)  # Delay until get file count increments or timeout
+         if (tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
+            prompt ("No telemetry received to verify the error. Verify connection and telemetry output filter table.");
+            got_file = false  
+         end
       
-    return got_file 
+         return got_file 
     
-  end # get()
+      end # get()
 
-  def put (gnd_filename, flt_filename)
+      def put (gnd_filename, flt_filename)
   
-    put_file = true
-    # TFTP uses UDP directly without cmd interface so can't use cmd counters to verify execution
-    put_file_cnt = tlm("TFTP HK_TLM_PKT PUT_FILE_COUNT")
-    seq_cnt = tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE")
-    @tftp.putbinaryfile(gnd_filename, flt_filename)
-    wait("TFTP HK_TLM_PKT PUT_FILE_COUNT == #{put_file_cnt}+1", 10)  # Delay until put file count increments or timeout
-    if (tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
-      prompt ("No telemetry received to verify the error. Verify connection and telemetry output filter table.");
-      put_file = false  
-    end
+         put_file = true
+         # TFTP uses UDP directly without cmd interface so can't use cmd counters to verify execution
+         put_file_cnt = tlm("TFTP HK_TLM_PKT PUT_FILE_COUNT")
+         seq_cnt = tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE")
+         @tftp.putbinaryfile(gnd_filename, flt_filename)
+         wait("TFTP HK_TLM_PKT PUT_FILE_COUNT == #{put_file_cnt}+1", 10)  # Delay until put file count increments or timeout
+         if (tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
+            prompt ("No telemetry received to verify the error. Verify connection and telemetry output filter table.");
+            put_file = false  
+         end
       
-    return put_file 
+         return put_file 
     
-  end # put()
+      end # put()
+
+   end # Class FileTransfer
+
+end # Module Osk
+
 
   
-end # Class FileTransfer

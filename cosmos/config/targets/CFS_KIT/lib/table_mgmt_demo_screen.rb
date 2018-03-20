@@ -115,7 +115,7 @@ end # tmd_set_instruct_text()
 ## Demo Flow Control
 ################################################################################
 
-$file_xfer = FileTransfer.new()
+$file_xfer = nil
 $tmd_step = 0   # Demo step incremented by Next button
 $tmd_demo = 0   # Issue command(s) to perform the current demo step
 
@@ -144,6 +144,7 @@ def table_mgmt_demo(screen, button)
 
     case $tmd_step
       when 1
+        $file_xfer = Osk::system.file_transfer
         display("CFS_KIT TABLE_MGMT_SCREEN",500,50)    
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_TBL, BITMASK 0x01") # Enable debug events
       when 2..TMD_LAST_STEP

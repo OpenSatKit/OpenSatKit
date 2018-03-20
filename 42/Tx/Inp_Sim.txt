@@ -1,20 +1,19 @@
 <<<<<<<<<<<<<<<<<  42: The Mostly Harmless Simulator  >>>>>>>>>>>>>>>>>
 ************************** Simulation Control **************************
-FAST                            !  Time Mode (FAST, REAL, or EXTERNAL)
-1000.0      0.5                  !  Sim Duration, Step Size [sec]
-0.5                             !  File Output Interval [sec]
+REAL                            !  Time Mode (FAST, REAL, or EXTERNAL)
+86400.0     1.0                 !  Sim Duration, Step Size [sec]
+1.0                             !  File Output Interval [sec]
 FALSE                           !  Graphics Front End?
 Inp_Cmd.txt                     !  Command Script File Name
 **************************  Reference Orbits  **************************
 1                               !  Number of Reference Orbits
 TRUE   Orb_LEO.txt              !  Input file name for Orb 0
 *****************************  Spacecraft  *****************************
-2                               !  Number of Spacecraft
-TRUE  0 SC_Dellingr1.txt        !  Existence, RefOrb, Input file for SC 0
-TRUE  0 SC_Dellingr2.txt        !  Existence, RefOrb, Input file for SC 1
+1                               !  Number of Spacecraft
+TRUE  0 SC_Simple.txt           !  Existence, RefOrb, Input file for SC 0
 ***************************** Environment  *****************************
 06 21 2014                      !  Date (Month, Day, Year)
-20 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
+00 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
 0.0                             !  Time Offset (sec)
 USER_DEFINED                    !  Model Date Interpolation for Solar Flux and AP values?(TWOSIGMA_KP, NOMINAL or USER_DEFINED)
 230.0                           !  If USER_DEFINED, enter desired F10.7 value
@@ -24,13 +23,15 @@ IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
 2   0                           !  Earth Gravity Model N and M (<=18)
 2   0                           !  Mars Gravity Model N and M (<=18)
 2   0                           !  Luna Gravity Model N and M (<=18)
-FALSE                           !  Aerodynamic Forces & Torques
+FALSE   FALSE                   !  Aerodynamic Forces & Torques (Shadows)
 FALSE                           !  Gravity Gradient Torques
-FALSE                           !  Solar Pressure Forces & Torques
+FALSE   FALSE                   !  Solar Pressure Forces & Torques (Shadows)
 FALSE                           !  Gravity Perturbation Forces
 FALSE                           !  Passive Joint Forces & Torques
 FALSE                           !  Thruster Plume Forces & Torques
 FALSE                           !  RWA Imbalance Forces and Torques
+FALSE                           !  Contact Forces and Torques
+FALSE                           !  CFD Slosh Forces and Torques
 FALSE                           !  Output Environmental Torques to Files
 ********************* Celestial Bodies of Interest *********************
 TRUE                            !  Mercury

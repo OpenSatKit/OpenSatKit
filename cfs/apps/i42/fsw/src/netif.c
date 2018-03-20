@@ -1,9 +1,8 @@
-/*
-** Purpose: Implement the 42 simulator network interface
+/* 
+** Purpose: Network interface
 **
 ** Notes:
-**   1. This is part of prototype effort to port a 42 simulator FSW controller
-**      component into a cFS-based application.
+**   1. TODO - Create a single NetIf library, add to app_fw, and use in TF and I42. 
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -16,19 +15,17 @@
 */
 
 /*
-** Includes
+** Include Files:
 */
 
-#include "netif.h"
-#include "f42_adp.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <errno.h> 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <netdb.h>
+#include <time.h>
+#include <string.h>
+
+#include "netif.h"
+
 
 /*
 ** Global File Data
@@ -36,86 +33,17 @@
 
 static NETIF_Class* NetIf = NULL;
 
-
 /*
 ** Local Function Prototypes
 */
 
-static boolean InitSocket(const char *HostName, int Port, int AllowBlocking);
+static boolean InitSocket(const char *HostName, uint16 Port, boolean AllowBlocking);
 
 /******************************************************************************
-** Function: NETIF_Constructor
-**
-** Initialize a Network Interface object.
-**
-** Notes:
-**   1. This must be called prior to any other function.
+** Function: NETIF42_Close
 **
 */
-void NET42IF_Constructor(NETIF_Class*  NetIfPtr) {
-
-   NetIf = NetIfPtr;
-
-   CFE_PSP_MemSet((void*)NetIf, 0, sizeof(NETIF_Class));
-   
-   NetIf->Port = NETIF_DEF_PORT;
-   strncpy(NetIf->IpAddrStr, NETIF_DEF_IP_ADDR_STR, NETIF_IP_STR_LEN);
-   strncpy(NetIf->IpAddrStr, NETIF_LOCAL_HOST_STR, sizeof(NETIF_LOCAL_HOST_STR));
-
-   /* InitSocket reports errors */
-   NetIf->Connected = InitSocket(NetIf->IpAddrStr,NetIf->Port,TRUE);
-   
-   CFE_SB_InitMsg(&(NetIf->SensorPkt), F42_SENSOR_MID,
-                  F42_ADP_SENSOR_PKT_LEN, TRUE);
-
-} /* End NETIF_Constructor() */
-
-
-/******************************************************************************
-** Function:  NETIF_ResetStatus
-**
-*/
-void NETIF_ResetStatus(void) {
-  
-   NetIf->SensorPktCnt = 0;
-   NetIf->ActuatorPktCnt = 0;
-
-} /* End NETIF_ResetStatus() */
-
-
-/******************************************************************************
-** Function: NETIF_ConnectTo42Cmd
-**
-*/
-boolean NETIF_ConnectTo42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
-{
-
-   const NETIF_ConnectTo42CmdParam* CmdParam = (const NETIF_ConnectTo42CmdParam *) MsgPtr;
-
-   NETIF_Close();
-
-   strncpy(NetIf->IpAddrStr, CmdParam->IpAddrStr, NETIF_IP_STR_LEN);
-   NetIf->Port = CmdParam->Port;
-   
-   /* InitSocket reports errors */
-   NetIf->Connected = InitSocket(NetIf->IpAddrStr, NetIf->Port, TRUE);
-
-   if (NetIf->Connected) {
-      CFE_EVS_SendEvent(NETIF_CONNECT_TO_42_INFO_EID, CFE_EVS_INFORMATION,
-                        "Connected to 42 simulator on %s port %d", NetIf->IpAddrStr,NetIf->Port);
-   }
-   
-   return NetIf->Connected;
-
-} /* End NETIF_ConnectTo42Cmd() */
-
-
-/******************************************************************************
-** Function: NETIF_Close
-**
-*/
-void NETIF_Close(void) {
-
+void NETIF42_Close(void) {
 
    if (NetIf->Connected == TRUE) {
     
@@ -124,103 +52,159 @@ void NETIF_Close(void) {
       NetIf->Connected = FALSE;
 
       CFE_EVS_SendEvent(NETIF_SOCKET_CLOSE_INFO_EID, CFE_EVS_INFORMATION,
-                        "Closed 42 socket after %d sensor data cycles", NetIf->ConnectCycles);
+                        "Successfully closed socket");
 
   
    } /* End if connected */
    else {
       CFE_EVS_SendEvent(NETIF_SOCKET_CLOSE_INFO_EID, CFE_EVS_INFORMATION,
-                        "I42 NETIF_Close() called without a socket connection");
+                        "Attempt to close socket without a connection");
    }
 
-   NetIf->ConnectCycles = 0;
-  
-} /* End NETIF_Close() */
-
+} /* End NETIF42_Close() */
 
 
 /******************************************************************************
-** Function:  NETIF_ProcessSensorPkt
+** Function: NETIF42_Constructor
 **
-** Autodisconnect if nothing read from socket. 
+** Initialize a Network Interface object.
+**
+** Notes:
+**   1. This must be called prior to any other function.
+**
 */
-boolean NETIF_ProcessSensorPkt(void) {
+void NETIF42_Constructor(NETIF_Class*  NetIfPtr, const char* IpAddrStr, uint16 Port) {
 
-   boolean ProcessedPkt = FALSE;
+   NetIf = NetIfPtr;
+
+   CFE_PSP_MemSet((void*)NetIf, 0, sizeof(NETIF_Class));
+   
+   NetIf->Port = Port;
+   strncpy(NetIf->IpAddrStr, IpAddrStr, NETIF_IP_ADDR_STR_LEN);
+
+   /* InitSocket reports errors */
+   NetIf->Connected = InitSocket(NetIf->IpAddrStr,NetIf->Port, FALSE);
+   
+} /* End NETIF42_Constructor() */
+
+
+/******************************************************************************
+** Function: NETIF42_Connect42Cmd
+**
+*/
+boolean NETIF42_Connect42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   const NETIF_Connect42CmdParam* CmdParam = (const NETIF_Connect42CmdParam *) MsgPtr;
+
+   NETIF42_Close();
+
+   strncpy(NetIf->IpAddrStr, CmdParam->IpAddrStr, NETIF_IP_ADDR_STR_LEN);
+   NetIf->Port = CmdParam->Port;
+   
+   /* InitSocket reports errors */
+   NetIf->Connected = InitSocket(NetIf->IpAddrStr, NetIf->Port, FALSE);
+
+   if (NetIf->Connected) {
+      CFE_EVS_SendEvent(NETIF_CONNECT_TO_42_INFO_EID, CFE_EVS_INFORMATION,
+                        "Connected to 42 simulator on %s port %d", NetIf->IpAddrStr,NetIf->Port);
+   }
+   
+   return NetIf->Connected;
+
+} /* End NETIF42_Connect42Cmd() */
+
+
+/******************************************************************************
+** Function: NETIF42_Disconnect42Cmd
+**
+** Notes:
+**   1. Must match CMDMGR_CmdFuncPtr function signature
+*/
+boolean NETIF42_Disconnect42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   NETIF42_Close();
+   
+   return TRUE;
+   
+} /* End NETIF42_Disconnect42Cmd() */
+
+
+/******************************************************************************
+** Function:  NETIF_ResetStatus
+**
+*/
+void NETIF42_ResetStatus(void) {
   
+
+} /* End NETIF_ResetStatus() */
+
+
+/******************************************************************************
+** Function: NETIF42_Recv
+**
+*/
+int32 NETIF42_Recv(char* BufPtr, const uint16 BufSize) 
+{
+
+   int   BytesRead = 0;
+   int   TotalBytesRead = 0;
+   int   BytesRemaining = (I42_SOCKET_BUF_LEN-2);
+   char* InBufPtr = BufPtr;
+   char* GetPtr = BufPtr;     /* Non-NULL value */
+   
+
    if (NetIf->Connected == TRUE) {
 
-      NetIf->ConnectCycles++;
+      while (TotalBytesRead < (I42_SOCKET_BUF_LEN-2) && GetPtr != NULL) {
 
-      if( fgets(NetIf->InBuf,sizeof(NetIf->InBuf)-1,NetIf->StreamId) != NULL ) {
+         if( (GetPtr = fgets(InBufPtr,BytesRemaining,NetIf->StreamId)) != NULL ) {
+	
+            //OS_printf("NETIF42_Recv(): Received sensor message (len=%d): %s",strlen(InBufPtr), InBufPtr);
+            //OS_printf("NETIF42_Recv(): Received message (len=%d)\n",strlen(InBufPtr));
+            TotalBytesRead += strlen(InBufPtr);
 
-         //OS_printf("I42 NETIF: Received sensor message: %s",NetIf->InBuf);
+         }         
 
-         if (sscanf(NetIf->InBuf,"%ld %lf %lf %lf %ld %ld %ld %ld",
-             &(NetIf->SensorPkt.Sensor.SunValid),
-             &(NetIf->SensorPkt.Sensor.wbn[0]),&(NetIf->SensorPkt.Sensor.wbn[1]),&(NetIf->SensorPkt.Sensor.wbn[2]),
-             &(NetIf->SensorPkt.Sensor.Css[0].Counts), &(NetIf->SensorPkt.Sensor.Css[1].Counts),
-             &(NetIf->SensorPkt.Sensor.Css[2].Counts), &(NetIf->SensorPkt.Sensor.Css[3].Counts)) == 8) {
-
-            CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &NetIf->SensorPkt);
-            CFE_SB_SendMsg((CFE_SB_Msg_t *) &NetIf->SensorPkt);
-
-            NetIf->SensorPktCnt++;
-            ProcessedPkt = TRUE;
-         
-         } /* End sscanf() */
-         
-         NetIf->DisconnectCycles = 0;
+      } /* End while loop */
       
-      } /* End if fgets() */
-      else {
-      
-         if (++NetIf->DisconnectCycles >= I42_NETIF_DISCONNECT_CYCLES) {
-            CFE_EVS_SendEvent(NETIF_IDLE_SOCKET_CLOSE_INFO_EID, CFE_EVS_INFORMATION,
-                              "Closing 42 socket. No data received for %d attempts.", NetIf->DisconnectCycles);
-            NETIF_Close();
-         }
+   } /* End if connected */
+   else
+      CFE_EVS_SendEvent(NETIF_RECV_ERR_EID,CFE_EVS_ERROR,
+                        "Error attempting network read without being connected");
 
-      }
-   } /* End if NetIf->Connected */
-   //else
-   //   OS_printf("I42 NETIF: NETIF_ProcessSensorPkt() called with no connection\n");
-
-
-   return ProcessedPkt;
+   return TotalBytesRead;
    
-} /* NETIF_ProcessSensorPkt() */
-            
-            
+} /* NETIF42_Recv() */
+
+
 /******************************************************************************
-** Function:  SendActuatorPkt
+** Function: NETIF42_Send
 **
 */
-ssize_t NETIF_SendActuatorPkt(F42_ADP_ActuatorPkt*  ActuatorPkt) {
-
-   ssize_t BytesSent = 0;
+int32 NETIF42_Send (const char *BufPtr, uint16 Len) 
+{
    
-   //OS_printf("I42 NETIF: WheelCmd.Torq[0] = %.6lf\n",ActuatorPkt->WheelCmd.Torq[0]);
-   //OS_printf("I42 NETIF: WheelCmd.Torq[1] = %.6lf\n",ActuatorPkt->WheelCmd.Torq[1]);
-   //OS_printf("I42 NETIF: WheelCmd.Torq[2] = %.6lf\n",ActuatorPkt->WheelCmd.Torq[2]);
+   int32 BytesSent = 0;
 
-   snprintf(NetIf->OutBuf, sizeof(NetIf->OutBuf), "%lf %lf %lf\n",
-            ActuatorPkt->WheelCmd.Torq[0], ActuatorPkt->WheelCmd.Torq[1], ActuatorPkt->WheelCmd.Torq[2]);
-                
-   BytesSent = send(NetIf->SocketFd,NetIf->OutBuf,strlen(NetIf->OutBuf),0);
-
-   NetIf->ActuatorPktCnt++;
+   if (NetIf->Connected)
+	   BytesSent = send(NetIf->SocketFd,BufPtr,Len,0);
+   else
+      CFE_EVS_SendEvent(NETIF_SEND_ERR_EID,CFE_EVS_ERROR,
+                        "Error attempting network send without being connected");
+	   
 
    return BytesSent;
-   
-} /* End SendActuatorPkt() */
+
+} /* End NETIF42_Send() */
 
 
 /******************************************************************************
 ** Function:  InitSocket
 **
 */
-boolean InitSocket(const char *HostName, int Port, int AllowBlocking)
+static boolean InitSocket(const char *HostName, uint16 Port, boolean AllowBlocking)
 {
 
    int SocketFd, Flags;
@@ -229,6 +213,7 @@ boolean InitSocket(const char *HostName, int Port, int AllowBlocking)
 
 
    NetIf->Connected = FALSE;
+   strcpy(NetIf->IpAddrStr, HostName);  
 
    SocketFd = socket(AF_INET,SOCK_STREAM,0);
    if (SocketFd < 0) {
@@ -249,13 +234,13 @@ boolean InitSocket(const char *HostName, int Port, int AllowBlocking)
    memcpy((char *)&Server.sin_addr.s_addr,(char *)Host->h_addr_list[0], Host->h_length);
    Server.sin_port = htons(Port);
    
-   OS_printf("I42 NETIF: Attempting to connect to Server %s on Port %d\n",HostName, Port);
+   OS_printf("***I42 NETIF***: Attempting to connect to Server %s on Port %d\n",HostName, Port);
    if (connect(SocketFd,(struct sockaddr *) &Server, sizeof(Server)) < 0) {
       CFE_EVS_SendEvent(NETIF_CONNECT_ERR_EID,CFE_EVS_ERROR,
                         "Error connecting client socket: %s", strerror(errno));
       return(NetIf->Connected);
    }
-   OS_printf("I42 NETIF: Successfully connected to Server %s on Port %d\n",HostName, Port);
+   OS_printf("***I42 NETIF***: Successfully connected to Server %s on Port %d\n",HostName, Port);
 
    /* Keep read() from waiting for message to come */
    if (!AllowBlocking) {
@@ -267,13 +252,13 @@ boolean InitSocket(const char *HostName, int Port, int AllowBlocking)
    if (SocketFd >= 0) {
       NetIf->StreamId = fdopen(SocketFd,"r+");
       if (NetIf->StreamId != NULL) {
-         NetIf->ConnectCycles    = 0;
-         NetIf->DisconnectCycles = 0;
          NetIf->Connected = TRUE;
+         CFE_EVS_SendEvent(NETIF_CONNECT_INFO_EID,CFE_EVS_INFORMATION,
+                          "Successfully connected to 42 server %s on Port %d\n",HostName, Port);
       }
       else {
          CFE_EVS_SendEvent(NETIF_STREAM_OPEN_ERR_EID,CFE_EVS_ERROR,
-                          "Error openning socket stream: %s", strerror(errno));
+                          "Error opening socket stream: %s", strerror(errno));
       }
    } /* End if valid SocketFd */
 

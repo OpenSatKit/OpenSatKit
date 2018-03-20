@@ -4,11 +4,13 @@
 #ifndef val_atm_msis86_h
 #define val_atm_msis86_h
 
-//#include <math.h>
+/* #include <math.h> */
 
-//#ifdef __cplusplus
-//namespace Kit {
-//#endif
+/*
+** #ifdef __cplusplus
+** namespace Kit {
+** #endif
+*/
 
 /*====================================================================*/
 /* Begin f2c.h */
@@ -23,10 +25,10 @@
 typedef long int integer;
 typedef char *address;
 typedef short int shortint;
-//typedef float real;
+/* typedef float real; */
 typedef double real;
 typedef real doublereal;
-//typedef struct { real r, i; } complex;
+/* typedef struct { real r, i; } complex; */
 typedef struct { doublereal r, i; } doublecomplex;
 typedef long int logical;
 typedef short int shortlogical;
@@ -301,7 +303,7 @@ EXTERN struct lsqv_86Type lsqv_86;
 #define lsqv_1 lsqv_86
 
 struct ipoly_86Type {
-    real plg[36]	/* was [9][4] */, ctloc, stloc, c2tloc, s2tloc, 
+    real plg[36]	/* was [9][4] */, ctloc, stloc, c2tloc, s2tloc,
 	    c3tloc, s3tloc;
     integer iyr;
     real day, df, dfa, apd, apdf, apt[4];
@@ -323,12 +325,12 @@ struct lower5_Type {
     real e_1[64];
 };
 EXTERN struct lower5_Type lower5_;
-    
+
 struct parm5_Type {
     real e_1[1400];
 };
 EXTERN struct parm5_Type parm5_;
-    
+
 
 /*====================================================================*/
 int gts5_(integer *iyd, real *sec, real *alt, real *glat,
@@ -359,9 +361,9 @@ int tretrv_86(real *svv);
 /*             (4) 3 HR AP INDEX FOR 6 HRS BEFORE CURRENT TIME        */
 /*             (5) 3 HR AP INDEX FOR 9 HRS BEFORE CURRENT TIME        */
 /*             (6) AVERAGE OF EIGHT 3 HR AP INDICIES FROM             */
-/*                    12 TO 33 HRS PRIOR TO CURRENT TIME              */ 
+/*                    12 TO 33 HRS PRIOR TO CURRENT TIME              */
 /*             (7) AVERAGE OF EIGHT 3 HR AP INDICIES FROM             */
-/*                    36 TO 59 HRS PRIOR TO CURRENT TIME              */ 
+/*                    36 TO 59 HRS PRIOR TO CURRENT TIME              */
 /*        MASS - MASS NUMBER (ONLY DENSITY FOR SELECTED GAS IS        */
 /*                 CALCULATED.  MASS 0 IS TEMPERATURE.                */
 /*                 MASS 48 FOR ALL.)                                  */
@@ -369,9 +371,9 @@ int tretrv_86(real *svv);
 /*            in the model and are not of equal importance for every  */
 /*            situation.  For the most physically realistic           */
 /*            calculation these three variables should be             */
-/*            consistent (STL=SEC/3600+GLONG/15).                     */ 
+/*            consistent (STL=SEC/3600+GLONG/15).                     */
 /*     OUTPUT:                                                        */
-/*        D(1) - HE NUMBER DENSITY(CM-3)                              */ 
+/*        D(1) - HE NUMBER DENSITY(CM-3)                              */
 /*        D(2) - O NUMBER DENSITY(CM-3)                               */
 /*        D(3) - N2 NUMBER DENSITY(CM-3)                              */
 /*        D(4) - O2 NUMBER DENSITY(CM-3)                              */
@@ -393,8 +395,8 @@ int tretrv_86(real *svv);
 /*               VARIATIONS:                                          */
 /*               1 - F10.7 EFFECT ON MEAN  2 - TIME INDEPENDENT       */
 /*               3 - SYMMETRICAL ANNUAL    4 - SYMMETRICAL SEMIANNUAL */
-/*               5 - ASYMMETRICAL ANNUAL   6 - ASYMMETRICAL SEMIANNUAL*/ 
-/*               7 - DIURNAL               8 - SEMIDIURNAL            */ 
+/*               5 - ASYMMETRICAL ANNUAL   6 - ASYMMETRICAL SEMIANNUAL*/
+/*               7 - DIURNAL               8 - SEMIDIURNAL            */
 /*               9 - DAILY AP             10 - ALL UT/LONG EFFECTS    */
 /*              11 - LONGITUDINAL         12 - UT AND MIXED UT/LONG   */
 /*              13 - MIXED AP/UT/LONG     14 - TERDIURNAL             */
@@ -407,14 +409,15 @@ int tretrv_86(real *svv);
 /*              To get current values of SW: CALL TRETRV(SW)          */
 /*====================================================================*/
 
-double MSIS86(long Year, long DOY, long Hour, long Minute, 
-              double Second, double pbn[3], 
+double MSIS86(long Year, long DOY, long Hour, long Minute,
+              double Second, double pbn[3],
               double PriMerAng, double F107, double AP);
 
 
-//#ifdef __cplusplus
-//}
-//#endif
-
+/*
+** #ifdef __cplusplus
+** }
+** #endif
+*/
 
 #endif

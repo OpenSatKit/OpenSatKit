@@ -28,13 +28,13 @@
 ** I42 Application Configurations
 */
 
-#define  I42_APP_ACTUATOR_TIMEOUT   1500  /* Pend timeout (ms) for actuator data read */
- 
+#define  I42_APP_ACTUATOR_TIMEOUT              1500  /* Pend timeout (ms) for actuator data read */
+#define  I42_APP_NO_SENSOR_DISCONNECT_LIM      1500  /* Number of 'no data' sensor data read attempts before disconnect */
+#define  I42_APP_NO_SENSOR_RESEND_ACTUATOR_LIM   50  /* Number of 'no data' sensor data read attempts before resend actutaor packet */
 
-/******************************************************************************
-** I42 Network Interface Configurations
-*/
-
-#define  I42_NETIF_DISCONNECT_CYCLES  10  /* Number of 'no data' sensor data read attempts before disconnect */
+#define  I42_LOCAL_HOST_STR   "localhost"
+#define  I42_SOCKET_ADDR_STR  "127.000.000.001"
+#define  I42_SOCKET_PORT      4242
+#define  I42_SOCKET_BUF_LEN   1024
 
 #endif /* _i42_platform_cfg_ */

@@ -20,8 +20,6 @@ require 'file_transfer'
 FILE_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
 FILE_MGMT_GND_SRV_DIR = GND_SRV_DIR
 
-$file_xfer = FileTransfer.new()
-
 ################################################################################
 ## Configure Screen
 ################################################################################
@@ -46,11 +44,13 @@ def file_mgmt_send_cmd(screen, cmd)
     flt_full_file_name = ask_string("Enter full FSW path/filename.")
     gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
     gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
+    $file_xfer = Osk::system.file_transfer
     $file_xfer.get(flt_full_file_name,gnd_full_file_name)
   elsif (cmd == "PUT_FILE")
     gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
     gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
     flt_full_file_name = ask_string("Enter full FSW path/filename.")
+    $file_xfer = Osk::system.file_transfer
     $file_xfer.put(gnd_full_file_name,flt_full_file_name)
   elsif (cmd == "CREATE_DIR")
     dir_name = ask_string("Enter full path of new directory.")

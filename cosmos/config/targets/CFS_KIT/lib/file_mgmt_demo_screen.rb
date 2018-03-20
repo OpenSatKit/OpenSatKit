@@ -147,7 +147,6 @@ end # fmd_set_instruct_text()
 ## Demo Flow Control
 ################################################################################
 
-$file_xfer = FileTransfer.new()
 $fmd_step = 0   # Demo step incremented by Next button
 $fmd_demo = 0   # Issue command(s) to perform the current demo step
 
@@ -176,6 +175,7 @@ def file_mgmt_demo(screen, button)
 
     case $fmd_step
       when 1
+        $file_xfer = Osk::system.file_transfer     
         display("CFS_KIT FILE_MGMT_SCREEN",500,50)    
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01") # Enable debug events
         wait (1)

@@ -1,9 +1,24 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 #include "42.h"
 
-//#ifdef __cplusplus
-//namespace _42 {
-//using namespace Kit;
-//#endif
+/* #ifdef __cplusplus
+** namespace _42 {
+** using namespace Kit;
+** #endif
+*/
 
 /**********************************************************************/
 /*  Acceleration of a point A fixed in SC[Isc].B[0], expressed in     */
@@ -58,43 +73,6 @@ void Accelerometer(struct SCType *S,struct AccelType *A)
 
 }
 /**********************************************************************/
-void CssModel(struct SCType *S)
-{
-      struct FSWType *FSW;
-      struct FswCssType *Css;
-      double Illum;
-      long i;
-
-      FSW = &S->FSW;
-
-      if (FSW->Init) {
-         for(i=0;i<4;i++) {
-            FSW->Css[i].CountsToIllum = 1.0/1024.0;  /* Max illum = 1.0 */
-            FSW->Css[i].Axis[1] = SqrtHalf;
-         }
-         FSW->Css[0].Axis[0] =  SqrtHalf;
-         FSW->Css[0].Axis[2] =  0.0;
-         FSW->Css[1].Axis[0] =  0.0;
-         FSW->Css[1].Axis[2] =  SqrtHalf;
-         FSW->Css[2].Axis[0] = -SqrtHalf;
-         FSW->Css[2].Axis[2] =  0.0;
-         FSW->Css[3].Axis[0] =  0.0;
-         FSW->Css[3].Axis[2] = -SqrtHalf;
-      }
-
-      if (S->Eclipse || S->svb[1] < 0.0) {
-         for(i=0;i<4;i++) FSW->Css[i].Amps = 0.0;
-      }
-      else {
-         for(i=0;i<4;i++) {
-            Css = &FSW->Css[i];
-            Illum = VoV(S->svb,Css->Axis);
-            if (Illum < 0.0) Illum = 0.0;
-            Css->Counts = (long) (Illum/(Css->CountsToIllum));
-         }
-      }
-}
-/**********************************************************************/
 /*  This function is called at the simulation rate.  Sub-sampling of  */
 /*  sensors should be done on a case-by-case basis.                   */
 
@@ -113,8 +91,6 @@ void Sensors(struct SCType *S)
       else FSW->Tlm = FALSE;
 
       /* Sun Sensor */
-      CssModel(S);
-      #if 0
       if (S->Eclipse){
          FSW->SunValid = FALSE;
       }
@@ -122,10 +98,8 @@ void Sensors(struct SCType *S)
          FSW->SunValid = TRUE;
          MxV(S->B[0].CN,S->svn,FSW->svb);
       }
-      #endif
-
       /* TAM */
-      if (Orb[S->RefOrb].center == EARTH) {
+      if (Orb[S->RefOrb].World == EARTH) {
          FSW->MagValid = TRUE;
          for(i=0;i<3;i++) FSW->bvb[i] = S->bvb[i];
       }
@@ -183,13 +157,13 @@ void Sensors(struct SCType *S)
       /* Formation Sensors */
       for (i=0;i<3;i++) {
          for (j=0;j<3;j++) FSW->CSF[i][j] = S->CF[i][j];
-         FSW->PosF[i] = S->pf[i];
-         FSW->PosF[i] = S->vf[i];
+         FSW->PosF[i] = S->PosF[i];
+         FSW->VelF[i] = S->VelF[i];
       }
 
 }
 
-//#ifdef __cplusplus
-//}
-//#endif
-
+/* #ifdef __cplusplus
+** }
+** #endif
+*/

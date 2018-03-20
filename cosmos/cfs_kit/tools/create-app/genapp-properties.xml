@@ -32,7 +32,7 @@ containing template files and an genapp-template.xml.
 
 <entry key="template-dir">templates</entry>
 <entry key="target-cfs-dir">../../../../cfs/apps</entry>
-<entry key="target-cosmos-dir">../../../../cosmos/config/targets</entry>
+<entry key="target-cosmos-dir">../../../../cosmos/config</entry>
 
 <entry key="template-var">@TEMPLATE@,@Template@,@template@</entry>
 

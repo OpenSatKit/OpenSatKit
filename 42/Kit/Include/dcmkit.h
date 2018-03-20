@@ -1,9 +1,25 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 #ifndef __DCMKIT_H__
 #define __DCMKIT_H__
 
-//#ifdef __cplusplus
-//namespace Kit {
-//#endif
+/*
+** #ifdef __cplusplus
+** namespace Kit {
+** #endif
+*/
 
 void C2Q(double C[3][3], double Q[4]);
 void Q2C(double Q[4], double C[3][3]);
@@ -24,8 +40,10 @@ void W2ADOT(long Seq, double ang[3], double w[3], double adot[3]);
 void W2CDOT(double w[3], double C[3][3], double Cdot[3][3]);
 void CDOT2W(double C[3][3], double Cdot[3][3], double w[3]);
 
-//#ifdef __cplusplus
-//}
-//#endif
+/*
+** #ifdef __cplusplus
+** }
+** #endif
+*/
 
 #endif /* __DCMKIT_H__ */

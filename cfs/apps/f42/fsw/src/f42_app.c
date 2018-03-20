@@ -29,7 +29,7 @@
 static int32 InitApp(void);
 static void ProcessCommands(void);
 static void ProcessSensorData(void);
-static void SendControlTlm(void);
+static void SendCtrlTlm(void);
 
 /*
 ** Global Data
@@ -38,7 +38,7 @@ static void SendControlTlm(void);
 F42_APP_Class   F42App;
 F42_APP_HkPkt   F42AppHkPkt;
 F42_APP_CtrlPkt F42AppCtrlPkt;
-   
+
 /* Convenience macro */
 #define  CMDMGR_OBJ  (&(F42App.CmdMgr))  
 #define  TBLMGR_OBJ  (&(F42App.TblMgr))
@@ -84,7 +84,7 @@ void F42_AppMain(void)
 
       ProcessSensorData();
       ProcessCommands();
-      SendControlTlm();
+      SendCtrlTlm();
       
    } /* End CFE_ES_RunLoop */
 
@@ -130,12 +130,70 @@ boolean F42_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    CMDMGR_ResetStatus(CMDMGR_OBJ);
    TBLMGR_ResetStatus(TBLMGR_OBJ);
 
-   F42App.ControllerExeCnt = 0;
+   F42App.CtrlExeCnt = 0;
    F42_ADP_ResetStatus();
 	  
    return TRUE;
 
 } /* End F42_APP_ResetAppCmd() */
+
+
+/******************************************************************************
+** Function: F42_APP_ConfigDbgCmd
+**
+** TODO - Add file command parameter
+*/
+
+boolean F42_APP_ConfigDbgCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   const F42_APP_ConfigDbgCmdPkt *ConfigDbgCmd = (const F42_APP_ConfigDbgCmdPkt *) MsgPtr;
+   boolean  RetStatus = FALSE;
+
+   if ( ConfigDbgCmd->NewState == TRUE) {
+     
+      if (F42App.DbgEnabled == TRUE) {
+         
+         CFE_EVS_SendEvent(999, CFE_EVS_ERROR, "Enable debug command rejected; debug already enabled.");
+      
+      }
+      else {
+         
+         F42App.DbgFileHandle = OS_creat(F42_APP_DBG_FILE, OS_WRITE_ONLY);
+         
+         if (F42App.DbgFileHandle >= OS_FS_SUCCESS) {
+            
+            F42App.DbgEnabled = TRUE;
+            CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "Created debug file %s",F42_APP_DBG_FILE);
+            RetStatus = TRUE;
+         
+         }
+         else {
+
+            CFE_EVS_SendEvent(999, CFE_EVS_ERROR, "Error creating debug file %s",F42_APP_DBG_FILE);
+         
+         } /* End if error creating file */
+      } /* End if debug not enabled */
+   } /* End if enable debug command */
+   else {
+      
+      if (F42App.DbgEnabled == TRUE) {
+         
+         F42App.DbgEnabled = FALSE;
+         OS_close(F42App.DbgFileHandle);
+         CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "Debug file %s closed", F42_APP_DBG_FILE);
+      
+      }
+      else {
+
+         CFE_EVS_SendEvent(999, CFE_EVS_ERROR, "Disable debug command rejected; debug not enabled.");
+      }
+      
+   } /* End if disable debug command */
+        
+   return RetStatus;
+
+} /* End F42_APP_ConfigDbgCmd() */
 
 
 /******************************************************************************
@@ -157,20 +215,21 @@ void F42_APP_SendHousekeepingPkt(void)
    F42AppHkPkt.LastAction       = LastTbl->LastAction;
    F42AppHkPkt.LastActionStatus = LastTbl->LastActionStatus;
 
-   F42AppHkPkt.ControllerExeCnt = F42App.ControllerExeCnt;
+   F42AppHkPkt.CtrlExeCnt = F42App.CtrlExeCnt;
 
    /*
    ** 42 FSW Adapter Data
    */
 
-   F42AppHkPkt.ControlMode   = F42App.F42Adp.ControlMode;
-
-   F42AppHkPkt.SunTargetAxis = F42App.F42Adp.SunTargetAxis;
-   F42AppHkPkt.CssFault      = F42App.F42Adp.Fault[F42_ADP_FAULT_CSS];
+   F42AppHkPkt.CtrlMode     = F42App.F42Adp.CtrlMode;
+   F42AppHkPkt.OvrSunValid  = F42App.F42Adp.Override[F42_ADP_OVR_SUN_VALID];
 
    for (i=0; i < 3; i++) {
+      F42AppHkPkt.wc[i] = F42App.F42Adp.Fsw.wc[i];
+      F42AppHkPkt.zc[i] = F42App.F42Adp.Fsw.zc[i];
       F42AppHkPkt.Kr[i] = F42App.F42Adp.Fsw.Kr[i];
       F42AppHkPkt.Kp[i] = F42App.F42Adp.Fsw.Kp[i];
+      F42AppHkPkt.Hwcmd[i] = F42App.F42Adp.Fsw.Hwcmd[i];
    }
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &F42AppHkPkt);
@@ -186,54 +245,57 @@ void F42_APP_SendHousekeepingPkt(void)
 static int32 InitApp(void)
 {
 
-    int32 Status = CFE_SUCCESS;
+   int32 Status = CFE_SUCCESS;
 
-    /*
-    ** Initialize objects 
-    */
+   /*
+   ** Initialize objects 
+   */
 
-    F42_ADP_Constructor(&(F42App.F42Adp));
+   F42_ADP_Constructor(&(F42App.F42Adp));
 
 
-    /*
-    ** Initialize app level interfaces
-    */
+   /*
+   ** Initialize app level interfaces
+   */
 
-    CFE_SB_CreatePipe(&F42App.CmdPipe, F42_CMD_PIPE_DEPTH, F42_CMD_PIPE_NAME);
-    CFE_SB_Subscribe(F42_CMD_MID, F42App.CmdPipe);
-    CFE_SB_Subscribe(F42_SEND_HK_MID, F42App.CmdPipe);
+   CFE_SB_CreatePipe(&F42App.CmdPipe, F42_CMD_PIPE_DEPTH, F42_CMD_PIPE_NAME);
+   CFE_SB_Subscribe(F42_CMD_MID, F42App.CmdPipe);
+   CFE_SB_Subscribe(F42_SEND_HK_MID, F42App.CmdPipe);
 
-    CMDMGR_Constructor(CMDMGR_OBJ);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, F42_APP_NoOpCmd,     0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, F42_APP_ResetAppCmd, 0);
+   CMDMGR_Constructor(CMDMGR_OBJ);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, F42_APP_NoOpCmd,     0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, F42_APP_ResetAppCmd, 0);
 
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_TBL_LOAD_CMD_FC,       TBLMGR_OBJ, TBLMGR_LoadTblCmd,        TBLMGR_LOAD_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_TBL_DUMP_CMD_FC,       TBLMGR_OBJ, TBLMGR_DumpTblCmd,        TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_MODE_CMD_FC,       F42_ADP_OBJ, F42_ADP_SetModeCmd,      F42_ADP_SET_MODE_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_FAULT_CMD_FC,      F42_ADP_OBJ, F42_ADP_SetFaultCmd,     F42_ADP_SET_FAULT_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_SUN_TARGET_CMD_FC, F42_ADP_OBJ, F42_ADP_SetSunTargetCmd, F42_ADP_SET_SUN_TARGET_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_TBL_LOAD_CMD_FC, TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_TBL_DUMP_CMD_FC, TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
+
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_CTRL_MODE_CMD_FC,      F42_ADP_OBJ, F42_ADP_SetCtrlModeCmd,     F42_ADP_SET_CTRL_MODE_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_OVR_CMD_FC,            F42_ADP_OBJ, F42_ADP_SetOvrCmd,          F42_ADP_SET_OVR_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_ADP_SET_TARGET_WHL_MOM_CMD_FC, F42_ADP_OBJ, F42_ADP_SetTargetWhlMomCmd, F42_ADP_SET_TARGET_WHL_MOM_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, F42_APP_CONFIG_DBG_CMD_FC,         F42_ADP_OBJ, F42_APP_ConfigDbgCmd,       F42_APP_CONFIG_DBG_CMD_DATA_LEN);
 
 	TBLMGR_Constructor(TBLMGR_OBJ);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, CTRLTBL_LoadCmd,  CTRLTBL_DumpCmd,  F42_APP_CTRL_TBL_DEF_LOAD_FILE);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, CTRLTBL_LoadCmd,  CTRLTBL_DumpCmd,  F42_APP_CTRL_TBL_DEF_LOAD_FILE);
 
-    CFE_SB_CreatePipe(&F42App.SensorPipe,F42_SENSOR_PIPE_DEPTH, F42_SENSOR_PIPE_NAME);
-    CFE_SB_Subscribe(F42_SENSOR_MID, F42App.SensorPipe);
+   CFE_SB_CreatePipe(&F42App.SensorPipe,F42_SENSOR_PIPE_DEPTH, F42_SENSOR_PIPE_NAME);
+   CFE_SB_Subscribe(F42_SENSOR_MID, F42App.SensorPipe);
 
-    CFE_SB_InitMsg(&F42AppHkPkt, F42_HK_TLM_MID, F42_APP_TLM_HK_LEN, TRUE);
-    CFE_SB_InitMsg(&F42AppCtrlPkt, F42_CONTROL_MID, F42_APP_TLM_CTRL_PKT_LEN, TRUE);
+   CFE_SB_InitMsg(&F42AppHkPkt, F42_HK_TLM_MID, F42_APP_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&F42AppCtrlPkt, F42_CONTROL_MID, F42_APP_TLM_CTRL_PKT_LEN, TRUE);
 
-    /*
-    ** Application startup event message
-    */
-    Status = CFE_EVS_SendEvent(F42_APP_INIT_APP_INFO_EID,
-                               CFE_EVS_INFORMATION,
-                               "F42 App Initialized. Version %d.%d.%d.%d",
-                               F42_APP_MAJOR_VERSION,
-                               F42_APP_MINOR_VERSION,
-                               F42_APP_REVISION,
-                               F42_APP_MISSION_REV);
+      
+   /*
+   ** Application startup event message
+   */
+   Status = CFE_EVS_SendEvent(F42_APP_INIT_APP_INFO_EID,
+                              CFE_EVS_INFORMATION,
+                              "F42 App Initialized. Version %d.%d.%d.%d",
+                              F42_APP_MAJOR_VERSION,
+                              F42_APP_MINOR_VERSION,
+                              F42_APP_REVISION,
+                              F42_APP_MISSION_REV);
 
-    return(Status);
+   return(Status);
 
 } /* End of InitApp() */
 
@@ -289,21 +351,52 @@ static void ProcessSensorData(void)
    CFE_SB_Msg_t*       MsgPtr;
    CFE_SB_MsgId_t      MsgId;
    F42_ADP_SensorPkt*  SensorPkt;
-
-
-   Status = CFE_SB_RcvMsg(&MsgPtr, F42App.SensorPipe, F42_APP_SENSOR_TIMEOUT);
+   struct FSWType*     Fsw = &(F42App.F42Adp.Fsw);
+   char                DbgRecord[512];
    
+   Status = CFE_SB_RcvMsg(&MsgPtr, F42App.SensorPipe, F42_APP_SENSOR_TIMEOUT);
+   //OS_printf("F42::ProcessSensorData() SB recv status = 0x%08X\n",Status);	
    if (Status == CFE_SUCCESS)
    {
 
       MsgId = CFE_SB_GetMsgId(MsgPtr);
+      //OS_printf("F42::ProcessSensorData() received msgid = 0x%04X\n",MsgId);	
 
       if (MsgId == F42_SENSOR_MID) {
 
-         F42App.ControllerExeCnt++;
+         F42App.CtrlExeCnt++;
          
          SensorPkt = (F42_ADP_SensorPkt*)MsgPtr;
-         F42_ADP_RunController(&(SensorPkt->Sensor));
+         F42_ADP_Run42Fsw(SensorPkt);
+         
+         if (F42App.DbgEnabled) {
+            sprintf(DbgRecord,"%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+              Fsw->MOI[0],Fsw->MOI[1],Fsw->MOI[2], 
+              Fsw->wc[0], Fsw->wc[1], Fsw->wc[2],
+              Fsw->zc[0], Fsw->zc[1], Fsw->zc[2],
+              Fsw->Kr[0], Fsw->Kr[1], Fsw->Kr[2],
+              Fsw->Kp[0], Fsw->Kp[1], Fsw->Kp[2]);
+            
+            /*
+            sprintf(DbgRecord,"%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+              Fsw->qbn[0],Fsw->qbn[1],Fsw->qbn[2],Fsw->qbn[3],Fsw->qbr[0]*2.0,Fsw->qbr[1]*2.0,Fsw->qbr[2]*2.0,Fsw->qbr[3],
+              Fsw->Twhlcmd[0],Fsw->Twhlcmd[1],Fsw->Twhlcmd[2]);
+            */
+            OS_write(F42App.DbgFileHandle,DbgRecord,strlen(DbgRecord));
+
+            /*
+            F42App.F42Adp.Fsw.wbn[i];
+            F42App.F42Adp.Fsw.qbr[i];
+            F42App.F42Adp.Fsw.qbr[i]*2.0);
+            F42App.F42Adp.Fsw.ierr[i];  // TODO - Hack to get Her to TLM
+            F42App.F42Adp.Fsw.svb[i];
+            F42App.F42Adp.Fsw.Twhlcmd[i];
+            F42App.F42Adp.Fsw.Mmtbcmd[i];
+            F42App.F42Adp.Fsw.GimCmd[0].Ang[0];
+            F42App.F42Adp.Fsw.SunValid;
+            */
+
+         } /* End if debug enabled */
          
       }
       else {
@@ -320,27 +413,29 @@ static void ProcessSensorData(void)
 
                           
 /******************************************************************************
-** Function: SendControlTlm
+** Function: SendCtrlTlm
 **
 */
-static void SendControlTlm(void)
+static void SendCtrlTlm(void)
 {
    uint8 i;
    
    for (i=0; i<3; i++) {
-      F42AppCtrlPkt.wbn[i]       = (float)F42App.F42Adp.Fsw.wbn[i];
-      F42AppCtrlPkt.svb[i]       = (float)F42App.F42Adp.Fsw.svb[i];
-      F42AppCtrlPkt.therr[i]     = (float)F42App.F42Adp.Fsw.therr[i];
-      F42AppCtrlPkt.Twhlcmd[i]   = (float)F42App.F42Adp.Fsw.Twhlcmd[i];
-      F42AppCtrlPkt.CssCounts[i] = (uint16)F42App.F42Adp.Fsw.Css[i].Counts;
+      F42AppCtrlPkt.wbn[i]    = (float)F42App.F42Adp.Fsw.wbn[i];
+      F42AppCtrlPkt.qbr[i]    = (float)F42App.F42Adp.Fsw.qbr[i];
+      F42AppCtrlPkt.AttErr[i] = (float)(F42App.F42Adp.Fsw.qbr[i]*2.0);
+      F42AppCtrlPkt.Herr[i]   = (float)F42App.F42Adp.Fsw.ierr[i];  // TODO - Hack to get Her to TLM
+      F42AppCtrlPkt.svb[i]    = (float)F42App.F42Adp.Fsw.svb[i];
+      F42AppCtrlPkt.WhlCmd[i] = (float)F42App.F42Adp.Fsw.Twhlcmd[i];
+      F42AppCtrlPkt.MtbCmd[i] = (float)F42App.F42Adp.Fsw.Mmtbcmd[i];
    }
-   F42AppCtrlPkt.CssCounts[3] = (uint16)F42App.F42Adp.Fsw.Css[3].Counts;
-   
+   F42AppCtrlPkt.qbr[3]   = (float)F42App.F42Adp.Fsw.qbr[3];
+   F42AppCtrlPkt.GimCmd   = (float)F42App.F42Adp.Fsw.GimCmd[0].Ang[0];
    F42AppCtrlPkt.SunValid = F42App.F42Adp.Fsw.SunValid;
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &F42AppCtrlPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &F42AppCtrlPkt);
 
-} /* End SendControlTlm() */
+} /* End SendCtrlTlm() */
                              
 /* end of file */

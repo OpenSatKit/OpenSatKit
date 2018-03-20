@@ -63,7 +63,7 @@ def table_mgmt_send_cmd(screen, cmd)
 	elsif (cmd == "GET_FILE")
     # Don't use file_mgmt because table file needs to be manipulated.
     file_mgmt_set_work_dir(screen);
-    file_xfer = FileTransfer.new()
+    file_xfer = Osk::system.file_transfer
     flt_full_file_name = ask_string("Enter full FSW path/filename.")
     gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
     gnd_file_name_no_hdr = gnd_file_name.split('.').first + "_no_hdr.dat" # Assumes one .

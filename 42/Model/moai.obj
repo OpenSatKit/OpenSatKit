@@ -1,5 +1,6 @@
 # Nv = 50  Nvt = 0  Nvn = 288  Npoly = 96
 # Exported from Wings 3D 1.5.2
+# Scale up by 2.0 to actual size
 mtllib 42.mtl
 o Moai
 #50 vertices, 96 faces
