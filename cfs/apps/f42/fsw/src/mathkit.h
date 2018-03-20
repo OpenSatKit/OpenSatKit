@@ -1,9 +1,25 @@
+/*    This file is distributed with 42,                               */
+/*    the (mostly harmless) spacecraft dynamics simulation            */
+/*    created by Eric Stoneking of NASA Goddard Space Flight Center   */
+
+/*    Copyright 2010 United States Government                         */
+/*    as represented by the Administrator                             */
+/*    of the National Aeronautics and Space Administration.           */
+
+/*    No copyright is claimed in the United States                    */
+/*    under Title 17, U.S. Code.                                      */
+
+/*    All Other Rights Reserved.                                      */
+
+
 #ifndef __MATHKIT_H__
 #define __MATHKIT_H__
 
-//#ifdef __cplusplus
-//namespace Kit {
-//#endif
+/*
+** #ifdef __cplusplus
+** namespace Kit {
+** #endif
+*/
 
 #ifndef __MINGW32__
    #ifdef WIN32
@@ -49,19 +65,19 @@ void RECTIFYQ(double Q[4]);
 void PerpBasis(double A[3], double B[3], double C[3]);
 double fact(long n);
 double oddfact(long n);
-void Legendre(long N, long M, double x, 
+void Legendre(long N, long M, double x,
               double P[19][19], double sdP[19][19]);
-void SphericalHarmonics(long N, long M, double r, double phi, 
-        double theta, double Re, double K, 
+void SphericalHarmonics(long N, long M, double r, double phi,
+        double theta, double Re, double K,
         double C[19][19], double S[19][19], double gradV[3]);
-void MxMG(double **A, double **B, double **C, 
+void MxMG(double **A, double **B, double **C,
           long N, long K, long M);
-void MxMTG(double **A, double **B, double **C, 
+void MxMTG(double **A, double **B, double **C,
            long N, long K, long M);
-void MTxMG(double **A, double **B, double **C, 
+void MTxMG(double **A, double **B, double **C,
           long N, long K, long M);
 void MxVG(double **M, double *v, double *w, long n, long m);
-void SxMG(double s, double **A, double **B, 
+void SxMG(double s, double **A, double **B,
           long N, long M);
 void MINVG(double **A, double **AI, long N);
 void PINVG(double **A, double **Ai, long n, long m);
@@ -69,28 +85,33 @@ double **CreateMatrix(long n, long m);
 void DestroyMatrix(double **A, long n);
 void LINSOLVE(double **A, double *x, double *b, long n);
 void CholeskySolve(double **A, double *x, double *b, long n);
-void ConjGradSolve(double **A, double *x, double *b, long n, 
+void ConjGradSolve(double **A, double *x, double *b, long n,
    double errtol, long maxiter);
 void Bairstow(long n, double *a, double Tol, double *Real, double *Imag);
-double Amoeba(long N, double *P, 
-            double CostFunction(double *p, double *Parm), 
+double Amoeba(long N, double *P,
+            double CostFunction(double *p, double *Parm),
             double *CostParm, double scale, double Tol);
 void FindNormal(double V1[3], double V2[3], double V3[3], double N[3]);
 double LinInterp(double *X, double *Y, double x, long n);
 void SphereInterp(double q1[4], double q2[4], double u, double q[4]);
 double CubicInterp1D(double f0, double f1, double x);
-double CubicInterp2D(double f00, double f10, double f01, double f11, 
+double CubicInterp2D(double f00, double f10, double f01, double f11,
                     double x, double y);
 double CubicInterp3D(double f000, double f100, double f010, double f110,
                     double f001, double f101, double f011, double f111,
                     double x, double y, double z);
-double DistanceToLine(double LineEnd1[3], double LineEnd2[3], 
+double DistanceToLine(double LineEnd1[3], double LineEnd2[3],
    double Point[3], double VecToLine[3]);
-long ProjectPointOntoPoly(double Point[3], double DirVec[3], 
+long ProjectPointOntoPoly(double Point[3], double DirVec[3],
    double **Vtx, long Nvtx, double ProjPoint[3], double *Distance);
+long ProjectPointOntoTriangle(double A[3], double B[3], double C[3],
+      double DirVec[3], double Pt[3], double ProjPt[3], double Bary[4]);
+double CubicSpline(double x, double X[4], double Y[4]);
 
-//#ifdef __cplusplus
-//}
-//#endif
+/*
+** #ifdef __cplusplus
+** }
+** #endif
+*/
 
 #endif /* __MATHKIT_H__ */

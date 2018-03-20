@@ -8,6 +8,8 @@
 ** References:
 **   1. OpenSat Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
+**   3. 42 open source repository at 
+**      https://sourceforge.net/projects/fortytwospacecraftsimulation/
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -50,8 +52,11 @@ typedef struct
    
    F42_ADP_Class    F42Adp;
 
-   uint32           ControllerExeCnt;
+   uint32           CtrlExeCnt;
    
+   int32            DbgFileHandle;
+   boolean          DbgEnabled;
+
 } F42_APP_Class;
 
 typedef struct
@@ -77,18 +82,22 @@ typedef struct
    ** Application Data
    */
    
-   uint32   ControllerExeCnt;
+   uint32   CtrlExeCnt;
 
    /*
    ** 42 FSW Adapter Data
    */
    
-   uint16   ControlMode;
-   uint8    SunTargetAxis;
-   boolean  CssFault;
+   uint16   CtrlMode;      /* 16-bit to keep aligned */
+   uint16   OvrSunValid;   /* 16-bit to keep aligned */
+
+   float    wc[3];
+   float    zc[3];
 
    float    Kr[3];
    float    Kp[3];
+
+   float    Hwcmd[3];
    
 } OS_PACK F42_APP_HkPkt;
 #define F42_APP_TLM_HK_LEN sizeof (F42_APP_HkPkt)
@@ -99,15 +108,32 @@ typedef struct
    uint8  Header[CFE_SB_TLM_HDR_SIZE];
    
    float  wbn[3];
+   float  qbr[4];
+   float  AttErr[3];
+   float  Herr[3];
    float  svb[3];
-   float  therr[3];
-   float  Twhlcmd[3];
+   float  WhlCmd[3];
+   float  MtbCmd[3];
+   float  GimCmd;
    
-   uint16 CssCounts[4];
    uint16 SunValid;
 
 } OS_PACK F42_APP_CtrlPkt;
 #define F42_APP_TLM_CTRL_PKT_LEN sizeof (F42_APP_CtrlPkt)
+
+/******************************************************************************
+** Command Functions
+*/
+
+typedef struct
+{
+
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint16   NewState;                        /* 0=Disable, 1=Enable */
+
+}  OS_PACK F42_APP_ConfigDbgCmdPkt;
+#define F42_APP_CONFIG_DBG_CMD_DATA_LEN  (sizeof(F42_APP_ConfigDbgCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+
 
 /*
 ** Exported Data

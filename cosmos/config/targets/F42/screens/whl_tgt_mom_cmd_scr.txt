@@ -1,0 +1,46 @@
+###############################################################################
+# F42 App Wheel Target Momentum Command Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Set Wheel Target Momentum Command"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX 
+  HORIZONTALBOX "Current Target Momentum"
+    MATRIXBYCOLUMNS 3
+      LABEL '   Wheel 1  ' 
+      LABEL '   Wheel 2  ' 
+      LABEL '   Wheel 3  ' 
+      VALUE F42 HK_TLM_PKT WHL_1_TGT_MOM
+      VALUE F42 HK_TLM_PKT WHL_2_TGT_MOM
+      VALUE F42 HK_TLM_PKT WHL_3_TGT_MOM
+    END # Matrix
+  END # Horizontal Box
+  HORIZONTALBOX "Command Target Momentum"
+    MATRIXBYCOLUMNS 3
+      LABEL '   Wheel 1  ' 
+      LABEL '   Wheel 2  ' 
+      LABEL '   Wheel 3  ' 
+      NAMED_WIDGET whl_1 TEXTFIELD 12
+      NAMED_WIDGET whl_2 TEXTFIELD 12
+      NAMED_WIDGET whl_3 TEXTFIELD 12
+    END # Matrix
+  END # Horizontal Box
+  LABEL ' '
+  LABEL 'Enter a floating point value for each axis. 0.0 will be sent for invalid values.'
+  LABEL ' '
+  MATRIXBYCOLUMNS 3
+    BUTTON 'Send'   'require "#{Cosmos::USERPATH}/config/targets/F42/lib/f42_screens.rb"; f42_whl_tgt_mom_cmd(self, "SEND")'
+    BUTTON 'Cancel' 'require "#{Cosmos::USERPATH}/config/targets/F42/lib/f42_screens.rb"; f42_whl_tgt_mom_cmd(self, "CANCEL")'
+  END # Matrix
+END # Vertical Box
+

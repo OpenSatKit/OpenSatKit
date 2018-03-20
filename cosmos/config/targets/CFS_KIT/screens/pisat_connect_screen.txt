@@ -1,0 +1,39 @@
+###############################################################################
+# PiSat Interface Connection Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Connect to PiSat"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX 
+
+  LABEL ' '
+  LABEL 'Enter the IP address of the host computer.'
+  LABEL 'Should be in the range 192.168.0.x'
+  ##LABEL 'This dialog screen is used to switched between the cFS running locally and on a PiSat'
+  #LABEL '    Host IP address is only required if switching to a PiSat'
+  #LABEL '   Local -> PiSat: Close the current local cFS terminal using Ctrl-C'
+  #LABEL '   PiSat -> Local: Shutdown the cFS using PiControl or manually on the PiSat'
+  LABEL ' '
+
+  HORIZONTALBOX "Local->PiSat"
+    MATRIXBYCOLUMNS 2
+      LABEL 'Host IP Address' 
+      NAMED_WIDGET host_ip_addr TEXTFIELD
+      LABEL '   ' 
+      LABEL '   ' 
+      BUTTON 'Switch to PiSat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screens.rb"; pisat_connection(self, "SWITCH_TO_PISAT")'
+      BUTTON 'Cancel'          'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screens.rb"; pisat_connection(self, "CANCEL")'
+    END # Matrix
+  END # Horizontal Box
+ 
+END # Vertical Box

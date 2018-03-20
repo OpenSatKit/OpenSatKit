@@ -13,8 +13,7 @@
 # 
 ################################################################################
 
-require 'cfs_kit_global'
-require 'file_transfer'
+require 'osk_system'
 
 ################################################################################
 ## Global Variables
@@ -166,7 +165,7 @@ end # mmd_set_instruct_text()
 ## Demo Flow Control
 ################################################################################
 
-$file_xfer = FileTransfer.new()
+$file_xfer = nil
 $mmd_step = 0   # Demo step incremented by Next button
 $mmd_demo = 0   # Issue command(s) to perform the current demo step
 
@@ -195,6 +194,8 @@ def memory_mgmt_demo(screen, button)
 
     case $mmd_step
       when 1
+        puts 'ABout to get file transfer'
+        $file_xfer = Osk::system.file_transfer
         display("CFS_KIT MEMORY_MGMT_SCREEN",500,50)    
         display("MD DWELL_PKT_SCREEN",500,50)    
         cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Enable debug events

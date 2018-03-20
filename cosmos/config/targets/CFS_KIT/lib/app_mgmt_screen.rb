@@ -18,8 +18,6 @@ require 'file_transfer'
 APP_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
 APP_MGMT_GND_SRV_DIR = GND_SRV_DIR
 
-$file_xfer = FileTransfer.new()
-
 ################################################################################
 ## Launch Applications
 ################################################################################
@@ -47,11 +45,12 @@ def app_mgmt_send_cmd(screen, cmd)
 
   if (cmd == "ES_APP_TASK_INFO")
     info = combo_box("Select info to write to a file","Application", "Task")
-    if (info == "Application")
+    if (info == "Application")    
       flt_full_file_name = ask_string("Enter full FSW path/filename.")
       cmd("CFE_ES WRITE_APP_INFO_TO_FILE with FILENAME #{flt_full_file_name}")
       gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
       gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
+      $file_xfer = Osk::system.file_transfer
       if ($file_xfer.get(flt_full_file_name,gnd_full_file_name))
         prompt ("In Table Manager select File->Open->cfs_kit/file_server #{gnd_file_name}. Select 'cfe_es_app_info.txt' for the definition file")
         spawn("ruby #{Cosmos::USERPATH}/tools/TableManager ")
@@ -63,6 +62,7 @@ def app_mgmt_send_cmd(screen, cmd)
       cmd("CFE_ES WRITE_TASK_INFO_TO_FILE with FILENAME #{flt_full_file_name}")
       gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
       gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
+      $file_xfer = Osk::system.file_transfer
       if ($file_xfer.get(flt_full_file_name,gnd_full_file_name))
         prompt ("In Table Manager select File->Open->cfs_kit/file_server #{gnd_file_name}. Select 'cfe_es_task_info.txt' for the definition file")
         spawn("ruby #{Cosmos::USERPATH}/tools/TableManager ")

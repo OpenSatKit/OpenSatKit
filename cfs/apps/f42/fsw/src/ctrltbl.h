@@ -34,27 +34,30 @@
 ** Event Message IDs
 */
 
-#define CTRLTBL_CREATE_FILE_ERR_EID        (CTRLTBL_BASE_EID + 0)
-#define CTRLTBL_LOAD_INDEX_ERR_EID         (CTRLTBL_BASE_EID + 1)
-#define CTRLTBL_LOAD_LINE_ERR_EID          (CTRLTBL_BASE_EID + 2)
-#define CTRLTBL_CMD_LOAD_TYPE_ERR_EID      (CTRLTBL_BASE_EID + 3)
-#define CTRLTBL_CMD_LOAD_PARSE_ERR_EID     (CTRLTBL_BASE_EID + 4)
-#define CTRLTBL_CMD_LOAD_OPEN_ERR_EID      (CTRLTBL_BASE_EID + 5)
-#define CTRLTBL_CMD_LOAD_REPLACE_ERR_EID   (CTRLTBL_BASE_EID + 6)
-#define CTRLTBL_CMD_LOAD_UPDATE_ERR_EID    (CTRLTBL_BASE_EID + 7)
-#define CTRLTBL_LOAD_MOI_ERR_EID           (CTRLTBL_BASE_EID + 8)
-
+#define CTRLTBL_CREATE_FILE_ERR_EID          (CTRLTBL_BASE_EID + 0)
+#define CTRLTBL_LOAD_INDEX_ERR_EID           (CTRLTBL_BASE_EID + 1)
+#define CTRLTBL_LOAD_LINE_ERR_EID            (CTRLTBL_BASE_EID + 2)
+#define CTRLTBL_CMD_LOAD_TYPE_ERR_EID        (CTRLTBL_BASE_EID + 3)
+#define CTRLTBL_CMD_LOAD_PARSE_ERR_EID       (CTRLTBL_BASE_EID + 4)
+#define CTRLTBL_CMD_LOAD_OPEN_ERR_EID        (CTRLTBL_BASE_EID + 5)
+#define CTRLTBL_CMD_LOAD_REPLACE_ERR_EID     (CTRLTBL_BASE_EID + 6)
+#define CTRLTBL_CMD_LOAD_UPDATE_ERR_EID      (CTRLTBL_BASE_EID + 7)
+#define CTRLTBL_LOAD_MOI_ERR_EID             (CTRLTBL_BASE_EID + 8)
+#define CTRLTBL_LOAD_WHL_TGT_MOM_LIM_ERR_EID (CTRLTBL_BASE_EID + 9)
 
 /*
 ** Table Structure Objects 
 */
 
-#define  CTRLTBL_OBJ_MOI           0
-#define  CTRLTBL_OBJ_PD_GAIN_PARAM 1
-#define  CTRLTBL_OBJ_CNT           2
+#define  CTRLTBL_OBJ_MOI             0
+#define  CTRLTBL_OBJ_PD_GAIN_PARAM   1
+#define  CTRLTBL_OBJ_WHL_TGT_MOM_LIM 2
+#define  CTRLTBL_OBJ_CNT             3
 
-#define  CTRLTBL_OBJ_MOI_NAME            "moment-of-inertia"
-#define  CTRLTBL_OBJ_PD_GAIN_PARAM_NAME  "pd-gain-param"
+#define  CTRLTBL_OBJ_MOI_NAME              "moment-of-inertia"
+#define  CTRLTBL_OBJ_PD_GAIN_PARAM_NAME    "pd-gain-param"
+#define  CTRLTBL_OBJ_WHL_TGT_MOM_LIM_NAME  "whl-tgt-mom-lim"
+                                           
 
 /*
 ** Type Definitions
@@ -101,11 +104,19 @@ typedef struct {
 
 } PdGainParam_Struct;
 
+typedef struct {
+
+   float Lower;
+   float Upper;
+
+} WhlTgtMomLim_Struct;
+
 typedef struct
 {
 
-   MomentOfInteria_Struct Moi;
-   PdGainParam_Struct     PdGainParam;
+   MomentOfInteria_Struct  Moi;
+   PdGainParam_Struct      PdGainParam;
+   WhlTgtMomLim_Struct     WhlTgtMomLim;
 
 } CTRLTBL_Struct;
 

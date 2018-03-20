@@ -24,18 +24,23 @@ COMMAND F42 DUMP_TBL <%= CfsKitConfig.processor_endian %> "Dump controller table
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
   APPEND_PARAMETER TBL_FILE_NAME 512 STRING "/cf/f42_ctrl_tbl_d.json" "Full path and file name to receive table dump"
 
-COMMAND F42 SET_CTRL_MODE <%= CfsKitConfig.processor_endian %> "Set the 42 Sim FSW control mode"
+COMMAND F42 SET_CTRL_MODE <%= CfsKitConfig.processor_endian %> "Placeholder to set the 42 Sim FSW control mode"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
   APPEND_PARAMETER NEW_MODE 16 UINT MIN_UINT16 MAX_UINT16 1 "Current demo supports: 1-Init"
 
-COMMAND F42 SET_FAULT_STATE <%= CfsKitConfig.processor_endian %> "Set the state of a fault in 42 Sim FSW "
+COMMAND F42 SET_OVR_STATE <%= CfsKitConfig.processor_endian %> "Set the state of an override in 42 Sim FSW "
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
-  APPEND_PARAMETER ID    8 UINT MIN_UINT8 MAX_UINT8 0 "Fault identifier. See f42_adp.h file"
-  APPEND_PARAMETER STATE 8 UINT MIN_UINT8 MAX_UINT8 1 "Boolean state: 0 = No Fault, 1 = Fault"
+  APPEND_PARAMETER ID    8 UINT MIN_UINT8 MAX_UINT8 0 "Override identifier. See f42_adp.h file"
+  APPEND_PARAMETER STATE 8 UINT MIN_UINT8 MAX_UINT8 1 "State: 1=Use Sim value, 2=Always TRUE, 3=Always FALSE"
   
-COMMAND F42 SET_SUN_TARGET <%= CfsKitConfig.processor_endian %> "Set the target body axis"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 2) %>
-  APPEND_PARAMETER AXIS 16 UINT MIN_UINT16 MAX_UINT16 2 "Fault identifier. See f42_adp.h file. Default to +Y"
+COMMAND F42 SET_TARGET_WHL_MOM <%= CfsKitConfig.processor_endian %> "Set the target wheel momentum "
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 12) %>
+  APPEND_PARAMETER WHL_1 32 FLOAT -1.0  1.0 0 "Wheel aligned with X-Axis"
+  APPEND_PARAMETER WHL_2 32 FLOAT -1.0  1.0 0 "Wheel aligned with Y-Axis"
+  APPEND_PARAMETER WHL_3 32 FLOAT -1.0  1.0 0 "Wheel aligned with Z-Axis"
 
+COMMAND F42 CONFIG_DBG <%= CfsKitConfig.processor_endian %> "Configure (enable/disable) logging debug data to a file"
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 2) %>
+  APPEND_PARAMETER NEW_STATE 16 UINT MIN_UINT16 MAX_UINT16 1 "0=Disable, 1=Enable"
 
 

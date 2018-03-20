@@ -49,7 +49,7 @@ VERTICAL
           BUTTON 'Verify cFS Config' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "RUN_TEST_SCRIPT")'
           BUTTON 'Run Performance Monitor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PERF_MON")'
           BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
-          BUTTON 'Run 42 Simulator' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
+          BUTTON '42 Simulator' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
           BUTTON 'PiSat Control' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
           BUTTON 'Create Application' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CREATE_APP")'
           ##SETTING BACKCOLOR 128 128 128

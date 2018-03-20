@@ -1,24 +1,39 @@
 ###############################################################################
 # cFS Kit Global Definitions 
 #
+# TODO - Refactor to osk_globals; define all globals in Osk module
+#
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
 #   License (GPL).
 # 
-################################################################################
+###############################################################################
+
 
 ######################
 ## Network Settings ##
 ######################
 
-DEF_IP_ADDR = "127.0.0.1"
+NULL_IP_ADDR  = "0.0.0.0"
+
+# The following definitions must match cmd_tlm_Server.txt definitions
+LOCAL_IP_ADDR = "127.0.0.1"
+LOCAL_CFS_INT = "LOCAL_CFS_INT"
+
+PISAT_IP_ADDR = "192.168.0.1"
+PISAT_CFS_INT = "PISAT_CFS_INT"
+PISAT_CONTROL = "PISAT_CONTROL"
+HOST_IP_ADDR  = "192.168.0.6"
+
+CFS_CMD_PORT  = "1234"
+CFS_TLM_PORT  = "1235"
 
 ###################
 ## Text Messages ##
 ###################
 
-BUTTON_CONT = "OK"
-BUTTON_CANCEL = "Cancel"  # Equal to hardcoded message_box() string
+BUTTON_CONT   = "OK"
+BUTTON_CANCEL = "Cancel"  # Equal to hard coded message_box() string
 UNDEFSTR = "Undefined"
 
 MSG_TBD_FEATURE = "Coming Soon"

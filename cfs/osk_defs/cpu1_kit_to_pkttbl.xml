@@ -151,16 +151,16 @@ not have any filtering feature.  Unused entries do not have to be populated.
   <entry  stream-id="2512" priority="0" reliability="0" buf-limit="4"/>
 
   <!-- F42_CONTROL_MID 0x09D1 -->
-  <entry  stream-id="2513" priority="0" reliability="0" buf-limit="4"/>
+  <entry  stream-id="2513" priority="0" reliability="0" buf-limit="20"/>
 
   <!-- I42_HK_TLM_MID 0x09D2 -->
   <entry  stream-id="2514" priority="0" reliability="0" buf-limit="4"/>
 
   <!-- F42_SENSOR_DATA 0x09E0 -->
-  <entry  stream-id="2528" priority="0" reliability="0" buf-limit="4"/>
+  <entry  stream-id="2528" priority="0" reliability="0" buf-limit="20"/>
 
   <!-- F42_ACTUATOR_DATA 0x09E1 -->
-  <entry  stream-id="2529" priority="0" reliability="0" buf-limit="4"/>
+  <entry  stream-id="2529" priority="0" reliability="0" buf-limit="20"/>
 
   <!-- OSK_GENAPP_HK_TLM_MID 0x0883 -->
   <entry  stream-id="2179" priority="0" reliability="0" buf-limit="4"/>

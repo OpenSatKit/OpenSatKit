@@ -21,8 +21,7 @@ Cosmos.catch_fatal_exception do
   require 'cosmos/tools/tlm_viewer/screen'
   require 'cosmos/tools/tlm_viewer/tlm_viewer'
 end
-require 'cfs_kit_global'
-require 'file_transfer'
+require 'osk_system'
 
 ################################################################################
 ## Global Variables
@@ -79,7 +78,7 @@ def cfs_kit_launch_app(screen, app)
     #wait(2)
     #cmd("KIT_TO ENABLE_TELEMETRY")
     spawn("ruby #{Cosmos::USERPATH}/tools/TlmGrapher")
-    display("CFS_KIT PISAT_SCREEN", 1000, 0)
+    display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
   elsif (app == "CREATE_APP")
     #prompt("Launching CreateApp...")
     #spawn("java -jar /mnt/hgfs/OpenSatKit/cosmos/cfs_kit/tools/create-app/CreateApp.jar")
@@ -144,10 +143,10 @@ def cfs_kit_send_cmd(screen, cmd)
     value = combo_box("Select the command being developed", 'Put File', 'Get File', 'Display SB Routes')
     case value
     when 'Put File'
-      file_xfer = FileTransfer.new()
+      file_xfer = Osk::system.file_transfer
       file_xfer.put(GND_TEST_PUT_FILE, FLT_TEST_PUT_FILE)
     when 'Get File'
-      file_xfer = FileTransfer.new()
+      file_xfer = Osk::system.file_transfer
       file_xfer.get(FLT_TEST_PUT_FILE,GND_TEST_PUT_FILE)
     when 'Display SB Routes'
       cmd("CFE_SB WRITE_ROUTING_TO_FILE with FILENAME '/cf/~sb_tmp.dat'")

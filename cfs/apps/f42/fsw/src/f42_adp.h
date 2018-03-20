@@ -27,52 +27,40 @@
 */
 
 #include "cfe.h"
-#include "fswtypes.h"  /* 42 FSW Types */
+#include "fswtypes.h"      /* 42 FSW Types */
 #include "app_cfg.h"
 #include "ctrltbl.h"
 
 /*
 ** Event Message IDs
 ** - Since this is an educational app many events are defined as informational. A
-**   flight app should minimize "event clutter" and define soem of these as debug.
+**   flight app should minimize "event clutter" and define some of these as debug.
 */
 
-#define F42_ADP_SET_MODE_INFO_EID            (F42_ADP_BASE_EID + 0)
-#define F42_ADP_INVALID_MODE_ERR_EID         (F42_ADP_BASE_EID + 1)
-#define F42_ADP_SET_FAULT_INFO_EID           (F42_ADP_BASE_EID + 2)
-#define F42_ADP_INVALID_FAULT_STATE_ERR_EID  (F42_ADP_BASE_EID + 3)
-#define F42_ADP_INVALID_FAULT_ID_ERR_EID     (F42_ADP_BASE_EID + 4)
-#define F42_ADP_SET_SUN_TARGET_INFO_EID      (F42_ADP_BASE_EID + 5)
-#define F42_ADP_INVALID_SUN_TARGET_ERR_EID   (F42_ADP_BASE_EID + 6)
+#define F42_ADP_SET_CTRL_MODE_INFO_EID      (F42_ADP_BASE_EID + 0)
+#define F42_ADP_INVALID_CTRL_MODE_ERR_EID   (F42_ADP_BASE_EID + 1)
+#define F42_ADP_SET_OVR_INFO_EID            (F42_ADP_BASE_EID + 2)
+#define F42_ADP_INVALID_OVR_STATE_ERR_EID   (F42_ADP_BASE_EID + 3)
+#define F42_ADP_INVALID_OVR_ID_ERR_EID      (F42_ADP_BASE_EID + 4)
+#define F42_ADP_SET_TARGET_WHL_MOM_INFO_EID (F42_ADP_BASE_EID + 5)
+#define F42_ADP_SET_TARGET_WHL_MOM_ERR_EID  (F42_ADP_BASE_EID + 6)
 
 
 /*
-** Control Modes
+** Override Identifiers
 */
 
-#define F42_ADP_MODE_INIT    1
-#define F42_ADP_MODE_SUN_ACQ 2
+#define F42_ADP_OVR_ID_MIN     0
+#define F42_ADP_OVR_SUN_VALID  0
+#define F42_ADP_OVR_SPARE      1
+#define F42_ADP_OVR_ID_MAX     1
+#define F42_ADP_OVR_ID_CNT     2
 
-/*
-** Fault Identifiers
-*/
-
-#define F42_ADP_FAULT_CSS    0
-#define F42_ADP_FAULT_SPARE  1
-#define F42_ADP_FAULT_ID_MAX 1
-#define F42_ADP_FAULT_ID_CNT 2
-
-/*
-** Sun Targets
-*/
-
-#define F42_ADP_SUN_TARGET_X_AXIS_PLUS    0
-#define F42_ADP_SUN_TARGET_X_AXIS_MINUS   1
-#define F42_ADP_SUN_TARGET_Y_AXIS_PLUS    2
-#define F42_ADP_SUN_TARGET_Y_AXIS_MINUS   3
-#define F42_ADP_SUN_TARGET_Z_AXIS_PLUS    4
-#define F42_ADP_SUN_TARGET_Z_AXIS_MINUS   5
-#define F42_ADP_SUN_TARGET_ID_MAX         5
+#define F42_ADP_OVR_STATE_MIN  1
+#define F42_ADP_OVR_USE_SIM    1
+#define F42_ADP_OVR_TO_TRUE    2
+#define F42_ADP_OVR_TO_FALSE   3
+#define F42_ADP_OVR_STATE_MAX  3
 
 /*
 ** Type Definitions
@@ -83,34 +71,24 @@ typedef struct FSWType F42_FSW;
 /******************************************************************************
 ** F42 Sensors
 **
-** F42_ADP_CSS has the same fields as 42's "struct FswCssType" but they've 
-** been reordered to facilitate bit packing.
+** This sensor data is really engineering units that would normally be derived
+** from sensor inputs.
 */
-
-typedef struct {
-   
-   double AmpsToCounts;
-   double CountsToIllum;
-   double Axis[3];
-   double Amps;
-   double Illum;
-   long   Counts;
-   
-} F42_ADP_CSS;
-
-typedef struct {
-
-   int     SunValid;
-   double  wbn[3];
-   F42_ADP_CSS Css[4];
-
-} F42_ADP_Sensor;
 
 typedef struct
 {
    uint8    Header[CFE_SB_TLM_HDR_SIZE];
 
-   F42_ADP_Sensor  Sensor;
+   double  DeltaTime;
+   double  PosN[3];
+   double  VelN[3];
+   double  wbn[3];
+   double  qbn[4];
+   double  svn[3];
+   double  svb[3];
+   double  bvb[3];
+   double  Hw[3];
+   int     SunValid;
 
 } OS_PACK F42_ADP_SensorPkt;
 #define F42_ADP_SENSOR_PKT_LEN sizeof (F42_ADP_SensorPkt)
@@ -120,17 +98,13 @@ typedef struct
 ** F42 Actuators
 */
 
-typedef struct {
-
-   double Torq[3];
-
-} F42_ADP_WheelCmd;
-
 typedef struct
 {
-   uint8    Header[CFE_SB_TLM_HDR_SIZE];
+   uint8   Header[CFE_SB_TLM_HDR_SIZE];
 
-   F42_ADP_WheelCmd  WheelCmd;
+   double  WhlTorqCmd[3];
+   double  MtbCmd[3];
+   double  SaGimbalCmd;
 
 } OS_PACK F42_ADP_ActuatorPkt;
 #define F42_ADP_ACTUATOR_PKT_LEN sizeof (F42_ADP_ActuatorPkt)
@@ -142,10 +116,9 @@ typedef struct
 
 typedef struct {
 
-   boolean Fault[F42_ADP_FAULT_ID_CNT];   
+   uint8   Override[F42_ADP_OVR_ID_CNT];   
   
-   uint16  ControlMode;
-   uint16  SunTargetAxis;
+   uint16  CtrlMode;
 
    CTRLTBL_Class CtrlTbl;
   
@@ -165,27 +138,27 @@ typedef struct
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    int16   NewMode;
 
-}  OS_PACK F42_ADP_SetModeCmdPkt;
-#define F42_ADP_SET_MODE_CMD_DATA_LEN  (sizeof(F42_ADP_SetModeCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK F42_ADP_SetCtrlModeCmdPkt;
+#define F42_ADP_SET_CTRL_MODE_CMD_DATA_LEN  (sizeof(F42_ADP_SetCtrlModeCmdPkt) - CFE_SB_CMD_HDR_SIZE)
 
 typedef struct
 {
 
    uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   int8     Id;
-   boolean  State;
+   uint8    Id;
+   uint8    State;
 
-}  OS_PACK F42_ADP_SetFaultCmdPkt;
-#define F42_ADP_SET_FAULT_CMD_DATA_LEN  (sizeof(F42_ADP_SetFaultCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK F42_ADP_SetOvrCmdPkt;
+#define F42_ADP_SET_OVR_CMD_DATA_LEN  (sizeof(F42_ADP_SetOvrCmdPkt) - CFE_SB_CMD_HDR_SIZE)
 
 typedef struct
 {
 
-   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   uint16   Axis;
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   float   Whl[3];
 
-}  OS_PACK F42_ADP_SetSunTargetCmdPkt;
-#define F42_ADP_SET_SUN_TARGET_CMD_DATA_LEN  (sizeof(F42_ADP_SetSunTargetCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK F42_ADP_SetTargetWhlMomCmdPkt;
+#define F42_ADP_SET_TARGET_WHL_MOM_CMD_DATA_LEN  (sizeof(F42_ADP_SetTargetWhlMomCmdPkt) - CFE_SB_CMD_HDR_SIZE)
 
 
 /*
@@ -205,12 +178,12 @@ void F42_ADP_Constructor(F42_ADP_Class*  F42_AdpPtr);
 
 
 /******************************************************************************
-** Function: F42_ADP_RunController
+** Function: F42_ADP_Run42Fsw
 **
-** Run the 42 simulator's control law
+** Run the 42 simulator's FSW algorithms
 **
 */
-void F42_ADP_RunController(F42_ADP_Sensor* Sensor);
+void F42_ADP_Run42Fsw(F42_ADP_SensorPkt*  SensorPkt);
 
 
 /******************************************************************************
@@ -221,29 +194,28 @@ void F42_ADP_ResetStatus(void);
 
 
 /******************************************************************************
-** Function: F42_ADP_SetModeCmd
+** Function: F42_ADP_SetCtrlModeCmd
 **
 ** Currently controller doesn't have modes so this command only lets the
 ** force a controller initialization.
 */
-boolean F42_ADP_SetModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean F42_ADP_SetCtrlModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: F42_ADP_SetFaultCmd
+** Function: F42_ADP_SetOvrCmd
 **
-** Set/Clear the command specified fault (F42_ADP_FAULT_xxx).
+** Set the state of the command specified override (F42_ADP_OVR_xxx).
 */
-boolean F42_ADP_SetFaultCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean F42_ADP_SetOvrCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: F42_ADP_SetSunTargetCmd
+** Function: F42_ADP_SetTargetWhlMomCmd
 **
-** Set the spacecraft body axis to be used as the sun target. See
-** F42_ADP_SUN_TARGET_xxx for axis definitions.
+** Set the target wheel momentum.
 */
-boolean F42_ADP_SetSunTargetCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean F42_ADP_SetTargetWhlMomCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************

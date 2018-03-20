@@ -1,9 +1,9 @@
 /*
-** Purpose: Define a 42 simulator interface
+** Purpose: Network interface  
 **
 ** Notes:
-**   1. This is part of prototype effort to port a 42 simulator FSW controller
-**      component into a cFS-based application
+**   1. TODO - Create on NetIf and moved to app_fw.
+**   2. Named NET42IF to avoid dynamic link with TF's NETIF. 
 **
 ** References:
 **   1. OpenSat Object-based Application Developer's Guide.
@@ -23,25 +23,23 @@
 
 #include "cfe.h"
 #include "app_cfg.h"
-#include "f42_adp.h"
 
-#define NETIF_IP_STR_LEN        16
-#define NETIF_SOCKET_BUF_LEN   512
-#define NETIF_LOCAL_HOST_STR   "localhost"
-#define NETIF_DEF_IP_ADDR_STR  "127.000.000.001"
-#define NETIF_DEF_PORT         42420
+#define NETIF_IP_ADDR_STR_LEN  16
 
 /*
 ** Event Message IDs
 */
 
-#define NETIF_CONNECT_TO_42_INFO_EID     (NETIF_BASE_EID +  0)
-#define NETIF_SOCKET_OPEN_ERR_EID        (NETIF_BASE_EID +  1)
-#define NETIF_HOST_ERR_EID               (NETIF_BASE_EID +  2)
-#define NETIF_CONNECT_ERR_EID            (NETIF_BASE_EID +  3)
-#define NETIF_STREAM_OPEN_ERR_EID        (NETIF_BASE_EID +  4)
-#define NETIF_IDLE_SOCKET_CLOSE_INFO_EID (NETIF_BASE_EID +  5)
-#define NETIF_SOCKET_CLOSE_INFO_EID      (NETIF_BASE_EID +  6)
+#define NETIF_CONNECT_TO_42_INFO_EID (NETIF_BASE_EID +  0)
+#define NETIF_CONNECT_INFO_EID       (NETIF_BASE_EID +  1)
+#define NETIF_BIND_SOCKET_ERR_EID    (NETIF_BASE_EID +  2)
+#define NETIF_SOCKET_OPEN_ERR_EID    (NETIF_BASE_EID +  3)
+#define NETIF_HOST_ERR_EID           (NETIF_BASE_EID +  4)
+#define NETIF_CONNECT_ERR_EID        (NETIF_BASE_EID +  5)
+#define NETIF_STREAM_OPEN_ERR_EID    (NETIF_BASE_EID +  6)
+#define NETIF_RECV_ERR_EID           (NETIF_BASE_EID +  7)
+#define NETIF_SEND_ERR_EID           (NETIF_BASE_EID +  8)
+#define NETIF_SOCKET_CLOSE_INFO_EID  (NETIF_BASE_EID +  9)
 
 /*
 ** Type Definitions
@@ -50,28 +48,16 @@
 /******************************************************************************
 ** NETIF Class
 */
-
 typedef struct {
 
    int     SocketFd;
    FILE*   StreamId;
-   char    IpAddrStr[NETIF_IP_STR_LEN];
+   char    IpAddrStr[NETIF_IP_ADDR_STR_LEN];
    uint16  Port;
 
    boolean Connected;
-   uint16  ConnectCycles;        /* Connection cycles based on sensor read attempts */
-   uint16  DisconnectCycles;
-
-   char  InBuf[NETIF_SOCKET_BUF_LEN];
-   char  OutBuf[NETIF_SOCKET_BUF_LEN];
-   
-   F42_ADP_SensorPkt  SensorPkt;
-   
-   uint32  SensorPktCnt;
-   uint32  ActuatorPktCnt;
-   
+    
 } NETIF_Class;
-
 
 /******************************************************************************
 ** Command Functions
@@ -81,62 +67,80 @@ typedef struct
 {
 
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   char    IpAddrStr[NETIF_IP_STR_LEN];
+   char    IpAddrStr[NETIF_IP_ADDR_STR_LEN];
    uint16  Port;
+   
+}  OS_PACK NETIF_Connect42CmdParam;
+#define NETIF_CONNECT_42_CMD_DATA_LEN  (sizeof(NETIF_Connect42CmdParam) - CFE_SB_CMD_HDR_SIZE)
 
-} NETIF_ConnectTo42CmdParam;
-#define NETIF_CONNECT_TO_42_CMD_DATA_LEN  (sizeof(NETIF_ConnectTo42CmdParam) - CFE_SB_CMD_HDR_SIZE)
+typedef struct
+{
 
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   
+}  OS_PACK NETIF_Disconnect42CmdParam;
+#define NETIF_DISCONNECT_42_CMD_DATA_LEN  (sizeof(NETIF_Disconnect42CmdParam) - CFE_SB_CMD_HDR_SIZE)
 
 /*
 ** Exported Functions
 */
 
 /******************************************************************************
-** Function: NETIF_Constructor
+** Function: NETIF42_Constructor
 **
-** Initialize a network interface object.
+** Construct a local NETIF object.
 **
 ** Notes:
 **   1. This must be called prior to any other function.
 **
 */
-void NET42IF_Constructor(NETIF_Class*  NetIfPtr);
+void NETIF42_Constructor(NETIF_Class*  NetIfPtr, const char* IpAddrStr, uint16 Port);
 
 
 /******************************************************************************
-** Function:  NETIF_ResetStatus
+** Function: NETIF42_Close
 **
 */
-void NETIF_ResetStatus(void);
+void NETIF42_Close(void);
 
 
 /******************************************************************************
-** Function: NETIF_ConnectTo42Cmd
+** Function: NETIF42_Connect42Cmd
 **
+** Notes:
+**   1. Must match CMDMGR_CmdFuncPtr function signature
 */
-boolean NETIF_ConnectTo42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean NETIF42_Connect42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function:  NETIF_ProcessSensorPkt
+** Function: NETIF42_Disconnect42Cmd
 **
+** Notes:
+**   1. Must match CMDMGR_CmdFuncPtr function signature
 */
-boolean NETIF_ProcessSensorPkt(void);
+boolean NETIF42_Disconnect42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: NETIF_SendActuatorPkt
+** Function: NETIF42_Recv
 **
 */
-ssize_t NETIF_SendActuatorPkt(F42_ADP_ActuatorPkt*  ActuatorPkt);
+int32 NETIF42_Recv(char* BufPtr, const uint16 BufSize);
 
 
 /******************************************************************************
-** Function: NETIF_Close
+** Function:  NETIF42_ResetStatus
 **
 */
-void NETIF_Close(void);
+void NETIF42_ResetStatus(void);
+
+
+/******************************************************************************
+** Function: NETIF42_Send
+**
+*/
+int32 NETIF42_Send (const char *BufPtr, uint16 len); 
 
 
 #endif /* _netif_ */

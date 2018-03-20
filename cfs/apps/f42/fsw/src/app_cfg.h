@@ -46,12 +46,14 @@
 ** Command Macros
 */
 
-#define F42_ADP_TBL_LOAD_CMD_FC       (CMDMGR_APP_START_FC + 0)
-#define F42_ADP_TBL_DUMP_CMD_FC       (CMDMGR_APP_START_FC + 1)
+#define F42_ADP_TBL_LOAD_CMD_FC           (CMDMGR_APP_START_FC + 0)
+#define F42_ADP_TBL_DUMP_CMD_FC           (CMDMGR_APP_START_FC + 1)
 
-#define F42_ADP_SET_MODE_CMD_FC       (CMDMGR_APP_START_FC + 2)
-#define F42_ADP_SET_FAULT_CMD_FC      (CMDMGR_APP_START_FC + 3)
-#define F42_ADP_SET_SUN_TARGET_CMD_FC (CMDMGR_APP_START_FC + 4)
+#define F42_ADP_SET_CTRL_MODE_CMD_FC      (CMDMGR_APP_START_FC + 2)
+#define F42_ADP_SET_OVR_CMD_FC            (CMDMGR_APP_START_FC + 3)
+#define F42_ADP_SET_TARGET_WHL_MOM_CMD_FC (CMDMGR_APP_START_FC + 4)
+
+#define F42_APP_CONFIG_DBG_CMD_FC         (CMDMGR_APP_START_FC + 5)
 
 
 /******************************************************************************

@@ -178,7 +178,7 @@ int32 NETIF_SendTo (const uint8 NetIFid, const uint8 *BufPtr, uint16 len)
 /******************************************************************************
 ** Function: NETIF_InitSocketCmd
 **
-** Initialze the socket.
+** Initialize the socket.
 **
 ** Notes:
 **   1. Must match CMDMGR_CmdFuncPtr function signature
