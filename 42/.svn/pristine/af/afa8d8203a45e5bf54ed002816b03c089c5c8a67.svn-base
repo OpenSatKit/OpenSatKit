@@ -1,0 +1,32 @@
+42 Chore List
+
+Implement SPLINE orbit for CENTRAL?
+
+Two-sigma low atmo as well as two-sigma high.  Turn if-else-if ladder into table lookup.
+
+Learn how to get modal integrals from NASTRAN/FEMAP.
+
+Covariance analysis for prox ops, cometary ops, maybe attitude slews?
+
+Fine formation control via wavefront sensing.
+
+Redo POV: Track any point fixed in S/C, not just cm.
+
+KNOWN BUG:  The first body of the first S/C, the first material stomps over any other materials.  This is somehow caused by Geom not being properly initialized.  Subsequent Geom's are fine.  For UVIS, I kludged a fix by making Geom[0] a "sacrificial cube".  Find a better way.
+
+Draw Ground stations in Cam.
+
+Thruster plume model.  Pressure and visualization.
+
+Geometrical optics.  Wavefront shape through multiple reflections (and 
+lenses?).
+
+Import from compressed image files (jpg rather than ppm)
+
+Instrument FOV view.  Use for docking camera as well as instruments.
+
+Migrate ST and CSS windows from SatCam to 42.
+
+Finish implementing commands in Prototype.rtf
+
+
