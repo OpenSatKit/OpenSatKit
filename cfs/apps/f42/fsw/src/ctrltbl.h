@@ -177,7 +177,7 @@ void CTRLTBL_Constructor(CTRLTBL_Class* ObjPtr,
 /******************************************************************************
 ** Function: CTRLTBL_ResetStatus
 **
-** Reset counters and status flags to a known reset state.  The behavour of
+** Reset counters and status flags to a known reset state.  The behavior of
 ** the table manager should not be impacted. The intent is to clear counters
 ** and flags to a known default state for telemetry.
 **

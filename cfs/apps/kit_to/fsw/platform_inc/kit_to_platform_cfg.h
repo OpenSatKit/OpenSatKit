@@ -33,7 +33,7 @@
 
 #define  KIT_TO_TLM_PORT        1235
 
-#define  KIT_TO_DEF_PKTTBL_FILE_NAME "/cf/kit_to_pkttbl.xml"
+#define  KIT_TO_DEF_PKTTBL_FILE_NAME "/cf/kit_to_pkt_tbl.json"
 
 
 /******************************************************************************

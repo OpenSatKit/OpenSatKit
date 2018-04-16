@@ -113,7 +113,7 @@ boolean KIT_CI_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (KIT_CI_NOOP_INFO_EID,
                       CFE_EVS_INFORMATION,
-                      "No operation command received for OpenSat Kit Command Ingest version %d.%d",
+                      "Kit Command Ingest (KIT_CI) version %d.%d received a no operation command",
                       KIT_CI_MAJOR_VERSION,KIT_CI_MINOR_VERSION);
 
    return TRUE;

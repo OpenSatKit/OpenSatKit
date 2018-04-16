@@ -124,7 +124,6 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
    char    LowMemBuf[JSON_MAX_FILE_LINE_CHAR];
    unsigned int  Indx = 0, Len = 0, Line = 1;
    
-   Json->CallBackIdx   = 0;
    Json->FileObjTokens = 0;
    Json->FileStatus = JSON_FILE_UNDEF; /* Internally used as a valid file read flag */
    

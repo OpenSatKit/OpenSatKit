@@ -1,7 +1,5 @@
 /*
 ** Purpose: Define configurations for the OpenSat Kit Telemetry Output app. 
-**          This app exercises the OpenSat application framework and serves
-**          as a good starting point for trying new ideas.
 **
 ** Notes:
 **   1. These macros can only be built with the application and can't
@@ -76,7 +74,7 @@
 ** Maximum Number of Packet Definitions in Packet Table. Must be greater than zero.
 */
 
-#define PKTTBL_MAX_ENTRY_ID    64
+#define PKTTBL_MAX_PKT_CNT     64
 #define PKTTBL_UNUSED_MSG_ID   (CFE_SB_HIGHEST_VALID_MSGID+1)
 
 

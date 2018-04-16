@@ -122,7 +122,7 @@ boolean KIT_TO_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (KIT_TO_NOOP_INFO_EID,
                       CFE_EVS_INFORMATION,
-                      "No operation command received for Telemetry Output Lab version %d.%d",
+                      "Kit Telemetry Output (KIT_TO) version %d.%d received a no operation command",
                       KIT_TO_MAJOR_VERSION,KIT_TO_MINOR_VERSION);
 
    return TRUE;

@@ -148,7 +148,7 @@ boolean KIT_SCH_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (666,
                       CFE_EVS_INFORMATION,
-                      "No operation command received for OpenSat Kit Scheduler version %d.%d",
+                      "Kit Scheduler (KIT_SCH) version %d.%d received a no operation command",
                       KIT_SCH_MAJOR_VERSION,KIT_SCH_MINOR_VERSION);
 
    return TRUE;
