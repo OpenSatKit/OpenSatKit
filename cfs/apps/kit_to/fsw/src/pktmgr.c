@@ -3,7 +3,9 @@
 **          software bus to a socket.
 **
 ** Notes:
-**   None
+**   1. This is much simpler than a typical flight TO app. If a packet is defined
+**      in the table then it will be subscribed to and every packet received will 
+**      be output over the socket. No filter algorithms are available.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -31,8 +33,8 @@
 ** Global File Data
 */
 
-static PKTMGR_Class*    PktMgr = NULL;
-static PKTTBL_Entry  UnusedTblEntry = {PKTTBL_UNUSED_MSG_ID, {0, 0}, 0};
+static PKTMGR_Class*  PktMgr = NULL;
+static PKTTBL_Pkt     UnusedTblPkt = {PKTTBL_UNUSED_MSG_ID, {0, 0}, 0};
 
 /*
 ** Local Function Prototypes
@@ -40,8 +42,8 @@ static PKTTBL_Entry  UnusedTblEntry = {PKTTBL_UNUSED_MSG_ID, {0, 0}, 0};
 
 static void DestructorCallback(void);
 static void FlushTlmPipe(void);
-static int  StreamIdEntry(uint16 StreamId);
-static int  UnusedTblEntryId(void);
+static int  StreamIdPktIdx(uint16 StreamId);
+static int  UnusedTblPktIdx(void);
 
 /******************************************************************************
 ** Function: PKTMGR_Constructor
@@ -59,10 +61,10 @@ void PKTMGR_Constructor(PKTMGR_Class*  PktMgrPtr, char* PipeName, uint16 PipeDep
    PktMgr->TlmSockId    = 0;
    strncpy(PktMgr->TlmDestIp, "000.000.000.000", PKTMGR_IP_STR_LEN);
 
-   CFE_PSP_MemSet((void*)&(PktMgr->Tbl), 0, sizeof(PKTTBL_Struct));
-   for (i=0; i < PKTTBL_MAX_ENTRY_ID; i++) {
+   CFE_PSP_MemSet((void*)&(PktMgr->Tbl), 0, sizeof(PKTTBL_Tbl));
+   for (i=0; i < PKTTBL_MAX_PKT_CNT; i++) {
 
-      PktMgr->Tbl.Entry[i].StreamId = PKTTBL_UNUSED_MSG_ID;
+      PktMgr->Tbl.Pkt[i].StreamId = PKTTBL_UNUSED_MSG_ID;
 
    } /* end pkt loop */
 
@@ -77,7 +79,7 @@ void PKTMGR_Constructor(PKTMGR_Class*  PktMgrPtr, char* PipeName, uint16 PipeDep
 ** Function: PKTMGR_GetTblPtr
 **
 */
-const PKTTBL_Struct* PKTMGR_GetTblPtr()
+const PKTTBL_Tbl* PKTMGR_GetTblPtr()
 {
 
    return &(PktMgr->Tbl);
@@ -104,43 +106,44 @@ void PKTMGR_ResetStatus(void)
 void PKTMGR_OutputTelemetry(void)
 {
 
-    static struct sockaddr_in SocketAddr;
-    int                       SocketStatus;
-    int32                     SbStatus;
-    uint16                    Size;
-    CFE_SB_Msg_t              *PktPtr;
+   static struct sockaddr_in SocketAddr;
+   int                       SocketStatus;
+   int32                     SbStatus;
+   uint16                    PktLen;
+   CFE_SB_Msg_t              *PktPtr;
 
-    CFE_PSP_MemSet((void*)&SocketAddr, 0, sizeof(SocketAddr));
-    SocketAddr.sin_family      = AF_INET;
-    SocketAddr.sin_addr.s_addr = inet_addr(PktMgr->TlmDestIp);
-    SocketAddr.sin_port        = htons(KIT_TO_TLM_PORT);
-    SocketStatus = 0;
+   CFE_PSP_MemSet((void*)&SocketAddr, 0, sizeof(SocketAddr));
+   SocketAddr.sin_family      = AF_INET;
+   SocketAddr.sin_addr.s_addr = inet_addr(PktMgr->TlmDestIp);
+   SocketAddr.sin_port        = htons(KIT_TO_TLM_PORT);
+   SocketStatus = 0;
 
-    /*
-    ** CFE_SB_RcvMsg returns CFE_SUCCESS when it gets a packet, otherwise no packet was received
-    */
-    do
-    {
-       SbStatus = CFE_SB_RcvMsg(&PktPtr, PktMgr->TlmPipe, CFE_SB_POLL);
+   /*
+   ** CFE_SB_RcvMsg returns CFE_SUCCESS when it gets a packet, otherwise
+   ** no packet was received
+   */
+   do
+   {
+      SbStatus = CFE_SB_RcvMsg(&PktPtr, PktMgr->TlmPipe, CFE_SB_POLL);
 
-       if ( (SbStatus == CFE_SUCCESS) && (PktMgr->SuppressSend == FALSE) )
-       {
-          Size = CFE_SB_GetTotalMsgLength(PktPtr);
+      if ( (SbStatus == CFE_SUCCESS) && (PktMgr->SuppressSend == FALSE) ) {
+          
+         PktLen = CFE_SB_GetTotalMsgLength(PktPtr);
 
-          if(PktMgr->DownlinkOn)
-          {
-
-             SocketStatus = sendto(PktMgr->TlmSockId, (char *)PktPtr, Size, 0,
-                                  (struct sockaddr *) &SocketAddr, sizeof(SocketAddr) );
-
-          }
-          if (SocketStatus < 0)
-          {
-             CFE_EVS_SendEvent(PKTMGR_SOCKET_SEND_ERR_EID,CFE_EVS_ERROR,
-                               "Error sending packet on socket %s, port %d, errno %d. Tlm output supressed\n",
-                               PktMgr->TlmDestIp, KIT_TO_TLM_PORT, errno);
-             PktMgr->SuppressSend = TRUE;
-          }
+         if(PktMgr->DownlinkOn) {
+               
+            SocketStatus = sendto(PktMgr->TlmSockId, (char *)PktPtr, PktLen, 0,
+                                    (struct sockaddr *) &SocketAddr, sizeof(SocketAddr) );
+          
+         } /* End if downlink enabled */
+          
+         if (SocketStatus < 0) {
+             
+            CFE_EVS_SendEvent(PKTMGR_SOCKET_SEND_ERR_EID,CFE_EVS_ERROR,
+                              "Error sending packet on socket %s, port %d, errno %d. Tlm output suppressed\n",
+                              PktMgr->TlmDestIp, KIT_TO_TLM_PORT, errno);
+            PktMgr->SuppressSend = TRUE;
+         }
 
        } /* End if SB received msg and output enabled */
 
@@ -153,10 +156,10 @@ void PKTMGR_OutputTelemetry(void)
 ** Function: PKTMGR_LoadTbl
 **
 */
-boolean PKTMGR_LoadTbl(PKTTBL_Struct* NewTbl)
+boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl)
 {
 
-   int      i, EntryCnt = 0, FailedSubscription = 0;
+   int      i, PktCnt = 0, FailedSubscription = 0;
    int32    Status;
    boolean  RetStatus = TRUE;
 
@@ -164,39 +167,38 @@ boolean PKTMGR_LoadTbl(PKTTBL_Struct* NewTbl)
 
    PKTMGR_RemoveAllPktsCmd(NULL, MsgPtr);  /* Parameter is unused so OK to be NULL */
 
-   CFE_PSP_MemCpy(&(PktMgr->Tbl), NewTbl, sizeof(PKTTBL_Struct));
+   CFE_PSP_MemCpy(&(PktMgr->Tbl), NewTbl, sizeof(PKTTBL_Tbl));
 
-   for (i=0; i < PKTTBL_MAX_ENTRY_ID; i++)
-   {
+   for (i=0; i < PKTTBL_MAX_PKT_CNT; i++) {
 
-      if(PktMgr->Tbl.Entry[i].StreamId != PKTTBL_UNUSED_MSG_ID)
-      {
-         EntryCnt++;
-         Status = CFE_SB_SubscribeEx(PktMgr->Tbl.Entry[i].StreamId,
-                                     PktMgr->TlmPipe,PktMgr->Tbl.Entry[i].Qos,
-                                     PktMgr->Tbl.Entry[i].BuffLim);
+      if(PktMgr->Tbl.Pkt[i].StreamId != PKTTBL_UNUSED_MSG_ID) {
+         
+         PktCnt++;
+         Status = CFE_SB_SubscribeEx(PktMgr->Tbl.Pkt[i].StreamId,
+                                     PktMgr->TlmPipe,PktMgr->Tbl.Pkt[i].Qos,
+                                     PktMgr->Tbl.Pkt[i].BufLim);
          if(Status != CFE_SUCCESS)
          {
             FailedSubscription++;
             CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_SUBSCRIBE_ERR_EID,CFE_EVS_ERROR,
-                              "Error subscribing to stream 0x%4X, BuffLim %d, Status %i",
-                              PktMgr->Tbl.Entry[i].StreamId, PktMgr->Tbl.Entry[i].BuffLim, Status);
+                              "Error subscribing to stream 0x%4X, BufLim %d, Status %i",
+                              PktMgr->Tbl.Pkt[i].StreamId, PktMgr->Tbl.Pkt[i].BufLim, Status);
          }
       }
 
    } /* End pkt loop */
 
-   if (FailedSubscription == 0)
-   {
+   if (FailedSubscription == 0) {
+      
       CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_INFO_EID, CFE_EVS_INFORMATION,
-                        "Loaded new table with %d entries", EntryCnt);
+                        "Loaded new table with %d packets", PktCnt);
    }
-   else
-   {
+   else {
+      
       RetStatus = FALSE;
       CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_ERR_EID, CFE_EVS_INFORMATION,
-                        "Attempted to load new table with %d entries. Failed %d subscriptions",
-                        EntryCnt, FailedSubscription);
+                        "Attempted to load new table with %d packets. Failed %d subscriptions",
+                        PktCnt, FailedSubscription);
    }
 
    return RetStatus;
@@ -208,28 +210,29 @@ boolean PKTMGR_LoadTbl(PKTTBL_Struct* NewTbl)
 ** Function: PKTMGR_LoadTblEntry
 **
 */
-boolean PKTMGR_LoadTblEntry(uint16 EntryId, PKTTBL_Entry* NewEntry)
+boolean PKTMGR_LoadTblEntry(uint16 PktIdx, PKTTBL_Pkt* PktArray)
 {
 
    int32    Status;
    boolean  RetStatus = TRUE;
+   PKTTBL_Pkt* NewPkt = &(PktMgr->Tbl.Pkt[PktIdx]); 
 
-   CFE_PSP_MemCpy(&(PktMgr->Tbl.Entry[EntryId]),NewEntry,sizeof(PKTTBL_Entry));
+   CFE_PSP_MemCpy(NewPkt,&PktArray[PktIdx],sizeof(PKTTBL_Pkt));
 
-   Status = CFE_SB_SubscribeEx(NewEntry->StreamId, PktMgr->TlmPipe, NewEntry->Qos, NewEntry->BuffLim);
+   Status = CFE_SB_SubscribeEx(NewPkt->StreamId, PktMgr->TlmPipe, NewPkt->Qos, NewPkt->BufLim);
 
-   if(Status == CFE_SUCCESS)
-   {
+   if(Status == CFE_SUCCESS) {
+      
       CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_ENTRY_INFO_EID, CFE_EVS_INFORMATION,
-                        "Loaded table entry %d with stream 0x%4X, BuffLim %d",
-                        EntryId, NewEntry->StreamId, NewEntry->BuffLim);
+                        "Loaded table entry %d with stream 0x%4X, BufLim %d",
+                        PktIdx, NewPkt->StreamId, NewPkt->BufLim);
    }
-   else
-   {
+   else {
+      
       RetStatus = FALSE;
       CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_ENTRY_SUBSCRIBE_ERR_EID,CFE_EVS_ERROR,
-                        "Error subscribing to stream 0x%4X, BuffLim %d, Status %i",
-                        NewEntry->StreamId, NewEntry->BuffLim, Status);
+                        "Error subscribing to stream 0x%4X, BufLim %d, Status %i",
+                        NewPkt->StreamId, NewPkt->BufLim, Status);
    }
 
    return RetStatus;
@@ -286,23 +289,21 @@ boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
    const  PKTMGR_AddPktCmdParam *CmdParam = (const PKTMGR_AddPktCmdParam *) MsgPtr;
-   int              EntryId;
-   PKTTBL_Entry  NewEntry;
-   boolean          RetStatus = TRUE;
+   int         PktIdx;
+   PKTTBL_Pkt  NewPkt;
+   boolean     RetStatus = TRUE;
 
-   if ( (EntryId = StreamIdEntry(CmdParam->StreamId)) < 0)
-   {
+   if ( (PktIdx = StreamIdPktIdx(CmdParam->StreamId)) < 0) {
 
-      if ( (EntryId = UnusedTblEntryId()) >= 0 )
-      {
+      if ( (PktIdx = UnusedTblPktIdx()) >= 0 ) {
 
-         NewEntry.StreamId = CmdParam->StreamId;
-         NewEntry.Qos      = CmdParam->Qos;
-         NewEntry.BuffLim  = CmdParam->BuffLim;
-         PKTMGR_LoadTblEntry(EntryId, &NewEntry);
+         NewPkt.StreamId = CmdParam->StreamId;
+         NewPkt.Qos      = CmdParam->Qos;
+         NewPkt.BufLim   = CmdParam->BufLim;
+         PKTMGR_LoadTblEntry(PktIdx, &NewPkt); /* FIXME - Assumes source is also an array */
          CFE_EVS_SendEvent(PKTMGR_ADD_PKT_INFO_EID, CFE_EVS_INFORMATION,
-                           "Added packet 0x%04X, QoS (%d,%d), BuffLim %d",
-                           NewEntry.StreamId, NewEntry.Qos.Priority, NewEntry.Qos.Reliability, NewEntry.BuffLim);
+                           "Added packet 0x%04X, QoS (%d,%d), BufLim %d",
+                           NewPkt.StreamId, NewPkt.Qos.Priority, NewPkt.Qos.Reliability, NewPkt.BufLim);
 
       } /* end if found unused entry */
       else
@@ -320,7 +321,7 @@ boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    {
       CFE_EVS_SendEvent(PKTMGR_ADD_PKT_DUPLICATE_ENTRY_EID, CFE_EVS_ERROR,
                         "Error adding packet, stream id 0x%4X exists at entry %d",
-                        CmdParam->StreamId, EntryId);
+                        CmdParam->StreamId, PktIdx);
 
    } /* End if found existing entry */
 
@@ -336,28 +337,28 @@ boolean PKTMGR_RemovePktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
    const PKTMGR_RemovePktCmdParam *RemovePktCmd = (const PKTMGR_RemovePktCmdParam *) MsgPtr;
-   int      EntryId = -1;
+   int      PktIdx = -1;
    int32    Status;
    boolean  RetStatus = TRUE;
 
-   if ( (EntryId = StreamIdEntry(RemovePktCmd->StreamId)) >= 0)
+   if ( (PktIdx = StreamIdPktIdx(RemovePktCmd->StreamId)) >= 0)
    {
 
-      CFE_PSP_MemCpy(&(PktMgr->Tbl.Entry[EntryId]), &UnusedTblEntry, sizeof(PKTTBL_Entry));
+      CFE_PSP_MemCpy(&(PktMgr->Tbl.Pkt[PktIdx]), &UnusedTblPkt, sizeof(PKTTBL_Pkt));
       Status = CFE_SB_Unsubscribe(RemovePktCmd->StreamId, PktMgr->TlmPipe);
 
       if(Status == CFE_SUCCESS)
       {
          CFE_EVS_SendEvent(PKTMGR_REMOVE_PKT_INFO_EID, CFE_EVS_INFORMATION,
-                           "Removed stream id 0x%4X at table entry %d",
-                           RemovePktCmd->StreamId, EntryId);
+                           "Removed stream id 0x%4X at table packet index %d",
+                           RemovePktCmd->StreamId, PktIdx);
       }
       else
       {
          RetStatus = FALSE;
          CFE_EVS_SendEvent(PKTMGR_REMOVE_PKT_SB_ERR_EID, CFE_EVS_ERROR,
-                           "Error removing stream id 0x%4X at table entry %d. Unsubscribe status 0x%8x",
-                           RemovePktCmd->StreamId, EntryId, Status);
+                           "Error removing stream id 0x%4X at table packet index %d. Unsubscribe status 0x%8x",
+                           RemovePktCmd->StreamId, PktIdx, Status);
       }
 
    } /* End if found stream ID in table */
@@ -384,28 +385,28 @@ boolean PKTMGR_RemovePktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   int      i, EntryCnt = 0, FailedUnsubscribe = 0;
+   int      i, PktCnt = 0, FailedUnsubscribe = 0;
    int32    Status;
    boolean  RetStatus = TRUE;
 
-   for (i=0; i < PKTTBL_MAX_ENTRY_ID; i++)
+   for (i=0; i < PKTTBL_MAX_PKT_CNT; i++)
    {
-       if (PktMgr->Tbl.Entry[i].StreamId != PKTTBL_UNUSED_MSG_ID )
+       if (PktMgr->Tbl.Pkt[i].StreamId != PKTTBL_UNUSED_MSG_ID )
        {
 
-          EntryCnt++;
-          CFE_PSP_MemCpy(&(PktMgr->Tbl.Entry[i]), &UnusedTblEntry, sizeof(PKTTBL_Entry));
-          Status = CFE_SB_Unsubscribe(PktMgr->Tbl.Entry[i].StreamId, PktMgr->TlmPipe);
+          PktCnt++;
+          CFE_PSP_MemCpy(&(PktMgr->Tbl.Pkt[i]), &UnusedTblPkt, sizeof(PKTTBL_Pkt));
+          Status = CFE_SB_Unsubscribe(PktMgr->Tbl.Pkt[i].StreamId, PktMgr->TlmPipe);
 
           if(Status != CFE_SUCCESS)
           {
              FailedUnsubscribe++;
              CFE_EVS_SendEvent(PKTMGR_REMOVE_ALL_PKTS_UNSUBSCRIBE_ERR_EID,CFE_EVS_ERROR,
-                               "Error removing stream id 0x%4X at table entry %d. Unsubscribe status 0x%8X",
-                               PktMgr->Tbl.Entry[i].StreamId, i, Status);
+                               "Error removing stream id 0x%4X at table packet index %d. Unsubscribe status 0x%8X",
+                               PktMgr->Tbl.Pkt[i].StreamId, i, Status);
           }
 
-       } /* End if entry in use */
+       } /* End if packet in use */
 
    } /* End pkt loop */
 
@@ -416,14 +417,14 @@ boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    if (FailedUnsubscribe == 0)
    {
       CFE_EVS_SendEvent(PKTMGR_REMOVE_ALL_PKTS_INFO_EID, CFE_EVS_INFORMATION,
-                        "Removed %d table entries", EntryCnt);
+                        "Removed %d table packet entries", PktCnt);
    }
    else
    {
       RetStatus = FALSE;
       CFE_EVS_SendEvent(PKTMGR_REMOVE_ALL_PKTS_ERR_EID, CFE_EVS_INFORMATION,
-                        "Attempted to remove %d entries. Failed %d unsubscribes",
-                        EntryCnt, FailedUnsubscribe);
+                        "Attempted to remove %d packet entries. Failed %d unsubscribes",
+                        PktCnt, FailedUnsubscribe);
    }
 
    return RetStatus;
@@ -469,60 +470,60 @@ static void FlushTlmPipe(void)
 } /* End FlushTlmPipe() */
 
 /******************************************************************************
-** Function: StreamIdTblEntry
+** Function: StreamIdPktIdx
 **
 ** Look for a StreamId in the packet table. Return the index of the
-** table entry if it is found and return -1 if it is not found.
+** packet if it is found and return -1 if it is not found.
 **
 */
-static int StreamIdEntry(uint16 StreamId)
+static int StreamIdPktIdx(uint16 StreamId)
 {
 
    int i;
-   int Entry = -1;
+   int PktIdx = -1;
 
-   for (i=0; i < PKTTBL_MAX_ENTRY_ID; i++)
+   for (i=0; i < PKTTBL_MAX_PKT_CNT; i++)
    {
 
-      if (PktMgr->Tbl.Entry[i].StreamId == StreamId)
+      if (PktMgr->Tbl.Pkt[i].StreamId == StreamId)
       {
-         Entry = i;
+         PktIdx = i;
          break;
       }
 
    } /* end pkt loop */
 
-   return Entry;
+   return PktIdx;
 
-} /* End StreamIdEntry() */
+} /* End StreamIdPktIdx() */
 
 /******************************************************************************
-** Function: UnusedTblEntryId
+** Function: UnusedTblPktIdx
 **
 ** Look for an unused packet table entry. Return the index of the
 ** unused table entry if one is found and return -1 if one is not
 ** found.
 **
 */
-static int UnusedTblEntryId(void)
+static int UnusedTblPktIdx(void)
 {
 
    int i;
-   int Entry = -1;
+   int PktIdx = -1;
 
-   for (i=0; i < PKTTBL_MAX_ENTRY_ID; i++)
+   for (i=0; i < PKTTBL_MAX_PKT_CNT; i++)
    {
 
-      if (PktMgr->Tbl.Entry[i].StreamId == PKTTBL_UNUSED_MSG_ID)
+      if (PktMgr->Tbl.Pkt[i].StreamId == PKTTBL_UNUSED_MSG_ID)
       {
-         Entry = i;
+         PktIdx = i;
          break;
       }
 
    } /* end pkt loop */
 
-   return Entry;
+   return PktIdx;
 
-} /* End UnusedTblEntryId() */
+} /* End UnusedTblPktIdx() */
 
 /* end of file */

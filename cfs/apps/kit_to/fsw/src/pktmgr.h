@@ -69,7 +69,7 @@ typedef struct {
    boolean           DownlinkOn;
    boolean           SuppressSend;
 
-   PKTTBL_Struct  Tbl;
+   PKTTBL_Tbl        Tbl;
 
 } PKTMGR_Class;
 
@@ -94,7 +94,7 @@ typedef struct
    uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
    CFE_SB_MsgId_t     StreamId;
    CFE_SB_Qos_t       Qos;
-   uint8              BuffLim;
+   uint8              BufLim;
 
 }  OS_PACK PKTMGR_AddPktCmdParam;
 #define PKKTMGR_ADD_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_AddPktCmdParam) - CFE_SB_CMD_HDR_SIZE)
@@ -138,7 +138,7 @@ void PKTMGR_Constructor(PKTMGR_Class *PktMgrPtr, char* PipeName, uint16 PipeDept
 **   1. Function signature must match PKTTBL_GetTblPtr
 **
 */
-const PKTTBL_Struct* PKTMGR_GetTblPtr(void);
+const PKTTBL_Tbl* PKTMGR_GetTblPtr(void);
 
 
 /******************************************************************************
@@ -157,7 +157,7 @@ void PKTMGR_ResetStatus(void);
 /******************************************************************************
 ** Function: PKTMGR_OutputTelemetry
 **
-** If downlink is enabled and output hasn't been supressed it sends all of the
+** If downlink is enabled and output hasn't been suppressed it sends all of the
 ** SB packets on the telemetry input pipe out the socket.
 **
 */
@@ -167,7 +167,7 @@ void PKTMGR_OutputTelemetry(void);
 /******************************************************************************
 ** Function: PKTMGR_LoadTbl
 **
-** Unsubscribes to all current SB telemetry, flushes the telemetry input pipe,
+** Unsubscribe from all current SB telemetry, flushes the telemetry input pipe,
 ** loads the entire new table and subscribes to each message.
 **
 ** Notes:
@@ -175,7 +175,7 @@ void PKTMGR_OutputTelemetry(void);
 **   2. Function signature must match PKTTBL_LoadTbl
 **
 */
-boolean PKTMGR_LoadTbl(PKTTBL_Struct* NewTbl);
+boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl);
 
 
 /******************************************************************************
@@ -188,7 +188,7 @@ boolean PKTMGR_LoadTbl(PKTTBL_Struct* NewTbl);
 **   2. Function signature must match PKTTBL_LoadTblEntry
 **
 */
-boolean PKTMGR_LoadTblEntry(uint16 EntryId, PKTTBL_Entry* NewEntry);
+boolean PKTMGR_LoadTblEntry(uint16 PktIdx, PKTTBL_Pkt* PktArray);
 
 
 /******************************************************************************

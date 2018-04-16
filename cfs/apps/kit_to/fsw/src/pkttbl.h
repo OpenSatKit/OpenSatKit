@@ -1,23 +1,21 @@
-/* 
-** Purpose: Manage KIT_TO's packet table.
+/*
+** Purpose: KIT_TO Packet Table
 **
 ** Notes:
-**   1. The tables are formatted using XML and reply on the open source EXPAT
-**      library.  This is a prototype and EXPAT has not been tested so it is
-**      not recommended that it be used on a flight project until it has been
-**      formally tested.
-**   2. The OpenSat application framework defines the table load/dump commands
+**   1. Use the Singleton design pattern. A pointer to the table object
+**      is passed to the constructor and saved for all other operations.
+**      This is a table-specific file so it doesn't need to be re-entrant.
+**   2. The table file is a JSON text file.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
-**   General Public License (GPL). 
+**   General Public License (GPL).
 **
 ** References:
 **   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
 **
 */
-
 #ifndef _pkttbl_
 #define _pkttbl_
 
@@ -25,95 +23,115 @@
 ** Includes
 */
 
-#include <expat.h>
 #include "app_cfg.h"
+#include "json.h"
 
-/*#############################################################################
-** XML tag definitions.
-**
-** XML Elements/Attributes used by the packet table.
+/*
+** Macro Definitions
 */
-
-#define PKTTBL_XML_LEVEL_INDENT 3
-#define PKTTBL_XML_MAX_KW_LEN   128   /* Maximum keyword length in bytes */
-
-#define PKTTBL_XML_EL_PKT_TBL      "pkt-tbl"
-#define PKTTBL_XML_EL_PKT_ENTRY    "entry"
-
-#define PKTTBL_XML_AT_STREAM_ID    "stream-id"
-#define PKTTBL_XML_AT_PRIORITY     "priority"
-#define PKTTBL_XML_AT_RELIABILITY  "reliability"
-#define PKTTBL_XML_AT_BUF_LIM      "buf-limit"
-
-#define PKTTBL_BUFFSIZE  8192
-
 
 /*
 ** Event Message IDs
 */
 
-#define PKTTBL_CREATE_PARSER_ERR_EID    (PKTTBL_BASE_EID + 0)
-#define PKTTBL_CMD_LOAD_TYPE_ERR_EID    (PKTTBL_BASE_EID + 1)
-#define PKTTBL_CMD_LOAD_PARSE_ERR_EID   (PKTTBL_BASE_EID + 2)
-#define PKTTBL_CMD_DUMP_INFO_EID        (PKTTBL_BASE_EID + 3)
-#define PKTTBL_FILE_READ_ERR_EID        (PKTTBL_BASE_EID + 4)
-#define PKTTBL_FILE_OPEN_ERR_EID        (PKTTBL_BASE_EID + 5)
-#define PKTTBL_PARSE_ERR_EID            (PKTTBL_BASE_EID + 6)
-#define PKTTBL_WRITE_CFE_HDR_ERR_EID    (PKTTBL_BASE_EID + 7)
-#define PKTTBL_CREATE_MSG_DUMP_ERR_EID  (PKTTBL_BASE_EID + 8)
+#define PKTTBL_CREATE_FILE_ERR_EID          (PKTTBL_BASE_EID + 0)
+#define PKTTBL_CMD_LOAD_TYPE_ERR_EID        (PKTTBL_BASE_EID + 1)
+#define PKTTBL_CMD_LOAD_EMPTY_ERR_EID       (PKTTBL_BASE_EID + 2)
+#define PKTTBL_CMD_LOAD_UPDATE_ERR_EID      (PKTTBL_BASE_EID + 3)
+#define PKTTBL_CMD_LOAD_OPEN_ERR_EID        (PKTTBL_BASE_EID + 4)
+#define PKTTBL_LOAD_PKT_ATTR_ERR_EID        (PKTTBL_BASE_EID + 5)
 
+
+/*
+** Table Structure Objects 
+*/
+
+#define  PKTTBL_OBJ_PKT    0
+#define  PKTTBL_OBJ_CNT    1
+
+#define  PKTTBL_OBJ_PKT_NAME  "packet"
+                                           
 
 /*
 ** Type Definitions
 */
 
+
+
 /******************************************************************************
-** Packet Table
+** Manage each JSON object
+** 
+** TODO - Move to framework once details are worked out
+** 
+*/
+
+#define JSON_OBJ_NAME_MAX_CHAR  32
+
+typedef struct
+{
+
+   char                   Name[JSON_OBJ_NAME_MAX_CHAR];
+   boolean                Modified;
+   JSON_ContainerFuncPtr  Callback;
+   void*                  Data;
+   
+} JSON_Obj;
+
+
+/******************************************************************************
+** Table -  Local table copy used for table loads
+** 
 */
 
 typedef struct {
 
    CFE_SB_MsgId_t   StreamId;
    CFE_SB_Qos_t     Qos;
-   uint16           BuffLim;
+   uint16           BufLim;
 
-} PKTTBL_Entry;
+} PKTTBL_Pkt;
+
 
 typedef struct
 {
-   PKTTBL_Entry Entry[PKTTBL_MAX_ENTRY_ID];
+   PKTTBL_Pkt Pkt[PKTTBL_MAX_PKT_CNT];
 
-} PKTTBL_Struct;
+} PKTTBL_Tbl;
+
 
 /*
 ** Table Owner Callback Functions
 */
 
 /* Return pointer to owner's table data */
-typedef const PKTTBL_Struct* (*PKTTBL_GetTblPtr)(void);
+typedef const PKTTBL_Tbl* (*PKTTBL_GetTblPtr)(void);
             
 /* Table Owner's function to load all table data */
-typedef boolean (*PKTTBL_LoadTbl)(PKTTBL_Struct* NewTable); 
+typedef boolean (*PKTTBL_LoadTbl)(PKTTBL_Tbl* NewTbl); 
 
-/* Table Owner's function to load a single table entry */
-typedef boolean (*PKTTBL_LoadTblEntry)(uint16 EntryId, PKTTBL_Entry* NewEntry);   
+/* Table Owner's function to load a single table pkt. The JSON object/container is an array */
+typedef boolean (*PKTTBL_LoadTblEntry)(uint16 PktIdx, PKTTBL_Pkt* NewPkt);   
 
 
-/*
-**  Local table copy used for table load command
-*/
 typedef struct {
 
    uint8    LastLoadStatus;
    uint16   AttrErrCnt;
-   boolean  Modified[PKTTBL_MAX_ENTRY_ID];
-
-   PKTTBL_Struct Tbl;
+   uint16   MaxObjErrCnt;
+   uint16   ObjLoadCnt;
+   uint16   PktLoadIdx;
+   
+   PKTTBL_Tbl Tbl;
 
    PKTTBL_GetTblPtr    GetTblPtrFunc;
    PKTTBL_LoadTbl      LoadTblFunc;
    PKTTBL_LoadTblEntry LoadTblEntryFunc; 
-   
+
+   JSON_Class Json;
+   JSON_Obj   JsonObj[PKTTBL_OBJ_CNT];
+   char       JsonFileBuf[JSON_MAX_FILE_CHAR];   
+   jsmntok_t  JsonFileTokens[JSON_MAX_FILE_TOKENS];
+
 } PKTTBL_Class;
 
 
@@ -124,19 +142,22 @@ typedef struct {
 /******************************************************************************
 ** Function: PKTTBL_Constructor
 **
-** Initialize the Packet Table object.
+** Initialize the Message Table object.
 **
+** Notes:
+**   1. The table values are not populated. This is done when the table is 
+**      registered with the table manager.
 */
-void PKTTBL_Constructor(PKTTBL_Class* ObjPtr,
+void PKTTBL_Constructor(PKTTBL_Class*       ObjPtr,
                         PKTTBL_GetTblPtr    GetTblPtrFunc,
                         PKTTBL_LoadTbl      LoadTblFunc, 
-                        PKTTBL_LoadTblEntry LoadTblEntryFunc);   
+                        PKTTBL_LoadTblEntry LoadTblEntryFunc);
 
 
 /******************************************************************************
 ** Function: PKTTBL_ResetStatus
 **
-** Reset counters and status flags to a known reset state.  The behavour of
+** Reset counters and status flags to a known reset state.  The behavior of
 ** the table manager should not be impacted. The intent is to clear counters
 ** and flags to a known default state for telemetry.
 **
@@ -144,7 +165,7 @@ void PKTTBL_Constructor(PKTTBL_Class* ObjPtr,
 void PKTTBL_ResetStatus(void);
 
 
-/*#############################################################################
+/******************************************************************************
 ** Function: PKTTBL_LoadCmd
 **
 ** Command to load the table.
@@ -158,7 +179,7 @@ void PKTTBL_ResetStatus(void);
 boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename);
 
 
-/*#############################################################################
+/******************************************************************************
 ** Function: PKTTBL_DumpCmd
 **
 ** Command to dump the table.
@@ -170,6 +191,5 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename);
 **
 */
 boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename);
-
 
 #endif /* _pkttbl_ */
