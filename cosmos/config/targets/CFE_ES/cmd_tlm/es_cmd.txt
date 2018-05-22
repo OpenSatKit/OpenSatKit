@@ -1,14 +1,16 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR  = "CFE_ES"
   @CMD_MID_STR     = "CFE_ES_CMD_MID"
   
-%>  
-COMMAND CFE_ES NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+%>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND CFE_ES RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset command counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Reset command counters"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND CFE_ES RESET <%= CfsKitConfig.processor_endian %> "This command restarts the cFE in one of two modes. The Power-On Reset will cause the cFE to restart as though the power were first applied to the processor. The Processor Reset will attempt to retain the contents of the volatile disk and the contents of the Critical Data Store. NOTE: If a requested Processor Reset should cause the Processor Reset Counter ($sc_$cpu_ES_ProcResetCnt) to exceed OR EQUAL the limit CFE_ES_MAX_PROCESSOR_RESETS (which is reported in housekeeping telemetry as $sc_$cpu_ES_MaxProcResets), the command is AUTOMATICALLY upgraded to a Power-On Reset"

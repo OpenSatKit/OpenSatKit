@@ -1,5 +1,6 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR  = "DS"
   @CMD_MID_STR     = "DS_CMD_MID"
@@ -8,11 +9,12 @@
   @DS_BASENAME_BUFSIZE  = "DS_BASENAME_BUFSIZE"
   @DS_EXTENSION_BUFSIZE = "DS_EXTENSION_BUFSIZE"
 
-%>  
-COMMAND DS NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+%>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND DS RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Reset counters"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND DS SET_APP_STATE <%= CfsKitConfig.processor_endian %> "Enable/Disable the DS application packet storing"

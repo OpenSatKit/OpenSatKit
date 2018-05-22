@@ -22,9 +22,10 @@ HORIZONTALBOX "Executive Service"
   
   VERTICAL
     MATRIXBYCOLUMNS 1
-      BUTTON 'Commands' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_CMD")'
-      BUTTON 'App Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_APP_MGMT")'
+      NAMED_WIDGET es_cmd COMBOBOX NOOP RESET_CTRS RESET SHELL START_APP STOP_APP RESTART_APP RELOAD_APP SEND_APP_INFO WRITE_APP_INFO_TO_FILE CLEAR_SYSLOG WRITE_SYSLOG_TO_FILE CLEAR_ERLOG WRITE_ERLOG_TO_FILE START_LA_DATA STOP_LA_DATA SET_LA_FILTER_MASK SET_LA_TRIG_MASK OVERWRITE_SYSLOG_MODE RESET_PR_CNT SET_MAX_PR_CNT DELETE_CDS TLM_POOL_STATS WRITE_CDS_REG_TO_FILE WRITE_TASK_INFO_TO_FILE
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_CMD")'
       BUTTON 'Perf Mon' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_PERF_MON")'
+      #BUTTON 'App Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_APP_MGMT")'
     END # Matrix
   END # Vertical
   
@@ -73,7 +74,8 @@ HORIZONTALBOX "Event Service"
   
   VERTICAL
     MATRIXBYCOLUMNS 1
-      BUTTON 'Commands' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "EVS_CMD")'
+      NAMED_WIDGET evs_cmd COMBOBOX NOOP RESET_CTRS ENA_EVENT_TYPE DIS_EVENT_TYPE SET_EVENT_FMT ENA_APP_EVENT_TYPE ENA_APP_EVENT_GEN DIS_APP_EVENT_GEN RESET_APP_CTRS SET_FILTER_MASK ENA_PORT DIS_PORT RESET_FILTER_CTR RESET_ALL_FILTERS ADD_EVENT_FILTER DEL_EVENT_FILTER WRITE_APP_DATA_TO_FILE FILE_WRITE_LOG_TO_FILE SET_LOG_MODE CLEAR_LOG
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "EVS_CMD")'
     END # Matrix
   END # Vertical
   
@@ -116,7 +118,8 @@ HORIZONTALBOX "Software Bus"
   
   VERTICAL
     MATRIXBYCOLUMNS 1
-      BUTTON 'Commands' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "SB_CMD")'
+      NAMED_WIDGET sb_cmd COMBOBOX NOOP RESET_CTRS SEND_STATS WRITE_ROUTING_TO_FILE ENA_ROUTE DIS_ROUTE WRITE_PIPE_TO_FILE WRITE_MAP_TO_FILE ENA_SUB_REPORTING DIS_SUB_REPORTING SEND_PREV_SUBS
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "SB_CMD")'
     END # Matrix
   END # Vertical
   
@@ -163,7 +166,8 @@ HORIZONTALBOX "Table Service"
   
   VERTICAL
     MATRIXBYCOLUMNS 1
-      BUTTON 'Commands' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TBL_CMD")'
+      NAMED_WIDGET tbl_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL VALIDATE_TBL ACTIVATE_TBL WRITE_REG_TO_FILE TLM_REGISTRY DELETE_CDS ABORT_LOAD
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TBL_CMD")'
       BUTTON 'Tbl Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TBL_MGMT")'
     END # Matrix
   END # Vertical
@@ -213,7 +217,8 @@ HORIZONTALBOX "Time Service"
   
   VERTICAL
     MATRIXBYCOLUMNS 1
-      BUTTON 'Commands' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TIME_CMD")'
+      NAMED_WIDGET time_cmd COMBOBOX NOOP RESET_CTRS REQUEST_DIAG SET_SOURCE SET_STATE ADD_CLOCK_LAT SUB_CLOCK_LAT SET_CLOCK SET_CLOCK_MET SET_CLOCK_STCF SET_CLOCK_LEAP ADD_STCF_ADJ SUB_STCF_ADJ ADD_1HZ_STCF_ADJ SUB_1HZ_STCF_ADJ SET_SIGNAL 
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TIME_CMD")'
     END # Matrix
   END # Vertical
   
@@ -243,5 +248,5 @@ END # Horizontal Time Service
 
 
 HORIZONTALLINE
-LABEL "Event Messages"
+LABEL "Flight Event Messages"
 NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 1024 50

@@ -1,57 +1,57 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR = "FM"
   @CMD_MID_STR    = "FM_CMD_MID"
-  @DEF_FILENAME   = "default"
-  @DEF_DIR_NAME   = "/cf"
+
 %>  
 
-COMMAND FM NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND FM RESET_CTRS <%= CfsKitConfig.processor_endian %> "Resets HK TLM parent and child task counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Resets HK TLM parent and child task counters"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
   
-COMMAND FM COPY_FILE <%= CfsKitConfig.processor_endian %> "Copy the source file to the target file. The source must be an existing file and the target must not be a directory name. If the Overwrite command argument is TRUE, then the target may be an existing file, provided that the file is closed. If the Overwrite command argument is FALSE, then the target must not exist. The source and target may be on different file systems. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but copying the file will be performed by a lower priority child task. As such, the command result for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
+COMMAND FM COPY_FILE <%= CfsKitConfig.processor_endian %> "Copy the source file to the target file."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 130) %>
-  APPEND_PARAMETER OVERWRITE 16 UINT MIN_UINT16 MAX_UINT16 0 "Allow overwrite"
-  APPEND_PARAMETER SOURCE   512 STRING <%= @DEF_FILENAME %>  "Source filename"
-  APPEND_PARAMETER TARGET   512 STRING <%= @DEF_FILENAME %>  "Target filename"
+  APPEND_PARAMETER OVERWRITE 16 UINT MIN_UINT16 MAX_UINT16 0 "1 = Allow overwriting an existing target file"
+  APPEND_PARAMETER SOURCE   512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete source /path/filename"
+  APPEND_PARAMETER TARGET   512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete target /path/filename"
 
-COMMAND FM MOVE_FILE <%= CfsKitConfig.processor_endian %> "Move the source file to the target file. The source must be an existing file and the target must not be a directory name. If the Overwrite command argument is TRUE, then the target may be an existing file, provided that the file is closed. If the Overwrite command argument is FALSE, then the target must not exist. Source and target must both be on the same file system. The move command does not actually move any file data. The command modifies the file system directory structure to create a different file entry for the same file data. If the user wishes to move a file across file systems, he must first copy the file and then delete the original."
+COMMAND FM MOVE_FILE <%= CfsKitConfig.processor_endian %> "Move the source file to the target file."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 130) %>
-  APPEND_PARAMETER OVERWRITE 16 UINT MIN_UINT16 MAX_UINT16 0 "Allow overwrite"
-  APPEND_PARAMETER SOURCE   512 STRING <%= @DEF_FILENAME %>  "Source filename"
-  APPEND_PARAMETER TARGET   512 STRING <%= @DEF_FILENAME %>  "Target filename"
+  APPEND_PARAMETER OVERWRITE 16 UINT MIN_UINT16 MAX_UINT16 0 "1 = Allow overwriting an existing target file"
+  APPEND_PARAMETER SOURCE   512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete source /path/filename"
+  APPEND_PARAMETER TARGET   512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete source /path/filename"
 
 COMMAND FM RENAME_FILE <%= CfsKitConfig.processor_endian %> "Rename the source file to the target file. Source must be an existing file and target must not exist. Source and target must both be on the same file system. The rename command does not actually move any file data. The command modifies the file system directory structure to create a different file entry for the same file data. If the user wishes to rename a file across file systems, he must first copy the file and then delete the original."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 128) %>
-  APPEND_PARAMETER SOURCE 512 STRING <%= @DEF_FILENAME %> "Source filename"
-  APPEND_PARAMETER TARGET 512 STRING <%= @DEF_FILENAME %> "Target filename"
+  APPEND_PARAMETER SOURCE 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Source filename"
+  APPEND_PARAMETER TARGET 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Target filename"
 
 COMMAND FM DELETE_FILE <%= CfsKitConfig.processor_endian %> "Delete the source file. Source must be an existing file that is not open."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING <%= @DEF_FILENAME %> "Delete filename"
+  APPEND_PARAMETER FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Delete filename"
 
 COMMAND FM DELETE_ALL_FILES <%= CfsKitConfig.processor_endian %> "Delete all files in the source directory. Source must be an existing directory. Open files and sub-directories are not deleted. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but reading the directory and deleting each file will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 64) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= @DEF_DIR_NAME %> "Directory name"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_DIR_NAME %> "Directory name"
 
 COMMAND FM DECOMPRESS_FILE <%= CfsKitConfig.processor_endian %> "Decompress the source file into the target file. Source must be an existing file and target must not exist. Source and target may be on different file systems. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but decompressing the source file into the target file will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 128) %>
-  APPEND_PARAMETER SOURCE 512 STRING <%= @DEF_FILENAME %> "Source filename"
-  APPEND_PARAMETER TARGET 512 STRING <%= @DEF_FILENAME %> "Target filename"
+  APPEND_PARAMETER SOURCE 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Source filename"
+  APPEND_PARAMETER TARGET 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Target filename"
 
 COMMAND FM CONCAT_FILES <%= CfsKitConfig.processor_endian %> "Concatenate two source files into the target file. Sources must both be existing files and target must not exist. Sources and target may be on different file systems. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but copying the first source file to the target file and then appending the second source file to the target file will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 192) %>
-  APPEND_PARAMETER SOURCE1 512 STRING <%= @DEF_FILENAME %> "Source 1 filename"
-  APPEND_PARAMETER SOURCE2 512 STRING <%= @DEF_FILENAME %> "Source 2 filename"
-  APPEND_PARAMETER TARGET  512 STRING <%= @DEF_FILENAME %> "Target filename"
+  APPEND_PARAMETER SOURCE1 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Source 1 filename"
+  APPEND_PARAMETER SOURCE2 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Source 2 filename"
+  APPEND_PARAMETER TARGET  512 STRING <%= Osk::CMD_DEF_FILENAME %> "Target filename"
 
 COMMAND FM GET_FILE_INFO <%= CfsKitConfig.processor_endian %> "Create a file information telemetry packet for the source file. The file information packet includes status that indicates whether source is a file that is open or closed, a directory, or does not exist. The file information data also includes a CRC, file size, last modify time and the source name. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but collecting the status data and calculating the CRC will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 68) %>
-  APPEND_PARAMETER FILENAME    512 STRING <%= @DEF_FILENAME %>  "Filename"
+  APPEND_PARAMETER FILENAME    512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Filename"
   APPEND_PARAMETER FILEINFOCRC  32 UINT MIN_UINT32 MAX_UINT32 0 "File info CRC method"
 
 COMMAND FM GET_OPEN_FILES <%= CfsKitConfig.processor_endian %> "Creates an 'open files' telemetry packet. The open files packet includes the number of open files and for each open file, the name of the file and the name of the application that has the file opened."
@@ -59,20 +59,20 @@ COMMAND FM GET_OPEN_FILES <%= CfsKitConfig.processor_endian %> "Creates an 'open
 
 COMMAND FM CREATE_DIR <%= CfsKitConfig.processor_endian %> "Create the source directory. Source must be a valid directory name that does not exist"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 64) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= @DEF_FILENAME %> "Directory name"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Directory name"
 
 COMMAND FM DELETE_DIR <%= CfsKitConfig.processor_endian %> "Delete the source directory, it does not delete the contents of the directory. Source must be a valid directory name that exists."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 64) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= @DEF_FILENAME %> "Directory name"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Directory name"
 
 COMMAND FM WRITE_DIR_TO_FILE <%= CfsKitConfig.processor_endian %> "Write a listing of the contents of the source directory to the target file. If the target filename buffer is empty, then the default target filename FM_DIR_LIST_FILE_DEFNAME is used. The command will overwrite a previous copy of the target file, if one exists. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but reading the directory will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 128) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= @DEF_DIR_NAME %> "Directory name"
-  APPEND_PARAMETER FILENAME  512 STRING <%= @DEF_FILENAME %> "Filename"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_DIR_NAME %> "Directory name"
+  APPEND_PARAMETER FILENAME  512 STRING <%= Osk::CMD_DEF_FILENAME %> "Filename"
 
 COMMAND FM SEND_DIR_PKT <%= CfsKitConfig.processor_endian %> "Creates a telemetry packet that contains a listing of the entries in the specified directory. Since the packet will likely hold fewer entries than will be possible in a directory, the command also provides an index argument to define which entry in the directory is the first entry reported in the telemetry packet. After reading the directory list and skipping entries until reaching the index of the first entry reported, the remaining entries in the packet are filled sequentially until either the packet is full or until there are no more entries in the directory. The first entry index is zero based - thus, when the first entry index is zero the first directory entry will be the first packet entry. The number of entries per packet FM_DIR_LIST_PKT_ENTRIES is a platform configuration definition. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but reading the directory will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 68) %>
-  APPEND_PARAMETER DIRECTORY     512 STRING <%= @DEF_DIR_NAME %>  "Directory name"
+  APPEND_PARAMETER DIRECTORY     512 STRING <%= Osk::CMD_DEF_DIR_NAME %>  "Directory name"
   APPEND_PARAMETER DIRLISTOFFSET  32 UINT MIN_UINT32 MAX_UINT32 0 "Index of 1st dir entry to put in packet"
 
 COMMAND FM SEND_FREE_SPACE_PKT <%= CfsKitConfig.processor_endian %> "Queries the amount of free space for each of the enabled entries in the file system free space table. The data is then placed in a telemetry packet and sent to ground."

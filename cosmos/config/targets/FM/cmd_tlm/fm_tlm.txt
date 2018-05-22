@@ -1,5 +1,6 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR         = "FM"
   @HK_TLM_MID_STR         = "FM_HK_TLM_MID"
@@ -12,10 +13,10 @@
   
 %>  
 
-TELEMETRY FM HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Housekeeping telemetry packet"
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= CfsKitConfig.processor_endian %> "Housekeeping telemetry packet"
   <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
-  APPEND_ITEM CMD_VALID_COUNT 8 UINT "Application command counter"
-  APPEND_ITEM CMD_ERROR_COUNT 8 UINT "Application command error counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
   APPEND_ITEM SPARE           8 UINT "Placeholder for unused command warning counter"
   APPEND_ITEM NUMOPENFILES    8 UINT "Number of open files in the system"
   APPEND_ITEM CHILDCMDCOUNTER 8 UINT "Child task command counter"

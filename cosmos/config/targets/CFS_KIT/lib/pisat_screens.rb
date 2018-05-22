@@ -54,10 +54,10 @@ def pisat_connection(screen, cmd)
       if (host_ip_addr == "")
         host_ip_addr = HOST_IP_ADDR
       end
-      Osk::system.connect_to_pisat_cfs(host_ip_addr)
+      Osk::system.switch_local_to_pisat_cfs(host_ip_addr)
       clear("CFS_KIT PISAT_CONNECT_SCREEN")    
    elsif (cmd == "SWITCH_TO_LOCAL")
-      Osk::system.connect_to_local_cfs()
+      Osk::system.switch_pisat_to_local_cfs()
    elsif (cmd == "CANCEL")
       clear("CFS_KIT PISAT_CONNECT_SCREEN")    
    else
