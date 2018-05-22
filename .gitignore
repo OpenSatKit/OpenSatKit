@@ -83,3 +83,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# 42 special files
+.42 /42
+.ppm /42
