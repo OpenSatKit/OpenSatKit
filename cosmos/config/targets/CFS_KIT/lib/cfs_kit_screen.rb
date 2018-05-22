@@ -21,7 +21,12 @@ Cosmos.catch_fatal_exception do
   require 'cosmos/tools/tlm_viewer/screen'
   require 'cosmos/tools/tlm_viewer/tlm_viewer'
 end
+require 'ccsds'
+require 'osk_global'
 require 'osk_system'
+require 'osk_flight'
+require 'fsw_app'
+
 
 ################################################################################
 ## Global Variables
@@ -40,58 +45,121 @@ GND_TEST_PUT_FILE = "#{GND_SRV_DIR}/tf_put_test_src.txt"
 
 def cfs_kit_launch_app(screen, app)
 
-  if (app == "CFS")
-    spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/../cfs/build/exe/cpu1"" --execute sudo ./core-cpu1""")
-    wait(3)
-    #cmd("KIT_TO ENABLE_TELEMETRY")
-  elsif (app == "CFE_SERVICES")
-    display("CFS_KIT CFE_SCREEN",50,50)   
-  elsif (app == "BENCHMARKS")
-    prompt("Note this is a prototype application")
-    display("CFS_KIT BENCHMARK_SCREEN",50,50) 
-  elsif (app == "PERF_MON")
-    display("CFS_KIT PERF_MON_SCREEN",50,50)
-  elsif (app == "RUN_TEST_SCRIPT")
-    spawn("ruby #{Cosmos::USERPATH}/tools/ScriptRunner #{Cosmos::USERPATH}/procedures/kit_test/kit_test_main.rb")
-    display("CFS_KIT APP_CFS_SUMMARY_SCREEN",50,50)
-    display("CFS_KIT APP_KIT_SUMMARY_SCREEN",50,50)
-  elsif (app == "MANAGE_FILES")
-    display("CFS_KIT FILE_MGMT_SCREEN",50,50)
-  elsif (app == "MANAGE_TABLES")
-    display("CFS_KIT TABLE_MGMT_SCREEN",50,50)
-  elsif (app == "MANAGE_MEMORY")
-    display("CFS_KIT MEMORY_MGMT_SCREEN",50,50)
-  elsif (app == "MANAGE_APPS")
-    display("CFS_KIT APP_MGMT_SCREEN",50,50)
-  elsif (app == "APP_SUMMARY")
-    display("CFS_KIT APP_CFS_SUMMARY_SCREEN",50,50)
-    display("CFS_KIT APP_KIT_SUMMARY_SCREEN",50,50)
-  elsif (app == "MANAGE_RECORDER")
-    display("CFS_KIT RECORDER_MGMT_SCREEN",50,50)
-  elsif (app == "MANAGE_AUTONOMY")
-    display("CFS_KIT AUTONOMY_MGMT_SCREEN",50,50)
-  elsif (app == "SIM_42")
-    display("CFS_KIT SIM_42_SCREEN",50,50)
-  elsif (app == "PISAT")
-	#prompt("Please ensure you are connected to the PiSat network")
-    #cmd("PICONTROL STARTCFS")
-    #wait(2)
-    #cmd("KIT_TO ENABLE_TELEMETRY")
-    spawn("ruby #{Cosmos::USERPATH}/tools/TlmGrapher")
-    display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
-  elsif (app == "CREATE_APP")
-    #prompt("Launching CreateApp...")
-    #spawn("java -jar /mnt/hgfs/OpenSatKit/cosmos/cfs_kit/tools/create-app/CreateApp.jar")
-    spawn("java -jar #{CFS_KIT_CREATE_APP_DIR}/CreateApp.jar", :chdir => "#{CFS_KIT_CREATE_APP_DIR}")
-  elsif (app == "UPDATE_TUTORIAL")
-    cfs_kit_create_tutorial_screen
-  elsif (app == "CFE_USERS_GUIDE")
-    Cosmos.open_in_web_browser("#{CFS_KIT_CFE_UG_DIR}/#{OSK_CFE_UG_FILE}")
-  elsif (app == "TODO")
-    prompt("Feature coming soon...")
-  else
-    prompt("Error in screen definition file. Undefined command sent to cfs_kit_launch_app()")
-  end
+   if (app == "CFS")
+   
+      # 
+      # Before starting cFE check if a cFE instance is already running and kill
+      # it if it is. Doesn't protect against multiple orphans, but the typical
+      # situation is one orphan.
+      #    
+      # When a new terminal windows, the user will be prompted for password 
+      # since cFE is run in privileged mode. The loop after the spawn 
+      # automatically enables telemetry 
+      #  
+      
+      
+      core = `pgrep core`
+      if (core.length > 1)
+         #puts core + " len = #{core.length}"
+         `echo osk | sudo -S kill #{core}`
+      end
+      
+      spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/../cfs/build/exe/cpu1"" --execute sudo ./core-cpu1""")
+        
+      #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
+
+      done = false
+      attempts = 0
+      seq_cnt = tlm("CFE_ES #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}")
+      while (!done)
+         core = `pgrep core`
+         if (core.length > 1)
+            wait(2)
+            cmd("KIT_TO ENABLE_TELEMETRY")
+            done = true
+            #puts core + " len = #{core.length}"
+         else
+            attempts += 1
+            if (attempts < 5)
+               wait (4)
+            else
+               done = true
+            end
+         end
+         #~puts core + " len = #{core.length}"
+         #~if ( tlm("CFE_ES #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}") != seq_cnt)
+         #~   done = true
+         #~else
+         #~   begin
+         #~      cmd("KIT_TO ENABLE_TELEMETRY")
+         #~   rescue
+         #~      Osk::system.connect_to_local_cfs
+         #~   end
+         #~   attempts += 1
+         #~   if (attempts < 5)
+         #~      wait (4)
+         #~   else
+         #~      done = true
+         #~   end
+         #~end   
+      end # while ! done
+      #~puts "attempt #{attempts}"
+      
+   elsif (app == "CFE_SERVICES")
+      display("CFS_KIT CFE_SCREEN",50,50)   
+   elsif (app == "SET_CMD_VALIDATE")
+      enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes','No')  
+      if (enable == "Yes")
+         FswApp.validate_cmd(true)
+      elsif (enable == "No")
+         FswApp.validate_cmd(false)
+      end
+   elsif (app == "BENCHMARKS")
+      prompt("Note this is a prototype application")
+      display("CFS_KIT BENCHMARK_SCREEN",50,50) 
+   elsif (app == "PERF_MON")
+      display("CFS_KIT PERF_MON_SCREEN",50,50)
+   elsif (app == "RUN_TEST_SCRIPT")
+      spawn("ruby #{Cosmos::USERPATH}/tools/ScriptRunner #{Cosmos::USERPATH}/procedures/kit_test/kit_test_main.rb")
+      display("CFS_KIT APP_CFS_SUMMARY_SCREEN",50,50)
+      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",50,50)
+   elsif (app == "MANAGE_FILES")
+      display("CFS_KIT FILE_MGMT_SCREEN",50,50)
+   elsif (app == "MANAGE_TABLES")
+      display("CFS_KIT TABLE_MGMT_SCREEN",50,50)
+   elsif (app == "MANAGE_MEMORY")
+      display("CFS_KIT MEMORY_MGMT_SCREEN",50,50)
+   elsif (app == "MANAGE_APPS")
+      display("CFS_KIT APP_MGMT_SCREEN",50,50)
+   elsif (app == "APP_SUMMARY")
+      display("CFS_KIT APP_CFS_SUMMARY_SCREEN",10,10)
+      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",1500,10)
+   elsif (app == "MANAGE_RECORDER")
+      display("CFS_KIT RECORDER_MGMT_SCREEN",50,50)
+   elsif (app == "MANAGE_AUTONOMY")
+      display("CFS_KIT AUTONOMY_MGMT_SCREEN",50,50)
+   elsif (app == "SIM_42")
+      display("CFS_KIT SIM_42_SCREEN",50,50)
+   elsif (app == "PISAT")
+	   #prompt("Please ensure you are connected to the PiSat network")
+      #cmd("PICONTROL STARTCFS")
+      #wait(2)
+      #cmd("KIT_TO ENABLE_TELEMETRY")
+      spawn("ruby #{Cosmos::USERPATH}/tools/TlmGrapher")
+      display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
+   elsif (app == "CREATE_APP")
+      #prompt("Launching CreateApp...")
+      #spawn("java -jar /mnt/hgfs/OpenSatKit/cosmos/cfs_kit/tools/create-app/CreateApp.jar")
+      spawn("java -jar #{CFS_KIT_CREATE_APP_DIR}/CreateApp.jar", :chdir => "#{CFS_KIT_CREATE_APP_DIR}")
+   elsif (app == "UPDATE_TUTORIAL")
+      cfs_kit_create_tutorial_screen
+   elsif (app == "CFE_USERS_GUIDE")
+      Cosmos.open_in_web_browser("#{CFS_KIT_CFE_UG_DIR}/#{OSK_CFE_UG_FILE}")
+   elsif (app == "TODO")
+      prompt("Feature coming soon...")
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_launch_app()"
+   end
 
 end # cfs_kit_launch_app()
 
@@ -101,26 +169,26 @@ end # cfs_kit_launch_app()
 
 def cfs_kit_launch_demo(screen, demo)
 
-  if (demo == "FILE_MGMT_DEMO")
-    display("CFS_KIT FILE_MGMT_DEMO_SCREEN",50,50)
-  elsif (demo == "TABLE_DEMO")
-    display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",50,50) 
-  elsif (demo == "MEMORY_DEMO")
-    display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",50,50)
-  elsif (demo == "RECORDER_DEMO")
-    display("CFS_KIT RECORDER_MGMT_DEMO_SCREEN",50,50)
-  elsif (demo == "AUTONOMY_DEMO")
-    display("CFS_KIT HEATER_CTRL_DEMO_SCREEN",50,50)
-  elsif (demo == "APP_DEMO")
-    display("CFS_KIT APP_MGMT_DEMO_SCREEN",50,50)
-  elsif (demo == "PERF_MON_DEMO")
-    display("CFS_KIT PERF_MON_DEMO_SCREEN",50,50)
-  elsif (demo == "TUTORIAL")
-    display("CFS_KIT TUTORIAL_SCREEN",50,50)
-  else
-    prompt("Error in screen definition file. Undefined command sent to cfs_kit_launch_demo()")
-    #Save prompt(MSG_TBD_FEATURE)  
-  end
+   if (demo == "FILE_MGMT_DEMO")
+      display("CFS_KIT FILE_MGMT_DEMO_SCREEN",500,50)
+   elsif (demo == "TABLE_DEMO")
+      display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",500,50) 
+   elsif (demo == "MEMORY_DEMO")
+      display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
+   elsif (demo == "RECORDER_DEMO")
+      display("CFS_KIT RECORDER_MGMT_DEMO_SCREEN",500,50)
+   elsif (demo == "AUTONOMY_DEMO")
+      display("CFS_KIT HEATER_CTRL_DEMO_SCREEN",500,50)
+   elsif (demo == "APP_DEMO")
+      display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
+   elsif (demo == "PERF_MON_DEMO")
+      display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
+   elsif (demo == "TUTORIAL")
+      display("CFS_KIT TUTORIAL_SCREEN",500,50)
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_launch_demo()"
+      #Save prompt(MSG_TBD_FEATURE)  
+   end
 
 end # cfs_kit_launch_demo()
 
@@ -130,30 +198,31 @@ end # cfs_kit_launch_demo()
 
 def cfs_kit_send_cmd(screen, cmd)
 
-  if (cmd == "TO_ENA_TELEMETRY")
-    cmd("KIT_TO ENABLE_TELEMETRY")
-  elsif (cmd == "TIME_SET_CLOCK_ZERO")
-    cmd("CFE_TIME SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0"); 
-    cmd("CFE_TIME SET_CLOCK with SECONDS 0, MICROSECONDS 0")
-  elsif (cmd == "PROTO_NEW_CMD")
-	  # TODO - Some potential new commands
-    # (cmd == "DISPLAY_SB_ROUTES")
-    # (cmd == "DISPLAY_MSG_IDS")
-    # (cmd == "CFS_HTML_DOC")
-    value = combo_box("Select the command being developed", 'Put File', 'Get File', 'Display SB Routes')
-    case value
-    when 'Put File'
-      file_xfer = Osk::system.file_transfer
-      file_xfer.put(GND_TEST_PUT_FILE, FLT_TEST_PUT_FILE)
-    when 'Get File'
-      file_xfer = Osk::system.file_transfer
-      file_xfer.get(FLT_TEST_PUT_FILE,GND_TEST_PUT_FILE)
-    when 'Display SB Routes'
-      cmd("CFE_SB WRITE_ROUTING_TO_FILE with FILENAME '/cf/~sb_tmp.dat'")
-    end
-  else
-    prompt("Error in screen definition file. Undefined command sent to cfs_kit_send_cmd()")
-  end
+   if (cmd == "TO_ENA_TELEMETRY")
+      # DOn't use Osk::flight because cmd validation would fail
+      cmd("KIT_TO ENABLE_TELEMETRY")
+   elsif (cmd == "TIME_SET_CLOCK_ZERO")
+      Osk::flight.cfe_time.send_cmd("SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0")
+      Osk::flight.cfe_time.send_cmd("SET_CLOCK with SECONDS 0, MICROSECONDS 0") 
+   elsif (cmd == "PROTO_NEW_CMD")
+	   # TODO - Some potential new commands
+      # (cmd == "DISPLAY_SB_ROUTES")
+      # (cmd == "DISPLAY_MSG_IDS")
+      # (cmd == "CFS_HTML_DOC")
+      value = combo_box("Select the command being developed", 'Put File', 'Get File', 'Display SB Routes')
+      case value
+         when 'Put File'
+            file_xfer = Osk::system.file_transfer
+            file_xfer.put(GND_TEST_PUT_FILE, FLT_TEST_PUT_FILE)
+         when 'Get File'
+            file_xfer = Osk::system.file_transfer
+            file_xfer.get(FLT_TEST_PUT_FILE,GND_TEST_PUT_FILE)
+         when 'Display SB Routes'
+            cmd("CFE_SB WRITE_ROUTING_TO_FILE with FILENAME '/cf/~sb_tmp.dat'")
+      end
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_send_cmd()"
+   end
 end # cfs_kit_send_cmd()
 
 ################################################################################
@@ -243,10 +312,3 @@ def cfs_kit_create_tutorial_screen
 end # cfs_kit_create_tutorial_screen()
 
 
-#
-# Useful code snippets
-#
-#sel = message_box("Press #{BUTTON_CONT} to continue",BUTTON_CONT)
-#if (sel != BUTTON_CONT) then return end  
-#
-#Cosmos.run_process("ruby tools/CmdSender -p \"CFE_ES START_APP\"")

@@ -10,7 +10,7 @@
 require 'cosmos'
 require 'cosmos/script'
 
-require 'message_ids'
+require 'fsw_msg_id'
 
 require 'kit_test_cfe_es'
 require 'kit_test_cfe_evs'
@@ -88,10 +88,10 @@ sc_test = KitTestSc.new(sc)
 
 # Custom Starter Kit Apps
 
-bm      = App.new("BM_APP","BM","HK_TLM_PKT",MessageIds::BM_CMD_MID)
+bm      = App.new("BM_APP","BM","HK_TLM_PKT",Fsw::MsgId::BM_CMD_MID)
 bm_test = KitTestBm.new(bm)
 
-f42      = App.new("F42_APP","F42","HK_TLM_PKT",MessageIds::F42_CMD_MID)
+f42      = App.new("F42_APP","F42","HK_TLM_PKT",Fsw::MsgId::F42_CMD_MID)
 f42_test = KitTestF42.new(f42)
 
 hc      = App.new("HC_APP","HC","HK_TLM_PKT","0x19A5")
@@ -100,7 +100,7 @@ hc_test = KitTestHc.new(hc)
 hsim      = App.new("HSIM_APP","HSIM","HK_TLM_PKT","0x19B1")
 hsim_test = KitTestHsim.new(hsim)
 
-i42      = App.new("I42_APP","I42","HK_TLM_PKT",MessageIds::I42_CMD_MID)
+i42      = App.new("I42_APP","I42","HK_TLM_PKT",Fsw::MsgId::I42_CMD_MID)
 i42_test = KitTestI42.new(i42)
 
 kit_ci      = App.new("KIT_CI_APP","KIT_CI","HK_TLM_PKT","0x1884")

@@ -7,16 +7,9 @@
 # 
 ################################################################################
 
-require 'cfs_kit_global'
-require 'file_transfer'
-require 'file_mgmt_screen'
-
-################################################################################
-## Global Variables
-################################################################################
-
-TABLE_MGMT_FLT_SRV_DIR = FLT_SRV_DIR
-TABLE_MGMT_GND_SRV_DIR = GND_SRV_TBL_DIR
+require 'osk_system'
+require 'osk_flight'
+require 'osk_ops'
 
 ################################################################################
 ## Send Commands
@@ -24,58 +17,63 @@ TABLE_MGMT_GND_SRV_DIR = GND_SRV_TBL_DIR
 
 def table_mgmt_send_cmd(screen, cmd)
 
-	if (cmd == "LOAD_TABLE")
-    tbl_file_name = ask_string("Enter full FSW path/filename of table file to be loaded.")
-    cmd("CFE_TBL LOAD_TBL with LOAD_FILENAME #{tbl_file_name}")
+   if (cmd == "LOAD_TABLE")
+      put_file = combo_box("Transfer file from ground to flight?", 'Yes','No')
+      if (put_file == "Yes")
+         Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_TBL_DIR, Osk::FLT_SRV_DIR)
+         if (Osk::Ops::put_flt_file_prompt(Osk::GND_SRV_TBL_DIR))
+            Osk::Ops::set_work_dir_widget(screen)
+         end
+      end 
+      tbl_path_filename = ask_string("Enter full FSW /path/filename of table file to be loaded.","#{Osk::Ops::flt_path_filename}")
+      Osk::flight.cfe_tbl.send_cmd("LOAD_TBL with LOAD_FILENAME #{tbl_path_filename}")
 	elsif (cmd == "ABORT_TABLE_LOAD")
-    tbl_name = ask_string("Enter complete table name (app.table) of load to be aborted.")
-    cmd("CFE_TBL ABORT_LOAD with TABLE_NAME #{tbl_name}")
+      tbl_name = ask_string("Enter complete table name (app.table) of load to be aborted.")
+      Osk::flight.cfe_tbl.send_cmd("ABORT_LOAD with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "DUMP_TABLE")
-    tbl_name = ask_string("Enter complete table name (app.table) of table to be dumped.")
-    tbl_file_name = ask_string("Enter full FSW path/filename of file to received the table")
-    buffer = combo_box("Select the buffer to be dumped", 'Inactive','Active')
-    if (buffer == 'Active') 
-      buffer_id = 1
-    else
-      buffer_id = 0
-    end
-    cmd("CFE_TBL DUMP_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}, DUMP_FILENAME #{tbl_file_name}")
-	elsif (cmd == "VALIDATE")
-    tbl_name = ask_string("Enter complete table name (app.table) of table to be validated.")
-    buffer = combo_box("Select the buffer to be validated", 'Inactive','Active')
-    if (buffer == 'Active') 
-      buffer_id = 1
-    else
-      buffer_id = 0
-    end
-    cmd("CFE_TBL VALIDATE_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}")
+      tbl_name = ask_string("Enter complete table name (app.table) of table to be dumped.")
+      tbl_path_filename = ask_string("Enter full FSW /path/filename of file to received the table")
+      buffer = combo_box("Select the buffer to be dumped", 'Inactive','Active')
+      if (buffer == 'Active') 
+         buffer_id = 1
+      else
+         buffer_id = 0
+      end
+      Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "DUMP_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}, ", "Definition file for #{tbl_name}")
+   elsif (cmd == "VALIDATE")
+      tbl_name = ask_string("Enter complete table name (app.table) of table to be validated.")
+      buffer = combo_box("Select the buffer to be validated", 'Inactive','Active')
+      if (buffer == 'Active') 
+         buffer_id = 1
+      else
+         buffer_id = 0
+      end
+      Osk::flight.cfe_tbl.send_cmd("VALIDATE_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}")
 	elsif (cmd == "ACTIVATE")
-    tbl_name = ask_string("Enter complete table name (app.table) of table to be activated.")
-    cmd("CFE_TBL ACTIVATE_TBL with TABLE_NAME #{tbl_name}")
+      tbl_name = ask_string("Enter complete table name (app.table) of table to be activated.")
+      Osk::flight.cfe_tbl.send_cmd("ACTIVATE_TBL with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "DISPLAY_ONE_REGISTRY")
-    tbl_name = ask_string("Enter complete table name (app.table) of table registry to be telemetered.")
-    cmd("CFE_TBL TLM_REGISTRY with TABLE_NAME #{tbl_name}")
+      tbl_name = ask_string("Enter complete table name (app.table) of table registry to be telemetered.")
+      Osk::flight.cfe_tbl.send_cmd("TLM_REGISTRY with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "WRITE_REGISTRY_TO_FILE")
-    rg_file_name = ask_string("Enter full FSW path/filename of file to received the registry data.")
-    cmd("CFE_TBL WRITE_REG_TO_FILE with DUMP_FILENAME #{reg_file_name}")
+      reg_filename = ask_string("Enter full flight path/filename of file to received the registry data.")
+      Osk::Ops::send_flt_bin_file_cmd("cfe_tbl", "WRITE_REG_TO_FILE with ",TBL_MGR_DEF_CFE_TBL_REG)
 	elsif (cmd == "DISPLAY_TABLE")
-     Cosmos.run_process("ruby tools/TableManager")
+      Cosmos.run_process("ruby tools/TableManager")
 	elsif (cmd == "GET_FILE")
-    # Don't use file_mgmt because table file needs to be manipulated.
-    file_mgmt_set_work_dir(screen);
-    file_xfer = Osk::system.file_transfer
-    flt_full_file_name = ask_string("Enter full FSW path/filename.")
-    gnd_file_name = ask_string("Enter ground filename without path. File will be in kit server location.")
-    gnd_file_name_no_hdr = gnd_file_name.split('.').first + "_no_hdr.dat" # Assumes one .
-    gnd_full_file_name = "#{GND_SRV_DIR}/#{gnd_file_name}"
-    gnd_full_file_name_no_hdr = "#{GND_SRV_DIR}/#{gnd_file_name_no_hdr}"
-    if (file_xfer.get(flt_full_file_name,gnd_full_file_name) )
-      IO.copy_stream(gnd_full_file_name,gnd_full_file_name_no_hdr,File.size(gnd_full_file_name)-64 ,64)
-      prompt ("Created table file #{gnd_full_file_name_no_hdr} without the cFE header")
-    end
-  else
-    prompt("Error in screen definition file. Undefined command sent to table_mgmt_send_cmd()")
-  end
+      # Update screen with working directories to help remind user where tables are stored
+      Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_TBL_DIR, Osk::FLT_SRV_DIR)
+      if (Osk::Ops::get_flt_file_prompt(Osk::GND_SRV_TBL_DIR))
+         Osk::Ops::set_work_dir_widget(screen)
+      end
+   elsif (cmd == "PUT_FILE")
+      # Update screen with working directories to help remind user where tables are stored
+      Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_TBL_DIR, Osk::FLT_SRV_DIR)
+      if (Osk::Ops::put_flt_file_prompt(Osk::GND_SRV_TBL_DIR))
+         Osk::Ops::set_work_dir_widget(screen)
+      end
+   else
+      raise "Error in screen definition file. Undefined command sent to table_mgmt_send_cmd()"
+   end
   
 end # table_mgmt_send_cmd()
-

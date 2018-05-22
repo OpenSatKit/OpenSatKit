@@ -68,7 +68,7 @@ class KitTestApp
     cmd_error_cnt = tlm("#{@target_hk_str} #{@@TLM_STR_CMD_ERR}")
     seq_cnt = tlm("#{@target_hk_str} #{@@TLM_STR_SEQUENCE}")
     ##puts cmd_valid_cnt
-	  cmd("#{@app.target} #{@@CMD_STR_NOOP} with #{@@TLM_STR_STREAM_ID} #{@app.cmd_mid}, #{@@TLM_STR_SEQUENCE} 0, #{@@TLM_STR_LENGTH} 1, #{@@TLM_STR_CHECKSUM} 0, #{@@TLM_STR_FC} #{noop_fc}")
+    cmd("#{@app.target} #{@@CMD_STR_NOOP} with #{@@TLM_STR_STREAM_ID} #{@app.cmd_mid}, #{@@TLM_STR_SEQUENCE} 0, #{@@TLM_STR_LENGTH} 1, #{@@TLM_STR_CHECKSUM} 0, #{@@TLM_STR_FC} #{noop_fc}")
     wait("#{@target_hk_str} #{@@TLM_STR_CMD_VLD} == #{cmd_valid_cnt}+1", 10)  # Delay until updated cmd valid count or timeout. 
 	
     ##puts tlm("#{@target_hk_str} CMD_VALID_COUNT")
@@ -77,7 +77,7 @@ class KitTestApp
       result = true
     else
       if ( tlm("#{@target_hk_str} #{@@TLM_STR_CMD_VLD}") == seq_cnt)
-        puts app.name + " HK telemtry packet not received"
+        puts app.name + " HK telemetry packet not received"
       end      
       puts app.name + " NOOP test failed"
     end

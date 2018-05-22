@@ -75,8 +75,8 @@ END # Horizontal
 VERTICALBOX "File Transfer"
   MATRIXBYCOLUMNS 2
     # Use table_mgmt because table file needs to be manipulated after transferred
-    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_set_work_dir(self); file_mgmt_send_cmd(self, "PUT_FILE")'
-    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; file_mgmt_set_work_dir(self); table_mgmt_send_cmd(self, "GET_FILE")'
+    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "PUT_FILE")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb"; table_mgmt_send_cmd(self, "GET_FILE")'
     LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
     LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
   END # Matrix
@@ -92,5 +92,5 @@ VERTICALBOX "File Transfer"
         SETTING HEIGHT 20
 END # Vertical File Transfer
 HORIZONTALLINE
-LABEL "Event Messages"
+LABEL "Flight Event Messages"
 NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 600 50

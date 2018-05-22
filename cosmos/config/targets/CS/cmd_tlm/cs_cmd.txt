@@ -1,15 +1,16 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR = "CS"
   @CMD_MID_STR    = "CS_CMD_MID"
 
-%>  
+%>
 
-COMMAND CS NOOP <%= CfsKitConfig.processor_endian %> "Implements the Noop command that insures the CS task is alive"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Implements the Noop command that insures the CS task is alive"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND CS RESET_CTRS <%= CfsKitConfig.processor_endian %> "Resets the CS housekeeping counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Resets the CS housekeeping counters"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND CS ONESHOT <%= CfsKitConfig.processor_endian %> "Computes a checksum on the given address and size of memory specified in the command. This command spawns a child task to complete the checksum."

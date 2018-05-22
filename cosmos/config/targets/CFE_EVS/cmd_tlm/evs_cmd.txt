@@ -1,15 +1,16 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR  = "CFE_EVS"
   @CMD_MID_STR     = "CFE_EVS_CMD_MID"
   
 %>  
 
-COMMAND CFE_EVS NOOP <%= CfsKitConfig.processor_endian %> "Increment the command execution counter and send event message to verify Event Service app response."
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Increment the command execution counter and send event message to verify Event Service app response."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND CFE_EVS RESET_CTRS <%= CfsKitConfig.processor_endian %> "Resets the command counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Resets the command counters"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND CFE_EVS ENA_EVENT_TYPE <%= CfsKitConfig.processor_endian %> "This command enables the command specified Event Type allowing event messages of this type to be sent through Event Service. An Event Type is defined to be a classification of an Event Message such as debug, informational, error and critical. This command is a global enable of a particular event type, it applies to all applications."
@@ -84,10 +85,9 @@ COMMAND CFE_EVS ADD_EVENT_FILTER <%= CfsKitConfig.processor_endian %> "This comm
   APPEND_PARAMETER MASK      16 UINT MIN_UINT16 MAX_UINT16         0  "Mask to use in the command."
 
 COMMAND CFE_EVS DEL_EVENT_FILTER <%= CfsKitConfig.processor_endian %> "This command removes the given filter for the given application identifier and event identifier. Note: In order for this command to take effect, applications must be registered for Event Service."
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 24) %>
+  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 22) %>
   APPEND_PARAMETER APP_NAME 160 STRING "default" "Application name to use in the command."
   APPEND_PARAMETER EVENT_ID  16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
-  APPEND_PARAMETER MASK      16 UINT MIN_UINT16 MAX_UINT16 0 "Mask to use in the command."
 
 COMMAND CFE_EVS WRITE_APP_DATA_TO_FILE <%= CfsKitConfig.processor_endian %> "This command writes all application data to a file for all applications that have registered with the EVS. The application data includes the Application ID, Active Flag, Event Count, Event Types Active Flag, and Filter Data."
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 64) %>

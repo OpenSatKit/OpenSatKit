@@ -1,15 +1,16 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR = "CFE_TIME"
   @CMD_MID_STR    = "CFE_TIME_CMD_MID"
   
 %>  
 
-COMMAND CFE_TIME NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND CFE_TIME RESET_CTRS <%= CfsKitConfig.processor_endian %> "This command resets the following counters within the Time Services Housekeeping Telemetry: Command Execution Counter ($sc_$cpu_TIME_CMDPC)Command Error Counter ($sc_$cpu_TIME_CMDEC) This command also resets the following counters within the Time Services Diagnostic Telemetry :Tone Signal Detected Software Bus Message Counter ($sc_$cpu_TIME_DTSDetCNT)Time at the Tone Data Software Bus Message Counter ($sc_$cpu_TIME_DTatTCNT)Tone Signal/Data Verify Counter ($sc_$cpu_TIME_DVerifyCNT)Tone Signal/Data Error Counter ($sc_$cpu_TIME_DVerifyER)Tone Signal Interrupt Counter ($sc_$cpu_TIME_DTsISRCNT)Tone Signal Interrupt Error Counter ($sc_$cpu_TIME_DTsISRERR)Tone Signal Task Counter ($sc_$cpu_TIME_DTsTaskCNT)Local 1 Hz Interrupt Counter ($sc_$cpu_TIME_D1HzISRCNT)Local 1 Hz Task Counter ($sc_$cpu_TIME_D1HzTaskCNT)Reference Time Version Counter ($sc_$cpu_TIME_DVersionCNT)"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "This command resets the following counters within the Time Services Housekeeping Telemetry: Command Execution Counter ($sc_$cpu_TIME_CMDPC)Command Error Counter ($sc_$cpu_TIME_CMDEC) This command also resets the following counters within the Time Services Diagnostic Telemetry :Tone Signal Detected Software Bus Message Counter ($sc_$cpu_TIME_DTSDetCNT)Time at the Tone Data Software Bus Message Counter ($sc_$cpu_TIME_DTatTCNT)Tone Signal/Data Verify Counter ($sc_$cpu_TIME_DVerifyCNT)Tone Signal/Data Error Counter ($sc_$cpu_TIME_DVerifyER)Tone Signal Interrupt Counter ($sc_$cpu_TIME_DTsISRCNT)Tone Signal Interrupt Error Counter ($sc_$cpu_TIME_DTsISRERR)Tone Signal Task Counter ($sc_$cpu_TIME_DTsTaskCNT)Local 1 Hz Interrupt Counter ($sc_$cpu_TIME_D1HzISRCNT)Local 1 Hz Task Counter ($sc_$cpu_TIME_D1HzTaskCNT)Reference Time Version Counter ($sc_$cpu_TIME_DVersionCNT)"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND CFE_TIME REQUEST_DIAG <%= CfsKitConfig.processor_endian %> "This command requests that the Time Service generate a message containing various data values not included in the normal Time Service housekeeping message. The command requests only a single copy of the diagnostic message. Refer to CFE_TIME_DiagPacket_t for a description of the Time Service diagnostic message contents."

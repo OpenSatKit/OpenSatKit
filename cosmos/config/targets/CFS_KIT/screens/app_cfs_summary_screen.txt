@@ -75,13 +75,15 @@ VERTICALBOX
     END # Matrix
     HORIZONTALBOX
       NAMED_WIDGET CFS_APPS COMBOBOX CFE_ES CFE_EVS CFE_SB CFE_TBL CFE_TIME CS DS FM HS LC MD MM SC
-      BUTTON 'Noop'           'cmd("#{get_named_widget("CFS_APPS").text} NOOP")'
-      BUTTON 'Reset Counters' 'cmd("#{get_named_widget("CFS_APPS").text} RESET_CTRS")'
+      BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("CFS_APPS").text}"].send_cmd("#{Osk::CMD_STR_NOOP}")'
+      BUTTON 'Reset Counters' 'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("CFS_APPS").text}"].send_cmd("#{Osk::CMD_STR_RESET}")'
+      #BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/fsw_app.rb"; FswApp.send_scr_cmd("#{get_named_widget("CFS_APPS").text}", "#{Osk::CMD_STR_NOOP}")'
+      #BUTTON 'Reset Counters' 'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/fsw_app.rb"; FswApp.send_scr_cmd("#{get_named_widget("CFS_APPS").text}", "#{Osk::CMD_STR_RESET}")'
     END
 
 END # Vertical Box
 
 
 HORIZONTALLINE
-LABEL "Event Messages"
+LABEL "Flight Event Messages"
 NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

@@ -3,7 +3,7 @@
 #
 # Notes:
 #   1. Abstract file transfer services so different protocols can be used
-#      Currently hardcoded for TFTP.
+#      Currently hard coded for TFTP.
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -18,13 +18,15 @@ module Osk
 
    class FileTransfer
 
-      def initialize ()
+      def initialize
       end
   
       def get(flt_filename, gnd_filename)
+         raise NotImplementedError
       end # get()
 
       def put (gnd_filename, flt_filename)
+         raise NotImplementedError
       end # put()
  
    end # Class FileTransfer
@@ -33,7 +35,7 @@ module Osk
 
       attr_reader :tftp
   
-      def initialize (ip_addr = LOCAL_IP_ADDR)
+      def initialize(ip_addr = LOCAL_IP_ADDR)
          @tftp = TFTP.new(ip_addr)
       end
   

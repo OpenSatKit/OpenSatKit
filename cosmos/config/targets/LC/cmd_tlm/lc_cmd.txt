@@ -1,15 +1,16 @@
 <% 
   require 'cfs_kit_config' 
+  require 'osk_global'
 
   @APP_PREFIX_STR  = "LC"
   @CMD_MID_STR     = "LC_CMD_MID"
   
 %>  
 
-COMMAND LC NOOP <%= CfsKitConfig.processor_endian %> "Implements the Noop command that insures the LC task is alive"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Implements the Noop command that insures the LC task is alive"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND LC RESET_CTRS <%= CfsKitConfig.processor_endian %> "Resets the LC housekeeping counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Resets the LC housekeeping counters"
   <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND LC SET_APP_STATE <%= CfsKitConfig.processor_endian %> "Sets the operational state of the LC application"

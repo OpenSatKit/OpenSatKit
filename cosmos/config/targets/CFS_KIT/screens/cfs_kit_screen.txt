@@ -30,6 +30,7 @@ VERTICAL
           BUTTON 'App Summary' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
           BUTTON 'cFE Services' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
           BUTTON 'cFE Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_USERS_GUIDE")'
+          BUTTON 'Set Cmd Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SET_CMD_VALIDATE")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # Box      
@@ -58,7 +59,7 @@ VERTICAL
         SETTING BACKCOLOR 162 181 205
       END # BOX
       HORIZONTALLINE
-      LABEL "Event Messages"
+      LABEL "Flight Event Messages"
       #SCROLLWINDOW
         #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
         #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
