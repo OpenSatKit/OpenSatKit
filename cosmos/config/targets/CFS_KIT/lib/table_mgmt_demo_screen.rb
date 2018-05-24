@@ -26,8 +26,8 @@ TMD_TBL_NAME = "FM.FreeSpace"          # cFS table name
 TMD_TBL_DEF_NAME = "fm_freespace.txt"  # COSMOS table definition file
 TMD_TBL_FILE = "tbl_demo_dmp.dat"      # File name used in demo. Don't clobber real name
 
-TMD_TMP_FLT_PATH_FILENAME = "#{FLT_SRV_DIR}/#{TMD_TBL_FILE}"
-TMD_TMP_GND_PATH_FILENAME = "#{GND_SRV_TBL_DIR}/#{TMD_TBL_FILE}"
+TMD_TMP_FLT_PATH_FILENAME = "#{Osk::FLT_SRV_DIR}/#{TMD_TBL_FILE}"
+TMD_TMP_GND_PATH_FILENAME = "#{Osk::GND_SRV_TBL_DIR}/#{TMD_TBL_FILE}"
 
 ################################################################################
 ## Demo Narrative Text
@@ -78,7 +78,7 @@ TMD_INSTRUCT_3 = ["Display the file using COSMOS Table Manager tool.",
                   "",
                   "<Demo> Launch Table Manager",
                   "",                  
-                  "   1. On tool menu bar select File->Open->#{REL_SRV_DIR}",
+                  "   1. On tool menu bar select File->Open->#{Osk::REL_SRV_DIR}",
                   "   2. In open dialog select 'table' folder, #{TMD_TBL_FILE}, and click 'Open'",
                   "   3. When prompted for table defintion file select #{TMD_TBL_DEF_NAME}"]
 TMD_INFO_3 = Osk::DEMO_STEP_NO_INFO
@@ -86,7 +86,7 @@ TMD_INFO_3 = Osk::DEMO_STEP_NO_INFO
 # 4 - Table load
 TMD_INSTRUCT_4 = ["Transfer a table file from ground to flight and load it.",
                   "",
-                  "<Demo> #{MSG_TBD_FEATURE}", 
+                  "<Demo> #{Osk::MSG_TBD_FEATURE}", 
                   "",
                   "This concludes the demo. Click <Next> to exit.",
                   "",

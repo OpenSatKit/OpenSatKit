@@ -15,7 +15,7 @@ Cosmos.catch_fatal_exception do
   require 'cosmos/gui/dialogs/scroll_text_dialog'
 end
 require 'osk_tbl_editor_frame'
-require 'cfs_kit_global'
+require 'osk_global'
   
 module Cosmos
   class OskTblEditor < QtTool

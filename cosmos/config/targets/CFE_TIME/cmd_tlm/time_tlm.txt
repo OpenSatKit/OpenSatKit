@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR   = "CFE_TIME"
   @HK_TLM_MID_STR   = "CFE_TIME_HK_TLM_MID"
@@ -9,11 +9,11 @@
   
 %>  
 
-TELEMETRY MD HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Memory Dwell Housekeeping Telemetry"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY MD HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Memory Dwell Housekeeping Telemetry"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
 
 TELEMETRY CFE_TIME HK_TLM_PKT LITTLE_ENDIAN "Time Services Housekeeping Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT    8 UINT "Time Command Execution Counter."
   APPEND_ITEM CMD_ERROR_COUNT    8 UINT "Time Command Error Counter."
   APPEND_ITEM CLOCK_STATE_FLAGS 16 UINT "State Flags. See cfe_time_msg.h. Will need to bit bust."
@@ -28,7 +28,7 @@ TELEMETRY CFE_TIME HK_TLM_PKT LITTLE_ENDIAN "Time Services Housekeeping Packet"
   APPEND_ITEM 1HZADJ_SUBSECS    32 UINT "1 Hz SCTF adjustment (sub-seconds)."
 
 TELEMETRY CFE_TIME DIAG_PKT BIG_ENDIAN "Time Services Diagnostics Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @DIAG_TLM_MID_STR) %>
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIAG_TLM_MID_STR) %>
   APPEND_ITEM MET_AT_TONE_SECONDS        32 UINT "Number of seconds since epoch. (Parent: MET at time of tone.)"
   APPEND_ITEM MET_AT_TONE_SUBSECONDS     32 UINT "Number of subseconds since epoch (LSB = 2^(-32) seconds). (Parent: MET at time of tone.)"
   APPEND_ITEM STCF_AT_TONE_SECONDS       32 UINT "Number of seconds since epoch. (Parent: STCF at time of tone.)"

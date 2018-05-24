@@ -1,13 +1,13 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "TFTP"
   @HK_TLM_MID_STR = "TFTP_HK_TLM_MID"
   
 %>  
 
-TELEMETRY TFTP HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "TFTP Housekeeping Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY TFTP HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "TFTP Housekeeping Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT 16 UINT "Valid Command Count"
   APPEND_ITEM CMD_ERROR_COUNT 16 UINT "Error Command Count"
   APPEND_ITEM GET_FILE_COUNT  16 UINT "Get file Count"

@@ -1,0 +1,37 @@
+
+      ###############################################################################
+      # Provide instructions for user to display a binary file using Table Manager
+      #
+      # Temporary screen automatically created.
+      #
+      # License:
+      #   Written by David McComas, licensed under the copyleft GNU General Public
+      #   License (GPL).
+      #
+      ###############################################################################
+
+      SCREEN AUTO AUTO 0.5
+      GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+      TITLE "Launch Table Manager"
+         SETTING BACKCOLOR 162 181 205
+         SETTING TEXTCOLOR black
+
+      LABEL " "
+   
+      VERTICALBOX "Display File in Table Manager"
+         LABEL "1. Click 'Table Manager' button to start the Table Manager tool"
+         LABEL "2. Within Table Manager select File->Open->cfs_kit/file_server" 
+         LABEL "       > Select 'osk_tmp_bin.dat' and click 'Open'"
+         LABEL "       > When prompted select 'mm_dump.txt' definition file"
+         LABEL "       > Ignore 'binary file size does not match definition file size' warning"
+      END # Vertical Box
+   
+
+      VERTICALBOX
+         MATRIXBYCOLUMNS 3      
+            BUTTON 'Table Manager' 'spawn("ruby /mnt/hgfs/OpenSatKit/cosmos/tools/TableManager")'
+            BUTTON 'Done'          'clear("CFS_KIT OSK_TMP_TBL_MGR_SCR")'
+         End # Matrix
+      END # Vertical Box
+

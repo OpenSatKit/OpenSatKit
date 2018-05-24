@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR       = "CFE_ES"
   @HK_TLM_MID_STR       = "CFE_ES_HK_TLM_MID"
@@ -10,8 +10,8 @@
   #TODO - Add configuration parameters
   
 %>
-TELEMETRY CFE_ES HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Housekeeping Telemetry"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY CFE_ES HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Telemetry"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT     8 UINT "The ES Application Command Counter."
   APPEND_ITEM CMD_ERROR_COUNT     8 UINT "The ES Application Command Error Counter."
   APPEND_ITEM CFE_CORE_CHECKSUM  16 UINT "Checksum of cFE Core Code."
@@ -59,8 +59,8 @@ TELEMETRY CFE_ES HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Housekeeping T
   APPEND_ITEM HEAP_BLOCKS_FREE   32 UINT "Number of free blocks remaining in the OS heap."
   APPEND_ITEM HEAP_MAX_BLOCKSIZE 32 UINT "Number of bytes in the largest free block."
 
-TELEMETRY CFE_ES APP_INFO_TLM_PKT <%= CfsKitConfig.processor_endian %> "Single Application Information Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @APP_TLM_MID_STR) %>
+TELEMETRY CFE_ES APP_INFO_TLM_PKT <%= Osk::Cfg.processor_endian %> "Single Application Information Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @APP_TLM_MID_STR) %>
   APPEND_ITEM APP_ID              32 UINT   "Application ID for this Application. (Parent: For more information, see CFE_ES_AppInfo_t.)"
   APPEND_ITEM TYPE                32 UINT   "The type of App: CORE or EXTERNAL. (Parent: For more information, see CFE_ES_AppInfot.)"
   APPEND_ITEM NAME               160 STRING "The Registered Name of the Application. (Parent: For more information, see CFE_ES_AppInfot.)"
@@ -85,7 +85,7 @@ TELEMETRY CFE_ES APP_INFO_TLM_PKT <%= CfsKitConfig.processor_endian %> "Single A
 
 # TODO - CFE_ES MEM_POOL_STATS_TLM_PKT fix bitfields for little endian. Need to keep BIG_ENDIAN until fixed.
 TELEMETRY CFE_ES MEM_POOL_STATS_TLM_PKT BIG_ENDIAN "Memory Pool Statistics Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @MEMSTATS_TLM_MID_STR) %>
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @MEMSTATS_TLM_MID_STR) %>
   APPEND_ITEM POOL_HANDLE                32 UINT      "Handle of memory pool whose stats are being telemetered."
   APPEND_ITEM POOL_STATS_POOL_SIZE       32 UINT      "Size of Memory Pool (in bytes). (Parent: For more info, see CFE_ES_MemPoolStats_t.)"
   APPEND_ITEM POOL_STATS_NUM_BLOCKS_REQ  32 UINT      "Number of times a memory block has been allocated. (Parent: For more info, see CFE_ES_MemPoolStats_t.)"
@@ -93,6 +93,6 @@ TELEMETRY CFE_ES MEM_POOL_STATS_TLM_PKT BIG_ENDIAN "Memory Pool Statistics Packe
   APPEND_ITEM POOL_STATS_NUM_FREE_BYTES  32 UINT      "Number of bytes never allocated to a block. (Parent: For more info, see CFE_ES_MemPoolStats_t.)"
   APPEND_ARRAY_ITEM POOLSTATS_BLOCKSTATS 96 UINT 1632 "Contains stats on each block size. (Parent: For more info, see CFE_ES_MemPoolStats_t.)"
 
-TELEMETRY CFE_ES SHELL_TLM_PKT <%= CfsKitConfig.processor_endian %> "OS Shell Output Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @SHELL_TLM_MID_STR) %>
+TELEMETRY CFE_ES SHELL_TLM_PKT <%= Osk::Cfg.processor_endian %> "OS Shell Output Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @SHELL_TLM_MID_STR) %>
   APPEND_ARRAY_ITEM SHELL_OUTPUT 8 UINT 512 "ASCII text string containing output from OS Shell that was received in response to an OS Shell Command."

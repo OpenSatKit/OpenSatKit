@@ -1,16 +1,16 @@
 <%
 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "CFE_TBL"
   @MAX_NUM_TABLES = "CFE_TBL_MAX_NUM_TABLES"
   
 %>
-TABLE "CFE_TBL Registry" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Table Registry"
-  <%= CfsKitConfig.file_hdr %>
+TABLE "CFE_TBL Registry" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Table Registry"
+  <%= Osk::Cfg.file_hdr %>
 
   <% 
-    max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_TABLES)
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_TABLES)
     append_items = ""
     for i in 1..max_entries
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_SIZE\"              32 UINT 0 MAX_UINT32 0  \"Size in bytes\"" << "\n"

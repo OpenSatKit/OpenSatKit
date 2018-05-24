@@ -1,16 +1,16 @@
 <%
 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "CFE_SB"
   @MAX_PIPES      = "CFE_SB_MAX_PIPES"
   
 %>
-TABLE "CFE_SB Pipe Info" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Pipe Information"
-  <%= CfsKitConfig.file_hdr %>
+TABLE "CFE_SB Pipe Info" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Pipe Information"
+  <%= Osk::Cfg.file_hdr %>
 
   <% 
-    max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPES)
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPES)
     append_items = ""
     for i in 1..max_entries
       append_items << "APPEND_PARAMETER \"PIPE#{i}_IN_USE\"            8 UINT 0 MAX_UINT8  0  \"Is the pipe in use?\"" << "\n"

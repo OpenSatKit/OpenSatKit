@@ -16,11 +16,11 @@ TITLE "Performance Monitor"
 
 HORIZONTALBOX "Commands"
   MATRIXBYCOLUMNS 2
-    BUTTON 'Set Filter Mask' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "SET_FILTER_MASK")'
-    BUTTON 'Set Trigger Mask' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "SET_TRIGGER_MASK")'
+    BUTTON 'Set Filter Mask'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "SET_FILTER_MASK")'
+    BUTTON 'Set Trigger Mask'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "SET_TRIGGER_MASK")'
     BUTTON 'Start Data Collect' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "START_DATA_COLLECT")'
-    BUTTON 'Stop Data Collect' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "STOP_DATA_COLLECT")'
-    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "GET_FILE")'
+    BUTTON 'Stop Data Collect'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "STOP_DATA_COLLECT")'
+    BUTTON 'Get File'           'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_send_cmd(self, "GET_FILE")'
     BUTTON 'Launch Analysis Tool' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_screen.rb"; perf_mon_launch_app(self, "PERF_MONITOR_TOOL")'
     LABEL ""
   END # Matrix
@@ -65,6 +65,26 @@ HORIZONTALBOX "Log Stats" 4
   END # Matrix
 END # Box
 
+VERTICALBOX "File Transfer"
+  MATRIXBYCOLUMNS 2
+    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "PUT_FILE")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "GET_FILE")'
+    LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
+    LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
+  END # Matrix
+  LABEL 'Ground Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET gnd_work_dir TEXTFIELD 256
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+  LABEL 'Flight Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET flt_work_dir TEXTFIELD 256
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+END # Vertical File Transfer
+
 HORIZONTALLINE
+
 LABEL "Flight Event Messages"
 NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

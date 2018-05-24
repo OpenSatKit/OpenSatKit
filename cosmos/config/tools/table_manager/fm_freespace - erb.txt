@@ -1,13 +1,13 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "FM"
   @TABLE_NAME     = "FreeSpace"
   @FM_TABLE_ENTRY_COUNT = "FM_TABLE_ENTRY_COUNT"
 
 %>  
-TABLE "FM FreeSpace" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "Unformatted hex data display"
-    <%= CfsKitConfig.tbl_hdr(@APP_PREFIX_STR, @TABLE_NAME) %>
+TABLE "FM FreeSpace" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Unformatted hex data display"
+    <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @TABLE_NAME) %>
     # CFE_FS_Header_t
     APPEND_PARAMETER "Content Type"     32 STRING "UNDEF"  "Header identifier. This file defines a CFE1 header" BIG_ENDIAN
     APPEND_PARAMETER "Subtype"          32   UINT 0 4294967295 0  "See CFE_FS_ES_ERLOG_SUBTYPE defined in cfe_fs.h" BIG_ENDIAN
@@ -30,7 +30,7 @@ TABLE "FM FreeSpace" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "Unfor
 #  APPEND_PARAMETER "ENTRY1_NAME"      512 STRING "UNDEF"  "Name of file system"
   <%
     append_items = ""
-    num_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @FM_TABLE_ENTRY_COUNT)
+    num_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @FM_TABLE_ENTRY_COUNT)
     for i in 1..num_entries
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_STATE\" 32 UINT 0 4294967295 0 \"Unused, Enabled, Disabled\"" << "\n"
       append_items << "   STATE UNUSED   0" << "\n"

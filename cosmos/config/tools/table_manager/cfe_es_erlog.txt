@@ -1,6 +1,6 @@
 <%
 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "CFE_ES"
   @ER_LOG_ENTRIES = "CFE_ES_ER_LOG_ENTRIES"
@@ -8,12 +8,12 @@
 
   
 %>
-TABLE "CFE_ES ErLog" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Exception Reset Log"
-  <%= CfsKitConfig.file_hdr %>
+TABLE "CFE_ES ErLog" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Exception Reset Log"
+  <%= Osk::Cfg.file_hdr %>
 
   <% 
-    max_entries     = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_ENTRIES)
-    #context_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_MAX_CONTEXT_SIZE) / 4
+    max_entries     = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_ENTRIES)
+    #context_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_MAX_CONTEXT_SIZE) / 4
     context_entries = 32
     append_items = ""
     for i in 1..max_entries

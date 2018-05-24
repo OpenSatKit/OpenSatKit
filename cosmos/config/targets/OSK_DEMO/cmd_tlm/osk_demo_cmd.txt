@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
   require 'osk_global'
 
   @APP_PREFIX_STR = "OSK_DEMO"
@@ -7,29 +7,29 @@
   
 %>  
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Reset commnad counters"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset commnad counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND OSK_DEMO LOAD_EXOBJ_TBL <%= CfsKitConfig.processor_endian %> "Load example object table"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
+COMMAND OSK_DEMO LOAD_EXOBJ_TBL <%= Osk::Cfg.processor_endian %> "Load example object table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=XML, 1=SCANF, 2=JSON"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
   APPEND_PARAMETER TBL_FILENAME 512 STRING "/cf/osk_demo_tbl.json" "Full path and file name of table to be loaded"
 
-COMMAND OSK_DEMO DUMP_EXOBJ_TBL <%= CfsKitConfig.processor_endian %> "Dump example object table"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
+COMMAND OSK_DEMO DUMP_EXOBJ_TBL <%= Osk::Cfg.processor_endian %> "Dump example object table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=XML, 1=SCANF, 2=JSON"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
   APPEND_PARAMETER TBL_FILENAME 512 STRING "/cf/osk_demo_tbl_d.json" "Full path and file name to receive table dump"
 
-COMMAND OSK_DEMO ENA_DATA_LOAD <%= CfsKitConfig.processor_endian %> "Enable/disable use of table data (TODO - Not sure this is right)"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 1) %>
+COMMAND OSK_DEMO ENA_DATA_LOAD <%= Osk::Cfg.processor_endian %> "Enable/disable use of table data (TODO - Not sure this is right)"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 1) %>
   APPEND_PARAMETER ENA_FLAG 8 UINT MIN_UINT8 MAX_UINT8 1 "Enable use of table data (0=False,1=True)"
 
-COMMAND OSK_DEMO SET_TBL_INDEX <%= CfsKitConfig.processor_endian %> "Set the index into table for which parameter set to use."
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
+COMMAND OSK_DEMO SET_TBL_INDEX <%= Osk::Cfg.processor_endian %> "Set the index into table for which parameter set to use."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
   APPEND_PARAMETER PARAM_INDEX 16 UINT 0 31 3 "Index into table for which parameter set to use."
 

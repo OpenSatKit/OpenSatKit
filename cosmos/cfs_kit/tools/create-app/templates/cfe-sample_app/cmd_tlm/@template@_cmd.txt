@@ -1,13 +1,13 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "@TEMPLATE@"
   @CMD_MID_STR    = "OSK_GENAPP_CMD_MID"  # Replace with your app's MID defined in message_ids.rb
   
 %>  
 
-COMMAND @TEMPLATE@ NOOP <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+COMMAND @TEMPLATE@ NOOP <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND @TEMPLATE@ RESET_CTRS <%= CfsKitConfig.processor_endian %> "Reset command counters"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+COMMAND @TEMPLATE@ RESET_CTRS <%= Osk::Cfg.processor_endian %> "Reset command counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>

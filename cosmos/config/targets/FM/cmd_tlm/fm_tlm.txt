@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
   require 'osk_global'
 
   @APP_PREFIX_STR         = "FM"
@@ -13,8 +13,8 @@
   
 %>  
 
-TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= CfsKitConfig.processor_endian %> "Housekeeping telemetry packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
   APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
   APPEND_ITEM SPARE           8 UINT "Placeholder for unused command warning counter"
@@ -26,8 +26,8 @@ TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= CfsKitConfig.pro
   APPEND_ITEM CHILDCURRENTCC  8 UINT "Command code currently executing"
   APPEND_ITEM CHILDPREVIOUSCC 8 UINT "Command code previously executed"
 
-TELEMETRY FM FILE_INFO_PKT <%= CfsKitConfig.processor_endian %> "Get File Info telemetry packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @FILE_INFO_TLM_MID_STR) %>
+TELEMETRY FM FILE_INFO_PKT <%= Osk::Cfg.processor_endian %> "Get File Info telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @FILE_INFO_TLM_MID_STR) %>
   APPEND_ITEM FILESTATUS  8 UINT "Status indicating whether the file is open or closed"
   APPEND_ARRAY_ITEM SPARE 8 UINT 16 "Structure padding"
   APPEND_ITEM CRC        32 UINT "CRC value if computed"
@@ -35,8 +35,8 @@ TELEMETRY FM FILE_INFO_PKT <%= CfsKitConfig.processor_endian %> "Get File Info t
   APPEND_ITEM LASTMODIFIEDTIME 32 UINT "Last Modification Time of File"
   APPEND_ITEM FILENAME  512 STRING "Name of File"
 
-TELEMETRY FM DIR_LIST_PKT <%= CfsKitConfig.processor_endian %> "Get Directory Listing telemetry packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @DIR_LIST_TLM_MID_STR) %>
+TELEMETRY FM DIR_LIST_PKT <%= Osk::Cfg.processor_endian %> "Get Directory Listing telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIR_LIST_TLM_MID_STR) %>
   APPEND_ITEM DIRNAME 512 STRING "Directory Name"
   APPEND_ITEM TOTALFILES 32 UINT "Number of files in the directory"
   APPEND_ITEM PACKETFILES 32 UINT "Number of files in this packet"
@@ -105,8 +105,8 @@ TELEMETRY FM DIR_LIST_PKT <%= CfsKitConfig.processor_endian %> "Get Directory Li
 # OS_MAX_NUM_OPEN_FILES = 50 for Linux
 # OS_MAX_PATH_LEN = 64
 # OS_MAX_API_NAME = 20
-TELEMETRY FM OPEN_FILES_PKT <%= CfsKitConfig.processor_endian %> "Get Open Files telemetry packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @OPEN_FILES_TLM_MID_STR) %>
+TELEMETRY FM OPEN_FILES_PKT <%= Osk::Cfg.processor_endian %> "Get Open Files telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @OPEN_FILES_TLM_MID_STR) %>
   APPEND_ITEM NUMOPENFILES 32 UINT   "Number of files opened via cFE"
   APPEND_ITEM FILE00_NAME 512 STRING "File name"
   APPEND_ITEM FILE00_APP  160 STRING "App that opened the file"
@@ -209,8 +209,8 @@ TELEMETRY FM OPEN_FILES_PKT <%= CfsKitConfig.processor_endian %> "Get Open Files
   APPEND_ITEM FILE49_NAME 512 STRING "File name"
   APPEND_ITEM FILE49_APP  160 STRING "App that opened the file"
 
-TELEMETRY FM FREE_SPACE_PKT <%= CfsKitConfig.processor_endian %> "Get Free Space telemetry packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @FREE_SPACE_TLM_MID_STR) %>
+TELEMETRY FM FREE_SPACE_PKT <%= Osk::Cfg.processor_endian %> "Get Free Space telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @FREE_SPACE_TLM_MID_STR) %>
   APPEND_ITEM FREE_SPACE1_SIZE_LO32 32 UINT "Low 32-bits of 64 bit integer"
   APPEND_ITEM FREE_SPACE1_SIZE_HI32 32 UINT "High 32-bits of 64 bit integer"
   APPEND_ITEM FREE_SPACE1_NAME 512 STRING   "File System Name"

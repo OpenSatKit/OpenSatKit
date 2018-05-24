@@ -120,7 +120,7 @@ MMD_INSTRUCT_5 = ["Display the memory dump file using COSMOS Table Manager tool.
                   "",
                   "<Demo> Launch Table Manager", 
                   "",
-                  "   1. On tool menu bar select File->Open->#{REL_SRV_DIR}",
+                  "   1. On tool menu bar select File->Open->#{Osk::REL_SRV_DIR}",
                   "   2. In open dialog select #{MMD_DMP_FILE} and click 'Open'",
                   "   3. When prompted for table defintion file select #{MMD_DMP_DEF_NAME}"]
 MMD_INFO_5 = Osk::DEMO_STEP_NO_INFO
@@ -258,7 +258,7 @@ def memory_mgmt_demo(screen, button)
          # 4 - Dump memory to a file and transfer file to the ground
          when 4
             if ($mmd_demo == 0)
-               Osk::flight.mm.send_cmd("DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILE_NAME #{MMD_FLT_PATH_FILENAME}")
+               Osk::flight.mm.send_cmd("DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILENAME #{MMD_FLT_PATH_FILENAME}")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
                Osk::system.file_transfer.get(MMD_FLT_PATH_FILENAME,MMD_GND_PATH_FILENAME)

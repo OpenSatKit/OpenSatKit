@@ -14,6 +14,7 @@ Cosmos.catch_fatal_exception do
   require 'cosmos/tools/tlm_viewer/screen'
   require 'cosmos/tools/tlm_viewer/tlm_viewer'
 end
+require 'osk_global'
 require 'osk_system'
 
 ################################################################################
@@ -52,7 +53,7 @@ def pisat_connection(screen, cmd)
    if (cmd == "SWITCH_TO_PISAT")
       host_ip_addr = screen.get_named_widget("host_ip_addr").text
       if (host_ip_addr == "")
-        host_ip_addr = HOST_IP_ADDR
+        host_ip_addr = Osk::COSMOS_IP_ADDR
       end
       Osk::system.switch_local_to_pisat_cfs(host_ip_addr)
       clear("CFS_KIT PISAT_CONNECT_SCREEN")    

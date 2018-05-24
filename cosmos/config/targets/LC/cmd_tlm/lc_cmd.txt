@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
   require 'osk_global'
 
   @APP_PREFIX_STR  = "LC"
@@ -7,33 +7,33 @@
   
 %>  
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Implements the Noop command that insures the LC task is alive"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Implements the Noop command that insures the LC task is alive"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Resets the LC housekeeping counters"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Resets the LC housekeeping counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND LC SET_APP_STATE <%= CfsKitConfig.processor_endian %> "Sets the operational state of the LC application"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 4) %>
+COMMAND LC SET_APP_STATE <%= Osk::Cfg.processor_endian %> "Sets the operational state of the LC application"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 4) %>
   APPEND_PARAMETER NEW_STATE 16 UINT MIN_UINT16 MAX_UINT16 0 "1=Active, 2=Passive, 3=Disabled"
   APPEND_PARAMETER PADDING   16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding"
 
-COMMAND LC SET_AP_STATE <%= CfsKitConfig.processor_endian %> "Set actionpoint state"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 4) %>
+COMMAND LC SET_AP_STATE <%= Osk::Cfg.processor_endian %> "Set actionpoint state"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 4) %>
   APPEND_PARAMETER AP_ID     16 UINT MIN_UINT16 MAX_UINT16 0 "Which actionpoint(s) to change"
   APPEND_PARAMETER NEW_STATE 16 UINT MIN_UINT16 MAX_UINT16 0 "1=Active, 2=Passive, 3=Disabled"
 
-COMMAND LC SET_AP_PERM_OFF <%= CfsKitConfig.processor_endian %> "Set the specified actionpoint's state to LC_APSTATE_PERMOFF"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 4) %>
+COMMAND LC SET_AP_PERM_OFF <%= Osk::Cfg.processor_endian %> "Set the specified actionpoint's state to LC_APSTATE_PERMOFF"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 4) %>
   APPEND_PARAMETER AP_ID   16 UINT MIN_UINT16 MAX_UINT16 0 "Which actionpoint to change"
   APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding"
 
-COMMAND LC RESET_AP_STATS <%= CfsKitConfig.processor_endian %> "Resets actionpoint statistics"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 4) %>
+COMMAND LC RESET_AP_STATS <%= Osk::Cfg.processor_endian %> "Resets actionpoint statistics"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 4) %>
   APPEND_PARAMETER AP_ID   16 UINT MIN_UINT16 MAX_UINT16 0 "Which actionpoint(s) to change"
   APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding"
 
-COMMAND LC RESET_WP_STATS <%= CfsKitConfig.processor_endian %> "Resets watchpoint statistics"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
+COMMAND LC RESET_WP_STATS <%= Osk::Cfg.processor_endian %> "Resets watchpoint statistics"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
   APPEND_PARAMETER WP_ID   16 UINT MIN_UINT16 MAX_UINT16 0 "Which watchpoint(s) to change"
   APPEND_PARAMETER PADDING 16 UINT MIN_UINT16 MAX_UINT16 0 "Structure padding"

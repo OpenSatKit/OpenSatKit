@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR   = "F42"
   @HK_TLM_MID_STR   = "F42_HK_TLM_MID"
@@ -9,8 +9,8 @@
 
 %>
     
-TELEMETRY F42 HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "F42 Housekeeping Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY F42 HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "F42 Housekeeping Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
 
   APPEND_ITEM CMD_VALID_COUNT 16 UINT "Valid Command Count"
   APPEND_ITEM CMD_ERROR_COUNT 16 UINT "Error Command Count"
@@ -22,9 +22,9 @@ TELEMETRY F42 HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "F42 Housekeeping 
     STATE Init 1
     STATE TBD  2
   APPEND_ITEM OVR_SUN_VALID   16 UINT "SunValid override"
-    STATE USE_42_SIM  1
-    STATE OVR_TRUE    2 
-    STATE OVR_FALSE   3 
+    STATE USE_42_SIM   1
+    STATE OVR_VALID    2 
+    STATE OVR_INVALID  3 
 
   APPEND_ITEM WC_1 32 FLOAT "FSW->wc[0]"
     FORMAT_STRING "%.6f"
@@ -62,8 +62,8 @@ TELEMETRY F42 HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "F42 Housekeeping 
     FORMAT_STRING "%.6f"
 
     
-TELEMETRY F42 CONTROL_PKT <%= CfsKitConfig.processor_endian %> "F42 Controller Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @CONTROL_MID_STR) %>
+TELEMETRY F42 CONTROL_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @CONTROL_MID_STR) %>
 
   APPEND_ITEM WBN_1       32 FLOAT "wbn[0]"
     FORMAT_STRING "%.6f"
@@ -113,8 +113,8 @@ TELEMETRY F42 CONTROL_PKT <%= CfsKitConfig.processor_endian %> "F42 Controller P
     FORMAT_STRING "%.6f"
   APPEND_ITEM SUN_VALID   16 UINT  "Sun present to use in controller"
 
-TELEMETRY F42 SENSOR_DATA_PKT <%= CfsKitConfig.processor_endian %> "F42 Sensor Data Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @SENSOR_MID_STR) %>
+TELEMETRY F42 SENSOR_DATA_PKT <%= Osk::Cfg.processor_endian %> "F42 Sensor Data Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @SENSOR_MID_STR) %>
   APPEND_ITEM DELTA_TIME  64 FLOAT "Time between controller executions"
   APPEND_ITEM PosN_1      64 FLOAT "42 FSW->PosN[0]"
   APPEND_ITEM PosN_2      64 FLOAT "42 FSW->PosN[1]"
@@ -144,8 +144,8 @@ TELEMETRY F42 SENSOR_DATA_PKT <%= CfsKitConfig.processor_endian %> "F42 Sensor D
   APPEND_ITEM SUN_VALID   16 UINT  "Sun present to use in controller"
   APPEND_ITEM SPARE_16    16 UINT  "2 byte pad"
 
-TELEMETRY F42 ACTUATOR_CMD_PKT <%= CfsKitConfig.processor_endian %> "F42 Actuator Command Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @ACTUATOR_MID_STR) %>
+TELEMETRY F42 ACTUATOR_CMD_PKT <%= Osk::Cfg.processor_endian %> "F42 Actuator Command Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @ACTUATOR_MID_STR) %>
 
   APPEND_ITEM WHL_1  64 FLOAT "Wheel 1 torque command"
     FORMAT_STRING "%.6f"
