@@ -10,18 +10,18 @@
 require 'cosmos'
 require 'cosmos/script'
 
-require 'cfs_kit_global'
-require 'file_transfer'
+require 'osk_global'
+require 'osk_system'
 
 ###############
 ## Constants ##
 ###############
 
 
-FLT_BIN_FILE = "#{FLT_SRV_DIR}/#{OSK_TMP_BIN_FILE}"
-GND_BIN_FILE = "#{GND_SRV_DIR}/#{OSK_TMP_BIN_FILE}"
+FLT_BIN_FILE = "#{Osk::FLT_SRV_DIR}/#{Osk::TMP_BIN_FILE}"
+GND_BIN_FILE = "#{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}"
 
-ES_TMP_FILE  = "#{GND_SRV_DIR}/es_#{OSK_TMP_BIN_FILE}"
+ES_TMP_FILE  = "#{Osk::GND_SRV_DIR}/es_#{Osk::TMP_BIN_FILE}"
 
 ##########
 ## ES01 ##
@@ -30,7 +30,7 @@ ES_TMP_FILE  = "#{GND_SRV_DIR}/es_#{OSK_TMP_BIN_FILE}"
 wait #ES01 - Startup script file. Click <Go> to begin  
 puts "ES01 - Startup script file"
 
-startup_script = open_file_dialog ("#{GND_BLD_CF_DIR}/" "Open Startup Script" ".scr")
+startup_script = open_file_dialog ("#{Osk::GND_BLD_CF_DIR}/" "Open Startup Script" ".scr")
 file_data = ""
 File.open(startup_script,'r') { |file| file_data = file.read() }
 puts file_data  
@@ -51,10 +51,8 @@ wait("CFE_ES HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd
 if (tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
   prompt ("Write syslog command failed. Notify the instructor.");
 end 
-	
-file_xfer = FileTransfer.new()
 			
-if (file_xfer.get(FLT_BIN_FILE,GND_BIN_FILE))
+if (Osk::system.file_transfer.get(FLT_BIN_FILE,GND_BIN_FILE))
 
   # Trouble displaying variable text fields using TableManager
   # spawn("ruby #{Cosmos::USERPATH}/tools/TableManager ")
@@ -86,13 +84,11 @@ if (tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
   prompt ("Write erlog command failed. Notify the instructor.");
 end 
 	
-file_xfer = FileTransfer.new()
-			
-if (file_xfer.get(FLT_BIN_FILE,GND_BIN_FILE))
+if (Osk::system.file_transfer.get(FLT_BIN_FILE,GND_BIN_FILE))
 
-   puts "Open #{FLT_BIN_FILE} in table manager by selecting File->Open->cfs_kit/file_server #{OSK_TMP_BIN_FILE}"
+   puts "Open #{FLT_BIN_FILE} in table manager by selecting File->Open->cfs_kit/file_server #{Osk::TMP_BIN_FILE}"
    puts "Select 'cfe_es_erlog.txt' when prompted for a definition file"
-   spawn("ruby #{Cosmos::USERPATH}/tools/TableManager ")
+   spawn("ruby #{Osk::COSMOS_TBL_MANAGER}")
   
 else
   prompt ("File transfer failed. Notify the instructor.");
@@ -115,13 +111,11 @@ if (tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
   prompt ("Write critical data store registry command failed. Notify the instructor.");
 end 
 	
-file_xfer = FileTransfer.new()
-			
-if (file_xfer.get(FLT_BIN_FILE,GND_BIN_FILE))
+if (Osk::system.file_transfer.get(FLT_BIN_FILE,GND_BIN_FILE))
 
-   puts "Open #{FLT_BIN_FILE} in table manager by selecting File->Open->cfs_kit/file_server #{OSK_TMP_BIN_FILE}"
+   puts "Open #{FLT_BIN_FILE} in table manager by selecting File->Open->cfs_kit/file_server #{Osk::TMP_BIN_FILE}"
    puts "Select 'cfe_es_cds_info.txt' when prompted for a definition file"
-   spawn("ruby #{Cosmos::USERPATH}/tools/TableManager ")
+   spawn("ruby #{Osk::COSMOS_TBL_MANAGER} ")
   
 else
   prompt ("File transfer failed. Notify the instructor.");

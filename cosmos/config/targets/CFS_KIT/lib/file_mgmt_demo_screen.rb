@@ -206,7 +206,7 @@ def file_mgmt_demo(screen, button)
          # 1 - Send directory cmd
          when 1
             if ($fmd_demo == 0)
-               Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{FLT_SRV_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
                # Don't increment fmd_demo; okay if user repeatedly sends the directory cmd
             end
       

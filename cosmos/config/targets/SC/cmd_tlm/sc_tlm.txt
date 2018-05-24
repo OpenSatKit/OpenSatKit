@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR      = "SC"
   @HK_TLM_MID_STR      = "SC_HK_TLM_MID"
@@ -8,8 +8,8 @@
   
 %>  
 
-TELEMETRY SC HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Housekeeping Packet Structure"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY SC HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet Structure"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM ATS_NUMBER          8 UINT "Current ATS number 1 = ATS A, 2 = ATS B"
   APPEND_ITEM ATP_STATE           8 UINT "Current ATP state valid values are: 2 = IDLE, 5 = EXECUTING"
   APPEND_ITEM CONT_ATS_ON_FAIL    8 UINT "In the event of ATS execution failure (ats command fails checksum) , the ATS execution will continue if this flag is set to TRUE and will stop if this flag is set to FALSE"

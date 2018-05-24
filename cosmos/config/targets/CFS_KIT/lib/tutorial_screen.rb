@@ -1,5 +1,5 @@
 ###############################################################################
-# cFS Kit Tutorials 
+# OpenSsatKit Tutorials 
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General
@@ -7,12 +7,7 @@
 # 
 ################################################################################
 
-require 'cfs_kit_global'
-
-################################################################################
-## Global Variables
-################################################################################
-
+require 'osk_global'
 
 ################################################################################
 ## Launch Tutorial
@@ -20,10 +15,10 @@ require 'cfs_kit_global'
 
 def launch_tutorial(screen, tutorial, lesson)
 
-   script_file = "#{CFS_KIT_TUTORIAL_DIR}/#{tutorial}/#{lesson}.rb"
+   script_file = "#{Osk::TUTORIAL_DIR}/#{tutorial}/#{lesson}.rb"
 
    if File.exists? script_file
-      spawn("ruby #{Cosmos::USERPATH}/tools/ScriptRunner -r '#{script_file}'")
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} -r '#{script_file}'")
    else
       prompt("#{script_file} tutorial file does not exist")
    end

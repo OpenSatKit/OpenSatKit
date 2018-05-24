@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR      = "CS"
   @HK_TLM_MID_STR      = "CS_HK_TLM_MID"
@@ -8,8 +8,8 @@
   
 %>  
 
-TELEMETRY CS HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Housekeeping Packet Structure"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY CS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet Structure"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT 8 UINT "CS Application Command Counter."
   APPEND_ITEM CMD_ERROR_COUNT 8 UINT "CS Application Command Error Counter."
   APPEND_ITEM CHECKSUMSTATE 8 UINT "CS Application global checksum state."

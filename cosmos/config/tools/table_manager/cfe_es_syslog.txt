@@ -1,12 +1,12 @@
 <%
 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "CFE_ES"
   
 %>
-TABLE "CFE_ES SysLog" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Array of characters, length CFE_ES_SYSTEM_LOG_SIZE"
-  <%= CfsKitConfig.file_hdr %>
+TABLE "CFE_ES SysLog" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Array of characters, length CFE_ES_SYSTEM_LOG_SIZE"
+  <%= Osk::Cfg.file_hdr %>
 
   # This was to much for the GUI. I think it tried to put it in one cell
   #APPEND_PARAMETER MSG 24576 STRING "UNDEF" "Message Text"
@@ -18,7 +18,7 @@ TABLE "CFE_ES SysLog" <%= CfsKitConfig.processor_endian %>  ONE_DIMENSIONAL "Arr
   # CFE_ES_MAX_SYSLOG_MSG_SIZE = CFE_EVS_MAX_MESSAGE_LENGTH + CFE_TIME_PRINTED_STRING_SIZE + 1
   #                            = 122 + 24 + 1
   <% 
-    #max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
+    #max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
     max_entries = 10
     append_items = ""
     for i in 1..max_entries

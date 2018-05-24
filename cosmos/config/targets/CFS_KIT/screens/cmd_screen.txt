@@ -1,0 +1,37 @@
+###############################################################################
+# Command Screen
+#
+# Temporary screen created to allow the user to use a simple GUI to enter 
+# command parameters. Basically a short cut to COSMOS Command and Telemetry
+# Server capability.  
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Command"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX "Command Parameters"
+  
+   MATRIXBYCOLUMNS 2
+      LABEL 'Parameter 1' 
+      NAMED_WIDGET param_1 TEXTFIELD 12 "Param 1 Default"
+      LABEL 'Parameter 2' 
+      NAMED_WIDGET param_2 TEXTFIELD 12 "Param 2 Default"
+   END # Matrix
+
+END # Vertical
+
+HORIZONTALLINE
+
+MATRIXBYCOLUMNS 2      
+   BUTTON 'Send'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TODO")'
+   BUTTON 'Cancel' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TODO")'
+End # Matrix

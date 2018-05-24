@@ -83,8 +83,8 @@ TITLE "App Management"
 
 VERTICALBOX "File Transfer"
   MATRIXBYCOLUMNS 2
-    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_set_work_dir(self);file_mgmt_send_cmd(self, "PUT_FILE")'
-    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_set_work_dir(self);file_mgmt_send_cmd(self, "GET_FILE")'
+    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "PUT_FILE")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "GET_FILE")'
     LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
     LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
   END # Matrix

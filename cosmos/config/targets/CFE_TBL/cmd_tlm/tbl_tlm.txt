@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR  = "CFE_TBL"
   @HK_TLM_MID_STR  = "CFE_TBL_HK_TLM_MID"
@@ -9,8 +9,8 @@
   
 %>  
 
-TELEMETRY CFE_TBL HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Table Services Housekeeping Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Table Services Housekeeping Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT         8 UINT "Count of valid commands received."
   APPEND_ITEM CMD_ERROR_COUNT         8 UINT "Count of invalid commands received."
   APPEND_ITEM NUM_TABLES             16 UINT "Number of Tables Registered."
@@ -36,8 +36,8 @@ TELEMETRY CFE_TBL HK_TLM_PKT <%= CfsKitConfig.processor_endian %> "Table Service
   APPEND_ITEM LAST_FILE_DUMPED      512 STRING "Path and Name of last file dumped to."
   APPEND_ITEM LAST_TABLE_LOADED     320 STRING "Name of the last table loaded."
 
-TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= CfsKitConfig.processor_endian %> "Table Registry Info Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @REG_TLM_MID_STR) %>
+TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= Osk::Cfg.processor_endian %> "Table Registry Info Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @REG_TLM_MID_STR) %>
   APPEND_ITEM SIZE                     32 UINT "Size, in bytes, of Table."
   APPEND_ITEM CRC                      32 UINT "Most recently calculated CRC of Table."
   APPEND_ITEM ACTIVE_BUF_ADDR          32 UINT "Address of Active Buffer."

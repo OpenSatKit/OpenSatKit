@@ -1,16 +1,16 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "FM"
   @TABLE_CFE_NAME_STR = "FM_TABLE_CFE_NAME"
   @TABLE_ENTRY_COUNT  = "FM_TABLE_ENTRY_COUNT"
 
 %>  
-TABLE "FM FreeSpace" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "File system status"
-  <%= CfsKitConfig.tbl_hdr(@APP_PREFIX_STR, @TABLE_CFE_NAME_STR) %>
+TABLE "FM FreeSpace" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "File system status"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @TABLE_CFE_NAME_STR) %>
 
   <%
-	max_entries = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @TABLE_ENTRY_COUNT)
+	max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @TABLE_ENTRY_COUNT)
     append_items = ""
     for i in 1..max_entries
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_STATE\" 32 UINT 0 4294967295 0 \"Unused, Enabled, Disabled\"" << "\n"

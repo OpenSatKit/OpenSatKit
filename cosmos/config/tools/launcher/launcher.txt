@@ -12,9 +12,10 @@ MULTITOOL_START "COSMOS" NULL
   TOOL "LAUNCH CmdSender -x 4 -y 586 -w 805 -t 533"
 MULTITOOL_END
 MULTITOOL_START "cFS Starter Kit" CFS_Logo_Blue-_C100_M40_Y0_B15-300x220.png
-  TOOL "LAUNCH CmdTlmServer --minimized -c cmd_tlm_server.txt"
+  TOOL "LAUNCH CmdTlmServer -x 1500 -y 1000 -c cmd_tlm_server.txt"
+  #TOOL "LAUNCH CmdTlmServer --minimized -c cmd_tlm_server.txt"
   DELAY 2 
-  TOOL "LAUNCH TlmViewer --minimized -x 0 -y 800"
+  TOOL "LAUNCH TlmViewer -x 0 -y 1000"
   # Initialize OpenSatKit modules
   <% 
      require 'osk_system'  

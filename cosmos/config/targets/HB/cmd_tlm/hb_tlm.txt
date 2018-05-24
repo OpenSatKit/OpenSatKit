@@ -1,12 +1,12 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR = "HB"
   @HK_TLM_MID_STR = "HB_HK_TLM_MID"
 %>  
 
 TELEMETRY HB HK_TLM_PKT LITTLE_ENDIAN "Hardware Bus Housekeeping Packet"
-  <%= CfsKitConfig.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM    ERROR_COUNT     8 UINT        "Error Count"
   APPEND_ITEM    COMMAND_COUNT   8 UINT        "Command Count"
   APPEND_ITEM    TEMP            32 FLOAT      "Temperature"

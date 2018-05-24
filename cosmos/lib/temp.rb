@@ -1,8 +1,8 @@
-require 'cfs_kit_global'
+require 'osk_global'
 
 TUTORIAL_SCR_HEADER = "
 ###############################################################################
-# cfs_kit Tutorial Screen
+# OSK Tutorial Screen
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -25,8 +25,8 @@ END # Vertical Box
 "
 
   
-   tutorial_def_file = "#{CFS_KIT_TUTORIAL_DIR}/#{TUTORIAL_DEF_FILE}"
-   tutorial_scr_file = "#{CFS_KIT_SCR_DIR}/#{TUTORIAL_SCR_FILE}"
+   tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
+   tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
    
    puts "#{tutorial_scr_file}"
    
@@ -46,14 +46,14 @@ END # Vertical Box
       if File.exists? tutorial_scr_file
          puts "Renaming #{tutorial_scr_file}"
          filename = File.basename(tutorial_scr_file, File.extname(tutorial_scr_file))
-         new_filename =  "#{CFS_KIT_SCR_DIR}/#{filename}#{file_stamp}"+File.extname(tutorial_scr_file)
+         new_filename =  "#{Osk::SCR_DIR}/#{filename}#{file_stamp}"+File.extname(tutorial_scr_file)
          puts "#{new_filename}" 
          File.rename(tutorial_scr_file, new_filename)
       end
       
       File.open("#{tutorial_scr_file}","w") do |f| 
 	     
-         f.write ("#{TUTORIAL_SCR_HEADER}")
+         f.write ("#{Osk::TUTORIAL_SCR_HEADER}")
          
          json_hash["tutorials"].each do |tutorial|
             
@@ -72,7 +72,7 @@ END # Vertical Box
          
          end # Tutorial
          
-         f.write ("#{TUTORIAL_SCR_TRAILER}")
+         f.write ("#{Osk::TUTORIAL_SCR_TRAILER}")
 
       end # File
       

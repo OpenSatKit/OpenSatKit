@@ -11,7 +11,7 @@
 #
 ###############################################################################
 
-require 'cfs_kit_global'
+require 'osk_global'
 require 'tftp'
 
 module Osk
@@ -35,7 +35,7 @@ module Osk
 
       attr_reader :tftp
   
-      def initialize(ip_addr = LOCAL_IP_ADDR)
+      def initialize(ip_addr = Osk::COSMOS_IP_ADDR)
          @tftp = TFTP.new(ip_addr)
       end
   

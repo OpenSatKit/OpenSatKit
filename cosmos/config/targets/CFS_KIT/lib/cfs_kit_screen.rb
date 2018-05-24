@@ -33,10 +33,10 @@ require 'fsw_app'
 ################################################################################
 
 # Used by file put/get command prototypes
-FLT_TEST_GET_FILE = "#{FLT_SRV_DIR}/tf_get_test_src.txt"
-FLT_TEST_PUT_FILE = "#{FLT_SRV_DIR}/tf_put_test_dst.txt"
-GND_TEST_GET_FILE = "#{GND_SRV_DIR}/tf_get_test_dst.txt"
-GND_TEST_PUT_FILE = "#{GND_SRV_DIR}/tf_put_test_src.txt"
+FLT_TEST_GET_FILE = "#{Osk::FLT_SRV_DIR}/tf_get_test_src.txt"
+FLT_TEST_PUT_FILE = "#{Osk::FLT_SRV_DIR}/tf_put_test_dst.txt"
+GND_TEST_GET_FILE = "#{Osk::GND_SRV_DIR}/tf_get_test_dst.txt"
+GND_TEST_PUT_FILE = "#{Osk::GND_SRV_DIR}/tf_put_test_src.txt"
 
 
 ################################################################################
@@ -120,9 +120,9 @@ def cfs_kit_launch_app(screen, app)
    elsif (app == "PERF_MON")
       display("CFS_KIT PERF_MON_SCREEN",50,50)
    elsif (app == "RUN_TEST_SCRIPT")
-      spawn("ruby #{Cosmos::USERPATH}/tools/ScriptRunner #{Cosmos::USERPATH}/procedures/kit_test/kit_test_main.rb")
+      spawn("ruby #{COSMOS_SCR_RUNNER} #{Cosmos::USERPATH}/procedures/kit_test/kit_test_main.rb")
       display("CFS_KIT APP_CFS_SUMMARY_SCREEN",50,50)
-      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",50,50)
+      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",1500,50)
    elsif (app == "MANAGE_FILES")
       display("CFS_KIT FILE_MGMT_SCREEN",50,50)
    elsif (app == "MANAGE_TABLES")
@@ -145,16 +145,16 @@ def cfs_kit_launch_app(screen, app)
       #cmd("PICONTROL STARTCFS")
       #wait(2)
       #cmd("KIT_TO ENABLE_TELEMETRY")
-      spawn("ruby #{Cosmos::USERPATH}/tools/TlmGrapher")
+      spawn("ruby #{Osk::COSMOS_TLM_GRAPHER}")
       display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
    elsif (app == "CREATE_APP")
       #prompt("Launching CreateApp...")
       #spawn("java -jar /mnt/hgfs/OpenSatKit/cosmos/cfs_kit/tools/create-app/CreateApp.jar")
-      spawn("java -jar #{CFS_KIT_CREATE_APP_DIR}/CreateApp.jar", :chdir => "#{CFS_KIT_CREATE_APP_DIR}")
+      spawn("java -jar #{Osk::CREATE_APP_DIR}/CreateApp.jar", :chdir => "#{Osk::CREATE_APP_DIR}")
    elsif (app == "UPDATE_TUTORIAL")
       cfs_kit_create_tutorial_screen
    elsif (app == "CFE_USERS_GUIDE")
-      Cosmos.open_in_web_browser("#{CFS_KIT_CFE_UG_DIR}/#{OSK_CFE_UG_FILE}")
+      Cosmos.open_in_web_browser("#{Osk::CFE_UG_DIR}/#{Osk::CFE_UG_FILE}")
    elsif (app == "TODO")
       prompt("Feature coming soon...")
    else
@@ -256,10 +256,10 @@ TUTORIAL_SCR_TRAILER = "
 def cfs_kit_create_tutorial_screen
 
 
-   tutorial_def_file = "#{CFS_KIT_TUTORIAL_DIR}/#{TUTORIAL_DEF_FILE}"
-   tutorial_scr_file = "#{CFS_KIT_SCR_DIR}/#{TUTORIAL_SCR_FILE}"
+   tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
+   tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
    
-   puts "#{tutorial_scr_file}"
+   #puts "Debug: #{tutorial_scr_file}"
    
    t = Time.new 
    file_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
@@ -275,7 +275,7 @@ def cfs_kit_create_tutorial_screen
       
       if File.exists? tutorial_scr_file
          filename = File.basename(tutorial_scr_file, File.extname(tutorial_scr_file))
-         new_filename =  "#{CFS_KIT_SCR_DIR}/#{filename}#{file_stamp}"+File.extname(tutorial_scr_file)
+         new_filename =  "#{Osk::SCR_DIR}/#{filename}#{file_stamp}"+File.extname(tutorial_scr_file)
          File.rename(tutorial_scr_file, new_filename)
       end
       

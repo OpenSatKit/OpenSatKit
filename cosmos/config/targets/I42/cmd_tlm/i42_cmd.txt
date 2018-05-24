@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
   require 'osk_global'
 
   @APP_PREFIX_STR  = "I42"
@@ -7,16 +7,16 @@
   
 %>  
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Reset Counters and application to a default state"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset Counters and application to a default state"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
   
-COMMAND I42 CONNECT_42 <%= CfsKitConfig.processor_endian %> "Create a socket connection to the 42 simulator"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 18) %>
+COMMAND I42 CONNECT_42 <%= Osk::Cfg.processor_endian %> "Create a socket connection to the 42 simulator"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 18) %>
   APPEND_PARAMETER IP_ADDR 128 STRING "127.0.0.1" "IP Address"
   APPEND_PARAMETER PORT 16 UINT MIN_UINT16 MAX_UINT16 4242 "Port number"
 
-COMMAND I42 DISCONNECT_42 <%= CfsKitConfig.processor_endian %> "Disconnect from the 42 simulator"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 0) %>
+COMMAND I42 DISCONNECT_42 <%= Osk::Cfg.processor_endian %> "Disconnect from the 42 simulator"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 0) %>

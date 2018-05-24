@@ -1,5 +1,5 @@
 <% 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
   require 'osk_global'
 
   @APP_PREFIX_STR = "MD"
@@ -7,22 +7,22 @@
 
 %>  
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= CfsKitConfig.processor_endian %> "Generate an info event message with app version"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= CfsKitConfig.processor_endian %> "Reset command counters"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset command counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND MD START_DWELL <%= CfsKitConfig.processor_endian %> "Set the Enabled flag(s) specified by Table Mask argument"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+COMMAND MD START_DWELL <%= Osk::Cfg.processor_endian %> "Set the Enabled flag(s) specified by Table Mask argument"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
   APPEND_PARAMETER TABLE_MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "0x0001=TBL1 bit, 0x0002=TBL2 bit,0x0004=TBL3 bit,0x0008=TBL4 enable bit, etc."
 
-COMMAND MD STOP_DWELL <%= CfsKitConfig.processor_endian %> "Clear the Enabled flag(s) specified by Table Mask argument."
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 2) %>
+COMMAND MD STOP_DWELL <%= Osk::Cfg.processor_endian %> "Clear the Enabled flag(s) specified by Table Mask argument."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 2) %>
   APPEND_PARAMETER TABLE_MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "0x0001=TBL1 bit, 0x0002=TBL2 bit,0x0004=TBL3 bit,0x0008=TBL4 enable bit, etc."
 
-COMMAND MD JAM_DWELL <%= CfsKitConfig.processor_endian %> "Inserts dwell parameters (dwell address, dwell field length, and delay count) into specified table, at specified index."
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 76) %>
+COMMAND MD JAM_DWELL <%= Osk::Cfg.processor_endian %> "Inserts dwell parameters (dwell address, dwell field length, and delay count) into specified table, at specified index."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 76) %>
   APPEND_PARAMETER TABLE_ID    16 UINT MIN_UINT16 MAX_UINT16 0 "Table Id: 1..MD_NUM_DWELL_TABLES"
   APPEND_PARAMETER ENTRY_ID    16 UINT MIN_UINT16 MAX_UINT16 0 "Address index: 1..MD_DWELL_TABLE_SIZE"
   APPEND_PARAMETER FIELD_LEN   16 UINT MIN_UINT16 MAX_UINT16 0 "Length of Dwell Field : 0, 1, 2, or 4"
@@ -30,8 +30,8 @@ COMMAND MD JAM_DWELL <%= CfsKitConfig.processor_endian %> "Inserts dwell paramet
   APPEND_PARAMETER ADDR_OFFSET 32 UINT MIN_UINT32 MAX_UINT32 0 "Offset from symbol or absolute address if no symbol specified"
   APPEND_PARAMETER ADDR_SYMBOL_NAME 512 STRING "default" "Symbol to be used as base address or empty string if no symbol"
 
-COMMAND MD SET_SIGNATURE <%= CfsKitConfig.processor_endian %> "Set signature text for a dwell table"
-  <%= CfsKitConfig.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 36) %>
+COMMAND MD SET_SIGNATURE <%= Osk::Cfg.processor_endian %> "Set signature text for a dwell table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 36) %>
   APPEND_PARAMETER TABLE_ID   16 UINT 1 4 1 "1..MD_NUM_DWELL_TABLES"
   APPEND_PARAMETER PAD_16     16 UINT MIN_UINT16 MAX_UINT16 0 "16 bit pad"
   APPEND_PARAMETER SIGNATURE 256 STRING "undefined" "Character string to describe the dwell table"

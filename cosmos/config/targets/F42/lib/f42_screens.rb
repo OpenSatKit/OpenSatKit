@@ -9,8 +9,9 @@
 
 require 'json'
 
-require 'cfs_kit_global'
-require 'file_transfer'
+require 'osk_global'
+require 'osk_system'
+
 
 ################################################################################
 ## Global Variables
@@ -26,10 +27,10 @@ F42_CTRL_TBL_ID = 0
 F42_CTRL_TBL_FILE = "osk_tmp_tbl.json"
 F42_CTRL_DEF_TBL_FILE = "f42_ctrl_tbl.json"
 
-FLT_TBL_FILE = "#{FLT_SRV_DIR}/#{F42_CTRL_TBL_FILE}"
-GND_TBL_FILE = "#{GND_SRV_DIR}/#{F42_CTRL_TBL_FILE}"
+FLT_TBL_FILE = "#{Osk::FLT_SRV_DIR}/#{F42_CTRL_TBL_FILE}"
+GND_TBL_FILE = "#{Osk::GND_SRV_DIR}/#{F42_CTRL_TBL_FILE}"
 
-FLT_DEF_TBL_FILE = "#{FLT_SRV_DIR}/#{F42_CTRL_DEF_TBL_FILE}"
+FLT_DEF_TBL_FILE = "#{Osk::FLT_SRV_DIR}/#{F42_CTRL_DEF_TBL_FILE}"
 
 ################################################################################
 ## Table Screen
@@ -42,16 +43,14 @@ def f42_tbl_cmd(screen, cmd)
   
       # Get current table values from flight table and display in screen
       cmd_cnt = tlm("F42 HK_TLM_PKT CMD_VALID_COUNT")
-      cmd("F42 DUMP_TBL with ID #{F42_CTRL_TBL_ID}, TBL_FILE_NAME #{FLT_TBL_FILE}"); 
+      Osk::flight.f42.send_cmd("DUMP_TBL with ID #{F42_CTRL_TBL_ID}, TBL_FILENAME #{FLT_TBL_FILE}"); 
       wait("F42 HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd count increments or timeout
       if (tlm("F42 HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
          prompt ("F42 dump table command failed");
 	      return
       end 
 	
-	   file_xfer = Osk::system.file_transfer
-
-      if (file_xfer.get(FLT_TBL_FILE,GND_TBL_FILE))
+      if (Osk::system.file_transfer.get(FLT_TBL_FILE,GND_TBL_FILE))
 
          tbl_file = File.read(GND_TBL_FILE)
          tbl_hash = JSON.parse(tbl_file)
@@ -113,7 +112,7 @@ def f42_tbl_cmd(screen, cmd)
          return
       end
       cmd_cnt = tlm("F42 HK_TLM_PKT CMD_VALID_COUNT")
-      cmd("F42 LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{OSK_TBL_REPLACE}, TBL_FILE_NAME #{FLT_TBL_FILE}"); 
+      Osk::flight.f42.send_cmd("LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{OSK_TBL_REPLACE}, TBL_FILENAME #{FLT_TBL_FILE}"); 
       wait("F42 HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd count increments or timeout
       if (tlm("F42 HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
          prompt ("F42 load table command failed");
@@ -122,7 +121,7 @@ def f42_tbl_cmd(screen, cmd)
 	
    elsif (cmd == "RESTORE_DEFAULTS")
       cmd_cnt = tlm("F42 HK_TLM_PKT CMD_VALID_COUNT")
-      cmd("F42 LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{OSK_TBL_REPLACE}, TBL_FILE_NAME #{FLT_DEF_TBL_FILE}"); 
+      Osk::flight.f42.send_cmd("LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{OSK_TBL_REPLACE}, TBL_FILENAME #{FLT_DEF_TBL_FILE}"); 
       wait("F42 HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd count increments or timeout
       if (tlm("F42 HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
          prompt ("F42 load table command failed to restore the default values");
@@ -152,7 +151,7 @@ def f42_whl_tgt_mom_cmd(screen, cmd)
    elsif (cmd == "CANCEL")
       clear("F42 WHL_TGT_MOM_CMD_SCR")    
    else
-      prompt("Error in screen definition file. Undefined command #{cmd} sent to f42_whl_tgt_cmd()")
+      raise "Error in screen definition file. Undefined command #{cmd} sent to f42_whl_tgt_cmd()"
    end
 
 end # f42_whl_tgt_cmd()

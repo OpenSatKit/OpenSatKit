@@ -1,0 +1,33 @@
+
+   ###############################################################################
+   # cfs_kit Tutorial Screen
+   #
+   # License:
+   #   Written by David McComas, licensed under the copyleft GNU General Public
+   #   License (GPL).
+   #
+   ###############################################################################
+
+   SCREEN AUTO AUTO 0.5
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+   TITLE "Tutorials"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+      
+   VERTICALBOX "" 10
+   
+               HORIZONTAL 10
+               BUTTON 'cFE' 'require "/mnt/hgfs/OpenSatKit/cosmos/config/targets/CFS_KIT/lib/tutorial_screen.rb"; tutorial = combo_box("Select tutorial","ES", "TBL"); launch_tutorial(self, "cfe", tutorial)'
+               SPACER 20 0 MAXIMUM FIXED          
+               LABEL "Core Flight Executive"
+               SPACER 50 0 MINIMUMEXPANDING FIXED          
+               END # Horizontal
+               HORIZONTAL 10
+               BUTTON 'Op Apps' 'require "/mnt/hgfs/OpenSatKit/cosmos/config/targets/CFS_KIT/lib/tutorial_screen.rb"; tutorial = combo_box("Select tutorial","CI", "SCH", "TO", "HK", "SC", "SBN"); launch_tutorial(self, "op_apps", tutorial)'
+               SPACER 20 0 MAXIMUM FIXED          
+               LABEL "Apps that provide an operational runtime environment"
+               SPACER 50 0 MINIMUMEXPANDING FIXED          
+               END # Horizontal
+   END # Vertical Box
+   

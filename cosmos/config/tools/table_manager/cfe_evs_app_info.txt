@@ -1,18 +1,18 @@
 <%
 
-  require 'cfs_kit_config' 
+  require 'osk_config' 
 
   @APP_PREFIX_STR    = "CFE_EVS"
   @MAX_APPLICATIONS  = "CFE_ES_MAX_APPLICATIONS"
   @MAX_EVENT_FILTERS = "CFE_EVS_MAX_EVENT_FILTERS"
   
 %>
-TABLE "CFE_EVS AppInfo" <%= CfsKitConfig.processor_endian %> ONE_DIMENSIONAL "App Info"
-  <%= CfsKitConfig.file_hdr %>
+TABLE "CFE_EVS AppInfo" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "App Info"
+  <%= Osk::Cfg.file_hdr %>
 
   <% 
-    max_apps    = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_APPLICATIONS)
-    max_filters = CfsKitConfig.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_EVENT_FILTERS)
+    max_apps    = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_APPLICATIONS)
+    max_filters = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_EVENT_FILTERS)
     append_items = ""
     for i in 1..max_apps
       append_items << "APPEND_PARAMETER \"APP#{i}_NAME\"           160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"

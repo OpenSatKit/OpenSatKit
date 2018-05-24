@@ -1,0 +1,137 @@
+<!-- 
+Maximum of 32 words per CCSDS message. The first three words are the
+primary header that must be big endian:
+
+   uint16  StreamId;     /* packet identifier word (stream ID) */
+      /*  bits  shift                description                  */
+      /* 0x07FF    0  : application ID                            */
+      /* 0x0800   11  : secondary header: 0 = absent, 1 = present */
+      /* 0x1000   12  : packet type:      0 = TLM, 1 = CMD        */
+      /* 0xE000   13  : CCSDS version, always set to 0            */
+
+   uint16  Sequence;     /* packet sequence word */
+      /*  bits  shift                description                  */
+      /* 0x3FFF    0  : sequence count                            */
+      /* 0xC000   14  : segmentation flags:  3 = complete packet  */
+
+   uint16  Length;       /* packet length word */
+      /*  bits  shift                description                  */
+      /* 0xFFFF    0  : (total packet length) - 7                 */
+
+-->
+<msg-tbl>
+
+  <!--******************-->
+  <!--**** cFE Apps ****-->
+  <!--******************-->
+
+  <!-- CFE_ES_SEND_HK_MID 0x1808(6152) => 0x0818(2072), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="0"  stream-id="2072" seq-seg="192" length="256"/>
+
+  <!-- CFE_EVS_SEND_HK_MID 0x1809(6153) => 0x0918(2328), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="1"  stream-id="2328" seq-seg="192" length="256" />
+
+  <!-- CFE_SB_SEND_HK_MID 0x180B(6155) => 0x0B18(2840), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="2"  stream-id="2840" seq-seg="192" length="256" />
+
+  <!-- CFE_TBL_SEND_HK_MID 0x180C => 0x0C18(3096), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="3"  stream-id="3096" seq-seg="192" length="256" />
+
+  <!-- CFE_TIME_SEND_HK_MID 0x180D(6157) => 0x0D18(3352), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="4"  stream-id="3352" seq-seg="192" length="256" />
+
+  <!--******************-->
+  <!--**** cFS Apps ****-->
+  <!--******************-->
+
+  <!-- CS_SEND_HK_MID 0x18A0(6304) => 0xA018(40984), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="10"  stream-id="40984" seq-seg="192" length="256" />
+
+  <!-- CS_BACKGROUND_CYCLE_MID 0x18A1(6305) => 0xA118(41240), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="11"  stream-id="41240" seq-seg="192" length="256" />
+
+  <!-- DS_SEND_HK_MID 0x18BC(6332) => 0xBC18(48152), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="12"  stream-id="48152" seq-seg="192" length="256" />
+
+  <!-- FM_SEND_HK_MID 0x188D(6285) => 0x8D18(36120), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="13"  stream-id="36120" seq-seg="192" length="256" />
+
+  <!-- HS_SEND_HK_MID 0x18AF(6319) => 0xAF18(44824), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="14"  stream-id="44824" seq-seg="192" length="256" />
+
+  <!-- HS_WAKEUP_MID 0x18B0(6320) => 0xB018(45080), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="15"  stream-id="45080" seq-seg="192" length="256" />
+
+  <!-- LC_SEND_HK_MID 0x18A5(6309) => 0xA518(42264), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="16"  stream-id="42264" seq-seg="192" length="256" />
+
+  <!-- LC_SAMPLE_AP_MID 0x18A6(6310) => 0xA618(42520), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="17"  stream-id="42520" seq-seg="192" length="256" />
+
+  <!-- MD_SEND_HK_MID 0x1891(6289) => 0x9118(37144), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="18"  stream-id="37144" seq-seg="192" length="256" />
+
+  <!-- MD_WAKEUP_MID 0x1892(6290) => 0x9218(37400), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="19"  stream-id="37400" seq-seg="192" length="256" />
+
+  <!-- MM_SEND_HK_MID 0x1889(6281) => 0x8918(35096), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="20"  stream-id="35096" seq-seg="192" length="256" />
+
+  <!-- SC_SEND_HK_MID 0x18AA(6314) => 0xAA18(43544), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="21"  stream-id="43544" seq-seg="192" length="256" />
+
+  <!-- SC_1HZ_WAKEUP_MID 0x18AB(6315) => 0xAB18(43800), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="22"  stream-id="43800" seq-seg="192" length="256" />
+
+  <!--******************-->
+  <!--**** Kit Apps ****-->
+  <!--******************-->
+
+  <!-- BM_SEND_HK_MID 0x19F1(6641) => 0xF119(61721), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="30"  stream-id="61721" seq-seg="192" length="256" />
+
+  <!-- BM_WAKEUP_MID 0x19F2(6642) => 0xF219(61977), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="31"  stream-id="61977" seq-seg="192" length="256" />
+
+  <!-- HC_SEND_HK_MID 0x19BA(6586) => 0xBA19(47641), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="32"  stream-id="47641" seq-seg="192" length="256" />
+  
+  <!-- HC_01HZ_WAKEUP_MID 0x19C1(6593) => 0xC119(49433), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="33"  stream-id="49433" seq-seg="192" length="256" />
+  
+  <!-- HSIM_SEND_HK_MID 0x19B2(6578) => 0xB219(45593), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="34"  stream-id="45593" seq-seg="192" length="256" />
+  
+  <!-- HSIM_SEND_DATA_MID 0x19B3(6578) => 0xB319(45849), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="35"  stream-id="45849" seq-seg="192" length="256" />
+  
+  <!-- KIT_CI_SEND_HK_MID 0x1885(6277) => 0x8518(34072), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="36"  stream-id="34072" seq-seg="192" length="256"/>
+
+  <!-- KIT_SCH_SEND_HK_MID 0x1896(6294) => 0x9618(38424), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="37"  stream-id="38424" seq-seg="192" length="256"/>
+
+  <!-- KIT_TO_SEND_HK_MID 0x1881(6273) => 0x8118(33048), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="38"  stream-id="33048" seq-seg="192" length="256"/>
+
+  <!-- TFTP_SEND_HK_MID 0x18B6(6326) => 0xB618(46616), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="39"  stream-id="46616" seq-seg="192" length="256" />
+
+  <!-- F42_SEND_HK_MID 0x19D1(6609) => 0xD119(53529), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="40"  stream-id="53529" seq-seg="192" length="256" />
+
+  <!-- I42_SEND_HK_MID 0x19D3(6611) => 0xD319(54041), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="41"  stream-id="54041" seq-seg="192" length="256" />
+
+ 
+  <!--***********************-->
+  <!--**** Test Messages ****-->
+  <!--***********************-->
+
+  <!-- TEST_SEND_HK_MID 0x1883(6275) => 0x8318(33560), 0xC000(48152) => 0x00C0(192), 0x0001 => 0x0100(256) -->
+  <entry  id="100"  stream-id="33560" seq-seg="192" length="256" />
+
+  <!-- Test packet 0x17FF(6143) => 0xFF17 (65303) with data 6 bytes of data Length of 7 0x0700(1792)-->
+  <entry  id="101"  stream-id="65303" seq-seg="192" length="1792">0,1,2,3,4,5</entry>
+
+</msg-tbl>
