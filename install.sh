@@ -5,12 +5,13 @@ OPEN_SAT_KIT_VERSION="0.0.1"
 main()
 {
 
-annouce "INSTALLATION WILL TAKE APPROXIMATELY 30 MINUTES OR LESS, THERE ARE SEVERSL PROMPTS"
+announce "INSTALLATION WILL TAKE TIME AND INCLUDES PROMPTS!"
 
 # set default path unless environment var exists
 if [ ! -n "${!OPEN_SAT_KIT_PATH}" ]; then
 OPEN_SAT_KIT_PATH="`pwd`/OpenSatKit-master/"
 fi
+
 announce "Installing OpenSatKit v$OPEN_SAT_KIT_VERSION in \"$OPEN_SAT_KIT_PATH\""
 confirm "Continue?" 1
 
@@ -21,8 +22,7 @@ rm master.tar.gz
 cd OpenSatKit-master
 
 announce "Installing dependencies"
-cmdtoapt="apt-get update -y; apt-get install -y cmake; apt-get install -y curl; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y xfce4-terminal; apt-get install -y gcc; apt-get install -y g++; apt-get install -y libssl-dev; apt-get install -y libyaml-dev; apt-get install -y libffi-dev; apt-get install -y libreadline6-dev; apt-get install -y zlib1g-dev; apt-get install -y libgdbm3; apt-get install -y libgdbm-dev; apt-get install -y libncurses5-dev; apt-get install -y git; apt-get install -y libgstreamer0.10-dev; apt-get install -y libgstreamer-plugins-base0.10-dev; apt-get install -y freeglut3; apt-get install -y freeglut3-dev; apt-get install -y qt4-default; apt-get install -y qt4-dev-tools;apt-get install -y libqt4-dev; apt-get install -y libsmokeqt4-dev; apt-get install libcanberra-gtk*; apt-get update -y;"
-
+cmdtoapt="apt-get update -y; apt-get install -y cmake; apt-get install -y curl; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y xfce4-terminal; apt-get install -y gcc; apt-get install -y g++; apt-get install -y libssl-dev; apt-get install -y libyaml-dev; apt-get install -y libffi-dev; apt-get install -y libreadline6-dev; apt-get install -y zlib1g-dev; apt-get install -y libgdbm3; apt-get install -y libgdbm-dev; apt-get install -y libncurses5-dev; apt-get install -y git; apt-get install -y libgstreamer0.10-dev; apt-get install -y libgstreamer-plugins-base0.10-dev; apt-get install -y freeglut3; apt-get install -y freeglut3-dev; apt-get install -y qt4-default; apt-get install -y qt4-dev-tools;apt-get install -y libqt4-dev; apt-get install -y libsmokeqt4-dev; apt-get install libcanberra-gtk*;apt install dos2unix; apt-get update -y;"
 
 
 sudo bash -c "$cmdtoapt"
@@ -94,7 +94,11 @@ cd ..
 announce "Building 42"
 cd ./42/
 make
-cd ..
+cd ../..
+
+#to fix shebang line \r warning by converting from Dos -> Unix
+git config --global core.autocrlf input
+find ./ -type f -exec dos2unix {} \;
 
 announce "Close this terminal. Open new terminal: cd OpenSatKit-master/cosmos/  and run 'ruby Launcher' "
 
