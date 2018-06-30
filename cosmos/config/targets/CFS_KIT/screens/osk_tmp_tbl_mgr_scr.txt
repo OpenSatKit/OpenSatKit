@@ -22,8 +22,8 @@
       VERTICALBOX "Display File in Table Manager"
          LABEL "1. Click 'Table Manager' button to start the Table Manager tool"
          LABEL "2. Within Table Manager select File->Open->cfs_kit/file_server" 
-         LABEL "       > Select 'osk_tmp_bin.dat' and click 'Open'"
-         LABEL "       > When prompted select 'mm_dump.txt' definition file"
+         LABEL "       > Select 'fm_demo_dir.dat' and click 'Open'"
+         LABEL "       > When prompted select 'fm_dir_list.txt' definition file"
          LABEL "       > Ignore 'binary file size does not match definition file size' warning"
       END # Vertical Box
    

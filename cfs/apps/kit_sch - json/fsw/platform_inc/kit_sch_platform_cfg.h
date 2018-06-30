@@ -29,8 +29,8 @@
 ** Scheduler Application Macros
 */
 
-#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/kit_sch_msgtbl.xml"
-#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/kit_sch_schtbl.xml"
+#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/kit_sch_msg_tbl.json"
+#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/kit_sch_sch_tbl.json"
 
 /******************************************************************************
 ** Scheduler Table Configurations
@@ -70,6 +70,7 @@
 ** #CFE_SB_CMD_HDR_SIZE)
 */
 #define MSGTBL_MAX_MSG_WORDS      32
+#define MSGTBL_MAX_MSG_BYTES      (MSGTBL_MAX_MSG_WORDS*2)
 
 
 /******************************************************************************

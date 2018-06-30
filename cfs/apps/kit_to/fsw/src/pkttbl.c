@@ -76,9 +76,7 @@ void JSON_ObjConstructor(JSON_Obj*              Obj,
 ** Function: JSON_ObjArrayReset
 **
 ** Notes:
-**    1. This must be called prior to any other functions using the JSON_OBJ
-**    2. The object name must be identical (case sensitive) to the name in the
-**       JSON file. 
+**    None
 **
 */
 void JSON_ObjArrayReset(JSON_Obj* ObjArray,
@@ -313,7 +311,7 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       
          sprintf(DumpRecord,"\"packet\": {\n");
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-         sprintf(DumpRecord,"   \"dec-id\": %d,\n   \"priority\": %d,\n   \"reliability\": %d\n   \"buf-lim\": %d\n},\n",
+         sprintf(DumpRecord,"   \"dec-id\": %d,\n   \"priority\": %d,\n   \"reliability\": %d,\n   \"buf-lim\": %d\n},\n",
                  PktTblPtr->Pkt[i].StreamId,
                  PktTblPtr->Pkt[i].Qos.Priority,
                  PktTblPtr->Pkt[i].Qos.Reliability,

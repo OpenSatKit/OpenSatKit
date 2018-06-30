@@ -861,72 +861,87 @@ static uint32 GetMETSlotNumber(void)
 */
 static int32 ProcessNextSlot(void)
 {
-    int32  Result = CFE_SUCCESS; /* TODO - Fix after resolve ground command processing */
-    int32  EntryNumber;
-    int32  SlotIndex;
-    uint32 Remainder;
-    SCHTBL_Entry *NextEntry;
+    
+   int32  Result = CFE_SUCCESS; /* TODO - Fix after resolve ground command processing */
+   int32  EntryNumber;
+   int32  SlotIndex;
+   uint32 Remainder;
+   SCHTBL_Entry *NextEntry;
+   uint16 *MsgPtr;
+   int32  MsgSendStatus;
 
-    SlotIndex = Scheduler->NextSlotNumber * SCHTBL_ENTRIES_PER_SLOT;
-    NextEntry = &Scheduler->SchTbl.Entry[SlotIndex];
+   SlotIndex = Scheduler->NextSlotNumber * SCHTBL_ENTRIES_PER_SLOT;
+   NextEntry = &Scheduler->SchTbl.Entry[SlotIndex];
 
-    /* Process each enabled entry in the schedule table slot */
-    for (EntryNumber = 0; EntryNumber < SCHTBL_ENTRIES_PER_SLOT; EntryNumber++)
-    {
-        if (NextEntry->Enabled == TRUE)
-        {
+   /* Process each enabled entry in the schedule table slot */
+   for (EntryNumber = 0; EntryNumber < SCHTBL_ENTRIES_PER_SLOT; EntryNumber++) {
+      
+      if (NextEntry->Enabled == TRUE) {
 
-           Remainder = Scheduler->TablePassCount % NextEntry->Frequency;
+         Remainder = Scheduler->TablePassCount % NextEntry->Frequency;
 
-           if (Remainder == NextEntry->Offset)
-           {
+         if (Remainder == NextEntry->Offset) {
 
-              
-               /* CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_INFORMATION,"Processed scheduler table slot %d, entry %d, msgid %d", Scheduler->NextSlotNumber, EntryNumber, NextEntry->MsgTblEntryId); */
+            /* CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_INFORMATION,"Processed scheduler table slot %d, entry %d, msgid %d", Scheduler->NextSlotNumber, EntryNumber, NextEntry->MsgTblEntryId); */
+             
+            MsgSendStatus = CFE_SB_NO_MESSAGE;  /* use any non-success error code */
+            if (MSGTBL_GetMsgPtr(NextEntry->MsgTblEntryId, &MsgPtr)) {
                
-               if (MSGTBL_SendMsg(NextEntry->MsgTblEntryId))
-               {
-                  Scheduler->ScheduleActivitySuccessCount++;
-               }
-               else
-               {
-                  NextEntry->Enabled = FALSE;
-                  Scheduler->ScheduleActivityFailureCount++;
+               MsgSendStatus = CFE_SB_SendMsg((CFE_SB_Msg_t *)MsgPtr);
+               /* 
+               OS_printf("MSGTBL_SendMsg() - %d\n", EntryId);
+               CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION,"MSGTBL Send: EntryId = %d, Buffer[0] = 0x%04x, SB_SendMsg Status = 0x%08X", EntryId, MsgTbl->Table.Entry[EntryId].Buffer[0], MsgSendStatus);
+               CFE_EVS_SendEvent(MSGTBL_SB_SEND_ERR_EID, CFE_EVS_ERROR,
+                                 "MSGTBL Send Error: EntryId = %d, MsgId = 0x%04x, SB_SendMsg Status = 0x%08X",
+                                 EntryId, MsgTbl->Tbl.Entry[EntryId].Buffer[0], MsgSendStatus);
+               */
+            } /* End if got msg ptr */ 
 
-                  CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_ERROR,
-                                    "Activity error: slot = %d, entry = %d, err = 0x%08X",
-                                    Scheduler->NextSlotNumber, EntryNumber, Result);
-               }
-           } /* End if offset met */
+            if (MsgSendStatus == CFE_SUCCESS)
+               
+               Scheduler->ScheduleActivitySuccessCount++;
+            
+            }
+            else {
+                  
+               NextEntry->Enabled = FALSE;
+               Scheduler->ScheduleActivityFailureCount++;
 
-        } /* End if entry is enabled */
+               CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_ERROR,
+                                 "Activity error: slot = %d, entry = %d, err = 0x%08X",
+                                 Scheduler->NextSlotNumber, EntryNumber, MsgSendStatus);
+            
+            } /* End if msg send error */
+         
+         } /* End if offset met */
 
-        NextEntry++;
+      } /* End if entry is enabled */
 
-    } /* Entries per slot loop */
+      NextEntry++;
 
-    /*
-    ** Process ground commands in the slot reserved for time synch
-    ** Ground commands should only be processed at the end of the schedule table
-    ** so that Group Enable/Disable commands do not change the state of entries
-    ** in the middle of a schedule.
-    */
-    if (Scheduler->NextSlotNumber == SCHEDULER_TIME_SYNC_SLOT)
-    {
-        /* TODO - Move to app level Result = SCH_ProcessCommands(); */
-    }
+   } /* Entries per slot loop */
 
-    Scheduler->NextSlotNumber++;
+   /*
+   ** Process ground commands in the slot reserved for time synch
+   ** Ground commands should only be processed at the end of the schedule table
+   ** so that Group Enable/Disable commands do not change the state of entries
+   ** in the middle of a schedule.
+   */
+   if (Scheduler->NextSlotNumber == SCHEDULER_TIME_SYNC_SLOT) {     
+      /* TODO - Move to app level Result = SCH_ProcessCommands(); */
+   }
 
-    if (Scheduler->NextSlotNumber == SCHTBL_TOTAL_SLOTS)
-    {
-       Scheduler->NextSlotNumber = 0;
-       Scheduler->TablePassCount++;
-    }
+   Scheduler->NextSlotNumber++;
 
-    Scheduler->SlotsProcessedCount++;
+   if (Scheduler->NextSlotNumber == SCHTBL_TOTAL_SLOTS) {
+       
+      Scheduler->NextSlotNumber = 0;
+      Scheduler->TablePassCount++;
+   }
 
-    return(Result);
+   Scheduler->SlotsProcessedCount++;
+
+   return(Result);
 
 } /* End ProcessNextSlot() */
 

@@ -1,5 +1,5 @@
 /* 
-** Purpose: Implement the Message Table management functions.
+** Purpose: Implement KIT_SCH's Message Table management functions.
 **
 ** Notes:
 **   None
@@ -21,13 +21,133 @@
 #include <string.h>
 #include "msgtbl.h"
 
+/* Convenience macro */
+#define  JSON_OBJ  &(MsgTbl->Json)
+
+/*
+** Type Definitions
+*/
+
+
 /*
 ** Global File Data
 */
 
-static MSGTBL_Class*  MsgTbl = NULL;
+static MSGTBL_Class* MsgTbl = NULL;
 
-static char TblFileBuff[TBL_BUFFSIZE];  /* XML table file buffer could be large so don't put on the stack */
+/*
+** Local File Function Prototypes
+*/
+
+/******************************************************************************
+** Function: xxxCallback
+**
+** Notes:
+**   1. These functions must have the same function signature as 
+**      JSON_ContainerFuncPtr.
+*/
+static boolean MsgCallback (int TokenIdx);
+
+/// TODO - Move to OSK_APP_FW
+/******************************************************************************
+** Function: JSON_ObjConstructor
+**
+** Notes:
+**    1. This must be called prior to any other functions using the JSON_OBJ
+**    2. The object name must be identical (case sensitive) to the name in the
+**       JSON file. 
+**
+*/
+void JSON_ObjConstructor(JSON_Obj*              Obj,
+                         char*                  Name,
+                         JSON_ContainerFuncPtr  Callback,
+                         void*                  Data)
+{
+	
+   strncpy(&(Obj->Name[0]), Name, JSON_OBJ_NAME_MAX_CHAR);
+   Obj->Modified = FALSE;
+   Obj->Callback = Callback;
+   Obj->Data     = Data;
+   
+
+} /* End JSON_ObjConstructor() */
+
+/******************************************************************************
+** Function: JSON_ObjArrayReset
+**
+** Notes:
+**    None
+**
+*/
+void JSON_ObjArrayReset(JSON_Obj* ObjArray,
+                        uint16    ObjCnt)
+{
+	int i;
+   
+   for (i=0; i < ObjCnt; i++) ObjArray[i].Modified = FALSE;
+   
+} /* End JSON_ObjArrayReset() */
+
+
+/******************************************************************************
+** Function: MSGTBL_Constructor
+**
+** Notes:
+**    1. This must be called prior to any other functions
+**
+*/
+void MSGTBL_Constructor(MSGTBL_Class*       ObjPtr,
+                        MSGTBL_GetTblPtr    GetTblPtrFunc,
+                        MSGTBL_LoadTbl      LoadTblFunc, 
+                        MSGTBL_LoadTblEntry LoadTblEntryFunc)
+{
+   
+   MsgTbl = ObjPtr;
+
+   CFE_PSP_MemSet(MsgTbl, 0, sizeof(MSGTBL_Class));
+
+   MsgTbl->GetTblPtrFunc    = GetTblPtrFunc;
+   MsgTbl->LoadTblFunc      = LoadTblFunc;
+   MsgTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
+
+   JSON_Constructor(JSON_OBJ, MsgTbl->JsonFileBuf, MsgTbl->JsonFileTokens);
+   
+   JSON_ObjConstructor(&(MsgTbl->JsonObj[MSGTBL_OBJ_PKT]),
+                       MSGTBL_OBJ_PKT_NAME,
+                       MsgCallback,
+                       (void *)&(MsgTbl->Tbl.Entry));
+   
+   JSON_RegContainerCallback(JSON_OBJ,
+	                          MsgTbl->JsonObj[MSGTBL_OBJ_PKT].Name,
+	                          MsgTbl->JsonObj[MSGTBL_OBJ_PKT].Callback);
+
+} /* End MSGTBL_Constructor() */
+
+
+/******************************************************************************
+** Function: MSGTBL_ResetStatus
+**
+*/
+void MSGTBL_ResetStatus(void)
+{
+   
+   MsgTbl->LastLoadStatus  = TBLMGR_STATUS_UNDEF;
+   MsgTbl->AttrErrCnt      = 0;
+   MsgTbl->MaxObjErrCnt    = 0;
+   MsgTbl->ObjLoadCnt      = 0;
+   MsgTbl->PktLoadIdx      = 0;
+   
+   JSON_ObjArrayReset (MsgTbl->JsonObj, MSGTBL_OBJ_CNT);
+    
+} /* End MSGTBL_ResetStatus() */
+
+
+
+
+
+
+
+
 
 /*
 ** Local File Function Prototypes
@@ -153,42 +273,350 @@ void MSGTBL_ResetStatus()
 
 
 /******************************************************************************
-** Function: MSGTBL_SendMsg
+** Function: MSGTBL_GetMsgPtr
 **
 */
-boolean MSGTBL_SendMsg(uint16  EntryId)
+boolean MSGTBL_GetMsgPtr(uint16  EntryId, uint16 **MsgPtr)
 {
 
    boolean RetStatus = FALSE;
-   int32   Status;
-   uint16 *MsgBuffPtr;
 
+   if (EntryId < MSGTBL_MAX_ENTRY_ID) {
 
-   if (EntryId < MSGTBL_MAX_ENTRY_ID)
-   {
-
-      MsgBuffPtr = MsgTbl->Tbl.Entry[EntryId].Buffer;
-      Status = CFE_SB_SendMsg((CFE_SB_Msg_t *)MsgBuffPtr);
-
-      /* OS_printf("MSGTBL_SendMsg() - %d\n", EntryId); */
-      /* CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION,"MSGTBL Send: EntryId = %d, Buffer[0] = 0x%04x, SB_SendMsg Status = 0x%08X", EntryId, MsgTbl->Table.Entry[EntryId].Buffer[0], Status); */
-
-      if (Status == CFE_SUCCESS)
-      {
-         RetStatus = TRUE;
-      }
-      else
-      {
-         CFE_EVS_SendEvent(MSGTBL_SB_SEND_ERR_EID, CFE_EVS_ERROR,
-                           "MSGTBL Send Error: EntryId = %d, MsgId = 0x%04x, SB_SendMsg Status = 0x%08X",
-                           EntryId, MsgTbl->Tbl.Entry[EntryId].Buffer[0], Status);
-      }
-
+      *MsgPtr = MsgTbl->Tbl.Entry[EntryId].Buffer;
+      RetStatus = TRUE;
+ 
    } /* End if valid EntryId */
 
    return RetStatus;
 
-} /* End MSGTBL_SendMSg() */
+} /* End MSGTBL_GetMsgPtr() */
+
+
+/******************************************************************************
+** Function: MSGTBL_LoadCmd
+**
+** Notes:
+**  1. Function signature must match TBLMGR_LoadTblFuncPtr.
+**  2. Can assume valid table file name because this is a callback from 
+**     the app framework table manager that has verified the file.
+*/
+boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
+{
+
+   int obj, msg;
+   
+   OS_printf("MSGTBL_LoadCmd() Entry. sizeof(MsgTbl->Tbl) = %d\n",sizeof(MsgTbl->Tbl));
+   
+   /* 
+   ** Reset status, object modified flags, and data. A non-zero BufLim
+   ** value is used to determine whether a packet was loaded.
+   */
+   MSGTBL_ResetStatus();  
+   CFE_PSP_MemSet(&(MsgTbl->Tbl), 0, sizeof(MsgTbl->Tbl));
+   
+   if (JSON_OpenFile(JSON_OBJ, Filename)) {
+  
+      OS_printf("************************************************\n");
+      OS_printf("MSGTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
+      ///JSON_PrintTokens(&Json,JsonFileTokens[0].size);
+      ///JSON_PrintTokens(&Json,50);
+    
+      JSON_ProcessTokens(JSON_OBJ);
+
+      /* 
+      ** Only process command if no attribute errors. No need to send an event
+      ** message if there are attribute errors since events are sent for each
+      ** error.  Checking at least one packet is a simple check but that's all
+      ** that can be done because the table doesn't have any other constraints.
+      ** A table with no packets is considered erroneous.
+      */
+      if (MsgTbl->AttrErrCnt == 0) {
+      
+         if (MsgTbl->PktLoadIdx > 0) {
+         
+            if (LoadType == TBLMGR_LOAD_TBL_REPLACE) {
+         
+			      MsgTbl->LastLoadStatus = ((MsgTbl->LoadTblFunc)(&(MsgTbl->Tbl)) == TRUE) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
+
+	         } /* End if replace entire table */
+            else if (LoadType == TBLMGR_LOAD_TBL_UPDATE) {
+         
+		         MsgTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
+   
+               /* 
+               ** Logic is written to easily support the addition of new JSON 
+               ** objects. Currently only array of packets is implemented.
+               */
+               if (MsgTbl->ObjLoadCnt > 0 ) {
+                  for (obj=0; obj < MSGTBL_OBJ_CNT; obj++) {
+                   
+                     if (MsgTbl->JsonObj[obj].Modified) {
+                     
+                        /* 
+                        ** If at least one packet was modified then loop through
+                        ** the packet array and update each packet.
+                        */                     
+                        if (obj == MSGTBL_OBJ_PKT) {
+                       
+                           for (msg=0; msg < MsgTbl->PktLoadIdx; msg++) {
+                          
+                              if (!(MsgTbl->LoadTblEntryFunc)(msg, (MSGTBL_Entry*)&(MsgTbl->JsonObj[obj].Data)))
+                                 MsgTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
+                          
+                           } /* End message array loop */                
+                           
+                        } /* End if MSGTBL_OBJ_PKT */ 
+                     } /* End if object modified */
+                  } /* End JSON object loop */
+               } /* End if at least one object */
+               else {
+                  
+                  CFE_EVS_SendEvent(MSGTBL_CMD_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Invalid table command. No messages defined.");
+
+               } /* End if no objects in file */
+               
+            } /* End if update records */
+			   else {
+               
+               CFE_EVS_SendEvent(MSGTBL_CMD_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Invalid table command load type %d",LoadType);            
+            
+            } /* End if invalid command option */ 
+            
+         } /* End if valid message index */
+         else {
+            
+            CFE_EVS_SendEvent(MSGTBL_CMD_LOAD_UPDATE_ERR_EID,CFE_EVS_ERROR,
+			                     "MSGTBL: Update table command rejected. File contained %d message objects which exceeds the max table size of %d",
+							         MsgTbl->ObjLoadCnt, MSGTBL_MAX_PKT_CNT);
+         
+         } /* End if too many messages in table file */
+
+      } /* End if no attribute errors */
+            
+   } /* End if valid file */
+   else {
+      
+      //printf("**ERROR** Processing Message Table file %s. Status = %d JSMN Status = %d\n",TEST_FILE, Json.FileStatus, Json.JsmnStatus);
+      CFE_EVS_SendEvent(MSGTBL_CMD_LOAD_OPEN_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Table open failure for file %s. File Status = %s JSMN Status = %s",
+	                     Filename, JSON_GetFileStatusStr(MsgTbl->Json.FileStatus), JSON_GetJsmnErrStr(MsgTbl->Json.JsmnStatus));
+   
+   } /* End if file processing error */
+    
+   return (MsgTbl->LastLoadStatus == TBLMGR_STATUS_VALID);
+
+} /* End of MSGTBL_LoadCmd() */
+
+
+/******************************************************************************
+** Function: MSGTBL_DumpCmd
+**
+** Notes:
+**  1. Function signature must match TBLMGR_DumpTblFuncPtr.
+**  2. Can assume valid table file name because this is a callback from 
+**     the app framework table manager that has verified the file.
+**  3. DumpType is unused.
+**  4. File is formatted so it can be used as a load file. It does not follow
+**     the cFE table file format. 
+**  5. Creates a new dump file, overwriting anything that may have existed
+**     previously
+*/
+
+boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
+{
+
+   boolean  RetStatus = FALSE;
+   int32    FileHandle,i, d;
+   char     DumpRecord[256], DataByteStr[10];
+   const    MSGTBL_Tbl *MsgTblPtr;
+   char     SysTimeStr[256];
+   uint8    DataBytes;
+   
+   FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
+
+   if (FileHandle >= OS_FS_SUCCESS) {
+
+      MsgTblPtr = (MsgTbl->GetTblPtrFunc)();
+
+      sprintf(DumpRecord,"\n{\n\"name\": \"Kit Scheduler (KIT_SCH) Message Table\",\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
+      
+      sprintf(DumpRecord,"\"description\": \"KIT_SCH dump at %s\",\n",SysTimeStr);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+
+      /* 
+      ** Message Array 
+      **
+      ** - Not all fields in ground table are saved in FSW so they are not
+      **   populated in the dump file. However, the dump file can still
+      **   be loaded.
+      **
+      **   "name":  Not loaded,
+      **   "descr": Not Loaded,
+      **   "id": 101,
+      **   "stream-id": 65303,
+      **   "seq-seg": 192,
+      **   "length": 1792,
+      **   "data-bytes": "0,1,2,3,4,5"
+      */
+      
+      sprintf(DumpRecord,"\"message-array\": [\n");
+
+      for (i=0; i < MSGTBL_MAX_ENTRY_ID; i++) {
+      
+         sprintf(DumpRecord,"\"message\": {\n");
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+         sprintf(DumpRecord,"   \"id\": %d,\n   \"stream-id\": %d,\n   \"seq-seg\": %d,\n   \"length\": %d,\n",
+                 i,
+                 MsgTblPtr->Entry[i].Buffer[0],
+                 MsgTblPtr->Entry[i].Buffer[1],
+                 MsgTblPtr->Entry[i].Buffer[2]);
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+         
+         DataBytes = ((MsgTblPtr->Entry[i].Buffer[2] & 0xFF00) >> 8) - 1;  /* Subtract 1 for CCSDS length definition */
+
+         if (DataBytes > (MSGTBL_MAX_MSG_BYTES-6)) {
+            
+            CFE_EVS_SendEvent(MSGTBL_DUMP_MSG_ERR_EID, CFE_EVS_ERROR,
+                              "Error creating dump file message entry %d. Data byte length %d is greater than max data buffer %d",
+                              i, DataBytes, (MSGTBL_MAX_MSG_BYTES-6));         
+         }
+         else {
+
+            if (DataBytes == 0) {
+            
+               sprintf(DumpRecord,"   \"data-bytes\": \"%d\"\n   },\n",0);         
+   
+            }
+            else {
+            
+            }
+
+            OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+         } /* End if DataBytes within range */
+
+         else {
+            if (DataBytes == 1) {
+               sprintf(DumpRecord,"   \"data-bytes\": \"%d\"\n   },\n",MsgTblPtr->Entry[i].Buffer[2]);         
+            }
+            sprintf(DumpRecord,"   \"data-bytes\": \"%d\"\n   },\n","0");
+            sprintf(DumpRecord,"   \"id\": %d,\n   \"stream-id\": %d,\n   \"seq-seg\": %d\n   \"length\": %d\n   \"data-bytes\": %s\n},\n",
+         if (DataBytes > 1 && DataBytes < 10) {
+         
+         } 
+         else {
+         }
+      MSGTBL_MAX_MSG_WORDS
+      
+      } /* End packet loop */
+
+      sprintf(DumpRecord,"]\n}\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      RetStatus = TRUE;
+
+      OS_close(FileHandle);
+
+   } /* End if file create */
+   else {
+   
+      CFE_EVS_SendEvent(MSGTBL_CREATE_FILE_ERR_EID, CFE_EVS_ERROR,
+                        "Error creating dump file '%s', Status=0x%08X", Filename, FileHandle);
+   
+   } /* End if file create error */
+
+   return RetStatus;
+   
+} /* End of MSGTBL_DumpCmd() */
+
+
+/******************************************************************************
+** Function: PktCallback
+**
+** Process a packet table entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. ObjLoadCnt incremented for every packet, valid or invalid.
+**      PktLoadIdx index to stored new pkt and incremented for valid packets
+*/
+static boolean PktCallback (int TokenIdx)
+{
+
+   int  AttributeCnt = 0;
+   int  JsonIntData;
+   boolean RetStatus = FALSE;      
+   PKTTBL_Pkt Pkt;
+
+   OS_printf("\nPKTTBL.PktCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+             PktTbl->ObjLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
+      
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "dec-id",      &JsonIntData)) { AttributeCnt++; Pkt.StreamId        = (CFE_SB_MsgId_t) JsonIntData; }
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "priority",    &JsonIntData)) { AttributeCnt++; Pkt.Qos.Priority    = (uint8) JsonIntData; }
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "reliability", &JsonIntData)) { AttributeCnt++; Pkt.Qos.Reliability = (uint8) JsonIntData; }
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "buf-limit",   &JsonIntData)) { AttributeCnt++; Pkt.BufLim          = (uint16)JsonIntData; }
+   
+   PktTbl->ObjLoadCnt++;
+   
+   if (AttributeCnt == 4) {
+   
+      if (PktTbl->PktLoadIdx < PKTTBL_MAX_PKT_CNT) {
+         
+         PktTbl->Tbl.Pkt[PktTbl->PktLoadIdx] = Pkt;
+         PktTbl->PktLoadIdx++;      
+         RetStatus = TRUE;
+      
+      } /* End if PktLoadIdx within limits */
+      else {
+         PktTbl->MaxObjErrCnt++;
+      }
+     
+      OS_printf("PKTTBL.PktCallback (Stream ID, BufLim, Priority, Reliability): %d, %d, %d, %d\n",
+                Pkt.StreamId, Pkt.Qos.Priority, Pkt.Qos.Reliability, Pkt.BufLim);
+   
+   } /* End if valid AttributeCnt */
+   else {
+	   
+      PktTbl->AttrErrCnt++;     
+      CFE_EVS_SendEvent(PKTTBL_LOAD_PKT_ATTR_ERR_EID, CFE_EVS_ERROR, "Invalid number of packet attributes %d. Should be 4.",
+                        AttributeCnt);
+   
+   } /* End if invalid AttributeCnt */
+      
+   return RetStatus;
+
+} /* PktCallback() */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /******************************************************************************
