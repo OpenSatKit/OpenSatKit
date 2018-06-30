@@ -142,7 +142,7 @@ typedef struct {
 /******************************************************************************
 ** Function: PKTTBL_Constructor
 **
-** Initialize the Message Table object.
+** Initialize the Packet Table object.
 **
 ** Notes:
 **   1. The table values are not populated. This is done when the table is 

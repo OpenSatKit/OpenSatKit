@@ -1,7 +1,7 @@
-1. Use exceptions in FswApp. Error handling in general. Search puts
-4. Verify table manager file definitions
-5. Create global exception strategy and return values
-6. Should I create cmd ERB for kit load/dump table commands?
+1. Done: Use exceptions in FswApp. Error handling in general. Search puts
+4. Done: Verify table manager file definitions
+5. Done (sort of): Create global exception strategy and return values
+6. Should I create cmd ERB for kit app load/dump table commands?
 7. Possible scr script optimize: f42, perfmon, 
 8. cfs_kit_global: es.rb tutorial
 9. PiControl interface switch needs to warn user of delay and what to check to make sure its working

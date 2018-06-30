@@ -1,13 +1,12 @@
 /* 
-** Purpose: Define the Message Table that provides the messages to be sent
-**          by the scheduler.
+** Purpose: Define KIT_SCH's Message Table that provides the messages to 
+**          be sent by the scheduler.
 **
 ** Notes:
-**   1. The tables are formatted using XML and reply on the open source EXPAT
-**      library.  This is a prototype and EXPAT has not been tested so it is
-**      not recommended that it be used on a flight project until it has been
-**      formally tested.
-**   2. The OpenSat application framework defines the table load/dump commands
+**   1. Use the Singleton design pattern. A pointer to the table object
+**      is passed to the constructor and saved for all other operations.
+**      This is a table-specific file so it doesn't need to be re-entrant.
+**   2. The table file is a JSON text file.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -25,12 +24,19 @@
 ** Includes
 */
 
-#include <expat.h>
 #include "app_cfg.h"
+#include "json.h"
 
 /*
 ** Event Message IDs
 */
+
+#define PKTTBL_CREATE_FILE_ERR_EID          (PKTTBL_BASE_EID + 0)
+#define PKTTBL_CMD_LOAD_TYPE_ERR_EID        (PKTTBL_BASE_EID + 1)
+#define PKTTBL_CMD_LOAD_EMPTY_ERR_EID       (PKTTBL_BASE_EID + 2)
+#define PKTTBL_CMD_LOAD_UPDATE_ERR_EID      (PKTTBL_BASE_EID + 3)
+#define PKTTBL_CMD_LOAD_OPEN_ERR_EID        (PKTTBL_BASE_EID + 4)
+#define PKTTBL_LOAD_PKT_ATTR_ERR_EID        (PKTTBL_BASE_EID + 5)
 
 #define MSGTBL_CREATE_PARSER_ERR_EID    (MSGTBL_BASE_EID + 0)
 #define MSGTBL_CMD_LOAD_TYPE_ERR_EID    (MSGTBL_BASE_EID + 1)
@@ -45,17 +51,48 @@
 #define MSGTBL_SB_SEND_ERR_EID          (MSGTBL_BASE_EID + 9)
 
 /*
+** Table Structure Objects 
+*/
+
+#define  MSGTBL_OBJ_PKT    0
+#define  MSGTBL_OBJ_CNT    1
+
+#define  MSGTBL_OBJ_MSG_NAME  "message"
+                                           
+
+/*
 ** Type Definitions
 */
 
 
 /******************************************************************************
-** Message Table
+** Manage each JSON object
+** 
+** TODO - Move to framework once details are worked out
+** 
 */
+
+#define JSON_OBJ_NAME_MAX_CHAR  32
 
 typedef struct
 {
-    uint16   Buffer[MSGTBL_MAX_MSG_WORDS];
+
+   char                   Name[JSON_OBJ_NAME_MAX_CHAR];
+   boolean                Modified;
+   JSON_ContainerFuncPtr  Callback;
+   void*                  Data;
+   
+} JSON_Obj;
+
+
+/******************************************************************************
+** Message Table -  Local table copy used for table loads
+** 
+*/
+
+typedef struct {
+   
+   uint16   Buffer[MSGTBL_MAX_MSG_WORDS];
 
 } MSGTBL_Entry;
 
@@ -63,36 +100,42 @@ typedef struct {
 
    MSGTBL_Entry Entry[MSGTBL_MAX_ENTRY_ID];
 
-} MSGTBL_Struct;
+} MSGTBL_Tbl;
+
 
 /*
 ** Table Owner Callback Functions
 */
 
 /* Return pointer to owner's table data */
-typedef const MSGTBL_Struct* (*MSGTBL_GetTblPtr)(void);
+typedef const MSGTBL_Tbl* (*MSGTBL_GetTblPtr)(void);
             
 /* Table Owner's function to load all table data */
-typedef boolean (*MSGTBL_LoadTbl)(MSGTBL_Struct* NewTable); 
+typedef boolean (*MSGTBL_LoadTbl)(MSGTBL_Tbl* NewTbl); 
 
-/* Table Owner's function to load a single table entry */
-typedef boolean (*MSGTBL_LoadTblEntry)(uint16 EntryId, MSGTBL_Entry* NewEntry);   
+/* Table Owner's function to load a single table message entry. The JSON object/container is an array */
+typedef boolean (*MSGTBL_LoadTblEntry)(uint16 MsgIdx, MSGTBL_Pkt* NewMsg);   
 
-/*
-**  Local table copy used for table load command
-*/
+
 typedef struct {
 
    uint8    LastLoadStatus;
    uint16   AttrErrCnt;
-   boolean  Modified[MSGTBL_MAX_ENTRY_ID];
-
-   MSGTBL_Struct Tbl;
+   uint16   MaxObjErrCnt;
+   uint16   ObjLoadCnt;
+   uint16   PktLoadIdx;
+   
+   MSGTBL_Tbl Tbl;
 
    MSGTBL_GetTblPtr    GetTblPtrFunc;
    MSGTBL_LoadTbl      LoadTblFunc;
    MSGTBL_LoadTblEntry LoadTblEntryFunc; 
-   
+
+   JSON_Class Json;
+   JSON_Obj   JsonObj[MSGTBL_OBJ_CNT];
+   char       JsonFileBuf[JSON_MAX_FILE_CHAR];   
+   jsmntok_t  JsonFileTokens[JSON_MAX_FILE_TOKENS];
+
 } MSGTBL_Class;
 
 
@@ -107,8 +150,8 @@ typedef struct {
 **
 ** Notes:
 **   1. This must be called prior to any other function.
-**   2. The local tabel data is not populated. Thsi can be done when the
-**      table is registered with the app framework TBLMGR.
+**   2. The local table data is not populated. This is done when the table is 
+**      registered with the app framework table manager.
 */
 void MSGTBL_Constructor(MSGTBL_Class* ObjPtr,
                         MSGTBL_GetTblPtr    GetTblPtrFunc,
@@ -129,6 +172,34 @@ void MSGTBL_ResetStatus(void);
 
 
 /******************************************************************************
+** Function: PKTTBL_LoadCmd
+**
+** Command to load the table.
+**
+** Notes:
+**  1. Function signature must match TBLMGR_LoadTblFuncPtr.
+**  2. Can assume valid table file name because this is a callback from 
+**     the app framework table manager.
+**
+*/
+boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename);
+
+
+/******************************************************************************
+** Function: PKTTBL_DumpCmd
+**
+** Command to dump the table.
+**
+** Notes:
+**  1. Function signature must match TBLMGR_DumpTblFuncPtr.
+**  2. Can assume valid table file name because this is a callback from 
+**     the app framework table manager.
+**
+*/
+boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename);
+
+
+/******************************************************************************
 ** Function: MSGTBL_SendMsg
 **
 ** Send a SB message containing the message table entry at location EntryId.
@@ -140,32 +211,5 @@ void MSGTBL_ResetStatus(void);
 */
 boolean MSGTBL_SendMsg(uint16  EntryId);
 
-
-/*#############################################################################
-** Function: MSGTBL_LoadCmd
-**
-** Command to load the table.
-**
-** Notes:
-**  1. Function signature must match TBLMGR_LoadTblFuncPtr.
-**  2. Can assume valid table file name because this is a callback from 
-**     the app framework table manager.
-**
-*/
-boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename);
-
-
-/*#############################################################################
-** Function: MSGTBL_DumpCmd
-**
-** Command to dump the table.
-**
-** Notes:
-**  1. Function signature must match TBLMGR_DumpTblFuncPtr.
-**  2. Can assume valid table file name because this is a callback from 
-**     the app framework table manager.
-**
-*/
-boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename);
 
 #endif /* _msgtbl_ */
