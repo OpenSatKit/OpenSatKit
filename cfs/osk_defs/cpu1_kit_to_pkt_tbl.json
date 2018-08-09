@@ -46,7 +46,7 @@
          "dec-id": 2056,
          "priority": 0,
          "reliability": 0,
-         "buf-limit": 4
+         "buf-limit": 40
       },
 
       "packet": {

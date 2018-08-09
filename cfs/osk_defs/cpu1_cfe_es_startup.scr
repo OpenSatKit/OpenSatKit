@@ -1,9 +1,9 @@
 CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,      CFS_LIB,        0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_app_lib.so,  OSK_APP_FwInit,   OSK_APP_FW,     0,    8192, 0x0, 0;
 CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,       EXPAT_LIB,      0,    8192, 0x0, 0;
-CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,   KIT_TO,        70,   16384, 0x0, 0;
-CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,   KIT_CI,        60,   16384, 0x0, 0;
-CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,  KIT_SCH,       50,   16384, 0x0, 0;
+CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,   KIT_TO,        30,   16384, 0x0, 0;
+CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,   KIT_CI,        20,   16384, 0x0, 0;
+CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,  KIT_SCH,       10,   16384, 0x0, 0;
 CFE_APP, /cf/ds.so,           DS_AppMain,       DS,            80,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,       FM,            80,   16384, 0x0, 0;
 CFE_APP, /cf/lc.so,           LC_AppMain,       LC,            80,   16384, 0x0, 0;

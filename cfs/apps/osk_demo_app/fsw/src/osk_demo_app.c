@@ -203,7 +203,7 @@ static int32 InitApp(void)
 {
     int32 Status = CFE_SUCCESS;
 
-    ///OS_printf("OSK_DEMO_InitApp() Entry\n");
+    CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "OSK_DEMO_InitApp() Entry\n");
     
     /*
     ** Initialize 'entity' objects
@@ -223,7 +223,7 @@ static int32 InitApp(void)
     CFE_SB_Subscribe(OSK_DEMO_CMD_MID, OskDemo.CmdPipe);
     CFE_SB_Subscribe(OSK_DEMO_SEND_HK_MID, OskDemo.CmdPipe);
 
-    ///OS_printf("OSK_DEMO_InitApp() Before CMDMGR calls\n");
+    CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "OSK_DEMO_InitApp() Before CMDMGR calls\n");
     CMDMGR_Constructor(CMDMGR_OBJ);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, OSK_DEMO_NoOpCmd,     0);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, OSK_DEMO_ResetAppCmd, 0);
@@ -233,7 +233,7 @@ static int32 InitApp(void)
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_ENA_DATA_LOAD_CMD_FC,   DEMOBJ_OBJ, DEMOBJ_EnableDataLoadCmd, DEMOBJ_ENABLE_DATA_LOAD_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_SET_TBL_INDEX_CMD_FC,   DEMOBJ_OBJ, DEMOBJ_SetTblIndexCmd,    DEMOBJ_SET_TBL_INDEX_CMD_DATA_LEN);
 
-    ///OS_printf("OSK_DEMO_InitApp() Before TBLMGR calls\n");
+    CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "OSK_DEMO_InitApp() Before TBLMGR calls\n");
     TBLMGR_Constructor(TBLMGR_OBJ);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, XMLTBL_LoadCmd,   XMLTBL_DumpCmd,   OSK_DEMO_XML_TBL_DEF_LOAD_FILE);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCANFTBL_LoadCmd, SCANFTBL_DumpCmd, OSK_DEMO_SCANF_TBL_DEF_LOAD_FILE);

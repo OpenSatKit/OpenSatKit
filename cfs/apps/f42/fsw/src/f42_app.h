@@ -29,12 +29,15 @@
 ** Macro Definitions
 */
 
-#define F42_APP_INIT_APP_INFO_EID   (F42_APP_BASE_EID + 0)
-#define F42_APP_NOOP_INFO_EID       (F42_APP_BASE_EID + 1)
-#define F42_APP_EXIT_ERR_EID        (F42_APP_BASE_EID + 2)
-#define F42_APP_INVALID_MID_ERR_EID (F42_APP_BASE_EID + 3)
+#define F42_INIT_APP_INFO_EID   (F42_BASE_EID + 0)
+#define F42_NOOP_INFO_EID       (F42_BASE_EID + 1)
+#define F42_EXIT_ERR_EID        (F42_BASE_EID + 2)
+#define F42_INVALID_MID_ERR_EID (F42_BASE_EID + 3)
+#define F42_DEBUG_CMD_ERR_EID   (F42_BASE_EID + 4)
+#define F42_DEBUG_CMD_INFO_EID  (F42_BASE_EID + 5)
+#define F42_DEBUG_EID           (F42_BASE_EID + 6)
 
-#define F42_APP_TOTAL_EID  4
+#define F42_TOTAL_EID  7
 
 
 /*
@@ -57,7 +60,7 @@ typedef struct
    int32            DbgFileHandle;
    boolean          DbgEnabled;
 
-} F42_APP_Class;
+} F42_Class;
 
 typedef struct
 {
@@ -99,8 +102,8 @@ typedef struct
 
    float    Hwcmd[3];
    
-} OS_PACK F42_APP_HkPkt;
-#define F42_APP_TLM_HK_LEN sizeof (F42_APP_HkPkt)
+} OS_PACK F42_HkPkt;
+#define F42_TLM_HK_LEN sizeof (F42_HkPkt)
 
 typedef struct
 {
@@ -118,8 +121,8 @@ typedef struct
    
    uint16 SunValid;
 
-} OS_PACK F42_APP_CtrlPkt;
-#define F42_APP_TLM_CTRL_PKT_LEN sizeof (F42_APP_CtrlPkt)
+} OS_PACK F42_CtrlPkt;
+#define F42_TLM_CTRL_PKT_LEN sizeof (F42_CtrlPkt)
 
 /******************************************************************************
 ** Command Functions
@@ -131,15 +134,15 @@ typedef struct
    uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
    uint16   NewState;                        /* 0=Disable, 1=Enable */
 
-}  OS_PACK F42_APP_ConfigDbgCmdPkt;
-#define F42_APP_CONFIG_DBG_CMD_DATA_LEN  (sizeof(F42_APP_ConfigDbgCmdPkt) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK F42_ConfigDbgCmdPkt;
+#define F42_CONFIG_DBG_CMD_DATA_LEN  (sizeof(F42_ConfigDbgCmdPkt) - CFE_SB_CMD_HDR_SIZE)
 
 
 /*
 ** Exported Data
 */
 
-extern F42_APP_Class  F42App;
+extern F42_Class  F42;
 
 
 /*
@@ -154,23 +157,23 @@ void F42_AppMain(void);
 
 
 /******************************************************************************
-** Function: F42_APP_NoOpCmd
+** Function: F42_NoOpCmd
 **
 */
-boolean F42_APP_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean F42_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: F42_APP_ResetAppCmd
+** Function: F42_ResetAppCmd
 **
 */
-boolean F42_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean F42_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: F42_APP_SendHousekeepingPkt
+** Function: F42_SendHousekeepingPkt
 **
 */
-void F42_APP_SendHousekeepingPkt(void);
+void F42_SendHousekeepingPkt(void);
 
 #endif /* _f42_app_ */

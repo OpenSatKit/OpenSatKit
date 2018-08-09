@@ -56,7 +56,7 @@
 ** Minor Frame Slot Characteristics
 */
 
-#define SCHEDULER_NORMAL_SLOT_PERIOD (SCHEDULER_MICROS_PER_MAJOR_FRAME / SCHTBL_TOTAL_SLOTS)
+#define SCHEDULER_NORMAL_SLOT_PERIOD (SCHEDULER_MICROS_PER_MAJOR_FRAME / SCHTBL_SLOTS)
 #define SCHEDULER_SYNC_SLOT_PERIOD   (SCHEDULER_NORMAL_SLOT_PERIOD + SCHEDULER_SYNC_SLOT_DRIFT_WINDOW)
 #define SCHEDULER_SHORT_SLOT_PERIOD  (SCHEDULER_NORMAL_SLOT_PERIOD - SCHEDULER_SYNC_SLOT_DRIFT_WINDOW)
 
@@ -67,14 +67,14 @@
 #define SCHEDULER_MF_SRC_CFE_TIME           1
 #define SCHEDULER_MF_SRC_MINOR_FRAME_TIMER  2
 
-#define SCHEDULER_TIME_SYNC_SLOT   (SCHTBL_TOTAL_SLOTS-1)  /* Slot processing algorithm assumes this is set to the last slot */
+#define SCHEDULER_TIME_SYNC_SLOT   (SCHTBL_SLOTS-1)  /* Slot processing algorithm assumes this is set to the last slot */
 
 /*
 ** Maximum allowed error in minor frame timing. Worst accuracy determined to be
 ** the amount of drift that would cause the loss of a minor frame over one
 ** major frame
 */
-#define SCHEDULER_WORST_CLOCK_ACCURACY  (SCHEDULER_NORMAL_SLOT_PERIOD/(SCHTBL_TOTAL_SLOTS-1))
+#define SCHEDULER_WORST_CLOCK_ACCURACY  (SCHEDULER_NORMAL_SLOT_PERIOD/(SCHTBL_SLOTS-1))
 
 /*
 ** Maximum number of minor frames to sample looking for subsecs = 0. Maximum
@@ -83,23 +83,28 @@
 ** three complete major frames should be sufficient for finding such a slot.
 */
 
-#define SCHEDULER_MAX_SYNC_ATTEMPTS   (SCHTBL_TOTAL_SLOTS * 3)
+#define SCHEDULER_MAX_SYNC_ATTEMPTS   (SCHTBL_SLOTS * 3)
 
 /*
 ** Event Message IDs
 */
 
-#define SCHEDULER_MINOR_FRAME_TIMER_CREATE_ERR_EID      (SCHEDULER_BASE_EID + 0)
-#define SCHEDULER_MINOR_FRAME_TIMER_ACC_WARN_EID        (SCHEDULER_BASE_EID + 1)
-#define SCHEDULER_SEM_CREATE_ERR_EID                    (SCHEDULER_BASE_EID + 2)
-#define SCHEDULER_MAJOR_FRAME_SUB_ERR_EID               (SCHEDULER_BASE_EID + 3)
-#define SCHEDULER_NOISY_MAJOR_FRAME_ERR_EID             (SCHEDULER_BASE_EID + 4)
+#define SCHEDULER_MINOR_FRAME_TIMER_CREATE_ERR_EID   (SCHEDULER_BASE_EID + 0)
+#define SCHEDULER_MINOR_FRAME_TIMER_ACC_WARN_EID     (SCHEDULER_BASE_EID + 1)
+#define SCHEDULER_SEM_CREATE_ERR_EID                 (SCHEDULER_BASE_EID + 2)
+#define SCHEDULER_MAJOR_FRAME_SUB_ERR_EID            (SCHEDULER_BASE_EID + 3)
+#define SCHEDULER_NOISY_MAJOR_FRAME_ERR_EID          (SCHEDULER_BASE_EID + 4)
 
-#define SCHEDULER_SAME_SLOT_EID                         (SCHEDULER_BASE_EID + 5)
-#define SCHEDULER_MULTI_SLOTS_EID                       (SCHEDULER_BASE_EID + 6)
-#define SCHEDULER_SKIPPED_SLOTS_EID                     (SCHEDULER_BASE_EID + 7)
+#define SCHEDULER_SAME_SLOT_EID                      (SCHEDULER_BASE_EID + 5)
+#define SCHEDULER_MULTI_SLOTS_EID                    (SCHEDULER_BASE_EID + 6)
+#define SCHEDULER_SKIPPED_SLOTS_EID                  (SCHEDULER_BASE_EID + 7)
 
-#define SCHEDULER_PACKET_SEND_ERR_EID                   (SCHEDULER_BASE_EID + 8)
+#define SCHEDULER_PACKET_SEND_ERR_EID                (SCHEDULER_BASE_EID + 8)
+
+#define SCHEDULER_CONFIG_CMD_ENTRY_ERR_EID           (SCHEDULER_BASE_EID + 9)
+#define SCHEDULER_CONFIG_CMD_SLOT_ERR_EID            (SCHEDULER_BASE_EID + 10)
+
+#define SCHEDULER_DEBUG_EID                          (SCHEDULER_BASE_EID + 11)
 
 
 /*
@@ -108,8 +113,8 @@
 
 typedef struct {
 
-   MSGTBL_Struct MsgTbl;
-   SCHTBL_Struct SchTbl;
+   MSGTBL_Tbl MsgTbl;
+   SCHTBL_Tbl SchTbl;
 
    uint32  SlotsProcessedCount;           /* Total number of Schedule Slots (Minor Frames) Processed */
    uint16  SkippedSlotsCount;             /* Number of times that slot (minor frame) were skipped. NOT the number of slots that were skipped  */
@@ -213,7 +218,7 @@ int32 SCHEDULER_StartTimers(void);
 **
 ** Return a pointer to the MsgTbl working table buffer.
 */
-const MSGTBL_Struct* SCHEDULER_GetMsgTblPtr();
+const MSGTBL_Tbl* SCHEDULER_GetMsgTblPtr();
 
 
 /******************************************************************************
@@ -226,7 +231,7 @@ const MSGTBL_Struct* SCHEDULER_GetMsgTblPtr();
 **   2. Function signature must match MSGTBL_LoadTbl
 **
 */
-boolean SCHEDULER_LoadMsgTbl(MSGTBL_Struct* NewTbl);
+boolean SCHEDULER_LoadMsgTbl(MSGTBL_Tbl* NewTbl);
 
 
 /******************************************************************************
@@ -247,7 +252,7 @@ boolean SCHEDULER_LoadMsgTblEntry(uint16 EntryId, MSGTBL_Entry* NewEntry);
 **
 ** Return a pointer to the SchTbl working table buffer.
 */
-const SCHTBL_Struct* SCHEDULER_GetSchTblPtr();
+const SCHTBL_Tbl* SCHEDULER_GetSchTblPtr();
 
 
 /******************************************************************************
@@ -260,7 +265,7 @@ const SCHTBL_Struct* SCHEDULER_GetSchTblPtr();
 **   2. Function signature must match SCHTBL_LoadTbl
 **
 */
-boolean SCHEDULER_LoadSchTbl(SCHTBL_Struct* NewTbl);
+boolean SCHEDULER_LoadSchTbl(SCHTBL_Tbl* NewTbl);
 
 
 /******************************************************************************

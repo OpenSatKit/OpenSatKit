@@ -23,7 +23,7 @@ COMMAND OSK_DEMO DUMP_EXOBJ_TBL <%= Osk::Cfg.processor_endian %> "Dump example o
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=XML, 1=SCANF, 2=JSON"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
-  APPEND_PARAMETER TBL_FILENAME 512 STRING "/cf/osk_demo_tbl_d.json" "Full path and file name to receive table dump"
+  APPEND_PARAMETER TBL_FILENAME 512 STRING "/cf/osk_demo_tbl~.json" "Full path and file name to receive table dump"
 
 COMMAND OSK_DEMO ENA_DATA_LOAD <%= Osk::Cfg.processor_endian %> "Enable/disable use of table data (TODO - Not sure this is right)"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 1) %>

@@ -57,6 +57,17 @@
 #define KIT_CI_BASE_EID  (APP_FW_APP_BASE_EID +  0)
 #define UPLINK_BASE_EID  (APP_FW_APP_BASE_EID + 10)
 
+/*
+** One event ID is used for all initialization debug messages. Uncomment one of
+** the KIT_CI_INIT_EVS_TYPE definitions. Set it to INFORMATION if you want to
+** see the events during initialization. This is opposite to what you'd expect 
+** because INFORMATION messages are enabled by default when an app is loaded.
+*/
+
+#define KIT_CI_INIT_DEBUG_EID 999
+#define KIT_CI_INIT_EVS_TYPE CFE_EVS_DEBUG
+//#define KIT_CI_INIT_EVS_TYPE CFE_EVS_INFORMATION
+
 
 /******************************************************************************
 ** uplink.h Configurations

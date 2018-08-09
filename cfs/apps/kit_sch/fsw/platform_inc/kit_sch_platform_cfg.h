@@ -29,8 +29,8 @@
 ** Scheduler Application Macros
 */
 
-#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/kit_sch_msgtbl.xml"
-#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/kit_sch_schtbl.xml"
+#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/kit_sch_msg_tbl.json"
+#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/kit_sch_sch_tbl.json"
 
 /******************************************************************************
 ** Scheduler Table Configurations
@@ -40,16 +40,16 @@
 /*
 ** Number of minor frame slots within each Major Frame. Must be 2 or more and less than 65536.
 */
-#define SCHTBL_TOTAL_SLOTS      5
+#define SCHTBL_SLOTS      5
 
 
 /*
 ** Maximum number of Activities per Minor Frame. Must be greater than zero.
 */
-#define SCHTBL_ENTRIES_PER_SLOT  10
+#define SCHTBL_ACTIVITIES_PER_SLOT  10
 
 
-#define SCHTBL_MAX_ENTRIES (SCHTBL_TOTAL_SLOTS * SCHTBL_ENTRIES_PER_SLOT)
+#define SCHTBL_MAX_ENTRIES (SCHTBL_SLOTS * SCHTBL_ACTIVITIES_PER_SLOT)
 
 
 /******************************************************************************
@@ -61,7 +61,7 @@
 ** greater than zero.
 */
 
-#define MSGTBL_MAX_ENTRY_ID      230
+#define MSGTBL_MAX_ENTRIES      200
 #define MSGTBL_UNUSED_MSG_ID    (CFE_SB_HIGHEST_VALID_MSGID+1)
 
 /*
@@ -70,6 +70,7 @@
 ** #CFE_SB_CMD_HDR_SIZE)
 */
 #define MSGTBL_MAX_MSG_WORDS      32
+#define MSGTBL_MAX_MSG_BYTES      (MSGTBL_MAX_MSG_WORDS*2)
 
 
 /******************************************************************************
@@ -80,7 +81,7 @@
 ** Number of Minor Frames that will be processed in "Catch Up"
 ** mode before giving up and skipping ahead.
 */
-#define SCHEDULER_MAX_LAG_COUNT  (SCHTBL_TOTAL_SLOTS / 2)
+#define SCHEDULER_MAX_LAG_COUNT  (SCHTBL_SLOTS / 2)
 
 
 /*

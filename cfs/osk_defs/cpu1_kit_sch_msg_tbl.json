@@ -259,7 +259,7 @@
          "name":  "KIT_TO_SEND_HK_MID",
          "descr": "0x1881(6273) => 0x8118(33048), 0xC000(49152) => 0x00C0(192), 0x0001 => 0x0100(256)",
          "id": 38,
-         "stream-id": ,
+         "stream-id": 33048,
          "seq-seg": 192,
          "length": 256
       },
@@ -302,13 +302,13 @@
       },
 
       "message": {
-         "name":  "",
+         "name":  "Test Packet",
          "descr": "Test packet 0x17FF(6143) => 0xFF17 (65303) with data 6 bytes of data Length of 7 0x0700(1792)",
          "id": 101,
          "stream-id": 65303,
          "seq-seg": 192,
          "length": 1792,
-         "data-bytes": "0,1,2,3,4,5"
+         "data-bytes": "1,2,3,4,5,6"
       },
 
    ]

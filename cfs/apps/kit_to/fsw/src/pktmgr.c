@@ -177,8 +177,9 @@ boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl)
          Status = CFE_SB_SubscribeEx(PktMgr->Tbl.Pkt[i].StreamId,
                                      PktMgr->TlmPipe,PktMgr->Tbl.Pkt[i].Qos,
                                      PktMgr->Tbl.Pkt[i].BufLim);
-         if(Status != CFE_SUCCESS)
-         {
+
+         if(Status != CFE_SUCCESS) {
+            
             FailedSubscription++;
             CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_SUBSCRIBE_ERR_EID,CFE_EVS_ERROR,
                               "Error subscribing to stream 0x%4X, BufLim %d, Status %i",
@@ -379,8 +380,10 @@ boolean PKTMGR_RemovePktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 /******************************************************************************
 ** Function: PKTMGR_RemoveAllPktsCmd
 **
-** TODO - The original code removed the inputs as well. My thought is this
-**        command was used so the tolab app could be removed.
+** Notes:
+**   1. The cFE to_lab code unsubscribes the command and send HK MIDs. I'm not
+**      sure why this is done and I'm not sure how the command is used. This 
+**      command is intended to help manage TO telemetry packets.
 */
 boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
@@ -410,9 +413,9 @@ boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    } /* End pkt loop */
 
-   printf ("PKTMGR_RemoveAllPktsCmd() - About to flush pipe\n");
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "PKTMGR_RemoveAllPktsCmd() - About to flush pipe\n");
    FlushTlmPipe();
-   printf ("PKTMGR_RemoveAllPktsCmd() - Completed pipe flush\n");
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "PKTMGR_RemoveAllPktsCmd() - Completed pipe flush\n");
 
    if (FailedUnsubscribe == 0)
    {
@@ -441,10 +444,12 @@ boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 static void DestructorCallback(void)
 {
 
-   OS_printf("TO delete callback -- Closing TO Network socket.\n");
-   if ( PktMgr->DownlinkOn)
-   {
-       close(PktMgr->TlmSockId);
+   CFE_EVS_SendEvent(PKTMGR_DESTRUCTOR_INFO_EID, CFE_EVS_INFORMATION, "Destructor callback -- Closing TO Network socket. Downlink on = %d\n", PktMgr->DownlinkOn);
+   
+   if (PktMgr->DownlinkOn) {
+      
+      close(PktMgr->TlmSockId);
+   
    }
 
 } /* End DestructorCallback() */

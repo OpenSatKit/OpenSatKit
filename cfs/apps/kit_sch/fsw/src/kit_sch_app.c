@@ -73,7 +73,7 @@ void KIT_SCH_AppMain(void)
     
     Status = CFE_ES_RegisterApp();
 
-    CFE_EVS_Register(NULL,0,0);
+    CFE_EVS_Register(NULL,0,CFE_EVS_NO_FILTER);
 
     /*
     ** Perform application specific initialization
@@ -108,7 +108,7 @@ void KIT_SCH_AppMain(void)
     /*
     ** Main process loop
     */
-    OS_printf("KIT_SCH: About to enter loop\n");
+    CFE_EVS_SendEvent(KIT_SCH_DEBUG_EID, CFE_EVS_DEBUG,"KIT_SCH: About to enter loop\n");
     while (CFE_ES_RunLoop(&RunStatus))
     {
 
@@ -131,7 +131,7 @@ void KIT_SCH_AppMain(void)
 
     CFE_ES_WriteToSysLog("KIT_SCH App terminating, err = 0x%08X\n", Status);
 
-    CFE_EVS_SendEvent(KIT_SCH_APP_EXIT_EID, CFE_EVS_CRITICAL, "KIT_SCH App: terminating, err = 0x%08X", Status);
+    CFE_EVS_SendEvent(KIT_SCH_EXIT_EID, CFE_EVS_CRITICAL, "KIT_SCH App: terminating, err = 0x%08X", Status);
 
     CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
 
@@ -146,7 +146,7 @@ void KIT_SCH_AppMain(void)
 boolean KIT_SCH_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (666,
+   CFE_EVS_SendEvent (KIT_SCH_NOOP_INFO_EID,
                       CFE_EVS_INFORMATION,
                       "Kit Scheduler (KIT_SCH) version %d.%d received a no operation command",
                       KIT_SCH_MAJOR_VERSION,KIT_SCH_MINOR_VERSION);
@@ -264,7 +264,7 @@ static int32 InitApp(void)
 
     CFE_SB_InitMsg(&KitSchHk, KIT_SCH_HK_TLM_MID, KIT_SCH_HK_TLM_LEN, TRUE);
 
-    OS_printf("KIT_SCH_InitApp() Before TBLMGR calls\n");
+    CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"KIT_SCH_InitApp() Before TBLMGR calls\n");
     TBLMGR_Constructor(TBLMGR_OBJ);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, MSGTBL_LoadCmd, MSGTBL_DumpCmd, KIT_SCH_DEF_MSG_TBL_FILE_NAME);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCHTBL_LoadCmd, SCHTBL_DumpCmd, KIT_SCH_DEF_SCH_TBL_FILE_NAME);
@@ -307,7 +307,7 @@ static void ProcessCmdPkt(CFE_SB_MsgPtr_t CmdMsgPtr)
          break;
 
       default:
-         CFE_EVS_SendEvent(KIT_SCH_APP_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+         CFE_EVS_SendEvent(KIT_SCH_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
                            "Received invalid command packet,MID = 0x%x",MsgId);
 
          break;

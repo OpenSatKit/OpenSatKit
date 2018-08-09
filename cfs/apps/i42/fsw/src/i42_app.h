@@ -30,14 +30,15 @@
 ** Macro Definitions
 */
 
-#define I42_APP_INIT_APP_INFO_EID            (I42_APP_BASE_EID + 0)
-#define I42_APP_NOOP_INFO_EID                (I42_APP_BASE_EID + 1)
-#define I42_APP_EXIT_ERR_EID                 (I42_APP_BASE_EID + 2)
-#define I42_APP_INVALID_MID_ERR_EID          (I42_APP_BASE_EID + 3)
-#define I42_APP_IDLE_SOCKET_CLOSE_INFO_EID   (I42_APP_BASE_EID + 4)
-#define I42_APP_RESEND_ACTUATOR_PKT_INFO_EID (I42_APP_BASE_EID + 5)
+#define I42_INIT_APP_INFO_EID            (I42_BASE_EID + 0)
+#define I42_NOOP_INFO_EID                (I42_BASE_EID + 1)
+#define I42_EXIT_ERR_EID                 (I42_BASE_EID + 2)
+#define I42_INVALID_MID_ERR_EID          (I42_BASE_EID + 3)
+#define I42_IDLE_SOCKET_CLOSE_INFO_EID   (I42_BASE_EID + 4)
+#define I42_RESEND_ACTUATOR_PKT_INFO_EID (I42_BASE_EID + 5)
+#define I42_DEBUG_EID                    (I42_BASE_EID + 6)
 
-#define I42_APP_TOTAL_EID  5
+#define I42_TOTAL_EID  7
 
 
 /*
@@ -71,7 +72,7 @@ typedef struct
    char  InBuf[I42_SOCKET_BUF_LEN];
    char  OutBuf[I42_SOCKET_BUF_LEN];
 
-} I42_APP_Class;
+} I42_Class;
 
 typedef struct
 {
@@ -95,14 +96,14 @@ typedef struct
 
    boolean  Connected;
    
-} OS_PACK I42_APP_HkPkt;
-#define I42_APP_TLM_HK_LEN sizeof (I42_APP_HkPkt)
+} OS_PACK I42_HkPkt;
+#define I42_TLM_HK_LEN sizeof (I42_HkPkt)
 
 /*
 ** Exported Data
 */
 
-extern I42_APP_Class  I42App;
+extern I42_Class  I42;
 
 
 /*
@@ -117,23 +118,23 @@ void I42_AppMain(void);
 
 
 /******************************************************************************
-** Function: I42_APP_NoOpCmd
+** Function: I42_NoOpCmd
 **
 */
-boolean I42_APP_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean I42_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: I42_APP_ResetAppCmd
+** Function: I42_ResetAppCmd
 **
 */
-boolean I42_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean I42_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: I42_APP_SendHousekeepingPkt
+** Function: I42_SendHousekeepingPkt
 **
 */
-void I42_APP_SendHousekeepingPkt(void);
+void I42_SendHousekeepingPkt(void);
 
 #endif /* _i42_app_ */

@@ -48,46 +48,6 @@ static PKTTBL_Class* PktTbl = NULL;
 */
 static boolean PktCallback (int TokenIdx);
 
-/// TODO - Move to OSK_APP_FW
-/******************************************************************************
-** Function: JSON_ObjConstructor
-**
-** Notes:
-**    1. This must be called prior to any other functions using the JSON_OBJ
-**    2. The object name must be identical (case sensitive) to the name in the
-**       JSON file. 
-**
-*/
-void JSON_ObjConstructor(JSON_Obj*              Obj,
-                         char*                  Name,
-                         JSON_ContainerFuncPtr  Callback,
-                         void*                  Data)
-{
-	
-   strncpy(&(Obj->Name[0]), Name, JSON_OBJ_NAME_MAX_CHAR);
-   Obj->Modified = FALSE;
-   Obj->Callback = Callback;
-   Obj->Data     = Data;
-   
-
-} /* End JSON_ObjConstructor() */
-
-/******************************************************************************
-** Function: JSON_ObjArrayReset
-**
-** Notes:
-**    None
-**
-*/
-void JSON_ObjArrayReset(JSON_Obj* ObjArray,
-                       uint16    ObjCnt)
-{
-	int i;
-   
-   for (i=0; i < ObjCnt; i++) ObjArray[i].Modified = FALSE;
-   
-} /* End JSON_ObjArrayReset() */
-
 
 /******************************************************************************
 ** Function: PKTTBL_Constructor
@@ -156,7 +116,7 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 
    int obj, pkt;
    
-   OS_printf("PKTTBL_LoadCmd() Entry. sizeof(PktTbl->Tbl) = %d\n",sizeof(PktTbl->Tbl));
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "PKTTBL_LoadCmd() Entry. sizeof(PktTbl->Tbl) = %d\n", sizeof(PktTbl->Tbl));
    
    /* 
    ** Reset status, object modified flags, and data. A non-zero BufLim
@@ -164,13 +124,13 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    */
    PKTTBL_ResetStatus();  
    CFE_PSP_MemSet(&(PktTbl->Tbl), 0, sizeof(PktTbl->Tbl));
-   
+   for (pkt=0; pkt < PKTTBL_MAX_PKT_CNT; pkt++) PktTbl->Tbl.Pkt[pkt].StreamId = PKTTBL_UNUSED_MSG_ID;
+
    if (JSON_OpenFile(JSON_OBJ, Filename)) {
   
-      OS_printf("************************************************\n");
-      OS_printf("PKTTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
-      ///JSON_PrintTokens(&Json,JsonFileTokens[0].size);
-      ///JSON_PrintTokens(&Json,50);
+      CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "PKTTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
+      //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
+      //DEBUG JSON_PrintTokens(&Json,50);
     
       JSON_ProcessTokens(JSON_OBJ);
 
@@ -222,21 +182,21 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
                } /* End if at least one object */
                else {
                   
-                  CFE_EVS_SendEvent(PKTTBL_CMD_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Invalid table command. No packets defined.");
+                  CFE_EVS_SendEvent(PKTTBL_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Invalid table command. No packets defined.");
 
                } /* End if no objects in file */
                
             } /* End if update records */
 			   else {
                
-               CFE_EVS_SendEvent(PKTTBL_CMD_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Invalid table command load type %d",LoadType);            
+               CFE_EVS_SendEvent(PKTTBL_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Invalid table command load type %d",LoadType);            
             
             } /* End if invalid command option */ 
             
          } /* End if valid packet index */
          else {
             
-            CFE_EVS_SendEvent(PKTTBL_CMD_LOAD_UPDATE_ERR_EID,CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(PKTTBL_LOAD_UPDATE_ERR_EID,CFE_EVS_ERROR,
 			                     "PKTTBL: Update table command rejected. File contained %d packet objects which exceeds the max table size of %d",
 							         PktTbl->ObjLoadCnt, PKTTBL_MAX_PKT_CNT);
          
@@ -248,7 +208,7 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    else {
       
       //printf("**ERROR** Processing Packet Table file %s. Status = %d JSMN Status = %d\n",TEST_FILE, Json.FileStatus, Json.JsmnStatus);
-      CFE_EVS_SendEvent(PKTTBL_CMD_LOAD_OPEN_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Table open failure for file %s. File Status = %s JSMN Status = %s",
+      CFE_EVS_SendEvent(PKTTBL_LOAD_OPEN_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Table open failure for file %s. File Status = %s JSMN Status = %s",
 	                     Filename, JSON_GetFileStatusStr(PktTbl->Json.FileStatus), JSON_GetJsmnErrStr(PktTbl->Json.JsmnStatus));
    
    } /* End if file processing error */
@@ -358,8 +318,9 @@ static boolean PktCallback (int TokenIdx)
    boolean RetStatus = FALSE;      
    PKTTBL_Pkt Pkt;
 
-   OS_printf("\nPKTTBL.PktCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
-             PktTbl->ObjLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE,
+                     "\nPKTTBL.PktCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     PktTbl->ObjLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
       
    if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "dec-id",      &JsonIntData)) { AttributeCnt++; Pkt.StreamId        = (CFE_SB_MsgId_t) JsonIntData; }
    if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "priority",    &JsonIntData)) { AttributeCnt++; Pkt.Qos.Priority    = (uint8) JsonIntData; }
@@ -381,8 +342,9 @@ static boolean PktCallback (int TokenIdx)
          PktTbl->MaxObjErrCnt++;
       }
      
-      OS_printf("PKTTBL.PktCallback (Stream ID, BufLim, Priority, Reliability): %d, %d, %d, %d\n",
-                Pkt.StreamId, Pkt.Qos.Priority, Pkt.Qos.Reliability, Pkt.BufLim);
+      CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, 
+                        "PKTTBL.PktCallback (Stream ID, BufLim, Priority, Reliability): %d, %d, %d, %d\n",
+                        Pkt.StreamId, Pkt.Qos.Priority, Pkt.Qos.Reliability, Pkt.BufLim);
    
    } /* End if valid AttributeCnt */
    else {

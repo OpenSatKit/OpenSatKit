@@ -1,353 +1,339 @@
 {
-   "name": "Scheduler Table Activity Table",
+   "name": "Scheduler Activity Table",
    "description":  Activities are defined in time slots. There are 5 slots per second 
                    and 10 entries per slot. This kit table is organized based on app 
-                   role. A flight table would be based on real-time needs",
+                   role. A flight table would be based on real-time needs.
+                   
+                   The boolean property uses a string for simplicty.
+                   
+                   The slot-activity structure is non-heirarchical due to jsmn limitations,
 
-   "slot-0-array": [
-
-      "slot": {
+   "slot": {
+   
+      "index": 0, 
+   },   
+      
+      "activity": {
          "name":  "cFE ES Housekeeping",
          "descr": "",
-         "id": 0,
-         "entry": 0,
-         "enable": true,
+         "index": 0,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 0,
       },
 
-      "slot": {
+      "activity": {
          "name":  "cFE EVS Housekeeping",
          "descr": "",
-         "id": 0,
-         "entry": 1,
-         "enable": true,
+         "index": 1,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 1,
       },
 
-      "slot": {
+      "activity": {
          "name":  "cFE SB Housekeeping",
          "descr": "",
-         "id": 0,
-         "entry": 2,
-         "enable": true,
+         "index": 2,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 2,
       },
 
-      "slot": {
+      "activity": {
          "name":  "cFE TBL Housekeeping",
          "descr": "",
-         "id": 0,
-         "entry": 3,
-         "enable": true,
+         "index": 3,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 3,
       },
 
-      "slot": {
+      "activity": {
          "name":  "Time Housekeeping",
          "descr": "",
-         "id": 0,
-         "entry": 4,
-         "enable": true,
+         "index": 4,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 4,
-      }
-   ],
-
-   "slot-1-array": [
-
-      "slot": {
+      },
+   
+   "slot": {
+   
+      "index": 1, 
+   },   
+      
+      "activity": {
          "name":  "CS Housekeeping",
          "descr": "",
-         "id": 1,
-         "entry": 0,
-         "enable": true,
+         "index": 0,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 10,
       },
-      "slot": {
+      
+      "activity": {
          "name":  "CS Execution",
          "descr": "",
-         "id": 1,
-         "entry": 1,
-         "enable": true,
+         "index": 1,
+         "enable": "true",
          "frequency": 2,
          "offset": 0,
          "msg-id": 11,
       },
   
-      "slot": {
+      "activity": {
          "name":  "DS Housekeeping",
          "descr": "",
-         "id": 1,
-         "entry": 2,
-         "enable": true,
+         "index": 2,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 12,
       },
   
-      "slot": {
+      "activity": {
          "name":  "FM Housekeeping",
          "descr": "",
-         "id": 1,
-         "entry": 3,
-         "enable": true,
+         "index": 3,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 13,
       },
   
-      "slot": {
+      "activity": {
          "name":  "HS Housekeeping",
          "descr": "",
-         "id": 1,
-         "entry": 4,
-         "enable": true,
+         "index": 4,
+         "enable": "true",
          "frequency": 4,
          "offset": 1,
          "msg-id": 14,
       },
-      "slot": {
+      
+      "activity": {
          "name":  "HS Execution",
          "descr": "",
-         "id": 1,
-         "entry": 5,
-         "enable": true,
+         "index": 5,
+         "enable": "true",
          "frequency": 2,
          "offset": 1,
          "msg-id": 15,
       },
-
-      "slot": {
+      
+      "activity": {
          "name":  "LC Housekeeping",
          "descr": "",
-         "id": 1,
-         "entry": 6,
-         "enable": true,
+         "index": 6,
+         "enable": "true",
          "frequency": 4,
          "offset": 2,
          "msg-id": 16,
       },
-      "slot": {
+      "activity": {
          "name":  "LC Execution",
          "descr": "",
-         "id": 1,
-         "entry": 7,
-         "enable": true,
+         "index": 7,
+         "enable": "true",
          "frequency": 1,
          "offset": 2,
          "msg-id": 17,
       },
 
-   "slot-2-array": [
-
-
-      "slot": {
+   "slot": {
+   
+      "index": 2, 
+   },   
+      
+      "activity": {
          "name":  "MD Housekeeping",
          "descr": "",
-         "id": 2,
-         "entry": 0,
-         "enable": true,
+         "index": 0,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 18,
       },
-      "slot": {
+      "activity": {
          "name":  "MD Execution",
          "descr": "",
-         "id": 2,
-         "entry": 1,
-         "enable": true,
+         "index": 1,
+         "enable": "true",
          "frequency": 1,
          "offset": 0,
          "msg-id": 19,
       },
 
-      "slot": {
+      "activity": {
          "name":  "MM Housekeeping",
          "descr": "",
-         "id": 2,
-         "entry": 2,
-         "enable": true,
+         "index": 2,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 20,
       },
 
-      "slot": {
+      "activity": {
          "name":  "SC Housekeeping",
          "descr": "",
-         "id": 2,
-         "entry": 3,
-         "enable": true,
+         "index": 3,
+         "enable": "true",
          "frequency": 4,
          "offset": 1,
          "msg-id": 21,
       },
-      "slot": {
+      "activity": {
          "name":  "SC Execution",
          "descr": "",
-         "id": 2,
-         "entry": 4,
-         "enable": true,
+         "index": 4,
+         "enable": "true",
          "frequency": 1,
          "offset": 1,
          "msg-id": 22,
       },
-
-   "slot-3-array": [
-
-      "slot": {
+   
+   "slot": {
+   
+      "index": 3, 
+   },   
+      
+      "activity": {
          "name":  "BM Housekeeping",
          "descr": "",
-         "id": 3,
-         "entry": 0,
-         "enable": true,
+         "index": 0,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 30,
       },
-      "slot": {
+      "activity": {
          "name":  "BM Execution",
          "descr": "",
-         "id": 3,
-         "entry": 1,
-         "enable": true,
+         "index": 1,
+         "enable": "true",
          "frequency": 2,
          "offset": 0,
          "msg-id": 31,
       },
 
-      "slot": {
-         "name":  ""HC Housekeeping,
+      "activity": {
+         "name":  "HC Housekeeping",
          "descr": "",
-         "id": 3,
-         "entry": 2,
-         "enable": true,
+         "index": 2,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 32,
       },
-      "slot": {
-         "name":  ""HC Execution,
+      "activity": {
+         "name":  "HC Execution",
          "descr": "",
-         "id": 3,
-         "entry": 3,
-         "enable": true,
+         "index": 3,
+         "enable": "true",
          "frequency": 10,
          "offset": 0,
          "msg-id": 33,
       },
 
-      "slot": {
+      "activity": {
          "name":  "HSIM Housekeeping",
          "descr": "",
-         "id": 3,
-         "entry": 4,
-         "enable": true,
+         "index": 4,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 34,
       },
-      "slot": {
+      "activity": {
          "name":  "HSIM Execution",
          "descr": "",
-         "id": 3,
-         "entry": 5,
-         "enable": true,
+         "index": 5,
+         "enable": "true",
          "frequency": 1,
          "offset": 0,
          "msg-id": 35,
       },
 
-      "slot": {
+      "activity": {
          "name":  "F42 Housekeeping",
          "descr": "",
-         "id": 3,
-         "entry": 6,
-         "enable": true,
+         "index": 6,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 40,
       },
 
-      "slot": {
+      "activity": {
          "name":  "I42 Housekeeping",
          "descr": "",
-         "id": 3,
-         "entry": 7,
-         "enable": true,
+         "index": 7,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 41,
       },
 
-   "slot-4-array": [
-
-      "slot": {
+   "slot": {
+   
+      "index": 4, 
+   },   
+      
+      "activity": {
          "name":  "KIT_CI Housekeeping",
          "descr": "",
-         "id": 4,
-         "entry": 0,
-         "enable": true,
+         "index": 0,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 36,
       },
 
-      "slot": {
+      "activity": {
          "name":  "KIT_SCH Housekeeping",
          "descr": "",
-         "id": 4,
-         "entry": 1,
-         "enable": true,
+         "index": 1,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 37,
       },
 
-      "slot": {
+      "activity": {
          "name":  "KIT_TO Housekeeping",
          "descr": "",
-         "id": 4,
-         "entry": 2,
-         "enable": true,
+         "index": 2,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 38,
       },
 
-      "slot": {
+      "activity": {
          "name":  "TFTP Housekeeping",
          "descr": "",
-         "id": 4,
-         "entry": 3,
-         "enable": true,
+         "index": 3,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 39,
       },
 
-      "slot": {
+      "activity": {
          "name":  "TEST",
          "descr": "",
-         "id": 4,
-         "entry": 4,
-         "enable": true,
+         "index": 4,
+         "enable": "true",
          "frequency": 4,
          "offset": 0,
          "msg-id": 100,
       }
-      
-   ]
 }

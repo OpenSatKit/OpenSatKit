@@ -64,26 +64,6 @@
 */
 
 
-
-/******************************************************************************
-** Manage each JSON object
-** 
-** TODO - Move to framework once details are worked out
-** 
-*/
-
-#define JSON_OBJ_NAME_MAX_CHAR  32
-
-typedef struct
-{
-
-   char                   Name[JSON_OBJ_NAME_MAX_CHAR];
-   boolean                Modified;
-   JSON_ContainerFuncPtr  Callback;
-   void*                  Data;
-   
-} JSON_Obj;
-
 /******************************************************************************
 ** Table -  Local table copy used for table loads
 ** 

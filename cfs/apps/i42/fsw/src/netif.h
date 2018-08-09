@@ -2,8 +2,8 @@
 ** Purpose: Network interface  
 **
 ** Notes:
-**   1. TODO - Create on NetIf and moved to app_fw.
-**   2. Named NET42IF to avoid dynamic link with TF's NETIF. 
+**   1. Named NET42IF to avoid dynamic link with TF's NETIF. Ticket entered
+**      to create one version and make it part of ask_app_fw.
 **
 ** References:
 **   1. OpenSat Object-based Application Developer's Guide.
@@ -40,6 +40,7 @@
 #define NETIF_RECV_ERR_EID           (NETIF_BASE_EID +  7)
 #define NETIF_SEND_ERR_EID           (NETIF_BASE_EID +  8)
 #define NETIF_SOCKET_CLOSE_INFO_EID  (NETIF_BASE_EID +  9)
+#define NETIF_DEBUG_EID              (NETIF_BASE_EID + 10)
 
 /*
 ** Type Definitions

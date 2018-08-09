@@ -21,6 +21,8 @@
 ** Includes
 */
 
+#include "app_cfg.h"
+
 
 /*
 ** Control Modes
@@ -29,6 +31,12 @@
 #define TAF_CTRL_MODE_INIT   1
 #define TAF_CTRL_MODE_TBD_1  2
 #define TAF_CTRL_MODE_MAX    2
+
+/*
+** Event Message IDs
+*/
+
+#define THREEAXISFSW_DEBUG_EID  (THREEAXISFSW_BASE_EID + 0)
 
 
 /*
