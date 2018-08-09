@@ -122,7 +122,7 @@ void InitFSW(struct FSWType *FSW)
     for (i=0;i<3;i++) {
         FSW->MOI[i] = MOI[i];
     }
-    OS_printf(">>>>>>InitFSW MOI: %lf %lf %lf\n",FSW->MOI[0],FSW->MOI[1],FSW->MOI[2]);
+    CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, "InitFSW MOI: %lf %lf %lf\n",FSW->MOI[0],FSW->MOI[1],FSW->MOI[2]);
     FSW->mass = 1000.0;
 
     /* For RampCoastGlide.  See Inp_Cmd.txt for easy modification. */
@@ -174,7 +174,7 @@ void ThreeAxisFSW(struct FSWType *FSW)
             FindPDGains(FSW->MOI[i],FSW->wc[i],FSW->zc[i], &FSW->Kr[i],&FSW->Kp[i]);
         }
         FSW->Kunl = 1.0E6;
-        OS_printf(">>>>>>ThreeAxis Init MOI: %lf %lf %lf\n",FSW->MOI[0],FSW->MOI[1],FSW->MOI[2]);
+        CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, "ThreeAxis Init MOI: %lf %lf %lf\n",FSW->MOI[0],FSW->MOI[1],FSW->MOI[2]);
     }
 
       /* Find Attitude Command */
@@ -192,8 +192,9 @@ void ThreeAxisFSW(struct FSWType *FSW)
          FSW->Twhlcmd[i] = -FSW->Tcmd[i];
       }
 
-      //OS_printf("Mom Mgmt: Hw: %.6e, %.6e, %.6e, Hwcmd: %.6e, %.6e, %.6e\n", 
-      //          FSW->Hw[0], FSW->Hw[1], FSW->Hw[2], FSW->Hwcmd[0], FSW->Hwcmd[1], FSW->Hwcmd[2]);
+      CFE_EVS_SendEvent(THREEAXISFSW_DEBUG_EID, CFE_EVS_DEBUG, "Mom Mgmt: Hw: %.6e, %.6e, %.6e, Hwcmd: %.6e, %.6e, %.6e\n", 
+                        FSW->Hw[0], FSW->Hw[1], FSW->Hw[2], FSW->Hwcmd[0], FSW->Hwcmd[1], FSW->Hwcmd[2]);
+      
       /* Momentum Management */
       for(i=0;i<3;i++) {
           Herr[i]=FSW->Hw[i]-FSW->Hwcmd[i];
@@ -207,8 +208,8 @@ void ThreeAxisFSW(struct FSWType *FSW)
       /* Gimbals */
       FSW->GimCmd[0].Rate[0] = wln[1];
 
-	  //OS_printf("Before PointGimbalToTarget(): %ld, %.6e, %.6e\n", 
-	  //          FSW->Gim[0].RotSeq, FSW->Gim[0].CGiBi[0][0], FSW->Gim[0].CBoGo[0][0]);
+	   CFE_EVS_SendEvent(THREEAXISFSW_DEBUG_EID, CFE_EVS_DEBUG, "Before PointGimbalToTarget(): %ld, %.6e, %.6e\n", 
+	                     FSW->Gim[0].RotSeq, FSW->Gim[0].CGiBi[0][0], FSW->Gim[0].CBoGo[0][0]);
 	  
       if (FSW->SunValid) {
            PointGimbalToTarget(FSW->Gim[0].RotSeq, FSW->Gim[0].CGiBi,

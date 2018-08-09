@@ -88,6 +88,46 @@ static char* JsonFileStatusStr[] = {
 static int ProcessContainerToken(JSON_Class* Json, int TokenId);
 
 
+/******************************************************************************
+** Function: JSON_ObjConstructor
+**
+** Notes:
+**    1. This must be called prior to any other functions using the JSON_OBJ
+**    2. The object name must be identical (case sensitive) to the name in the
+**       JSON file. 
+**
+*/
+void JSON_ObjConstructor(JSON_Obj*              Obj,
+                         char*                  Name,
+                         JSON_ContainerFuncPtr  Callback,
+                         void*                  Data)
+{
+	
+   strncpy(&(Obj->Name[0]), Name, JSON_MAX_OBJ_NAME_CHAR);
+   Obj->Modified = FALSE;
+   Obj->Callback = Callback;
+   Obj->Data     = Data;
+   
+
+} /* End JSON_ObjConstructor() */
+
+
+/******************************************************************************
+** Function: JSON_ObjArrayReset
+**
+** Notes:
+**    None
+**
+*/
+void JSON_ObjArrayReset(JSON_Obj* ObjArray,
+                       uint16    ObjCnt)
+{
+	int i;
+   
+   for (i=0; i < ObjCnt; i++) ObjArray[i].Modified = FALSE;
+   
+} /* End JSON_ObjArrayReset() */
+
 
 /******************************************************************************
 ** Function: JSON_Constructor
@@ -137,7 +177,7 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
          Len = JSON_MAX_FILE_LINE_CHAR;
          
          if (!LowFileMem) {
-			if (AppFw_ReadLine (FileHandle, &(Json->FileBuf[Indx]), JSON_MAX_FILE_LINE_CHAR)) {
+            if (AppFw_ReadLine (FileHandle, &(Json->FileBuf[Indx]), JSON_MAX_FILE_LINE_CHAR)) {
                Len = strnlen(&(Json->FileBuf[Indx]),JSON_MAX_FILE_LINE_CHAR);
             }
             else {
@@ -145,7 +185,7 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
             }
          } /* End if !LowFileMem */
          else {
-			if (AppFw_ReadLine (FileHandle, LowMemBuf, JSON_MAX_FILE_LINE_CHAR)) {
+            if (AppFw_ReadLine (FileHandle, LowMemBuf, JSON_MAX_FILE_LINE_CHAR)) {
                Len = strnlen(LowMemBuf,JSON_MAX_FILE_LINE_CHAR);
                if ( (Indx+Len) >= JSON_MAX_FILE_CHAR) {
                   Json->FileStatus = JSON_FILE_CHAR_ERR;
@@ -181,7 +221,8 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
       } /* End while reading file */
       
       OS_close(FileHandle);
-      ///printf ("OS_\n\n%s\n\n",Json->FileBuf);
+
+      if (DBG_JSON) OS_printf("JSON_OpenFile(): OS_\n\n%s\n\n",Json->FileBuf);
 
       if (Json->FileStatus == JSON_FILE_UNDEF) {
 
@@ -220,13 +261,13 @@ void JSON_PrintTokens(JSON_Class* Json, int TokenCnt)
    int i=0;
    jsmntok_t* Token;
 
-   if (DBG_JSON) OS_printf("Printing %d tokens\n", TokenCnt);
+   if (DBG_JSON) OS_printf("JSON_PrintTokens(): Printing %d tokens\n", TokenCnt);
    if (DBG_JSON) OS_printf("Token[i] = (Type, Start, End, Size)\n");
   
    for (i=0; i < TokenCnt; i++) {
       Token = &Json->FileTokens[i];
       if (DBG_JSON) OS_printf("Token[%d] = (%d,%d,%d,%d)\n", i, 
-      Token->type, Token->start, Token->end, Token->size);
+                              Token->type, Token->start, Token->end, Token->size);
       if (DBG_JSON) OS_printf("              %s\n", JSON_TokenToStr(Json->FileBuf, Token));
    }
   
@@ -285,7 +326,7 @@ void JSON_ProcessTokens(JSON_Class* Json)
       }
       else {
          CFE_EVS_SendEvent(JSON_INVLD_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON tokens not processed. File starts with a %s. It must start with an object or array.", 
-		    JSON_GetJsmnTypeStr(Json->FileTokens[0].type));
+                           JSON_GetJsmnTypeStr(Json->FileTokens[0].type));
       }
 
    } /* End if valid file to process */  
@@ -299,6 +340,24 @@ void JSON_ProcessTokens(JSON_Class* Json)
 } /* End JSON_ProcessTokens() */
 
 
+/******************************************************************************
+** Function: JSON_GetContainerSize
+**
+** Notes:
+**    None   
+** 
+*/
+int JSON_GetContainerSize(JSON_Class* Json, int ContainTokenIdx) {
+   
+   jsmntok_t* ContainToken;
+
+   ContainToken = &(Json->FileTokens[ContainTokenIdx]);
+   
+   return ContainToken->size;
+
+} /* End JSON_GetContainerSize() */
+
+   
 /******************************************************************************
 ** Function: JSON_GetValBool
 **
@@ -319,28 +378,28 @@ boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, char* Key, boolea
       
       if (JSON_TokenStrEq(Json->FileBuf, &Json->FileTokens[i], Key)) {
 
-	     TokenStr = JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[i+1]);
+         TokenStr = JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[i+1]);
          if (Json->FileTokens[i+1].type == JSMN_PRIMITIVE) {
 			
-			if (strcmp(TokenStr,"true") == 0) {
-			   *BoolVal = TRUE;
-			   return TRUE;
-			}				
+            if (strcmp(TokenStr,"true") == 0) {
+               *BoolVal = TRUE;
+               return TRUE;
+            }		
 			
-			if (strcmp(TokenStr,"false") == 0) {
-			   *BoolVal = FALSE;
-			   return TRUE;
-			}				
+            if (strcmp(TokenStr,"false") == 0) {
+               *BoolVal = FALSE;
+               return TRUE;
+            }		
             
-			CFE_EVS_SendEvent(JSON_INVLD_BOOL_VAL_ERR_EID,CFE_EVS_ERROR,"JSON invalid boolean string %s for key %s at container token index %d",
-			   TokenStr, Key, ContainTokenIdx);
+            CFE_EVS_SendEvent(JSON_INVLD_BOOL_VAL_ERR_EID,CFE_EVS_ERROR,"JSON invalid boolean string %s for key %s at container token index %d",
+                              TokenStr, Key, ContainTokenIdx);
 			
             return FALSE;
 			
          } /* End if primitive */
          else {
-			CFE_EVS_SendEvent(JSON_INVLD_BOOL_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid boolean type %s for key %s at container token index %d. Must be a primitive.",
-			   JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
+            CFE_EVS_SendEvent(JSON_INVLD_BOOL_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid boolean type %s for key %s at container token index %d. Must be a primitive.",
+                              JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
             break;
          }
      
@@ -367,7 +426,7 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, char* Key, in
    jsmntok_t  *ContainToken;
 
    ContainToken = &(Json->FileTokens[ContainTokenIdx]);
-   //printf("JSON_GetValShortInt() for token %d with size %d\n",ContainTokenIdx,ContainToken->size);
+   if (DBG_JSON) OS_printf("JSON_GetValShortInt() for token %d with size %d\n",ContainTokenIdx,ContainToken->size);
    
    /* TODO - This logic doesn't allow a value to have a keyword */
    /* TODO - Protect against exceeding the array length */ 
@@ -385,18 +444,18 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, char* Key, in
          //printf("JSON_GetValShortInt() Found key %s\n",Key);
          if (Json->FileTokens[i+1].type == JSMN_PRIMITIVE) {
             ///*IntVal = atoi(TokenStr);
-			*IntVal = (int)strtol(TokenStr, &ErrCheck, 10);
-			if (ErrCheck == TokenStr) {
+			   *IntVal = (int)strtol(TokenStr, &ErrCheck, 10);
+			   if (ErrCheck == TokenStr) {
                CFE_EVS_SendEvent(JSON_INT_CONV_ERR_EID,CFE_EVS_ERROR,"JSON short int conversion error for key %s token %s at container token index %d.",
-			      Key, TokenStr, ContainTokenIdx);
+                                 Key, TokenStr, ContainTokenIdx);
                break;
-			}
+            }
             return TRUE;
-			
+
          } /* End if primitive */
          else {
-			CFE_EVS_SendEvent(JSON_INVLD_INT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid short int type %s for key %s at container token index %d. Must be a primitive.",
-			   JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
+            CFE_EVS_SendEvent(JSON_INVLD_INT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid short int type %s for key %s at container token index %d. Must be a primitive.",
+                              JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
             break;
          }
      
@@ -434,8 +493,8 @@ boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* S
             return TRUE;
          }
          else {
-			CFE_EVS_SendEvent(JSON_INVLD_STR_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid string type %s for key %s at container token index %d. Must be a string.",
-			   JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
+			   CFE_EVS_SendEvent(JSON_INVLD_STR_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid string type %s for key %s at container token index %d. Must be a string.",
+                              JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
             break;
          }
      
@@ -471,17 +530,17 @@ boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, doub
          TokenStr = JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[i+1]);
          if (Json->FileTokens[i+1].type == JSMN_PRIMITIVE) {
             *DoubleVal = strtod(TokenStr, &ErrCheck);
-			if (ErrCheck == TokenStr) {
+            if (ErrCheck == TokenStr) {
                CFE_EVS_SendEvent(JSON_FLT_CONV_ERR_EID,CFE_EVS_ERROR,"JSON float conversion error for key %s token %s at container token index %d.",
 			      Key, TokenStr, ContainTokenIdx);
-			   break;
-			}
+               break;
+            }
             return TRUE;
 			
          } /* End if primitive */
          else {
-			CFE_EVS_SendEvent(JSON_INVLD_FLT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid float type %s for key %s at container token index %d. Must be a primitive.",
-			   JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
+            CFE_EVS_SendEvent(JSON_INVLD_FLT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid float type %s for key %s at container token index %d. Must be a primitive.",
+                              JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
             break;
          }
      
@@ -574,6 +633,31 @@ char* JSON_GetJsmnTypeStr(int Enum) {
 
 
 /******************************************************************************
+** Function: JSON_GetBoolStr
+**
+** Notes:
+**   1. Input uint16 because it is a common JSOSN parser integer size
+**   2. Use lowercase by convention
+*/
+char* JSON_GetBoolStr (uint16 State) {
+
+   static char* BoolStr[] = {"true", "false", JSON_UNDEF_VAL_STR};
+   
+   if (State == TRUE)
+
+      return BoolStr[0];
+ 
+   else if (State == FALSE)
+
+      return BoolStr[1];
+   
+   else
+      
+      return BoolStr[2];
+ 
+} /* End JSON_GetBoolStr() */
+
+/******************************************************************************
 ** Function: ProcessContainerToken
 **
 ** Notes:
@@ -586,7 +670,7 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
    int   TokenIdx = TokenId;
    jsmntok_t* KeyToken;
 
-   ///printf("\n>>Enter<< ProcessContainerToken() processing token %d\n",TokenId);
+   if (DBG_JSON) OS_printf("\n>>Enter<< ProcessContainerToken() processing token %d\n",TokenId);
    //while (Json->FileTokens[TokenIdx].size <= Json->MaxToken && TokenIdx < JSON_MAX_FILE_TOKENS) {
    //while (TokenIdx <= Json->MaxToken && TokenIdx < JSON_MAX_FILE_TOKENS) {
    //while (TokenIdx <= Json->MaxToken && TokenIdx < JSON_MAX_FILE_TOKENS) {
@@ -595,16 +679,16 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
    /* Check if container key name matches a registered callback function */
    if (TokenId > 0) {
 
-      ///printf("ProcessContainerToken() TokenId > 0\n");
+      if (DBG_JSON) OS_printf("ProcessContainerToken() TokenId > 0\n");
       i = TokenId-1;
       if (Json->FileTokens[i].type == JSMN_STRING) {
 
          KeyToken = &Json->FileTokens[i];
-         ///printf("ProcessContainerToken() KeyToken string = %s\n",JSON_TokenToStr(Json->FileBuf, KeyToken));
+         if (DBG_JSON) OS_printf("ProcessContainerToken() KeyToken string = %s\n",JSON_TokenToStr(Json->FileBuf, KeyToken));
 
          for (i = 0; i < Json->CallBackIdx; i++) {
         
-            ///printf("ProcessContainerToken() Callback loop %d: CallbackName = %s\n",i, Json->ContainerCallBack[i].Name);
+            if (DBG_JSON) OS_printf("ProcessContainerToken() Callback loop %d: CallbackName = %s\n",i, Json->ContainerCallBack[i].Name);
             if (JSON_TokenStrEq(Json->FileBuf, KeyToken, Json->ContainerCallBack[i].Name)) {
                
                (Json->ContainerCallBack[i].FuncPtr)(TokenId);
@@ -616,11 +700,11 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
    } /* End if TokenId > 0 */
 
    ContainTokenMax = Json->FileTokens[TokenIdx].size;
-   //TODO - Chcek tokenMax doesn't exceed array
+   //TODO - Check tokenMax doesn't exceed array
    TokenIdx++;
    while (ContainTokenCnt <= ContainTokenMax) {
 
-      ///printf("Container Token %d: TokenCnt %d\n", TokenId, ContainTokenCnt);
+      if (DBG_JSON) OS_printf("Container Token %d: TokenCnt %d\n", TokenId, ContainTokenCnt);
       if (Json->FileTokens[TokenIdx].type == JSMN_OBJECT || Json->FileTokens[TokenIdx].type == JSMN_ARRAY) {
         
          TokenIdx += ProcessContainerToken(Json, TokenIdx);
@@ -633,10 +717,9 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
 
    }
 
-   ///printf(">>Exit<< ProcessContainerToken() processed %d tokens\n\n", ContainTokenCnt);
+   if (DBG_JSON) OS_printf(">>Exit<< ProcessContainerToken() processed %d tokens\n\n", ContainTokenCnt);
 
    return ContainTokenCnt;
 
 } /* End ProcessContainerToken() */
-
 

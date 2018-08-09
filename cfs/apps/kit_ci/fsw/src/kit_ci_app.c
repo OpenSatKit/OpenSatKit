@@ -96,7 +96,7 @@ void KIT_CI_AppMain(void)
 
    CFE_ES_WriteToSysLog("KIT_CI App terminating, err = 0x%08X\n", Status);
 
-   CFE_EVS_SendEvent(KIT_CI_APP_EXIT_EID, CFE_EVS_CRITICAL, "KIT_CI App: terminating, err = 0x%08X", Status);
+   CFE_EVS_SendEvent(KIT_CI_EXIT_EID, CFE_EVS_CRITICAL, "KIT_CI App: terminating, err = 0x%08X", Status);
 
    CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
 
@@ -247,7 +247,7 @@ static void ProcessCommands(void)
             break;
 
          default:
-            CFE_EVS_SendEvent(KIT_CI_APP_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(KIT_CI_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
                               "Received invalid command packet,MID = 0x%4X",MsgId);
 
             break;
@@ -260,8 +260,3 @@ static void ProcessCommands(void)
 
 
 /* end of file */
-
-
-
-
-

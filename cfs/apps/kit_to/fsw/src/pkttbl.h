@@ -34,12 +34,13 @@
 ** Event Message IDs
 */
 
-#define PKTTBL_CREATE_FILE_ERR_EID          (PKTTBL_BASE_EID + 0)
-#define PKTTBL_CMD_LOAD_TYPE_ERR_EID        (PKTTBL_BASE_EID + 1)
-#define PKTTBL_CMD_LOAD_EMPTY_ERR_EID       (PKTTBL_BASE_EID + 2)
-#define PKTTBL_CMD_LOAD_UPDATE_ERR_EID      (PKTTBL_BASE_EID + 3)
-#define PKTTBL_CMD_LOAD_OPEN_ERR_EID        (PKTTBL_BASE_EID + 4)
-#define PKTTBL_LOAD_PKT_ATTR_ERR_EID        (PKTTBL_BASE_EID + 5)
+#define PKTTBL_CREATE_FILE_ERR_EID      (PKTTBL_BASE_EID + 0)
+#define PKTTBL_LOAD_TYPE_ERR_EID        (PKTTBL_BASE_EID + 1)
+#define PKTTBL_LOAD_EMPTY_ERR_EID       (PKTTBL_BASE_EID + 2)
+#define PKTTBL_LOAD_UPDATE_ERR_EID      (PKTTBL_BASE_EID + 3)
+#define PKTTBL_LOAD_OPEN_ERR_EID        (PKTTBL_BASE_EID + 4)
+#define PKTTBL_LOAD_PKT_ATTR_ERR_EID    (PKTTBL_BASE_EID + 5)
+#define PKTTBL_DEBUG_EID                (PKTTBL_BASE_EID + 6)
 
 
 /*
@@ -55,27 +56,6 @@
 /*
 ** Type Definitions
 */
-
-
-
-/******************************************************************************
-** Manage each JSON object
-** 
-** TODO - Move to framework once details are worked out
-** 
-*/
-
-#define JSON_OBJ_NAME_MAX_CHAR  32
-
-typedef struct
-{
-
-   char                   Name[JSON_OBJ_NAME_MAX_CHAR];
-   boolean                Modified;
-   JSON_ContainerFuncPtr  Callback;
-   void*                  Data;
-   
-} JSON_Obj;
 
 
 /******************************************************************************

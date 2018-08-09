@@ -1,5 +1,5 @@
 /* 
-** Purpose: Implement the Message Table management functions.
+** Purpose: Implement KIT_SCH's Message Table management functions.
 **
 ** Notes:
 **   None
@@ -21,89 +21,38 @@
 #include <string.h>
 #include "msgtbl.h"
 
+/* Convenience macro */
+#define  JSON_OBJ  &(MsgTbl->Json)
+
+/*
+** Type Definitions
+*/
+
+
 /*
 ** Global File Data
 */
 
-static MSGTBL_Class*  MsgTbl = NULL;
-
-static char TblFileBuff[TBL_BUFFSIZE];  /* XML table file buffer could be large so don't put on the stack */
+static MSGTBL_Class* MsgTbl = NULL;
 
 /*
 ** Local File Function Prototypes
 */
 
-typedef void (*DumpTableFuncPtr)(int32 FileHandle);   /* File-specific dump table function */
+/******************************************************************************
+** Function: xxxCallback
+**
+** Notes:
+**   1. These functions must have the same function signature as 
+**      JSON_ContainerFuncPtr.
+*/
+static boolean MsgCallback (int TokenIdx);
 
 /******************************************************************************
-** Function: DumpTableToCfeFile
-**
-** Dump a table to a cFE compatible dump file. This function is written as a reusable
-** function and a function pointer is passed to a function that performs the table-specific
-** processing.
+** Function: SplitStr
 **
 */
-static boolean DumpTableToCfeFile(const char* Filename, const char* FileDescr, DumpTableFuncPtr DumpTableFunc);
-
-/******************************************************************************
-** Function: DumpTableToXmlFile
-**
-** Dump a table to a well-formed XML file that is suitable for loading. This function is
-** written as a reusable function and a function pointer is passed to a function that
-** performs the table-specific processing.
-**
-*/
-static boolean DumpTableToXmlFile(const char* Filename, const char* FileDescr, DumpTableFuncPtr DumpTableFunc);
-
-/******************************************************************************
-** Function: WriteStartElement
-**
-** Write a start element with no attributes to an XML dump file.
-**
-*/
-static int32 WriteStartElement(int32 FileHandle, char* ElementName, int Level);
-
-/******************************************************************************
-** Function: WriteEndElement
-**
-** Write an end element to an XML dump file.
-**
-*/
-static int32 WriteEndElement(int32 FileHandle, char* ElementName, int Level);
-
-
-/******************************************************************************
-** Function: ParseXmlFile
-**
-** General purpose XML file parser.  The Start and End element callback
-** functions do the file-specific processing.
-**
-*/
-static boolean ParseXmlFile(const char* Filename,
-                            XML_StartElementHandler StartElementHandler,
-                            XML_EndElementHandler   EndElementHandler);
-
-/*#############################################################################
-** Functions: MsgTblStartElement, MsgTblEndElement, WriteMsgTblToCfeFile
-**
-** These functions provide the packet table specific processing for XML parsing
-** and for dump file formatting.
-**
-*/
-static void XMLCALL MsgTblStartElement(void *data, const char *el, const char **attr);
-static void XMLCALL MsgTblEndElement(void *data, const char *el);
-static void WriteMsgTblToCfeFile(int32 FileHandle);
-
-/*#############################################################################
-** Functions: WriteMsgTblToXmlFile, WriteMsgEntryElement,
-**
-** These functions provide the packet table-specific processing for XML
-** dump file formatting.
-**
-*/
-static void WriteMsgTblToXmlFile(int32 FileHandle);
-static int32 WriteMsgEntryElement(int32 FileHandle,const MSGTBL_Entry *TblEntry, int Index, int Level);
-
+static char *SplitStr(char *Str, const char *Delim);
 
 
 /******************************************************************************
@@ -113,83 +62,49 @@ static int32 WriteMsgEntryElement(int32 FileHandle,const MSGTBL_Entry *TblEntry,
 **    1. This must be called prior to any other functions
 **
 */
-void MSGTBL_Constructor(MSGTBL_Class* ObjPtr,
+void MSGTBL_Constructor(MSGTBL_Class*       ObjPtr,
                         MSGTBL_GetTblPtr    GetTblPtrFunc,
                         MSGTBL_LoadTbl      LoadTblFunc, 
                         MSGTBL_LoadTblEntry LoadTblEntryFunc)
 {
- 
+   
    MsgTbl = ObjPtr;
 
-  /*
-    * Set all data and flags to zero.
-    * AttrErrCnt - Incremented by XML parser
-    */
    CFE_PSP_MemSet(MsgTbl, 0, sizeof(MSGTBL_Class));
 
    MsgTbl->GetTblPtrFunc    = GetTblPtrFunc;
    MsgTbl->LoadTblFunc      = LoadTblFunc;
    MsgTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
 
- 
+   JSON_Constructor(JSON_OBJ, MsgTbl->JsonFileBuf, MsgTbl->JsonFileTokens);
+   
+   JSON_ObjConstructor(&(MsgTbl->JsonObj[MSGTBL_OBJ_MSG]),
+                       MSGTBL_OBJ_MSG_NAME,
+                       MsgCallback,
+                       (void *)&(MsgTbl->Tbl.Entry));
+   
+   JSON_RegContainerCallback(JSON_OBJ,
+	                          MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Name,
+	                          MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Callback);
+
 } /* End MSGTBL_Constructor() */
 
 
 /******************************************************************************
-** Function:  MSGTBL_ResetStatus
+** Function: MSGTBL_ResetStatus
 **
 */
-void MSGTBL_ResetStatus()
+void MSGTBL_ResetStatus(void)
 {
-   int entry;
-
-   MsgTbl->LastLoadStatus = TBLMGR_STATUS_UNDEF;
-   MsgTbl->AttrErrCnt = 0;
-
-   for (entry=0; entry < MSGTBL_MAX_ENTRY_ID; entry++)
-      MsgTbl->Modified[entry] = FALSE;
-
+   
+   MsgTbl->LastLoadStatus  = TBLMGR_STATUS_UNDEF;
+   MsgTbl->AttrErrCnt      = 0;
+   MsgTbl->ObjErrCnt       = 0;
+   MsgTbl->ObjLoadCnt      = 0;
+   
+   JSON_ObjArrayReset (MsgTbl->JsonObj, MSGTBL_OBJ_CNT);
+    
 } /* End MSGTBL_ResetStatus() */
-
-
-/******************************************************************************
-** Function: MSGTBL_SendMsg
-**
-*/
-boolean MSGTBL_SendMsg(uint16  EntryId)
-{
-
-   boolean RetStatus = FALSE;
-   int32   Status;
-   uint16 *MsgBuffPtr;
-
-
-   if (EntryId < MSGTBL_MAX_ENTRY_ID)
-   {
-
-      MsgBuffPtr = MsgTbl->Tbl.Entry[EntryId].Buffer;
-      Status = CFE_SB_SendMsg((CFE_SB_Msg_t *)MsgBuffPtr);
-
-      /* OS_printf("MSGTBL_SendMsg() - %d\n", EntryId); */
-      /* CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION,"MSGTBL Send: EntryId = %d, Buffer[0] = 0x%04x, SB_SendMsg Status = 0x%08X", EntryId, MsgTbl->Table.Entry[EntryId].Buffer[0], Status); */
-
-      if (Status == CFE_SUCCESS)
-      {
-         RetStatus = TRUE;
-      }
-      else
-      {
-         CFE_EVS_SendEvent(MSGTBL_SB_SEND_ERR_EID, CFE_EVS_ERROR,
-                           "MSGTBL Send Error: EntryId = %d, MsgId = 0x%04x, SB_SendMsg Status = 0x%08X",
-                           EntryId, MsgTbl->Tbl.Entry[EntryId].Buffer[0], Status);
-      }
-
-   } /* End if valid EntryId */
-
-   return RetStatus;
-
-} /* End MSGTBL_SendMSg() */
-
 
 /******************************************************************************
 ** Function: MSGTBL_LoadCmd
@@ -202,52 +117,105 @@ boolean MSGTBL_SendMsg(uint16  EntryId)
 boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 {
 
-   int    Entry;
-
-   OS_printf("MSGTBL_LoadCmd() Entry\n");
-
-   /*
-   ** Set all data & flags to zero then set all StreamIds to UNUSED.
-   ** AttrErrCnt - Incremented by XML parser
+   int obj, msg;
+   
+   CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
+                     "MSGTBL_LoadCmd() Entry. sizeof(MsgTbl->Tbl) = %d\n",sizeof(MsgTbl->Tbl));
+   
+   /* 
+   ** Reset status, object modified flags, and data. A non-zero BufLim
+   ** value is used to determine whether a packet was loaded.
    */
+   MSGTBL_ResetStatus();  
+   CFE_PSP_MemSet(&(MsgTbl->Tbl), 0, sizeof(MsgTbl->Tbl));
    
-   CFE_PSP_MemSet(&(MsgTbl->Tbl), 0, sizeof(MSGTBL_Struct));
-   MSGTBL_ResetStatus();
+   if (JSON_OpenFile(JSON_OBJ, Filename)) {
+  
+      CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"MSGTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
+      //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
+      //DEBUG JSON_PrintTokens(&Json,50);
+    
+      JSON_ProcessTokens(JSON_OBJ);
 
-   if (ParseXmlFile(Filename, MsgTblStartElement, MsgTblEndElement) &&
-       MsgTbl->AttrErrCnt == 0)
-   {
-
-      if (LoadType == TBLMGR_LOAD_TBL_REPLACE)
-      {
-         MsgTbl->LastLoadStatus = (MsgTbl->LoadTblFunc)(&(MsgTbl->Tbl)) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
+      /* 
+      ** Only process command if no attribute errors. No need to send an event
+      ** message if there are attribute errors since events are sent for each
+      ** error.  Checking at least one packet is a simple check but that's all
+      ** that can be done because the table doesn't have any other constraints.
+      ** A table with no packets is considered erroneous.
+      */
+      if (MsgTbl->AttrErrCnt == 0) {
+      
+         if (MsgTbl->ObjLoadCnt > 0) {
          
-      } /* End if replace entire table */
-      else if (LoadType == TBLMGR_LOAD_TBL_UPDATE)
-      {
-         MsgTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
-         for (Entry=0; Entry < MSGTBL_MAX_ENTRY_ID; Entry++)
-         {
-            if (MsgTbl->Modified[Entry])
-            {
-               if (!(MsgTbl->LoadTblEntryFunc)(Entry, &(MsgTbl->Tbl.Entry[Entry])))
-                  MsgTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
-            }
+            if (LoadType == TBLMGR_LOAD_TBL_REPLACE) {
+         
+			      MsgTbl->LastLoadStatus = ((MsgTbl->LoadTblFunc)(&(MsgTbl->Tbl)) == TRUE) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
 
-         } /* End Entry loop */
-
-      } /* End if update individual records */
-      else
-      {
-         CFE_EVS_SendEvent(MSGTBL_CMD_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Invalid message table command load type %d",LoadType);
-      }
-
-   } /* End if successful parse */
-   else
-   {
-      CFE_EVS_SendEvent(MSGTBL_CMD_LOAD_PARSE_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Table Parsing failure for file %s",Filename);
-   }
+	         } /* End if replace entire table */
+            else if (LoadType == TBLMGR_LOAD_TBL_UPDATE) {
+         
+		         MsgTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
    
+               /* 
+               ** Logic is written to easily support the addition of new JSON 
+               ** objects. Currently only array of packets is implemented.
+               */
+               if (MsgTbl->ObjLoadCnt > 0 ) {
+                  for (obj=0; obj < MSGTBL_OBJ_CNT; obj++) {
+                   
+                     if (MsgTbl->JsonObj[obj].Modified) {
+                     
+                        /* 
+                        ** If at least one packet was modified then loop through
+                        ** the entire message array and update each non-zero length message.
+                        */                     
+                        if (obj == MSGTBL_OBJ_MSG) {
+                       
+                           for (msg=0; msg < MSGTBL_MAX_ENTRIES; msg++) {
+                         
+                              if  ((MsgTbl->Tbl.Entry[msg].Buffer[2] > 0)) {
+                                 if (!(MsgTbl->LoadTblEntryFunc)(msg, (MSGTBL_Entry*)&(MsgTbl->JsonObj[obj].Data)))  /* Should I use MsgTbl->Tbl.Entry[]? */
+                                    MsgTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
+                              }
+                           } /* End message array loop */                
+                           
+                        } /* End if MSGTBL_OBJ_MSG */ 
+                     } /* End if object modified */
+                  } /* End JSON object loop */
+               } /* End if at least one object */
+               else {
+                  
+                  CFE_EVS_SendEvent(MSGTBL_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Invalid table command. No messages defined.");
+
+               } /* End if no objects in file */
+               
+            } /* End if update records */
+			   else {
+               
+               CFE_EVS_SendEvent(MSGTBL_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Invalid table command load type %d",LoadType);            
+            
+            } /* End if invalid command option */ 
+            
+         } /* End if valid message index */
+         else {
+            
+            CFE_EVS_SendEvent(MSGTBL_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Invalid table command. No message objects defined.");
+            
+         
+         } /* End if no objects loaded */
+
+      } /* End if no attribute errors */
+            
+   } /* End if valid file */
+   else {
+      
+      //printf("**ERROR** Processing Message Table file %s. Status = %d JSMN Status = %d\n",TEST_FILE, Json.FileStatus, Json.JsmnStatus);
+      CFE_EVS_SendEvent(MSGTBL_LOAD_OPEN_ERR_EID,CFE_EVS_ERROR,"MSGTBL: Table open failure for file %s. File Status = %s JSMN Status = %s",
+	                     Filename, JSON_GetFileStatusStr(MsgTbl->Json.FileStatus), JSON_GetJsmnErrStr(MsgTbl->Json.JsmnStatus));
+   
+   } /* End if file processing error */
+    
    return (MsgTbl->LastLoadStatus == TBLMGR_STATUS_VALID);
 
 } /* End of MSGTBL_LoadCmd() */
@@ -260,441 +228,315 @@ boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 **  1. Function signature must match TBLMGR_DumpTblFuncPtr.
 **  2. Can assume valid table file name because this is a callback from 
 **     the app framework table manager that has verified the file.
-**  3. Command supplied filename is used for the cFE dump file. A second
-**     file is created with an XML extension for an XML dump file.
+**  3. DumpType is unused.
+**  4. File is formatted so it can be used as a load file. It does not follow
+**     the cFE table file format. 
+**  5. Creates a new dump file, overwriting anything that may have existed
+**     previously
 */
+
 boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 {
 
-   char*   DotChrPtr;
-   boolean RetStatus = FALSE;
-   char   XmlFilename[OS_MAX_PATH_LEN];
-
-   
-   if (DumpTableToCfeFile(Filename,"KIT_SCH Packet Table",WriteMsgTblToCfeFile))
-   {
-      strcpy(XmlFilename, Filename);
-      DotChrPtr = strrchr(Filename, '.');
-      if (DotChrPtr != NULL)
-      { 
-         strcpy(++DotChrPtr,"xml");
-         OS_printf("MSGTBL_DumpCmd: New XML filename = %s",XmlFilename);
-     
-         RetStatus = DumpTableToXmlFile(XmlFilename,"KIT_TO's Packet Table",WriteMsgTblToXmlFile);
-
-         if (RetStatus) {
-	          CFE_EVS_SendEvent(MSGTBL_CMD_DUMP_INFO_EID,CFE_EVS_INFORMATION,"{MSGTBL: Successfully created %s and %s dump files",Filename,XmlFilename);
-	       }
-         else
-         {
-            CFE_EVS_SendEvent(999,CFE_EVS_ERROR,"MSGTBL: Failed to create dump file %s",XmlFilename);
-         }
-      } /* End if DotChrPtr != NULL */
-      else
-      {
-         CFE_EVS_SendEvent(999,CFE_EVS_ERROR,"MSGTBL: Failed to append (missing .) xml file extension to %s",XmlFilename);
-      }
-   }
-   else
-   {
-	    CFE_EVS_SendEvent(999,CFE_EVS_ERROR,"MSGTBL: Failed to create dump file %s",Filename);
-   }
-
-   return RetStatus;
-
-} /* End of MSGTBL_DumpCmd() */
-
-
-/******************************************************************************
-** Function: MsgTblStartElement
-**
-** Callback function for the XML parser. It assumes global variables have been
-** properly setup before the parsing begins.
-**
-*/
-static void XMLCALL MsgTblStartElement(void *data, const char *el, const char **attr)
-{
-  int i;
-  uint16  ProcessedAttr = 0x0F;  /* 4 Attribute bits */
-  uint16  Id =0;
-  uint16  StreamId = 0;
-  uint16  SeqSeg = 0;
-  uint16  MsgLen = 0;
-
-  if (strcmp(el,TBL_XML_EL_MSG_ENTRY) == 0)
-  {
-     /* printf ("MsgTblStartElement() - Entry: "); */
-     for (i = 0; attr[i]; i += 2) {
-        if (strcmp(attr[i],TBL_XML_AT_ID)==0) {
-           /* printf("%s, ", attr[i + 1]); */
-           Id = atoi(attr[i + 1]);
-           ProcessedAttr &= 0xFE;
-        } else if (strcmp(attr[i],TBL_XML_AT_STREAM_ID)==0)
-        {
-           StreamId = atoi(attr[i + 1]);
-           ProcessedAttr &= 0xFD;
-        } else if (strcmp(attr[i],TBL_XML_AT_SEQ_SEG)==0)
-        {
-           SeqSeg = atoi(attr[i + 1]);
-           ProcessedAttr &= 0xFB;
-        } else if (strcmp(attr[i],TBL_XML_AT_MSG_LEN)==0)
-        {
-           MsgLen = atoi(attr[i + 1]);
-           ProcessedAttr &= 0xF7;
-        }
-     } /* End attribute loop */
-     /* printf("\n"); */
-
-     if (ProcessedAttr == 0)
-     {
-        /* TODO - Add error checking */
-        MsgTbl->Tbl.Entry[Id].Buffer[0] = StreamId;
-        MsgTbl->Tbl.Entry[Id].Buffer[1] = SeqSeg;
-        MsgTbl->Tbl.Entry[Id].Buffer[2] = MsgLen;
-        MsgTbl->Modified[Id] = TRUE;
-     }
-     else
-     {
-        MsgTbl->AttrErrCnt++;
-     }
-
-     /* CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "MsgTbl File Entry: Id=%d,StreamId=%d,SeqSeg=%d,MsgLen=%d",Id,StreamId,SeqSeg,MsgLen); */
-
-  } /* End if MSGTBL_XML_EL_ENTRY found */
-
-} /* End MsgTblStartElement() */
-
-
-/*##############################################################################
-** Function: MsgTblEndElement
-**
-** Nothing to do.
-**
-*/
-static void XMLCALL MsgTblEndElement(void *data, const char *el)
-{
-
-} /* End MsgTblEndElement() */
-
-
-/************************************/
-/***  START CUSTOM DUMP FUNCTIONS ***/
-/************************************/
-
-/*##############################################################################
-** WriteMsgTblToCfeFile
-**
-** Write the packet table contents to a file as text. The function signature
-** must correspond to the DumpTableFuncPtr type.
-**
-*/
-static void WriteMsgTblToCfeFile(int32 FileHandle)
-{
-   const  MSGTBL_Struct  *MsgTblPtr;
-   char   DumpRecord[256];
-   int    i;
-
-   sprintf(DumpRecord,"\nEntry: Stream ID, Sequence-Segment, Length\n");
-   OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-
-   MsgTblPtr = (MsgTbl->GetTblPtrFunc)();
-
-   for (i=0; i < MSGTBL_MAX_ENTRY_ID; i++)
-   {
-      sprintf(DumpRecord,"%03d: 0x%04X, 0x%04X, 0x%04X\n",
-              i, MsgTblPtr->Entry[i].Buffer[0], MsgTblPtr->Entry[i].Buffer[1], MsgTblPtr->Entry[i].Buffer[2]);
-      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-   }
-
-} /* End WriteMsgTblToCfeFile() */
-
-/*##############################################################################
-** WriteMsgTblToXmlFile
-**
-** Write the packet table contents to an XML file. The function signature
-** must correspond to the DumpTableFuncPtr type.
-**
-*/
-static void WriteMsgTblToXmlFile(int32 FileHandle)
-{
-
-   const MSGTBL_Struct *MsgTblPtr = (MsgTbl->GetTblPtrFunc)();
-   int    i;
-   int Level = 0;
-
-   WriteStartElement(FileHandle, TBL_XML_EL_MSG_TBL, Level++);
-
-   for (i=0; i < MSGTBL_MAX_ENTRY_ID; i++)
-   {
-      WriteMsgEntryElement(FileHandle,&MsgTblPtr->Entry[i],i,Level);
-   }
-
-   WriteEndElement(FileHandle, TBL_XML_EL_MSG_TBL,--Level);
-
-} /* End WriteMsgTblToXmlFile() */
-
-
-/*##############################################################################
-** Function: WriteMsgEntryElement
-**
-** Write an "entry" element with the following format:
-**  With Data:  <entry  id="1"  stream-id="2072" seq-seg="192" length="256"/>
-**    No Data:  <entry  id="1"  stream-id="2072" seq-seg="192" length="1792">0,1,2,3,4,5</entry>
-**
-** The message table index serves as the message ID referenced by the scheduler table.
-**
-*/
-static int32 WriteMsgEntryElement(int32 FileHandle,const MSGTBL_Entry *TblEntry, int Index, int Level)
-{
-
-   char ElementBuf[256];
-   int  i = Level * TBL_XML_LEVEL_INDENT;
-
-   CFE_PSP_MemSet(ElementBuf,' ',sizeof(ElementBuf));
-
-   sprintf(&ElementBuf[i],"<%s  %s=\"%d\"  %s=\"%d\"  %s=\"%d\"  %s=\"%d\"/>\n",TBL_XML_EL_MSG_ENTRY,
-		   TBL_XML_AT_ID,        Index,
-		   TBL_XML_AT_STREAM_ID, TblEntry->Buffer[0],
-		   TBL_XML_AT_SEQ_SEG,   TblEntry->Buffer[1],
-		   TBL_XML_AT_MSG_LEN,   TblEntry->Buffer[2]);
-
-   OS_write(FileHandle,ElementBuf,strlen(ElementBuf));
-
-   return CFE_SUCCESS;
-
-} /* End WriteMsgEntryElement() */
-
-/**********************************************/
-/***  DO NOT MODIFY CODE BELOW THIS COMMENT ***/
-/**********************************************/
-
-
-/******************************************************************************
-**
-** ParseXmlFile
-**
-** Parse an XML file
-*/
-static boolean ParseXmlFile(const char* FilePathName,
-                            XML_StartElementHandler StartElementHandler,
-                            XML_EndElementHandler   EndElementHandler)
-{
-
-   int      FileHandle;
-   int32    ReadStatus;
-   boolean  Done;
-   boolean  ParseErr  = FALSE;
    boolean  RetStatus = FALSE;
+   int32    FileHandle, i, d;
+   char     DumpRecord[256];
+   const    MSGTBL_Tbl *MsgTblPtr;
+   char     SysTimeStr[256];
+   uint8    DataBytes;
+   
+   FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
-   XML_Parser XmlParser = XML_ParserCreate(NULL);
-   if (! XmlParser) {
-      CFE_EVS_SendEvent(MSGTBL_CREATE_PARSER_ERR_EID, CFE_EVS_ERROR, "Failed to allocate memory for XML parser");
-   }
-   else {
+   if (FileHandle >= OS_FS_SUCCESS) {
 
-      XML_SetElementHandler(XmlParser, StartElementHandler, EndElementHandler);
+      MsgTblPtr = (MsgTbl->GetTblPtrFunc)();
 
-      FileHandle = OS_open(FilePathName, OS_READ_ONLY, 0);
+      sprintf(DumpRecord,"\n{\n\"name\": \"Kit Scheduler (KIT_SCH) Message Table\",\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
       
-      if (FileHandle >= 0) {
+      sprintf(DumpRecord,"\"description\": \"KIT_SCH dump at %s\",\n",SysTimeStr);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-         Done = FALSE;
 
-         while (!Done) {
+      /* 
+      ** Message Array 
+      **
+      ** - Not all fields in ground table are saved in FSW so they are not
+      **   populated in the dump file. However, the dump file can still
+      **   be loaded.
+      **
+      **   "name":  Not loaded,
+      **   "descr": Not Loaded,
+      **   "id": 101,
+      **   "stream-id": 65303,
+      **   "seq-seg": 192,
+      **   "length": 1792,
+      **   "data-bytes": "0,1,2,3,4,5"
+      */
+      
+      sprintf(DumpRecord,"\"message-array\": [\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-            ReadStatus = OS_read(FileHandle, TblFileBuff, TBL_BUFFSIZE);
-
-            if ( ReadStatus == OS_FS_ERROR )
-            {
-               CFE_EVS_SendEvent(MSGTBL_FILE_READ_ERR_EID, CFE_EVS_ERROR, "File read error, EC = 0x%08X",ReadStatus);
-               Done = TRUE;
-               ParseErr = TRUE;
-            }
-            else if ( ReadStatus == 0 ) /* EOF reached */
-            {
-                Done = TRUE;
-            }
-            else {
-
-               /* ReadStatus contains number of bytes read */
-               if (XML_Parse(XmlParser, TblFileBuff, ReadStatus, Done) == XML_STATUS_ERROR) {
-
-                  CFE_EVS_SendEvent(MSGTBL_PARSE_ERR_EID, CFE_EVS_ERROR, "Parse error at line %lu, error code = %ls",
-                                    XML_GetCurrentLineNumber(XmlParser),
-                                    XML_ErrorString(XML_GetErrorCode(XmlParser)));
-                  Done = TRUE;
-                  ParseErr = TRUE;
-
-               } /* End if valid parse */
-            } /* End if valid fread */
-         } /* End file read loop */
-
-         RetStatus = !ParseErr;
+      for (i=0; i < MSGTBL_MAX_ENTRIES; i++) {
+      
+         sprintf(DumpRecord,"\"message\": {\n");
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+         sprintf(DumpRecord,"   \"id\": %d,\n   \"stream-id\": %d,\n   \"seq-seg\": %d,\n   \"length\": %d,\n",
+                 i,
+                 MsgTblPtr->Entry[i].Buffer[0],
+                 MsgTblPtr->Entry[i].Buffer[1],
+                 MsgTblPtr->Entry[i].Buffer[2]);
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
          
-         OS_close(FileHandle);
+         DataBytes = ((MsgTblPtr->Entry[i].Buffer[2] & 0xFF00) >> 8);
+         //TODO DataBytes = (MsgTblPtr->Entry[i].Buffer[2] & 0x00FF);  
 
-      } /* End if file opened */
-      else
-      {
-      
-          CFE_EVS_SendEvent(MSGTBL_FILE_OPEN_ERR_EID, CFE_EVS_ERROR, "File open error for %s, Error = %d",
-                            FilePathName, FileHandle );
-      }
+         if (DataBytes > (uint8)(MSGTBL_MAX_MSG_BYTES-6)) {
+            
+            CFE_EVS_SendEvent(MSGTBL_DUMP_MSG_ERR_EID, CFE_EVS_ERROR,
+                              "Error creating dump file message entry %d. Data byte length %d is greater than max data buffer %d",
+                              i, DataBytes, (MSGTBL_MAX_MSG_BYTES-6));         
+         }
+         else {
 
-      XML_ParserFree(XmlParser);
+            /* 
+            ** Omit "data-bytes" property if no data
+            */
+            if (DataBytes > 0) {
+         
+               sprintf(DumpRecord,"   \"data-bytes\": \"");         
+               OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+                  
+               for (d=0; d < DataBytes; d++) {
+                  
+                  if (d == (DataBytes-1)) {
+                     sprintf(DumpRecord,"%d\"\n   },\n",MsgTblPtr->Entry[i].Buffer[3+d]);
+                  }
+                  else {
+                     sprintf(DumpRecord,"%d,",MsgTblPtr->Entry[i].Buffer[3+d]);
+                  }
+                  OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-   } /* end if parser allocated */
+               } /* End DataByte loop */
+                           
+            } /* End if non-zero data bytes */
 
-   return RetStatus;
+         } /* End if DataBytes within range */
 
-} /* End ParseXmlFile() */
+      } /* End message loop */
 
+      sprintf(DumpRecord,"]\n}\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-/******************************************************************************
-** Function: DumpTableToCfeFile
-**
-*/
-static boolean DumpTableToCfeFile(const char* Filename, const char* FileDescr, DumpTableFuncPtr DumpTableFunc)
-{
-
-   CFE_FS_Header_t  CfeStdFileHeader;
-   int32            FileHandle;
-   int32            FileStatus;
-   boolean          RetStatus = FALSE;
-
-   /* Create a new dump file, overwriting anything that may have existed previously */
-   FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
-
-   if (FileHandle >= OS_FS_SUCCESS)
-   {
-      /* Initialize the standard cFE File Header for the Dump File */
-      CfeStdFileHeader.SubType = 0x74786574;
-      strcpy(&CfeStdFileHeader.Description[0], FileDescr);
-
-      /* Output the Standard cFE File Header to the Dump File */
-      FileStatus = CFE_FS_WriteHeader(FileHandle, &CfeStdFileHeader);
-
-      if (FileStatus == sizeof(CFE_FS_Header_t))
-      {
-         (DumpTableFunc)(FileHandle);
-         RetStatus = TRUE;
-
-      } /* End if successfully wrote file header */
-      else
-      {
-          CFE_EVS_SendEvent(MSGTBL_WRITE_CFE_HDR_ERR_EID,
-                            CFE_EVS_ERROR,
-                            "Error writing cFE File Header to '%s', Status=0x%08X",
-                            Filename, FileStatus);
-
-      }
-      
-      OS_close(FileHandle);
-      
-   } /* End if file create */
-   else
-   {
-
-        CFE_EVS_SendEvent(MSGTBL_CREATE_MSG_DUMP_ERR_EID,
-                          CFE_EVS_ERROR,
-                          "Error creating cFE table dump file '%s', Status=0x%08X",
-                          Filename, FileHandle);
-
-    }
-
-
-   return RetStatus;
-
-} /* End of DumpTableToCfeFile() */
-
-/******************************************************************************
-** Function: DumpTableToXmlFile
-**
-*/
-static boolean DumpTableToXmlFile(const char* Filename, const char* FileDescr, DumpTableFuncPtr DumpTableFunc)
-{
-
-   int32     FileHandle;
-   boolean   RetStatus = FALSE;
-
-   /* Create a new dump file, overwriting anything that may have existed previously */
-   FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
-
-   if (FileHandle >= OS_FS_SUCCESS)
-   {
-
-      (DumpTableFunc)(FileHandle);
       RetStatus = TRUE;
 
       OS_close(FileHandle);
 
    } /* End if file create */
-   else
-   {
+   else {
+   
+      CFE_EVS_SendEvent(MSGTBL_CREATE_FILE_ERR_EID, CFE_EVS_ERROR,
+                        "Error creating dump file '%s', Status=0x%08X", Filename, FileHandle);
+   
+   } /* End if file create error */
 
-      CFE_EVS_SendEvent(MSGTBL_CREATE_MSG_DUMP_ERR_EID,
-                        CFE_EVS_ERROR,
-                        "Error creating XML table dump file '%s', Status=0x%08X",
-                        Filename, FileHandle);
+   return RetStatus;
+   
+} /* End of MSGTBL_DumpCmd() */
 
-    } /* End if open failed */
+
+/******************************************************************************
+** Function: MSGTBL_GetMsgPtr
+**
+*/
+boolean MSGTBL_GetMsgPtr(uint16  EntryId, uint16 **MsgPtr)
+{
+
+   boolean RetStatus = FALSE;
+
+   if (EntryId < MSGTBL_MAX_ENTRIES) {
+
+      CFE_EVS_SendEvent(MSGTBL_DEBUG_EID, CFE_EVS_DEBUG,"MSGTBL_GetMsgPtr(): EntryId = %d, Buffer[0] = 0x%04x", EntryId, MsgTbl->Tbl.Entry[EntryId].Buffer[0]);
+
+      *MsgPtr = MsgTbl->Tbl.Entry[EntryId].Buffer;
+      RetStatus = TRUE;
+                
+
+   } /* End if valid EntryId */
 
    return RetStatus;
 
-} /* End of DumpTableToXmlFile() */
+} /* End MSGTBL_GetMsgPtr() */
+
 
 /******************************************************************************
-** Function: WriteCommentElement
+** Function: MsgCallback
 **
+** Process a message table entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. ObjLoadCnt incremented for every message, valid or invalid.
 */
-static int32 WriteCommentElement(int32 FileHandle,char* ElementName, int Level)
+static boolean MsgCallback (int TokenIdx)
 {
 
-   /* TDOD - Implement comment WriteCOmmentElement() */
+   int    AttributeCnt = 0;
+   int    JsonIntData, Id, i;
+   char   DataStr[(MSGTBL_MAX_MSG_WORDS-3)*10];  /* 6 digits per word plus any extra commas and spaces */
+   char  *DataStrPtr;
+   boolean RetStatus = FALSE, DataBytes = FALSE;      
+   MSGTBL_Entry MsgEntry;
 
-	return CFE_SUCCESS;
+   CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"\nMSGTBL.MsgCallback: ObjLoadCnt %d, ObjErrCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     MsgTbl->ObjLoadCnt, MsgTbl->ObjErrCnt, MsgTbl->AttrErrCnt, TokenIdx);
 
-} /* End WriteCommentElement() */
+   memset((void*)&MsgEntry,0,sizeof(MSGTBL_Entry));
+   
+   /* 
+   ** Message Array 
+   **
+   **   "name":  Not saved,
+   **   "descr": Not saved,
+   **   "id": 101,
+   **   "stream-id": 65303,
+   **   "seq-seg": 192,
+   **   "length": 1792,
+   **   "data-bytes": "0,1,2,3,4,5"
+   */
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "id",         &JsonIntData)) { AttributeCnt++; Id = JsonIntData; }
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "stream-id",  &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[0] = (uint16) JsonIntData; }
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "seq-seg",    &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[1] = (uint16) JsonIntData; }
+   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "length",     &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[2] = (uint16) JsonIntData; }
+   
+   if (JSON_GetValStr(JSON_OBJ,      TokenIdx, "data-bytes", DataStr)) {
+      
+      AttributeCnt++; 
+      i = 3;
+      
+      /* No pretection against ill-formed data array */
+      DataStrPtr = SplitStr(DataStr,",");
+      if ( DataStrPtr != NULL) {
+         MsgEntry.Buffer[i++] = atoi(DataStrPtr);
+         while ( (DataStrPtr = SplitStr(NULL,",")) != NULL) {
+            MsgEntry.Buffer[i++] = atoi(DataStrPtr);
+            CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
+                              "MSGTBL.MsgCallback data[%d] = %d\n",i-1,MsgEntry.Buffer[i-1]);
+         }
+      }
+      
+      DataBytes = TRUE;
+      
+   } /* End if DataStr */
+   
+   MsgTbl->ObjLoadCnt++;
+   
+   /* data-bytes is optional */
+   if ( (DataBytes  && AttributeCnt == 5) ||
+        (!DataBytes && AttributeCnt == 4) ) {
+   
+      if (Id < MSGTBL_MAX_ENTRIES) {
+         
+         MsgTbl->Tbl.Entry[Id] = MsgEntry;
+         RetStatus = TRUE;
+      
+      } /* End if Id within limits */
+      else {
+         MsgTbl->ObjErrCnt++;
+      }
+     
+      CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"MSGTBL.MsgCallback Id %d (Stream ID, Seq-Seg, Length, Data[0]): %d, %d, %d, %d\n",
+                        Id, MsgEntry.Buffer[0], MsgEntry.Buffer[1], MsgEntry.Buffer[2], MsgEntry.Buffer[3]);
+   
+   } /* End if valid AttributeCnt */
+   else {
+	   
+      MsgTbl->AttrErrCnt++;     
+      CFE_EVS_SendEvent(MSGTBL_LOAD_MSG_ATTR_ERR_EID, CFE_EVS_ERROR, "Invalid number of packet attributes %d. Should be 5.",
+                        AttributeCnt);
+   
+   } /* End if invalid AttributeCnt */
+      
+   return RetStatus;
+
+} /* MsgCallback() */
+
 
 /******************************************************************************
-** Function: WriteStartElement
+** Function: SplitStr
 **
+** Split a string based on a delimiter. 
+**
+** Example Usage
+**    char str[] = "A,B,,,C";
+**    printf("1 %s\n",zstring_strtok(s,","));
+**    printf("2 %s\n",zstring_strtok(NULL,","));
+**    printf("3 %s\n",zstring_strtok(NULL,","));
+**    printf("4 %s\n",zstring_strtok(NULL,","));
+**    printf("5 %s\n",zstring_strtok(NULL,","));
+**    printf("6 %s\n",zstring_strtok(NULL,","));
+** Example Output
+**    1 A
+**    2 B
+**    3 ,
+**    4 ,
+**    5 C
+**    6 (null)
+**
+** Notes:
+**   1. Plus: No extra memory required
+**   2. Minus: Use of static variable is not rentrant so can't use in app_fw
+**   3. Minus: Modifies caller's string
 */
-static int32 WriteStartElement(int32 FileHandle,char* ElementName, int Level)
-{
+static char *SplitStr(char *Str, const char *Delim) {
+   
+   static char *StaticStr=NULL;      /* Store last address */
+   int i=0, StrLength=0;
+   boolean DelimFound = FALSE;                  
 
-   char ElementBuf[TBL_XML_MAX_KW_LEN+4];
-   int  i = Level * TBL_XML_LEVEL_INDENT;
+   /* Valid Delim and have characters left */
+   if (Delim == NULL || (Str == NULL && StaticStr == NULL))
+      return NULL;
 
-   CFE_PSP_MemSet(ElementBuf,' ',sizeof(ElementBuf));
+   if (Str == NULL)
+      Str = StaticStr;
 
-   sprintf(&ElementBuf[i],"<%s>\n",ElementName);
-   OS_write(FileHandle,ElementBuf,strlen(ElementBuf));
+   StrLength = strlen(&Str[StrLength]);
+   //while(str[strlength])
+   //   strlength++;
 
-   return CFE_SUCCESS;
+   /* find the first occurance of delim */
+   for (i=0; i < StrLength && !DelimFound; i++)
+      DelimFound = (Str[i] == Delim[0]);
+   
+   if (!DelimFound) {
+      StaticStr = NULL;
+      return Str;
+   }
 
-} /* End WriteStartElement() */
+   /* Check for consecutive delimiters */
+   if (Str[0] == Delim[0]) {
+      StaticStr = (Str + 1);
+      return (char *)Delim;
+   }
 
-/******************************************************************************
-** Function: WriteEndElement
-**
-** Callback function for the XML parser. It assumes global variables have been
-** properly set up before the parsing begins.
-**
-*/
-static int32 WriteEndElement(int32 FileHandle,char* ElementName, int Level)
-{
+   /* terminate the string
+    * this assignmetn requires char[], so str has to
+    * be char[] rather than *char
+    */
+   Str[i] = '\0';
 
-   char ElementBuf[TBL_XML_MAX_KW_LEN+4];
-   int  i = Level * TBL_XML_LEVEL_INDENT;
+   /* save the rest of the string */
+   if ((Str + i + 1) != 0)
+      StaticStr = (Str + i + 1);
+   else
+      StaticStr = NULL;
 
-   CFE_PSP_MemSet(ElementBuf,' ',sizeof(ElementBuf));
+   return Str;
 
-   sprintf(&ElementBuf[i],"</%s>\n",ElementName);
-   OS_write(FileHandle,ElementBuf,strlen(ElementBuf));
+} /* End SplitStr() */
 
-   return CFE_SUCCESS;
-
-} /* End WriteEndElement() */
 
 /* end of file */

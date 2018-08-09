@@ -71,10 +71,11 @@ void KIT_TO_AppMain(void)
    /*
    ** Perform application specific initialization
    */
-   if (Status == CFE_SUCCESS)
-   {
-       OS_printf("KIT_TO: About to call init\n");
-       Status = InitApp();
+   if (Status == CFE_SUCCESS) {
+      
+      CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO: About to call init\n");
+      Status = InitApp();
+   
    }
 
    /*
@@ -88,7 +89,8 @@ void KIT_TO_AppMain(void)
    /*
    ** Main process loop
    */
-   OS_printf("KIT_TO: About to enter loop\n");
+   
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO: About to enter loop\n");
    while (CFE_ES_RunLoop(&RunStatus))
    {
 
@@ -209,59 +211,59 @@ void KIT_TO_SendHousekeepingPkt(void)
 */
 static int32 InitApp(void)
 {
-    int32 Status = CFE_SUCCESS;
+   int32 Status = CFE_SUCCESS;
 
-    OS_printf("KIT_TO_InitApp() Entry\n");
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Entry\n");
 
-    /*
-    ** Initialize 'entity' objects
-    */
+   /*
+   ** Initialize 'entity' objects
+   */
 
-    PKTTBL_Constructor(PKTTBL_OBJ, PKTMGR_GetTblPtr, PKTMGR_LoadTbl, PKTMGR_LoadTblEntry);
-    PKTMGR_Constructor(PKTMGR_OBJ, PKTMGR_PIPE_NAME, PKTMGR_PIPE_DEPTH);
+   PKTTBL_Constructor(PKTTBL_OBJ, PKTMGR_GetTblPtr, PKTMGR_LoadTbl, PKTMGR_LoadTblEntry);
+   PKTMGR_Constructor(PKTMGR_OBJ, PKTMGR_PIPE_NAME, PKTMGR_PIPE_DEPTH);
 
-    /*
-    ** Initialize application managers
-    */
+   /*
+   ** Initialize application managers
+   */
 
-    CFE_SB_CreatePipe(&KitTo.CmdPipe, KIT_TO_CMD_PIPE_DEPTH, KIT_TO_CMD_PIPE_NAME);
-    CFE_SB_Subscribe(KIT_TO_CMD_MID, KitTo.CmdPipe);
-    CFE_SB_Subscribe(KIT_TO_SEND_HK_MID, KitTo.CmdPipe);
+   CFE_SB_CreatePipe(&KitTo.CmdPipe, KIT_TO_CMD_PIPE_DEPTH, KIT_TO_CMD_PIPE_NAME);
+   CFE_SB_Subscribe(KIT_TO_CMD_MID, KitTo.CmdPipe);
+   CFE_SB_Subscribe(KIT_TO_SEND_HK_MID, KitTo.CmdPipe);
 
-    OS_printf("KIT_TO_InitApp() Before CMDMGR calls\n");
-    CMDMGR_Constructor(CMDMGR_OBJ);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,            NULL,       KIT_TO_NoOpCmd,            0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,           NULL,       KIT_TO_ResetAppCmd,        0);
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Before CMDMGR calls\n");
+   CMDMGR_Constructor(CMDMGR_OBJ);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,            NULL,       KIT_TO_NoOpCmd,            0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,           NULL,       KIT_TO_ResetAppCmd,        0);
 
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_PKT_TBL_LOAD_CMD_FC,    TBLMGR_OBJ, TBLMGR_LoadTblCmd,         TBLMGR_LOAD_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_PKT_TBL_DUMP_CMD_FC,    TBLMGR_OBJ, TBLMGR_DumpTblCmd,         TBLMGR_DUMP_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_PKT_TBL_LOAD_CMD_FC,    TBLMGR_OBJ, TBLMGR_LoadTblCmd,         TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_PKT_TBL_DUMP_CMD_FC,    TBLMGR_OBJ, TBLMGR_DumpTblCmd,         TBLMGR_DUMP_TBL_CMD_DATA_LEN);
 
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ADD_PKT_CMD_FC,         PKTMGR_OBJ, PKTMGR_AddPktCmd,          PKKTMGR_ADD_PKT_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_PKT_CMD_FC,      PKTMGR_OBJ, PKTMGR_RemovePktCmd,       PKKTMGR_REMOVE_PKT_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_ALL_PKTS_CMD_FC, PKTMGR_OBJ, PKTMGR_RemoveAllPktsCmd,   0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ENABLE_OUTPUT_CMD_FC,   PKTMGR_OBJ, PKTMGR_EnableOutputCmd,    PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC, &KitTo,     KIT_TO_SendDataTypeTlmCmd, 0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ADD_PKT_CMD_FC,         PKTMGR_OBJ, PKTMGR_AddPktCmd,          PKKTMGR_ADD_PKT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_PKT_CMD_FC,      PKTMGR_OBJ, PKTMGR_RemovePktCmd,       PKKTMGR_REMOVE_PKT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_ALL_PKTS_CMD_FC, PKTMGR_OBJ, PKTMGR_RemoveAllPktsCmd,   0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ENABLE_OUTPUT_CMD_FC,   PKTMGR_OBJ, PKTMGR_EnableOutputCmd,    PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC, &KitTo,     KIT_TO_SendDataTypeTlmCmd, 0);
 
-    OS_printf("KIT_TO_InitApp() Before TBLMGR calls\n");
-    TBLMGR_Constructor(TBLMGR_OBJ);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, PKTTBL_LoadCmd, PKTTBL_DumpCmd, KIT_TO_DEF_PKTTBL_FILE_NAME);
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Before TBLMGR calls\n");
+   TBLMGR_Constructor(TBLMGR_OBJ);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, PKTTBL_LoadCmd, PKTTBL_DumpCmd, KIT_TO_DEF_PKTTBL_FILE_NAME);
 
-    CFE_SB_InitMsg(&KitToHkPkt, KIT_TO_HK_TLM_MID, KIT_TO_TLM_HK_LEN, TRUE);
-    InitDataTypePkt();
+   CFE_SB_InitMsg(&KitToHkPkt, KIT_TO_HK_TLM_MID, KIT_TO_TLM_HK_LEN, TRUE);
+   InitDataTypePkt();
 
-    /*
-    ** Application startup event message
-    */
+   /*
+   ** Application startup event message
+   */
 
-    Status = CFE_EVS_SendEvent(KIT_TO_INIT_APP_INFO_EID,
-                               CFE_EVS_INFORMATION,
-                               "KIT_TO Initialized. Version %d.%d.%d.%d",
-                               KIT_TO_MAJOR_VERSION,
-                               KIT_TO_MINOR_VERSION,
-                               KIT_TO_REVISION,
-                               KIT_TO_MISSION_REV);
+   Status = CFE_EVS_SendEvent(KIT_TO_INIT_APP_INFO_EID,
+                              CFE_EVS_INFORMATION,
+                              "KIT_TO Initialized. Version %d.%d.%d.%d",
+                              KIT_TO_MAJOR_VERSION,
+                              KIT_TO_MINOR_VERSION,
+                              KIT_TO_REVISION,
+                              KIT_TO_MISSION_REV);
 
-    return(Status);
+   return(Status);
 
 } /* End of InitApp() */
 

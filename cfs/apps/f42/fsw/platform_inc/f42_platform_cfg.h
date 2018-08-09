@@ -28,10 +28,10 @@
 ** F42 Application Macros
 */
 
-#define  F42_APP_SENSOR_TIMEOUT   1500  /* Pend timeout (ms) for sensor data read */
+#define  F42_SENSOR_TIMEOUT   1500  /* Pend timeout (ms) for sensor data read */
  
-#define  F42_APP_CTRL_TBL_DEF_LOAD_FILE  "/cf/f42_ctrl_tbl.json"
+#define  F42_CTRL_TBL_DEF_LOAD_FILE  "/cf/f42_ctrl_tbl.json"
 
-#define  F42_APP_DBG_FILE  "/cf/f42_debug.txt"
+#define  F42_DBG_FILE  "/cf/f42_debug.txt"
 
 #endif /* _f42_platform_cfg_ */

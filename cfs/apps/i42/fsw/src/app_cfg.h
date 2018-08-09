@@ -32,10 +32,10 @@
 ** I42 Application Macros
 */
 
-#define  I42_APP_MAJOR_VERSION      1
-#define  I42_APP_MINOR_VERSION      0
-#define  I42_APP_REVISION           0
-#define  I42_APP_MISSION_REV        0
+#define  I42_MAJOR_VERSION      1
+#define  I42_MINOR_VERSION      0
+#define  I42_REVISION           0
+#define  I42_MISSION_REV        0
 
 #define  I42_CMD_PIPE_DEPTH     5
 #define  I42_CMD_PIPE_NAME      "I42_CMD_PIPE"
@@ -60,8 +60,20 @@
 */
 
 
-#define I42_APP_BASE_EID  (APP_FW_APP_BASE_EID +  0)
-#define NETIF_BASE_EID    (APP_FW_APP_BASE_EID + 10)
+#define I42_BASE_EID    (APP_FW_APP_BASE_EID +  0)
+#define NETIF_BASE_EID  (APP_FW_APP_BASE_EID + 10)  /* Uses more than 10 IDs */
+
+/*
+** One event ID is used for all initialization debug messages. Uncomment one of
+** the I42_INIT_EVS_TYPE definitions. Set it to INFORMATION if you want to
+** see the events during initialization. This is opposite to what you'd expect 
+** because INFORMATION messages are enabled by default when an app is loaded.
+*/
+
+#define I42_INIT_DEBUG_EID 999
+#define I42_INIT_EVS_TYPE CFE_EVS_DEBUG
+//#define I42_INIT_EVS_TYPE CFE_EVS_INFORMATION
+
 
 /******************************************************************************
 ** NET_IF Macros

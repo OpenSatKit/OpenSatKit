@@ -50,30 +50,6 @@ boolean MoiCallback (int TokenIdx);
 boolean PdGainParamCallback (int TokenIdx);
 boolean WhlTgtMomLimCallback (int TokenIdx);
 
-/// TODO - Move to OSK_APP_FW
-/******************************************************************************
-** Function: JSON_ObjConstructor
-**
-** Notes:
-**    1. This must be called prior to any other functions using the JSON_OBJ
-**    2. The object name must be identical (case sensitive) to the name in the
-**       JSON file. 
-**
-*/
-void JSON_ObjConstructor(JSON_Obj*              Obj,
-                         char*                  Name,
-                         JSON_ContainerFuncPtr  Callback,
-                         void*                  Data)
-{
-	
-   strncpy(&(Obj->Name[0]), Name, JSON_OBJ_NAME_MAX_CHAR);
-   Obj->Modified = FALSE;
-   Obj->Callback = Callback;
-   Obj->Data     = Data;
-   
-
-} /* End JSON_ObjConstructor() */
-
 
 /******************************************************************************
 ** Function: CTRLTBL_Constructor
@@ -146,7 +122,7 @@ boolean CTRLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 
    int i;
    
-   OS_printf("CTRLTBL_LoadCmd() Entry\n");
+   CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, "CTRLTBL_LoadCmd() Entry\n");
    
    CTRLTBL_ResetStatus();  /* Reset status & object modified flags */
 
@@ -155,9 +131,9 @@ boolean CTRLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    
    if (JSON_OpenFile(JSON_OBJ, Filename)) {
   
-      OS_printf("CTRLTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
-      ///JSON_PrintTokens(&Json,JsonFileTokens[0].size);
-      ///JSON_PrintTokens(&Json,50);
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, "CTRLTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
+      //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
+      //DEBUG JSON_PrintTokens(&Json,50);
   
       JSON_RegContainerCallback(JSON_OBJ,
 	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI].Name,
@@ -323,8 +299,9 @@ boolean MoiCallback (int TokenIdx)
    double  x, y, z;
    boolean RetStatus = FALSE;   
    
-   OS_printf("\nCTRLTBL.MoiCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
-             CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
+   CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
+                     "\nCTRLTBL.MoiCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
    if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "x", &x)) AxisCnt++;
    if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "y", &y)) AxisCnt++;
@@ -339,7 +316,8 @@ boolean MoiCallback (int TokenIdx)
       CtrlTbl->ObjLoadCnt++;
       RetStatus = TRUE;
 	  
-      OS_printf("CTRLTBL.MoiCallback: %f, %f, %f\n",CtrlTbl->Data.Moi.x,CtrlTbl->Data.Moi.y,CtrlTbl->Data.Moi.z);
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,  "CTRLTBL.MoiCallback: %f, %f, %f\n",
+                        CtrlTbl->Data.Moi.x,CtrlTbl->Data.Moi.y,CtrlTbl->Data.Moi.z);
    
    } /* End if AxisCnt == 3 */
    else {
@@ -371,8 +349,9 @@ boolean PdGainParamCallback (int TokenIdx)
    double  w, z;
    boolean RetStatus = FALSE;   
    
-   OS_printf("\nCTRLTBL.PdGainParamCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
-             CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
+   CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
+                     "\nCTRLTBL.PdGainParamCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
    if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "w", &w)) AxisCnt++;
    if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "z", &z)) AxisCnt++;
@@ -386,7 +365,9 @@ boolean PdGainParamCallback (int TokenIdx)
       CtrlTbl->ObjLoadCnt++;
       RetStatus = TRUE;
 	  
-      OS_printf("CTRLTBL.PdGainParamCallback: %f, %f\n",CtrlTbl->Data.PdGainParam.w,CtrlTbl->Data.PdGainParam.z);
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,
+                        "CTRLTBL.PdGainParamCallback: %f, %f\n", 
+                        CtrlTbl->Data.PdGainParam.w,CtrlTbl->Data.PdGainParam.z);
    
    } /* End if AxisCnt == 2 */
    else
@@ -418,8 +399,9 @@ boolean WhlTgtMomLimCallback (int TokenIdx)
    double  Lower, Upper;
    boolean RetStatus = FALSE;   
    
-   OS_printf("\nCTRLTBL.WhlTgtMomLimCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
-             CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
+   CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,
+                     "\nCTRLTBL.WhlTgtMomLimCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
    if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "lower", &Lower)) LimCnt++;
    if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "upper", &Upper)) LimCnt++;
@@ -433,7 +415,9 @@ boolean WhlTgtMomLimCallback (int TokenIdx)
       CtrlTbl->ObjLoadCnt++;
       RetStatus = TRUE;
 	  
-      OS_printf("CTRLTBL.WhlTgtMomLimCallback: %f, %f\n",CtrlTbl->Data.WhlTgtMomLim.Lower,CtrlTbl->Data.WhlTgtMomLim.Upper);
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
+                        "CTRLTBL.WhlTgtMomLimCallback: %f, %f\n",
+                        CtrlTbl->Data.WhlTgtMomLim.Lower,CtrlTbl->Data.WhlTgtMomLim.Upper);
    
    } /* End if LimCnt == 2 */
    else

@@ -106,7 +106,7 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 
    int Entry;
    
-   OS_printf("JSONTBL_LoadCmd() Entry\n");
+   CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "JSONTBL_LoadCmd() Entry\n");
 
    /*
    ** Set all data and flags to zero. If a table replace is commanded and
@@ -122,9 +122,9 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    
    if (JSON_OpenFile(&(JsonTbl->Json), Filename)) {
   
-      OS_printf("JSONTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
-      ///JSON_PrintTokens(&Json,JsonFileTokens[0].size);
-      ///JSON_PrintTokens(&Json,50);
+      CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "JSONTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
+      //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
+      //DEBUG JSON_PrintTokens(&Json,50);
   
       JsonTbl->DataArrayEntryIdx = 0;
 
@@ -165,7 +165,7 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
       
    } /* End if valid file */
    else {
-      //printf("**ERROR** Processing JSON file %s. Status = %d JSMN Status = %d\n",TEST_FILE, Json.FileStatus, Json.JsmnStatus);
+      
       CFE_EVS_SendEvent(JSONTBL_CMD_LOAD_JSON_OPEN_ERR_EID,CFE_EVS_ERROR,"JSONTBL: Table open failure for file %s. JSON Status = %d JSMN Status = %d",
 	                    Filename, JsonTbl->Json.FileStatus, JsonTbl->Json.JsmnStatus);
    }
@@ -199,8 +199,7 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
-   if (FileHandle >= OS_FS_SUCCESS)
-   {
+   if (FileHandle >= OS_FS_SUCCESS) {
 
       JsonTblPtr = (JsonTbl->GetTblPtrFunc)();
 
@@ -213,8 +212,7 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       sprintf(DumpRecord,"\"data-array\": [\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
-      for (i=0; i < JSONTBL_MAX_ENTRY_ID; i++)
-      {
+      for (i=0; i < JSONTBL_MAX_ENTRY_ID; i++) {
       
          sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d, \n},\n",
                  i, JsonTblPtr->Entry[i].Data1, JsonTblPtr->Entry[i].Data2, JsonTblPtr->Entry[i].Data3);
@@ -231,8 +229,7 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       OS_close(FileHandle);
 
    } /* End if file create */
-   else
-   {
+   else {
    
       CFE_EVS_SendEvent(JSONTBL_CREATE_FILE_ERR_EID, CFE_EVS_ERROR,
                         "Error creating dump file '%s', Status=0x%08X", Filename, FileHandle);
@@ -258,33 +255,36 @@ boolean EntryCallBack (int TokenIdx)
    int  Index, Data1, Data2, Data3, EntryCnt=0;
 
    JsonTbl->DataArrayEntryIdx++;
-   ///OS_printf("\nEntryCallBack() for DataArrayEntryIdx %d and token index %d\n",JsonTbl->DataArrayEntryIdx, TokenIdx);
+   
+   CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "\nEntryCallBack() for DataArrayEntryIdx %d and token index %d\n",JsonTbl->DataArrayEntryIdx, TokenIdx);
       
    if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "index", &Index)) EntryCnt++;
    if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "data1", &Data1)) EntryCnt++;
    if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "data2", &Data2)) EntryCnt++;
    if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "data3", &Data3)) EntryCnt++;
    
-   if (EntryCnt == 4)
-   {
-      if (Index < JSONTBL_MAX_ENTRY_ID)
-      {        
+   if (EntryCnt == 4) {
+      
+      if (Index < JSONTBL_MAX_ENTRY_ID) {
+         
          JsonTbl->Tbl.Entry[Index].Data1 = Data1;
          JsonTbl->Tbl.Entry[Index].Data2 = Data2;
          JsonTbl->Tbl.Entry[Index].Data3 = Data3;
          JsonTbl->Modified[Index] = TRUE;
-         ///OS_printf("JSONTBL-ParseLine: %d, %d, %d, %d\n",Index, Data1, Data2, Data3);
+         
+         CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "JSONTBL-ParseLine: %d, %d, %d, %d\n",Index, Data1, Data2, Data3);
+      
       }
-      else
-      {
+      else {
+         
          JsonTbl->AttrErrCnt++;     
          CFE_EVS_SendEvent(JSONTBL_LOAD_INDEX_ERR_EID, CFE_EVS_ERROR, "Load file data-array entry %d error, invalid index %d",
                            JsonTbl->DataArrayEntryIdx, Index);
       }
       
    } /* Valid Entry */
-   else
-   {
+   else {
+      
       JsonTbl->AttrErrCnt++;
       CFE_EVS_SendEvent(JSONTBL_LOAD_LINE_ERR_EID, CFE_EVS_ERROR, "Load file data-array entry %d error, invalid number of elements %d. Should be 4.",
                         JsonTbl->DataArrayEntryIdx, EntryCnt);

@@ -62,6 +62,18 @@
 #define SCANFTBL_BASE_EID   (APP_FW_APP_BASE_EID + 30)
 #define JSONTBL_BASE_EID    (APP_FW_APP_BASE_EID + 40)
 
+/*
+** One event ID is used for all initialization debug messages. Uncomment one of
+** the OSK_DEMO_INIT_EVS_TYPE definitions. Set it to INFORMATION if you want to
+** see the events during initialization. This is opposite to what you'd expect 
+** because INFORMATION messages are enabled by default when an app is loaded.
+*/
+
+#define OSK_DEMO_INIT_DEBUG_EID 999
+#define OSK_DEMO_INIT_EVS_TYPE CFE_EVS_DEBUG
+//#define OSK_DEMO_INIT_EVS_TYPE CFE_EVS_INFORMATION
+
+
 /******************************************************************************
 ** Example Table Configurations
 **

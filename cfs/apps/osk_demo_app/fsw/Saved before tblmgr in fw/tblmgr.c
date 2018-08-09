@@ -174,7 +174,7 @@ boolean TBLMGR_LoadExObjTableCmd2(const CFE_SB_MsgPtr_t MsgPtr)
       CFE_EVS_SendEvent(TBLMGR_CMD_LOAD_PARSE_ERR_EID,CFE_EVS_ERROR,"TBLMGR: Table Parsing failure for file %s",LoadTblCmd->FileName);
    }
 
-   TblMgr2->ExObjTbl.LoadActive = FALSE;  /* TODO - Is this flag helpful. WHen can process be interrupted if in same thread as tlm production? */
+   TblMgr2->ExObjTbl.LoadActive = FALSE;  /* TODO - Is this flag helpful. When can process be interrupted if in same thread as tlm production? */
 
    return (TblMgr2->ExObjTbl.LastLoadStatus == TBLMGR_STATUS_VALID);
 

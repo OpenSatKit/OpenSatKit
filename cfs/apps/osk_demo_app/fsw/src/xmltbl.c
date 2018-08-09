@@ -120,7 +120,7 @@ boolean XMLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 
    int    entry;
 
-   OS_printf("XMLTBL_LoadCmd() Entry\n");
+   CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "XMLTBL_LoadCmd() Entry\n");
 
    /*
    ** Set all data and flags to zero. If a table replace is commanded and
@@ -140,9 +140,9 @@ boolean XMLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 
       if (LoadType == TBLMGR_LOAD_TBL_REPLACE)
       {
-         OS_printf("XMLTBL_LoadCmd() Before LoadTblFunc\n");
+         CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "XMLTBL_LoadCmd() Before LoadTblFunc\n");
          XmlTbl->LastLoadStatus = ((XmlTbl->LoadTblFunc)(&(XmlTbl->Tbl)) == TRUE) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
-         OS_printf("XMLTBL_LoadCmd() After LoadTblFunc\n");
+         CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "XMLTBL_LoadCmd() After LoadTblFunc\n");
 
       } /* End if replace entire table */
       else if (LoadType == TBLMGR_LOAD_TBL_UPDATE)

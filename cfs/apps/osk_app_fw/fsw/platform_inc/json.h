@@ -40,8 +40,10 @@
 #define JSON_MAX_FILE_CHAR        32768
 #define JSON_MAX_CONTAINER_TOKENS   256
 #define JSON_MAX_STR_LEN             32
+#define JSON_MAX_OBJ_NAME_CHAR       32
 
-#define JSON_UNDEF_STATUS_STR "Undefined"
+#define JSON_UNDEF_STATUS_STR  "Undefined"   /* Status used in ground reporting */
+#define JSON_UNDEF_VAL_STR     "undefined"   /* JSON property value */
 
 /*
 ** Event Message IDs
@@ -75,6 +77,8 @@ typedef enum {
   JSON_FILE_VALID         = 5 
 } JSON_FILE_STATUS;
 
+
+
 /*
 ** Application's function that processes JSON table container objects. 
 */
@@ -104,8 +108,51 @@ typedef struct {
 } JSON_Class;
 
 /*
+** Structure used to manage each JSON object used for table
+** loads and dumps.
+** 
+*/
+
+typedef struct
+{
+
+   char                   Name[JSON_MAX_OBJ_NAME_CHAR];
+   boolean                Modified;
+   JSON_ContainerFuncPtr  Callback;
+   void*                  Data;
+   
+} JSON_Obj;
+
+/*
 ** Exported Functions
 */
+
+
+/******************************************************************************
+** Function: JSON_ObjConstructor
+**
+** Notes:
+**    1. This must be called prior to any other functions using the JSON_OBJ
+**    2. The object name must be identical (case sensitive) to the name in the
+**       JSON file. 
+**
+*/
+void JSON_ObjConstructor(JSON_Obj*              Obj,
+                         char*                  Name,
+                         JSON_ContainerFuncPtr  Callback,
+                         void*                  Data);
+
+
+/******************************************************************************
+** Function: JSON_ObjArrayReset
+**
+** Notes:
+**    None
+**
+*/
+void JSON_ObjArrayReset(JSON_Obj* ObjArray,
+                       uint16    ObjCnt);
+
 
 /******************************************************************************
 ** Function: JSON_Constructor
@@ -188,6 +235,15 @@ void JSON_RegContainerCallback(JSON_Class* Json, char* Name, JSON_ContainerFuncP
 
 
 /******************************************************************************
+** Function: JSON_GetContainerSize
+**
+** Notes:
+** 
+*/
+int JSON_GetContainerSize(JSON_Class* Json, int ContainTokenIdx);
+
+
+/******************************************************************************
 ** Function: JSON_GetValBool
 **
 ** Notes:
@@ -232,6 +288,16 @@ boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, doub
 char* JSON_GetFileStatusStr(int Enum);
 
 
+/******************************************************************************
+** Function: JSON_GetBoolStr
+**
+** Notes:
+**   1. Input uint16 because it is a common JSOSN parser integer size
+**   2. Returns lowercase 'true' or 'false' by convention. Returns 'undef'
+**      all non TRUE/FALSE values  
+*/
+char* JSON_GetBoolStr (uint16 State);
+   
 /******************************************************************************
 ** Function: JSON_GetJsmnErrStr
 **

@@ -2,7 +2,7 @@
 ** Purpose: Network interface
 **
 ** Notes:
-**   1. TODO - Create a single NetIf library, add to app_fw, and use in TF and I42. 
+**   None
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -161,8 +161,8 @@ int32 NETIF42_Recv(char* BufPtr, const uint16 BufSize)
 
          if( (GetPtr = fgets(InBufPtr,BytesRemaining,NetIf->StreamId)) != NULL ) {
 	
-            //OS_printf("NETIF42_Recv(): Received sensor message (len=%d): %s",strlen(InBufPtr), InBufPtr);
-            //OS_printf("NETIF42_Recv(): Received message (len=%d)\n",strlen(InBufPtr));
+            CFE_EVS_SendEvent(NETIF_DEBUG_EID, CFE_EVS_DEBUG, "NETIF42_Recv(): Received sensor message (len=%d): %s",strlen(InBufPtr), InBufPtr);
+            CFE_EVS_SendEvent(NETIF_DEBUG_EID, CFE_EVS_DEBUG, "NETIF42_Recv(): Received message (len=%d)\n",strlen(InBufPtr));
             TotalBytesRead += strlen(InBufPtr);
 
          }         
@@ -234,13 +234,13 @@ static boolean InitSocket(const char *HostName, uint16 Port, boolean AllowBlocki
    memcpy((char *)&Server.sin_addr.s_addr,(char *)Host->h_addr_list[0], Host->h_length);
    Server.sin_port = htons(Port);
    
-   OS_printf("***I42 NETIF***: Attempting to connect to Server %s on Port %d\n",HostName, Port);
+   CFE_EVS_SendEvent(NETIF_DEBUG_EID, CFE_EVS_DEBUG, "***I42 NETIF***: Attempting to connect to Server %s on Port %d\n",HostName, Port);
    if (connect(SocketFd,(struct sockaddr *) &Server, sizeof(Server)) < 0) {
       CFE_EVS_SendEvent(NETIF_CONNECT_ERR_EID,CFE_EVS_ERROR,
                         "Error connecting client socket: %s", strerror(errno));
       return(NetIf->Connected);
    }
-   OS_printf("***I42 NETIF***: Successfully connected to Server %s on Port %d\n",HostName, Port);
+   CFE_EVS_SendEvent(NETIF_DEBUG_EID, CFE_EVS_DEBUG, "***I42 NETIF***: Successfully connected to Server %s on Port %d\n",HostName, Port);
 
    /* Keep read() from waiting for message to come */
    if (!AllowBlocking) {

@@ -172,7 +172,7 @@ void SCHEDULER_ResetStatus()
 **
 ** Return a pointer to the MsgTbl working table buffer.
 */
-const MSGTBL_Struct* SCHEDULER_GetMsgTblPtr()
+const MSGTBL_Tbl* SCHEDULER_GetMsgTblPtr()
 {
 
    return &(Scheduler->MsgTbl);
@@ -190,10 +190,10 @@ const MSGTBL_Struct* SCHEDULER_GetMsgTblPtr()
 **   2. Function signature must match MSGTBL_LoadTbl
 **
 */
-boolean SCHEDULER_LoadMsgTbl(MSGTBL_Struct* NewTbl)
+boolean SCHEDULER_LoadMsgTbl(MSGTBL_Tbl* NewTbl)
 {
 
-   CFE_PSP_MemCpy(&(Scheduler->MsgTbl), NewTbl, sizeof(MSGTBL_Struct));       
+   CFE_PSP_MemCpy(&(Scheduler->MsgTbl), NewTbl, sizeof(MSGTBL_Tbl));       
 
    return TRUE;
 
@@ -225,7 +225,7 @@ boolean SCHEDULER_LoadMsgTblEntry(uint16 EntryId, MSGTBL_Entry* NewEntry)
 **
 ** Return a pointer to the SchTbl working table buffer.
 */
-const SCHTBL_Struct* SCHEDULER_GetSchTblPtr()
+const SCHTBL_Tbl* SCHEDULER_GetSchTblPtr()
 {
 
    return &(Scheduler->SchTbl);
@@ -243,10 +243,10 @@ const SCHTBL_Struct* SCHEDULER_GetSchTblPtr()
 **   2. Function signature must match SCHTBL_LoadTbl
 **
 */
-boolean SCHEDULER_LoadSchTbl(SCHTBL_Struct* NewTbl)
+boolean SCHEDULER_LoadSchTbl(SCHTBL_Tbl* NewTbl)
 {
 
-   CFE_PSP_MemCpy(&(Scheduler->SchTbl), NewTbl, sizeof(SCHTBL_Struct));       
+   CFE_PSP_MemCpy(&(Scheduler->SchTbl), NewTbl, sizeof(SCHTBL_Tbl));       
 
    return TRUE;
 
@@ -329,7 +329,7 @@ boolean SCHEDULER_Execute(void)
    if (Result == OS_SUCCESS)
    {
 
-      /* TODO - OS_printf("ProcessTable::OS_BinSemTake() success");*/
+      CFE_EVS_SendEvent(SCHEDULER_DEBUG_EID, CFE_EVS_DEBUG, "ProcessTable::OS_BinSemTake() success");
 
       if (Scheduler->IgnoreMajorFrame)
       {
@@ -351,7 +351,7 @@ boolean SCHEDULER_Execute(void)
       /* Compute the number of slots we need to process (watch for rollover) */
       if (CurrentSlot < Scheduler->NextSlotNumber)
       {
-         ProcessCount = SCHTBL_TOTAL_SLOTS - Scheduler->NextSlotNumber;
+         ProcessCount = SCHTBL_SLOTS - Scheduler->NextSlotNumber;
          ProcessCount += (CurrentSlot + 1);
       }
       else
@@ -359,7 +359,7 @@ boolean SCHEDULER_Execute(void)
          ProcessCount = (CurrentSlot - Scheduler->NextSlotNumber) + 1;
       }
 
-      /* CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "ProcessTable::CurrentSlot=%d, First ProcessCount=%d", CurrentSlot, ProcessCount); */
+      CFE_EVS_SendEvent(SCHEDULER_DEBUG_EID, CFE_EVS_DEBUG, "ProcessTable::CurrentSlot=%d, First ProcessCount=%d", CurrentSlot, ProcessCount);
 
       /*
       ** Correct for the following conditions observed when minor frame driven
@@ -387,14 +387,14 @@ boolean SCHEDULER_Execute(void)
          }
          Scheduler->LastProcessCount = 2;
       }
-      else if (ProcessCount == SCHTBL_TOTAL_SLOTS)
+      else if (ProcessCount == SCHTBL_SLOTS)
       {
          /* Same as previous comment except in reverse order. */
-         if (Scheduler->LastProcessCount != SCHTBL_TOTAL_SLOTS)
+         if (Scheduler->LastProcessCount != SCHTBL_SLOTS)
          {
             ProcessCount = 1;
          }
-         Scheduler->LastProcessCount = SCHTBL_TOTAL_SLOTS;
+         Scheduler->LastProcessCount = SCHTBL_SLOTS;
       }
       else
       {
@@ -404,7 +404,7 @@ boolean SCHEDULER_Execute(void)
       /*
       ** If current slot = next slot - 1, assume current slot did not increment
       */
-      if (ProcessCount == SCHTBL_TOTAL_SLOTS)
+      if (ProcessCount == SCHTBL_SLOTS)
       {
          Scheduler->SameSlotCount++;
 
@@ -472,7 +472,7 @@ boolean SCHEDULER_Execute(void)
 
       } /* End if ProcessCount > 1) */
 
-      /* TODO - OS_printf("ProcessTable::Final ProcessCount=%d", ProcessCount);*/
+      CFE_EVS_SendEvent(SCHEDULER_DEBUG_EID, CFE_EVS_DEBUG, "ProcessTable::Final ProcessCount=%d", ProcessCount);
       /* Process the slots (most often this will be just one) */
       while ((ProcessCount != 0) && (Result == CFE_SUCCESS))
       {
@@ -496,9 +496,10 @@ void MajorFrameCallback(void)
     /*
     ** Synchronize slot zero to the external tone signal
     */
+    
     uint16 StateFlags;
 
-    /* OS_printf("MajorFrameCallback()\n"); */
+    CFE_EVS_SendEvent(SCHEDULER_DEBUG_EID, CFE_EVS_DEBUG, "MajorFrameCallback()\n");
     
     /*
     ** If cFE TIME is in FLYWHEEL mode, then ignore all synchronization signals
@@ -523,8 +524,7 @@ void MajorFrameCallback(void)
              (Scheduler->MinorFramesSinceTone != SCHEDULER_TIME_SYNC_SLOT)) ||
             ((Scheduler->SyncToMET == SCHEDULER_SYNCH_TO_MINOR) &&
              (Scheduler->NextSlotNumber != 0) &&
-             (Scheduler->NextSlotNumber <
-              (SCHTBL_TOTAL_SLOTS - Scheduler->WorstCaseSlotsPerMinorFrame - 1))))
+             (Scheduler->NextSlotNumber < (SCHTBL_SLOTS - Scheduler->WorstCaseSlotsPerMinorFrame - 1))))
         {
             /*
             ** Count the number of consecutive noisy major frames and the Total number
@@ -616,7 +616,7 @@ void MinorFrameCallback(uint32 TimerId)
     uint32  CurrentSlot;
 
 
-    /* OS_printf("MinorFrameCallback()\n"); */
+    CFE_EVS_SendEvent(SCHEDULER_DEBUG_EID, CFE_EVS_DEBUG, "MinorFrameCallback()\n");
     
     /*
     ** If this is the very first timer interrupt, then the initial
@@ -668,7 +668,7 @@ void MinorFrameCallback(uint32 TimerId)
         Scheduler->MinorFramesSinceTone++;
     }
 
-    if (Scheduler->MinorFramesSinceTone >= SCHTBL_TOTAL_SLOTS)
+    if (Scheduler->MinorFramesSinceTone >= SCHTBL_SLOTS)
     {
         /*
         ** If we just rolled over from the last slot to slot zero,
@@ -723,25 +723,26 @@ boolean SCHEDULER_ConfigSchEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgP
    const   SCHEDULER_ConfigSchCmd *ConfigSchEntryCmd = (const SCHEDULER_ConfigSchCmd *) MsgPtr;
    uint16  entry;
    
-   if (ConfigSchEntryCmd->Slot < SCHTBL_TOTAL_SLOTS)
-   {
+   if (ConfigSchEntryCmd->Slot < SCHTBL_SLOTS) {
 
-      if (ConfigSchEntryCmd->EntryInSlot < SCHTBL_ENTRIES_PER_SLOT)
-      {
+      if (ConfigSchEntryCmd->EntryInSlot < SCHTBL_ACTIVITIES_PER_SLOT) {
+         
          entry = SCHTBL_INDEX(ConfigSchEntryCmd->Slot, ConfigSchEntryCmd->EntryInSlot);
          Scheduler->SchTbl.Entry[entry].Enabled = ConfigSchEntryCmd->ConfigFlag;
       }
-      else
-      {
-         CFE_EVS_SendEvent (666, CFE_EVS_ERROR, "Configure command error. Invalid entry %d greater than max %d",
-                            ConfigSchEntryCmd->EntryInSlot,SCHTBL_ENTRIES_PER_SLOT);
+      else {
+         
+         CFE_EVS_SendEvent (SCHEDULER_CONFIG_CMD_ENTRY_ERR_EID, CFE_EVS_ERROR, 
+                            "Configure command error. Invalid entry %d greater than max %d",
+                            ConfigSchEntryCmd->EntryInSlot,SCHTBL_ACTIVITIES_PER_SLOT);
       }
 
    } /* End if valid slot ID */
-   else
-   {
-      CFE_EVS_SendEvent (666, CFE_EVS_ERROR, "Configure command error. Invalid slot %d greater than max %d",
-                         ConfigSchEntryCmd->Slot,SCHTBL_TOTAL_SLOTS);
+   else {
+      
+      CFE_EVS_SendEvent (SCHEDULER_CONFIG_CMD_SLOT_ERR_EID, CFE_EVS_ERROR, 
+                         "Configure command error. Invalid slot %d greater than max %d",
+                         ConfigSchEntryCmd->Slot,SCHTBL_SLOTS);
 
    } /* End if invalid slot ID */
 
@@ -787,7 +788,7 @@ static uint32 GetCurrentSlotNumber(void)
         */
         if (CurrentSlot < Scheduler->LastSyncMETSlot)
         {
-            CurrentSlot = CurrentSlot + SCHTBL_TOTAL_SLOTS - Scheduler->LastSyncMETSlot;
+            CurrentSlot = CurrentSlot + SCHTBL_SLOTS - Scheduler->LastSyncMETSlot;
         }
         else
         {
@@ -844,7 +845,7 @@ static uint32 GetMETSlotNumber(void)
     /*
     ** Check to see if the Current Slot number needs to roll over
     */
-    if (METSlot == SCHTBL_TOTAL_SLOTS)
+    if (METSlot == SCHTBL_SLOTS)
     {
         METSlot = 0;
     }
@@ -861,72 +862,81 @@ static uint32 GetMETSlotNumber(void)
 */
 static int32 ProcessNextSlot(void)
 {
-    int32  Result = CFE_SUCCESS; /* TODO - Fix after resolve ground command processing */
-    int32  EntryNumber;
-    int32  SlotIndex;
-    uint32 Remainder;
-    SCHTBL_Entry *NextEntry;
+    
+   int32  Result = CFE_SUCCESS; /* TODO - Fix after resolve ground command processing */
+   int32  EntryNumber;
+   int32  SlotIndex;
+   uint32 Remainder;
+   SCHTBL_Entry *NextEntry;
+   uint16 *MsgPtr;
+   int32  MsgSendStatus;
 
-    SlotIndex = Scheduler->NextSlotNumber * SCHTBL_ENTRIES_PER_SLOT;
-    NextEntry = &Scheduler->SchTbl.Entry[SlotIndex];
+   SlotIndex = Scheduler->NextSlotNumber * SCHTBL_ACTIVITIES_PER_SLOT;
+   NextEntry = &Scheduler->SchTbl.Entry[SlotIndex];
 
-    /* Process each enabled entry in the schedule table slot */
-    for (EntryNumber = 0; EntryNumber < SCHTBL_ENTRIES_PER_SLOT; EntryNumber++)
-    {
-        if (NextEntry->Enabled == TRUE)
-        {
+   /* Process each enabled entry in the schedule table slot */
+   for (EntryNumber = 0; EntryNumber < SCHTBL_ACTIVITIES_PER_SLOT; EntryNumber++) {
+      
+      if (NextEntry->Enabled == TRUE) {
 
-           Remainder = Scheduler->TablePassCount % NextEntry->Frequency;
+         Remainder = Scheduler->TablePassCount % NextEntry->Frequency;
 
-           if (Remainder == NextEntry->Offset)
-           {
+         if (Remainder == NextEntry->Offset) {
 
-              
-               /* CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_INFORMATION,"Processed scheduler table slot %d, entry %d, msgid %d", Scheduler->NextSlotNumber, EntryNumber, NextEntry->MsgTblEntryId); */
+            CFE_EVS_SendEvent(SCHEDULER_DEBUG_EID, CFE_EVS_DEBUG,"Scheduler ProcessNextSlot(): slot %d, entry %d, msgid %d", Scheduler->NextSlotNumber, EntryNumber, NextEntry->MsgTblEntryId);
+             
+            MsgSendStatus = CFE_SB_NO_MESSAGE;  /* use any non-success error code */
+            if (MSGTBL_GetMsgPtr(NextEntry->MsgTblEntryId, &MsgPtr)) {
                
-               if (MSGTBL_SendMsg(NextEntry->MsgTblEntryId))
-               {
-                  Scheduler->ScheduleActivitySuccessCount++;
-               }
-               else
-               {
-                  NextEntry->Enabled = FALSE;
-                  Scheduler->ScheduleActivityFailureCount++;
+               MsgSendStatus = CFE_SB_SendMsg((CFE_SB_Msg_t *)MsgPtr);
 
-                  CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_ERROR,
-                                    "Activity error: slot = %d, entry = %d, err = 0x%08X",
-                                    Scheduler->NextSlotNumber, EntryNumber, Result);
-               }
-           } /* End if offset met */
+            } /* End if got msg ptr */ 
 
-        } /* End if entry is enabled */
+            if (MsgSendStatus == CFE_SUCCESS) {
+               
+               Scheduler->ScheduleActivitySuccessCount++;
+            
+            }
+            else {
+                  
+               NextEntry->Enabled = FALSE;
+               Scheduler->ScheduleActivityFailureCount++;
 
-        NextEntry++;
+               CFE_EVS_SendEvent(SCHEDULER_PACKET_SEND_ERR_EID, CFE_EVS_ERROR,
+                                 "Activity error: slot = %d, entry = %d, err = 0x%08X",
+                                 Scheduler->NextSlotNumber, EntryNumber, MsgSendStatus);
+            
+            } /* End if msg send error */
+         
+         } /* End if offset met */
 
-    } /* Entries per slot loop */
+      } /* End if entry is enabled */
 
-    /*
-    ** Process ground commands in the slot reserved for time synch
-    ** Ground commands should only be processed at the end of the schedule table
-    ** so that Group Enable/Disable commands do not change the state of entries
-    ** in the middle of a schedule.
-    */
-    if (Scheduler->NextSlotNumber == SCHEDULER_TIME_SYNC_SLOT)
-    {
-        /* TODO - Move to app level Result = SCH_ProcessCommands(); */
-    }
+      NextEntry++;
 
-    Scheduler->NextSlotNumber++;
+   } /* Entries per slot loop */
 
-    if (Scheduler->NextSlotNumber == SCHTBL_TOTAL_SLOTS)
-    {
-       Scheduler->NextSlotNumber = 0;
-       Scheduler->TablePassCount++;
-    }
+   /*
+   ** Process ground commands in the slot reserved for time synch
+   ** Ground commands should only be processed at the end of the schedule table
+   ** so that Group Enable/Disable commands do not change the state of entries
+   ** in the middle of a schedule.
+   */
+   if (Scheduler->NextSlotNumber == SCHEDULER_TIME_SYNC_SLOT) {     
+      /* TODO - Move to app level Result = SCH_ProcessCommands(); */
+   }
 
-    Scheduler->SlotsProcessedCount++;
+   Scheduler->NextSlotNumber++;
 
-    return(Result);
+   if (Scheduler->NextSlotNumber == SCHTBL_SLOTS) {
+       
+      Scheduler->NextSlotNumber = 0;
+      Scheduler->TablePassCount++;
+   }
+
+   Scheduler->SlotsProcessedCount++;
+
+   return(Result);
 
 } /* End ProcessNextSlot() */
 

@@ -188,7 +188,7 @@ int UPLINK_Read(uint16 MaxMsgRead)
         {
             if (Status <= UPLINK_RECV_BUFF_LEN)
             {
-            	  /* OS_printf("UPLINK_Read: Read %d bytes from socket\n",Status); */
+            	 CFE_EVS_SendEvent(UPLINK_DEBUG_EID, CFE_EVS_DEBUG, "UPLINK_Read: Read %d bytes from socket\n",Status);
                 Uplink->RecvMsgCnt++;
                 if (Uplink->MsgTunnel.Enabled)
                 {
@@ -239,7 +239,8 @@ void UPLINK_ResetStatus()
 static void DestructorCallback(void)
 {
 
-   OS_printf("UPLINK deleting callback. Closing Network socket.\n");
+   CFE_EVS_SendEvent(UPLINK_DESTRUCTOR_INFO_EID, CFE_EVS_INFORMATION, "UPLINK deleting callback. Closing Network socket.\n");
+
    close(Uplink->SocketId);
 
 } /* End DestructorCallback() */
