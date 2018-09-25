@@ -16,7 +16,7 @@ announce "Installing OpenSatKit v$OPEN_SAT_KIT_VERSION in \"$OPEN_SAT_KIT_PATH\"
 confirm "Continue?" 1
 
 announce "Downloading archive zip file from \"https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz\""
-wget https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz
+wget -c https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz
 tar -xzf master.tar.gz
 rm master.tar.gz
 cd OpenSatKit-master
