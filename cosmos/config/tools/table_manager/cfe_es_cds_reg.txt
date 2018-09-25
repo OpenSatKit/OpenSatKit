@@ -1,0 +1,27 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "CFE_ES"
+  @CDS_MAX_NUM_ENTRIES = "CFE_ES_CDS_MAX_NUM_ENTRIES"
+  
+%>
+TABLE "CFE_ES CdsInfo" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Critical Data Store Info"
+  <%= Osk::Cfg.file_hdr %>
+
+  <% 
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @CDS_MAX_NUM_ENTRIES)
+    append_items = ""
+    for i in 0..9  # TODO - Defaults allows for 512 CDSs. Kept it small for demo. Also use CPU address size
+      append_items << "APPEND_PARAMETER \"CDS#{i}_HANDLE\"        32 UINT 0 MAX_UINT32 0  \"Starting address\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"CDS#{i}_SIZE\"          32 UINT 0 MAX_UINT32 0  \"Size in bytes\"" << "\n"
+      append_items << "APPEND_PARAMETER \"CDS#{i}_TABLE\"          8 UINT 0 MAX_UINT32 0  \"Boolean indicating whether a table\"" << "\n"
+      append_items << "   STATE FALSE   0" << "\n"
+      append_items << "   STATE TRUE    1" << "\n"
+      append_items << "APPEND_PARAMETER \"CDS#{i}_NAME\"         304 STRING \"UNDEF\"     \"Registered AppName.CdsName\"" << "\n"
+      append_items << "APPEND_PARAMETER \"CDS#{i}_SPARE\"          8 UINT 0 MAX_UINT8  0  \"Byte alignment\"" << "\n"
+    end
+  %>
+  <%= append_items %>
+  

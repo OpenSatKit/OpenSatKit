@@ -1,20 +1,40 @@
 {
    "tutorials": [
       {
-         "name":   "cFE",
+         "name":      "cFE",
          "directory": "cfe",
-         "button": "cFE",
-         "description": "Core Flight Executive",
-		 "user-prompt": "Select tutorial",
-         "lessons": ["ES","TBL"]
+         "button":    "cFE",
+         "description": "Exercises to explore Core Flight Executive features",
+         "user-prompt": "Select lesson",
+         "format"     : "SCRIPT",
+         "lessons": ["ES","EVS","SB","TBL","TIME"]
       },
       {
-         "name":   "Operational Applications",
+         "name":      "Developing with the cFS",
+         "directory": "dev_cfs",
+         "button":    "Dev cFS",
+         "description": "Hands on coding exercises for developing apps", 
+         "user-prompt": "Select lesson",
+         "format"     : "HTML",
+         "lessons": ["INTRO"]
+      },
+      {
+         "name":      "Operational Applications",
          "directory": "op_apps",
-         "button": "Op Apps",
+         "button":    "Op Apps",
          "description": "Apps that provide an operational runtime environment",		 
-         "user-prompt": "Select tutorial",
-	     "lessons": ["CI","SCH","TO","HK","SC","SBN"]
+         "user-prompt": "Select lesson",
+         "format"     : "SCRIPT",
+         "lessons": ["KIT_CI","KIT_SCH","KIT_TO"]
+      },
+      {
+         "name":      "Tutorial Guide",
+         "directory": "tutorial_guide",
+         "button":    "Tutor Guide",
+         "description": "Overview of tutorial framework",		 
+         "user-prompt": "Select lesson",
+         "format"     : "PDF",
+         "lessons": ["INTRO"]
       } 
    ]
 }

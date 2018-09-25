@@ -275,7 +275,7 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       **   has been loaded.      
       ** 
       **   "slot": {
-      **      "index": 4, 
+      **      "index": 4
       **   },   
       **      "activity": {
       **         "name":  "cFE ES Housekeeping",
@@ -284,22 +284,29 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       **         "enable": true,
       **         "frequency": 4,
       **         "offset": 0,
-      **         "msg-id": 0,
+      **         "msg-id": 0
       **      },
       */
       
       for (Slot=0; Slot < SCHTBL_SLOTS; Slot++) {
          
-         sprintf(DumpRecord,"\"slot\": {\n   \"index\": %d,\n},\n",Slot);
+         if (Slot==0)
+            sprintf(DumpRecord,"\"slot\": {\n   \"index\": %d\n},\n",Slot);
+         else
+            sprintf(DumpRecord,",\n\"slot\": {\n   \"index\": %d\n},\n",Slot);
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
          
          for (Activity=0; Activity < SCHTBL_ACTIVITIES_PER_SLOT; Activity++) {
             
             EntryIdx = Slot * SCHTBL_ACTIVITIES_PER_SLOT + Activity;
 
-            sprintf(DumpRecord,"\"activity\": {\n");
+            if (Activity==0)
+               sprintf(DumpRecord,"\"activity\": {\n");
+            else
+               sprintf(DumpRecord,",\n\"activity\": {\n");
+               
             OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-            sprintf(DumpRecord,"   \"index\": %d,\n   \"enable\": \"%s\",\n   \"frequency\": %d,\n    \"offset\": %d,\n    \"msg-id\": %d\n},\n",
+            sprintf(DumpRecord,"   \"index\": %d,\n   \"enable\": \"%s\",\n   \"frequency\": %d,\n    \"offset\": %d,\n    \"msg-id\": %d\n}",
                  Activity,
                  JSON_GetBoolStr(SchTblPtr->Entry[EntryIdx].Enabled),
                  SchTblPtr->Entry[EntryIdx].Frequency,
@@ -312,7 +319,7 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       } /* End slot loop */
  
  
-      sprintf(DumpRecord,"}\n");
+      sprintf(DumpRecord,"\n}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       RetStatus = TRUE;

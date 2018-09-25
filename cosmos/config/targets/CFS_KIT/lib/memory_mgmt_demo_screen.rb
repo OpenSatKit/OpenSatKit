@@ -231,6 +231,7 @@ def memory_mgmt_demo(screen, button)
                Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.md.send_cmd("SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'Memory Management Demo'")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
                Osk::flight.md.send_cmd("START_DWELL with TABLE_MASK 0x0001")

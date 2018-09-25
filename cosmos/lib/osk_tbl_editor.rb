@@ -273,8 +273,8 @@ module Cosmos
       type_menu.addActions(@type_group.actions)
 
       # Actions Menu
-      actions_menu = menuBar.addMenu(tr('&Actions'))
-      actions_menu.addAction(@create_target)
+      #dcm actions_menu = menuBar.addMenu(tr('&Actions'))
+      #dcm actions_menu.addAction(@create_target)
 
       # Help Menu
       @about_string = "OSK table editor allows the user to edit OSK JSON tables "\
@@ -289,8 +289,8 @@ module Cosmos
 
       @fs_model = Qt::FileSystemModel.new
       #dcm @fs_model.setRootPath(Cosmos::USERPATH)
-	  @fs_path = File.expand_path(REL_DIR_CFS,Cosmos::USERPATH)
-	  @fs_model.setRootPath(@fs_path)
+      @fs_path = File.expand_path(Osk::REL_TUTORIAL_DIR,Cosmos::USERPATH)
+      @fs_model.setRootPath(@fs_path)
       @tree_view = MyTreeView.new(@splitter)
       @tree_view.setModel(@fs_model)
       @tree_view.setRootIndex(@fs_model.index(@fs_path))

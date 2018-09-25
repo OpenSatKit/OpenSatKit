@@ -35,7 +35,7 @@ COMMAND KIT_TO ADD_PKT <%= Osk::Cfg.processor_endian %> "Add an individual packe
   
 COMMAND KIT_TO REMOVE_PKT <%= Osk::Cfg.processor_endian %> "Remove all packets"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
-  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "CCSDS Packet Sequence Control"
 
 COMMAND KIT_TO REMOVE_ALL_PKTS <%= Osk::Cfg.processor_endian %> "Remove all packets"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>

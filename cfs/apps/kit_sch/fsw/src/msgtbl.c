@@ -280,10 +280,20 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       for (i=0; i < MSGTBL_MAX_ENTRIES; i++) {
-      
-         sprintf(DumpRecord,"\"message\": {\n");
+         /* 
+         ** JSMN accepted the message keyword in an array but ruby JSON doesn't.
+         ** I think JSMN is wrong
+         if (i==0) 
+            sprintf(DumpRecord,"\"message\": {\n");
+         else
+            sprintf(DumpRecord,",\n\"message\": {\n");
+         */
+         if (i==0) 
+            sprintf(DumpRecord,"{\n");
+         else
+            sprintf(DumpRecord,",\n{\n");
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-         sprintf(DumpRecord,"   \"id\": %d,\n   \"stream-id\": %d,\n   \"seq-seg\": %d,\n   \"length\": %d,\n",
+         sprintf(DumpRecord,"   \"id\": %d,\n   \"stream-id\": %d,\n   \"seq-seg\": %d,\n   \"length\": %d",
                  i,
                  MsgTblPtr->Entry[i].Buffer[0],
                  MsgTblPtr->Entry[i].Buffer[1],
@@ -303,16 +313,17 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
             /* 
             ** Omit "data-bytes" property if no data
+            ** - Properly terminate 'length' line 
             */
             if (DataBytes > 0) {
          
-               sprintf(DumpRecord,"   \"data-bytes\": \"");         
+               sprintf(DumpRecord,",\n   \"data-bytes\": \"");         
                OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
                   
                for (d=0; d < DataBytes; d++) {
                   
                   if (d == (DataBytes-1)) {
-                     sprintf(DumpRecord,"%d\"\n   },\n",MsgTblPtr->Entry[i].Buffer[3+d]);
+                     sprintf(DumpRecord,"%d\"\n   }",MsgTblPtr->Entry[i].Buffer[3+d]);
                   }
                   else {
                      sprintf(DumpRecord,"%d,",MsgTblPtr->Entry[i].Buffer[3+d]);
@@ -322,12 +333,15 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
                } /* End DataByte loop */
                            
             } /* End if non-zero data bytes */
-
+            else {
+               sprintf(DumpRecord,"\n}");         
+               OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+            }
          } /* End if DataBytes within range */
 
       } /* End message loop */
 
-      sprintf(DumpRecord,"]\n}\n");
+      sprintf(DumpRecord,"\n]}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       RetStatus = TRUE;

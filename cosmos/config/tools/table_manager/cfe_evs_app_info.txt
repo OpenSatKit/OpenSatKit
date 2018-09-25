@@ -14,7 +14,7 @@ TABLE "CFE_EVS AppInfo" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "App In
     max_apps    = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_APPLICATIONS)
     max_filters = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_EVENT_FILTERS)
     append_items = ""
-    for i in 1..max_apps
+    for i in 0..(max_apps-1)
       append_items << "APPEND_PARAMETER \"APP#{i}_NAME\"           160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
       append_items << "APPEND_PARAMETER \"APP#{i}_ENABLED\"          8 UINT 0 MAX_UINT8  0  \"Are events enabled for this app?\"" << "\n"
       append_items << "   STATE FALSE   0" << "\n"

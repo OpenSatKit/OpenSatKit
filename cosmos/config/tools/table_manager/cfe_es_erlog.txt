@@ -16,7 +16,7 @@ TABLE "CFE_ES ErLog" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Exceptio
     #context_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @ER_LOG_MAX_CONTEXT_SIZE) / 4
     context_entries = 32
     append_items = ""
-    for i in 1..max_entries
+    for i in 0..(max_entries-1)
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_TYPE\"             32 UINT 0 MAX_UINT32 0  \"Power on, processor, app\"" << "\n"
          append_items << "   STATE PROCESSOR    1" << "\n"
          append_items << "   STATE POWER_ON     2" << "\n"

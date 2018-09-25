@@ -12,7 +12,7 @@ TABLE "CFE_ES TaskInfo" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Task I
   <% 
     max_tasks = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_TASKS)
     append_items = ""
-    for i in 1..max_tasks
+    for i in 0..(max_tasks-1)
       append_items << "APPEND_PARAMETER \"TASK#{i}_ID\"            32 UINT 0 MAX_UINT32 0  \"ID assigned by ES when created\"" << "\n"
       append_items << "APPEND_PARAMETER \"TASK#{i}_EXECUTION_CTR\" 32 UINT 0 MAX_UINT32 0  \"Execution counter\"" << "\n"
       append_items << "APPEND_PARAMETER \"TASK#{i}_NAME\"         160 STRING \"UNDEF\"     \"Registered task Name\"" << "\n"

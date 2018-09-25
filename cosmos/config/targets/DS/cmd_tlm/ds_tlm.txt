@@ -33,7 +33,7 @@ TELEMETRY DS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "DS application houseke
   APPEND_ITEM FILTER_TBL_FILENAME  <%= Osk::Cfg.get_fsw_cfg_str_param(@APP_PREFIX_STR, @DS_TOTAL_FNAME_BUFSIZE)*8 %> STRING "Name of filter table file"
   
 
-TELEMETRY DS FILE_INFO_PKT LITTLE_ENDIAN "DS application file info packet"
+TELEMETRY DS FILE_INFO_PKT <%= Osk::Cfg.processor_endian %> "DS application file info packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIAG_TLM_MID_STR) %>
   <%
     append_items = ""

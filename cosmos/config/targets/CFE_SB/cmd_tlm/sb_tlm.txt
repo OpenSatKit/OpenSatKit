@@ -30,7 +30,7 @@ TELEMETRY CFE_SB HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Software Bus task 
   APPEND_ITEM MEM_IN_USE         32 UINT "Memory in use."
   APPEND_ITEM UNMARKED_MEM       32 UINT "cfg param CFE_SB_BUF_MEMORY_BYTES minus Peak Memory in use"
 
-# TODO - CFE_SB PREV_SUBSCRIBE_TLM_PKT  fix bitfield for LITTLE_ENDIAN
+# TODO - CFE_SB PREV_SUBSCRIBE_TLM_PKT  fix bitfield for LITTLE_ENDIAN. Need to keep BIG_ENDIAN until fixed.
 TELEMETRY CFE_SB PREV_SUBSCRIBE_TLM_PKT BIG_ENDIAN "SB Previous Subscriptions Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @ALLSUBS_TLM_MID_STR) %>
   APPEND_ITEM PKT_SEGMENT    32 UINT "Pkt number(starts at 1) in the series."
@@ -38,8 +38,8 @@ TELEMETRY CFE_SB PREV_SUBSCRIBE_TLM_PKT BIG_ENDIAN "SB Previous Subscriptions Pa
   APPEND_ITEM ENTRIES        32 UINT "Number of entries in the pkt."
   APPEND_ARRAY_ITEM ENTRY 40 UINT 800 "Array of CFE_SB_SubEntries_t entries."
 
-# TODO - CFE_SB STATISTICS_TLM_PKT fix bitfield for LITTLE_ENDIAN
-TELEMETRY CFE_SB STATISTICS_TLM_PKT <%= Osk::Cfg.processor_endian %> "SB Statistics Telemetry Packet"
+# TODO - CFE_SB STATISTICS_TLM_PKT fix bitfield for LITTLE_ENDIAN. Need to keep BIG_ENDIAN until fixed.
+TELEMETRY CFE_SB STATS_TLM_PKT <%= Osk::Cfg.processor_endian %> "SB Statistics Telemetry Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @STATS_TLM_MID_STR) %>
   APPEND_ITEM MSG_IDS_IN_USE            32 UINT "Current number of MsgIds with a destination."
   APPEND_ITEM PEAK_MSG_IDS_IN_USE       32 UINT "Peak number of MsgIds with a destination."
@@ -56,7 +56,19 @@ TELEMETRY CFE_SB STATISTICS_TLM_PKT <%= Osk::Cfg.processor_endian %> "SB Statist
   APPEND_ITEM SB_BUFFERS_IN_USE         32 UINT "Number of SB message buffers currently in use."
   APPEND_ITEM PEAK_SB_BUFFERS_IN_USE    32 UINT "Max number of SB message buffers in use."
   APPEND_ITEM MAX_PIPE_DEPTH_ALLOWED    32 UINT "cFE Cfg Param CFE_SB_MAX_PIPE_DEPTH"
-  APPEND_ARRAY_ITEM PIPE_DEPTH_STATS    64 UINT 192 "Pipe Depth Statistics CFE_SB_PipeDepthStats_t."
+  <% 
+    max_pipes = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "CFE_SB_MAX_PIPES")
+    append_items = ""
+    for i in 0..(max_pipes-1)
+      append_items << "APPEND_ITEM \"PIPE#{i}_ID\"            8 UINT  \"Pipe Identfier\"" << "\n"
+      append_items << "APPEND_ITEM \"PIPE#{i}_SPARE\"         8 UINT  \"Spare for byte alignment\"" << "\n"
+      append_items << "APPEND_ITEM \"PIPE#{i}_DEPTH\"        16 UINT  \"Max messages in pipe\"" << "\n"
+      append_items << "APPEND_ITEM \"PIPE#{i}_IN_USE\"       16 UINT  \"Current messages in pipe\"" << "\n"
+      append_items << "APPEND_ITEM \"PIPE#{i}_PEAK_IN_USE\"  16 UINT  \"Peak # of messages in pipe\"" << "\n"
+    end
+  %>
+  <%= append_items %>
+  
 
 # TODO - CFE_SB SUBSCRIBE_REPORT_TLM_PKT not verified
 TELEMETRY CFE_SB SUBSCRIBE_REPORT_TLM_PKT <%= Osk::Cfg.processor_endian %> "SB Subscription Report Packet"
