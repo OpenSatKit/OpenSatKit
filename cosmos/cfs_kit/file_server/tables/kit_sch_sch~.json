@@ -1,0 +1,370 @@
+
+{
+"name": "Kit Scheduler (KIT_SCH) Scheduler Activity Table",
+"description": "KIT_SCH dump at 1980-012-14:06:41.40253",
+"slot": {
+   "index": 0
+},
+"activity": {
+   "index": 0,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 0
+},
+"activity": {
+   "index": 1,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 1
+},
+"activity": {
+   "index": 2,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 2
+},
+"activity": {
+   "index": 3,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 3
+},
+"activity": {
+   "index": 4,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 4
+},
+"activity": {
+   "index": 5,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 6,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 7,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 8,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 9,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"slot": {
+   "index": 1
+},
+"activity": {
+   "index": 0,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 10
+},
+"activity": {
+   "index": 1,
+   "enable": "true",
+   "frequency": 2,
+    "offset": 0,
+    "msg-id": 11
+},
+"activity": {
+   "index": 2,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 12
+},
+"activity": {
+   "index": 3,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 13
+},
+"activity": {
+   "index": 4,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 1,
+    "msg-id": 14
+},
+"activity": {
+   "index": 5,
+   "enable": "true",
+   "frequency": 2,
+    "offset": 1,
+    "msg-id": 15
+},
+"activity": {
+   "index": 6,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 2,
+    "msg-id": 16
+},
+"activity": {
+   "index": 7,
+   "enable": "true",
+   "frequency": 1,
+    "offset": 2,
+    "msg-id": 17
+},
+"activity": {
+   "index": 8,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 9,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"slot": {
+   "index": 2
+},
+"activity": {
+   "index": 0,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 18
+},
+"activity": {
+   "index": 1,
+   "enable": "true",
+   "frequency": 1,
+    "offset": 0,
+    "msg-id": 19
+},
+"activity": {
+   "index": 2,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 20
+},
+"activity": {
+   "index": 3,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 1,
+    "msg-id": 21
+},
+"activity": {
+   "index": 4,
+   "enable": "true",
+   "frequency": 1,
+    "offset": 1,
+    "msg-id": 22
+},
+"activity": {
+   "index": 5,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 6,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 7,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 8,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 9,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"slot": {
+   "index": 3
+},
+"activity": {
+   "index": 0,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 30
+},
+"activity": {
+   "index": 1,
+   "enable": "true",
+   "frequency": 2,
+    "offset": 0,
+    "msg-id": 31
+},
+"activity": {
+   "index": 2,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 32
+},
+"activity": {
+   "index": 3,
+   "enable": "true",
+   "frequency": 10,
+    "offset": 0,
+    "msg-id": 33
+},
+"activity": {
+   "index": 4,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 34
+},
+"activity": {
+   "index": 5,
+   "enable": "true",
+   "frequency": 1,
+    "offset": 0,
+    "msg-id": 35
+},
+"activity": {
+   "index": 6,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 40
+},
+"activity": {
+   "index": 7,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 41
+},
+"activity": {
+   "index": 8,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 9,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"slot": {
+   "index": 4
+},
+"activity": {
+   "index": 0,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 36
+},
+"activity": {
+   "index": 1,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 37
+},
+"activity": {
+   "index": 2,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 38
+},
+"activity": {
+   "index": 3,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 39
+},
+"activity": {
+   "index": 4,
+   "enable": "true",
+   "frequency": 4,
+    "offset": 0,
+    "msg-id": 100
+},
+"activity": {
+   "index": 5,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 6,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 7,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 8,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+},
+"activity": {
+   "index": 9,
+   "enable": "false",
+   "frequency": 0,
+    "offset": 0,
+    "msg-id": 200
+}
+}

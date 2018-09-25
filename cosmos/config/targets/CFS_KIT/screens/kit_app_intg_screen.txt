@@ -1,0 +1,43 @@
+###############################################################################
+# Kit Application Integration Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Kit Application Integration"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICAL
+
+  #SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+  CANVAS 1400 500
+    CANVASIMAGE "osk_app_Context.png" 20 0
+  END
+  
+  MATRIXBYCOLUMNS 3 10 20
+    
+    BUTTON 'Config Editor'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/kit_app_intg_screen.rb"; kit_app_intg(self, "CONFIG_EDITOR")'
+    LABEL "Load targets: config/tools/cmd_tlm_server/cmd_tlm_server.txt. Edit targets: config/targets/*"
+    LABEL "                                                                               "
+ 
+    BUTTON 'CFG SCH Entry'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/kit_app_intg_screen.rb"; kit_app_intg(self, "SCH_CFG_ENTRY")'
+    BUTTON 'Dmp SCH Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/kit_app_intg_screen.rb"; kit_app_intg(self, "SCH_SUM_FILE")'
+    LABEL "                                                                               "
+    
+    BUTTON 'Add TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/kit_app_intg_screen.rb"; kit_app_intg(self, "TO_ADD_PKT")'
+    BUTTON 'Rem TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/kit_app_intg_screen.rb"; kit_app_intg(self, "TO_REMOVE_PKT")'
+    LABEL "                                                                               "
+  
+  END
+  SPACER 50 0 EXPANDING FIXED 
+
+END # Vertical

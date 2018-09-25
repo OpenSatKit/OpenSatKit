@@ -27,10 +27,10 @@ VERTICAL
         MATRIXBYCOLUMNS 3
           BUTTON 'Enable Telemetry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TO_ENA_TELEMETRY")'
           BUTTON 'Reset Time' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TIME_SET_CLOCK_ZERO")'
-          BUTTON 'App Summary' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
-          BUTTON 'cFE Services' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
-          BUTTON 'cFE Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_USERS_GUIDE")'
           BUTTON 'Set Cmd Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SET_CMD_VALIDATE")'
+          BUTTON 'App Sum Pages' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
+          BUTTON 'cFE Services' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
+          BUTTON 'Kit App Integration' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "KIT_APP_INTG")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # Box      
@@ -182,30 +182,51 @@ VERTICAL
 
 #######################################################
 
-    TABITEM "Tutorials"
+    TABITEM "Docs"
  
       VERTICALBOX "" 5
  
         HORIZONTAL 10
-          BUTTON 'Tutorials' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TUTORIAL")'
+          BUTTON 'OSK Tour' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "OSK_TOUR")'
           SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Launch window to access script-based tutorials"
+          LABEL "Quick tour of OpenSatKit's features"
           SPACER 50 0 MINIMUMEXPANDING FIXED          
         END # Horizontal
- 
+
         HORIZONTAL 10
-          BUTTON 'Update' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "UPDATE_TUTORIAL")'
+          BUTTON 'OSK UG' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "OSK_UG")'
           SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Update tutorials using the osk_tutorials.json definition file"
+          LABEL "OSk USer's Guide"
           SPACER 50 0 MINIMUMEXPANDING FIXED          
         END # Horizontal
-      
+
         HORIZONTAL 10
           BUTTON 'cFE Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_USERS_GUIDE")'
           SPACER 20 0 MAXIMUM FIXED          
           LABEL "Display the cFE HTML User's Guide in a web browser"
           SPACER 50 0 MINIMUMEXPANDING FIXED          
         END # Horizontal
+
+        HORIZONTAL 10
+          BUTTON 'Tutorials' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TUTORIAL")'
+          SPACER 20 0 MAXIMUM FIXED          
+          LABEL "Launch window to access tutorials"
+          SPACER 50 0 MINIMUMEXPANDING FIXED          
+        END # Horizontal
+ 
+        HORIZONTAL 10
+          BUTTON 'Update' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "UPDATE_TUTORIAL")'
+          SPACER 20 0 MAXIMUM FIXED          
+          LABEL "Update tutorials using the <i>osk_tutorials.json</i> definition file"
+          SPACER 50 0 MINIMUMEXPANDING FIXED          
+        END # Horizontal
+      
+        #HORIZONTAL 10
+        #  BUTTON 'Proto' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PROTO_APP")'
+        #  SPACER 20 0 MAXIMUM FIXED          
+        #  LABEL "Prototype a new feature"
+        #  SPACER 50 0 MINIMUMEXPANDING FIXED          
+        #END # Horizontal
 
       END # Vertical Box
 

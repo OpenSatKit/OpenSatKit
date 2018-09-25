@@ -413,6 +413,12 @@ module Cosmos
         "specific help will appear in this pane. TODO: If the configuration file type "\
         "can't be automatically detected (or is detected incorrectly) you can manually "\
         "set the configuration file type with the File Type menu.")
+      description = Qt::Label.new("<h2>Introduction</h2>"\
+        "<p>This is the training guide for CFS-101 self-guided tutorial.</p>"\
+        "<ol>"\
+        "<li><p>be commanded from a ground system</p></li>"\
+        "<li><p>provide input data to the system</p></li>"\
+        "</ol>")
       description.setFont(Cosmos.getFont("Arial", 12))
       description.setWordWrap(true)
       @gui_layout.addWidget(description)

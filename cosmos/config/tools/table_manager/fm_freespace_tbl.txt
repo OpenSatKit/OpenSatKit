@@ -1,0 +1,24 @@
+<% 
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "FM"
+  @TABLE_CFE_NAME_STR = "FM_TABLE_CFE_NAME"
+  @TABLE_ENTRY_COUNT  = "FM_TABLE_ENTRY_COUNT"
+
+%>  
+TABLE "FM FreeSpace" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "File system status"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @TABLE_CFE_NAME_STR) %>
+
+  <%
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @TABLE_ENTRY_COUNT)
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_STATE\" 32 UINT 0 4294967295 0 \"Unused, Enabled, Disabled\"" << "\n"
+      append_items << "   STATE UNUSED   0" << "\n"
+      append_items << "   STATE ENABLED  1" << "\n"
+      append_items << "   STATE DISABLED 2" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_NAME\" 512 STRING \"UNDEF\"  \"Name of file system\"" << "\n"
+    end
+  %>
+  <%= append_items %>
+  

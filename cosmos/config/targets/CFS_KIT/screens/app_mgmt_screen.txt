@@ -16,7 +16,7 @@ TITLE "App Management"
 
   HORIZONTALBOX
     VERTICALBOX
-      BUTTON 'App Summary' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "APP_SUMMARY")'
+      BUTTON 'App Sum Pages' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "APP_SUMMARY")'
       BUTTON 'App/Task Registry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_APP_TASK_INFO")'
       BUTTON 'Enable App Events' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "EVS_ENA_APP_EVENT_TYPE")'
       BUTTON 'Disable App Events' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "EVS_DIS_APP_EVENT_TYPE")'
@@ -30,7 +30,7 @@ TITLE "App Management"
       BUTTON 'Get App Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_send_cmd(self, "ES_SEND_APP_INFO")'
       HORIZONTALLINE
       #BUTTON 'Start Eclipse' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "Eclipse")'
-      BUTTON 'Create App Tool' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "AppGen")'
+      BUTTON 'Create App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_mgmt_screen.rb"; app_mgmt_launch_app(self, "CREATE_APP")'
     END 
     VERTICAL
       VERTICALBOX "Executive Service Status"

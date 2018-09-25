@@ -1,6 +1,7 @@
 USER_MODIFIED
 "lib/ccsds.rb" 0xC4C58068
 "lib/cfe_file.rb" 0xFBF090FA
+"lib/cfs_fcx_cmdgen.rb" 0x41F95390
 "lib/config_editor.rb" 0x4A68E1AB
 "lib/config_editor_frame.rb" 0x68487058
 "lib/evs_msg_viewer.rb" 0x8995F3B0
@@ -12,12 +13,12 @@ USER_MODIFIED
 "lib/hw_target.rb" 0xF54C1CC2
 "lib/OskTblEditor" 0x8F182FA3
 "lib/osk_config.rb" 0x390E6845
-"lib/osk_flight.rb" 0x82EA3103
-"lib/osk_global.rb" 0xDBA93CE0
+"lib/osk_flight.rb" 0x1690DED9
+"lib/osk_global.rb" 0xEF74CB72
 "lib/osk_ops.rb" 0x9DF4DB36
 "lib/osk_system.rb" 0x79458449
-"lib/osk_tbl_editor.rb" 0xCF705885
-"lib/osk_tbl_editor_frame.rb" 0x381E3C82
+"lib/osk_tbl_editor.rb" 0x101F3E56
+"lib/osk_tbl_editor_frame.rb" 0xB9D0D14C
 "lib/sb_route.dat" 0x2D72CB4D
 "lib/sb_route.txt" 0xECE4F136
 "lib/sb_route_util.rb" 0x2F0C6865
@@ -56,7 +57,7 @@ USER_MODIFIED
 "config/targets/CFS_KIT/lib/bm_utility.rb" 0x6E2E86D7
 "config/targets/CFS_KIT/lib/cfe_file.rb" 0xAF5427A9
 "config/targets/CFS_KIT/lib/cfe_screen.rb" 0xA7B738DB
-"config/targets/CFS_KIT/lib/cfs_kit_screen.rb" 0x35B172B2
+"config/targets/CFS_KIT/lib/cfs_kit_screen.rb" 0x8FCBBB51
 "config/targets/CFS_KIT/lib/file_mgmt_demo_screen.rb" 0xBC3A274C
 "config/targets/CFS_KIT/lib/file_mgmt_screen.rb" 0x8669BAEE
 "config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb" 0xE647EEFD
@@ -70,7 +71,7 @@ USER_MODIFIED
 "config/targets/CFS_KIT/lib/sb_route.dat" 0x2D72CB4D
 "config/targets/CFS_KIT/lib/sb_route.txt" 0xECE4F136
 "config/targets/CFS_KIT/lib/sb_route_util.rb" 0xC9A78A4A
-"config/targets/CFS_KIT/lib/sim_42_screen.rb" 0x3EC6033C
+"config/targets/CFS_KIT/lib/sim_42_screen.rb" 0xABE5E4F6
 "config/targets/CFS_KIT/lib/table_mgmt_demo_screen.rb" 0x6531CB01
 "config/targets/CFS_KIT/lib/table_mgmt_screen.rb" 0x56F65D4A
 "config/targets/CFS_KIT/lib/temp.txt" 0x9460F298
@@ -83,7 +84,7 @@ USER_MODIFIED
 "config/targets/CFS_KIT/screens/autonomy_mgmt_screen.txt" 0x2DBCF803
 "config/targets/CFS_KIT/screens/benchmark_screen.txt" 0x614E9AE8
 "config/targets/CFS_KIT/screens/cfe_screen.txt" 0xA4BC431A
-"config/targets/CFS_KIT/screens/cfs_kit_screen.txt" 0x6BF5BA99
+"config/targets/CFS_KIT/screens/cfs_kit_screen.txt" 0xC5A486B0
 "config/targets/CFS_KIT/screens/cmd_screen.txt" 0x1C46A1EC
 "config/targets/CFS_KIT/screens/file_mgmt_demo_info_screen.txt" 0xC6A701BC
 "config/targets/CFS_KIT/screens/file_mgmt_demo_screen.txt" 0x77E28D51
@@ -94,7 +95,7 @@ USER_MODIFIED
 "config/targets/CFS_KIT/screens/memory_mgmt_screen.txt" 0x6BBFF608
 "config/targets/CFS_KIT/screens/osk_tmp_flt_cmd_scr.txt" 0x086C3F85
 "config/targets/CFS_KIT/screens/osk_tmp_get_bin_file_scr.txt" 0x8E367515
-"config/targets/CFS_KIT/screens/osk_tmp_tbl_mgr_scr.txt" 0x3D1F3FCF
+"config/targets/CFS_KIT/screens/osk_tmp_tbl_mgr_scr.txt" 0xC850C4A2
 "config/targets/CFS_KIT/screens/perf_mon_demo_info_screen.txt" 0x29430FA7
 "config/targets/CFS_KIT/screens/perf_mon_demo_screen.txt" 0x6799BBD3
 "config/targets/CFS_KIT/screens/perf_mon_screen.txt" 0x94BDCE11
@@ -204,7 +205,7 @@ USER_MODIFIED
 "config/tools/table_manager/fm_freespace.txt" 0x8E7C1355
 "config/tools/table_manager/mm_dump.txt" 0x02F2B2D5
 "config/tools/table_manager/README.txt" 0x93B2C07E
-"config/tools/test_runner/test_runner.txt" 0xD24409D2
+"config/tools/test_runner/test_runner.txt" 0xEB2645F2
 "config/tools/tlm_extractor/README.txt" 0x93B2C07E
 "config/tools/tlm_grapher/README.txt" 0x93B2C07E
 "config/tools/tlm_viewer/tlm_viewer.txt" 0x35EF4665
@@ -244,6 +245,9 @@ USER_MODIFIED
 "tools/TlmViewer.bat" 0x09A34857
 "tools/ToolLaunch.bat" 0x7896E14C
 "tools/tool_launch.rb" 0x0BDB6696
+"procedures/example_test.rb" 0xEB8B8E79
+"procedures/kit_ci_test.rb" 0x4858B017
+"procedures/kit_sch_test.rb" 0x66023942
 "procedures/kit_test/app.rb" 0xA5D75786
 "procedures/kit_test/from Jamie/FrontEnd.rb" 0xBCECFE12
 "procedures/kit_test/from Jamie/integration_scr.rb" 0x151A26E1
@@ -278,8 +282,11 @@ USER_MODIFIED
 "procedures/kit_test/kit_test_mm.rb" 0x6CBF0E4A
 "procedures/kit_test/kit_test_sc.rb" 0x97DBE908
 "procedures/kit_test/kit_test_tftp.rb" 0xF6786BF5
+"procedures/kit_test_suite.rb" 0x6E607EA1
+"procedures/kit_to_test.rb" 0xBC605D08
 "procedures/kit_util/kit_main_screen - Copy.old" 0x3695C051
 "procedures/kit_util/new_target.rb" 0x84BB35B1
 "procedures/kit_util/test.rb" 0x15BC4662
 "procedures/kit_util/ttf.rb" 0xB12CA2E1
+"procedures/osk_test.rb" 0x62A77DD5
 "procedures/README.txt" 0x93B2C07E

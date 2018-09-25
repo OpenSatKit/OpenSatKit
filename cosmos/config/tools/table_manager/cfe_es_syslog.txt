@@ -21,7 +21,7 @@ TABLE "CFE_ES SysLog" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Array o
     #max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
     max_entries = 10
     append_items = ""
-    for i in 1..max_entries
+    for i in 0..(max_entries-1)
       append_items << "APPEND_PARAMETER \"MSG#{i}\" 1336 STRING \"UNDEF\"     \"Message Text\"" << "\n"
       #append_items << "  FORMAT_STRING  \"%s\"" << "\n"
     end

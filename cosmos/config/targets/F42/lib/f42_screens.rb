@@ -11,7 +11,7 @@ require 'json'
 
 require 'osk_global'
 require 'osk_system'
-
+require 'osk_flight'
 
 ################################################################################
 ## Global Variables

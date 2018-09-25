@@ -68,7 +68,6 @@ COMMAND CFE_EVS DIS_PORT <%= Osk::Cfg.processor_endian %> "This command disables
   APPEND_PARAMETER BITMASK 8 UINT MIN_UINT8 MAX_UINT8 0 "BitMask"
   APPEND_PARAMETER SPARE   8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte."
 
-# TODO - Unable to retrieve application ID for default: CC = 13
 COMMAND CFE_EVS RESET_FILTER_CTR <%= Osk::Cfg.processor_endian %> "This command resets the command specified application's event filter for the command specified event ID. Note: In order for this command to take effect, applications must be registered for Event Service."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 22) %>
   APPEND_PARAMETER APP_NAME 160 STRING                     "default" "Application name to use in the command."
@@ -89,20 +88,19 @@ COMMAND CFE_EVS DEL_EVENT_FILTER <%= Osk::Cfg.processor_endian %> "This command 
   APPEND_PARAMETER APP_NAME 160 STRING "default" "Application name to use in the command."
   APPEND_PARAMETER EVENT_ID  16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
 
-COMMAND CFE_EVS WRITE_APP_DATA_TO_FILE <%= Osk::Cfg.processor_endian %> "This command writes all application data to a file for all applications that have registered with the EVS. The application data includes the Application ID, Active Flag, Event Count, Event Types Active Flag, and Filter Data."
+COMMAND CFE_EVS WRITE_APP_INFO_TO_FILE <%= Osk::Cfg.processor_endian %> "Writes application registry & current data to a file. Registry includes the App ID, Active Flag, Event Count, Event Types Active Flag, and Filter Data."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 64) %>
-  APPEND_PARAMETER APP_DATA_FILENAME 512 STRING "default" "Full path/filename where applicaton data is to be written"
+  APPEND_PARAMETER FILENAME 512 STRING "default" "Full path/filename where applicaton data is to be written"
 
-COMMAND CFE_EVS FILE_WRITE_LOG_TO_FILE <%= Osk::Cfg.processor_endian %> "This command requests the Event Service to generate a file containing the contents of the local event log."
+COMMAND CFE_EVS WRITE_LOG_TO_FILE <%= Osk::Cfg.processor_endian %> "Write the contents of the local event log to a file."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 64) %>
-  APPEND_PARAMETER LOG_FILENAME 512 STRING "default" "Full path/filename where log data is to be written"
+  APPEND_PARAMETER FILENAME 512 STRING "default" "Full path/filename where log data is to be written"
 
-COMMAND CFE_EVS SET_LOG_MODE <%= Osk::Cfg.processor_endian %> "This command sets the logging mode to the command specified value."
+COMMAND CFE_EVS SET_LOG_MODE <%= Osk::Cfg.processor_endian %> "Sets the logging mode to the command specified value."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 2) %>
   APPEND_PARAMETER MODE  8 UINT MIN_UINT8 MAX_UINT8 0 "0=Overwrite, 1=Discard"
   APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Pad to even byte."
 
-COMMAND CFE_EVS CLEAR_LOG <%= Osk::Cfg.processor_endian %> "This command clears the contents of the local event log."
+COMMAND CFE_EVS CLEAR_LOG <%= Osk::Cfg.processor_endian %> "Clears the contents of the local event log."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 20, 0) %>
-
 

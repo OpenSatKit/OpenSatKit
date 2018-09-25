@@ -12,7 +12,7 @@ TABLE "CFE_TBL Registry" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Tabl
   <% 
     max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_TABLES)
     append_items = ""
-    for i in 1..max_entries
+    for i in 0..(max_entries-1)
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_SIZE\"              32 UINT 0 MAX_UINT32 0  \"Size in bytes\"" << "\n"
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_SYS_TIME_SECONDS\"  32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_SYS_TIME_SUBSECS\"  32 UINT 0 MAX_UINT32 0  \" \"" << "\n"

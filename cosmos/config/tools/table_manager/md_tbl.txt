@@ -1,0 +1,35 @@
+<% 
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "MD"
+  @TABLE_CFE_NAME_STR = "MD_TABLE1_CFE_NAME"
+  @TABLE_ENTRY_COUNT  = "MD_DWELL_TABLE_SIZE"
+
+%>  
+TABLE "MD DWELL_TABLE" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Defines dwell locations and rates"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @TABLE_CFE_NAME_STR) %>
+
+  APPEND_PARAMETER "Enabled"  32  UINT 0 MAX_UINT32 0 "0=Disabled, 1=Enabled"
+  
+  <%
+    sig_bit_len = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "MD_SIGNATURE_FIELD_LENGTH") * 8
+    append_items = ""
+    if (Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "MD_SIGNATURE_OPTION") == true)
+      append_items << "APPEND_PARAMETER \"SIGNATURE\" #{sig_bit_len} STRING \"UNDEF\"  \"Text describing purpose of dwell entries\"" << "\n"    
+    end
+  %>
+  <%= append_items %>
+  
+  <%
+    symbol_bit_len = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "OS_MAX_SYM_LEN") * 8
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @TABLE_ENTRY_COUNT)
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DATA_LEN\" 16 UINT 0 MAX_UINT16 0  \"Length of dwell data field in bytes. 0 indicates null entry.\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DELAY\"    16 UINT 0 MAX_UINT16 0  \"Delay(# of app wakeup calls) between samples\"" << "\n"
+      # CFS_SymAddr_t defined in cfs_utils.h
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_ADDR_OFFSET\"  32 UINT 0 MAX_UINT32 0  \"Optional offset used as abs address if ADDR_SYMBOL is null\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_ADDR_SYMBOL\" #{symbol_bit_len} STRING \"UNDEF\"  \"Dwell symbol address or null\"" << "\n"    
+    end
+  %>
+  <%= append_items %>

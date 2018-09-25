@@ -23,6 +23,7 @@ module FswConfigParam
 
   OS_MAX_API_NAME  = 20
   OS_MAX_PATH_LEN  = 64
+  OS_MAX_SYM_LEN   = 64
   OS_MAX_TASKS     = 64
 
   #########
@@ -75,6 +76,16 @@ module FswConfigParam
   LC_MAX_ACTIONPOINTS = 176
   LC_HKAR_NUM_BYTES   = (((LC_MAX_ACTIONPOINTS +  7) /  8) * 4)   # 4 bits per AP and keep array on longword boundary
   
+
+  ########################
+  ## App - Memory Dwell ##
+  ########################
+
+  MD_TABLE1_CFE_NAME        = "DWELL_TABLE1"
+  MD_SIGNATURE_OPTION       = true            # Ena/Dis text to describe the table
+  MD_SIGNATURE_FIELD_LENGTH = 32              # Number of character's in signature text
+  MD_DWELL_TABLE_SIZE       = 25              # Number of dwell entries per table
+
 
   ##########################
   ## App - Stored Command ##

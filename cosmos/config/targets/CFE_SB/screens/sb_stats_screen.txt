@@ -1,0 +1,73 @@
+###############################################################################
+# SOftware Bus Stats Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SB Statistics"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX
+  MATRIXBYCOLUMNS 4
+    LABEL "Msg IDs In Use"
+    VALUE CFE_SB STATS_TLM_PKT MSG_IDS_IN_USE
+    LABEL "Peak Msg IDs In Use"
+    VALUE CFE_SB STATS_TLM_PKT PEAK_MSG_IDS_IN_USE
+    LABEL "CFE_SB_MAX_MSG_IDS"
+    VALUE CFE_SB STATS_TLM_PKT MAX_MSG_IDS_ALLOWED
+    LABEL "Pipes In Use"
+    VALUE CFE_SB STATS_TLM_PKT PIPES_IN_USE
+    LABEL "Peak Pipes Reboot"
+    VALUE CFE_SB STATS_TLM_PKT PEAK_PIPES_IN_USE
+    LABEL "CFE_SB_MAX_PIPES"
+    VALUE CFE_SB STATS_TLM_PKT MAX_PIPES_ALLOWED
+    LABEL "Msg Xfer Mem"
+    VALUE CFE_SB STATS_TLM_PKT MEM_IN_USE
+    LABEL "Peak Msg Xfer Mem"
+    VALUE CFE_SB STATS_TLM_PKT PEAK_MEM_IN_USE
+    LABEL "CFE_SB_BUF_MEMORY_BYTES"
+    VALUE CFE_SB STATS_TLM_PKT MAX_MEM_ALLOWED
+    LABEL "Curr Subscriptions"
+    VALUE CFE_SB STATS_TLM_PKT SUBSCRIPTIONS_IN_USE
+    LABEL "Peak Subscriptions"
+    VALUE CFE_SB STATS_TLM_PKT PEAK_SUBSCRIPTIONS_IN_USE
+    LABEL "MAX_MSG_IDS*MAX_DEST_PER_PKT"
+    VALUE CFE_SB STATS_TLM_PKT MAX_SUBSCRIPTIONS_ALLOWED
+    LABEL "Msg Bufs In Use"
+    VALUE CFE_SB STATS_TLM_PKT SB_BUFFERS_IN_USE
+    LABEL "Peak Msg Bufs In Use"
+    VALUE CFE_SB STATS_TLM_PKT PEAK_SB_BUFFERS_IN_USE
+    LABEL "CFE_SB_MAX_PIPE_DEPTH"
+    VALUE CFE_SB STATS_TLM_PKT MAX_PIPE_DEPTH_ALLOWED
+    LABEL ""
+    LABEL ""
+
+    LABEL "Pipe ID"
+    LABEL "Depth"
+    LABEL "In Use"
+    LABEL "Peak Use"
+  <% 
+    require 'osk_config'
+    
+    max_pipes = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "CFE_SB_MAX_PIPES")
+    append_items = ""
+    for i in 0..(max_pipes-1)
+      append_items << "VALUE CFE_SB STATS_TLM_PKT PIPE#{i}_ID"            << "\n"
+      append_items << "VALUE CFE_SB STATS_TLM_PKT PIPE#{i}_DEPTH"         << "\n"
+      append_items << "VALUE CFE_SB STATS_TLM_PKT PIPE#{i}_IN_USE"        << "\n"
+      append_items << "VALUE CFE_SB STATS_TLM_PKT PIPE#{i}_PEAK_IN_USE"   << "\n"
+    end
+  %>
+  <%= append_items %>
+    
+  END # Matrix
+END # Vertical Box
+
+

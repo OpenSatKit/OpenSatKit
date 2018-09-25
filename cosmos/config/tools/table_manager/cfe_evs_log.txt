@@ -12,12 +12,12 @@ TABLE "CFE_EVS EventLog" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Local
   <% 
     max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
     append_items = ""
-    for i in 1..max_entries
+    for i in 0..(max_entries-1)
 
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_STREAM_ID\" 16 UINT 0 MAX_UINT16 0  \"CCSDS Header Stream ID\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_STREAM_ID\" 16 UINT 0 MAX_UINT16 0  \"CCSDS Header Stream ID\" BIG_ENDIAN" << "\n"
       append_items << "  FORMAT_STRING  \"0x%04X\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SEQ_CNT\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Header Sequence Count\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_LEN\"       16 UINT 0 MAX_UINT16 0  \"CCSDS Header Packet Length\"" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SEQ_CNT\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Header Sequence Count\" BIG_ENDIAN" << "\n"
+      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_LEN\"       16 UINT 0 MAX_UINT16 0  \"CCSDS Header Packet Length\" BIG_ENDIAN" << "\n"
       append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SECONDS\"   32 UINT 0 MAX_UINT32 0  \"CCSDS Secondary Header Seconds\"" << "\n"
       append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SUBSECS\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Secondary Header Sub Seconds\"" << "\n"
       
@@ -35,4 +35,4 @@ TABLE "CFE_EVS EventLog" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Local
     end
   %>
   <%= append_items %>
-  
+

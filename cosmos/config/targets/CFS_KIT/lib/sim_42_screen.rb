@@ -43,12 +43,6 @@ def sim_42_send_cmd(screen, cmd)
 	   end
    elsif (cmd == "MANAGE_CTRL_TBL")
       display("F42 TBL_SCR",50,50)
-      #TODO - Investigate generic text table editor
-      #Cosmos.run_process("ruby lib/OskTblEditor")
-      #Cosmos.run_process("ruby tools/ConfigEditor")
-	   #require 'osk_tbl_editor'
-      #Cosmos::OskTblEditor.run
-      #Cosmos.run_cosmos_tool('ConfigEditor')
    elsif (cmd == "SET_CTRL_MODE")
       selection = vertical_message_box("Select the new control mode",'Reset Current Mode','To Be Defined')
 	   case selection

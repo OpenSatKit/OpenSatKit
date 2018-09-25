@@ -15,7 +15,7 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_
 
 COMMAND CFE_TBL LOAD_TBL <%= Osk::Cfg.processor_endian %> "This command loads the contents of the specified file into an inactive buffer for the table specified within the file."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 64) %>
-  APPEND_PARAMETER LOAD_FILENAME 512 STRING "default" "Filename (and path) of data to be loaded."
+  APPEND_PARAMETER FILENAME 512 STRING "default" "Filename (and path) of data to be loaded."
 
 COMMAND CFE_TBL DUMP_TBL <%= Osk::Cfg.processor_endian %> "This command will cause the Table Services to put the contents of the specified table buffer into the command specified file."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 106) %>

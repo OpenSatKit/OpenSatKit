@@ -26,20 +26,21 @@ def table_mgmt_send_cmd(screen, cmd)
          end
       end 
       tbl_path_filename = ask_string("Enter full FSW /path/filename of table file to be loaded.","#{Osk::Ops::flt_path_filename}")
-      Osk::flight.cfe_tbl.send_cmd("LOAD_TBL with LOAD_FILENAME #{tbl_path_filename}")
+      Osk::flight.cfe_tbl.send_cmd("LOAD_TBL with FILENAME #{tbl_path_filename}")
 	elsif (cmd == "ABORT_TABLE_LOAD")
       tbl_name = ask_string("Enter complete table name (app.table) of load to be aborted.")
       Osk::flight.cfe_tbl.send_cmd("ABORT_LOAD with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "DUMP_TABLE")
       tbl_name = ask_string("Enter complete table name (app.table) of table to be dumped.")
-      tbl_path_filename = ask_string("Enter full FSW /path/filename of file to received the table")
+      flt_tbl_path_filename = ask_string("Enter full FSW /path/filename of file to receive the table", Osk::TMP_FLT_BIN_PATH_FILE)
       buffer = combo_box("Select the buffer to be dumped", 'Inactive','Active')
       if (buffer == 'Active') 
          buffer_id = 1
       else
          buffer_id = 0
       end
-      Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "DUMP_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}, ", "Definition file for #{tbl_name}")
+      cmd_str = "DUMP_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name},"
+      Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", cmd_str, "Definition file for #{tbl_name}", flt_path_filename: flt_tbl_path_filename, gnd_rel_path: Osk::REL_SRV_TBL_DIR)
    elsif (cmd == "VALIDATE")
       tbl_name = ask_string("Enter complete table name (app.table) of table to be validated.")
       buffer = combo_box("Select the buffer to be validated", 'Inactive','Active')
@@ -56,8 +57,8 @@ def table_mgmt_send_cmd(screen, cmd)
       tbl_name = ask_string("Enter complete table name (app.table) of table registry to be telemetered.")
       Osk::flight.cfe_tbl.send_cmd("TLM_REGISTRY with TABLE_NAME #{tbl_name}")
 	elsif (cmd == "WRITE_REGISTRY_TO_FILE")
-      reg_filename = ask_string("Enter full flight /path/filename of file to receive the registry data.")
-      Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "WRITE_REG_TO_FILE with ",Osk::TBL_MGR_DEF_CFE_TBL_REG)
+      flt_reg_path_filename = ask_string("Enter full flight /path/filename of file to receive the registry data.", Osk::TMP_FLT_BIN_PATH_FILE)
+      Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "WRITE_REG_TO_FILE with ",Osk::TBL_MGR_DEF_CFE_TBL_REG, flt_path_filename: flt_reg_path_filename)
 	elsif (cmd == "DISPLAY_TABLE")
       Cosmos.run_process("ruby tools/TableManager")
 	elsif (cmd == "GET_FILE")

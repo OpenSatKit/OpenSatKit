@@ -24,11 +24,21 @@ require 'fsw_app'
 
 module Osk
    
+   #
+   # Constants that characterize the flight configuration. They 
+   # are not FSW configuration parameters
+   #
+   CFE_EVS_APP_ID  = 0
+   CFE_SB_APP_ID   = 1
+   CFE_ES_APP_ID   = 2
+   CFE_TIME_APP_ID = 3
+   CFE_TBL_APP_ID  = 4
+   
    class Flight
    
       @@instance = nil
       
-      # Hash conatining FswApps
+      # Hash containing FswApps
       attr_reader :app
       
       # cFE Apps

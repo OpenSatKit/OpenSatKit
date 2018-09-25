@@ -622,7 +622,7 @@
 **       There is a lower limit of 512 and an upper limit of 16384 on this
 **       configuration paramater.
 */
-#define CFE_ES_SYSTEM_LOG_SIZE  32768
+#define CFE_ES_SYSTEM_LOG_SIZE  16384
 
 
 /**

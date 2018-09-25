@@ -12,7 +12,7 @@ TABLE "CFE_ES AppInfo" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "App Inf
   <% 
     max_apps = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_APPLICATIONS)
     append_items = ""
-    for i in 1..max_apps
+    for i in 0..(max_apps-1)
       append_items << "APPEND_PARAMETER \"APP#{i}_ID\"            32 UINT 0 MAX_UINT32 0  \"ID assigned by ES when registered\"" << "\n"
       append_items << "APPEND_PARAMETER \"APP#{i}_TYPE\"          32 UINT 0 MAX_UINT32 0  \"TBD=CORE, TBD=User\"" << "\n"
       append_items << "APPEND_PARAMETER \"APP#{i}_NAME\"         160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
