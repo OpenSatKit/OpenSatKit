@@ -38,7 +38,99 @@ module Osk
       def init_variables
          @file_transfer = TftpFileTransfer.new()
       end # End init_variables()
-    
+
+      
+      # 
+      # Start the cFS and enable telemetry
+      #      
+      def self.start_cfs()
+         
+         # Start the cFS
+         spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute sudo ./core-cpu1""")
+         #spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute echo #{Osk::PASSWORD} | sudo ./core-cpu1""")
+
+         #spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/../cfs/build/exe/cpu1"" --execute sudo ./core-cpu1""")
+         #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
+
+         wait(4)  # Give some time to type in password
+         
+         # Enable telemetry
+         done = false
+         attempts = 0
+         while (!done)
+            core = `pgrep core`
+            if (core.length > 1)
+               wait(2)
+               cmd("KIT_TO ENABLE_TELEMETRY")
+               done = true
+               #puts core + " len = #{core.length}"
+            else
+               attempts += 1
+               if (attempts < 5)
+                  wait (4)
+               else
+                  done = true
+               end
+            end
+            #~seq_cnt = tlm("CFE_ES #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}")
+            #~puts core + " len = #{core.length}"
+            #~if ( tlm("CFE_ES #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}") != seq_cnt)
+            #~   done = true
+            #~else
+            #~   begin
+            #~      cmd("KIT_TO ENABLE_TELEMETRY")
+            #~   rescue
+            #~      Osk::system.connect_to_local_cfs
+            #~   end
+            #~   attempts += 1
+            #~   if (attempts < 5)
+            #~      wait (4)
+            #~   else
+            #~      done = true
+            #~   end
+            #~end   
+         end # while ! done
+         #~puts "attempt #{attempts}"
+      
+      end # start_cfs()      
+
+      
+      # 
+      # Stop all instances of the cFS
+      #
+      def self.stop_cfs()
+      
+         done = false
+         while (not done)
+            core = `pgrep core`
+            if (core.length > 1)
+               #puts core + " len = #{core.length}"
+               `echo #{Osk::PASSWORD} | sudo -S kill #{core}`  # Echo supplies the password to sudo
+            else
+               done = true
+            end
+         end
+      
+      end # stop_cfs()
+      
+
+      # Stop the COSMOS cmd-tlm-server. This is an ungraceful
+      # termination. It kills the process.
+      def self.stop_cmd_tlm_server()
+      
+         pids = `ps H -C ruby -o \'pid comm\'`   
+         #puts pids
+         pids.each_line do |line|
+            if line.include? "cmd_tlm_server"  
+               #puts "Found server PID: " + line
+               cmd_tlm_pid = line.split[0]
+               `echo osk | sudo -S kill #{cmd_tlm_pid}` # Echo supplies the password
+            end
+         end
+         
+      end # stop_cmd_tlm_server()
+      
+      
       def switch_local_to_pisat_cfs(host_ip_addr=HOST_IP_ADDR, pisat_ip_addr=PISAT_IP_ADDR)
    
          if (interface_state(COSMOS_CFS_INT) == 'CONNECTED')

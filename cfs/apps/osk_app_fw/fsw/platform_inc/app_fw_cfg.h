@@ -63,7 +63,7 @@
 /******************************************************************************
 ** Debug macros
 **
-** Set debug macros to 1 to enable debug messgae outputs to the console
+** Set debug macros to 1 to enable debug message outputs to the console
 */
 
 

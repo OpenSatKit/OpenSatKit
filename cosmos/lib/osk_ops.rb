@@ -49,7 +49,7 @@ module Ops
    ############################################################################
    ##  File Transfer
    ############################################################################
-
+   
    #
    # gnd/flt_path_file_names set to path/filename of last successful transfer. 
    # Screens can read and display them.
@@ -101,8 +101,8 @@ module Ops
    def self.put_flt_file_prompt(gnd_path = GND_SRV_DIR)
       #gnd_filename = ask_string("Enter ground filename without path. File will be located in #{gnd_path}.")
       #gnd_path_filename = "#{gnd_path}/#{gnd_filename}"
-      gnd_pathfilename = open_file_dialog(gnd_path)
-      gnd_filename = File.basename(gnd_pathfilename)
+      gnd_path_filename = open_file_dialog(gnd_path)
+      gnd_filename = File.basename(gnd_path_filename)
       flt_path_filename = ask_string("Enter full FSW /path/filename.             ","#{FLT_SRV_DIR}/#{gnd_filename}")
       put_file = put_flt_file(gnd_path_filename,flt_path_filename)
       return put_file
@@ -157,6 +157,46 @@ module Ops
       
    end # get_flt_bin_file()
 
+   # 
+   # Send a flight command that creates a text file 
+   # 1. Issue the flight command that creates the file
+   # 2. Optionally transfer file to the ground and display 
+   #    the file using the OSK's text file viewer
+   # 
+   # Use the default server directories and temporary file names
+   #
+   # NOTE: THE COMMAND DEFINITION MUST USE THE KEYWORD 'FILENAME' AND 
+   #       cmd_str MUST CONTAIN THE ENTIRE COMMAND EXCEPT FOR THE FILENAME
+   #       PARAMETER. cmd_str MUST BE FORMATTED WITH OR WITHOUT A COMMA SO
+   #       FILENAME CAN SIMPLY BE APPENDED. See json_table_mgmt_screen.rb's
+   #       load and dump for an example.    
+   #
+   def self.send_flt_txt_file_cmd(app_name, cmd_str, flt_path_filename: Osk::TMP_FLT_TXT_PATH_FILE, gnd_rel_path: Osk::REL_SRV_TBL_DIR)
+      cmd_str = "#{cmd_str} FILENAME #{flt_path_filename}"
+      if (Osk::flight.app[app_name].send_cmd(cmd_str))
+         get_file = combo_box("Transfer file from flight to ground and display it?", 'Yes','No')
+         if (get_file == "Yes")
+            filename = File.basename(flt_path_filename)
+            get_flt_txt_file(flt_path_filename, gnd_rel_path, filename)
+         end
+      else
+         raise_exception "osk_ops.send_flt_txt_file_cmd() - #{app_name} command '#{cmd_str}' failed"
+      end
+   end # send_flt_txt_file_cmd()
+   
+   #
+   # 1. Transfer a text file from flight to ground 
+   # 2. Launch OSK's text file viewer to display the file
+   # 
+   def self.get_flt_txt_file(flt_path_filename, gnd_rel_path, gnd_filename)
+      gnd_path_filename = "#{Cosmos::USERPATH}/#{gnd_rel_path}/#{gnd_filename}"
+      if (Osk::system.file_transfer.get(flt_path_filename,gnd_path_filename))
+         Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{gnd_path_filename}'")
+      else  
+         raise_exception "osk_ops.get_flt_txt_file() - File transfer from flight to ground failed" 
+      end
+      
+   end # get_flt_txt_file()
 
    
    ############################################################################
@@ -301,6 +341,7 @@ module Ops
 
    def self.launch_tbl_mgr(rel_bin_file_path, bin_filename, tbl_def_filename)
 
+      @@rel_server_dir = rel_bin_file_path
       create_tbl_mgr_scr(rel_bin_file_path, bin_filename, tbl_def_filename)
       display("CFS_KIT #{TMP_TBL_MGR_SCR_STR}",50,50)
 

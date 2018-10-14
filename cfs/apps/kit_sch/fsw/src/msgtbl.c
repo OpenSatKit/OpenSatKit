@@ -106,6 +106,7 @@ void MSGTBL_ResetStatus(void)
     
 } /* End MSGTBL_ResetStatus() */
 
+
 /******************************************************************************
 ** Function: MSGTBL_LoadCmd
 **
@@ -128,7 +129,7 @@ boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    */
    MSGTBL_ResetStatus();  
    CFE_PSP_MemSet(&(MsgTbl->Tbl), 0, sizeof(MsgTbl->Tbl));
-   
+
    if (JSON_OpenFile(JSON_OBJ, Filename)) {
   
       CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"MSGTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
@@ -256,7 +257,7 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
       CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
       
-      sprintf(DumpRecord,"\"description\": \"KIT_SCH dump at %s\",\n",SysTimeStr);
+      sprintf(DumpRecord,"\"description\": \"KIT_SCH table dumped at %s\",\n",SysTimeStr);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
 
@@ -281,19 +282,18 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
       for (i=0; i < MSGTBL_MAX_ENTRIES; i++) {
          /* 
-         ** JSMN accepted the message keyword in an array but ruby JSON doesn't.
-         ** I think JSMN is wrong
-         if (i==0) 
-            sprintf(DumpRecord,"\"message\": {\n");
-         else
-            sprintf(DumpRecord,",\n\"message\": {\n");
+         ** JSMN accepted the message keyword in an array withot be in a new 
+         ** object but ruby JSON parser doesn't. I think JSMN is wrong
          */
-         if (i==0) 
-            sprintf(DumpRecord,"{\n");
-         else
-            sprintf(DumpRecord,",\n{\n");
+         if (i > 0) { 
+            sprintf(DumpRecord,",\n");
+            OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+         }
+          
+         sprintf(DumpRecord,"   {\"message\": {\n");
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-         sprintf(DumpRecord,"   \"id\": %d,\n   \"stream-id\": %d,\n   \"seq-seg\": %d,\n   \"length\": %d",
+         
+         sprintf(DumpRecord,"      \"id\": %d,\n      \"stream-id\": %d,\n      \"seq-seg\": %d,\n      \"length\": %d",
                  i,
                  MsgTblPtr->Entry[i].Buffer[0],
                  MsgTblPtr->Entry[i].Buffer[1],
@@ -317,13 +317,13 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
             */
             if (DataBytes > 0) {
          
-               sprintf(DumpRecord,",\n   \"data-bytes\": \"");         
+               sprintf(DumpRecord,",\n      \"data-bytes\": \"");         
                OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
                   
                for (d=0; d < DataBytes; d++) {
                   
                   if (d == (DataBytes-1)) {
-                     sprintf(DumpRecord,"%d\"\n   }",MsgTblPtr->Entry[i].Buffer[3+d]);
+                     sprintf(DumpRecord,"%d\"\n   }}",MsgTblPtr->Entry[i].Buffer[3+d]);
                   }
                   else {
                      sprintf(DumpRecord,"%d,",MsgTblPtr->Entry[i].Buffer[3+d]);
@@ -334,13 +334,14 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
                            
             } /* End if non-zero data bytes */
             else {
-               sprintf(DumpRecord,"\n}");         
+               sprintf(DumpRecord,"\n   }}");         
                OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
             }
          } /* End if DataBytes within range */
 
       } /* End message loop */
 
+      /* Close message-array and top-level object */      
       sprintf(DumpRecord,"\n]}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
@@ -356,6 +357,12 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
    
    } /* End if file create error */
 
+   if (RetStatus) {
+      
+      CFE_EVS_SendEvent(MSGTBL_DUMP_INFO_EID, CFE_EVS_INFORMATION,
+                        "Successfully dumped message table to %s", Filename);
+   }
+   
    return RetStatus;
    
 } /* End of MSGTBL_DumpCmd() */
@@ -410,7 +417,7 @@ static boolean MsgCallback (int TokenIdx)
    memset((void*)&MsgEntry,0,sizeof(MSGTBL_Entry));
    
    /* 
-   ** Message Array 
+   ** Message
    **
    **   "name":  Not saved,
    **   "descr": Not saved,

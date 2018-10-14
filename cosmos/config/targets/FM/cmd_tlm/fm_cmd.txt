@@ -49,10 +49,10 @@ COMMAND FM CONCAT_FILES <%= Osk::Cfg.processor_endian %> "Concatenate two source
   APPEND_PARAMETER SOURCE2 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Source 2 filename"
   APPEND_PARAMETER TARGET  512 STRING <%= Osk::CMD_DEF_FILENAME %> "Target filename"
 
-COMMAND FM GET_FILE_INFO <%= Osk::Cfg.processor_endian %> "Create a file information telemetry packet for the source file. The file information packet includes status that indicates whether source is a file that is open or closed, a directory, or does not exist. The file information data also includes a CRC, file size, last modify time and the source name. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but collecting the status data and calculating the CRC will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
+COMMAND FM GET_FILE_INFO <%= Osk::Cfg.processor_endian %> "Create a file information telemetry packet for the specified file"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 68) %>
-  APPEND_PARAMETER FILENAME    512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Filename"
-  APPEND_PARAMETER FILEINFOCRC  32 UINT MIN_UINT32 MAX_UINT32 0 "File info CRC method"
+  APPEND_PARAMETER FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Filename"
+  APPEND_PARAMETER CRC       32 UINT MIN_UINT32 MAX_UINT32 2         "CRC method"
 
 COMMAND FM GET_OPEN_FILES <%= Osk::Cfg.processor_endian %> "Creates an 'open files' telemetry packet. The open files packet includes the number of open files and for each open file, the name of the file and the name of the application that has the file opened."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 0) %>

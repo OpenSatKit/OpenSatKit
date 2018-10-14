@@ -263,7 +263,7 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
       CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
       
-      sprintf(DumpRecord,"\"description\": \"KIT_SCH dump at %s\",\n",SysTimeStr);
+      sprintf(DumpRecord,"\"description\": \"KIT_SCH table dumped at %s\",\n",SysTimeStr);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
 
@@ -274,39 +274,51 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       ** - The MsgTblEntryId field is used to indicate whether an activity
       **   has been loaded.      
       ** 
-      **   "slot": {
-      **      "index": 4
-      **   },   
-      **      "activity": {
-      **         "name":  "cFE ES Housekeeping",
-      **         "descr": "",
-      **         "index": 0,
-      **         "enable": true,
-      **         "frequency": 4,
-      **         "offset": 0,
-      **         "msg-id": 0
-      **      },
+      **   "slot-array": [
+      **
+      **      {"slot": {
+      **         "index": 4
+      **         "activity-array" : [
+      **   
+      **            {"activity": {
+      **            "name":  "cFE ES Housekeeping",
+      **            "descr": "",
+      **            "index": 0,
+      **            "enable": true,
+      **            "frequency": 4,
+      **            "offset": 0,
+      **            "msg-id": 0
+      **         }},
+      **         ...
+      **      ...
       */
       
+      sprintf(DumpRecord,"\"slot-array\": [\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
       for (Slot=0; Slot < SCHTBL_SLOTS; Slot++) {
          
-         if (Slot==0)
-            sprintf(DumpRecord,"\"slot\": {\n   \"index\": %d\n},\n",Slot);
-         else
-            sprintf(DumpRecord,",\n\"slot\": {\n   \"index\": %d\n},\n",Slot);
+         if (Slot > 0) {
+            sprintf(DumpRecord,",\n");            
+            OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+         }
+            
+         sprintf(DumpRecord,"   {\"slot\": {\n      \"index\": %d,\n      \"activity-array\" : [\n",Slot);         
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
          
          for (Activity=0; Activity < SCHTBL_ACTIVITIES_PER_SLOT; Activity++) {
             
             EntryIdx = Slot * SCHTBL_ACTIVITIES_PER_SLOT + Activity;
 
-            if (Activity==0)
-               sprintf(DumpRecord,"\"activity\": {\n");
-            else
-               sprintf(DumpRecord,",\n\"activity\": {\n");
-               
+            if (Activity > 0) {
+               sprintf(DumpRecord,",\n");
+               OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+            }
+            
+            sprintf(DumpRecord,"         {\"activity\": {\n");
             OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-            sprintf(DumpRecord,"   \"index\": %d,\n   \"enable\": \"%s\",\n   \"frequency\": %d,\n    \"offset\": %d,\n    \"msg-id\": %d\n}",
+            
+            sprintf(DumpRecord,"         \"index\": %d,\n         \"enable\": \"%s\",\n         \"frequency\": %d,\n         \"offset\": %d,\n         \"msg-id\": %d\n      }}",
                  Activity,
                  JSON_GetBoolStr(SchTblPtr->Entry[EntryIdx].Enabled),
                  SchTblPtr->Entry[EntryIdx].Frequency,
@@ -316,10 +328,13 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
          
          } /* End activity loop */             
       
+         sprintf(DumpRecord,"\n      ]\n   }}");
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+      
       } /* End slot loop */
  
- 
-      sprintf(DumpRecord,"\n}\n");
+      /* Close slot-array and top-level object */
+      sprintf(DumpRecord,"\n   ]\n}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       RetStatus = TRUE;
@@ -334,6 +349,12 @@ boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
    
    } /* End if file create error */
 
+   if (RetStatus) {
+      
+      CFE_EVS_SendEvent(SCHTBL_DUMP_INFO_EID, CFE_EVS_INFORMATION,
+                        "Successfully dumped scheduler table to %s", Filename);
+   }
+   
    return RetStatus;
    
 } /* End of SCHTBL_DumpCmd() */

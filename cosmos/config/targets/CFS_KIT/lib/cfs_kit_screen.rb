@@ -47,12 +47,18 @@ def cfs_kit_launch_app(screen, app)
 
    if (app == "CFS")
    
-      # 
-      # Before starting cFE check if a cFE instance is already running and kill
-      # it if it is. Doesn't protect against multiple orphans, but the typical
-      # situation is one orphan.
+      # Kill all instances of the cFS before starting a new instance. 
+      
+      Osk::System.stop_cfs()
+
+      # Start the cFS and enable telemetry
+      
+      Osk::System.start_cfs()
+      
+      return
+      
       #    
-      # When a new terminal windows, the user will be prompted for password 
+      # When a new terminal window open user will be prompted for password 
       # since cFE is run in privileged mode. The loop after the spawn 
       # automatically enables telemetry 
       #  
@@ -107,8 +113,8 @@ def cfs_kit_launch_app(screen, app)
       
    elsif (app == "CFE_SERVICES")
       display("CFS_KIT CFE_SCREEN",50,50)   
-   elsif (app == "KIT_APP_INTG")
-      display("CFS_KIT KIT_APP_INTG_SCREEN",50,50)   
+   elsif (app == "MANAGE_USER_APP")
+      display("CFS_KIT USER_APP_INTG_SCREEN",50,50)   
    elsif (app == "SET_CMD_VALIDATE")
       enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes','No')  
       if (enable == "Yes")

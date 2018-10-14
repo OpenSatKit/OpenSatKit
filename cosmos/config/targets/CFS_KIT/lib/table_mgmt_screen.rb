@@ -1,6 +1,10 @@
 ###############################################################################
 # cFS Kit Table Management 
 #
+# Notes:
+#   1. The user interaction with loads and dumps should be as close as possible
+#      to the JSON interface defined in json_table_mgmt
+#
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General 
 #   Public License (GPL).
@@ -34,21 +38,14 @@ def table_mgmt_send_cmd(screen, cmd)
       tbl_name = ask_string("Enter complete table name (app.table) of table to be dumped.")
       flt_tbl_path_filename = ask_string("Enter full FSW /path/filename of file to receive the table", Osk::TMP_FLT_BIN_PATH_FILE)
       buffer = combo_box("Select the buffer to be dumped", 'Inactive','Active')
-      if (buffer == 'Active') 
-         buffer_id = 1
-      else
-         buffer_id = 0
-      end
+      buffer == 'Active' ? buffer_id = 1 : buffer_id = 0
       cmd_str = "DUMP_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name},"
+      Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_TBL_DIR, File.dirname(flt_tbl_path_filename))
       Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", cmd_str, "Definition file for #{tbl_name}", flt_path_filename: flt_tbl_path_filename, gnd_rel_path: Osk::REL_SRV_TBL_DIR)
    elsif (cmd == "VALIDATE")
       tbl_name = ask_string("Enter complete table name (app.table) of table to be validated.")
       buffer = combo_box("Select the buffer to be validated", 'Inactive','Active')
-      if (buffer == 'Active') 
-         buffer_id = 1
-      else
-         buffer_id = 0
-      end
+      buffer == 'Active' ? buffer_id = 1 : buffer_id = 0
       Osk::flight.cfe_tbl.send_cmd("VALIDATE_TBL with ACTIVE_TBL_FLAG #{buffer_id}, TABLE_NAME #{tbl_name}")
 	elsif (cmd == "ACTIVATE")
       tbl_name = ask_string("Enter complete table name (app.table) of table to be activated.")

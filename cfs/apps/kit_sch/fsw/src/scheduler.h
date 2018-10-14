@@ -1,5 +1,5 @@
 /* 
-** Purpose: Define a scheduler. Uses scheduler & message tables.
+** Purpose: Define a scheduler. Owns scheduler & message tables.
 **
 ** Notes:
 **   1. This design intentionally decouples the scheduler table from 
@@ -101,10 +101,15 @@
 
 #define SCHEDULER_PACKET_SEND_ERR_EID                (SCHEDULER_BASE_EID + 8)
 
-#define SCHEDULER_CONFIG_CMD_ENTRY_ERR_EID           (SCHEDULER_BASE_EID + 9)
-#define SCHEDULER_CONFIG_CMD_SLOT_ERR_EID            (SCHEDULER_BASE_EID + 10)
+#define SCHEDULER_CFG_SCH_CMD_ACTIVITY_ERR_EID       (SCHEDULER_BASE_EID + 9)
+#define SCHEDULER_CFG_SCH_CMD_SLOT_ERR_EID           (SCHEDULER_BASE_EID + 10)
 
-#define SCHEDULER_DEBUG_EID                          (SCHEDULER_BASE_EID + 11)
+#define SCHEDULER_LOAD_SCH_CMD_ACTIVITY_ERR_EID      (SCHEDULER_BASE_EID + 11)
+#define SCHEDULER_LOAD_SCH_CMD_SLOT_ERR_EID          (SCHEDULER_BASE_EID + 12)
+
+#define SCHEDULER_LOAD_MSG_CMD_INDEX_ERR_EID         (SCHEDULER_BASE_EID + 13)
+
+#define SCHEDULER_DEBUG_EID                          (SCHEDULER_BASE_EID + 14)
 
 
 /*
@@ -152,18 +157,41 @@ typedef struct {
 } SCHEDULER_Class;
 
 /*
-** Commands
+** Command Packets
 */
 
 typedef struct
 {
    uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header     */
    uint16   Slot;
-   uint16   EntryInSlot;
+   uint16   Activity;
    boolean  ConfigFlag;   /* 0=Disable, 1=Enable */
 
-} OS_PACK SCHEDULER_ConfigSchCmd;
-#define SCHEDULER_CFG_SCH_CMD_DATA_LEN  (sizeof(SCHEDULER_ConfigSchCmd) - CFE_SB_CMD_HDR_SIZE)
+} OS_PACK SCHEDULER_ConfigSchEntryCmdMsg;
+#define SCHEDULER_CFG_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_ConfigSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+typedef struct
+{
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header     */
+   uint16  Slot;
+   uint16  Activity;
+   uint16  ConfigFlag;   /* 0=Disable, 1=Enable */
+   uint16  Frequency;
+   uint16  Offset;
+   uint16  MsgTblEntryId;
+
+} OS_PACK SCHEDULER_LoadSchEntryCmdMsg;
+#define SCHEDULER_LOAD_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_LoadSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+typedef struct
+{
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header     */
+   uint16          Index;
+   CFE_SB_MsgId_t  MsgId;
+
+} OS_PACK SCHEDULER_LoadMsgEntryCmdMsg;
+#define SCHEDULER_LOAD_MSG_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_LoadMsgEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
 
 /*
 ** Exported Functions
@@ -289,5 +317,26 @@ boolean SCHEDULER_LoadSchTblEntry(uint16 EntryId, SCHTBL_Entry* NewEntry);
 **
 */
 boolean SCHEDULER_ConfigSchEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: SCHEDULER_LoadSchEntryCmd
+**
+** Notes:
+**   1. Function signature must match the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCHEDULER_LoadSchEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: SCHEDULER_LoadMsgEntryCmd
+**
+** Notes:
+**   1. Function signature must match the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCHEDULER_LoadMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
 
 #endif /* _scheduler_ */

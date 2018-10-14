@@ -19,18 +19,14 @@
       SCREEN AUTO AUTO 0.5
       GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
      
-      TITLE CFG_SCH_ENTRY
+      TITLE REMOVE_PKT
          SETTING BACKCOLOR 162 181 205
          SETTING TEXTCOLOR black
 
       VERTICALBOX "Command Parameters"
       MATRIXBYCOLUMNS 2
-   NAMED_WIDGET param_1 LABEL 'SLOT'
+   NAMED_WIDGET param_1 LABEL 'MSG_ID'
    NAMED_WIDGET value_1 TEXTFIELD 16 "0"
-   NAMED_WIDGET param_2 LABEL 'ENTRY'
-   NAMED_WIDGET value_2 TEXTFIELD 16 "0"
-   NAMED_WIDGET param_3 LABEL 'CONFIG'
-   NAMED_WIDGET value_3 TEXTFIELD 16 "1"
 
       END # Matrix
       END # Vertical
@@ -38,6 +34,6 @@
       HORIZONTALLINE
 
       MATRIXBYCOLUMNS 2      
-         BUTTON 'Send'   'require "/mnt/hgfs/OpenSatKit/cosmos/lib/osk_ops.rb"; Osk::Ops::send_flt_cmd_with_param_scr(self, "KIT_SCH", "CFG_SCH_ENTRY", 3);'
+         BUTTON 'Send'   'require "/mnt/hgfs/OpenSatKit/cosmos/lib/osk_ops.rb"; Osk::Ops::send_flt_cmd_with_param_scr(self, "KIT_TO", "REMOVE_PKT", 1);'
          BUTTON 'Cancel' 'clear("CFS_KIT OSK_TMP_FLT_CMD_SCR")'
       End # Matrix

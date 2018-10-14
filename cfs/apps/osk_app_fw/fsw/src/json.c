@@ -8,9 +8,14 @@
 **      considered a shortcoming for FSW because JSMN was written with
 **      simplicity, portability, and optimization as high priorities which
 **      makes it suitable for FSW.
-**   2. If JSMN's jsmntype_t or jsmnerr_t change the lookup string tables and
+**   2. JSON_ProcessTokens() deviates from the current standard and requires
+**      the JSON file start with an unnamed object or array. Originally all
+**      JSON files had to start with an object or an array (RFC-4627). RFC-7159
+**      changed the original spec and added number, string, 'null', 'true', and
+**      'false' to the valid items that can start a file.
+**   3. If JSMN's jsmntype_t or jsmnerr_t change the lookup string tables and
 **      the corresponding functions must both change.
-**   3. Since this is part of the application framework provide sufficient 
+**   4. Since this is part of the application framework provide sufficient 
 **      debug events to help user's debug their JSON table integration.
 ** 
 ** License:
@@ -120,7 +125,7 @@ void JSON_ObjConstructor(JSON_Obj*              Obj,
 **
 */
 void JSON_ObjArrayReset(JSON_Obj* ObjArray,
-                       uint16    ObjCnt)
+                        uint16    ObjCnt)
 {
 	int i;
    
@@ -166,6 +171,7 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
    
    Json->FileObjTokens = 0;
    Json->FileStatus = JSON_FILE_UNDEF; /* Internally used as a valid file read flag */
+   CFE_PSP_MemSet(&(Json->JsmnParser), 0, sizeof(jsmn_parser));
    
    FileHandle = OS_open(Filename, OS_READ_ONLY, 0);
    CFE_EVS_SendEvent(JSON_DBG_OPEN_FILE_EID,CFE_EVS_DEBUG,"JSON: OS_open(%s) returned FileHamdle = %d",Filename, FileHandle);
@@ -200,11 +206,11 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
             }
          } /* End if LowFileMem */ 
             
-         if (DBG_JSON) OS_printf("Line %d, Length = %d\n", Line, Len);
+         //if (DBG_JSON) OS_printf("Line %d, Length = %d\n", Line, Len);
     
          if (ReadingFile) {
             if (Len < JSON_MAX_FILE_LINE_CHAR) {
-               if (DBG_JSON) OS_printf("%s",&Json->FileBuf[Indx]);
+               //if (DBG_JSON) OS_printf("%s",&Json->FileBuf[Indx]);
                Indx += Len; /* Don't skip over '\0'. Start next line on '\0' */
                Line++;
             }
@@ -302,12 +308,7 @@ void JSON_RegContainerCallback(JSON_Class* Json, char* Name, JSON_ContainerFuncP
 ** Function: JSON_ProcessTokens
 **
 ** Notes:
-**    
-**   1. This processing deviates from the current standard and requires the
-**      JSON file start with an object or array. Originally all JSON files had
-**      to start with an object or an array (RFC-4627). RFC-7159 changed the
-**      original spec and added number, string, 'null', 'true', and 'false' to
-**      the valid items that can start a file.
+**   1. See file prologue notes for JSON file assumptions
 ** 
 */
 void JSON_ProcessTokens(JSON_Class* Json) 
@@ -322,18 +323,20 @@ void JSON_ProcessTokens(JSON_Class* Json)
       CFE_EVS_SendEvent(JSON_DBG_PROC_TOKENS_EID,CFE_EVS_DEBUG,"JSON: ProcessTokens() - %d tokens.",Json->FileObjTokens);
 
       if (Json->FileTokens[0].type == JSMN_OBJECT || Json->FileTokens[0].type == JSMN_ARRAY) {
+         if (DBG_JSON) JSON_PrintTokens(Json, Json->FileObjTokens);
          ProcessContainerToken(Json, TokenIdx);
       }
       else {
-         CFE_EVS_SendEvent(JSON_INVLD_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON tokens not processed. File starts with a %s. It must start with an object or array.", 
-                           JSON_GetJsmnTypeStr(Json->FileTokens[0].type));
+         CFE_EVS_SendEvent(JSON_INVLD_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON tokens not processed. File starts with a %s: %s.  It must start with an object or array.", 
+                           JSON_GetJsmnTypeStr(Json->FileTokens[0].type),
+                           JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[0]));
       }
 
    } /* End if valid file to process */  
    else {
       
       CFE_EVS_SendEvent(JSON_INVLD_FILE_EID,CFE_EVS_ERROR,"Invalid JSON file has not been read into memory. File status = %s",
-	     JSON_GetFileStatusStr(Json->FileStatus));
+                        JSON_GetFileStatusStr(Json->FileStatus));
 
    } /* End if a valid file has not been processed */
 
@@ -666,20 +669,30 @@ char* JSON_GetBoolStr (uint16 State) {
 */
 static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
 
+   static int ContainerDepth = 0;
+   int   LocalDepth;
    int   i, ContainTokenCnt = 0, ContainTokenMax;
+   int   StartIdx = TokenId;
    int   TokenIdx = TokenId;
+   char  ContainerChar;
    jsmntok_t* KeyToken;
 
-   if (DBG_JSON) OS_printf("\n>>Enter<< ProcessContainerToken() processing token %d\n",TokenId);
+   LocalDepth = ++ContainerDepth;
+   
+   if (DBG_JSON) OS_printf("\n>>Enter<< ProcessContainerToken(): Depth=%d, Token=%d\n",ContainerDepth, TokenId);
    //while (Json->FileTokens[TokenIdx].size <= Json->MaxToken && TokenIdx < JSON_MAX_FILE_TOKENS) {
    //while (TokenIdx <= Json->MaxToken && TokenIdx < JSON_MAX_FILE_TOKENS) {
    //while (TokenIdx <= Json->MaxToken && TokenIdx < JSON_MAX_FILE_TOKENS) {
    
 
-   /* Check if container key name matches a registered callback function */
+   /* 
+   ** See file prologue for JSON file assumptions.
+   */
    if (TokenId > 0) {
 
       if (DBG_JSON) OS_printf("ProcessContainerToken() TokenId > 0\n");
+
+      /* Check if container key name matches a registered callback function */
       i = TokenId-1;
       if (Json->FileTokens[i].type == JSMN_STRING) {
 
@@ -704,22 +717,40 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
    TokenIdx++;
    while (ContainTokenCnt <= ContainTokenMax) {
 
-      if (DBG_JSON) OS_printf("Container Token %d: TokenCnt %d\n", TokenId, ContainTokenCnt);
-      if (Json->FileTokens[TokenIdx].type == JSMN_OBJECT || Json->FileTokens[TokenIdx].type == JSMN_ARRAY) {
-        
-         TokenIdx += ProcessContainerToken(Json, TokenIdx);
+      if (DBG_JSON) OS_printf("Container TokenIdx %d: Type %s, First Char %c, ContainTokenCnt %d\n", 
+                              TokenIdx, JSON_GetJsmnTypeStr(Json->FileTokens[TokenIdx].type),
+                              Json->FileBuf[Json->FileTokens[TokenIdx].start], ContainTokenCnt);
 
+      if (Json->FileTokens[TokenIdx].type == JSMN_OBJECT || Json->FileTokens[TokenIdx].type == JSMN_ARRAY) {
+         
+         ContainerChar = Json->FileBuf[Json->FileTokens[TokenIdx].start];
+         /*
+         if (ContainerChar == '{' || ContainerChar == '[') {
+         else if (ContainerChar == '}' || ContainerChar == ']') {
+         
+         }
+         else
+         */
+      
+         TokenIdx += ProcessContainerToken(Json, TokenIdx);
+         
+         if (DBG_JSON) OS_printf("Continue ProcessContainerToken():  ContainerDepth=%d, LocalDepth=%d, TokenIdx=%d\n\n", 
+                                 ContainerDepth, LocalDepth, TokenIdx);
+         
       } /* End if container */
       else
          TokenIdx++;
       
       ContainTokenCnt++;
 
-   }
+   } /* End while container tokens */
 
-   if (DBG_JSON) OS_printf(">>Exit<< ProcessContainerToken() processed %d tokens\n\n", ContainTokenCnt);
-
-   return ContainTokenCnt;
+   if (DBG_JSON) OS_printf(">>Exit<< ProcessContainerToken():  Depth=%d, StartIdx=%d, TokenIdx=%d, ContainTokenCnt=%d\n\n", 
+                           ContainerDepth, StartIdx, TokenIdx, ContainTokenCnt);
+   ContainerDepth--;
+   
+   //return ContainTokenCnt;
+   return (TokenIdx-StartIdx);
 
 } /* End ProcessContainerToken() */
 
