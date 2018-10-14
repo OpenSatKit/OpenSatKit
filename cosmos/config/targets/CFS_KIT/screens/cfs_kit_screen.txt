@@ -26,33 +26,33 @@ VERTICAL
         LABEL ""
         MATRIXBYCOLUMNS 3
           BUTTON 'Enable Telemetry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TO_ENA_TELEMETRY")'
-          BUTTON 'Reset Time' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TIME_SET_CLOCK_ZERO")'
+          BUTTON 'Reset Time'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TIME_SET_CLOCK_ZERO")'
           BUTTON 'Set Cmd Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SET_CMD_VALIDATE")'
-          BUTTON 'App Sum Pages' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
-          BUTTON 'cFE Services' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
-          BUTTON 'Kit App Integration' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "KIT_APP_INTG")'
+          BUTTON 'App Sum Pages'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
+          BUTTON 'cFE Services'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
+          BUTTON 'Manage User App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_USER_APP")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # Box      
       HORIZONTALBOX cFS-Functions 5
         MATRIXBYCOLUMNS 3
-          BUTTON 'Manage Files' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_FILES")'
-          BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_TABLES")'
-          BUTTON 'Manage Memory' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_MEMORY")'
+          BUTTON 'Manage Files'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_FILES")'
+          BUTTON 'Manage Tables'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_TABLES")'
+          BUTTON 'Manage Memory'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_MEMORY")'
           BUTTON 'Manage Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_RECORDER")'
           BUTTON 'Manage Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_AUTONOMY")'
-          BUTTON 'Manage Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APPS")'
+          BUTTON 'Manage Apps'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APPS")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # BOX
       HORIZONTALBOX Kit-Tools 5
         MATRIXBYCOLUMNS 3
-          BUTTON 'Verify cFS Config' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "RUN_TEST_SCRIPT")'
+          BUTTON 'Verify cFS Config'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "RUN_TEST_SCRIPT")'
           BUTTON 'Run Performance Monitor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PERF_MON")'
-          BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
-          BUTTON '42 Simulator' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
-          BUTTON 'PiSat Control' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
-          BUTTON 'Create Application' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CREATE_APP")'
+          BUTTON 'Run Benchmarks'          'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
+          BUTTON '42 Simulator'            'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
+          BUTTON 'PiSat Control'           'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
+          BUTTON 'Create Application'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CREATE_APP")'
           ##SETTING BACKCOLOR 128 128 128
           ##SETTING GRAY_TOLERANCE 0.1
         END # Matrix

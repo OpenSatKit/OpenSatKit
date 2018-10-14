@@ -151,7 +151,7 @@ void JSON_ObjConstructor(JSON_Obj*              Obj,
 **
 */
 void JSON_ObjArrayReset(JSON_Obj* ObjArray,
-                       uint16    ObjCnt);
+                        uint16    ObjCnt);
 
 
 /******************************************************************************

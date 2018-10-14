@@ -150,6 +150,7 @@ class OskTxtFileViewer < QtTool
       # Create the text edit where previously issued commands go and where
       # commands can be manually typed in. 
       @txt_window = Qt::TextEdit.new(statusBar)
+      @txt_window.font = Cosmos.getFont('Courier', 12)
       @txt_window.setFocus()
       top_layout.addWidget(@txt_window)
 

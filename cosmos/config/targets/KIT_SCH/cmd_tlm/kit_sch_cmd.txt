@@ -17,16 +17,32 @@ COMMAND KIT_SCH LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load Table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 1 0 "Table ID: 0=Message 1=Schedule"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
-  APPEND_PARAMETER TBL_FILENAME 512 STRING "/cf/kit_sch_msg_tbl.json" "Message Table"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/kit_sch_msg_tbl.json" "Message Table"
 
 COMMAND KIT_SCH DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump Table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 1 0 "Table ID: 0=Message 1=Schedule"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
-  APPEND_PARAMETER TBL_FILENAME 512 STRING "/cf/kit_sch_msg_tb~.json" "Full path/file name to receive table dump. 20 cha max for file name without extension"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/kit_sch_msg_tb~.json" "Full path/file name to receive table dump. 20 char max for file name without extension"
  
 COMMAND KIT_SCH CFG_SCH_ENTRY <%= Osk::Cfg.processor_endian %> "Enable/disable a single activity in the Schedule Definition Table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 5) %>
-  APPEND_PARAMETER SLOT   16 UINT MIN_UINT16 MAX_UINT16 0 "Slot Number of Activity whose state is to change."
-  APPEND_PARAMETER ENTRY  16 UINT MIN_UINT16 MAX_UINT16 0 "Entry Number of Activity whose state is to change."
-  APPEND_PARAMETER CONFIG  8 UINT 0 1 1 "0=Disable, 1=Enable"
+  APPEND_PARAMETER SLOT     16 UINT MIN_UINT16 MAX_UINT16 0 "Scheduler slot number (0..N) whose state is to change."
+  APPEND_PARAMETER ACTIVITY 16 UINT MIN_UINT16 MAX_UINT16 0 "Activity index (0..M) whose state is to change."
+  APPEND_PARAMETER CONFIG    8 UINT 0 1 1 "0=Disable, 1=Enable"
+
+COMMAND KIT_SCH LOAD_SCH_ENTRY <%= Osk::Cfg.processor_endian %> "Load a scheduler table entry"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 12) %>
+  APPEND_PARAMETER SLOT        16 UINT MIN_UINT16 MAX_UINT16 0 "Scheduler slot number (0..N) whose state is to change."
+  APPEND_PARAMETER ACTIVITY    16 UINT MIN_UINT16 MAX_UINT16 0 "Activity index (0..M) whose state is to change."
+  APPEND_PARAMETER CONFIG      16 UINT          0          1 1 "0=Disable, 1=Enable"
+  APPEND_PARAMETER FREQ        16 UINT MIN_UINT16 MAX_UINT16 1 "Scheduler cycles between execution. 1=Send every execution"
+  APPEND_PARAMETER OFFSET      16 UINT MIN_UINT16 MAX_UINT16 0 "Number of schedler cycles to wait before first execution"
+  APPEND_PARAMETER MSG_TBL_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into message table"
+
+COMMAND KIT_SCH LOAD_MSG_ENTRY <%= Osk::Cfg.processor_endian %> "Load a message table entry. Doesn't accept parameters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
+  APPEND_PARAMETER MSG_TBL_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into message table"  
+  APPEND_PARAMETER MSG_ID      16 UINT MIN_UINT16 MAX_UINT16 0 "Complete first word of CCSDS primary header"
+
+  

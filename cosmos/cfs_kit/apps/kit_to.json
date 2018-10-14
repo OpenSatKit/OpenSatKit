@@ -1,0 +1,26 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "KIT_TO"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/kit_to.so",
+      "entry-symbol": "KIT_TO_AppMain",
+      "name": "KIT_TO",
+      "priority": 30,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "Packet Table",
+                  "id": 0,
+            "filename": "kit_to_pkt_tbl.json"
+         }
+      ]
+   }
+   
+}}

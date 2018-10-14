@@ -35,17 +35,20 @@ HORIZONTAL
       BUTTON 'Edit ES Startup'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_create_screen.rb"; app_create(self, "EDIT_STARTUP")'
       LABEL "Add app to cFE Executive Service startup script"
       LABEL "4"
-      BUTTON 'Stop cFS/Server'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_create_screen.rb"; app_create(self, "STOP_CFS")'
+      BUTTON 'Stop cFS/Server'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_create_screen.rb"; app_create(self, "STOP_CFS_SERVER")'
       LABEL "Stop cFS and COSMOS cmd-tlm server"
       LABEL "5"
       BUTTON 'Build cFS'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_create_screen.rb"; app_create(self, "BUILD_CFS")'
       LABEL "Run cmake to build new app"
       LABEL "6"
-      LABEL "Start COSMOS Server"
-      LABEL "Manually start cmd-tlm server from COSMOS launcher"
-      LABEL "7"
-      BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFS")'
-      LABEL "Start cFS with new app"
+      BUTTON 'Start cFS/Server'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/app_create_screen.rb"; app_create(self, "START_CFS_SERVER")'
+      LABEL "Start cFS and COSMOS cmd-tlm server"
+      #LABEL "5"
+      #LABEL "Start COSMOS Server"
+      #LABEL "Manually start cmd-tlm server from COSMOS launcher"
+      #LABEL "7"
+      #BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFS")'
+      #LABEL "Start cFS with new app"
     END
     SPACER 0 50 FIXED EXPANDING
   End # Vertical

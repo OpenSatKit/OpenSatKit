@@ -2,7 +2,8 @@
 ** Purpose: Define the OpenSat Kit scheduler application. 
 **
 ** Notes:
-**   None
+**   1. The scheduler object owns the message and scheduler tables
+**      so it provides command functions. 
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -121,6 +122,7 @@ typedef struct {
 } OS_PACK KIT_SCH_DiagPkt;
 
 #define KIT_SCH_DIAG_TLM_LEN sizeof (KIT_SCH_DiagPkt)
+
 
 /*
 ** Exported Data

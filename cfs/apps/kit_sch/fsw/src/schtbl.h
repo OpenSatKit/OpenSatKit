@@ -39,6 +39,7 @@
 #define SCHTBL_LOAD_PARSE_ERR_EID   (SCHTBL_BASE_EID + 3)
 #define SCHTBL_LOAD_ATTR_ERR_EID    (SCHTBL_BASE_EID + 4)
 #define SCHTBL_LOAD_OPEN_ERR_EID    (SCHTBL_BASE_EID + 5)
+#define SCHTBL_DUMP_INFO_EID        (SCHTBL_BASE_EID + 6)
 
 
 /*
@@ -178,18 +179,6 @@ boolean SCHTBL_ProcessTable(void);
 **
 */
 int32 SCHTBL_StartTimers(void);
-
-
-/******************************************************************************
-** Function: SCHTBL_ConfigureTableEntry
-**
-** Configure (enable/disable) a single entry
-**
-** Notes:
-**   1. Range checking is not performed on the parameters.
-**
-*/
-void SCHTBL_ConfigureTableEntry(uint16 SlotId, uint16 SlotEntry, boolean EnableFlag);
 
 
 /******************************************************************************

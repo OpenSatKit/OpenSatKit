@@ -32,16 +32,17 @@ def app_create(screen, cmd)
       Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CMAKE_DIR}/#{Osk::CPU1_STARTUP_FILE}'")
    elsif (cmd == "BUILD_CFS")
       spawn("xfce4-terminal --default-working-directory=""#{Osk::OSK_CFS_DIR}"" --execute make install""")
-   elsif (cmd == "STOP_CFS")
-      pids = `ps H -C ruby -o \'pid comm\'`   # Echo supplies the password
-      #puts pids
-      pids.each_line do |line|
-         if line.include? "cmd_tlm_server"  
-            #puts "Found server PID: " + line
-            cmd_tlm_pid = line.split[0]
-            `echo osk | sudo -S kill #{cmd_tlm_pid}`
-         end
-      end
+   elsif (cmd == "STOP_CFS_SERVER")
+   
+      Osk::System.stop_cfs
+      Osk::System.stop_cmd_tlm_server
+      
+   elsif (cmd == "START_CFS_SERVER")
+   
+      spawn("ruby #{Osk::COSMOS_CMD_TLM_SRV}")            
+      wait 4
+      Osk::System.start_cfs
+
    else
       prompt("Error in screen definition file. Undefined command sent to app_create()")
    end

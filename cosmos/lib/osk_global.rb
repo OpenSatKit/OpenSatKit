@@ -19,6 +19,15 @@ require 'cosmos'
 
 module Osk
 
+   PASSWORD = "osk"
+
+   ###########################
+   ## JSON Naming standards ##
+   ###########################
+
+   JSON_APP_TYPE_CFS = "cfs"
+   JSON_APP_TYPE_OSK = "osk"
+   
    ######################
    ## Network Settings ##
    ######################
@@ -72,10 +81,13 @@ module Osk
    CPU1_OS_CFG_FILE  = "cpu1_osconfig.h"
    CPU1_STARTUP_FILE = "cpu1_cfe_es_startup.scr"
    
+   JSON_TBL_MGMT_SCR_FILE = "json_table_mgmt_scr.txt"
+   
    TMP_BIN_FILE  = "osk_tmp_bin.dat"
    TMP_TBL_FILE  = "osk_tmp_tbl.dat"
    TMP_JSON_FILE = "osk_tmp.json"
-
+   TMP_TXT_FILE  = "osk_tmp.txt"
+   
    TMP_FLT_CMD_SCR_FILE = "osk_tmp_flt_cmd_scr.txt"
    TMP_FLT_CMD_SCR_STR  = "OSK_TMP_FLT_CMD_SCR"
 
@@ -132,6 +144,8 @@ module Osk
 
    LIB_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
    SCR_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/screens"
+   
+   APPS_JSON_DIR  = "#{Cosmos::USERPATH}/cfs_kit/apps"
 
    CFE_DOCS_DIR   = "#{Cosmos::USERPATH}/cfs_kit/docs"
    CFE_UG_DIR     = "#{CFE_DOCS_DIR}/cfe_users_guide"
@@ -148,19 +162,23 @@ module Osk
    COSMOS_SCR_RUNNER  = "#{Cosmos::USERPATH}/tools/ScriptRunner"
    COSMOS_TBL_MANAGER = "#{Cosmos::USERPATH}/tools/TableManager"
    COSMOS_TLM_GRAPHER = "#{Cosmos::USERPATH}/tools/TlmGrapher"
+   COSMOS_CMD_TLM_SRV = "#{Cosmos::USERPATH}/tools/CmdTlmServer"
    
    TMP_FLT_BIN_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_BIN_FILE}"
    TMP_GND_BIN_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_BIN_FILE}"
     
-   #####################
-   ## Demo Standards  ## 
-   #####################
+   TMP_FLT_TXT_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_TXT_FILE}"
+   TMP_GND_TXT_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_TXT_FILE}"
+    
+   #################################
+   ## Demo Standard Text Strings  ## 
+   #################################
 
    DEMO_STEP_NO_INFO = "\n\nNo additional information for this demo step."
 
-   #######################
-   ## Screen Standards  ## 
-   #######################
+   ###################################
+   ## Screen Standard Text Strings  ## 
+   ###################################
 
    WIDGET_GND_WORK_DIR = "gnd_work_dir"
    WIDGET_FLT_WORK_DIR = "flt_work_dir"
@@ -171,6 +189,8 @@ module Osk
 
    CMD_STR_NOOP      = "NOOP"
    CMD_STR_RESET     = "RESET_CTRS"
+   CMD_STR_LOAD_TBL  = "LOAD_TBL"
+   CMD_STR_DUMP_TBL  = "DUMP_TBL"
    CMD_DEF_FILENAME  = TMP_BIN_FILE
    CMD_DEF_DIR_NAME  = FLT_SRV_DIR
   

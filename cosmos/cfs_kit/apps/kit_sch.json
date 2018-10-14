@@ -1,0 +1,32 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "KIT_SCH"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/kit_sch.so",
+      "entry-symbol": "KIT_SCH_AppMain",
+      "name": "KIT_SCH",
+      "priority": 10,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "Message Table",
+                  "id": 0,
+            "filename": "kit_sch_msg_tbl.json"
+         },
+         { 
+                "name": "Scheduler Table",
+                  "id": 1,
+            "filename": "kit_sch_sch_tbl.json"
+         }
+      ]
+   }
+}}
+
+

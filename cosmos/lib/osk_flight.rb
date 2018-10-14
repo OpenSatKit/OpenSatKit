@@ -18,9 +18,10 @@
 require 'cosmos'
 
 require 'fsw_msg_id'
+require 'fsw_app'
 require 'osk_global'
 require 'osk_system'
-require 'fsw_app'
+require 'osk_targets'
 
 module Osk
    
@@ -98,9 +99,16 @@ module Osk
          @hc      = FswApp.new("HC",      "HC",      Osk::TLM_STR_HK_PKT, Fsw::MsgId::HC_CMD_MID)
          @hsim    = FswApp.new("HSIM",    "HSIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID)
          @i42     = FswApp.new("I42",     "I42",     Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
-         @kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID)
-         @kit_sch = FswApp.new("KIT_SCH", "KIT_SCH", Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_SCH_CMD_MID)
-         @kit_to  = FswApp.new("KIT_TO",  "KIT_TO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_TO_CMD_MID)
+        
+         app_json = read_app_json("kit_ci.json")
+         @kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID, app_json)
+
+         app_json = read_app_json("kit_sch.json")
+         @kit_sch = FswApp.new("KIT_SCH", "KIT_SCH", Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_SCH_CMD_MID, app_json)
+
+         app_json = read_app_json("kit_to.json")
+         @kit_to  = FswApp.new("KIT_TO",  "KIT_TO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_TO_CMD_MID, app_json)
+
          @tftp    = FswApp.new("TFTP",    "TFTP",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
          
          @app["BM"]      = @bm
@@ -113,8 +121,26 @@ module Osk
          @app["KIT_TO"]  = @kit_to
          @app["TFTP"]    = @tftp
 
+         Osk::create_json_table_mgmt_scr(@app)
+         
       end # End init_variables()
              
+      def read_app_json(filename) 
+
+         app_hash = nil
+         
+         begin
+            app_json = File.read("#{Osk::APPS_JSON_DIR}/#{filename}")
+            app_hash = JSON.parse(app_json)
+         rescue Exception => e
+            puts e.message
+            puts e.backtrace.inspect  
+         end
+
+         return app_hash
+         
+      end
+      
    end # Flight class
    
    # An instance of flight is created outside of the module
