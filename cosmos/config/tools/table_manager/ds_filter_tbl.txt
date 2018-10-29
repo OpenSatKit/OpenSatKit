@@ -1,0 +1,32 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR          = "DS"
+  @FILTERS_PER_PACKET      = "DS_FILTERS_PER_PACKET"
+  @PACKETS_IN_FILTER_TABLE = "DS_PACKETS_IN_FILTER_TABLE"
+  @FILTER_TBL_NAME_STR     = "DS_FILTER_TBL_NAME"
+  
+%>
+TABLE "DS Filter" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Packet Filters"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @FILTER_TBL_NAME_STR) %>
+
+  APPEND_PARAMETER "DESCR"  256 STRING "UNDEF"   "Table description"
+  <% 
+    max_filters = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @FILTERS_PER_PACKET)
+    max_packets = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @PACKETS_IN_FILTER_TABLE)
+    append_items = ""
+    for p in 0..(max_packets-1)
+      append_items << "APPEND_PARAMETER \"PKT#{p}_MSG_ID\"  16 UINT 0 MAX_UINT16 0  \"Packet MessageID (may be cmd or tlm)\"" << "\n"
+      append_items << "FORMAT_STRING \"0x%04X\"" << "\n"
+      for f in 0..(max_filters-1)
+        append_items << "APPEND_PARAMETER \"PKT#{p}_FLTR#{f}_TBL_IDX\"  8 UINT 0 MAX_UINT8  0  \"Index into destination file table\"" << "\n"
+        append_items << "APPEND_PARAMETER \"PKT#{p}_FLTR#{f}_TYPE\"     8 UINT 0 MAX_UINT8  0  \"Packet count or time\"" << "\n"
+        append_items << "APPEND_PARAMETER \"PKT#{p}_FLTR#{f}_ALG_N\"   16 UINT 0 MAX_UINT16 0  \"Algorithm value N (pass this many)\"" << "\n"
+        append_items << "APPEND_PARAMETER \"PKT#{p}_FLTR#{f}_ALG_X\"   16 UINT 0 MAX_UINT16 0  \"Algorithm value X (out of this many)\"" << "\n"
+        append_items << "APPEND_PARAMETER \"PKT#{p}_FLTR#{f}_ALG_O\"   16 UINT 0 MAX_UINT16 0  \"Algorithm value O (at this offset)\"" << "\n"
+      end # filters
+    end # packets
+  %>
+  <%= append_items %>
+  
