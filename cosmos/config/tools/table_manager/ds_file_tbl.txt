@@ -1,0 +1,30 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "DS"
+  @DEST_FILE_CNT  = "DS_DEST_FILE_CNT"
+  @DESTINATION_TBL_NAME_STR = "DS_DESTINATION_TBL_NAME"
+  
+%>
+TABLE "DS File" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Destination "
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @DESTINATION_TBL_NAME_STR) %>
+
+  APPEND_PARAMETER "DESCRIPTOR"  256 STRING "UNDEF"   "Table description"
+  <% 
+    dest_file_cnt = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @DEST_FILE_CNT)
+    append_items = ""
+    for f in 0..(dest_file_cnt-1)
+      # TODO - DS_MOVE_FILE
+      append_items << "APPEND_PARAMETER \"FILE#{f}_PATHNAME\"  512 STRING \"UNDEF\"     \"Path portion of filename\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_BASENAME\"  512 STRING \"UNDEF\"     \"Base portion of filename\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_EXTENSION\"  64 STRING \"UNDEF\"     \"Filename extension\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_TYPE\"       16 UINT 0 MAX_UINT16  0 \"Count or time\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_ENABLE\"     16 UINT 0 MAX_UINT16  0 \"Enable or disable state\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_MAX_SIZE\"   32 UINT 0 MAX_UINT32  0 \"Max file size (bytes)\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_MAX_AGE\"    32 UINT 0 MAX_UINT32  0 \"Max file age (seconds)\"" << "\n"
+      append_items << "APPEND_PARAMETER \"FILE#{f}_SEQ_CNT\"    32 UINT 0 MAX_UINT32  0 \"Max Sequence count\"" << "\n"
+    end # file loop
+  %>
+  <%= append_items %>
+  

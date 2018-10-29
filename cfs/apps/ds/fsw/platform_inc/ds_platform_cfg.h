@@ -110,7 +110,7 @@
 **       The number must be greater than zero but there is no upper
 **       enforced limit for this parameter.
 */
-#define DS_DEST_FILE_CNT                16
+#define DS_DEST_FILE_CNT               16
 
 
 /**
