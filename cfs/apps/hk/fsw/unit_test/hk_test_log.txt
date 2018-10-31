@@ -1,0 +1,706 @@
+##############################################################################
+## $Id: hk_test_log.txt 1.4 2016/10/28 11:04:15EDT mdeschu Exp  $
+##
+## Purpose: CFS HK application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+## $Log: hk_test_log.txt  $
+## Revision 1.4 2016/10/28 11:04:15EDT mdeschu 
+## Updates to unit tests for 2.4.1
+## Revision 1.3 2016/10/18 17:28:57EDT czogby 
+## Fix test HK_AppInit_Test_Nominal
+## Revision 1.2 2016/10/07 14:33:11EDT czogby 
+## Code Walkthrough Updates
+## Revision 1.1 2016/06/24 14:43:49EDT czogby 
+## Initial revision
+## Member added to project /CFS-APPs-PROJECT/hk/fsw/unit_test/project.pj
+##############################################################################
+
+HK 2.4.1.0 Unit Test Output:
+
+Running Test: HK_AppMain_Test_Nominal
+INFO EVENT ID=1 HK Initialized.  Version 2.4.1.0
+PKT: 00 00 00 00 00 00 00 
+PASS: HK_AppData.CombinedPacketsSent == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppMain_Test_AppInitError
+ERROR EVENT ID=14 Error Creating SB Pipe,RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppMain_Test_RcvMsgError
+INFO EVENT ID=1 HK Initialized.  Version 2.4.1.0
+ERROR EVENT ID=26 HK_APP Exiting due to CFE_SB_RcvMsg error 0xFFFFFFFF
+SYSTEM LOG: HK_APP Exiting due to CFE_SB_RcvMsg error 0xFFFFFFFF
+
+PASS: HK_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: HK_APP Exiting due to CFE_SB_RcvMsg error 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+PASS: HK_APP Exiting due to CFE_SB_RcvMsg error 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_Nominal
+INFO EVENT ID=1 HK Initialized.  Version 2.4.1.0
+PASS: HK Initialized.  Version 2.4.1.0
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == CFE_SUCCESS
+PASS: memcmp(&HK_AppData.HkPacket, &ExpectedPacket, sizeof(HK_HkPacket_t)) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_EVSRegisterError
+SYSTEM LOG: HK: error registering for event services: 0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: HK: error registering for event services: 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+
+Running Test: HK_AppInit_Test_SBCreatePipeError
+ERROR EVENT ID=14 Error Creating SB Pipe,RC=0xFFFFFFFF
+PASS: Error Creating SB Pipe,RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_SBSubscribeHKSendError
+ERROR EVENT ID=15 Error Subscribing to HK Snd Cmb Pkt, MID=0x189C, RC=0xFFFFFFFF
+PASS: Error Subscribing to HK Snd Cmb Pkt, MID=0x189C, RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_SBSubscribeHKRequestError
+ERROR EVENT ID=16 Error Subscribing to HK Request, MID=0x189B, RC=0xFFFFFFFF
+PASS: Error Subscribing to HK Request, MID=0x189B, RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_SBSubscribeHKGndCmdsError
+ERROR EVENT ID=17 Error Subscribing to HK Gnd Cmds, MID=0x189A, RC=0xFFFFFFFF
+PASS: Error Subscribing to HK Gnd Cmds, MID=0x189A, RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_PoolCreateError
+ERROR EVENT ID=18 Error Creating Memory Pool,RC=0xFFFFFFFF
+PASS: Error Creating Memory Pool,RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_TableInitError
+ERROR EVENT ID=19 Error Registering Copy Table,RC=0xFFFFFFFF
+PASS: Error Registering Copy Table,RC=0xFFFFFFFF
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppInit_Test_SendInitEventError
+SYSTEM LOG: HK App:Error Sending Initialization Event,RC=0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: HK App:Error Sending Initialization Event,RC=0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+PASS: HK_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Result == -1
+
+Running Test: HK_TableInit_Test_Nominal
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_TableInit_Test_RegisterCopyTableError
+ERROR EVENT ID=19 Error Registering Copy Table,RC=0xFFFFFFFF
+PASS: Error Registering Copy Table,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_TableInit_Test_RegisterRuntimeTableError
+ERROR EVENT ID=20 Error Registering Runtime Table,RC=0xFFFFFFFF
+PASS: Error Registering Runtime Table,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_TableInit_Test_LoadCopyTableError
+ERROR EVENT ID=21 Error Loading Copy Table,RC=0xFFFFFFFF
+PASS: Error Loading Copy Table,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_TableInit_Test_TableManageCopyTableError
+ERROR EVENT ID=22 Error from TBL Manage call for Copy Table,RC=0xFFFFFFFF
+PASS: Error from TBL Manage call for Copy Table,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_TableInit_Test_TableManageRuntimeTableError
+ERROR EVENT ID=23 Error from TBL Manage call for Runtime Table,RC=0xFFFFFFFF
+PASS: Error from TBL Manage call for Runtime Table,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_TableInit_Test_GetAddressCopyTableError
+ERROR EVENT ID=24 Error Getting Adr for Cpy Tbl,RC=0xFFFFFFFF
+PASS: Error Getting Adr for Cpy Tbl,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_TableInit_Test_GetAddressRuntimeTableAddressError
+ERROR EVENT ID=25 Error Getting Adr for Runtime Table,RC=0xFFFFFFFF
+PASS: Error Getting Adr for Runtime Table,RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_SendCombinedPktNominal
+INFO EVENT ID=11 Combined HK Packet 0x0000 is not found in current HK Copy Table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_SendCombinedPktError
+ERROR EVENT ID=28 Msg with Bad length Rcvd: ID = 0x189C, Exp Len = 10, Len = 1
+PASS: Msg with Bad length Rcvd: ID = 0x189C, Exp Len = 10, Len = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_SendHKNominal
+PKT: 00 00 00 00 00 00 00 00 
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_AppPipe_Test_SendHKError
+ERROR EVENT ID=28 Msg with Bad length Rcvd: ID = 0x189B, Exp Len = 8, Len = 1
+PASS: Msg with Bad length Rcvd: ID = 0x189B, Exp Len = 8, Len = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_Noop
+INFO EVENT ID=4 HK No-op command, Version 2.4.1.0
+PASS: HK No-op command, Version 2.4.1.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_Reset
+DEBUG EVENT ID=5 HK Reset Counters command received
+PASS: HK Reset Counters command received
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_InvalidCommandCode
+ERROR EVENT ID=2 Cmd Msg with Invalid command code Rcvd -- ID = 0x189A, CC = 99
+PASS: Cmd Msg with Invalid command code Rcvd -- ID = 0x189A, CC = 99
+PASS: HK_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_AppPipe_Test_ProcessIncomingHkData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_HousekeepingCmd_Test
+PKT: 00 00 00 00 00 00 00 
+PASS: HK_AppData.HkPacket.CmdCounter == 1
+PASS: HK_AppData.HkPacket.ErrCounter == 2
+PASS: HK_AppData.HkPacket.MissingDataCtr == 3
+PASS: HK_AppData.HkPacket.CombinedPacketsSent == 4
+PASS: HK_AppData.HkPacket.MemPoolHandle == 5
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_NoopCmd_Test_Nominal
+INFO EVENT ID=4 HK No-op command, Version 2.4.1.0
+PASS: HK No-op command, Version 2.4.1.0
+PASS: HK_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_NoopCmd_Test_BadMsgLength
+ERROR EVENT ID=3 Cmd Msg with Bad length Rcvd: ID = 0x0, CC = 0, Exp Len = 8, Len = 99
+PASS: HK_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_ResetCtrsCmd_Test_Nominal
+DEBUG EVENT ID=5 HK Reset Counters command received
+PASS: HK Reset Counters command received
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_ResetCtrsCmd_Test_BadMsgLength
+ERROR EVENT ID=3 Cmd Msg with Bad length Rcvd: ID = 0x0, CC = 0, Exp Len = 8, Len = 99
+PASS: HK_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_ResetHkData_Test
+PASS: HK_AppData.HkPacket.CmdCounter == 0
+PASS: HK_AppData.HkPacket.ErrCounter == 0
+PASS: HK_AppData.HkPacket.CombinedPacketsSent == 0
+PASS: HK_AppData.HkPacket.MissingDataCtr == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_VerifyCmdLength_Test_Nominal
+PASS: Result == HK_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_VerifyCmdLength_Test_BadMsgLength
+ERROR EVENT ID=3 Cmd Msg with Bad length Rcvd: ID = 0x189A, CC = 1, Exp Len = 99, Len = 8
+PASS: Cmd Msg with Bad length Rcvd: ID = 0x189A, CC = 1, Exp Len = 99, Len = 8
+PASS: Result == HK_BAD_MSG_LENGTH_RC
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_ProcessIncomingHkData_Test_Nominal
+PASS: memcmp(RtTblEntry->OutputPktAddr, CmdPacket, sizeof(HK_Send_Out_Msg_t))
+PASS: HK_AppData.RuntimeTablePtr->DataPresent == HK_DATA_PRESENT
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_ProcessIncomingHkData_Test_MessageError
+ERROR EVENT ID=6 HK table definition exceeds packet length. MID:0x189C, Length:10, Count:1
+PASS: HK table definition exceeds packet length. MID:0x189C, Length:10, Count:1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_ValidateHkCopyTable_Test
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_ProcessNewCopyTable_Test_Nominal
+PASS: (& HK_AppData.RuntimeTablePtr[0])->OutputPktAddr == (CFE_SB_MsgPtr_t)(&HK_UTILS_TEST_ProcessNewCopyTable_CmdPacket)
+PASS: (& HK_AppData.RuntimeTablePtr[0])->InputMidSubscribed == HK_INPUTMID_SUBSCRIBED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_ProcessNewCopyTable_Test_Errors
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+ERROR EVENT ID=7 HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+ERROR EVENT ID=8 HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+PASS: HK Processing New Table: ES_GetPoolBuf for size 2 returned 0xFFFFFFFF
+PASS: HK Processing New Table:SB_Subscribe for Mid 0x189C returned 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2*HK_COPY_TABLE_ENTRIES
+
+Running Test: HK_TearDownOldCopyTable_Test_Nominal
+PASS: (& HK_AppData.RuntimeTablePtr[0])->OutputPktAddr == (CFE_SB_MsgPtr_t)(0)
+PASS: (& HK_AppData.RuntimeTablePtr[0])->InputMidSubscribed == HK_INPUTMID_NOT_SUBSCRIBED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_TearDownOldCopyTable_Test_MemPoolError
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+ERROR EVENT ID=9 HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+PASS: HK TearDown: ES_putPoolBuf Err pkt:0x00000001 ret 0xFFFFFFFF, hdl 0x00000000
+PASS: (& HK_AppData.RuntimeTablePtr[0])->InputMidSubscribed == HK_INPUTMID_NOT_SUBSCRIBED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == HK_COPY_TABLE_ENTRIES
+
+Running Test: HK_SendCombinedHkPacket_Test_MissingData
+DEBUG EVENT ID=12 Combined Packet 0x189C missing data from Input Pkt 0x189C
+PKT: 18 9C C0 00 00 03 00 00 00 00 
+PASS: Combined Packet 0x189C missing data from Input Pkt 0x189C
+PASS: HK_AppData.MissingDataCtr == 1
+PASS: HK_AppData.CombinedPacketsSent == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_SendCombinedHkPacket_Test_PacketFoundFalse
+INFO EVENT ID=11 Combined HK Packet 0x189C is not found in current HK Copy Table
+PASS: Combined HK Packet 0x189C is not found in current HK Copy Table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: HK_CheckStatusOfTables_Test_ValidationPending
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_CheckStatusOfTables_Test_UpdatePending
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_CheckStatusOfTables_Test_DumpPending
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_CheckStatusOfTables_Test_Errors
+ERROR EVENT ID=10 Unexpected CFE_TBL_GetStatus return (0xFFFFFFFF) for Copy Table
+ERROR EVENT ID=27 Unexpected CFE_TBL_GetStatus return (0xFFFFFFFF) for Runtime Table
+PASS: Unexpected CFE_TBL_GetStatus return (0xFFFFFFFF) for Copy Table
+PASS: Unexpected CFE_TBL_GetStatus return (0xFFFFFFFF) for Runtime Table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: HK_CheckForMissingData_Test
+PASS: Result == HK_MISSING_DATA_DETECTED
+PASS: MissingInputMid == HK_SEND_COMBINED_PKT_MID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: HK_SetFlagsToNotPresent_Test
+PASS: (& HK_AppData.RuntimeTablePtr[0])->DataPresent == HK_DATA_NOT_PRESENT
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Tests Executed:    51
+Assert Pass Count: 145
+Assert Fail Count: 0
+
+gcov: '../src/hk_app.c' 100.00%  153
+gcov: '../src/hk_utils.c' 100.00%  163
+

@@ -89,6 +89,15 @@ module Fsw
       FM_OPEN_FILES_TLM_MID   = "0x088D"
       FM_FREE_SPACE_TLM_MID   = "0x088E"
 
+      # Housekeeping
+  
+      HK_CMD_MID              = "0x189A"
+      HK_HK_TLM_MID           = "0x089B"
+      HK_COMBINED_PKT1_MID    = "0x089C"
+      HK_COMBINED_PKT2_MID    = "0x089D"
+      HK_COMBINED_PKT3_MID    = "0x089E"
+      HK_COMBINED_PKT4_MID    = "0x089F"
+
       # Health & Safety
   
       HS_CMD_MID              = "0x18AE"

@@ -12,6 +12,7 @@ CFE_APP, /cf/bm.so,           BM_AppMain,       BM,            80,   16384, 0x0,
 CFE_APP, /cf/cs.so,           CS_AppMain,       CS,            90,   16384, 0x0, 0;
 CFE_APP, /cf/md.so,           MD_AppMain,       MD,            90,   16384, 0x0, 0;
 CFE_APP, /cf/mm.so,           MM_AppMain,       MM,            90,   16384, 0x0, 0;
+CFE_APP, /cf/hk.so,           HK_AppMain,       HK,            90,   16384, 0x0, 0;
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,     TFTP,         100,   16384, 0x0, 0;
 CFE_APP, /cf/hc.so,           HC_AppMain,       HC,            80,   16384, 0x0, 0;
 CFE_APP, /cf/hsim.so,         SIM_AppMain,      HSIM,          90,   16384, 0x0, 0;

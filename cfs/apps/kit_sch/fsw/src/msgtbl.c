@@ -274,7 +274,7 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       **   "stream-id": 65303,
       **   "seq-seg": 192,
       **   "length": 1792,
-      **   "data-bytes": "0,1,2,3,4,5"
+      **   "data-words": "0,1,2,3,4,5"
       */
       
       sprintf(DumpRecord,"\"message-array\": [\n");
@@ -312,12 +312,12 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
          else {
 
             /* 
-            ** Omit "data-bytes" property if no data
+            ** Omit "data-words" property if no data
             ** - Properly terminate 'length' line 
             */
             if (DataBytes > 0) {
          
-               sprintf(DumpRecord,",\n      \"data-bytes\": \"");         
+               sprintf(DumpRecord,",\n      \"data-words\": \"");         
                OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
                   
                for (d=0; d < DataBytes; d++) {
@@ -425,26 +425,28 @@ static boolean MsgCallback (int TokenIdx)
    **   "stream-id": 65303,
    **   "seq-seg": 192,
    **   "length": 1792,
-   **   "data-bytes": "0,1,2,3,4,5"
+   **   "data-words": "0,1,2,3,4,5"
    */
    if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "id",         &JsonIntData)) { AttributeCnt++; Id = JsonIntData; }
    if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "stream-id",  &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[0] = (uint16) JsonIntData; }
    if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "seq-seg",    &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[1] = (uint16) JsonIntData; }
    if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "length",     &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[2] = (uint16) JsonIntData; }
    
-   if (JSON_GetValStr(JSON_OBJ,      TokenIdx, "data-bytes", DataStr)) {
+   if (JSON_GetValStr(JSON_OBJ, TokenIdx, "data-words", DataStr)) {
       
       AttributeCnt++; 
       i = 3;
       
-      /* No pretection against ill-formed data array */
+      /* No protection against ill-formed data array */
       DataStrPtr = SplitStr(DataStr,",");
       if ( DataStrPtr != NULL) {
          MsgEntry.Buffer[i++] = atoi(DataStrPtr);
+         CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
+                           "MSGTBL.MsgCallback data[%d] = 0x%4X, DataStrPtr=%s\n",i-1,MsgEntry.Buffer[i-1],DataStrPtr);         
          while ( (DataStrPtr = SplitStr(NULL,",")) != NULL) {
             MsgEntry.Buffer[i++] = atoi(DataStrPtr);
             CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
-                              "MSGTBL.MsgCallback data[%d] = %d\n",i-1,MsgEntry.Buffer[i-1]);
+                              "MSGTBL.MsgCallback data[%d] = 0x%4X, DataStrPtr=%s\n",i-1,MsgEntry.Buffer[i-1],DataStrPtr);
          }
       }
       
@@ -454,7 +456,7 @@ static boolean MsgCallback (int TokenIdx)
    
    MsgTbl->ObjLoadCnt++;
    
-   /* data-bytes is optional */
+   /* data-words is optional */
    if ( (DataBytes  && AttributeCnt == 5) ||
         (!DataBytes && AttributeCnt == 4) ) {
    
@@ -525,12 +527,14 @@ static char *SplitStr(char *Str, const char *Delim) {
       Str = StaticStr;
 
    StrLength = strlen(&Str[StrLength]);
-   //while(str[strlength])
-   //   strlength++;
 
    /* find the first occurance of delim */
-   for (i=0; i < StrLength && !DelimFound; i++)
-      DelimFound = (Str[i] == Delim[0]);
+   for (i=0; i < StrLength; i++) {
+      if (Str[i] == Delim[0]) {
+         DelimFound = TRUE;
+         break;
+      }
+   }
    
    if (!DelimFound) {
       StaticStr = NULL;
@@ -544,7 +548,7 @@ static char *SplitStr(char *Str, const char *Delim) {
    }
 
    /* terminate the string
-    * this assignmetn requires char[], so str has to
+    * this assignment requires char[], so str has to
     * be char[] rather than *char
     */
    Str[i] = '\0';

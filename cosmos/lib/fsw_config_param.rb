@@ -62,6 +62,13 @@ module FswConfigParam
   DS_DESTINATION_TBL_NAME = "FILE_TBL"
   DS_FILTER_TBL_NAME      = "FILTER_TBL"
   
+  #########################
+  ## App - House Keeping ##
+  #########################
+
+  HK_COPY_TABLE_ENTRIES = 128
+  HK_COPY_TBL_NAME      = "CopyTable"
+  
   ########################
   ## App - File Manager ##
   ########################

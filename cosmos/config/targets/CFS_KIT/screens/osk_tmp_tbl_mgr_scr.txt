@@ -25,7 +25,7 @@
          LABEL "1. Click 'Table Manager' button to start the Table Manager tool"
          LABEL "2. Within Table Manager select File->Open->cfs_kit/file_server/tables" 
          LABEL "       > Select 'osk_tmp_bin.dat' and click 'Open'"
-         LABEL "       > When prompted select 'Definition file for DS.FILTER_TBL' definition file"
+         LABEL "       > When prompted select 'Definition file for HK.CopyTable' definition file"
          LABEL "       > Ignore 'binary file size does not match definition file size' warning"
       END # Vertical Box
    

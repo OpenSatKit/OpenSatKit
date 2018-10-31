@@ -207,7 +207,28 @@
                "frequency": 1,
                "offset": 1,
                "msg-id": 22
+            }},
+            
+            {"activity": {
+               "name":  "HK Housekeeping",
+               "descr": "",
+               "index": 5,
+               "enable": "true",
+               "frequency": 4,
+               "offset": 2,
+               "msg-id": 23
+            }},
+            
+            {"activity": {
+               "name":  "HK Combined Pkts",
+               "descr": "",
+               "index": 6,
+               "enable": "true",
+               "frequency": 4,
+               "offset": 2,
+               "msg-id": 24
             }}
+            
          ]
       }},   
    
