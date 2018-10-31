@@ -275,6 +275,33 @@
       },
   
       "packet": {
+         "name": "HK_HK_TLM_MID",
+         "stream-id": "\u089B",
+         "dec-id": 2203,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+  
+      "packet": {
+         "name": "HK_COMBINED_PKT1_MID",
+         "stream-id": "\u089C",
+         "dec-id": 2204,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+  
+      "packet": {
+         "name": "HK_COMBINED_PKT2_MID",
+         "stream-id": "\u089D",
+         "dec-id": 2205,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+  
+      "packet": {
          "name": "BM_HK_TLM_MID",
          "stream-id": "\u09F0",
          "dec-id": 2544,

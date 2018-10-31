@@ -52,6 +52,10 @@ VERTICALBOX
     VALUE FM HK_TLM_PKT CCSDS_SEQUENCE
     VALUE FM HK_TLM_PKT CMD_VALID_COUNT
     VALUE FM HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "HK - House Keeping"
+    VALUE HK HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE HK HK_TLM_PKT CMD_VALID_COUNT
+    VALUE HK HK_TLM_PKT CMD_ERROR_COUNT
     LABEL "HS - Health & Safety"
     VALUE HS HK_TLM_PKT CCSDS_SEQUENCE
     VALUE HS HK_TLM_PKT CMD_VALID_COUNT
@@ -74,7 +78,7 @@ VERTICALBOX
     VALUE SC HK_TLM_PKT CMD_ERROR_COUNT
     END # Matrix
     HORIZONTALBOX
-      NAMED_WIDGET CFS_APPS COMBOBOX CFE_ES CFE_EVS CFE_SB CFE_TBL CFE_TIME CS DS FM HS LC MD MM SC
+      NAMED_WIDGET CFS_APPS COMBOBOX CFE_ES CFE_EVS CFE_SB CFE_TBL CFE_TIME CS DS FM HK HS LC MD MM SC
       BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("CFS_APPS").text}"].send_cmd("#{Osk::CMD_STR_NOOP}")'
       BUTTON 'Reset Counters' 'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("CFS_APPS").text}"].send_cmd("#{Osk::CMD_STR_RESET}")'
       #BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/fsw_app.rb"; FswApp.send_scr_cmd("#{get_named_widget("CFS_APPS").text}", "#{Osk::CMD_STR_NOOP}")'

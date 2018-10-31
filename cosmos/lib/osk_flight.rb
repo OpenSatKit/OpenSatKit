@@ -46,7 +46,7 @@ module Osk
       attr_reader :cfe_es, :cfe_evs, :cfe_sb, :cfe_tbl, :cfe_time
 
       # cFS Apps
-      attr_reader :cs, :ds, :fm, :hs, :lc, :md, :mm, :sc
+      attr_reader :cs, :ds, :fm, :hk, :hs, :lc, :md, :mm, :sc
       
       # Kit Apps
       attr_reader :bm, :f42, :hc, :hsim, :i42, :kit_ci, :kit_sch, :kit_to, :tftp
@@ -78,6 +78,7 @@ module Osk
          @cs = FswApp.new("CS","CS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::CS_CMD_MID)
          @ds = FswApp.new("DS","DS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::DS_CMD_MID)
          @fm = FswApp.new("FM","FM",Osk::TLM_STR_HK_PKT,Fsw::MsgId::FM_CMD_MID)
+         @hk = FswApp.new("HK","HK",Osk::TLM_STR_HK_PKT,Fsw::MsgId::HK_CMD_MID)
          @hs = FswApp.new("HS","HS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::HS_CMD_MID)
          @lc = FswApp.new("LC","LC",Osk::TLM_STR_HK_PKT,Fsw::MsgId::LC_CMD_MID)
          @md = FswApp.new("MD","MD",Osk::TLM_STR_HK_PKT,Fsw::MsgId::MD_CMD_MID)
@@ -87,6 +88,7 @@ module Osk
          @app["CS"] = @cs
          @app["DS"] = @ds
          @app["FM"] = @fm
+         @app["HK"] = @hk
          @app["HS"] = @hs
          @app["LC"] = @lc
          @app["MD"] = @md
