@@ -5,6 +5,8 @@ include_directories(fsw/src)
 include_directories(fsw/mission_inc)
 include_directories(fsw/platform_inc)
 include_directories(${CFECORE_SOURCE_DIR}/src/inc)
+include_directories(${f42_MISSION_DIR}/fsw/platform_inc)
+include_directories(${isim_MISSION_DIR}/fsw/platform_inc)
 
 aux_source_directory(fsw/src APP_SRC_FILES)
 aux_source_directory(fsw/tables APP_TABLE_FILES)

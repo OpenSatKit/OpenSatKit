@@ -5,15 +5,6 @@
 **   1. Use the Singleton design pattern. A pointer to the table object
 **      is passed to the constructor and saved for all other operations.
 **      This is a table-specific file so it doesn't need to be re-entrant.
-**   2. The table is formatted using common format for each row similar to 
-**      the cFE executive service's cfe_es_startup.scr file. 
-**   3. This example illustrates how to integrate a user-defined text parser
-**      into the opensat app framework. A more complex parser is needed
-**      for non-homogeneous data files.
-**   4. One of the goals of the object-based cFS application effort is to 
-**      explore using text-based tables that are managed by the application.
-**      Once a 'standard' text format is agreed upon the common utilities 
-**      could be provided as libraries to the apps.
 **
 ** License:
 **   Template written by David McComas and licensed under the GNU

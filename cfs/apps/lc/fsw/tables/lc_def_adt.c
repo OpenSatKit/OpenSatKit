@@ -263,19 +263,19 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] =
                                }
     },
 
-    /* #2 (unused) */
+    /* #2 (ISIM Fault) */
     {
-        .DefaultState        = LC_ACTION_NOT_USED,
-        .MaxPassiveEvents    = 0,
-        .MaxPassFailEvents   = 0,
-        .MaxFailPassEvents   = 0,
-        .RTSId               = 0,
-        .MaxFailsBeforeRTS   = 0,
-        .EventType           = CFE_EVS_INFORMATION,
-        .EventID             = 0,
-        .EventText           = { " " },
+        .DefaultState        = LC_APSTATE_ACTIVE,
+        .MaxPassiveEvents    = 2,
+        .MaxPassFailEvents   = 2,
+        .MaxFailPassEvents   = 2,
+        .RTSId               = 6,
+        .MaxFailsBeforeRTS   = 3,
+        .EventType           = CFE_EVS_ERROR,
+        .EventID             = LC_BASE_AP_EID + 2,
+        .EventText           = { "ISIM Fault" },
         .RPNEquation         = { /* (WP_0) */
-                                 0,
+                                 12,
                                  LC_RPN_EQUAL
                                }
     },

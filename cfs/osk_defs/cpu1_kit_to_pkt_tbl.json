@@ -453,6 +453,15 @@
          "reliability": 0,
          "buf-limit": 4
       },
+      
+      "packet": {
+         "name": "ISIM_HK_TLM_MID",
+         "stream-id": "\u0882",
+         "dec-id": 2178,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      }
 
    ]
 }

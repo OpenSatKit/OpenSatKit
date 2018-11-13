@@ -117,7 +117,7 @@ const EXTBL_Struct* EXOBJ_GetTblPtr(void);
 /******************************************************************************
 ** Function: EXOBJ_LoadTbl
 **
-** Load into ExObj's example table.
+** Load data into ExObj's example table.
 **
 ** Note:
 **  1. This function must match the EXTBL_LoadTblFunc definition.
@@ -129,7 +129,7 @@ boolean EXOBJ_LoadTbl (EXTBL_Struct* NewTbl);
 /******************************************************************************
 ** Function: EXOBJ_LoadEntry
 **
-** Load into ExObj's example table.
+** Load data into ExObj's example table.
 **
 ** Note:
 **  1. This function must match the EXTBL_LoadEntryFunc definition.

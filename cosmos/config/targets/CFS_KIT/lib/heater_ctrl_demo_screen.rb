@@ -100,6 +100,7 @@ def heater_demo(screen, button)
     cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME SC, BITMASK 0x01") # Enable debug events
     cmd("HC HEATER_CONTROL with HCTYPE BATTERY, HCSTATUS ENABLED")
     cmd("HC HEATER_CONTROL with HCTYPE PROPULSION, HCSTATUS ENABLED")
+    cmd("SC ENABLE_RTS with RTS_ID 2")
     cmd("SC ENABLE_RTS with RTS_ID 3")
     cmd("SC START_RTS with RTS_ID 3")
   elsif (button == "DISABLE")

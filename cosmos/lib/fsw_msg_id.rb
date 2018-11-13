@@ -28,36 +28,36 @@ module Fsw
       ##########################
 
       # Executive Services
+      
       CFE_ES_CMD_MID          = "0x1806"
-  
       CFE_ES_HK_TLM_MID       = "0x0800"
       CFE_ES_APP_TLM_MID      = "0x080B"
       CFE_ES_SHELL_TLM_MID    = "0x080F"
       CFE_ES_MEMSTATS_TLM_MID = "0x0810"
   
       # Event Services
+      
       CFE_EVS_CMD_MID         = "0x1801"
-  
       CFE_EVS_HK_TLM_MID      = "0x0801"
       CFE_EVS_EVENT_MSG_MID   = "0x0808"
   
       # Software Bus
-      CFE_SB_CMD_MID          = "0x1803"
-  
+      
+      CFE_SB_CMD_MID          = "0x1803"  
       CFE_SB_HK_TLM_MID       = "0x0803"
       CFE_SB_STATS_TLM_MID    = "0x080A"
       CFE_SB_ALLSUBS_TLM_MID  = "0x080D"
       CFE_SB_ONESUB_TLM_MID   = "0x080E"
   
       # Table Service
+      
       CFE_TBL_CMD_MID         = "0x1804"
-  
       CFE_TBL_HK_TLM_MID      = "0x0804"
       CFE_TBL_REG_TLM_MID     = "0x080C"
   
       # Time Service
+      
       CFE_TIME_CMD_MID        = "0x1805"
-  
       CFE_TIME_HK_TLM_MID     = "0x0805"
       CFE_TIME_DIAG_TLM_MID   = "0x0806"
 
@@ -67,14 +67,12 @@ module Fsw
   
       # Checksum
   
-      CS_CMD_MID              = "0x189F"
-  
+      CS_CMD_MID              = "0x189F"  
       CS_HK_TLM_MID           = "0x08A4"
 
       # Data Storage
 
       DS_CMD_MID              = "0x18BB"
-
       DS_HK_TLM_MID           = "0x08B8"
       DS_DIAG_TLM_MID         = "0x08B9"
   
@@ -82,7 +80,6 @@ module Fsw
       # File Manager  
   
       FM_CMD_MID              = "0x188C"
-  
       FM_HK_TLM_MID           = "0x088A"
       FM_FILE_INFO_TLM_MID    = "0x088B"  
       FM_DIR_LIST_TLM_MID     = "0x088C"
@@ -112,7 +109,6 @@ module Fsw
       # Memory Dwell  
   
       MD_CMD_MID              = "0x1890"
-
       MD_HK_TLM_MID           = "0x0890"
       MD_DWELL_PKT_MID_1      = "0x0891"
       MD_DWELL_PKT_MID_2      = "0x0892"
@@ -127,6 +123,7 @@ module Fsw
       # Stored Command
 
       SC_CMD_MID              = "0x18A9"
+      SC_1HZ_WAKEUP_MID       = "0x18AB"
       SC_HK_TLM_MID           = "0x08AA"
   
       #########################
@@ -141,10 +138,8 @@ module Fsw
       # F42 - 42 Simulator FSW
   
       F42_CMD_MID      = "0x19D0"
-
       F42_HK_TLM_MID   = "0x09D0"
       F42_CONTROL_MID  = "0x09D1"
-
       F42_SENSOR_MID   = "0x09E0"
       F42_ACTUATOR_MID = "0x09E1"
   
@@ -162,9 +157,13 @@ module Fsw
       # I42 - 42 Simulator Interface
   
       I42_CMD_MID      = "0x19D2"
-
       I42_HK_TLM_MID   = "0x09D2"
 
+      # ISIM - Budget Sat (Bsat) Instrument Simulator (Isim)
+  
+      ISIM_CMD_MID      = "0x1802"
+      ISIM_HK_TLM_MID   = "0x0882"
+      
       # Kit Command Ingest
   
       KIT_CI_CMD_MID    = "0x1884"

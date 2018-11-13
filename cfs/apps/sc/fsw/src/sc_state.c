@@ -166,7 +166,6 @@ void SC_GetNextRtsCommand(void)
     /*
      ** Make sure that the RTP is executing some RTS
      */
-     
     if ((SC_OperData.RtsCtrlBlckAddr -> RtsNumber > 0) &&
          (SC_OperData.RtsCtrlBlckAddr -> RtsNumber <= SC_NUMBER_OF_RTS))
     {
@@ -243,7 +242,7 @@ void SC_GetNextRtsCommand(void)
                              */
                             SC_OperData.RtsInfoTblAddr[RtsNum].NextCommandTime = 
                             SC_ComputeAbsTime(RtsEntryPtr->TimeTag);
-                            
+
                             /*
                              ** Update the appropriate RTS info table current command pointer
                              */

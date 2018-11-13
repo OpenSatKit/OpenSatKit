@@ -194,7 +194,7 @@ int32 SIM_AppInit(void)
     if (Result == CFE_SUCCESS)
     {
         /* Subscribe to SIM ground command packets */
-        Result = CFE_SB_Subscribe(SIM_CMD_MID, SIM_GlobalData.CmdPipe);
+        Result = CFE_SB_SubscribeEx(SIM_CMD_MID, SIM_GlobalData.CmdPipe,CFE_SB_Default_Qos,6);
 
         if (Result != CFE_SUCCESS)
         {

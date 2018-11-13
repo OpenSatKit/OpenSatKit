@@ -13,8 +13,8 @@
 **   2. cFS Application Developer's Guide.
 **
 */
-#ifndef _@template@_
-#define _@template@_
+#ifndef _@template@_app_
+#define _@template@_app_
 
 /*
 ** Includes
@@ -95,4 +95,4 @@ extern @TEMPLATE@_Class  @Template@;
 */
 void @TEMPLATE@_AppMain(void);
 
-#endif /* _@template@_ */
+#endif /* _@template@_app_ */

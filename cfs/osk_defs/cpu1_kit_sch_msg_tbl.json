@@ -191,13 +191,23 @@
       }},
 
       {"message": {
-         "name":  "HK_SEND_COMBINED_PKT_MID",
+         "name":  "HK_SEND_COMBINED_PKT_MID: HK_COMBINED_PKT1_MID",
          "descr": "0x189C(6300) => 0x9C18(39960), 0xC000(49152) => 0x00C0(192), 0x0003 => 0x0300(768), Data: 0x089C (2204) => 0x9C08 (39944)",
          "id": 24,
          "stream-id": 39960,
          "seq-seg": 192,
          "length": 768,
          "data-words": "0,2204"
+      }},
+
+      {"message": {
+         "name":  "HK_SEND_COMBINED_PKT_MID: HK_COMBINED_PKT2_MID",
+         "descr": "0x189C(6300) => 0x9C18(39960), 0xC000(49152) => 0x00C0(192), 0x0003 => 0x0300(768), Data: 0x089D (2205) => 0x9D08 (40200)",
+         "id": 25,
+         "stream-id": 39960,
+         "seq-seg": 192,
+         "length": 768,
+         "data-words": "0,2205"
       }},
 
       {"message": {

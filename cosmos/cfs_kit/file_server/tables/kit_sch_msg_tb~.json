@@ -1,7 +1,7 @@
 
 {
 "name": "Kit Scheduler (KIT_SCH) Message Table",
-"description": "KIT_SCH table dumped at 1980-013-01:41:56.60147",
+"description": "KIT_SCH table dumped at 1980-013-01:43:30.80235",
 "message-array": [
    {"message": {
       "id": 0,
@@ -22,21 +22,21 @@
       "stream-id": 2840,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-bords": "0"
    }},
    {"message": {
       "id": 3,
       "stream-id": 3096,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 4,
       "stream-id": 3352,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 5,
@@ -73,109 +73,112 @@
       "stream-id": 40984,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 11,
       "stream-id": 41240,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 12,
       "stream-id": 48152,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 13,
       "stream-id": 36120,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 14,
       "stream-id": 44824,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 15,
       "stream-id": 45080,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 16,
       "stream-id": 42264,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 17,
       "stream-id": 42520,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 18,
       "stream-id": 37144,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 19,
       "stream-id": 37400,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 20,
       "stream-id": 35096,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 21,
       "stream-id": 43544,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 22,
       "stream-id": 43800,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 23,
-      "stream-id": 0,
-      "seq-seg": 0,
-      "length": 0
+      "stream-id": 39704,
+      "seq-seg": 192,
+      "length": 256,
+      "data-words": "0"
    }},
    {"message": {
       "id": 24,
-      "stream-id": 0,
-      "seq-seg": 0,
-      "length": 0
+      "stream-id": 39960,
+      "seq-seg": 192,
+      "length": 768,
+      "data-words": "0,2204,0"
    }},
    {"message": {
       "id": 25,
-      "stream-id": 0,
-      "seq-seg": 0,
-      "length": 0
+      "stream-id": 39960,
+      "seq-seg": 192,
+      "length": 768,
+      "data-words": "0,2205,0"
    }},
    {"message": {
       "id": 26,
@@ -206,84 +209,84 @@
       "stream-id": 61721,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 31,
       "stream-id": 61977,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 32,
       "stream-id": 47641,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 33,
       "stream-id": 49433,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 34,
       "stream-id": 45593,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 35,
       "stream-id": 45849,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 36,
       "stream-id": 34072,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 37,
       "stream-id": 38424,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 38,
       "stream-id": 33048,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 39,
       "stream-id": 46616,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 40,
       "stream-id": 53529,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 41,
       "stream-id": 54041,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 42,
@@ -638,14 +641,14 @@
       "stream-id": 33560,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 101,
       "stream-id": 65303,
       "seq-seg": 192,
       "length": 1792,
-      "data-bytes": "1,0,3,0,5,0,0"
+      "data-words": "1,2,3,4,5,6,0"
    }},
    {"message": {
       "id": 102,

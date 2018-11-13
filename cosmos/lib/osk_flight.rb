@@ -49,7 +49,7 @@ module Osk
       attr_reader :cs, :ds, :fm, :hk, :hs, :lc, :md, :mm, :sc
       
       # Kit Apps
-      attr_reader :bm, :f42, :hc, :hsim, :i42, :kit_ci, :kit_sch, :kit_to, :tftp
+      attr_reader :bm, :f42, :hc, :hsim, :i42, :isim, :kit_ci, :kit_sch, :kit_to, :tftp
       
       def initialize
          #puts "Osk::Flight.initialize()"
@@ -101,6 +101,7 @@ module Osk
          @hc      = FswApp.new("HC",      "HC",      Osk::TLM_STR_HK_PKT, Fsw::MsgId::HC_CMD_MID)
          @hsim    = FswApp.new("HSIM",    "HSIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID)
          @i42     = FswApp.new("I42",     "I42",     Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
+         @isim    = FswApp.new("ISIM",    "ISIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
         
          app_json = read_app_json("kit_ci.json")
          @kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID, app_json)
@@ -118,6 +119,7 @@ module Osk
          @app["HC"]      = @hc
          @app["HSIM"]    = @hsim
          @app["I42"]     = @i42
+         @app["ISIM"]    = @isim
          @app["KIT_CI"]  = @kit_ci
          @app["KIT_SCH"] = @kit_sch
          @app["KIT_TO"]  = @kit_to

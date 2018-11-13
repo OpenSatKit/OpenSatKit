@@ -22,7 +22,7 @@ COMMAND @TEMPLATE@ DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump example objec
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID   8 UINT 0 1 0 "Table ID. 0 is first table registered"
   APPEND_PARAMETER TYPE 8 UINT 0 1 0 "Unused"
-  APPEND_PARAMETER FILENAME 512 STRING "/cf/@template@_extbl_d.json" "Full path and file name to receive table dump"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/@template@_extbl~.json" "Full path and file name to receive table dump"
 
 COMMAND @TEMPLATE@ EXOBJ_STUB <%= Osk::Cfg.processor_endian %> "Stub command for the example object"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>

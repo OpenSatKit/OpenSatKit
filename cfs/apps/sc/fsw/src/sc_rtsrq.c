@@ -99,13 +99,13 @@ void SC_StartRtsCmd (CFE_SB_MsgPtr_t CmdPacket)
             {
                 /* the requested RTS is not being used and is not empty */
                 if (SC_OperData.RtsInfoTblAddr[RtsIndex].RtsStatus == SC_LOADED)
-                {               
+                {   
                     /*
                      ** Check the command length
                      */   
                     RtsEntryPtr = (SC_RtsEntryHeader_t *) SC_OperData.RtsTblAddr[RtsIndex];
                     RtsEntryCmd = (CFE_SB_MsgPtr_t) RtsEntryPtr->CmdHeader;
-                    
+                                                  
                     CmdLength = CFE_SB_GetTotalMsgLength(RtsEntryCmd); 
                      /* Make sure the command is big enough, but not too big  */
                     if (CmdLength >= SC_PACKET_MIN_SIZE  && CmdLength <= SC_PACKET_MAX_SIZE)
@@ -125,7 +125,6 @@ void SC_StartRtsCmd (CFE_SB_MsgPtr_t CmdPacket)
                          */
                         SC_OperData.RtsInfoTblAddr[RtsIndex].NextCommandTime  = 
                             SC_ComputeAbsTime(RtsEntryPtr->TimeTag);
-
                         
                         /*
                          ** Last, Increment some global counters associated with the
