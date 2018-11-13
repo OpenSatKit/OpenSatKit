@@ -19,6 +19,7 @@ CFE_APP, /cf/hsim.so,         SIM_AppMain,      HSIM,          90,   16384, 0x0,
 CFE_APP, /cf/osk_demo_app.so, OSK_DEMO_AppMain, OSK_DEMO,     120,    8192, 0x0, 0;
 CFE_APP, /cf/f42.so,          F42_AppMain,      F42,           90,   16384, 0x0, 0;
 CFE_APP, /cf/i42.so,          I42_AppMain,      I42,           90,   80192, 0x0, 0;
+CFE_APP, /cf/isim.so,         ISIM_AppMain,     ISIM,          90,   16384, 0x0, 0;
 !CFE_APP, /cf/hs.so,           HS_AppMain,       HS,            80,   16384, 0x0, 0;
 !CFE_APP, /cf/example.so,      EXAMPLE_AppMain,  EXAMPLE,       90,   16384, 0x0, 0;
 !CFE_LIB, /cf/sample_lib.so,  SAMPLE_LibInit,  SAMPLE_LIB,    0,      0,  0x0, 0;

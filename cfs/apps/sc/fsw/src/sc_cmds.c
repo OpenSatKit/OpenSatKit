@@ -623,7 +623,7 @@ void SC_ProcessRequest (CFE_SB_MsgPtr_t CmdPacket)
      ** Get the current system time in the global SC_AppData.CurrentTime
      */
     SC_GetCurrentTime();
-  
+
     switch (MessageID)
     {        
         case SC_CMD_MID:
@@ -660,7 +660,6 @@ void SC_ProcessRequest (CFE_SB_MsgPtr_t CmdPacket)
             /*
              ** Time to execute a command in the SC memory
              */
-            
             do
             {
                 /*

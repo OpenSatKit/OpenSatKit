@@ -2,7 +2,6 @@
 # cFE Executive Service tutorial top-level script
 # 
 # Notes:
-# Notes:
 #   1. This tutorial is part of the cFE Service training module and implements
 #      the ES exercises.
 #

@@ -413,7 +413,10 @@ boolean SC_ParseRts (uint16 Buffer[])
 
     i = 0;
     Done = Error = FALSE;
-        
+    
+   //OS_printf("SC_ParseRts: 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X 0x%04X\n", 
+   //          Buffer[0], Buffer[1], Buffer[2], Buffer[3], Buffer[4],Buffer[5]);
+              
     while (Error == FALSE && Done == FALSE)
     {
         

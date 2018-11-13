@@ -157,7 +157,7 @@ boolean @TEMPLATE@_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 void @TEMPLATE@_SendHousekeepingPkt(void)
 {
 
-   /* Good design practice in case app expands to more than on etable */
+   /* Good design practice in case app expands to more than one table */
    const TBLMGR_Tbl* LastTbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
 
    
@@ -170,7 +170,7 @@ void @TEMPLATE@_SendHousekeepingPkt(void)
 
    
    /*
-   ** EXTABL/EXOBJ Data
+   ** EXTBL/EXOBJ Data
    ** - At a minimum all OBJECT variables effected by a reset must be included
    */
 

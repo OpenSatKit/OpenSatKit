@@ -70,6 +70,8 @@
 #include "lc_tbl.h"
 #include "lc_app.h"
 #include "hc_msgids.h"
+#include "isim_msgids.h"
+
 
 /*************************************************************************
 ** Examples
@@ -280,16 +282,16 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 40.0,
     },
 
-    /* #12 (unused) */
+    /* #12 (ISIM Fault) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = 0,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = ISIM_TLM_HK_MID,
+        .WatchpointOffset           = 20,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8in32.Unsigned8 = 1
     },
 
     /* #13 (unused) */

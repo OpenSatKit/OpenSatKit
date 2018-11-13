@@ -5,6 +5,7 @@
   @APP_PREFIX_STR         = "HK"
   @HK_TLM_MID_STR         = "HK_HK_TLM_MID"
   @COMBINED_PKT1_MID_STR  = "HK_COMBINED_PKT1_MID"
+  @COMBINED_PKT2_MID_STR  = "HK_COMBINED_PKT2_MID"
   
 %>
 
@@ -36,3 +37,54 @@ TELEMETRY HK COMBO_PKT_1 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined
   APPEND_ITEM <%= "TBL_#{Osk::TLM_STR_CMD_VLD}" %>   8 UINT "TBL Command Valid Counter."
   APPEND_ITEM <%= "TBL_#{Osk::TLM_STR_CMD_ERR}" %>   8 UINT "TBL Command Error Counter."
   APPEND_ITEM TBL_NUM_REG_TABLES                    16 UINT "TBL Number of Tables Registered."
+
+# BudgetSat (bSat) 
+  
+TELEMETRY HK COMBO_PKT_2 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT2_MID_STR) %>
+  
+  #ISIM HK - Instrument Status
+  APPEND_ITEM INSTR_STATE 8 UINT  ""
+    STATE OFF          0
+    STATE INITIALIZING 1 
+    STATE READY        2 
+
+  APPEND_ITEM SCI_STATE 8 UINT  ""
+    STATE OFF    0
+    STATE START  1
+    STATE STOP   2
+    STATE ON     3
+  
+  APPEND_ITEM FAULT  8 UINT  ""
+    STATE FALSE   0
+    STATE TRUE    1 
+  
+  APPEND_ITEM SPARE  8 UINT  ""
+
+  #F42 HK - Control Mode
+  APPEND_ITEM CTRL_MODE       16 UINT "Control Mode"
+    STATE Init 1
+    STATE TBD  2
+
+  #F42 CTRL - Rates, Att Est, Att Err
+
+  APPEND_ITEM WBN_1       32 FLOAT "wbn[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WBN_2       32 FLOAT "wbn[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WBN_3       32 FLOAT "wbn[2]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_1       32 FLOAT "qbr[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_2       32 FLOAT "qbr[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_3       32 FLOAT "qbr[2]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_4       32 FLOAT "qbr[3]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM ATT_ERR_X   32 FLOAT "qbr[0]*2.0"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM ATT_ERR_Y   32 FLOAT "qbr[1]*2.0"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM ATT_ERR_Z   32 FLOAT "qbr[2]*2.0"
+    FORMAT_STRING "%.6f"

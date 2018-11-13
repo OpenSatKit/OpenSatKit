@@ -19,24 +19,18 @@
       SCREEN AUTO AUTO 0.5
       GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
      
-      TITLE START_APP
+      TITLE ENA_APP_EVENT_TYPE
          SETTING BACKCOLOR 162 181 205
          SETTING TEXTCOLOR black
 
       VERTICALBOX "Command Parameters"
       MATRIXBYCOLUMNS 2
    NAMED_WIDGET param_1 LABEL 'APP_NAME'
-   NAMED_WIDGET value_1 TEXTFIELD 16 "APPNAME"
-   NAMED_WIDGET param_2 LABEL 'APP_ENTRY_POINT'
-   NAMED_WIDGET value_2 TEXTFIELD 16 "APPNAME_AppMain"
-   NAMED_WIDGET param_3 LABEL 'APP_FILENAME'
-   NAMED_WIDGET value_3 TEXTFIELD 16 "/cf/appname.so"
-   NAMED_WIDGET param_4 LABEL 'STACK_SIZE'
-   NAMED_WIDGET value_4 TEXTFIELD 16 "8192"
-   NAMED_WIDGET param_5 LABEL 'EXCEPTION_ACTION'
-   NAMED_WIDGET value_5 TEXTFIELD 16 "0"
-   NAMED_WIDGET param_6 LABEL 'PRIORITY'
-   NAMED_WIDGET value_6 TEXTFIELD 16 "0"
+   NAMED_WIDGET value_1 TEXTFIELD 16 "default"
+   NAMED_WIDGET param_2 LABEL 'BITMASK'
+   NAMED_WIDGET value_2 TEXTFIELD 16 "15"
+   NAMED_WIDGET param_3 LABEL 'SPARE'
+   NAMED_WIDGET value_3 TEXTFIELD 16 "0"
 
       END # Matrix
       END # Vertical
@@ -44,6 +38,6 @@
       HORIZONTALLINE
 
       MATRIXBYCOLUMNS 2      
-         BUTTON 'Send'   'require "/mnt/hgfs/OpenSatKit/cosmos/lib/osk_ops.rb"; Osk::Ops::send_flt_cmd_with_param_scr(self, "CFE_ES", "START_APP", 6);'
+         BUTTON 'Send'   'require "/mnt/hgfs/OpenSatKit/cosmos/lib/osk_ops.rb"; Osk::Ops::send_flt_cmd_with_param_scr(self, "CFE_EVS", "ENA_APP_EVENT_TYPE", 3);'
          BUTTON 'Cancel' 'clear("CFS_KIT OSK_TMP_FLT_CMD_SCR")'
       End # Matrix

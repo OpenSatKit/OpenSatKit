@@ -70,7 +70,7 @@
 /* #include "cs_msgids.h"  */
 /* #include "ds_msgids.h"  */
 /* #include "fm_msgids.h"  */
-/* #include "hk_msgids.h"  */
+#include "hk_msgids.h"
 /* #include "hs_msgids.h"  */
 /* #include "lc_msgids.h"  */
 /* #include "md_msgids.h"  */
@@ -288,11 +288,11 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 015 */
     {
-      /* .MessageID = */ DS_UNUSED,
+      /* .MessageID = */ HK_COMBINED_PKT2_MID,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
-        { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED },
+        { 6, DS_BY_COUNT, 1, 1, 0 },
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED },
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED },
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }

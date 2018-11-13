@@ -205,7 +205,7 @@
                "index": 4,
                "enable": "true",
                "frequency": 1,
-               "offset": 1,
+               "offset": 0,
                "msg-id": 22
             }},
             
@@ -220,13 +220,23 @@
             }},
             
             {"activity": {
-               "name":  "HK Combined Pkts",
+               "name":  "HK Combined Pkt 1",
                "descr": "",
                "index": 6,
                "enable": "true",
                "frequency": 4,
                "offset": 2,
                "msg-id": 24
+            }},
+            
+            {"activity": {
+               "name":  "HK Combined Pkt 2",
+               "descr": "",
+               "index": 7,
+               "enable": "false",
+               "frequency": 4,
+               "offset": 2,
+               "msg-id": 25
             }}
             
          ]

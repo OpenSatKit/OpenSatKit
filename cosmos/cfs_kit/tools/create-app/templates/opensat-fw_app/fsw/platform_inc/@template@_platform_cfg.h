@@ -26,7 +26,7 @@
 #include "@template@_perfids.h"
 
 /******************************************************************************
-** Demo Application Macros
+** Application Macros
 */
 
 #define  @TEMPLATE@_RUNLOOP_DELAY    500  /* Delay in milliseconds */

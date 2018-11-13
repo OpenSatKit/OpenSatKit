@@ -277,7 +277,7 @@ static int32 InitApp(void)
     */
     Status = CFE_EVS_SendEvent(KIT_SCH_INITSTATS_INF_EID,
                                CFE_EVS_INFORMATION,
-                               "Sch-LAB Initialized. Version %d.%d.%d.%d",
+                               "KIT_SCH Initialized. Version %d.%d.%d.%d",
                                KIT_SCH_MAJOR_VERSION,
                                KIT_SCH_MINOR_VERSION,
                                KIT_SCH_REVISION,

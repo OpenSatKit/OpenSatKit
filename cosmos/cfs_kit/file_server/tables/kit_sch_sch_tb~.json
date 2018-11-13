@@ -1,7 +1,7 @@
 
 {
 "name": "Kit Scheduler (KIT_SCH) Scheduler Activity Table",
-"description": "KIT_SCH table dumped at 1980-012-16:31:34.60160",
+"description": "KIT_SCH table dumped at 1980-013-01:43:52.80171",
 "slot-array": [
    {"slot": {
       "index": 0,
@@ -193,24 +193,24 @@
       }},
          {"activity": {
          "index": 5,
-         "enable": "false",
-         "frequency": 0,
-         "offset": 0,
-         "msg-id": 200
+         "enable": "true",
+         "frequency": 4,
+         "offset": 2,
+         "msg-id": 23
       }},
          {"activity": {
          "index": 6,
-         "enable": "false",
-         "frequency": 0,
-         "offset": 0,
-         "msg-id": 200
+         "enable": "true",
+         "frequency": 4,
+         "offset": 2,
+         "msg-id": 24
       }},
          {"activity": {
          "index": 7,
          "enable": "false",
-         "frequency": 0,
-         "offset": 0,
-         "msg-id": 200
+         "frequency": 4,
+         "offset": 2,
+         "msg-id": 25
       }},
          {"activity": {
          "index": 8,
