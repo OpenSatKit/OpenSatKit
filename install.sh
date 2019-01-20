@@ -13,7 +13,7 @@ announce "INSTALLATION WILL TAKE TIME AND INCLUDES PROMPTS!"
 
 # set default path unless environment var exists
 if [ ! -n "${!OPEN_SAT_KIT_PATH}" ]; then
-OPEN_SAT_KIT_PATH="`pwd`/OpenSatKit-master/"
+   OPEN_SAT_KIT_PATH="`pwd`/OpenSatKit-master/"
 fi
 
 announce "Installing OpenSatKit v$OPEN_SAT_KIT_VERSION in \"$OPEN_SAT_KIT_PATH\""
@@ -52,7 +52,7 @@ cd ..
 # Complete COSMOS installation
 cd ./cosmos/
 if [ -f Gemfile.lock ]; then
-rm Gemfile.lock
+   rm Gemfile.lock
 fi
 bundle install
 cd ..
@@ -70,41 +70,41 @@ return 1
 # ask the user to confirm an action
 confirm() # prompt, default (0: N, 1: Y)
 {
-if [ $2 -eq 0 ]; then
-read -p "$1 (y,N)" -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-then
-[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
-fi
-else
-read -p "$1 (Y,n)" -n 1 -r
-echo
-if [[ $REPLY =~ ^[Nn]$ ]]
-then
-[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
-fi
-fi
+   if [ $2 -eq 0 ]; then
+      read -p "$1 (y,N)" -n 1 -r
+      echo
+      if [[ ! $REPLY =~ ^[Yy]$ ]]
+      then
+         [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
+      fi
+   else
+      read -p "$1 (Y,n)" -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Nn]$ ]]
+      then
+         [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
+      fi
+   fi
 }
 
 # make output stand out
 announce() # message
 {
-echo
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
-echo $1
-printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
-echo
+   echo
+   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
+   echo $1
+   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
+   echo
 }
 
 # check that system is Ubuntu
 if [[ "$OSTYPE" == "darwin"* ]]; then # on MacOS
-echo "Sorry, OpenSatKit will only run on Linux. Please use an Ubuntu virtual machine."
-exit 1
+   echo "Sorry, OpenSatKit will only run on Linux. Please use an Ubuntu virtual machine."
+   exit 1
 elif [[ -z $(which apt-get) ]]; then # no Ubuntu package manager
-echo "You are missing the apt-get package manager."
-echo "Sorry, OpenSatKit currently only supports Ubuntu. Please use an Ubuntu virtual machine."
-exit 1
+   echo "You are missing the apt-get package manager."
+   echo "Sorry, OpenSatKit currently only supports Ubuntu. Please use an Ubuntu virtual machine."
+   exit 1
 fi
 
 main
