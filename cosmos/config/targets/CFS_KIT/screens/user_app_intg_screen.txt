@@ -19,7 +19,7 @@ VERTICAL
   SETTING TEXTCOLOR black
 
   CANVAS 1400 500
-    CANVASIMAGE "osk_app_Context.png" 20 0
+    CANVASIMAGE "osk_app_context.png" 20 0
   END
   
     
