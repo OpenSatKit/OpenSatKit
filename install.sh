@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-OPEN_SAT_KIT_VERSION="1.7.0"
+OPEN_SAT_KIT_VERSION="1.6.0"
 
-# Intentional order: Dependencies, COSMOS, OSK Archive
+# Intentional order: OSK Archive, Dependencies, COSMOS, Build System 
 # - Dependencies cover OSK's needs, COSMOS may need additional ones
 # - OSK last ensures OSK COSMOS config files not overrriden
 
@@ -19,6 +19,11 @@ fi
 announce "Installing OpenSatKit v$OPEN_SAT_KIT_VERSION in \"$OPEN_SAT_KIT_PATH\""
 confirm "Continue?" 1
 
+announce "Downloading OSK archive zip file from \"https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz\""
+wget -c https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz
+tar -xzf master.tar.gz
+rm master.tar.gz
+
 announce "Installing dependencies"
 cmdtoapt="apt-get update -y; apt-get install -y cmake; apt-get install -y curl; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y xfce4-terminal; apt-get install -y gcc; apt-get install -y g++; apt-get install -y libssl-dev; apt-get install -y libyaml-dev; apt-get install -y libffi-dev; apt-get install -y libreadline6-dev; apt-get install -y zlib1g-dev; apt-get install -y libgdbm3; apt-get install -y libgdbm-dev; apt-get install -y libncurses5-dev; apt-get install -y git; apt-get install -y libgstreamer0.10-dev; apt-get install -y libgstreamer-plugins-base0.10-dev; apt-get install -y freeglut3; apt-get install -y freeglut3-dev; apt-get install -y qt4-default; apt-get install -y qt4-dev-tools;apt-get install -y libqt4-dev; apt-get install -y libsmokeqt4-dev; apt-get install libcanberra-gtk*;apt install dos2unix; apt-get update -y;"
 
@@ -29,10 +34,6 @@ confirm "Continue?" 1
 
 bash <(\curl -sSL https://raw.githubusercontent.com/BallAerospace/COSMOS/master/vendor/installers/linux_mac/INSTALL_COSMOS.sh)
 
-announce "Downloading OSK archive zip file from \"https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz\""
-wget -c https://github.com/OpenSatKit/OpenSatKit/archive/master.tar.gz
-tar -xzf master.tar.gz
-rm master.tar.gz
 cd OpenSatKit-master
 
 announce "Building CFS"
