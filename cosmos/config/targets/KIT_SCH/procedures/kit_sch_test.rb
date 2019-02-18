@@ -1,5 +1,5 @@
 ###############################################################################
-# Kit Telemetry Output (KIT_TO) Application Test
+# Kit Scheduler (KIT_SCH) Application Test
 #
 # Notes:
 #   1. Loaded by kit test suite so it can assume common utilities have been 
@@ -12,29 +12,18 @@
 ###############################################################################
 
 
-class KitToTest < Cosmos::Test
-
+class KitSchTest < Cosmos::Test
+ 
+   include OskTestApp
+   
    def initialize
       super()
+      osk_test_app_init("KIT_SCH", Fsw::MsgId::KIT_SCH_CMD_MID)
    end
 
    def setup
       status_bar("setup")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
-      wait(2)
-   end
-
-   def test_noop_cmd
-      status_bar("noop command")
-      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
-      Cosmos::Test.puts "TBD"
-      wait(2)
-   end
-
-   def test_reset_cmd
-      status_bar("noop command")
-      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
-      Cosmos::Test.puts "TBD"
       wait(2)
    end
 
@@ -47,5 +36,5 @@ class KitToTest < Cosmos::Test
    def helper_method
    end
 
-end # Class KitToTest
+end # Class KitSchTest
 

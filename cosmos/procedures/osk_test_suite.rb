@@ -19,8 +19,8 @@ load 'fsw_app.rb'
 load 'cosmos/tools/test_runner/test.rb'
 
 load 'kit_test_suite.rb'
-#load 'cfs_test.rb'
-#load 'usr_test.rb'
+#load 'cfs_test_suite.rb'
+#load 'usr_test_suite.rb'
 
 
 # This Test demonstrates the usage of the setup and teardown methods
