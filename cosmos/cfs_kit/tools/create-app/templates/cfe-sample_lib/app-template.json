@@ -1,0 +1,21 @@
+{
+
+   "title": "cFE Sample Lib",
+   "version": "6.5",
+   "cosmos": false,
+
+   "description": [
+
+      "Provides templates for creating a shared library using the 'sample_lib' that",      
+      "is delivered with the cFE as the basis for the templates. The templates ",
+      "include the FSW and make files. Libraries do not have a ground interface so",
+      "there are no COSMOS command and telemetry template files"
+
+   ],
+
+   "cfsapp-": "CMakeLists.txt",
+   "cfsapp-fsw/public_inc": "@template@_lib.h",
+   "cfsapp-fsw/src":        "@template@_lib.c,@template@_lib_version.h"
+
+}
+

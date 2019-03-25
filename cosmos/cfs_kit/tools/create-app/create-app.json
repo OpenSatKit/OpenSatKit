@@ -1,0 +1,40 @@
+{
+
+   "description": [
+
+      "The design and capabilities of create-app are intentionally very simple. It",
+      "is designed to create a shell cFS application using simple string substitution.",
+      "It's not solving a complex problem so it should be very easy to use, configure,",
+      "extend, and maintain.",
+      
+      "The 'dir' struture defines the location of template sources and the destinations",
+      "for generated artifacts. The '/' must be used as a path separator.",
+      "   templates  - Relative path from create-app to the base template directory",
+      "                The template directory contains a directory for each template",
+      "                that can be instantiated.",
+      "   dst-cfs    - Relative path from cFS base directory",
+      "   dst-cosmos - Relative path from the COSMOS base directory",
+
+      "The 'template-var' entry defines case sensitive template variables that are",
+      "replaced by CreateApp with the new App's name. The template variables should",
+      "not need to change but if they do check the code for dependencies.",
+
+      "Each template base directory must contain a file called. app-template.json",
+      "This file tells CreateApp which subdirectories/files to instantiate. New ",
+      "application templates are easy to add by creating a directory hierarchy",
+      "containing template files and an app-template.json."
+      
+   ],
+
+   "version": "1.0",
+   
+   "dir": {
+      "src-template": "templates",
+      "dst-cfs": "apps",
+      "dst-cosmos": "config/targets"
+   },
+
+   "template-var": ["@TEMPLATE@","@Template@","@template@"]
+   
+}
+

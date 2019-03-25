@@ -1,0 +1,23 @@
+{
+
+   "title": "OSK Framework App",
+   "version": "1.7",
+   "cosmos": true,
+
+   "description": [
+
+      "Creates a 'hello world' app using the OSK application framework",
+      "including an example JSON table. The FSW, cmake file, and COSMOS",
+      "command and telemetry files are generated. The 'classic' makefile",
+      "is not created."
+   ],
+
+   "cfsapp-": "CMakeLists.txt",
+   "cfsapp-fsw/mission_inc":  "@template@_mission_cfg.h",
+   "cfsapp-fsw/platform_inc": "@template@_msgids.h,@template@_perfids.h,@template@_platform_cfg.h",
+   "cfsapp-fsw/src":          "@template@_app.c,@template@_app.h,app_cfg.h,exobj.c,exobj.h,extbl.c,extbl.h",
+   "cosmos-cmd_tlm":          "@template@_cmd.txt,@template@_tlm.txt"
+
+   
+}
+

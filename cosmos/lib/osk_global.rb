@@ -64,7 +64,12 @@ module Osk
    DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
-   TUTORIAL_SCR_FILE  = "tutorial_screen.txt"
+   TUTORIAL_SCR_FILE  = "tutorial_scr.txt"
+
+   CREATE_APP_JSON_FILE     = "create-app.json"
+   CREATE_APP_TEMPLATE_FILE = "app-template.json"
+   CREATE_APP_SCR_FILE      = "create_app_scr.txt"
+   TEMPLATE_INFO_SCR_FILE   = "template_info_scr.txt"
 
    # Tutorial file format types
    TUTORIAL_HTML   = "HTML"

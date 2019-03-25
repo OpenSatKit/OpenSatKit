@@ -2,6 +2,10 @@ TITLE 'cFS Command and Telemetry Server'
 
 PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
 
+# Visiona CFDP Interface
+BACKGROUND_TASK cfdp_engine_task.rb
+INTERFACE_TARGET CFDP cmd_tlm_server.txt
+
 #AUTO_INTERFACE_TARGETS # Use cmd_tlm_server.txt from all targets declared in system.txt
 
 #INTERFACE CFS_PI_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
@@ -18,6 +22,7 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   TARGET CFE_SB
   TARGET CFE_TBL
   TARGET CFE_TIME
+  TARGET CF
   TARGET CS
   TARGET DS
   TARGET FM
@@ -39,6 +44,13 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   TARGET TFTP
   TARGET F42
   TARGET I42
+  # CFDP Engine
+  TARGET PDU
+  TARGET CFDP_TEST
+  PROTOCOL READ interfaces/cfdp_test_protocol
+  PROTOCOL READ interfaces/cfdp_protocol
+  PROTOCOL WRITE interfaces/cfdp_protocol  
+  PROTOCOL WRITE interfaces/cfdp_test_protocol
   # PiSat Apps
   TARGET HB
   # User Apps
@@ -46,6 +58,8 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
 #<cfs_kit>Create app tool will add target between the cfs_kit tags
 
   TARGET ISIM
+  TARGET  AA
+
 #</cfs_kit>
   
 INTERFACE COSMOSINT cmd_tlm_server_interface.rb

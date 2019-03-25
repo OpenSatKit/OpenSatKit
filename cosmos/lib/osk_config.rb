@@ -43,6 +43,11 @@ module Cfg
     return Ccsds.renderTlmHdr(Fsw::MsgId.get_msg_val(msg_id))
   end
 
+  # @return CCSDS CFDP PDU header string for COSMOS command definition file
+  def self.cfdp_pdu_cmd_hdr(app_prefix, msg_id)
+    return Ccsds.renderCfdpPduCmdHdr(Fsw::MsgId.get_msg_val(msg_id))
+  end
+
   # @return file header string for COSMOS table definition file used to represent a binary cFE file
   def self.file_hdr
     return CfeFile.renderFileHdr
