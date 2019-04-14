@@ -1,0 +1,32 @@
+{
+
+   "description": [
+
+      "This documents the template file format. For an actual template",
+      "file this 'description' array provides descriptive information about",
+      "the template that will be displayed when a user asks for template information.",
+
+      "The 'cfsapp-' and 'comsos-' name/value pairs define the directories and template",
+      "files that will be instantiated by the OpenSat CreateApp tool. Each name defines",
+      "a relative directory path. Normally these paths are relative to <osk>/cfs/apps and",
+      "<osk>/cosmos/config/targets (see create-app.josn). The CreateApp user interface",
+      "allows the user to change the defaults. The portion of the name string after the",
+      "prefix hyphon specifies the relative target directory path."
+
+      "Files within a directory that a user wants instantiated are listed in a",
+      "comma separated string. Explicitied stating which files get instantiated",
+      "allows additonal unprocessed files to be in the template directory."
+      
+   ],
+
+   "cfsapp-": "CMakeLists.txt",
+   "cfsapp-fsw/for_build":    "Makefile",
+   "cfsapp-fsw/mission_inc":  "@template@_app_perfids.h",
+   "cfsapp-fsw/platform_inc": "@template@_app_msgids.h",
+   "cfsapp-fsw/src":          "@template@_app.c,@template@_app.h,@template@_app_events.h,@template@_app_msg.h,@template@_app_version.h",
+   "cosmos-cmd_tlm":          "@template@_cmd.txt,@template@_tlm.txt"
+
+   
+}
+
+

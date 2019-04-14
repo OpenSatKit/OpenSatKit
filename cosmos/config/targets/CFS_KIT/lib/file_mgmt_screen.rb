@@ -5,7 +5,7 @@
 #   1. Uses custom parameter prompts instead of general purpose FswApp methods
 #      since it can be confusing when to use full path vs just a filename. In 
 #      addition the cmd & tlm definition comments need to be improved if they 
-#      are goign to be used for user input guidance.  
+#      are going to be used for user input guidance.  
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General 

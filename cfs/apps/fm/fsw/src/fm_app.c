@@ -166,10 +166,10 @@ void FM_AppMain(void)
     {
         /* Performance Log (stop time counter) */
         CFE_ES_PerfLogExit(FM_APPMAIN_PERF_ID);
-
+        
         /* Wait for the next Software Bus message */
         Result = CFE_SB_RcvMsg(&MsgPtr, FM_GlobalData.CmdPipe, CFE_SB_PEND_FOREVER);
-
+        
         /* Performance Log (start time counter) */
         CFE_ES_PerfLogEntry(FM_APPMAIN_PERF_ID);
 

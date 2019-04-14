@@ -23,12 +23,12 @@
 
 /* Command Message IDs */ 
 
-#define  TFTP_CMD_MID       (0x18B5)
-#define  TFTP_SEND_HK_MID   (0x18B6)   
+#define  TFTP_CMD_MID       (0x1900)
+#define  TFTP_SEND_HK_MID   (0x1901)   
 
 /* Telemetry Message IDs */ 
 
-#define  TFTP_HK_TLM_MID    (0x08B0)
+#define  TFTP_HK_TLM_MID    (0x0900)
 
 #endif /*_tftp_msgids_*/
 

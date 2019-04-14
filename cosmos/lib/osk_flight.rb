@@ -5,7 +5,7 @@
 #   1. The OSK module defines the namespace that contains constants, methods,
 #      and classes used to created the OSK. This flight module is limited to
 #      just the Flight software. If a function is required that requires
-#      multiple OSK components such as transefrring a file between the ground
+#      multiple OSK components such as transferring a file between the ground
 #      and flight then it will be defined in another file within the OSK
 #      module.
 #
@@ -103,13 +103,16 @@ module Osk
          @i42     = FswApp.new("I42",     "I42",     Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
          @isim    = FswApp.new("ISIM",    "ISIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
         
-         app_json = read_app_json("kit_ci.json")
+         #app_json = read_app_json("kit_ci.json")
+         app_json = Osk::System.read_target_json("KIT_CI")
          @kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID, app_json)
 
-         app_json = read_app_json("kit_sch.json")
+         #app_json = read_app_json("kit_sch.json")
+         app_json = Osk::System.read_target_json("KIT_SCH")
          @kit_sch = FswApp.new("KIT_SCH", "KIT_SCH", Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_SCH_CMD_MID, app_json)
 
-         app_json = read_app_json("kit_to.json")
+         #app_json = read_app_json("kit_to.json")
+         app_json = Osk::System.read_target_json("KIT_TO")
          @kit_to  = FswApp.new("KIT_TO",  "KIT_TO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_TO_CMD_MID, app_json)
 
          @tftp    = FswApp.new("TFTP",    "TFTP",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
@@ -129,22 +132,6 @@ module Osk
          
       end # End init_variables()
              
-      def read_app_json(filename) 
-
-         app_hash = nil
-         
-         begin
-            app_json = File.read("#{Osk::APPS_JSON_DIR}/#{filename}")
-            app_hash = JSON.parse(app_json)
-         rescue Exception => e
-            puts e.message
-            puts e.backtrace.inspect  
-         end
-
-         return app_hash
-         
-      end
-      
    end # Flight class
    
    # An instance of flight is created outside of the module

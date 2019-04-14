@@ -32,6 +32,12 @@ module Ccsds
     t.result(binding)
   end
 
+  def self.renderCfdpPduCmdHdr (stream_id)
+    @stream_id = stream_id
+    t = ERB.new(CFDP_PDU_CMD_HDR)
+    t.result(binding)
+  end
+
   def self.renderIgnores ()
     t = ERB.new(IGNORE_STRING)
     t.result(binding)
@@ -48,7 +54,7 @@ module Ccsds
       
   # CeRes
   CFS_CMD_HDR_1 = %Q(
-    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Identification\"   BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
     APPEND_PARAMETER    #{SEC_HDR_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  \<%= @func_code %\> \"Command Function Code\"   BIG_ENDIAN
@@ -57,7 +63,7 @@ module Ccsds
 
   # CeRes without Big Endian
   CFS_CMD_HDR_2 = %Q(
-    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Identification\"   BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
     APPEND_PARAMETER    #{SEC_HDR_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  \<%= @func_code %\> \"Command Function Code\"
@@ -66,7 +72,7 @@ module Ccsds
 
   # My original with Big Endian
   CFS_CMD_HDR_3 = %Q(
-    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Identification\"   BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
     APPEND_PARAMETER    #{SEC_HDR_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"  BIG_ENDIAN
@@ -75,7 +81,7 @@ module Ccsds
 
   # My original
   CFS_CMD_HDR_4 = %Q(
-    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Indentification\"  BIG_ENDIAN
+    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Identification\"   BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
     APPEND_PARAMETER    #{PRI_HDR_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 \<%= @ccsds_len %\> \"Packet Data Length\"      BIG_ENDIAN
     APPEND_PARAMETER    #{SEC_HDR_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"
@@ -91,6 +97,23 @@ module Ccsds
       #FORMAT_STRING "0x%04X"
     APPEND_ITEM       #{SEC_HDR_SUBSECS}  16 UINT \"Tlm Secondary Header - Subseconds\"
       #FORMAT_STRING "0x%04X"
+  )
+
+
+  CFDP_PDU_CMD_HDR = %Q(
+    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Identification\"   BIG_ENDIAN    
+    APPEND_PARAMETER    #{PRI_HDR_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
+    APPEND_PARAMETER    #{PRI_HDR_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 6                   \"Packet Data Length\"      BIG_ENDIAN
+    APPEND_PARAMETER    #{SEC_HDR_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"Command Function Code\"   BIG_ENDIAN
+    APPEND_PARAMETER    #{SEC_HDR_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"
+  )
+
+  CFDP_PDU_HDR = %Q(
+    APPEND_ID_PARAMETER #{PRI_HDR_STREAMID} 16 UINT MIN_UINT16 MAX_UINT16 \<%= @stream_id %\> \"Packet Identification\"   BIG_ENDIAN    
+    APPEND_PARAMETER    #{PRI_HDR_SEQUENCE} 16 UINT MIN_UINT16 MAX_UINT16 0xC000              \"Packet Sequence Counter\" BIG_ENDIAN
+    APPEND_PARAMETER    #{PRI_HDR_LENGTH}   16 UINT MIN_UINT16 MAX_UINT16 6                   \"Packet Data Length\"      BIG_ENDIAN
+    APPEND_PARAMETER    #{SEC_HDR_FUNCCODE}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"Command Function Code\"   BIG_ENDIAN
+    APPEND_PARAMETER    #{SEC_HDR_CHECKSUM}  8 UINT MIN_UINT8  MAX_UINT8  0                   \"CCSDS Command Checksum\"
   )
 
 end # module Ccsds

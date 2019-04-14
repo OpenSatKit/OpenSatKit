@@ -1,0 +1,22 @@
+File Definition, /mnt/hgfs/OpenSatKit/cosmos/config/tools/table_manager/example_tbl.txt
+File Binary, /mnt/hgfs/OpenSatKit/cosmos/cfs_kit/file_server/tables/osk_tmp_bin.dat
+
+EXAMPLE MYFIRSTTBL
+Label, Value
+CONTENT TYPE, cFE1, 
+SUBTYPE, 8, 
+LENGTH, 64, 
+SPACECRAFT ID, 42, 
+PROCESSOR ID, 1, 
+APPLICATION ID, 4, 
+TIME SECONDS, 1001344, 
+TIME SUBSECONDS, 1708802048, 
+DESCRIPTION, Table Dump Image, 
+RESERVED, 0, 
+OFFSET, 0, 
+NUMBYTE, 8, 
+NAME, EXAMPLE.MyFirstTbl, 
+INT_32, 100, 
+INT_16, 6, 
+INT_8, 7, 
+

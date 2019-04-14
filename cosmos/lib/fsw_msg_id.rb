@@ -65,6 +65,27 @@ module Fsw
       ## cFS App Message IDs ##
       #########################
   
+      # CFDP
+  
+      CF_CMD_MID              = "0x18B3"
+      CF_SEND_HK_MID          = "0x18B4" 
+      CF_WAKE_UP_REQ_CMD_MID  = "0x18B5"
+      CF_SPARE1_CMD_MID       = "0x18B6"
+      CF_SPARE2_CMD_MID       = "0x18B7"
+      CF_SPARE3_CMD_MID       = "0x18B8"
+      CF_SPARE4_CMD_MID       = "0x18B9"
+      CF_SPARE5_CMD_MID       = "0x18BA"
+      CF_INCOMING_PDU_MID     = "0x1FFD"
+
+      CF_HK_TLM_MID           = "0x08B0"
+      CF_TRANS_TLM_MID        = "0x08B1"
+      CF_CONFIG_TLM_MID       = "0x08B2"
+      CF_SPARE0_TLM_MID       = "0x08B3"
+      CF_SPARE1_TLM_MID       = "0x08B4"
+      CF_SPARE2_TLM_MID       = "0x08B5"
+      CF_SPARE3_TLM_MID       = "0x08B6"
+      CF_SPARE4_TLM_MID       = "0x08B7"
+      
       # Checksum
   
       CS_CMD_MID              = "0x189F"  
@@ -196,9 +217,9 @@ module Fsw
 
       # Trivial File Transfer Protocol
   
-      TFTP_CMD_MID    = "0x18B5"
-      TFTP_HK_TLM_MID = "0x08B0" 
-
+      TFTP_CMD_MID    = "0x1900"
+      TFTP_HK_TLM_MID = "0x0900" 
+  
       ###############
       ## PiSat Kit ##
       ###############

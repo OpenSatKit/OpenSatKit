@@ -364,7 +364,7 @@ void MD_AppMain ( void )
       if(Status == CFE_SUCCESS)
       {
         MessageID = CFE_SB_GetMsgId(MD_AppData.MsgPtr);
-                 
+
         switch(MessageID)
         {
             case MD_WAKEUP_MID:

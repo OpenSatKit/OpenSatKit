@@ -1,0 +1,7 @@
+require_relative "test_cfdp_ack.rb"
+require_relative "test_cfdp_header.rb"
+require_relative "test_cfdp_eof.rb"
+require_relative "test_cfdp_filedata.rb"
+require_relative "test_cfdp_finished.rb"
+require_relative "test_cfdp_metadata.rb"
+require_relative "test_cfdp_nak.rb"

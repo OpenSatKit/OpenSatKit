@@ -218,7 +218,7 @@ function(prepare)
             "${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
       # Export the variables determined here up to the parent scope
       SET(CFE_SYSTEM_PSPNAME      "pc-linux" PARENT_SCOPE)
-      SET(OSAL_SYSTEM_OSTYPE      "posix-ng"    PARENT_SCOPE)
+      SET(OSAL_SYSTEM_OSTYPE      "posix"    PARENT_SCOPE)
     else ()
       # Not cross compiling and host system is not recognized
       message(FATAL_ERROR "Do not know how to set CFE_SYSTEM_PSPNAME and OSAL_SYSTEM_OSTYPE on ${CMAKE_SYSTEM_NAME} system")

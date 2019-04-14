@@ -30,7 +30,7 @@ VERTICAL
           BUTTON 'Set Cmd Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SET_CMD_VALIDATE")'
           BUTTON 'App Sum Pages'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
           BUTTON 'cFE Services'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
-          BUTTON 'Manage User App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_USER_APP")'
+          BUTTON 'Mng App Sch-Tlm'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APP_SCH_TLM")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # Box      
@@ -52,7 +52,7 @@ VERTICAL
           BUTTON 'Run Benchmarks'          'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
           BUTTON '42 Simulator'            'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
           BUTTON 'PiSat Control'           'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
-          BUTTON 'Create Application'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CREATE_APP")'
+          BUTTON 'Manage App Development'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APP_DEV")'
           ##SETTING BACKCOLOR 128 128 128
           ##SETTING GRAY_TOLERANCE 0.1
         END # Matrix
@@ -210,14 +210,14 @@ VERTICAL
         HORIZONTAL 10
           BUTTON 'Tutorials' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TUTORIAL")'
           SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Launch window to access tutorials"
+          LABEL "Launch window to access tutorials. Must select <Update> prior to first use after kit installation."
           SPACER 50 0 MINIMUMEXPANDING FIXED          
         END # Horizontal
  
         HORIZONTAL 10
           BUTTON 'Update' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "UPDATE_TUTORIAL")'
           SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Update tutorials using the <i>osk_tutorials.json</i> definition file"
+          LABEL "Create new tutorials page after updating the <i>osk_tutorials.json</i> definition file"
           SPACER 50 0 MINIMUMEXPANDING FIXED          
         END # Horizontal
       

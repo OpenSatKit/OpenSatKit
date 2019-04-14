@@ -51,7 +51,7 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 
 # Each target board can have its own HW arch selection and set of included apps
 SET(TGT1_NAME cpu1) 
-SET(TGT1_APPLIST osk_app_fw bm cfs_lib cs ds expat_lib fm osk_demo_app hc hs hsim kit_ci kit_sch kit_to lc md mm sc hk tftp i42 f42 isim)
+SET(TGT1_APPLIST osk_app_fw bm cfs_lib cs ds expat_lib fm osk_demo_app hc hs hsim kit_ci kit_sch kit_to lc md mm sc hk tftp i42 f42 isim cf)
 SET(TGT1_FILELIST cfe_es_startup.scr kit_to_pkt_tbl.json kit_sch_msg_tbl.json kit_sch_sch_tbl.json osk_demo_tbl.json osk_demo_tbl.scanf osk_demo_tbl.xml f42_ctrl_tbl.json isim_tbl.json)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 

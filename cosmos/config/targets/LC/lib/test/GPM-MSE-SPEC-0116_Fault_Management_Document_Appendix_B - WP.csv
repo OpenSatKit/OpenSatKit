@@ -1,0 +1,286 @@
+,Appendix I.     Watchpoints (WP),,,,,,,,,,,,,Non-print -->,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,Compare Value,,,,,,,,,,,,
+,,WP#,Description,Mnemonic,Production Rate,Fn,Eng,Fn,Raw,Arg,Comments,Ref,Notes,,,,,
+KEYWORD_ROW,,ID,DESCRIPTION,MNEMONIC,,,,OPERATOR,COMPARISON_VALUE,CUSTOM_ARG,COMMENTS,,,,,,,
+,Spacecraft Startup,,,,,NA,,,,,,1,,,,,0,
+,?,000,Reserve,,,N/O,,NO OPER,,,,,,,,,1,0
+,?,001,NormOps A (SCOMM/ScPad),GC_SCOMA_SCRATCHPAD0,1,=,MISSION,EQ,0x4E53,,"use Launch, Mission, Unknown",OBS-STRT-1,,,,,1,1
+,?,002,NormOps B (SCOMM/ScPad),GC_SCOMB_SCRATCHPAD0,1,=,MISSION,EQ,0x4E53,,,OBS-STRT-2,,,,,1,2
+,Fairing Separation,,,,,,,,,,,1,,,,,0,3
+,?,003,T-0 Fairing Separation A (MAC) - Lo,GC_MACA_T0_1_BW,1,=,SEP,GE,3726,,,LEO-SEP-A,gc_tlm_maca_hk_200 (r9363),,,,1,3
+,?,004,T-0 Fairing Separation A (MAC) - Hi,GC_MACA_T0_1_BW,1,=,SEP,LE,3799,,,LEO-SEP-A,gc_tlm_maca_hk_200 (r9363),,,,1,4
+,?,005,T-0 Fairing Separation B (MAC) - Lo,GC_MACB_T0_2_BW,1,=,SEP,GE,3716,,,LEO-SEP-A,gc_tlm_macb_hk_202 (r9363),,,,1,5
+,?,006,T-0 Fairing Separation B (MAC) - Hi,GC_MACB_T0_2_BW,1,=,SEP,LE,3790,,,LEO-SEP-A,gc_tlm_macb_hk_202 (r9363),,,,1,6
+,?,007,Fairing Separation BW 1A (SCOMM),GC_SW_FS_BW_1A,5,=,SEP,EQ,1,,this is a 1 and not a 2 due to the mask on the telemetry point,LEO-SEP-B,,,,,1,7
+,?,008,Fairing Separation BW 1B (SCOMM),GC_SW_FS_BW_1B,5,=,SEP,EQ,1,,this is a 1 and not a 2 due to the mask on the telemetry point,LEO-SEP-B,,,,,1,8
+,?,009,Fairing Separation BW 2A (MAC) - Lo,GC_MACA_FS_BW_2A,1,=,SEP,GE,3066,,,LEO-SEP-C,gc_tlm_maca_hk_200 (r9363),,,,1,9
+,?,010,Fairing Separation BW 2A (MAC) - Hi,GC_MACA_FS_BW_2A,1,=,SEP,LE,3136,,,LEO-SEP-C,gc_tlm_maca_hk_200 (r9363),,,,1,10
+,?,011,Fairing Separation BW 2B (MAC) - Lo,GC_MACB_FS_BW_2B,1,=,SEP,GE,3062,,,LEO-SEP-C,gc_tlm_macb_hk_202 (r9363),,,,1,11
+,?,012,Fairing Separation BW 2B (MAC) - Hi,GC_MACB_FS_BW_2B,1,=,SEP,LE,3131,,,LEO-SEP-C,gc_tlm_macb_hk_202 (r9363),,,,1,12
+,Spacecraft Separation,,,,,,,,,,,1,,,,,0,13
+,?,013,LV Separation BW 2A (MAC) - Lo,GC_MACA_LV_BW_2A,1,=,SEP,GE,3642,,,LEO-SEP-X,gc_tlm_maca_hk_200 (r9363),,,,1,13
+,?,014,LV Separation BW 2A (MAC) - Hi,GC_MACA_LV_BW_2A,1,=,SEP,LE,3715,,,LEO-SEP-X,gc_tlm_maca_hk_200 (r9363),,,,1,14
+,?,015,LV Separation BW 2B (MAC) - Lo,GC_MACB_LV_BW_2B,1,=,SEP,GE,3634,,,LEO-SEP-X,gc_tlm_macb_hk_202 (r9363),,,,1,15
+,?,016,LV Separation BW 2B (MAC) - Hi,GC_MACB_LV_BW_2B,1,=,SEP,LE,3707,,,LEO-SEP-X,gc_tlm_macb_hk_202 (r9363),,,,1,16
+,?,017,S/C Separation Switch 1A (SCOMM),GC_SW_LV_SW_1A,5,=,SEP,EQ,1,,,LEO-SEP-Y,,,,,1,17
+,?,018,S/C Separation Switch 1B (SCOMM),GC_SW_LV_SW_1B,5,=,SEP,EQ,1,,,LEO-SEP-Y,,,,,1,18
+,?,019,S/C Separation Switch 2A (SCOMM),GC_SW_LV_SW_2A,5,=,SEP,EQ,1,,this is a 1 and not a 4 due to the mask on the telemetry point,LEO-SEP-Y,,,,,1,19
+,?,020,S/C Separation Switch 2B (SCOMM),GC_SW_LV_SW_2B,5,=,SEP,EQ,1,,this is a 1 and not a 4 due to the mask on the telemetry point,LEO-SEP-Y,,,,,1,20
+,?,021,LV Separation BW 1A (MAC) - Lo,GC_MACA_LV_BW_1A,1,=,SEP,GE,4065,,,LEO-SEP-Z,gc_tlm_maca_hk_200 (r9363),,,,1,21
+,?,022,LV Separation BW 1B (MAC) - Lo,GC_MACB_LV_BW_1B,1,=,SEP,GE,4065,,,LEO-SEP-Z,gc_tlm_macb_hk_202 (r9363),,,,1,22
+,Solar Array Deployed,,,,,,,,,,,1,,,,,0,23
+,?,023,SA Boom Hinge Shoulder +Y (ATB-A),GC_ATBA_SaPos5,1,>,25,GT,3512,,,"LEO-SEP-L, Multiple","GPM-SMAC-ICD-0015RevD, GPM-SADDS-PROC-0305RevBReleased, GPM-SADDS-PROC-0192RevB",,,,1,23
+,?,024,SA Boom Hinge Elbow +Y (ATB B),GC_ATBB_SaPos5,1,>,41,GT,3544,,,"LEO-SEP-L, Multiple","GPM-SMAC-ICD-0015RevD, GPM-SADDS-PROC-0305RevBReleased, GPM-SADDS-PROC-0192RevB",,,,1,24
+,?,025,SA Boom Hinge Shoulder -Y (ATB-A),GC_ATBA_SaPos8,1,>,25°,GT,3508,,,"LEO-SEP-M, Multiple","GPM-SMAC-ICD-0015RevD, GPM-SADDS-PROC-0305RevBReleased, GPM-SADDS-PROC-0192RevB",,,,1,25
+,?,026,SA Boom Hinge Elbow -Y (ATB B),GC_ATBB_SaPos8,1,>,41°,GT,3539,,,"LEO-SEP-M, Multiple","GPM-SMAC-ICD-0015RevD, GPM-SADDS-PROC-0305RevBReleased, GPM-SADDS-PROC-0192RevB",,,,1,26
+,"Additional Asecent, Separation, Deployment Checks",,,,,NA,,,,,,1,,,,,0,27
+,?,027,MAC A Current Calibration Reference - Lo,GC_MACA_I_CAL,1,?,1mA,GE,2024,,"2054=~1mA (±30, thermal/electrical variation)","LEO-SEP-A,C,X,Z",values from J. Pope report (04/02/12),,,,1,27
+,?,028,MAC A Current Calibration Reference - Hi,GC_MACA_I_CAL,1,?,1mA,LE,2084,,"2054=~1mA (±30, thermal/electrical variation)","LEO-SEP-A,C,X,Z",values from J. Pope report (04/02/12),,,,1,28
+,?,029,MAC B Current Calibration Reference - Lo,GC_MACB_I_CAL,1,?,1mA,GE,2024,,"2054=~1mA (±30, thermal/electrical variation)","LEO-SEP-A,C,X,Z",values from J. Pope report (04/02/12),,,,1,29
+,?,030,MAC B Current Calibration Reference - Hi,GC_MACB_I_CAL,1,?,1mA,LE,2084,,"2054=~1mA (±30, thermal/electrical variation)","LEO-SEP-A,C,X,Z",values from J. Pope report (04/02/12),,,,1,30
+,ScratchPad (SCOMM/ScPad),,,,,NA,,,,,,1,,,,,0,31
+,?,031,+Y SA Stuck (ScPad A),GC_SCOMA_SCRATCHPAD1,1,=,STUCK,EQ,0x505A,,"PYSTUCK: STUCK, NOTSTUCK, ERR",Multiple,GC_SCOMA_SCRATCHPAD[1],,,,1,31
+,?,032,+Y SA Stuck (ScPad B),GC_SCOMB_SCRATCHPAD1,1,=,STUCK,EQ,0x505A,,,Multiple,GC_SCOMB_SCRATCHPAD[1],,,,1,32
+,?,033,-Y SA Stuck A (ScPad A),GC_SCOMA_SCRATCHPAD2,1,=,STUCK,EQ,0x2DA5,,"MYSTUCK: STUCK, NOTSTUCK, ERR",Multiple,GC_SCOMA_SCRATCHPAD[2],,,,1,33
+,?,034,-Y SA Stuck (ScPad B),GC_SCOMB_SCRATCHPAD2,1,=,STUCK,EQ,0x2DA5,,,Multiple,GC_SCOMB_SCRATCHPAD[2],,,,1,34
+,,035,PSE S/W Heater Control Side (ScPad A),GC_SCOMA_SCRATCHPAD3,1,=,B,EQ,0xC396,,"HTRCTRL: A,B, ERR",THR-HTR-2,GC_SCOMA_SCRATCHPAD[3],,,,1,35
+,,036,PSE S/W Heater Control Side (ScPad B),GC_SCOMB_SCRATCHPAD3,1,=,B,EQ,0xC396,,,THR-HTR-2,GC_SCOMB_SCRATCHPAD[3],,,,1,36
+,Command & Data Handling (C&DH),,,,,NA,,,,,,1,,,,,0,37
+,Interfaces (1553 Bus and Spacewire),,,,,NA,,,,,,1,,,,,0,37
+,?,037,SpW Link A-A Status  ,GC_SW_LINK1STATE,5,!=,RUN,NE,0x07,,SCOMM A (Port 1) to SBC A (Port 1),CDH-SPW-1,gc_tlm_sw_hk_01a7.rdl (6/14/2011),,,,1,37
+,?,038,SpW Link B-A Status,GC_SW_LINK2STATE,5,!=,RUN,NE,0x07,,SCOMM B (Port 1) to SBC A (Port 1),CDH-SPW-1,gc_tlm_sw_hk_01a7.rdl (6/14/2011),,,,1,38
+,"SCOMM and Switched Cards (SBC, DSB, DIO, MAC)",,,,,NA,,,,,,1,,,,,0,39
+,?,039,DSB Status level 2,GC_RM_SDRFreeSpace,5,<,1288490189,LT,1288490189,,"FSW can have up to 3 partitions, only first one is currently in use",CDH-DSB-1,gc_tlm_xb_tlm_01a8.rdl (6/14/2011),,,,1,39
+,?,040,DM File Errors,GC_DM_WriteErrorCnt,5,>,0,GT,0,,,CDH-DSB-2,gc_tlm_dm_tlm_01a2.rdl,,,,1,40
+,?,041,GM File Errors ,GC_GM_WriteErrorCnt,5,>,0,GT,0,,,CDH-DSB-2,gc_tlm_gm_tlm_01a3.rdl,,,,1,41
+,?,042,MAC Telemetry Stale Flag,GC_PS_MAC_TLMSTALE,5,=,TRUE,EQ,1,,,CDH-MAC-1,gc_tlm_ps_hk_01a5.rdl (8/31/2011),,,,1,42
+,?,043,CFDP Open Transactions ,GC_CF_TotalInProgTrans,5,>,200,GT,200,,,CDH-CF-1,,,,,1,43
+,?,044,DS File Errors ,GC_DS_FileWriteErrCnt,5,>,0,GT,0,,,,,,,,1,44
+,,045,DSB Status level 1,GC_RM_SDRFreeSpace,5,<,2791728742,LT,2791728742,,"FSW can have up to 3 partitions, only first one is currently in use",CDH-DSB-1,gc_tlm_xb_tlm_01a8.rdl (6/14/2011),,,,1,45
+,?,046,DI Message Limit Error Count level 1,GC_SB_MsgLimEC,5,>,10,GT,10,,,,,,,,1,46
+,?,047,DI Message Limit Error Count level 2,GC_SB_MsgLimEC,5,>,100,GT,100,,,,,,,,1,47
+,Communication (RF),,,,,NA,,,,,,1,,,,,0,48
+,?,048,Ground Command Counter Timer (8 hrs),GC_CI_CmdElapsedTime,5,>,28800,GT,28800,,,COMM-RCV-1a,gc_tlm_ci_hk_01a0.rdl (8/31/2011),,,,1,48
+,?,049,Ground Command Counter Timer (24 hrs),GC_CI_CmdElapsedTime,5,>,86400,GT,86400,,,COMM-RCV-1b,gc_tlm_ci_hk_01a0.rdl (8/31/2011),,,,1,49
+,High Gain Antenna (HGA),,,,,NA,,,,,,1,,,,,0,50
+,?,050,HGA Position Invalid FDC Flag,GC_DI_FdcFaultHga1553Msg,0.1,=,FAULT,EQ,1,,DI_FR_HGA_STALE_1553,,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,50
+,?,051,HGA (inboard) Stuck FDC Flag,GC_DI_FdcFaultHgaInEncDiff,0.1,=,FAULT,EQ,1,,DI_FR_HGA_0_MAXENCPLSDIF,,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,51
+,?,052,HGA (outboard) Stuck FDC Flag,GC_DI_FdcFaultHgaOutEncDiff,0.1,=,FAULT,EQ,1,,DI_FR_HGA_1_MAXENCPLSDIF,,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,52
+,?,053,HGA (inboard) Soft Stop Error FDC Flag,GC_DI_FdcFaultHgaInMaxAngle,0.1,=,FAULT,EQ,1,,DI_FR_HGA_0_ANGLE_MAX/MIN,,gc_tlm_di_fdc_01ce.rdl (6/14/2011),,,,1,53
+,?,054,HGA (outboard) Soft Stop Error FDC Flag,GC_DI_FdcFaultHgaOutMaxAngle,0.1,=,FAULT,EQ,1,,DI_FR_HGA_0_ANGLE_MAX/MIN,,gc_tlm_di_fdc_01ce.rdl (6/14/2011),,,,1,54
+,Electrical Power (EPS),,,,,NA,,,,,,1,,,,,0,55
+,PSE and 1553 Bus,,,,,NA,,,,,,1,,,,,0,55
+,?,055,PMC-A 1553 RT Errors,GC_XB_SCRETRYFAILS_PSEA,5,>,30,GT,30,,,EPS-PSE-1,gc_tlm_xb_tlm_01a8.rdl (6/14/2011),,,,1,55
+,?,056,PMC-B 1553 RT Errors,GC_XB_SCRETRYFAILS_PSEB,5,>,30,GT,30,,,EPS-PSE-1,gc_tlm_xb_tlm_01a8.rdl (6/14/2011),,,,1,56
+,?,057,PMC-A 1553 RT Errors,GC_XB_SCRETRYFAILS_PSEA,5,>,10,GT,10,,,EPS-PSE-2,gc_tlm_xb_tlm_01a8.rdl (6/14/2011),,,,1,57
+,?,058,PSE A SAMLimitCycle FDC Flag,GC_PSEA_LIMCYC_FLT_CRCT,1,=,YES,EQ,1,,,EPS-PSE-3,gc_tlm_psea_0217.rdl (6/14/2011),,,,1,58
+,?,059,PSE A PWM1 Status,GC_PSEA_SAM1_PWM1_ST,1,=,ENABLED,EQ,1,,Pete email 07/23/12,EPS-PSE-4,,,,,1,59
+,?,060,PSE A PWM1 Status,GC_PSEA_SAM2_PWM2_ST,1,=,ENABLED,EQ,1,,Pete email 07/23/12,EPS-PSE-4,,,,,1,60
+,Battery,,,,,NA,,,,,,1,,,,,0,61
+,?,061,UV 1 Battery 1A,GC_PSEA_BAT_1_V,1,<,30.8 V,LT,3076,,"POLY=(0,0.010015)",EPS-BATT-1a,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,61
+,?,062,UV 1 Battery 2A,GC_PSEA_BAT_2_V,1,<,30.8 V,LT,3076,,"POLY=(0,0.010015)",EPS-BATT-1a,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,62
+,?,063,UV 1 Battery 3A,GC_PSEA_BAT_3_V,1,<,30.8 V,LT,3076,,"POLY=(0,0.010015)",EPS-BATT-1a,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,63
+,?,064,UV 2 Battery 1A,GC_PSEA_BAT_1_V,1,<,29.0 V,LT,2896,,"POLY=(0,0.010015)",EPS-BATT-1b,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,64
+,?,065,UV 2 Battery 2A,GC_PSEA_BAT_2_V,1,<,29.0 V,LT,2896,,"POLY=(0,0.010015)",EPS-BATT-1b,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,65
+,?,066,UV 2 Battery 3A,GC_PSEA_BAT_3_V,1,<,29.0 V,LT,2896,,"POLY=(0,0.010015)",EPS-BATT-1b,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,66
+,?,067,OV Battery 1A,GC_PSEA_BAT_1_V,1,>,33.8 V,GT,3375,,"POLY=(0,0.010015)",EPS-BATT-2,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,67
+,?,068,OV Battery 2A,GC_PSEA_BAT_2_V,1,>,33.8 V,GT,3375,,"POLY=(0,0.010015)",EPS-BATT-2,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,68
+,?,069,OV Battery 3A,GC_PSEA_BAT_3_V,1,>,33.8 V,GT,3375,,"POLY=(0,0.010015)",EPS-BATT-2,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,69
+,?,070,Battery Current Discharging,GC_PSEA_SM1_BAT1_N_I,1,=,,CUSTOM,,,Sum of Battery Current Discharge < -10 A,EPS-BATT-3,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,70
+,?,071,PWM Railed High,GC_PSEA_SAM1_PRCNT_PWM_I,1,>,95%,GT,3936,,"POLY=(-1.09156,0.02441)",EPS-BATT-3,,,,,1,71
+,?,072,PSE A Ahr-Out Sum,GC_PS_AMP_HR_OUT_PSEA_BATT1,5,=,,CUSTOM,,,Sum of PSE A Ahr-Out > 50,EPS-BATT-6,,,,,1,72
+,?,073,"Battery Current 1A (Discharging, OT)",GC_PSEA_SM1_BAT1_N_I,1,<,-10 A,GT,409,,"POLY=(0,-0.02441406)",EPS-TEMP-1,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,73
+,?,074,"Battery Current 2A (Discharging, OT)",GC_PSEA_SM1_BAT2_N_I,1,<,-10 A,GT,409,,"POLY=(0,-0.02441406)",EPS-TEMP-1,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,74
+,?,075,"Battery Current 3A (Discharging, OT)",GC_PSEA_SM1_BAT3_N_I,1,<,-10 A,GT,409,,"POLY=(0,-0.02441406)",EPS-TEMP-1,gc_tlm_psea_0216.rdl (6/14/2011),,,,1,75
+,?,076,Battery 1 Avg Temperature,GC_PS_AVG_TEMP_PSEA_BATT1,5,>,32 °C,GT,32.0,,,EPS-TEMP-1,gc_tlm_ps_hk_01a5.rdl (08/31/2011),,,,1,76
+,?,077,Battery 2 Avg Temperature,GC_PS_AVG_TEMP_PSEA_BATT2,5,>,32 °C,GT,32.0,,,EPS-TEMP-1,gc_tlm_ps_hk_01a5.rdl (08/31/2011),,,,1,77
+,?,078,Battery 3 Avg Temperature,GC_PS_AVG_TEMP_PSEA_BATT3,5,>,32 °C,GT,32.0,,,EPS-TEMP-1,gc_tlm_ps_hk_01a5.rdl (08/31/2011),,,,1,78
+,,079,Segments Shunted,GC_PSEA_SAM1_SEG_ST,1,=,,CUSTOM,,,more than 1 (out of 24) segments are shunted,EPS-BATT-3,gc_tlm_psea_0218.rdl (6/14/2011),,,,1,79
+,,080,PSE A Battery Voltage Error Flag,GC_PS_BATT_VOLT_ERR_CNTR_PSEA,5,>,0,GT,0,,(all three battery voltages are out of range),EPS-BATT-4,,,,,1,80
+,?,081,Max Battery Charge Current Exceeded,GC_PSEA_SM1_BAT1_P_I,1,=,,CUSTOM,,,Sum of battery charge currents > Maximum charge current + 3A tolerance,EPS-BATT-5,,,,,1,81
+,?,082,PSE A Vbatt,GC_PS_AVG_VOLTAGE_PSEA,5,<,31.8 V,LT,31.8,,Avg PSE A Voltage < 31.8,EPS-BATT-6,CCR-057,,,,1,82
+,Solar Arrays (S/As),,,,,NA,,,,,,1,,,,,0,83
+,?,083,SADE Data Unavailable FDC Flag,GC_DI_FdcFaultSA1553Msg,0.1,=,FAULT,EQ,1,,DI_FR_SA_STALE_1553,SA-POS-1a,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,83
+,?,084,+Y SA Stuck FDC Flag,GC_DI_FdcFaultSaPyEncDiff,0.1,=,FAULT,EQ,1,,DI_FR_SA_0_MAXENCPLSDIF,SA-POS-2a,,,,,1,84
+,?,085,-Y SA Stuck FDC Flag,GC_DI_FdcFaultSaMyEncDiff,0.1,=,FAULT,EQ,1,,DI_FR_SA_1_MAXENCPLSDIF,SA-POS-2b,,,,,1,85
+,?,086,+Y SA Position Status (MCE),GC_SadA_PY_Location,0.1,!=,EOT_CW,NE,2,,EOT_CW=2,"SA-POS-3a,b", gc_tlm_sada_pos_01f0.rdl (6/14/2011),,,,1,86
+,?,087,-Y SA Position Status (MCE),GC_SadA_MY_Location,0.1,!=,EOT_CCW,NE,3,,EOT_CCW=3,"SA-POS-3a,c", gc_tlm_sada_pos_01f0.rdl (6/14/2011),,,,1,87
+,?,088,+Y S/A Soft Stop FDC Flag,GC_DI_FdcFaultSAPyMaxAngle,0.1,=,FAULT,EQ,1,,DI_FR_SA_0_ANGLE_MAX,SA-POS-4a,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,88
+,?,089,-Y S/A Soft Stop FDC Flag,GC_DI_FdcFaultSAMyMaxAngle,0.1,=,FAULT,EQ,1,,DI_FR_SA_1_ANGLE_MAX,SA-POS-4b,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,89
+,"Guidance, Navigation & Control (GN&C)",,,,,NA,,,,,,1,,,,,0,90
+,GNC Modes and Status,,,,,NA,,,,,,1,,,,,0,90
+,?,090,in Launch Mode,GC_CL_AcsMode,0.1,=,LM,EQ,0,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,90
+,?,091,in Rate Null Mode,GC_CL_AcsMode,0.1,=,RNM,EQ,1,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,91
+,?,092,in Sun Point Mode,GC_CL_AcsMode,0.1,=,SPM,EQ,2,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,92
+,?,093,in Gyroless Sun Point Mode,GC_CL_AcsMode,0.1,=,GSP,EQ,3,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,93
+,?,094,in Mission Science Mode,GC_CL_AcsMode,0.1,=,MSM,EQ,4,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,94
+,?,095,in Slew Mode,GC_CL_AcsMode,0.1,=,SLM,EQ,5,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,95
+,?,096,in Delta-V Mode,GC_CL_AcsMode,0.1,=,DVM,EQ,7,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,96
+,?,097,in Delta-H Mode,GC_CL_AcsMode,0.1,=,DHM,EQ,6,,,Multiple,gc_tlm_cl_eng_01d6.rdl (6/14/2011),,,,1,97
+,,098,in Eclipse,GC_DI_DCssEclipseState,0.1,=,NIGHT,EQ,1,,,TBD,gc_tlm_di_eng_01d3.rdl (6/14/2011),,,,1,98
+,L1 and L2 System,,,,,NA,,,,,,1,,,,,0,99
+,?,099,Sun Angle Exceeded FDC Flag,GC_SD_FdcFaultSunAvoid,0.1,=,FAULT,EQ,1,,SD_FR_SUN_POSITION,GNC-SYS-1,gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,99
+,?,100,Sys Momentum 1 (Non-thruster modes),GC_SD_MomSysMomMag,0.1,>,200 Nms,GT,200,,,GNC-MOM-1,gc_tlm_sd_diag_momentum_01c3.rdl (6/14/2011),,,,1,100
+,?,101,Sys Momentum 2a (Delta-V mode),GC_SD_MomSysMomMag,0.1,>,200 Nms,GT,200,,,GNC-MOM-2a,gc_tlm_sd_diag_momentum_01c3.rdl (6/14/2011),,,,1,101
+,?,102,Sys Momentum 2b (Delta-H mode),GC_SD_MomSysMomMag,0.1,>,160 Nms,GT,160,,,GNC-MOM-2b,gc_tlm_sd_diag_momentum_01c3.rdl (6/14/2011),,,,1,102
+,?,103,Sys Momentum 3a (Delta Mom) FDC Flag,GC_SD_FdcFaultDeltaMomWhlMode,0.1,=,FAULT,EQ,1,,SD_SYSMOM_FR_WHL_MODE_DELTA_MAG_HIGH,GNC-MOM-3a,,,,,1,103
+,?,104,"Sys Momentum 3b (Delta Mom, Thruster modes) FDC Flag",GC_SD_FdcFaultDeltaMomThrMode,0.1,=,FAULT,EQ,1,,SD_SYSMOM_FR_THR_MODE_DELTA_MAG_HIGH,GNC-MOM-3b,,,,,1,104
+,?,105,Attitude Error in MSM FDC Flag,GC_CL_FdcFaultMSMAttErr,0.1,=,FAULT,EQ,1,,CL_FR_MSM_ATT_ERR,GNC-ATT-1,gc_tlm_cl_fdc_01d1.rdl (8/31/2011),,,,1,105
+,?,106,Attitude Error in DVM FDC Flag,GC_CL_FdcFaultDVMAttErr,0.1,=,FAULT,EQ,1,,CL_FR_DVM_ATT_ERR,GNC-ATT-2,gc_tlm_cl_fdc_01d1.rdl (8/31/2011),,,,1,106
+,?,107,Attitude Error in SLM FDC Flag,GC_CL_FdcFaultSLMAttErr,0.1,=,FAULT,EQ,1,,CL_FR_SLM_ATT_ERR,GNC-ATT-3,gc_tlm_cl_fdc_01d1.rdl (8/31/2011),,,,1,107
+,?,108,Slew Mode Time-out Flag,GC_CL_SLMExpired,0.1,=,TRUE,EQ,1,,,GNC-MODE-1,gc_tlm_cl_diag_slm_023d.rdl (6/14/2011),,,,1,108
+,?,109,Delta-H Mode Time-out FDC Flag,GC_CL_FdcFaultDHMTimeout,0.1,=,FAULT,EQ,1,,CL_FR_DHM_BURN_TIMEOUT,GNC-MODE-2,gc_tlm_cl_fdc_01d1.rdl (8/31/2011),,,,1,109
+,?,110,MSS Direction Vector Validity,GC_SD_SstamMssSunDirValid,0.1,=,INVALID,EQ,0,,,GNC-MODE-3,gc_tlm_sd_diag_sstam_01c1.rdl (6/14/2011),,,,1,110
+,?,111,MSS Status,GC_SD_MSS_Enabled,0.1,=,ENABLED,EQ,1,,,GNC-MODE-3,gc_tlm_sd_eng_01d5.rdl (6/14/2011),,,,1,111
+,?,112,TimeInMode (SPM),GC_CL_SPMTimeInMode,0.1,>,75 mins,GT,4500,,(sec),GNC-MODE-3,gc_tlm_cl_diag_spm_023a.rdl (6/14/2011),,,,1,112
+,?,113,TimeInMode (GSP),GC_CL_GSPTimeInMode,0.1,>,75 mins,GT,4500,,(sec),GNC-MODE-3,gc_tlm_cl_diag_gsp_023b.rdl (6/14/2011),,,,1,113
+,?,114,SS/SD Sun Vector Error FDC Flag,GC_SD_FdcFaultSunVector,0.1,=,FAULT,EQ,1,,SD_FR_SUN_VEC_MISCOMPARE,GNC-SD-1,gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,114
+,?,115,ST Attitude Residual Error FDC Flag,GC_SD_FdcFaultAttitude,0.1,=,FAULT,EQ,1,,Missy email 10/17/11,GNC-SD-2,gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,115
+,?,116,KF Delta Drift Bias High FDC Flag,GC_SD_FdcFaultKFRate,0.1,=,FAULT,EQ,1,,SD_FR_KF_RATE_CORR_HIGH,GNC-KF-1(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,116
+,?,117,ST Adjusted Residual Error FDC Flag,GC_SD_FdcFaultSTResidualRel,0.1,=,FAULT,EQ,1,,SD_FR_ST_RELATIVE_RESIDUAL,GNC-KF-2(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,117
+,?,118,KF not in Background mode,GC_SD_KfKfInBack,0.1,=,NO,EQ,0,,Missy email 10/19/11,,,,,,1,118
+,?,119,KF Attitude Error (X-Axis) FDC Flag,GC_SD_FdcFaultKFXAttConv,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-KF-3(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,119
+,,120,KF Attitude Error (Y-Axis) FDC Flag,GC_SD_FdcFaultKFYAttConv,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-KF-3(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,120
+,,121,KF Attitude Error (Z-Axis) FDC Flag,GC_SD_FdcFaultKFZAttConv,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-KF-3(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,121
+,?,122,KF Bias Error (X-Axis) FDC Flag,GC_SD_FdcFaultKFXBiasConv,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-KF-3(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,122
+,,123,KF Bias Error (Y-Axis) FDC Flag,GC_SD_FdcFaultKFYBiasConv,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-KF-3(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,123
+,,124,KF Bias Error (Z-Axis) FDC Flag,GC_SD_FdcFaultKFZBiasConv,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-KF-3(a-b),gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,124
+,?,125,,,,N/O,,NO OPER,,,,,,,,,1,125
+,?,126,,,,N/O,,NO OPER,,,,,,,,,1,126
+,L3 Electronics and 1553 Bus,,,,,NA,,,,,,1,,,,,0,127
+,?,127,ATB A Data Unavailable FDC Flag,GC_DI_FdcFaultATB1553Msg,0.1,=,FAULT,EQ,1,,DI_FR_ATB_STALE_1553,MACE-ATB-1,gc_tlm_di_fdc_01ce.rdl (6/14/2011),,,,1,127
+,,128,ATB A Unavailable Scratchpad Flag (SCOMA),GC_SCOMA_SCRATCHPAD4,1,=,NOTAVAIL,EQ,0xB86A,,,MACE-ATB-1,,,,,1,128
+,,129,ATB A Unavailable Scratchpad Flag (SCOMB),GC_SCOMB_SCRATCHPAD4,1,=,NOTAVAIL,EQ,0xB86A,,,MACE-ATB-1,,,,,1,129
+,?,130,PROP 1A 1553 RT Errors,GC_XB_SCRETRYFAILS_PROPA1,5,>,5,GT,5,,,MACE-PROP-1,,,,,1,130
+,?,131,PROP 2A 1553 RT Errors,GC_XB_SCRETRYFAILS_PROPA2,5,>,5,GT,5,,,MACE-PROP-1,,,,,1,131
+,?,132,GPS GEONS Unavailable FDC Flag,GC_DI_FdcFaultGpsGEONSNoData,0.1,=,FAULT,EQ,1,,DI_FR_GPS_GEONS_VALID_STALE,GNC-GPS-3(a-b),,,,,1,132
+,?,133,Improper STB Mode,GC_STRB_HK_MODE,0.1,!=,AAD,NE,2,,,GNC-ST-4b,,,,,1,133
+,L3 Sensor and Actuator,,,,,NA,,,,,,1,,,,,0,134
+,?,134,GPS Point Solution Unavailable FDC Flag,GC_DI_FdcFaultGpsPtSolNoData,0.1,=,FAULT,EQ,1,,DI_FR_GPS_PTSOL_VALID_STALE,GNC-GPS-1(a-b),gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,134
+,?,135,GPS Point Solution Exceeds Limit FDC Flag,GC_DI_FdcFaultGpsPtSolDiff,0.1,=,FAULT,EQ,1,,DI_FR_GPS_PTSOL_DIFF_FAIL,GNC-GPS-2a,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,135
+,?,136,GEONS Solution Exceeds Limit FDC Flag,GC_DI_FdcFaultGpsGeonsDiff,0.1,=,FAULT,EQ,1,,DI_FR_GPS_GEONS_DIFF_FAIL,GNC-GPS-2b,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,136
+,?,137,IRU Data Unavailable FDC Flag,GC_DI_FdcFaultIRU1553Msg,0.1,=,FAULT,EQ,1,,DI_FR_IRU_STALE_1553,GNC-IRU-1(a-b),gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,137
+,?,138,IRU Delta Time FDC Flag,GC_DI_FdcFaultIRUTimeDelta,0.1,=,FAULT,EQ,1,,DI_FR_IRU_INVALID_TIME,GNC-IRU-1(a-b),gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,138
+,?,139,IRU Gyro Validity Flag,GC_DI_IruDataValid,0.1,=,INVALID,EQ,0,,DI_DL_IRUDATAVALID,GNC-IRU-1(a-b),gc_tlm_di_irudiag_02b2.rdl (6/14/2011),,,,1,139
+,?,140,Cross compared Gyro rates are inconsistent,GC_SD_FdcFaultGyroRate,0.1,=,FAULT,EQ,1,,Missy email 10/19/11,GNC-IRU-3,,,,,1,140
+,?,141,MTB Current Miscompare FDC flag,GC_CG_FdcFaultMtbCurr,0.1,=,FAULT,EQ,1,,CG_FR_MTB_CURR_COMP,GNC-MTB-1,gc_tlm_sd_fdc_01d0.rdl (8/31/2011),,,,1,141
+,?,142,RWA 1 Data Stale Flag,DataStale,0.1,=,FAIL,EQ,1,,GC_DI_DRw[1].DataStale,GNC-RWA-1a,gc_tlm_di_rwdiag_02b3.rdl (11/14/2011),,,,1,142
+,?,143,RWA 2 Data Stale Flag,DataStale,0.1,=,FAIL,EQ,1,,GC_DI_DRw[2].DataStale,GNC-RWA-1b,gc_tlm_di_rwdiag_02b3.rdl (11/14/2011),,,,1,143
+,?,144,RWA 3 Data Stale Flag,DataStale,0.1,=,FAIL,EQ,1,,GC_DI_DRw[3].DataStale,GNC-RWA-1c,gc_tlm_di_rwdiag_02b3.rdl (11/14/2011),,,,1,144
+,?,145,RWA 4 Data Stale Flag,DataStale,0.1,=,FAIL,EQ,1,,GC_DI_DRw[4].DataStale,GNC-RWA-1d,gc_tlm_di_rwdiag_02b3.rdl (11/14/2011),,,,1,145
+,?,146,RWA 5 Data Stale Flag,DataStale,0.1,=,FAIL,EQ,1,,GC_DI_DRw[5].DataStale,GNC-RWA-1e,gc_tlm_di_rwdiag_02b3.rdl (11/14/2011),,,,1,146
+,?,147,RWA 1 Torq-Tach Miscompare FDC Flag,GC_CG_FdcFaultRW1TrqMom,0.1,=,FAULT,EQ,1,,CG_FR_RW_0_TRQMOM_COMP,GNC-RWA-2a,gc_tlm_cg_fdc_01d2.rdl (8/31/2011),,,,1,147
+,?,148,RWA 2 Torq-Tach Miscompare FDC Flag,GC_CG_FdcFaultRW2TrqMom,0.1,=,FAULT,EQ,1,,CG_FR_RW_1_TRQMOM_COMP,GNC-RWA-2b,gc_tlm_cg_fdc_01d2.rdl (8/31/2011),,,,1,148
+,?,149,RWA 3 Torq-Tach Miscompare FDC Flag,GC_CG_FdcFaultRW3TrqMom,0.1,=,FAULT,EQ,1,,CG_FR_RW_2_TRQMOM_COMP,GNC-RWA-2c,gc_tlm_cg_fdc_01d2.rdl (8/31/2011),,,,1,149
+,?,150,RWA 4 Torq-Tach Miscompare FDC Flag,GC_CG_FdcFaultRW4TrqMom,0.1,=,FAULT,EQ,1,,CG_FR_RW_3_TRQMOM_COMP,GNC-RWA-2d,gc_tlm_cg_fdc_01d2.rdl (8/31/2011),,,,1,150
+,?,151,RWA 5 Torq-Tach Miscompare FDC Flag,GC_CG_FdcFaultRW5TrqMom,0.1,=,FAULT,EQ,1,,CG_FR_RW_4_TRQMOM_COMP,GNC-RWA-2e,gc_tlm_cg_fdc_01d2.rdl (8/31/2011),,,,1,151
+,?,152,Too Many RWAs OFF FSW Flag,GC_XB_SCRETRYFAILS_RWA1,5,=,,CUSTOM,,,XB Retry Failures on more than one RWA,GNC-RWA-3,,,,,1,152
+,?,153,ST Data Invalid FDC Flag,GC_DI_FdcFaultST1553Msg,0.1,=,FAULT,EQ,1,,DI_FR_ST_STALE_1553,GNC-ST-1,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,153
+,?,154,ST Attitude Angular Error FDC flag,GC_DI_FdcFaultSTDelta,0.1,=,FAULT,EQ,1,,DI_FR_ST_OVER_MAX_RATE,GNC-ST-2,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,154
+,?,155,Improper STA Mode,GC_STRA_HK_MODE,0.1,!=,AAD,NE,2,,,GNC-ST-4,gc_tlm_stra_hk_021e.rdl (6/14/2011),,,,1,155
+,?,156,ST Not Occulted by Earth,GC_SD_StEarthOccult,0.1,!=,Occulted,NE,1,,1=occulted,GNC-ST-4,gc_tlm_sd_eng_01d5 (6/14/2011),,,,1,156
+,?,157,ST Not Occulted by Sun,GC_SD_StSunOccult,0.1,!=,Occulted,NE,1,,1=occulted; Missy email 10/19/11,GNC-ST-4,gc_tlm_sd_eng_01d5 (6/14/2011),,,,1,157
+,?,158,ST Not Occulted by Moon,GC_SD_StLunarOccult,0.1,!=,Occulted,NE,1,,1=occulted; Missy email 10/19/11,GNC-ST-4,gc_tlm_sd_eng_01d5 (6/14/2011),,,,1,158
+,,159,TAM Mag Field Vector Min Error FDC Flag,GC_DI_FdcFaultTamMtbFieldMin,0.1,=,FAULT,EQ,1,,DI_FR_TAM_MTB_MIN_MAGFIELD,GNC-TAM-1,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,159
+,?,160,TAM Mag Field Vector Max Error FDC Flag,GC_DI_FdcFaultTamMtbFieldMax,0.1,=,FAULT,EQ,1,,DI_FR_TAM_MTB_MAX_MAGFIELD,GNC-TAM-1,gc_tlm_di_fdc_01ce.rdl (8/31/2011),,,,1,160
+,?,161,+Y S/A Soft Stop FDC Flag,GC_DI_FdcFaultSAPyMinAngle,0.1,=,FAULT,EQ,1,,DI_FR_SA_0_ANGLE_MIN,SA-POS-4a,,,,,1,161
+,?,162,-Y S/A Soft Stop FDC Flag,GC_DI_FdcFaultSAMyMinAngle,0.1,=,FAULT,EQ,1,,DI_FR_SA_1_ANGLE_MIN,SA-POS-4b,,,,,1,162
+,Thermal,,,,,NA,,,,,,1,,,,,0,163
+,?,163,PS Prop Heater Control Status,GC_PS_PROP_HTR_CTRL_STATUS,5,=,DISABLED,EQ,0,,,THR-HTR-1,,,,,1,163
+,Instrument/GMI,,,,,,,,,,,1,,,,,0,164
+,?,164,Category 1 Error,GC_GMI_HSD_CAT1_ERR_ID,1,!=,0,NE,0,,,INST-GMI-1,,,,,1,164
+,?,165,GMI KeepAlive,GC_GM_GmiKeepAliveStale,5,=,TRUE,EQ,1,,,"INST-GMI-4a, INST-GMI-4b",,,,,1,165
+,?,166,GMI 1553 Monitor 1,GC_XB_INRETRYFAILS_GMI,5,>,50,GT,50,,,INST-GMI-5a,,,,,1,166
+,?,167,GMI 1553 Monitor 2,GC_XB_INRETRYFAILS_GMI,5,>,150,GT,150,,,INST-GMI-5b,,,,,1,167
+,?,168,RS Overtemperature,GC_MACA_GMI_RS_RCVR_T,1,>,85 °C,LT,998,,"POLY=(2.60471413E+01,3.12006274E-01,-4.89297249E-04,3.37352764E-07,-1.21797079E-10,2.22836575E-14,-1.63610203E-18)",INST-GMI-6,gc_tlm_maca_hk_200 (r9363),,,,1,168
+,?,169,SMA Overtemperature,GC_MACA_GMI_SMA_T,1,>,55 °C,LT,1860,,"POLY=(2.60471413E+01,3.12006274E-01,-4.89297249E-04,3.37352764E-07,-1.21797079E-10,2.22836575E-14,-1.63610203E-18)",INST-GMI-6,gc_tlm_maca_hk_200 (r9363),,,,1,169
+,?,170,ICA Overtemperature,GC_MACA_GMI_ICA_T,1,>,53 °C,LT,1935,,"POLY=(2.60471413E+01,3.12006274E-01,-4.89297249E-04,3.37352764E-07,-1.21797079E-10,2.22836575E-14,-1.63610203E-18)",INST-GMI-6,gc_tlm_maca_hk_200 (r9363),,,,1,170
+,?,171,RS Undertemperature,GC_MACA_GMI_RS_RCVR_T,1,<,-35 °C,GT,4060,,"POLY=(2.60471413E+01,3.12006274E-01,-4.89297249E-04,3.37352764E-07,-1.21797079E-10,2.22836575E-14,-1.63610203E-18)",INST-GMI-7,gc_tlm_maca_hk_200 (r9363),,,,1,171
+,?,172,SMA Undertemperature,GC_MACA_GMI_SMA_T,1,<,-35 °C,GT,4060,,"POLY=(2.60471413E+01,3.12006274E-01,-4.89297249E-04,3.37352764E-07,-1.21797079E-10,2.22836575E-14,-1.63610203E-18)",INST-GMI-7,gc_tlm_maca_hk_200 (r9363),,,,1,172
+,?,173,ICA Undertemperature,GC_MACA_GMI_ICA_T,1,<,-40 °C,GT,4094,,"POLY=(2.60471413E+01,3.12006274E-01,-4.89297249E-04,3.37352764E-07,-1.21797079E-10,2.22836575E-14,-1.63610203E-18)",INST-GMI-7,gc_tlm_maca_hk_200 (r9363),,,,1,173
+,1553 Errors,,,,,,,,,,1,,,,,,0,174
+,?,174,MACA 1553 Bus Transfer Status,P200_1553_XFER_STATUS,1,=,0,EQ,0,,,,,,,,1,174
+,?,175,MACB 1553 Bus Transfer Status,P202_1553_XFER_STATUS,1,=,0,EQ,0,,,,,,,,1,175
+,?,176,PSEA 1553 Bus Transfer Status,P216_1553_XFER_STATUS,1,=,0,EQ,0,,,,,,,,1,176
+,,177,PSEA 1553 Bus Transfer Status,P219_1553_XFER_STATUS,1,=,0,EQ,0,,,,,,,,1,177
+,?,178,FSW PSE Tlm Stale,GC_PS_PSE_TLMSTALE,5,=,FALSE,EQ,0,,,,,,,,1,178
+,?,179,SADA 1553 Bus Transfer Status,P1F0_1553_XFER_STATUS,1,=,0,EQ,0,,,,,,,,1,179
+,Thermal (continued),,,,,NA,,,,,,1,,,,,,
+,?,180,HGAS Elbow Temperature Low Limit,GC_MACA_HGAS_ELBOW_DMPR_T,1,<,10,GT,2192,,"POLY=(1.17009108E+02,-1.71961350E-01,1.58135168E-04,-8.78241000E-08,2.66683407E-11,-4.09640063E-15,2.40984521E-19)",THR-HTR-3a,gc_tlm_maca_hk_200 (r9363),,,,1,180
+,?,181,HGAS Shoulder Temperature Low Limit,GC_MACA_HGAS_SHOULDER_DMPR_T,1,<,10,GT,2192,,"POLY=(1.17009108E+02,-1.71961350E-01,1.58135168E-04,-8.78241000E-08,2.66683407E-11,-4.09640063E-15,2.40984521E-19)",THR-HTR-3a,gc_tlm_maca_hk_200 (r9363),,,,1,181
+,?,182,HGAS Elbow Temperature High Limit,GC_MACA_HGAS_ELBOW_DMPR_T,1,>,60,LT,516,,"POLY=(1.17009108E+02,-1.71961350E-01,1.58135168E-04,-8.78241000E-08,2.66683407E-11,-4.09640063E-15,2.40984521E-19)",THR-HTR-3b,gc_tlm_maca_hk_200 (r9363),,,,1,182
+,?,183,HGAS Shoulder Temperature High Limit,GC_MACA_HGAS_SHOULDER_DMPR_T,1,>,60,LT,516,,"POLY=(1.17009108E+02,-1.71961350E-01,1.58135168E-04,-8.78241000E-08,2.66683407E-11,-4.09640063E-15,2.40984521E-19)",THR-HTR-3b,gc_tlm_maca_hk_200 (r9363),,,,1,183
+,?,184,Packets received with an unknown PID,GC_SW_UNKNOWNPKTRCVCnt,5,>,100,GT,100,,,,,,,,1,184
+,?,185,SpaceWire Port 3 Parity Error Count,GC_SW_Pt3Parity_ErrCnt,5,?,7,GE,7,,,,,,,,1,185
+,?,186,SpaceWire Port 3 Flow Control Underflow Error,GC_SW_Pt3FlowCntlUnder_Err,5,=,ERROR,EQ,1,,,,,,,,1,186
+,?,187,SpaceWire Port 3 Flow Control Overflow Error,GC_SW_Pt3FlowCntlOver_Err,5,=,ERROR,EQ,1,,,,,,,,1,187
+,?,188,SpaceWire Port 4 Parity Error Count,GC_SW_Pt4Parity_ErrCnt,5,?,7,GE,7,,,,,,,,1,188
+,?,189,SpaceWire Port 4 Flow Control Underflow Error,GC_SW_Pt4FlowCntlUnder_Err,5,=,ERROR,EQ,1,,,,,,,,1,189
+,?,190,SpaceWire Port 4 Flow Control Overflow Error,GC_SW_Pt4FlowCntlOver_Err,5,=,ERROR,EQ,1,,,,,,,,1,190
+,?,191,PSE A Ahr-In/Out Compare,GC_PS_AMP_HR_IN_PSEA_BATT1,5,=,,CUSTOM,,,Sum Ahr-In > Sum Ahr-Out + 0.05,EPS-BATT-7,,,,,1,191
+,?,192,PSE A select NOT,GC_PSEB_SAM1_A_SLCT_N,1,=,0,EQ,0,,,,,,,,1,192
+,?,193,PSE B select NOT,GC_PSEB_SAM1_B_SLCT_N,1,=,1,EQ,1,,,,,,,,1,193
+,Instrument/GMI,,,,,,,,,,,1,,,,,0,194
+,?,194,GMI Raw HSD SMA bearing temperature,gc_gmi_hsd_sma_bearing_tmp_raw,2,?,,LE,37084,,Eng value computed in pseudo gc_gmi_hsd_sma_bearing_tmp,CCR-035,,,,,1,194
+,?,195,GMI Raw HSD SMA motor temperature,gc_gmi_hsd_sma_mtr_temp_raw,2,?,,LE,37084,,Eng value computed in pseudo gc_gmi_hsd_sma_mtr_temp,CCR-035,,,,,1,195
+,?,196,GMI Raw HSD SMA slip ring heater temperature,gc_gmi_hsd_sma_slprhtr_tmp_raw,2,?,,LE,37084,,Eng value computed in pseudo gc_gmi_hsd_sma_slprhtr_tmp,CCR-035,,,,,1,196
+,?,197,,,,N/O,,NO OPER,,,,,,,,,1,197
+,?,198,,,,N/O,,NO OPER,,,,,,,,,1,198
+,?,199,,,,N/O,,NO OPER,,,,,,,,,1,199
+,?,200,,,,N/O,,NO OPER,,,,,,,,,1,200
+,?,201,,,,N/O,,NO OPER,,,,,,,,,1,201
+,?,202,,,,N/O,,NO OPER,,,,,,,,,1,202
+,?,203,,,,N/O,,NO OPER,,,,,,,,,1,203
+,?,204,,,,N/O,,NO OPER,,,,,,,,,1,204
+,?,205,,,,N/O,,NO OPER,,,,,,,,,1,205
+,?,206,,,,N/O,,NO OPER,,,,,,,,,1,206
+,?,207,,,,N/O,,NO OPER,,,,,,,,,1,207
+,?,208,,,,N/O,,NO OPER,,,,,,,,,1,208
+,?,209,,,,N/O,,NO OPER,,,,,,,,,1,209
+,?,210,,,,N/O,,NO OPER,,,,,,,,,1,210
+,?,211,,,,N/O,,NO OPER,,,,,,,,,1,211
+,?,212,,,,N/O,,NO OPER,,,,,,,,,1,212
+,?,213,,,,N/O,,NO OPER,,,,,,,,,1,213
+,?,214,,,,N/O,,NO OPER,,,,,,,,,1,214
+,?,215,,,,N/O,,NO OPER,,,,,,,,,1,215
+,?,216,,,,N/O,,NO OPER,,,,,,,,,1,216
+,?,217,,,,N/O,,NO OPER,,,,,,,,,1,217
+,?,218,,,,N/O,,NO OPER,,,,,,,,,1,218
+,?,219,,,,N/O,,NO OPER,,,,,,,,,1,219
+,?,220,,,,N/O,,NO OPER,,,,,,,,,1,220
+,?,221,,,,N/O,,NO OPER,,,,,,,,,1,221
+,?,222,,,,N/O,,NO OPER,,,,,,,,,1,222
+,?,223,,,,N/O,,NO OPER,,,,,,,,,1,223
+,?,224,,,,N/O,,NO OPER,,,,,,,,,1,224
+,?,225,,,,N/O,,NO OPER,,,,,,,,,1,225
+,?,226,,,,N/O,,NO OPER,,,,,,,,,1,226
+,?,227,,,,N/O,,NO OPER,,,,,,,,,1,227
+,?,228,,,,N/O,,NO OPER,,,,,,,,,1,228
+,?,229,,,,N/O,,NO OPER,,,,,,,,,1,229
+,?,230,,,,N/O,,NO OPER,,,,,,,,,1,230
+,?,231,,,,N/O,,NO OPER,,,,,,,,,1,231
+,?,232,,,,N/O,,NO OPER,,,,,,,,,1,232
+,?,233,,,,N/O,,NO OPER,,,,,,,,,1,233
+,?,234,,,,N/O,,NO OPER,,,,,,,,,1,234
+,?,235,,,,N/O,,NO OPER,,,,,,,,,1,235
+,?,236,,,,N/O,,NO OPER,,,,,,,,,1,236
+,?,237,,,,N/O,,NO OPER,,,,,,,,,1,237
+,?,238,,,,N/O,,NO OPER,,,,,,,,,1,238
+,?,239,,,,N/O,,NO OPER,,,,,,,,,1,239
+,?,240,,,,N/O,,NO OPER,,,,,,,,,1,240
+,?,241,,,,N/O,,NO OPER,,,,,,,,,1,241
+,?,242,,,,N/O,,NO OPER,,,,,,,,,1,242
+,?,243,,,,N/O,,NO OPER,,,,,,,,,1,243
+,?,244,,,,N/O,,NO OPER,,,,,,,,,1,244
+,?,245,,,,N/O,,NO OPER,,,,,,,,,1,245
+,?,246,,,,N/O,,NO OPER,,,,,,,,,1,246
+,?,247,,,,N/O,,NO OPER,,,,,,,,,1,247
+,?,248,,,,N/O,,NO OPER,,,,,,,,,1,248
+,?,249,,,,N/O,,NO OPER,,,,,,,,,1,249
+,?,250,,,,N/O,,NO OPER,,,,,,,,,1,250
+,?,251,,,,N/O,,NO OPER,,,,,,,,,1,251
+,?,252,,,,N/O,,NO OPER,,,,,,,,,1,252
+,?,253,,,,N/O,,NO OPER,,,,,,,,,1,253
+,?,254,,,,N/O,,NO OPER,,,,,,,,,1,254
+,?,255,,,,N/O,,NO OPER,,,,,,,,,1,255

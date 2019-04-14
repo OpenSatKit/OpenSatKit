@@ -39,6 +39,25 @@ module Osk
          @file_transfer = TftpFileTransfer.new()
       end # End init_variables()
 
+      def self.read_target_json(target_name) 
+
+         folder_name = File.join(Cosmos::USERPATH, 'config', 'targets', target_name.to_s.upcase,'osk')
+         unless Dir.exist?(folder_name)
+            raise parser.error("Undefined target folder '#{folder_name}'.")
+         end
+         path_filename = File.join(folder_name,"#{target_name.to_s.downcase}.json")
+
+         begin
+            app_json = File.read("#{path_filename}")
+            app_hash = JSON.parse(app_json)
+         rescue Exception => e
+            puts e.message
+            puts e.backtrace.inspect  
+         end
+
+         return app_hash
+       
+      end
       
       # 
       # Start the cFS and enable telemetry

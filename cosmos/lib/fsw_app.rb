@@ -4,8 +4,8 @@
 #
 # Notes:
 #   1. This class supports both cFS and OSK applications. Tables are the main
-#      archietctural difference. If the need arises this will be refactored to
-#      use sbclasses
+#      architectural difference. If the need arises this will be refactored to
+#      use subclasses
 #   2. Refer to osk_global.rb for JSON definitions that are used to initialize
 #      most of the attributes
 #   

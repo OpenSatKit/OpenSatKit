@@ -393,13 +393,85 @@
 
       "packet": {
          "name": "TFTP_HK_TLM_MID",
+         "stream-id": "\u0900",
+         "dec-id": 2304,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+  
+      "packet": {
+         "name": "CF_HK_TLM_MID",
          "stream-id": "\u08B0",
          "dec-id": 2224,
          "priority": 0,
          "reliability": 0,
          "buf-limit": 4
       },
-  
+
+      "packet": {
+         "name": "CF_TRANS_TLM_MID",
+         "stream-id": "\u08B1",
+         "dec-id": 2225,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
+         "name": "CF_CONFIG_TLM_MID",
+         "stream-id": "\u08B2",
+         "dec-id": 2226,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
+         "name": "CF_SPARE0_TLM_MID",
+         "stream-id": "\u08B3",
+         "dec-id": 2227,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
+         "name": "CF_SPARE1_TLM_MID",
+         "stream-id": "\u08B4",
+         "dec-id": 2228,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
+         "name": "CF_SPARE2_TLM_MID",
+         "stream-id": "\u08B5",
+         "dec-id": 2229,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
+         "name": "CF_SPARE3_TLM_MID",
+         "stream-id": "\u08B6",
+         "dec-id": 2230,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
+         "name": "CF_SPARE4_TLM_MID",
+         "stream-id": "\u08B7",         
+	 "dec-id": 2231,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },  
+
       "packet": {
          "name": "TEST",
          "stream-id": "\u0885",

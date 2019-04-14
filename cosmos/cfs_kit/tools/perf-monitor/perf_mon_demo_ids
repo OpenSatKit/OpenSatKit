@@ -1,0 +1,3 @@
+FM_App,0x00000027,0x00ff6666,0,File Manager Application
+FM_Child_Task,0x0000002C,0xffcccc,0,File Manager Child Task
+MD_App,0x0000001A,0x00ff66,0,Memory Dwell Application

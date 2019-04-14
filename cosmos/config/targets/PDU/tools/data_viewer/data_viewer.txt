@@ -1,0 +1,5 @@
+#COMPONENT "CFDP PDUs to Target" pdu_to_target_viewer.rb
+#  PACKET PDU CF_GND_TO_SPACE_PDU 
+
+COMPONENT "CFDP PDUs from Target" pdu_from_target_viewer.rb
+  PACKET PDU CF_SPACE_TO_GND_PDU

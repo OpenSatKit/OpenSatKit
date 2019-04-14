@@ -237,8 +237,28 @@
                "frequency": 4,
                "offset": 2,
                "msg-id": 25
-            }}
+            }},
+
+            {"activity": {
+               "name":  "CF Hosekeeping",
+               "descr": "",
+               "index": 8,
+               "enable": "true",
+               "frequency": 3,
+               "offset": 2,
+               "msg-id": 26
+            }},
             
+            {"activity": {
+               "name":  "CF Execution",
+               "descr": "",
+               "index": 9,
+               "enable": "false",
+               "frequency": 1,
+               "offset": 2,
+               "msg-id": 27
+            }}
+                        
          ]
       }},   
    
