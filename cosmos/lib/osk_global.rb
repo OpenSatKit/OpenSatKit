@@ -7,7 +7,6 @@
 #      definitions. Whenever possible it uses existing COSMOS definitions
 #      to prevent multiple definitions
 #   2. System is designed as a Singleton 
-#   TODO - Resolve interface switch management: remap vs reconnect 
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -60,6 +59,8 @@ module Osk
    ## File Names ##
    ################
 
+   # Use "_SCR" for automatically generated screen files
+   
    DOCS_TOUR_FILE = "OSK_Tour.pdf"
    DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
 

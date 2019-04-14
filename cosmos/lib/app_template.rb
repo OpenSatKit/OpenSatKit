@@ -75,8 +75,8 @@ class AppTemplate
    end # initialize()
 
    #
-   # Use the Osk::CREATE_APP_TEMPlATE_FILE in the template_dir to create
-   # a new app in the cFS & COSMOS detsination directories
+   # Use the Osk::CREATE_APP_TEMPLATE_FILE in the template_dir to create
+   # a new app in the cFS & COSMOS destination directories
    #
    def create_app(template_dir, cfs_dst_dir, cosmos_dst_dir)
       
@@ -84,7 +84,7 @@ class AppTemplate
 
       begin
       
-         template_dir   = File.join(Osk::CREATE_APP_DIR,'templates',template_dir)
+         ###template_dir   = File.join(Osk::CREATE_APP_DIR,'templates',template_dir)
          template_file  = File.join(template_dir,Osk::CREATE_APP_TEMPLATE_FILE)
          cfs_dst_dir    = File.join(cfs_dst_dir,@app_name[:"LOWER"])
          cosmos_dst_dir = File.join(cosmos_dst_dir,@app_name[:"UPPER"])
@@ -271,6 +271,27 @@ class AppTemplate
       return descr_array
 
    end # get_descr()
+
+   #
+   # Return a template's title defined in its JSON file
+   #
+   def self.get_title(template_dir)
+   
+      template_file = File.join(template_dir,Osk::CREATE_APP_TEMPLATE_FILE)
+
+      raise IOError "Missing application template file for #{template_file}" unless File.exist?(template_file)
+
+      template_json = File.read(template_file)
+      template = JSON.parse(template_json)
+
+      title =""
+      if template.key? (JSON_TITLE)
+         title = template[JSON_TITLE]
+      end
+
+      return title
+
+   end # get_title()
 
    #
    # 

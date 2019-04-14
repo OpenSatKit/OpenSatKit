@@ -64,12 +64,12 @@ The tools\\perfutils-java directory contains the CPM user's guide."
 
 # 2 - Configure the trigger masks
 PMD_INSTRUCT_1 = ["Configure the filter masks. The demo uses performance IDs (see More Info for bit mask explanation)",
-                  "   FM App     = 39(0x0027)",
-                  "   FM_CHILD = 44(0x002C)",
-                  "   MD App     = 26(0x001A)",
+                  "   FM App       = 39 (mask[1] = 0x00000080)",
+                  "   FM_CHILD  = 44 (mask[1] = 0x00001000)",
+                  "   MD App       = 26 (mask[0] = 0x04000000)",
                   "",
                   " <Demo> Send CFE_ES SET_LA_FILTER_MASK cmd four times with the following",
-                  "                 '[filter num]=mask' parameters: [0]=0x04000000, [1]=0x1080, [2]=0, [3]=0"]
+                  "                 '[filter num]=mask' parameters: [0]=0x04000000, [1]=0x00001080, [2]=0, [3]=0"]
 
 PMD_INFO_1 = "\n\n\
 There is one bit for each performance marker (ID) and a '1' indicates the ID should be \n\
@@ -98,12 +98,12 @@ performance monitor IDs. It defaults to 128 which is why the perf mon page \n\
 is configured as a 4 dimensional array with 32 bits per entry."
 
 # 3-Collect Data
-PMD_INSTRUCT_3 = ["This step collects data. Note the Performance Monitor screen doesn't update during data collection.",
+PMD_INSTRUCT_3 = ["This step collects data.",
                   "",
                   " <Demo> Send CFE_ES START_LA_DATA cmd to start the data collection.",
                   "",
-                  "After 12 seconds CFE_ES STOP_LA_DATA cmd is sent and the data is written to", 
-                  "#{PMD_FLT_DAT_FILE}. During the 12s FM commands were issued to create",
+                  "After ~16 seconds CFE_ES STOP_LA_DATA cmd is sent and the data is written to", 
+                  "#{PMD_FLT_DAT_FILE}. During the 16s FM commands were issued to create",
                   "interesting trace data. Click <More Info> for details."]
 PMD_INFO_3 = "\n\n\
 Data is collected for approximately 12 seconds. The sequence of events is:\n\
@@ -243,43 +243,50 @@ def perf_mon_demo(screen, button)
          # 3 - Collect the data 
          when 3
             if ($pmd_demo == 0)
-               Osk::flight.cfe_es.send_cmd("START_LA_DATA with TRIG_MODE 0")
-               wait (3)
-               Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
-               wait (3)
-               Osk::flight.fm.send_cmd("WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{PMD_DIR_LIST_FLT_FILE}")
-               wait (3)
-               Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
-               wait (3)
-               cmd_valid_cnt = tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT")
-               cmd_error_cnt = tlm("CFE_ES HK_TLM_PKT CMD_ERROR_COUNT")
-               seq_cnt = tlm("CFE_ES HK_TLM_PKT CCSDS_SEQUENCE")
-               Osk::flight.cfe_es.send_cmd("STOP_LA_DATA with DATA_FILENAME #{PMD_FLT_DAT_FILE}")  
-               wait("CFE_ES HK_TLM_PKT CMD_VALID_COUNT == #{cmd_valid_cnt}+1", 10)  # Delay until updated valid cmd count or timeout
-               if ( (tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT") != (cmd_valid_cnt + 1)) || 
-                    (tlm("CFE_ES HK_TLM_PKT CMD_ERROR_COUNT") !=  cmd_error_cnt))
-                  if (tlm("CFE_ES HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
-                     prompt ("No telemetry received to verify the error.\nVerify connection and telemetry output filter table.");
+
+               # In order for pages to update this script must return. Therefore 
+               # use a new thread that will start and stop the data collection 
+               collect_data = Thread.new {
+                  Osk::flight.cfe_es.send_cmd("START_LA_DATA with TRIG_MODE 0")
+                  sleep (4)
+                  Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+                  sleep (4)
+                  Osk::flight.fm.send_cmd("WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{PMD_DIR_LIST_FLT_FILE}")
+                  sleep (4)
+                  Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+                  sleep (4)
+
+                  cmd_valid_cnt = tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT")
+                  cmd_error_cnt = tlm("CFE_ES HK_TLM_PKT CMD_ERROR_COUNT")
+                  seq_cnt = tlm("CFE_ES HK_TLM_PKT CCSDS_SEQUENCE")
+                  Osk::flight.cfe_es.send_cmd("STOP_LA_DATA with DATA_FILENAME #{PMD_FLT_DAT_FILE}")  
+                  wait("CFE_ES HK_TLM_PKT CMD_VALID_COUNT == #{cmd_valid_cnt}+1", 10)  # Delay until updated valid cmd count or timeout
+                  if ( (tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT") != (cmd_valid_cnt + 1)) || 
+                       (tlm("CFE_ES HK_TLM_PKT CMD_ERROR_COUNT") !=  cmd_error_cnt))
+                     if (tlm("CFE_ES HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
+                        prompt ("No telemetry received to verify the error.\nVerify connection and telemetry output filter table.");
+                     else
+                        prompt ("Executive Service had an error processing the command.\nSee event message for details.")
+                     end
                   else
-                     prompt ("Executive Service had an error processing the command.\nSee event message for details.")
-                  end
-               else
-                  prompt ("Successfully created #{PMD_FLT_DAT_FILE}.\n\nClick <Next> to transfer file to COSMOS and launch the performance analyzer tool.")
-               end 
-               # Don't increment pmd_demo; allow data repeat of data collection
+                     prompt ("Successfully created #{PMD_FLT_DAT_FILE}.\n\nClick <Next> to transfer file to COSMOS and launch the performance analyzer tool.")
+                  end 
+                  # Don't increment pmd_demo; allow data repeat of data collection
+               } # End thread
             end # if $pmd_demo == 0
 
          # 4 - Transfer file from flight to ground & display in CPM 
-            when 4
-               if ($pmd_demo == 0)
-                  if (Osk::Ops.get_flt_file(PMD_FLT_DAT_FILE,PMD_GND_DAT_FILE))
-                     perf_mon_launch_app(screen, "PERF_MONITOR_TOOL")
-                  else
-                     raise "FM Demo - File transfer from flight to ground failed" 
-                  end    
+         when 4
+            transfer_data = Thread.new {
+            if ($pmd_demo == 0)
+               if (Osk::Ops.get_flt_file(PMD_FLT_DAT_FILE,PMD_GND_DAT_FILE))
+                  perf_mon_launch_app(screen, "PERF_MONITOR_TOOL")
+               else
+                  raise "FM Demo - File transfer from flight to ground failed" 
+               end    
                $pmd_demo += 1
             end
-
+            } # End thread
       end # Step Case
    end # Demo button
  

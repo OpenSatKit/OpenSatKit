@@ -1,0 +1,98 @@
+This file contains code snippets that are required for adding table processing to
+the "Hello World" app
+
+/******************************************************************************
+** 1.  Add the following to the #include section
+*/
+
+#include "example_tbl.h"
+
+/******************************************************************************
+** 2.  Add the following to the global data section
+*/
+
+CFE_TBL_Handle_t      TblHandle; 
+
+
+/******************************************************************************
+** 3.  Add the following to EXAMPLE_AppInit(), after call to 
+**     EXAMPLE_ResetCounters() is adequate
+** 
+*/
+
+    int32     Status;
+
+    Status = CFE_TBL_Register(&TblHandle, 
+                              "MyFirstTbl",
+                              sizeof(EXAMPLE_Tbl_t), 
+                              CFE_TBL_OPT_DEFAULT,
+                              EXAMPLE_TblValidationFunc);
+    if ( Status != CFE_SUCCESS )
+    {
+       CFE_ES_WriteToSysLog("Example App: Error Registering Table 1, RC = 0x%08X\n", Status);
+    }
+    else
+    {
+       Status = CFE_TBL_Load(TblHandle, CFE_TBL_SRC_FILE, EXAMPLE_TBL_DEFAULT_FILE);
+    }
+
+
+/******************************************************************************
+** 4.  Add the following to the begining of EXAMPLE_ReportHousekeeping()
+*/
+
+    CFE_TBL_Manage(TblHandle);
+    
+/******************************************************************************
+** 5.  Add the following to EXAMPLE_NewCmd()
+*/
+    
+    EXAMPLE_Tbl_t  *TblDataPtr;
+        
+    CFE_TBL_GetAddress((void *)&TblDataPtr,TblHandle);
+    CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "My table data: %d, %d, %d", 
+                      TblDataPtr->Int32, TblDataPtr->Int16, TblDataPtr->Int8);    
+    CFE_TBL_ReleaseAddress(TblHandle);
+
+
+/******************************************************************************
+** 6.  Add the following anywhere inbetween functions, end of file is easy
+*/
+    
+int32 EXAMPLE_TblValidationFunc(void *TblData)
+{
+    int32          ReturnCode = CFE_SUCCESS;
+    EXAMPLE_Tbl_t *TblDataPtr = (EXAMPLE_Tbl_t *)TblData;
+    
+    if (TblDataPtr->Int32 > EXAMPLE_TBL_VAL_LIM ||
+        TblDataPtr->Int16 > EXAMPLE_TBL_VAL_LIM ||
+        TblDataPtr->Int8  > EXAMPLE_TBL_VAL_LIM)
+    {
+        /* First element is out of range, return an appropriate error code */
+        ReturnCode = EXAMPLE_TBL_LIM_ERR;
+    }
+    
+    return ReturnCode;
+}
+
+/******************************************************************************
+** 7.  Update cmakelist.txt. The complete file is shown below. The changed
+**     lines are
+**         include_directories(fsw/src)
+**         aux_source_directory(fsw/tables APP_TABLE_FILES)
+**         add_cfe_tables(example ${APP_TABLE_FILES})
+*/
+
+cmake_minimum_required(VERSION 2.6.4)
+project(CFS_EXAMPLE C)
+
+include_directories(fsw/src)
+include_directories(fsw/mission_inc)
+include_directories(fsw/platform_inc)
+
+aux_source_directory(fsw/src APP_SRC_FILES)
+aux_source_directory(fsw/tables APP_TABLE_FILES)
+
+# Create the app module
+add_cfe_app(example ${APP_SRC_FILES})
+add_cfe_tables(example ${APP_TABLE_FILES})

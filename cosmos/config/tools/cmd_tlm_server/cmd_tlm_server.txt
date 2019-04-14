@@ -44,6 +44,7 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   TARGET TFTP
   TARGET F42
   TARGET I42
+  TARGET ISIM
   # CFDP Engine
   TARGET PDU
   TARGET CFDP_TEST
@@ -57,8 +58,6 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
 
 #<cfs_kit>Create app tool will add target between the cfs_kit tags
 
-  TARGET ISIM
-  TARGET  AA
 
 #</cfs_kit>
   

@@ -28,7 +28,7 @@
 ** \name HC CFS Application Performance IDs */
 
 /** \{ */
-#define HC_APPMAIN_PERF_ID          39
+#define HC_APPMAIN_PERF_ID          56
 /** \} */
 
 #endif /*_hc_perfids_h_*/

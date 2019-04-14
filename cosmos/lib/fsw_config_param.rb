@@ -62,12 +62,11 @@ module FswConfigParam
   DS_DESTINATION_TBL_NAME = "FILE_TBL"
   DS_FILTER_TBL_NAME      = "FILTER_TBL"
   
-  #########################
-  ## App - House Keeping ##
-  #########################
+  ###################
+  ## App - Example ##
+  ###################
 
-  HK_COPY_TABLE_ENTRIES = 128
-  HK_COPY_TBL_NAME      = "CopyTable"
+  EXAMPLE_TBL_NAME = "MyFirstTbl"
   
   ########################
   ## App - File Manager ##
@@ -75,6 +74,13 @@ module FswConfigParam
 
   FM_TABLE_CFE_NAME    = "FreeSpace"
   FM_TABLE_ENTRY_COUNT = 8
+  
+  #########################
+  ## App - House Keeping ##
+  #########################
+
+  HK_COPY_TABLE_ENTRIES = 128
+  HK_COPY_TBL_NAME      = "CopyTable"
   
   ##########################
   ## App - Limit Checker  ##

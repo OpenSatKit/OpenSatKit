@@ -27,7 +27,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 10 20
       LABEL "1"
       BUTTON 'Create App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_dev_screen.rb"; mng_app_dev(self, "CREATE_APP")'
-      LABEL "Launch tool to create new app"
+      LABEL "Launch tool to create new app/lib from a template"
       LABEL "2"
       BUTTON 'Edit cmake'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_dev_screen.rb"; mng_app_dev(self, "EDIT_CMAKE")'
       LABEL "Add app file to cmake target list TGT1_APPLIST"
@@ -41,7 +41,7 @@ HORIZONTAL
       BUTTON 'Build cFS'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_dev_screen.rb"; mng_app_dev(self, "BUILD_CFS")'
       LABEL "Run cmake to build new app"
       LABEL "6"
-      BUTTON 'Start cFS/Server'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_dev_screen.rb"; mng_app_dev(self, "START_CFS_SERVER")'
+      BUTTON 'Start Server/cFS'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_dev_screen.rb"; mng_app_dev(self, "START_CFS_SERVER")'
       LABEL "Start cFS and COSMOS cmd-tlm server"
       #LABEL "5"
       #LABEL "Start COSMOS Server"
