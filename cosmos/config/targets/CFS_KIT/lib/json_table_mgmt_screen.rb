@@ -3,8 +3,8 @@
 #
 # Notes:
 #   1. The user interaction with loads and dumps should be as close as possible
-#      to the cFS interface defined in table_mgmt_screen.mgmt.rb.
-#   2. create_json_table_mgmt_scr() is called during system initializtion and
+#      to the cFS interface defined in table_mgmt_screen.rb.
+#   2. create_json_table_mgmt_scr() is called during system initialization and
 #      creates a screen that supports all of the apps using the OSK JSON table
 #      framework.
 #

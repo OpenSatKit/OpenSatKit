@@ -58,7 +58,6 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
 
 #<cfs_kit>Create app tool will add target between the cfs_kit tags
 
-
 #</cfs_kit>
   
 INTERFACE COSMOSINT cmd_tlm_server_interface.rb

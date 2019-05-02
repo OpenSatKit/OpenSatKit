@@ -1,0 +1,26 @@
+{
+
+   "title": "cFE App Training",
+   "version": "6.5",
+   "cosmos": true,
+
+   "description": [
+
+      "Provides templates for creating a 'hello world' app using a",
+      "subset of 'QQ App' that is described in the cFE Application",
+      "Developer's Guide. It's a subset so students can add features",
+      "to the app as learning exercises. The templates include the FSW,",
+      "cmake, and COSMOS cmd_tlm definition files. They do not include",
+      "the 'classic build' make files."
+
+   ],
+
+   "cfsapp-": "CMakeLists.txt",
+   "cfsapp-fsw/mission_inc":  "@template@_app_perfids.h",
+   "cfsapp-fsw/platform_inc": "@template@_app_msgids.h",
+   "cfsapp-fsw/src":          "@template@_app.c,@template@_app.h",
+   "cosmos-cmd_tlm":          "@template@_cmd.txt,@template@_tlm.txt"
+   
+}
+
+

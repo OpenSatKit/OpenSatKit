@@ -1,0 +1,25 @@
+{
+
+   "title": "cFE App Dev Guide",
+   "version": "6.5",
+   "cosmos": true,
+
+   "description": [
+
+      "Provides templates for creating a 'hello world' app using the",
+      "example app described in the cFE Application Developer's Guide.",
+      "The templates include the FSW, cmake, and COSMOS cmd_tlm definition",
+      "files. They do not include the 'classic build' make files."
+   ],
+
+   "cfsapp-": "CMakeLists.txt",
+   "cfsapp-fsw/mission_inc":  "@template@_app_perfids.h",
+   "cfsapp-fsw/platform_inc": "@template@_app_msgids.h",
+   "cfsapp-fsw/src":          "@template@_app.c,@template@_app.h,@template@_tbldefs.h",
+   "cfsapp-fsw/tables":       "@template@_tbl_1.c,@template@_tbl_2.c",
+   "cosmos-cmd_tlm":          "@template@_cmd.txt,@template@_tlm.txt",
+   "cosmos-table_manager":    "@template@_tbl_1.txt,@template@_tbl_2.txt"
+
+}
+
+

@@ -45,7 +45,7 @@ GND_TEST_PUT_FILE = "#{Osk::GND_SRV_DIR}/tf_put_test_src.txt"
 
 def cfs_kit_launch_app(screen, app)
 
-   if (app == "CFS")
+   if (app == "START_CFS")
    
       # Kill all instances of the cFS before starting a new instance. 
       
@@ -111,6 +111,9 @@ def cfs_kit_launch_app(screen, app)
       end # while ! done
       #~puts "attempt #{attempts}"
       
+   elsif (app == "STOP_CFS")
+      Osk::System.stop_cfs()
+      ##Osk::flight.cfe_es.send_cmd("RESET with RESTART_TYPE 2")
    elsif (app == "CFE_SERVICES")
       display("CFS_KIT CFE_SCREEN",50,50)   
    elsif (app == "MANAGE_APP_SCH_TLM")

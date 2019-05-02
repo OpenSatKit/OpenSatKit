@@ -53,14 +53,22 @@ wait #TBL01 - Click <Go> to continue to next section
 wait #TBL02 - Click <Go> to jam MD table #1
 
 Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 1, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MM_OFFSET_W1}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MM_OFFSET_W2}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MM_OFFSET_W3}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.md.send_cmd("SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'cFE Table Exercise'")
+wait 1
 
 Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x01020304, ADDR_OFFSET #{MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x05060708, ADDR_OFFSET #{MM_OFFSET_W1}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0X090A0B0C, ADDR_OFFSET #{MM_OFFSET_W2}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
+wait 1
 Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x0D0E0F10, ADDR_OFFSET #{MM_OFFSET_W3}, ADDR_SYMBOL_NAME #{MM_SYMBOL}")
 
 display("MD DWELL_PKT_SCREEN",50,50)  
