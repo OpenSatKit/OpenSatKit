@@ -2,27 +2,33 @@ This file contains code snippets that are required for adding table processing t
 the "Hello World" app
 
 /******************************************************************************
-** 1.  Add the following to the #include section
+** 1.  example_app.h: 
+**
+**     Add the following to the #include section
 */
 
 #include "example_tbl.h"
 
 /******************************************************************************
-** 2.  Add the following to the global data section
+** 2.  example_app.h:
+**
+**     Add the following to the global data section
 */
 
 CFE_TBL_Handle_t      TblHandle; 
 
 
 /******************************************************************************
-** 3.  Add the following to EXAMPLE_AppInit(), after call to 
-**     EXAMPLE_ResetCounters() is adequate
-** 
+** 3.  example_app.c: 
+**
+**     Locate EXAMPLE_AppInit() and at the end of the function just before the
+**     CFE_EVS_SendEvent(EXAMPLE_INIT_INF_EID,...
+**
+**     Note function already defined a variable "Status" 
 */
 
-    int32     Status;
 
-    Status = CFE_TBL_Register(&TblHandle, 
+    Status = CFE_TBL_Register(&EXAMPLE_AppData.TblHandle, 
                               "MyFirstTbl",
                               sizeof(EXAMPLE_Tbl_t), 
                               CFE_TBL_OPT_DEFAULT,
@@ -33,30 +39,36 @@ CFE_TBL_Handle_t      TblHandle;
     }
     else
     {
-       Status = CFE_TBL_Load(TblHandle, CFE_TBL_SRC_FILE, EXAMPLE_TBL_DEFAULT_FILE);
+       Status = CFE_TBL_Load(EXAMPLE_AppData.TblHandle, CFE_TBL_SRC_FILE, EXAMPLE_TBL_DEFAULT_FILE);
     }
 
 
 /******************************************************************************
-** 4.  Add the following to the begining of EXAMPLE_ReportHousekeeping()
+** 4.  example_app.c: 
+**
+**     Add the following to the begining of EXAMPLE_ReportHousekeeping()
 */
 
-    CFE_TBL_Manage(TblHandle);
+    CFE_TBL_Manage(EXAMPLE_AppData.TblHandle);
     
 /******************************************************************************
-** 5.  Add the following to EXAMPLE_NewCmd()
+** 5.  example_app.c:
+**
+**     Add the following to EXAMPLE_ProcessCmd()
 */
     
     EXAMPLE_Tbl_t  *TblDataPtr;
         
-    CFE_TBL_GetAddress((void *)&TblDataPtr,TblHandle);
+    CFE_TBL_GetAddress((void *)&TblDataPtr,EXAMPLE_AppData.TblHandle);
     CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "My table data: %d, %d, %d", 
                       TblDataPtr->Int32, TblDataPtr->Int16, TblDataPtr->Int8);    
-    CFE_TBL_ReleaseAddress(TblHandle);
+    CFE_TBL_ReleaseAddress(EXAMPLE_AppData.TblHandle);
 
 
 /******************************************************************************
-** 6.  Add the following anywhere inbetween functions, end of file is easy
+** 6.  example_app.c:
+**
+**     Add the following anywhere inbetween functions, end of file is easy
 */
     
 int32 EXAMPLE_TblValidationFunc(void *TblData)
@@ -76,11 +88,13 @@ int32 EXAMPLE_TblValidationFunc(void *TblData)
 }
 
 /******************************************************************************
-** 7.  Update cmakelist.txt. The complete file is shown below. The changed
-**     lines are
+** 7.  cmakelist.txt: Add the following lines:
 **         include_directories(fsw/src)
 **         aux_source_directory(fsw/tables APP_TABLE_FILES)
 **         add_cfe_tables(example ${APP_TABLE_FILES})
+**
+**     The complete file is shown below to show where to add them or just copy 
+**     below and replace the entire content.
 */
 
 cmake_minimum_required(VERSION 2.6.4)

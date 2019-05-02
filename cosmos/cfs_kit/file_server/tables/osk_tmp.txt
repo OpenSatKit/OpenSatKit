@@ -1,7 +1,7 @@
 
 {
 "name": "Kit Telemetry Output (KIT_TO) Table",
-"description": "KIT_TO dump at 1980-012-14:03:47.20147",
+"description": "KIT_TO dump at 1980-012-16:40:05.22805",
 "packet": {
    "dec-id": 2059,
    "priority": 0,

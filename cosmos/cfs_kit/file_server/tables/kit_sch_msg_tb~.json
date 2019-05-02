@@ -1,28 +1,28 @@
 
 {
 "name": "Kit Scheduler (KIT_SCH) Message Table",
-"description": "KIT_SCH table dumped at 1980-013-01:43:30.80235",
+"description": "KIT_SCH table dumped at 1980-012-14:05:04.00154",
 "message-array": [
    {"message": {
       "id": 0,
       "stream-id": 2072,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 1,
       "stream-id": 2328,
       "seq-seg": 192,
       "length": 256,
-      "data-bytes": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 2,
       "stream-id": 2840,
       "seq-seg": 192,
       "length": 256,
-      "data-bords": "0"
+      "data-words": "0"
    }},
    {"message": {
       "id": 3,
@@ -182,15 +182,17 @@
    }},
    {"message": {
       "id": 26,
-      "stream-id": 0,
-      "seq-seg": 0,
-      "length": 0
+      "stream-id": 46104,
+      "seq-seg": 192,
+      "length": 256,
+      "data-words": "0"
    }},
    {"message": {
       "id": 27,
-      "stream-id": 0,
-      "seq-seg": 0,
-      "length": 0
+      "stream-id": 46360,
+      "seq-seg": 192,
+      "length": 256,
+      "data-words": "0"
    }},
    {"message": {
       "id": 28,
@@ -269,7 +271,7 @@
    }},
    {"message": {
       "id": 39,
-      "stream-id": 46616,
+      "stream-id": 281,
       "seq-seg": 192,
       "length": 256,
       "data-words": "0"
@@ -638,7 +640,7 @@
    }},
    {"message": {
       "id": 100,
-      "stream-id": 33560,
+      "stream-id": 537,
       "seq-seg": 192,
       "length": 256,
       "data-words": "0"

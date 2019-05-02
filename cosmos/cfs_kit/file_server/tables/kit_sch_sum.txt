@@ -25,12 +25,12 @@ Slot Activity Enabled Frequency Offset MsgTblIdx StreamId
   2     1      true       1        0       19     0x9218
   2     2      true       4        0       20     0x8918
   2     3      true       4        1       21     0xAA18
-  2     4      true       1        1       22     0xAB18
+  2     4      true       1        0       22     0xAB18
   2     5      true       4        2       23     0x9B18
   2     6      true       4        2       24     0x9C18
   2     7      false      4        2       25     0x9C18
-  2     8      false      0        0      200       nil
-  2     9      false      0        0      200       nil
+  2     8      true       3        2       26     0xB418
+  2     9      false      1        2       27     0xB518
 ---------------------------------------------------------
   3     0      true       4        0       30     0xF119
   3     1      true       2        0       31     0xF219
@@ -46,8 +46,8 @@ Slot Activity Enabled Frequency Offset MsgTblIdx StreamId
   4     0      true       4        0       36     0x8518
   4     1      true       4        0       37     0x9618
   4     2      true       4        0       38     0x8118
-  4     3      true       4        0       39     0xB618
-  4     4      true       4        0      100     0x8318
+  4     3      true       4        0       39     0x0119
+  4     4      true       4        0      100     0x0219
   4     5      false      0        0      200       nil
   4     6      false      0        0      200       nil
   4     7      false      0        0      200       nil
