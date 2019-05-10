@@ -192,7 +192,8 @@ module Osk
    ################################
    ## Standard Cmd Tlm mnemonics ## 
    ################################
-
+   # - ccsds.rb defines the CCSDS header constants
+   
    CMD_STR_NOOP      = "NOOP"
    CMD_STR_RESET     = "RESET_CTRS"
    CMD_STR_LOAD_TBL  = "LOAD_TBL"
