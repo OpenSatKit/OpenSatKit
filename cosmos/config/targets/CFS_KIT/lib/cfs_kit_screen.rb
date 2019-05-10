@@ -162,12 +162,8 @@ def cfs_kit_launch_app(screen, app)
       #spawn("java -jar #{Osk::CREATE_APP_DIR}/CreateApp.jar", :chdir => "#{Osk::CREATE_APP_DIR}")
       display("CFS_KIT MNG_APP_DEV_SCREEN",50,50)
    elsif (app == "UPDATE_TUTORIAL")
-
-      tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
-      tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
-   
       # An exception will report any errors   
-      if cfs_kit_create_tutorial_screen(tutorial_def_file, tutorial_scr_file)
+      if cfs_kit_create_tutorial_screen
          prompt ("Successfuly created tutorial screen file #{tutorial_scr_file}\nusing #{tutorial_def_file}")
       end
    elsif (app == "CFE_USERS_GUIDE")
@@ -216,7 +212,7 @@ def cfs_kit_launch_demo(screen, demo)
    elsif (demo == "PERF_MON_DEMO")
       display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
    elsif (demo == "TUTORIAL")
-      display("CFS_KIT #{File.basename(Osk::TUTORIAL_SCR_FILE,'.txt')}",500,50)
+      cfs_kit_launch_tutorial_screen
    else
       raise "Error in screen definition file. Undefined command sent to cfs_kit_launch_demo()"
       #Save prompt(MSG_TBD_FEATURE)  
@@ -261,15 +257,40 @@ end # cfs_kit_send_cmd()
 ## Create Tutorial Screen
 ################################################################################
 
+#
+# When OSK is first installed the tutorial screen has the wrong absolute 
+# address. Some user's ignore the instructions to run 'Update'. This function
+# checks the absolute path used when the tutorial screen was created and if it
+# doesn't match the current installation it creates a new tutorial screen. No
+# user message is sent when the scr is created since they don't expect anything. 
+#
+def cfs_kit_launch_tutorial_screen
 
-def cfs_kit_create_tutorial_screen(tutorial_def_file, tutorial_scr_file)
+   tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+
+   scr_tutorial_dir = File.open(tutorial_scr_file) {|f| f.readline}
+
+   if scr_tutorial_dir.index(Osk::SCR_DIR).nil? 
+      cfs_kit_create_tutorial_screen
+   end
+   
+   display("CFS_KIT #{File.basename(Osk::TUTORIAL_SCR_FILE,'.txt')}",500,50)
+      
+end # cfs_kit_verify_tutorial_screen
+
+
+def cfs_kit_create_tutorial_screen
 
    status = false
    
    t = Time.new 
    time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
    
-   tutorial_scr_header = "
+   tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
+   tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+
+   # Directory in first line is assumed by other functions
+   tutorial_scr_header = "##{Osk::SCR_DIR}
    ###############################################################################
    # cfs_kit Tutorial Screen
    #

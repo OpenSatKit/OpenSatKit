@@ -57,8 +57,15 @@
 #define CMDMGR_BASE_EID          1 
 #define TBLMGR_BASE_EID         10
 #define JSON_BASE_EID           20
+#define FAULTREP_BASE_EID       40
 #define APP_FW_UTILS_BASE_EID   50
 #define APP_FW_APP_BASE_EID    100 /* Starting ID for the App using the framework */
+
+/******************************************************************************
+** Fault Reporter (FAULTREP)
+*/
+
+#define FAULTREP_ID_MAX  80
 
 /******************************************************************************
 ** Debug macros
@@ -67,9 +74,10 @@
 */
 
 
-#define DBG_CMDMGR  0
-#define DBG_TBLMGR  0
-#define DBG_JSON    0
+#define DBG_CMDMGR   0
+#define DBG_TBLMGR   0
+#define DBG_JSON     0
+#define DBG_FAULTREP 0
 
 
 #endif /* _app_fw_cfg_ */
