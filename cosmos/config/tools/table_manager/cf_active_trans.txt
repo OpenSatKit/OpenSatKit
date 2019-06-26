@@ -1,0 +1,48 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "CF"
+  @MAX_APPLICATIONS = "CFE_ES_MAX_APPLICATIONS"
+  
+%>
+
+                case CF_WR_ACTIVE_TRANS_CC 22 :
+                    CF_WriteActiveTransCmd(MessagePtr);
+
+TABLE "CFE_ES AppInfo" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "App Info"
+  <%= Osk::Cfg.file_hdr %>
+
+  <% 
+    max_apps = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_APPLICATIONS)
+    append_items = ""
+    for i in 0..(max_apps-1)
+      append_items << "APPEND_PARAMETER \"APP#{i}_ID\"            32 UINT 0 MAX_UINT32 0  \"ID assigned by ES when registered\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_TYPE\"          32 UINT 0 MAX_UINT32 0  \"TBD=CORE, TBD=User\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_NAME\"         160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_ENTRY_SYMBOL\" 160 STRING \"UNDEF\"     \"Symbol name of app main function\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_FILENAME\"     512 STRING \"UNDEF\"     \"Full path/name of object file\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_STACK_SIZE\"    32 UINT 0 MAX_UINT32 0  \"Bytes allocated for stack\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_MODULES_ID\"    32 UINT 0 MAX_UINT32 0  \"ID of the loadable module\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_VALID_ADDR\"    32 UINT 0 MAX_UINT32 0  \"Code, data, and BSS are valid addresses\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_CODE_ADDR\"     32 UINT 0 MAX_UINT32 0  \"Address of the app code segment\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_CODE_SIZE\"     32 UINT 0 MAX_UINT32 0  \"Size (in bytes) of code segment\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_DATA_ADDR\"     32 UINT 0 MAX_UINT32 0  \"Address of the app data segment\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_DATA_SIZE\"     32 UINT 0 MAX_UINT32 0  \"Size (in bytes) of data segment\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_BSS_ADDR\"      32 UINT 0 MAX_UINT32 0  \"Address of the app BSS segment\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_BSS_SIZE\"      32 UINT 0 MAX_UINT32 0  \"Size (in bytes) of BSS segment\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_START_ADDR\"    32 UINT 0 MAX_UINT32 0  \"Address of Entry Symbol\"" << "\n"
+      append_items << "  FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_EXCEPT_ACTION\" 16 UINT 0 MAX_UINT16 0  \"What should occur on an exception\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_PRIORITY\"      16 UINT 0 MAX_UINT16 0  \"App's main task priority\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_MAIN_TASK_ID\"  32 UINT 0 MAX_UINT32 0  \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_EXECUTION_CTR\" 32 UINT 0 MAX_UINT32 0  \"Execution counter\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_MAIN_NAME\"    160 STRING \"UNDEF\"     \"TBD\"" << "\n"
+      append_items << "APPEND_PARAMETER \"APP#{i}_NUM_CHILDREN\"  32 UINT 0 MAX_UINT32 0  \"Number of child tasks\"" << "\n"
+    end
+  %>
+  <%= append_items %>
+  

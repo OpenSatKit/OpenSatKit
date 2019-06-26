@@ -13,24 +13,124 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_e
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Resets HK TLM parent and child task counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 4) %>
   APPEND_PARAMETER VALUE 8 UINT MIN_UINT8 MAX_UINT8 0 "0=all, 1=cmd, 2=fault 3=up 4=down"
-  APPEND_PARAMETER SPARE 8 UINT MIN_UINT8 MAX_UINT8 0 "Spare Byte"
+  APPEND_PARAMETER SPARE_1    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_2    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_3    8 UINT MIN_UINT8 MAX_UINT8 0 ""
  
-COMMAND CF PLAYBACK_FILE <%= Osk::Cfg.processor_endian %> "This command is used to queue the specified file."
+COMMAND CF PLAYBACK_FILE <%= Osk::Cfg.processor_endian %> "Put the specified file in the playback queue"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 148) %>
-  APPEND_PARAMETER CLASS       8 UINT MIN_UINT8 MAX_UINT8 1 "Class_1(1), Class_2(2)"
-  APPEND_PARAMETER CHANNEL     8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
-  APPEND_PARAMETER PRIORITY    8 UINT MIN_UINT8 MAX_UINT8 0 "Priority – 00 (highest priority) – 0xff (lowest priority)"
-  APPEND_PARAMETER PRESERVE    8 UINT MIN_UINT8 MAX_UINT8 0 "Delete_File(0), Keep_File(1)"
-  APPEND_PARAMETER PEER_ID   512 STRING "default" "Entity ID of ground engine to receive file (ex 0.23)"
-  APPEND_PARAMETER SRC       512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete target /path/filename"
-  APPEND_PARAMETER DEST      512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete target /path/filename"
+  APPEND_PARAMETER CLASS           8 UINT MIN_UINT8 MAX_UINT8 1 "Class_1(1), Class_2(2)"
+  APPEND_PARAMETER CHANNEL         8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER PRIORITY        8 UINT MIN_UINT8 MAX_UINT8 0 "Priority – 00 (highest priority) – 0xff (lowest priority)"
+  APPEND_PARAMETER PRESERVE        8 UINT MIN_UINT8 MAX_UINT8 1 "Delete_File(0), Keep_File(1)"
+  APPEND_PARAMETER PEER_ID       128 STRING <%= Osk::CFDP_GND_ENTITY_ID %> "Entity ID of ground engine to receive file (ex 0.23)"
+  APPEND_PARAMETER SRC_FILENAME  512 STRING "/cf/cf_test.txt"  "Complete target /path/filename"
+  APPEND_PARAMETER DEST_FILENAME 512 STRING <%= Osk::TMP_GND_TXT_PATH_FILE %> "Complete target /path/filename"
 
-COMMAND CF SEND_TRANS_DIAG_DATA <%= Osk::Cfg.processor_endian %> "This command is used to get diagnostic data on a particular transaction."
+COMMAND CF PLAYBACK_DIR <%= Osk::Cfg.processor_endian %> "Put all of the files in the specified directory in the playback queue"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 148) %>
+  APPEND_PARAMETER CLASS           8 UINT MIN_UINT8 MAX_UINT8 1 "Class_1(1), Class_2(2)"
+  APPEND_PARAMETER CHANNEL         8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER PRIORITY        8 UINT MIN_UINT8 MAX_UINT8 0 "Priority – 00 (highest priority) – 0xff (lowest priority)"
+  APPEND_PARAMETER PRESERVE        8 UINT MIN_UINT8 MAX_UINT8 0 "Delete_File(0), Keep_File(1)"
+  APPEND_PARAMETER PEER_ID       128 STRING <%= Osk::CFDP_GND_ENTITY_ID %> "Entity ID of ground engine to receive file (ex 0.23)"
+  APPEND_PARAMETER SRC_FILENAME  512 STRING <%= Osk::CMD_DEF_FILENAME %>   "Complete target /path/filename"
+  APPEND_PARAMETER DEST_FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>   "Complete target /path/filename"
+
+#~~define CF_FREEZE_CC                    4
+#~~define CF_THAW_CC                      5 
+#~~define CF_SUSPEND_CC                   6
+#~~define CF_RESUME_CC                    7
+#~~define CF_CANCEL_CC                    8
+#~~define CF_ABANDON_CC                   9
+
+COMMAND CF SET_MIB <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 48) %>
+  APPEND_PARAMETER PARAM  256 STRING "param"  "TODO"
+  APPEND_PARAMETER VALUE  128 STRING "value"  "TODO"
+
+COMMAND CF GET_MIB <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 32) %>
+  APPEND_PARAMETER PARAM  256 STRING "param"  "TODO"
+
+COMMAND CF SEND_TRANS_DIAG_DATA <%= Osk::Cfg.processor_endian %> "Create/send diagnostic data on a particular transaction."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 64) %>
-  APPEND_PARAMETER DEST 512 STRING "default" "Transaction ID (0.24_4) or Filename (/path/filename) of the transaction to suspend"
+  APPEND_PARAMETER TRANS 512 STRING "default" "Transaction ID (0.24_4) or Filename (/path/filename) of the transaction to suspend"
 
-COMMAND CF WRITE_ACTIVE_TRANS <%= Osk::Cfg.processor_endian %> "This command will write the contents of one or more active queues to a file."
+#~~define CF_SET_POLL_PARAM_CC            13
+
+COMMAND CF SEND_CFG_PARAMS <%= Osk::Cfg.processor_endian %> "Create/send a configuration telemetry packet"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 0) %>
+
+COMMAND CF WRITE_QUEUE_INFO <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 68) %>
+  APPEND_PARAMETER TYPE       8 UINT MIN_UINT8 MAX_UINT8 1 "1=Up, 2=Down"
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER QUEUE      8 UINT MIN_UINT8 MAX_UINT8 0 "0=pending, 1=active, 2=history"
+  APPEND_PARAMETER SPARE      8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>   "Complete target /path/filename"
+
+COMMAND CF ENA_DEQUEUE <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 4) %>
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER SPARE_1    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_2    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_3    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+
+COMMAND CF DIS_DEQUEUE <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 4) %>
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER SPARE_1    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_2    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_3    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+
+COMMAND CF ENA_DIR_POLLING <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 4) %>
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER DIR        8 UINT MIN_UINT8 MAX_UINT8 0 "TODO"
+  APPEND_PARAMETER SPARE_1    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_2    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+
+COMMAND CF DIS_DIR_POLLING <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 4) %>
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER DIR        8 UINT MIN_UINT8 MAX_UINT8 0 "TODO"
+  APPEND_PARAMETER SPARE_1    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_2    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+
+#~~define CF_DELETE_QUEUE_NODE_CC         20
+
+COMMAND CF PURGE_QUEUE <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 21, 4) %>
+  APPEND_PARAMETER TYPE       8 UINT MIN_UINT8 MAX_UINT8 1 "1=Up, 2=Down"
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER QUEUE      8 UINT MIN_UINT8 MAX_UINT8 0 "0=pending, 1=active, 2=history"
+  APPEND_PARAMETER SPARE      8 UINT MIN_UINT8 MAX_UINT8 0 ""
+
+COMMAND CF WRITE_ACTIVE_TRANS <%= Osk::Cfg.processor_endian %> "Create/send an active transaction telemetry packet"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 22, 66) %>
   APPEND_PARAMETER TYPE     8 UINT MIN_UINT8 MAX_UINT8 0 "all(0), incoming(1), outgoing(2)"
   APPEND_PARAMETER SPARE    8 UINT MIN_UINT8 MAX_UINT8 0 "one byte field"
   APPEND_PARAMETER DEST   512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete target /path/filename"
+
+COMMAND CF KICK_START <%= Osk::Cfg.processor_endian %> "TODO"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 23, 4) %>
+  APPEND_PARAMETER CHANNEL    8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER SPARE_1    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_2    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+  APPEND_PARAMETER SPARE_3    8 UINT MIN_UINT8 MAX_UINT8 0 ""
+
+COMMAND CF QUICK_STAT <%= Osk::Cfg.processor_endian %> "Send an event message containing status of teh specified transaction"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 24, 64) %>
+  APPEND_PARAMETER TRANS   512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete target /path/filename"
+
+#~~define CF_GIVETAKE_CC                  25
+#~~define CF_ENADIS_AUTO_SUSPEND_CC       26
+
+# This isn't implemented in the FSW. Note lack of "_CC" in #define.
+#
+#~~define CF_CYCLES_PER_WAKEUP            27
+#COMMAND CF SET_CYCLES_PER_WAKEUP <%= Osk::Cfg.processor_endian %> "TODO"
+#  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 27, 4) %>
+#  APPEND_PARAMETER NUM_CYCLES   32 UINT MIN_UINT32 MAX_UINT32 1 ""
+

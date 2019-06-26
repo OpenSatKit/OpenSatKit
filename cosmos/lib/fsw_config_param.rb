@@ -5,6 +5,7 @@
 #   1. All configuration parameters are contained in this file.
 #   2. The names are identical to the FSW #define
 #   3. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
+#   4. TODO - Not all defintiions are config params. See MD and OSK_APP_FW
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -102,6 +103,26 @@ module FswConfigParam
   MD_SIGNATURE_FIELD_LENGTH = 32              # Number of character's in signature text
   MD_DWELL_TABLE_SIZE       = 25              # Number of dwell entries per table
 
+  ##########################
+  ## App - Memory Manager ##
+  ##########################
+
+  # MM_AppData+256 is a safe area in MM's global data structure that can be used
+  # as a working buffer during the demo
+
+  MM_SYMBOL = "MM_AppData"
+  MM_OFFSET_W0 = 256
+  MM_OFFSET_W1 = 260
+  MM_OFFSET_W2 = 264
+  MM_OFFSET_W3 = 268
+
+  ########################
+  ## App - OSK_APP_FSW  ##
+  ########################
+
+  # Table load command 
+  OSK_TBL_REPLACE    = 0 
+  OSK_TBL_UPDATE_REC = 1
 
   ##########################
   ## App - Stored Command ##

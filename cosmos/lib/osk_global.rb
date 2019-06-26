@@ -46,6 +46,13 @@ module Osk
    CFS_TLM_PORT  = "1235"
 
    ###################
+   ## CFDP Settings ##
+   ###################
+
+   CFDP_APP_ENTITY_ID = "23"     # Ground tool prepends "0."
+   CFDP_GND_ENTITY_ID = "0.21"
+   
+   ###################
    ## Text Messages ##
    ###################
 
@@ -58,7 +65,7 @@ module Osk
    ################
    ## File Names ##
    ################
-
+   
    # Use "_SCR" for automatically generated screen files
    
    DOCS_TOUR_FILE = "OSK_Tour.pdf"
@@ -103,6 +110,9 @@ module Osk
    TMP_GET_BIN_FILE_SCR_FILE = "osk_tmp_get_bin_file_scr.txt"
    TMP_GET_BIN_FILE_SCR_STR  = "OSK_TMP_GET_BIN_FILE_SCR"
 
+   # Tag appended to dump file basename to identify as a dump file
+   DMP_FILE_TAG = "~"
+   
    #########################################
    ## Table Manager Definition File Names ##
    #########################################
@@ -120,9 +130,11 @@ module Osk
 
    TBL_MGR_DEF_CFE_TBL_REG = "cfe_tbl_reg.txt"
 
-   TBL_MGR_DEF_FM_DIR = "fm_dir_list.txt"
-   TBL_MGR_DEF_MD_TBL = "md_tbl.txt"
-   TBL_MGR_DEF_MM_DMP = "mm_dump.txt"
+   TBL_MGR_DEF_DS_FILE_TBL   = "ds_file_tbl.txt"
+   TBL_MGR_DEF_DS_FILTER_TBL = "ds_filter_tbl.txt"
+   TBL_MGR_DEF_FM_DIR  = "fm_dir_list.txt"
+   TBL_MGR_DEF_MD_TBL  = "md_tbl.txt"
+   TBL_MGR_DEF_MM_DMP  = "mm_dump.txt"
    
    #####################
    ## Directory Paths ##

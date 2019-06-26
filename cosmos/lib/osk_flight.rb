@@ -102,6 +102,7 @@ module Osk
          @hsim    = FswApp.new("HSIM",    "HSIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID)
          @i42     = FswApp.new("I42",     "I42",     Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
          @isim    = FswApp.new("ISIM",    "ISIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
+         @tftp    = FswApp.new("TFTP",    "TFTP",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
         
          #app_json = read_app_json("kit_ci.json")
          app_json = Osk::System.read_target_json("KIT_CI")
@@ -115,18 +116,20 @@ module Osk
          app_json = Osk::System.read_target_json("KIT_TO")
          @kit_to  = FswApp.new("KIT_TO",  "KIT_TO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_TO_CMD_MID, app_json)
 
-         @tftp    = FswApp.new("TFTP",    "TFTP",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
+         app_json  = Osk::System.read_target_json("OSK_DEMO")
+         @osk_demo = FswApp.new("OSK_DEMO",  "OSK_DEMO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::OSK_DEMO_CMD_MID, app_json)
          
-         @app["BM"]      = @bm
-         @app["F42"]     = @f42
-         @app["HC"]      = @hc
-         @app["HSIM"]    = @hsim
-         @app["I42"]     = @i42
-         @app["ISIM"]    = @isim
-         @app["KIT_CI"]  = @kit_ci
-         @app["KIT_SCH"] = @kit_sch
-         @app["KIT_TO"]  = @kit_to
-         @app["TFTP"]    = @tftp
+         @app["BM"]       = @bm
+         @app["F42"]      = @f42
+         @app["HC"]       = @hc
+         @app["HSIM"]     = @hsim
+         @app["I42"]      = @i42
+         @app["ISIM"]     = @isim
+         @app["KIT_CI"]   = @kit_ci
+         @app["KIT_SCH"]  = @kit_sch
+         @app["KIT_TO"]   = @kit_to
+         @app["OSK_DEMO"] = @osk_demo
+         @app["TFTP"]     = @tftp
 
          Osk::create_json_table_mgmt_scr(@app)
          

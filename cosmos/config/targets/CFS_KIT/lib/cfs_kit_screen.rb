@@ -2,12 +2,7 @@
 # cFS Kit Main Screen Scripts
 #
 # Notes:
-#   1. Global kit todo list, not just main screen
-#      TODO - Use similar layout for app, file, tbl mgmt screens 
-#      TODO - Display ground directory listing file after transfer to ground?
-#      TODO - Add drop down menus where it makes sense
-#      TODO - Is there a way to have a script run when a screen is first displayed?
-#             Update working directories if user changes them
+#   None
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General 
@@ -112,12 +107,13 @@ def cfs_kit_launch_app(screen, app)
       #~puts "attempt #{attempts}"
       
    elsif (app == "STOP_CFS")
-      Osk::System.stop_cfs()
-      ##Osk::flight.cfe_es.send_cmd("RESET with RESTART_TYPE 2")
+      # Hopefully ES cleans up resources and does a controlled shutdown
+      Osk::flight.cfe_es.send_cmd("RESET with RESTART_TYPE 1")
+      #Osk::System.stop_cfs()
    elsif (app == "CFE_SERVICES")
       display("CFS_KIT CFE_SCREEN",50,50)   
-   elsif (app == "MANAGE_APP_SCH_TLM")
-      display("CFS_KIT MNG_APP_SCH_TLM_SCREEN",50,50)   
+   elsif (app == "MANAGE_APP_RUNTIME")
+      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",50,50)   
    elsif (app == "SET_CMD_VALIDATE")
       enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes','No')  
       if (enable == "Yes")

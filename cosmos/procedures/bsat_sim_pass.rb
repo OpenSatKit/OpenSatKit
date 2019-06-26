@@ -8,7 +8,7 @@
 #
 # Notes:
 #   1. This script is part of the cFS systems engineering training module
-#   2. OSK uses TFTP and not CFDP for file transfers whcih impacts how
+#   2. OSK uses TFTP and not CFDP for file transfers which impacts how
 #      files are transferred and managed onboard.
 #
 ###############################################################################
@@ -28,7 +28,7 @@ require 'osk_ops'
 #
 # Assess health of spacecraft
 #
-# - If event log is full then it file should be downlinked or you may always
+# - If event log is full then it should be downlinked or you may always
 #   downlink DS as the means for capturing all events.  
 # - 
 #

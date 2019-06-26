@@ -87,15 +87,7 @@
 **       when creating command database entries that require file
 **       index numbers for command arguments.
 */
-#define FILE_ALL_EVENTS       0
-
-#define FILE_ALL_APP_HK_PKTS  1
-#define FILE_ALL_APP_TLM_PKTS 2
-
-#define FILE_ALL_HW_TLM_PKTS  3
-
-#define FILE_CFE_APP_HK_PKTS  4
-#define FILE_CFE_APP_TLM_PKTS 5
+/* Moved definitions to ds_platfororm_cfg.h */
 
 
 /*
@@ -103,7 +95,7 @@
 */
 DS_FilterTable_t DS_FilterTable =
 {
-  /* .Descriptor = */ "Sample filter table data",
+  /* .Descriptor = */ "OpenSatKit Default",
   /* .Packet     = */
   {
     /* Packet Index 000 */
@@ -118,6 +110,7 @@ DS_FilterTable_t DS_FilterTable =
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }
       }
     },
+    
     /* Packet Index 001 */
     {
       /* .MessageID = */ CFE_EVS_HK_TLM_MID,
@@ -130,6 +123,7 @@ DS_FilterTable_t DS_FilterTable =
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }
       }
     },
+    
     /* Packet Index 002 */
     {
       /* .MessageID = */ CFE_SB_HK_TLM_MID,
@@ -142,6 +136,7 @@ DS_FilterTable_t DS_FilterTable =
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }
       }
     },
+    
     /* Packet Index 003 */
     {
       /* .MessageID = */ CFE_TBL_HK_TLM_MID,
@@ -154,6 +149,7 @@ DS_FilterTable_t DS_FilterTable =
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }
       }
     },
+    
     /* Packet Index 004 */
     {
       /* .MessageID = */ CFE_TIME_HK_TLM_MID,
@@ -166,6 +162,7 @@ DS_FilterTable_t DS_FilterTable =
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }
       }
     },
+    
     /* Packet Index 005 */
     {
       /* .MessageID = */ CFE_TIME_DIAG_TLM_MID,

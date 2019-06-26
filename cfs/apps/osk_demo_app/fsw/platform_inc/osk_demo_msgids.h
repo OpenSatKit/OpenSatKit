@@ -29,6 +29,7 @@
 ** Telemetry Message IDs
 */
 
-#define  OSK_DEMO_TLM_HK_MID     0x0F03
+#define  OSK_DEMO_TLM_HK_MID     0x0F03  /* Housekeeping */
+#define  OSK_DEMO_TLM_FR_MID     0x0F04  /* FaultRep     */
 
 #endif /* _osk_demo_msgids_ */

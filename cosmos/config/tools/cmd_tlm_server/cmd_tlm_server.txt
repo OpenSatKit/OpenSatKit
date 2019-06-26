@@ -1,7 +1,7 @@
 TITLE 'cFS Command and Telemetry Server'
 
 PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
-
+  
 # Visiona CFDP Interface
 BACKGROUND_TASK cfdp_engine_task.rb
 INTERFACE_TARGET CFDP cmd_tlm_server.txt
@@ -66,3 +66,4 @@ INTERFACE COSMOSINT cmd_tlm_server_interface.rb
 
 INTERFACE PISAT_CONTROL_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
   TARGET PICONTROL
+  DONT_CONNECT

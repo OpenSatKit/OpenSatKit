@@ -65,7 +65,7 @@
 ** Fault Reporter (FAULTREP)
 */
 
-#define FAULTREP_ID_MAX  80
+#define FAULTREP_ID_MAX  32
 
 /******************************************************************************
 ** Debug macros

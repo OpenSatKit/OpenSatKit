@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+def hexdump(src, length=16):
+    FILTER = ''.join([(len(repr(chr(x))) == 3) and chr(x) or '.' for x in range(256)])
+    lines = []
+    for c in xrange(0, len(src), length):
+        chars = src[c:c+length]
+        hex = ' '.join(["%02x" % ord(x) for x in chars])
+        printable = ''.join(["%s" % ((ord(x) <= 127 and FILTER[ord(x)]) or '.') for x in chars])
+        lines.append("%04x  %-*s  %s\n" % (c, length*3, hex, printable))
+    return ''.join(lines)
+
+import socket, struct, optparse, sys
+
+parser = optparse.OptionParser('sends CCSDS packets to CI')
+parser.add_option('--host', action='store', dest='host', default='127.0.0.1', help='Host name/IP address of the CI host.')
+parser.add_option('--port', type='int', dest='port', default=1234, help='Port of the CI host.')
+parser.add_option('--mid', type='int', dest='mid', default=0x18FA, help='Message ID.')
+parser.add_option('--cc', type='int', dest='cc', default=0, help='Command code.')
+parser.add_option('--ccendian', type='choice', choices=('big', 'little', 'platform'), dest='ccendian', default='platform', help='Command code.')
+(options, args) = parser.parse_args()
+
+print 'reading payload from stdin'
+payload=sys.stdin.read()
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+cmdhigh = options.cc
+cmdlow = 0
+if options.ccendian == 'little':
+    cmdlow = cmdhigh
+    cmdhigh = 0
+ccsds_msg = struct.pack('>HHHBB', options.mid, 0, len(payload) + 1, cmdhigh, cmdlow) + payload
+
+print hexdump(ccsds_msg)
+sock.sendto(ccsds_msg, (options.host, options.port))

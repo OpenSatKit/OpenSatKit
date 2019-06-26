@@ -5,13 +5,13 @@
 **   1. This object is for illustrative purposes only. The computational
 **      functionality isn't very pratical but the goal is to illustrate
 **      how an app's object can define/use commands, tables, and telemtry.
-**   2. It is not designed as a template object and it's not clear a generic
-**      object template would be very helup.
-**   3. The example object table (DemObjTbl) defines an array of elements and
+**   2. The example object table (DemObjTbl) defines an array of elements and
 **      each element is a 3-tuple (Data1, Data2, Data3). Two commands are
 **      defined:
 **      A. Select which table tuple is used in demobj's computation
 **      B. Enable/disable the use of the table data in the computation
+**   3. Different text-based tables were protoyped prior to selecting JSON.
+**      They ar eall retained so the ser can see how they vary.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU General Public
@@ -99,7 +99,7 @@ typedef struct
 /******************************************************************************
 ** Function: DEMOBJ_Constructor
 **
-** Initial the example object to a known state
+** Initialize the example object to a known state
 **
 ** Notes:
 **   1. This must be called prior to any other function.

@@ -36,8 +36,9 @@ static void LoadDataFromTbl(void);
 ** Global Data
 */
 
-OSK_DEMO_Class  OskDemo;
-OSK_DEMO_HkPkt  OskDemoHkPkt;
+OSK_DEMO_Class   OskDemo;
+OSK_DEMO_HkPkt   OskDemoHkPkt;
+FaultRep_TlmMsg  OskDemoFrPkt;
 
 /*
 ** Convenience Macros
@@ -49,6 +50,8 @@ OSK_DEMO_HkPkt  OskDemoHkPkt;
 #define  XMLTBL_OBJ   (&(OskDemo.XmlTbl))
 #define  SCANFTBL_OBJ (&(OskDemo.ScanfTbl))
 #define  JSONTBL_OBJ  (&(OskDemo.JsonTbl))
+#define  FAULTREP_OBJ (&(OskDemo.FaultRep))
+#define  DEMOFR_OBJ   (&(OskDemo.DemoFr))
 
 /******************************************************************************
 ** Function: OSK_DEMO_Main
@@ -92,11 +95,17 @@ void OSK_DEMO_AppMain(void)
       ** main loop execution.
       */
 
-	  CFE_ES_PerfLogExit(OSK_DEMO_MAIN_PERF_ID);
+      CFE_ES_PerfLogExit(OSK_DEMO_MAIN_PERF_ID);
       OS_TaskDelay(OSK_DEMO_RUNLOOP_DELAY);
       CFE_ES_PerfLogEntry(OSK_DEMO_MAIN_PERF_ID);
 
       LoadDataFromTbl();
+      
+      DEMOFR_SimStep();
+      
+      FaultRep_GenTlmMsg(FAULTREP_OBJ, &OskDemoFrPkt);
+      CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskDemoFrPkt);
+      CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskDemoFrPkt);
 
       ProcessCommands();
 
@@ -144,7 +153,11 @@ boolean OSK_DEMO_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CMDMGR_ResetStatus(CMDMGR_OBJ);
    TBLMGR_ResetStatus(TBLMGR_OBJ);
+   /* No FaultRep_ResetStatus */
+   
    DEMOBJ_ResetStatus();
+   DEMOFR_ResetStatus();
+
    XMLTBL_ResetStatus();
    SCANFTBL_ResetStatus();
    JSONTBL_ResetStatus();
@@ -161,7 +174,7 @@ boolean OSK_DEMO_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 void OSK_DEMO_SendHousekeepingPkt(void)
 {
 
-   const TBLMGR_Tbl* LastTbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
+   const TBLMGR_Tbl* Tbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
    
    /*
    ** CMDMGR Data
@@ -175,8 +188,21 @@ void OSK_DEMO_SendHousekeepingPkt(void)
    ** EXTBL Data
    */
  
-   OskDemoHkPkt.LastAction       = LastTbl->LastAction;
-   OskDemoHkPkt.LastActionStatus = LastTbl->LastActionStatus;
+   OskDemoHkPkt.LastTblId           = Tbl->Id;
+   OskDemoHkPkt.LastTblAction       = Tbl->LastAction;
+   OskDemoHkPkt.LastTblActionStatus = Tbl->LastActionStatus;
+
+   /*
+   ** DEMOFR & FaultRep Data
+   */
+   
+   OskDemoHkPkt.FaultRepTlmMode  = OskDemo.FaultRep.TlmMode;
+   OskDemoHkPkt.SimEnabled       = OskDemo.DemoFr.SimEnabled;
+   OskDemoHkPkt.SimMode          = OskDemo.DemoFr.SimMode;
+   
+   OskDemoHkPkt.FaultRepEnabled  = OskDemo.FaultRep.FaultDet.Enabled[0];
+   OskDemoHkPkt.FaultRepLatched  = OskDemo.FaultRep.FaultDet.Latched[0];
+  
 
    /*
    ** DEMOBJ Data
@@ -188,6 +214,7 @@ void OSK_DEMO_SendHousekeepingPkt(void)
    OskDemoHkPkt.Data1          = OskDemo.DemObj.Data1;
    OskDemoHkPkt.Data2          = OskDemo.DemObj.Data2;
    OskDemoHkPkt.Data3          = OskDemo.DemObj.Data3;
+
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskDemoHkPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskDemoHkPkt);
@@ -214,6 +241,8 @@ static int32 InitApp(void)
     JSONTBL_Constructor(JSONTBL_OBJ, DEMOBJ_GetJsonTblPtr, DEMOBJ_LoadJsonTbl, DEMOBJ_LoadJsonTblEntry);
     
     DEMOBJ_Constructor(DEMOBJ_OBJ);
+    
+    DEMOFR_Constructor(DEMOFR_OBJ, FAULTREP_OBJ);
 
     /*
     ** Initialize application managers
@@ -228,18 +257,30 @@ static int32 InitApp(void)
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, OSK_DEMO_NoOpCmd,     0);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, OSK_DEMO_ResetAppCmd, 0);
     
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_DEMOBJ_TBL_LOAD_CMD_FC, TBLMGR_OBJ, TBLMGR_LoadTblCmd,        TBLMGR_LOAD_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_DEMOBJ_TBL_DUMP_CMD_FC, TBLMGR_OBJ, TBLMGR_DumpTblCmd,        TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_ENA_DATA_LOAD_CMD_FC,   DEMOBJ_OBJ, DEMOBJ_EnableDataLoadCmd, DEMOBJ_ENABLE_DATA_LOAD_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_SET_TBL_INDEX_CMD_FC,   DEMOBJ_OBJ, DEMOBJ_SetTblIndexCmd,    DEMOBJ_SET_TBL_INDEX_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_DEMOBJ_TBL_LOAD_CMD_FC,     TBLMGR_OBJ,   TBLMGR_LoadTblCmd,          TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_DEMOBJ_TBL_DUMP_CMD_FC,     TBLMGR_OBJ,   TBLMGR_DumpTblCmd,          TBLMGR_DUMP_TBL_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_ENA_DATA_LOAD_CMD_FC,       DEMOBJ_OBJ,   DEMOBJ_EnableDataLoadCmd,   DEMOBJ_ENABLE_DATA_LOAD_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_SET_TBL_INDEX_CMD_FC,       DEMOBJ_OBJ,   DEMOBJ_SetTblIndexCmd,      DEMOBJ_SET_TBL_INDEX_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_FAULTREP_CFG_CMD_FC,        FAULTREP_OBJ, FaultRep_ConfigFaultDetCmd, FAULTREP_CFG_FAULT_DET_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_FAULTREP_CLR_CMD_FC,        FAULTREP_OBJ, FaultRep_ClearFaultDetCmd,  FAULTREP_CLR_FAULT_DET_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC, DEMOFR_OBJ,   DEMOFR_SetTlmModeCmd,       DEMOFR_SET_TLM_MODE_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_DEMO_DEMOFR_SIM_FAULT_CMD_FC,    DEMOFR_OBJ,   DEMOFR_SimFaultCmd,         DEMOFR_SIM_FAULT_CMD_DATA_LEN);
 
     CFE_EVS_SendEvent(OSK_DEMO_INIT_DEBUG_EID, OSK_DEMO_INIT_EVS_TYPE, "OSK_DEMO_InitApp() Before TBLMGR calls\n");
+    
+    /*
+    ** Table IDs are assigned during registration so the order is important. COSMOS cmd/tlm definitions assume
+    ** XML, SCANF, JSON.
+    */
     TBLMGR_Constructor(TBLMGR_OBJ);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, XMLTBL_LoadCmd,   XMLTBL_DumpCmd,   OSK_DEMO_XML_TBL_DEF_LOAD_FILE);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCANFTBL_LoadCmd, SCANFTBL_DumpCmd, OSK_DEMO_SCANF_TBL_DEF_LOAD_FILE);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, JSONTBL_LoadCmd,  JSONTBL_DumpCmd,  OSK_DEMO_JSON_TBL_DEF_LOAD_FILE);
-                         
-                         
+
+    FaultRep_Constructor(FAULTREP_OBJ, OSK_DEMO_FAULT_ID_MAX);
+    
+    CFE_SB_InitMsg(&OskDemoFrPkt, OSK_DEMO_TLM_FR_MID, FAULTREP_FAULT_REP_PKT_LEN, TRUE);
+                                          
     CFE_SB_InitMsg(&OskDemoHkPkt, OSK_DEMO_TLM_HK_MID, OSK_DEMO_TLM_HK_LEN, TRUE);
 
     /*

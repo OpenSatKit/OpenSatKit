@@ -35,7 +35,7 @@
 #define  KIT_TO_REVISION           0
 #define  KIT_TO_MISSION_REV        0
 
-#define  KIT_TO_CMD_PIPE_DEPTH    50
+#define  KIT_TO_CMD_PIPE_DEPTH    100
 #define  KIT_TO_CMD_PIPE_NAME     "KIT_TO_CMD_PIPE"
 
 

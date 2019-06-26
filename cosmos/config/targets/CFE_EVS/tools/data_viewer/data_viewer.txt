@@ -1,0 +1,2 @@
+COMPONENT "cFE Event Service" event_viewer.rb
+  PACKET CFE_EVS EVENT_MSG_PKT 

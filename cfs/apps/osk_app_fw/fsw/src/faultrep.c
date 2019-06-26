@@ -38,7 +38,6 @@
 ** Macro Definitions
 */
 
-#define EVS_ID(Offset)   ((uint16)(FaultRepObj->EvsIdBase  + Offset)) 
 
 /*
 ** Type Definitions
@@ -57,7 +56,7 @@ typedef struct
 ** File Function Prototypes
 */
 
-static boolean GetFaultDetIdBit(FaultRep_Class*      FaultRepObj,
+static boolean GetFaultDetIdBit(FaultRep_Class*      FaultRep,
                                 const char*          CallerStr,
                                 uint16               FaultDetId,
                                 FaultDetBitStruct*   FaultDetBit);
@@ -73,26 +72,26 @@ static boolean GetFaultDetIdBit(FaultRep_Class*      FaultRepObj,
 ** Notes:
 **    1. Must clear both the Software Bus report packet and NewReport.
 */
-boolean FaultRep_ClearFaultDetCmd(      void*  CmdObjPtr, 
-                                  const void*  CmdParamPtr)
+boolean FaultRep_ClearFaultDetCmd(                void* ObjDataPtr,  /* Pointer to an instance of a FaultRep_Class  */
+                                  const CFE_SB_MsgPtr_t MsgPtr)      /* Pointer to FaultRep_ClearFaultDetCmd struct */
 {
 
-   FaultRep_Class* FaultRepObj = (FaultRep_Class*)CmdObjPtr;
-   FaultRep_ClearFaultDetCmdParam*  CmdParam = (FaultRep_ClearFaultDetCmdParam*)CmdParamPtr;
+   FaultRep_Class* FaultRep = (FaultRep_Class*)ObjDataPtr;
+   FaultRep_ClearFaultDetCmdMsg*  Cmd = (FaultRep_ClearFaultDetCmdMsg*)MsgPtr;
 
    boolean            RetStatus = TRUE;
    FaultDetBitStruct  FaultDetBit;
 
-   if (CmdParam->FaultDetId == FAULTREP_SELECT_ALL)
+   if (Cmd->FaultDetId == FAULTREP_SELECT_ALL)
    {
 
-      CFE_PSP_MemSet(&(FaultRepObj->FaultDet.Latched),0,sizeof(FaultRepObj->FaultDet.Latched));
+      CFE_PSP_MemSet(&(FaultRep->FaultDet.Latched),0,sizeof(FaultRep->FaultDet.Latched));
 
       for (FaultDetBit.WordIndex=0; FaultDetBit.WordIndex < FAULTREP_BITFIELD_WORDS; FaultDetBit.WordIndex++)
       {
 
-         FaultRepObj->NewReport.Data[FaultDetBit.WordIndex] = 0;
-         FaultRepObj->SbMsg.Tlm.Data[FaultDetBit.WordIndex] = 0;
+         FaultRep->NewReport.Data[FaultDetBit.WordIndex] = 0;
+         FaultRep->SbMsg.Tlm.Data[FaultDetBit.WordIndex] = 0;
 
       } /* End LatchIndex loop */
 
@@ -101,9 +100,9 @@ boolean FaultRep_ClearFaultDetCmd(      void*  CmdObjPtr,
    else 
    {
 
-      RetStatus = GetFaultDetIdBit(FaultRepObj,
+      RetStatus = GetFaultDetIdBit(FaultRep,
                                    "Fault Reporter Rejected Clear Detector Cmd: ",
-                                   CmdParam->FaultDetId,
+                                   Cmd->FaultDetId,
                                    &FaultDetBit);
       
       if (RetStatus == TRUE)
@@ -111,10 +110,10 @@ boolean FaultRep_ClearFaultDetCmd(      void*  CmdObjPtr,
 
          FaultDetBit.Mask = (uint16)~FaultDetBit.Mask;
 
-         FaultRepObj->FaultDet.Latched[FaultDetBit.WordIndex] &= FaultDetBit.Mask;
+         FaultRep->FaultDet.Latched[FaultDetBit.WordIndex] &= FaultDetBit.Mask;
 
-         FaultRepObj->NewReport.Data[FaultDetBit.WordIndex] &= FaultDetBit.Mask;
-         FaultRepObj->SbMsg.Tlm.Data[FaultDetBit.WordIndex] &= FaultDetBit.Mask;
+         FaultRep->NewReport.Data[FaultDetBit.WordIndex] &= FaultDetBit.Mask;
+         FaultRep->SbMsg.Tlm.Data[FaultDetBit.WordIndex] &= FaultDetBit.Mask;
       
       } /* End if valid ID */
 
@@ -134,35 +133,36 @@ boolean FaultRep_ClearFaultDetCmd(      void*  CmdObjPtr,
 ** Notes:
 **    None
 */
-boolean FaultRep_ConfigFaultDetCmd(  void*      CmdObjPtr, 
-                                   const void*  CmdParamPtr)
+boolean FaultRep_ConfigFaultDetCmd(                void* ObjDataPtr,  /* Pointer to an instance of a FaultRep_Class   */
+                                   const CFE_SB_MsgPtr_t MsgPtr)      /* Pointer to FaultRep_ConfigFaultDetCmd struct */
+
 {
 
-   FaultRep_Class* FaultRepObj = (FaultRep_Class*)CmdObjPtr;
-   FaultRep_ConfigFaultDetCmdParam*  CmdParam = (FaultRep_ConfigFaultDetCmdParam*)CmdParamPtr;
+   FaultRep_Class* FaultRep = (FaultRep_Class*)ObjDataPtr;
+   FaultRep_ConfigFaultDetCmdMsg*  Cmd = (FaultRep_ConfigFaultDetCmdMsg*)MsgPtr;
 
    boolean  RetStatus = TRUE;
 
    FaultDetBitStruct  FaultDetBit;
 
-   if (CmdParam->Enable == TRUE || CmdParam->Enable == FALSE)
+   if (Cmd->Enable == TRUE || Cmd->Enable == FALSE)
    {
 
-      if (CmdParam->FaultDetId == FAULTREP_SELECT_ALL) 
+      if (Cmd->FaultDetId == FAULTREP_SELECT_ALL) 
       {
          
-         if (CmdParam->Enable)
+         if (Cmd->Enable)
          {
-            for (FaultDetBit.WordIndex=0; FaultDetBit.WordIndex < FaultRepObj->FaultDet.BitfieldWords; FaultDetBit.WordIndex++)
-               FaultRepObj->FaultDet.Enabled[FaultDetBit.WordIndex] = 0xFFFF;
+            for (FaultDetBit.WordIndex=0; FaultDetBit.WordIndex < FaultRep->FaultDet.BitfieldWords; FaultDetBit.WordIndex++)
+               FaultRep->FaultDet.Enabled[FaultDetBit.WordIndex] = 0xFFFF;
 
-            if (FaultRepObj->FaultDet.BitfieldWords < FAULTREP_BITFIELD_WORDS)
-               FaultRepObj->FaultDet.Enabled[FaultRepObj->FaultDet.BitfieldWords] = FaultRepObj->FaultDet.BitfieldRemMask;
+            if (FaultRep->FaultDet.BitfieldWords < FAULTREP_BITFIELD_WORDS)
+               FaultRep->FaultDet.Enabled[FaultRep->FaultDet.BitfieldWords] = FaultRep->FaultDet.BitfieldRemMask;
 
          }
          else
          {
-            CFE_PSP_MemSet(&(FaultRepObj->FaultDet.Enabled),0,sizeof(FaultRepObj->FaultDet.Enabled));
+            CFE_PSP_MemSet(&(FaultRep->FaultDet.Enabled),0,sizeof(FaultRep->FaultDet.Enabled));
          }
 
          
@@ -171,19 +171,19 @@ boolean FaultRep_ConfigFaultDetCmd(  void*      CmdObjPtr,
       else 
       {
          
-         RetStatus = GetFaultDetIdBit(FaultRepObj,
+         RetStatus = GetFaultDetIdBit(FaultRep,
                                       "Fault Reporter Reject Config Detector Cmd:",
-                                      CmdParam->FaultDetId,
+                                      Cmd->FaultDetId,
                                       &FaultDetBit);
          
          if (RetStatus == TRUE)
          {
             
-            if (CmdParam->Enable)
-               FaultRepObj->FaultDet.Enabled[FaultDetBit.WordIndex] |= FaultDetBit.Mask;
+            if (Cmd->Enable)
+               FaultRep->FaultDet.Enabled[FaultDetBit.WordIndex] |= FaultDetBit.Mask;
             
             else
-               FaultRepObj->FaultDet.Enabled[FaultDetBit.WordIndex] &= ~FaultDetBit.Mask;
+               FaultRep->FaultDet.Enabled[FaultDetBit.WordIndex] &= ~FaultDetBit.Mask;
             
          } /* End if valid ID */
          
@@ -192,10 +192,10 @@ boolean FaultRep_ConfigFaultDetCmd(  void*      CmdObjPtr,
    else
    {
 
-      CFE_EVS_SendEvent (EVS_ID(FAULTREP_EVS_CONFIG_CMD_ERR),
+      CFE_EVS_SendEvent (FAULTREP_EVS_CONFIG_CMD_ERR,
                          CFE_EVS_ERROR,
                          "Fault Reporter Reject Config Detector Cmd: Invalid enable value %d",
-                         CmdParam->Enable);
+                         Cmd->Enable);
 
       RetStatus = FALSE;
 
@@ -214,9 +214,8 @@ boolean FaultRep_ConfigFaultDetCmd(  void*      CmdObjPtr,
 ** Notes:
 **    None
 */
-void FaultRep_Constructor(FaultRep_Class*  FaultRepObj,
-                          uint16           FaultIdCnt,
-                          uint16*          EvsIdBase)
+void FaultRep_Constructor(FaultRep_Class*  FaultRep,
+                          uint16           FaultIdCnt)
 {
 
    uint16 RemBitCnt, i;
@@ -226,24 +225,20 @@ void FaultRep_Constructor(FaultRep_Class*  FaultRepObj,
    ** clears their latch flags.
    */
    
-   CFE_PSP_MemSet(FaultRepObj,0,sizeof(FaultRep_Class));
+   CFE_PSP_MemSet(FaultRep,0,sizeof(FaultRep_Class));
 
-   FaultRepObj->FaultDet.IdLimit = FaultIdCnt;
-   FaultRepObj->FaultDet.BitfieldWords = (uint16)(FaultIdCnt / FAULTREP_BITS_PER_WORD);
+   FaultRep->FaultDet.IdLimit = FaultIdCnt;
+   FaultRep->FaultDet.BitfieldWords = (uint16)(FaultIdCnt / FAULTREP_BITS_PER_WORD);
    
    RemBitCnt = (uint16)(FaultIdCnt % FAULTREP_BITS_PER_WORD);
    for (i=0; i < RemBitCnt; i++)
    {
-      FaultRepObj->FaultDet.BitfieldRemMask |= 1 << i;
+      FaultRep->FaultDet.BitfieldRemMask |= 1 << i;
    }
 
-   FaultRepObj->TlmMode = FAULTREP_NEW_REPORT;
+   FaultRep->TlmMode = FAULTREP_NEW_REPORT;
       
-   FaultRepObj->EvsIdBase = *EvsIdBase;
-   *EvsIdBase += FAULTREP_EVS_MSG_CNT;
-
 } /* End FaultRep_Constructor() */
-
 
 
 /******************************************************************************
@@ -254,7 +249,7 @@ void FaultRep_Constructor(FaultRep_Class*  FaultRepObj,
 **       return status is provided because the caller always expects the call
 **       to be successful.
 */
-void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRepObj,
+void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRep,
                              uint16           FaultDetId)
 {
 
@@ -262,7 +257,7 @@ void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRepObj,
    FaultDetBitStruct  FaultDetBit;
 
       
-   ValidFaultDetId = GetFaultDetIdBit(FaultRepObj,
+   ValidFaultDetId = GetFaultDetIdBit(FaultRep,
                                       "Fault Reporter Rejected Detector Failure:",
                                       FaultDetId,
                                       &FaultDetBit);
@@ -270,12 +265,12 @@ void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRepObj,
    if (ValidFaultDetId == TRUE)
    {
 
-      if (FaultRepObj->FaultDet.Enabled[FaultDetBit.WordIndex] & FaultDetBit.Mask)
+      if (FaultRep->FaultDet.Enabled[FaultDetBit.WordIndex] & FaultDetBit.Mask)
       {
          
-         FaultRepObj->FaultDet.Latched[FaultDetBit.WordIndex] |= FaultDetBit.Mask;
+         FaultRep->FaultDet.Latched[FaultDetBit.WordIndex] |= FaultDetBit.Mask;
             
-         FaultRepObj->NewReport.Data[FaultDetBit.WordIndex] |= FaultDetBit.Mask;
+         FaultRep->NewReport.Data[FaultDetBit.WordIndex] |= FaultDetBit.Mask;
             
       } /* End if enabled */
          
@@ -292,12 +287,11 @@ void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRepObj,
 **    1. Logic assumes FAULTDET_REPORT_MODE has two states.
 **
 */
-void FaultRep_GenTlmMsg(void* TlmObjPtr, CFE_SB_MsgPtr_t TlmMsgPtr)
+void FaultRep_GenTlmMsg(FaultRep_Class*  FaultRep,
+                        FaultRep_TlmMsg* FaultRepMsg)
 {
 
    uint16  i;
-   FaultRep_Class*  FaultRepObj = (FaultRep_Class*)TlmObjPtr;
-   FaultRep_TlmMsg* FaultRepMsg = (FaultRep_TlmMsg*)TlmMsgPtr;
 
    /*
    ** Generate the FD report packet
@@ -305,21 +299,21 @@ void FaultRep_GenTlmMsg(void* TlmObjPtr, CFE_SB_MsgPtr_t TlmMsgPtr)
    ** - Clear NewTlm for the next control cycle
    */
 
-   if (FaultRepObj->TlmMode == FAULTREP_MERGE_REPORT)
+   if (FaultRep->TlmMode == FAULTREP_MERGE_REPORT)
    {
 
       for (i=0; i < FAULTREP_BITFIELD_WORDS; i++)
-         FaultRepMsg->Tlm.Data[i] |= FaultRepObj->NewReport.Data[i];
+         FaultRepMsg->Tlm.Data[i] |= FaultRep->NewReport.Data[i];
 
    } /* End if FAULTREP_MERGE_REPORT */
    else 
    {
 
-      CFE_PSP_MemCpy(&(FaultRepMsg->Tlm),&(FaultRepObj->NewReport),sizeof(FaultRep_Data));
+      CFE_PSP_MemCpy(&(FaultRepMsg->Tlm),&(FaultRep->NewReport),sizeof(FaultRep_Data));
 
    } /* End if FAULTREP_NEW_REPORT */
 
-   CFE_PSP_MemSet(&(FaultRepObj->NewReport),0,sizeof(FaultRep_Data));
+   CFE_PSP_MemSet(&(FaultRep->NewReport),0,sizeof(FaultRep_Data));
 
 
 } /* End FaultRep_GenTlmMsg() */
@@ -332,16 +326,40 @@ void FaultRep_GenTlmMsg(void* TlmObjPtr, CFE_SB_MsgPtr_t TlmMsgPtr)
 **    None
 **
 */
-void FaultRep_SetTlmMode(FaultRep_Class*   FaultRepObj,
+void FaultRep_SetTlmMode(FaultRep_Class*   FaultRep,
                          FaultRep_TlmMode  TlmMode)
 {
 
-
-   FaultRepObj->TlmMode = TlmMode;
-
+   FaultRep->TlmMode = TlmMode;
 
 } /* End FaultRep_SetTlmMode() */
 
+
+/******************************************************************************
+** Function: FaultRep_TlmModeStr
+**
+*/
+const char* FaultRep_TlmModeStr(FaultRep_TlmMode  TlmMode)
+{
+
+   static char* TlmModeStr[] = {
+      "Undefined", 
+      "New Report",     /* FAULTREP_NEW_REPORT   */
+      "Merge Report"    /* FAULTREP_MERGE_REPORT */
+   };
+
+   uint8 i = 0;
+   
+   if ( TlmMode == FAULTREP_NEW_REPORT ||
+        TlmMode == FAULTREP_MERGE_REPORT) {
+   
+      i = TlmMode;
+   
+   }
+        
+   return TlmModeStr[i];
+
+} /* End FaultRep_TlmModeStr() */
 
 
 /******************************************************************************
@@ -351,7 +369,7 @@ void FaultRep_SetTlmMode(FaultRep_Class*   FaultRepObj,
 **    1. If the ID is invalid (too big) then an event message is sent.
 **
 */
-static boolean GetFaultDetIdBit(FaultRep_Class*     FaultRepObj,
+static boolean GetFaultDetIdBit(FaultRep_Class*     FaultRep,
                                 const char*         CallerStr,
                                 uint16              FaultDetId,
                                 FaultDetBitStruct*  FaultDetBit)
@@ -360,7 +378,7 @@ static boolean GetFaultDetIdBit(FaultRep_Class*     FaultRepObj,
    boolean  RetStatus = TRUE;
 
 
-   if (FaultDetId < FaultRepObj->FaultDet.IdLimit)
+   if (FaultDetId < FaultRep->FaultDet.IdLimit)
    {
    
       FaultDetBit->WordIndex = (uint16)(FaultDetId/FAULTREP_BITS_PER_WORD);
@@ -371,12 +389,12 @@ static boolean GetFaultDetIdBit(FaultRep_Class*     FaultRepObj,
    {
 
       RetStatus = FALSE;
-      CFE_EVS_SendEvent (EVS_ID(FAULTREP_EVS_INV_DETECTOR_ID),
+      CFE_EVS_SendEvent (FAULTREP_EVS_INV_DETECTOR_ID,
                          CFE_EVS_ERROR,
                          "%s Invalid fault ID %d (Max ID = %d)",
                          CallerStr,
                          FaultDetId,
-                         FaultRepObj->FaultDet.IdLimit-1);
+                         FaultRep->FaultDet.IdLimit-1);
    }
 
 

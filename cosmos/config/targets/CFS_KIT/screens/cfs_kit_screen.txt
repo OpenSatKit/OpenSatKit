@@ -35,7 +35,7 @@ VERTICAL
           BUTTON 'Set Cmd Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SET_CMD_VALIDATE")'
           BUTTON 'App Sum Pages'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
           BUTTON 'cFE Services'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
-          BUTTON 'Mng App Sch-Tlm'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APP_SCH_TLM")'
+          BUTTON 'Mng App RunTime'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APP_RUNTIME")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # Box      

@@ -4,7 +4,7 @@
   @APP_PREFIX_STR = "HSIM"
   @HK_TLM_MID_STR = "HSIM_HK_TLM_MID"
   
-%>  
+%>
 
 TELEMETRY HSIM HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Heater Sim Housekeeping Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>

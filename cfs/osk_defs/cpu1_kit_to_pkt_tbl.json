@@ -338,6 +338,15 @@
       },
 
       "packet": {
+         "name": "FW_DEMO_FR_TLM_MID",
+         "stream-id": "\u0F04",
+         "dec-id": 3844,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+      },
+
+      "packet": {
          "name": "HC_HK_TLM_MID",
          "stream-id": "\u0A40",
          "dec-id": 2624,
@@ -428,6 +437,15 @@
       },
 
       "packet": {
+         "name": "CF_SPACE_TO_GND_PDU_MID",
+         "stream-id": "\u0FFD",
+         "dec-id": 4093,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 20
+      },
+
+      "packet": {
          "name": "CF_SPARE0_TLM_MID",
          "stream-id": "\u08B3",
          "dec-id": 2227,
@@ -466,7 +484,7 @@
       "packet": {
          "name": "CF_SPARE4_TLM_MID",
          "stream-id": "\u08B7",         
-	 "dec-id": 2231,
+	      "dec-id": 2231,
          "priority": 0,
          "reliability": 0,
          "buf-limit": 4

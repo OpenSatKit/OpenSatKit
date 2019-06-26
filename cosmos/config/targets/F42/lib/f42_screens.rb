@@ -17,9 +17,6 @@ require 'osk_flight'
 ## Global Variables
 ################################################################################
 
-# TODO - Create OSK global or app base class for ask_app_fw definitions
-OSK_TBL_REPLACE    = 0
-OSK_TBL_UPDATE_REC = 1
 
 # Use different file name than FSW default name so it doesn't get overwritten 
 

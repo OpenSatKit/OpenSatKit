@@ -146,7 +146,8 @@ There are four rows in the display:\n\
 "
 
 PMD_INSTRUCT_ARRAY = [PMD_INSTRUCT_0, PMD_INSTRUCT_1, PMD_INSTRUCT_2, PMD_INSTRUCT_3, PMD_INSTRUCT_4]
-PMD_LAST_STEP = 4
+PMD_LAST_STEP = PMD_INSTRUCT_ARRAY.length - 1
+
 
 def pmd_set_instruct_text(num)
 

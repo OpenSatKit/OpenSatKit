@@ -1,0 +1,23 @@
+#!/bin/bash
+
+mid=0x1843
+
+# noop
+./cisend --mid=$mid --ccendian=little --cc=0 < /dev/null
+sleep 1
+
+# get hk
+./cisend --mid=$mid --ccendian=little --cc=0x20 < /dev/null
+sleep 1
+
+# midconfig
+printf '\000' | ./cisend --mid=$mid --ccendian=little --cc=0x21
+sleep 1
+
+# task
+printf '\000' | ./cisend --mid=$mid --ccendian=little --cc=0x22
+sleep 1
+
+# file
+printf '\000\000' | ./cisend --mid=$mid --ccendian=little --cc=0x23
+sleep 1

@@ -31,7 +31,7 @@ module Cosmos
       @timer = nil
     end
 
-    # Adds a packet to the list of packets this components processes
+    # Adds a packet to the list of packets this component processes
     #
     # @param target_name [String] Name of the target
     # @param packet_name [String] Name of the packet

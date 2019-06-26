@@ -34,7 +34,7 @@
 */
 
 #define  OSK_DEMO_MAJOR_VERSION      1
-#define  OSK_DEMO_MINOR_VERSION      0
+#define  OSK_DEMO_MINOR_VERSION      1
 #define  OSK_DEMO_REVISION           0
 #define  OSK_DEMO_MISSION_REV        0
 
@@ -42,10 +42,14 @@
 ** Command Macros
 */
 
-#define OSK_DEMO_DEMOBJ_TBL_LOAD_CMD_FC   (CMDMGR_APP_START_FC + 0)
-#define OSK_DEMO_DEMOBJ_TBL_DUMP_CMD_FC   (CMDMGR_APP_START_FC + 1)
-#define OSK_DEMO_ENA_DATA_LOAD_CMD_FC     (CMDMGR_APP_START_FC + 2)
-#define OSK_DEMO_SET_TBL_INDEX_CMD_FC     (CMDMGR_APP_START_FC + 3)
+#define OSK_DEMO_DEMOBJ_TBL_LOAD_CMD_FC      (CMDMGR_APP_START_FC + 0)
+#define OSK_DEMO_DEMOBJ_TBL_DUMP_CMD_FC      (CMDMGR_APP_START_FC + 1)
+#define OSK_DEMO_ENA_DATA_LOAD_CMD_FC        (CMDMGR_APP_START_FC + 2)
+#define OSK_DEMO_SET_TBL_INDEX_CMD_FC        (CMDMGR_APP_START_FC + 3)
+#define OSK_DEMO_FAULTREP_CFG_CMD_FC         (CMDMGR_APP_START_FC + 4)
+#define OSK_DEMO_FAULTREP_CLR_CMD_FC         (CMDMGR_APP_START_FC + 5)
+#define OSK_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC  (CMDMGR_APP_START_FC + 6)
+#define OSK_DEMO_DEMOFR_SIM_FAULT_CMD_FC     (CMDMGR_APP_START_FC + 7)
 
 
 /******************************************************************************
@@ -61,6 +65,7 @@
 #define XMLTBL_BASE_EID     (APP_FW_APP_BASE_EID + 20)
 #define SCANFTBL_BASE_EID   (APP_FW_APP_BASE_EID + 30)
 #define JSONTBL_BASE_EID    (APP_FW_APP_BASE_EID + 40)
+#define DEMOFR_BASE_EID     (APP_FW_APP_BASE_EID + 50)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of
@@ -84,5 +89,14 @@
 #define XMLTBL_MAX_ENTRY_ID      OSK_DEMO_TBL_MAX_ENTRY_ID
 #define SCANFTBL_MAX_ENTRY_ID    OSK_DEMO_TBL_MAX_ENTRY_ID
 #define JSONTBL_MAX_ENTRY_ID     OSK_DEMO_TBL_MAX_ENTRY_ID
+
+/******************************************************************************
+** Fault Reporter/Detector 
+**
+** Show how app can be lower than osk_fw deafult & keep low for simple screen 
+*/
+
+#define OSK_DEMO_FAULT_ID_MAX    16  
+#define OSK_DEMO_FAULT_ID_WORDS   1
 
 #endif /* _app_cfg_ */

@@ -1,4 +1,4 @@
-<% 
+ <% 
   require 'osk_config' 
   require 'osk_global'
 
