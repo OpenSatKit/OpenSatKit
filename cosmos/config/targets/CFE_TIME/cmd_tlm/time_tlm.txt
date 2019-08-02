@@ -27,7 +27,7 @@ TELEMETRY CFE_TIME HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Time Services Ho
   APPEND_ITEM 1HZADJ_SECONDS    32 UINT "1 Hz SCTF adjustment (seconds)."
   APPEND_ITEM 1HZADJ_SUBSECS    32 UINT "1 Hz SCTF adjustment (sub-seconds)."
 
-TELEMETRY CFE_TIME DIAG_PKT <%= Osk::Cfg.processor_endian %> "Time Services Diagnostics Packet"
+TELEMETRY CFE_TIME DIAG_TLM_PKT <%= Osk::Cfg.processor_endian %> "Time Services Diagnostics Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIAG_TLM_MID_STR) %>
   APPEND_ITEM MET_AT_TONE_SECONDS        32 UINT "Number of seconds since epoch. (Parent: MET at time of tone.)" 
   APPEND_ITEM MET_AT_TONE_SUBSECONDS     32 UINT "Number of subseconds since epoch (LSB = 2^(-32) seconds). (Parent: MET at time of tone.)"

@@ -961,7 +961,8 @@ void CF_SendPDUToEngine(CFE_SB_MsgPtr_t MessagePtr)
     CF_PDU_Hdr_t            *PduHdrPtr;
     uint8                   *IncomingPduPtr;
     uint8                   EntityIdBytes,TransSeqBytes,PduHdrBytes;
-    uint8                   *PduUint8Ptr,TempUint8; //dcm
+    uint8                   *PduUint8Ptr; //,TempUint8; //dcm
+    uint16                  DataLen; //dcm
 #ifdef CF_DEBUG
     uint8                   PduData0,PduData1;
     uint8                   *PduDataPtr;
@@ -1019,12 +1020,14 @@ void CF_SendPDUToEngine(CFE_SB_MsgPtr_t MessagePtr)
 
     /* calculate the pdu 'length' field needed by the engine */
     //dcm CF_AppData.RawPduInputBuf.length = PduHdrPtr->PDataLen + PduHdrBytes;
+    DataLen = ntohs(PduHdrPtr->PDataLen);  //dcm
+    CF_AppData.RawPduInputBuf.length = DataLen + PduHdrBytes;  //dcm
 
-    PduUint8Ptr = (uint8 *)PduHdrPtr;  //dcm
+    //*PduUint8Ptr = (uint8 *)PduHdrPtr;  //dcm
     //TempUint8 = PduUint8Ptr[2];        //dcm
     //PduUint8Ptr[2] = PduUint8Ptr[1];   //dcm
     //PduUint8Ptr[1] = TempUint8;        //dcm
-    CF_AppData.RawPduInputBuf.length = (PduUint8Ptr[1] * 256) + PduUint8Ptr[2] + PduHdrBytes; //dcm
+    //*CF_AppData.RawPduInputBuf.length = (PduUint8Ptr[1] * 256) + PduUint8Ptr[2] + PduHdrBytes; //dcm
 
 #ifdef CF_DEBUG
     if(cfdbg > 0){

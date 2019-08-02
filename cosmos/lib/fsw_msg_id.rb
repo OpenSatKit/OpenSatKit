@@ -182,7 +182,7 @@ module Fsw
       I42_CMD_MID      = "0x19D2"
       I42_HK_TLM_MID   = "0x09D2"
 
-      # ISIM - Budget Sat (Bsat) Instrument Simulator (Isim)
+      # ISIM - Simple Sat (Simsat) Instrument Simulator (Isim)
   
       ISIM_CMD_MID      = "0x1802"
       ISIM_HK_TLM_MID   = "0x0882"

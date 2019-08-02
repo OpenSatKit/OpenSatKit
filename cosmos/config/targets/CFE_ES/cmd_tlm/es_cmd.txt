@@ -1,4 +1,5 @@
 <% 
+  require 'fsw_config_param' 
   require 'osk_config' 
   require 'osk_global'
 
@@ -13,7 +14,7 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_e
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset command counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND CFE_ES RESET <%= Osk::Cfg.processor_endian %> "This command restarts the cFE in one of two modes. The Power-On Reset will cause the cFE to restart as though the power were first applied to the processor. The Processor Reset will attempt to retain the contents of the volatile disk and the contents of the Critical Data Store. NOTE: If a requested Processor Reset should cause the Processor Reset Counter ($sc_$cpu_ES_ProcResetCnt) to exceed OR EQUAL the limit CFE_ES_MAX_PROCESSOR_RESETS (which is reported in housekeeping telemetry as $sc_$cpu_ES_MaxProcResets), the command is AUTOMATICALLY upgraded to a Power-On Reset"
+COMMAND CFE_ES RESET <%= Osk::Cfg.processor_endian %> "Restart the cFE in one of two modes: Power-On Reset will cause the cFE to restart as though the power were first applied to the processor. The Processor Reset will attempt to retain the contents of the volatile disk and the contents of the Critical Data Store. NOTE: If a requested Processor Reset should cause the Processor Reset Counter ($sc_$cpu_ES_ProcResetCnt) to exceed OR EQUAL the limit CFE_ES_MAX_PROCESSOR_RESETS (which is reported in housekeeping telemetry as $sc_$cpu_ES_MaxProcResets), the command is AUTOMATICALLY upgraded to a Power-On Reset"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
   APPEND_PARAMETER RESTART_TYPE 16 UINT MIN_UINT16 MAX_UINT16 0 "CFE_ES_PROCESSOR_RESET=Processor Reset or CFE_ES_POWERON_RESET=Power-On Reset"
 
@@ -50,21 +51,21 @@ COMMAND CFE_ES SEND_APP_INFO <%= Osk::Cfg.processor_endian %> "Send a telemetry 
 
 COMMAND CFE_ES WRITE_APP_INFO_TO_FILE <%= Osk::Cfg.processor_endian %> "Write the entire app registry data to the command specified file"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which Application data is to be dumped"
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_ES_DEFAULT_APP_LOG_FILE %> "ASCII text string containing full path and filename of file in which Application data is to be dumped"
   
 COMMAND CFE_ES CLEAR_SYSLOG <%= Osk::Cfg.processor_endian %> "This command clears the contents of the Executive Services System Log"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
 
 COMMAND CFE_ES WRITE_SYSLOG_TO_FILE <%= Osk::Cfg.processor_endian %> "This command causes the contents of the Executive Services System Log to be written to a log file"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which System Log is to be dumped"
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_ES_DEFAULT_SYSLOG_FILE %> "ASCII text string containing full path and filename of file in which System Log is to be dumped"
 
 COMMAND CFE_ES CLEAR_ERLOG <%= Osk::Cfg.processor_endian %> "This command causes the contents of the Executive Services Exception and Reset Log to be cleared"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 0) %>
 
 COMMAND CFE_ES WRITE_ERLOG_TO_FILE <%= Osk::Cfg.processor_endian %> "This command causes the contents of the Executive Services Exception and Reset Log to be written to the specified file"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "ASCII text string containing full path and filename of file in which ER Log is to be dumped"
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_ES_DEFAULT_ER_LOG_FILE %> "ASCII text string containing full path and filename of file in which ER Log is to be dumped"
 
 COMMAND CFE_ES START_LA_DATA <%= Osk::Cfg.processor_endian %> "This command causes the Performance Analyzer to begin collecting data using the specified trigger mode"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 4) %>
@@ -106,9 +107,9 @@ COMMAND CFE_ES TLM_POOL_STATS <%= Osk::Cfg.processor_endian %> "This command all
 
 COMMAND CFE_ES WRITE_CDS_REG_TO_FILE <%= Osk::Cfg.processor_endian %> "This command allows the user to dump the Critical Data Store Registry to an onboard file."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 23, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "ASCII text string of full path and filename of file CDS Registry is to be written."
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_ES_DEFAULT_CDS_REG_DUMP_FILE %> "ASCII text string of full path and filename of file CDS Registry is to be written."
 
 COMMAND CFE_ES WRITE_TASK_INFO_TO_FILE <%= Osk::Cfg.processor_endian %> "This command takes the information kept by Executive Services on all of the registered tasks and writes it to the specified file."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 24, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Full path and filename of file in which Application data is to be dumped."
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_ES_DEFAULT_TASK_LOG_FILE %> "Full path and filename of file in which Application data is to be dumped."
 

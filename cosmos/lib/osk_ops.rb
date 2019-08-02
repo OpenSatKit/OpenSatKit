@@ -340,7 +340,7 @@ module Ops
             cmd_param_str = ""
             cmd_param_list.each do |param|
                cmd_param_str << "   NAMED_WIDGET param_#{param_num} LABEL '#{param[0]}'\n"         
-               cmd_param_str << "   NAMED_WIDGET value_#{param_num} TEXTFIELD 32 \"#{param[1]}\"\n"  # Large enough for filenames
+               cmd_param_str << "   NAMED_WIDGET value_#{param_num} TEXTFIELD 64 \"#{param[1]}\"\n"  # Large enough for filenames
                param_num += 1
             end
             

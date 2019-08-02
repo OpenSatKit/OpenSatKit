@@ -35,139 +35,221 @@ GND_TEST_PUT_FILE = "#{Osk::GND_SRV_DIR}/tf_put_test_src.txt"
 
 
 ################################################################################
-## Launch Applications
+## Explore cFS/SimSat
 ################################################################################
 
-def cfs_kit_launch_app(screen, app)
+def cfs_kit_scr_explore_cfs(screen, cmd)
 
-   if (app == "START_CFS")
+   case cmd
+   when "START_CFS"
    
       # Kill all instances of the cFS before starting a new instance. 
-      
       Osk::System.stop_cfs()
+      Osk::System.start_cfs()  # Enables telemetry
+      
+   when "START_CFS_42"
+   
+      prompt("The 42 simulator takes about 20 seconds to initialize.")
+      
+      # Kill all instances of the cFS before starting a new instance. 
 
-      # Start the cFS and enable telemetry
-      
-      Osk::System.start_cfs()
-      
-      return
-      
-      #    
-      # When a new terminal window open user will be prompted for password 
-      # since cFE is run in privileged mode. The loop after the spawn 
-      # automatically enables telemetry 
-      #  
-      
-      
-      core = `pgrep core`
-      if (core.length > 1)
-         #puts core + " len = #{core.length}"
-         `echo osk | sudo -S kill #{core}`  # Echo supplies the password
-      end
-      spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute sudo ./core-cpu1""")
-      #spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/../cfs/build/exe/cpu1"" --execute sudo ./core-cpu1""")
-        
-      #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
+      Osk::System.stop_cfs()
+      Osk::System.start_cfs()  # Enables telemetry
 
-      done = false
-      attempts = 0
-      seq_cnt = tlm("CFE_ES #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}")
-      while (!done)
-         core = `pgrep core`
-         if (core.length > 1)
-            wait(2)
-            cmd("KIT_TO ENABLE_TELEMETRY")
-            done = true
-            #puts core + " len = #{core.length}"
-         else
-            attempts += 1
-            if (attempts < 5)
-               wait (4)
-            else
-               done = true
-            end
-         end
-         #~puts core + " len = #{core.length}"
-         #~if ( tlm("CFE_ES #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}") != seq_cnt)
-         #~   done = true
-         #~else
-         #~   begin
-         #~      cmd("KIT_TO ENABLE_TELEMETRY")
-         #~   rescue
-         #~      Osk::system.connect_to_local_cfs
-         #~   end
-         #~   attempts += 1
-         #~   if (attempts < 5)
-         #~      wait (4)
-         #~   else
-         #~      done = true
-         #~   end
-         #~end   
-      end # while ! done
-      #~puts "attempt #{attempts}"
-      
-   elsif (app == "STOP_CFS")
+      spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
+      wait(15)
+      Osk::flight.i42.send_cmd("CONNECT_42")
+     
+   when "STOP_CFS"
       # Hopefully ES cleans up resources and does a controlled shutdown
       Osk::flight.cfe_es.send_cmd("RESET with RESTART_TYPE 1")
       #Osk::System.stop_cfs()
-   elsif (app == "CFE_SERVICES")
-      display("CFS_KIT CFE_SCREEN",50,50)   
-   elsif (app == "MANAGE_APP_RUNTIME")
-      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",50,50)   
-   elsif (app == "SET_CMD_VALIDATE")
-      enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes','No')  
-      if (enable == "Yes")
-         FswApp.validate_cmd(true)
-      elsif (enable == "No")
-         FswApp.validate_cmd(false)
+   
+   when "STOP_42"
+      Osk::flight.i42.send_cmd("DISCONNECT_42")
+   
+   when "CONFIG_SYS"
+      case screen.get_named_widget("sys_cmd").text
+      when "ENA_TLM"
+         # Don't use Osk::flight because cmd validation would fail
+         cmd("KIT_TO ENABLE_TELEMETRY")
+      when "RESET_TIME"
+         Osk::flight.cfe_time.send_cmd("SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0")
+         Osk::flight.cfe_time.send_cmd("SET_CLOCK with SECONDS 0, MICROSECONDS 0") 
+      when "SET_GND_CMD_MODE"
+         enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes','No')  
+         if (enable == "Yes")
+            FswApp.validate_cmd(true)
+         elsif (enable == "No")
+            FswApp.validate_cmd(false)
+         end
       end
-   elsif (app == "BENCHMARKS")
-      prompt("Note this is a prototype application")
-      display("CFS_KIT BENCHMARK_SCREEN",50,50) 
-   elsif (app == "PERF_MON")
+      
+   when "OSK_QUICK_START"
+      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_TOUR_FILE}")
+
+   when "OSK_USERS_GUIDE"
+      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_UG_FILE}")
+
+   when "RUN_OPS_EXAMPLE"
+      prompt(Osk::MSG_TBD_FEATURE)
+   
+   when "RUN_INTG_TEST"
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} #{Cosmos::USERPATH}/procedures/simsat/simsat_intg_test.rb")
+      display("CFS_KIT SIMSAT_CFS_APP_SCREEN",50,50)
+      display("CFS_KIT SIMSAT_OSK_APP_SCREEN",1500,50)
+
+   when "SIMSAT_RUNTIME"
+      display("CFS_KIT SIMSAT_RUNTIME_SCREEN",50,50)
+   
+   when "SIMSAT_DATA_FILE"
+      display("CFS_KIT SIMSAT_DATA_FILE_SCREEN",50,50)
+   
+   when "SIMSAT_AUTONOMY"
+      display("CFS_KIT SIMSAT_AUTONOMY_SCREEN",50,50)
+   
+   when "SIMSAT_ADC"
+      display("CFS_KIT SIMSAT_ADC_SCREEN",50,50)
+   
+   when "SIMSAT_MAINTENANCE"
+      display("CFS_KIT SIMSAT_MAINTENANCE_SCREEN",50,50)
+   
+   when "SIMSAT_HEALTH_SAFETY"
+      display("CFS_KIT SIMSAT_HEALTH_SAFETY_SCREEN",50,50)
+   
+   when "CFE_EVENT_SERVICE"
+      display("CFE_EVS CFE_EVS_SCREEN",50,50)
+   
+   when "CFE_EXECUTIVE_SERVICE"
+      display("CFE_ES CFE_ES_SCREEN",50,50)
+   
+   when "CFE_SOFTWARE_BUS"
+      display("CFE_SB CFE_SB_SCREEN",50,50)
+   
+   when "CFE_TABLE_SERVICE"
+      display("CFE_TBL CFE_TBL_SCREEN",50,50)
+   
+   when "CFE_TIME_SERVICE"
+      display("CFE_TIME CFE_TIME_SCREEN",50,50)
+   
+   when "CFE_USERS_GUIDE"
+      Cosmos.open_in_web_browser("#{Osk::CFE_UG_DIR}/#{Osk::CFE_UG_FILE}")
+   
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_explore_cfs()"
+   end # cmd case
+
+end # cfs_kit_scr_explore_cfs()
+
+################################################################################
+## Develop Apps
+################################################################################
+
+
+def cfs_kit_scr_develop_apps(screen, cmd)
+
+   case cmd
+   when "CFE_APP_DEV_GUIDE"
+      # cFE does not deliver PDF file so I generate it in OSK's docs directory
+      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::CFE_APP_DEV_FILE}")
+   
+   when "OSK_APP_DEV_GUIDE"
+      prompt(Osk::MSG_TBD_FEATURE)
+   
+   when "OSK_APP_TRAIN_SLIDES"
+      prompt(Osk::MSG_TBD_FEATURE)   
+
+   when "OSK_DEMO_APP"
+      prompt(Osk::MSG_TBD_FEATURE)   
+   
+   when "ADD_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Add an app from existing app library")   
+   
+   when "REMOVE_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Remove an app from cFE startup scr")   
+   
+   when "CREATE_APP"
+      display("CFS_KIT MNG_APP_DEV_SCREEN",50,50)
+   
+   when "MANAGE_APP_RUNTIME"
+      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",50,50)   
+
+   when "DEV_ADC_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app from control algorithms developed in 42 simulator")   
+   
+   when "DEV_ECI_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the External Code Interface")   
+   
+   when "PERF_MON_MGMT"
       display("CFS_KIT PERF_MON_SCREEN",50,50)
-   elsif (app == "RUN_TEST_SCRIPT")
-      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} #{Cosmos::USERPATH}/procedures/kit_test/kit_test_main.rb")
-      display("CFS_KIT APP_CFS_SUMMARY_SCREEN",50,50)
-      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",1500,50)
-   elsif (app == "MANAGE_FILES")
-      display("CFS_KIT FILE_MGMT_SCREEN",50,50)
-   elsif (app == "MANAGE_TABLES")
-      display("CFS_KIT TABLE_MGMT_SCREEN",50,50)
-   elsif (app == "MANAGE_MEMORY")
-      display("CFS_KIT MEMORY_MGMT_SCREEN",50,50)
-   elsif (app == "MANAGE_APPS")
-      display("CFS_KIT APP_MGMT_SCREEN",50,50)
-   elsif (app == "APP_SUMMARY")
-      display("CFS_KIT APP_CFS_SUMMARY_SCREEN",10,10)
-      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",1500,10)
-   elsif (app == "MANAGE_RECORDER")
-      display("CFS_KIT RECORDER_MGMT_SCREEN",50,50)
-   elsif (app == "MANAGE_AUTONOMY")
-      display("CFS_KIT AUTONOMY_MGMT_SCREEN",50,50)
-   elsif (app == "SIM_42")
-      display("CFS_KIT SIM_42_SCREEN",50,50)
-   elsif (app == "PISAT")
+   
+   when "PERF_MON_DEMO"
+      display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
+
+   when "UNIT_TEST"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run unit tests for all installed apps")   
+
+   when "INTG_TEST"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run integration test all installed apps")   
+
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_develop_apps()"
+   end # cmd case
+
+end # cfs_kit_scr_develop_apps()
+
+
+################################################################################
+## Extend OSK
+################################################################################
+
+
+def cfs_kit_scr_extend_osk(screen, cmd)
+
+   case cmd
+   when "PISAT"
 	   #prompt("Please ensure you are connected to the PiSat network")
       #cmd("PICONTROL STARTCFS")
       #wait(2)
       #cmd("KIT_TO ENABLE_TELEMETRY")
       spawn("ruby #{Osk::COSMOS_TLM_GRAPHER}")
       display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
-   elsif (app == "MANAGE_APP_DEV")
-      #spawn("java -jar #{Osk::CREATE_APP_DIR}/CreateApp.jar", :chdir => "#{Osk::CREATE_APP_DIR}")
-      display("CFS_KIT MNG_APP_DEV_SCREEN",50,50)
-   elsif (app == "UPDATE_TUTORIAL")
+
+   when "RUN_BENCHMARKS"
+      prompt("Note this is a prototype application tht ill be updated for benchmarking remote targets")
+      display("CFS_KIT BENCHMARK_SCREEN",50,50) 
+
+   when "RUN_PLATFORM_CERT"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run platform certification against a target")   
+
+   when "SBN"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Work with Software Bus Netowrk app")   
+
+   when "ROS2"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Wrok with the Robotic Operating System")   
+
+   when "UPDATE_CFE"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Instructions for ugrading to a new cFE version")   
+   
+   when "UPDATE_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Instructions for ugrading an installed open source app")   
+   
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_develop_apps()"
+   end # cmd case
+
+end # cfs_kit_scr_extend_osk()
+
+
+
+def cfs_kit_launch_app(screen, app)
+
+
+   if (app == "UPDATE_TUTORIAL")
       # An exception will report any errors   
       if cfs_kit_create_tutorial_screen
          prompt ("Successfuly created tutorial screen file #{tutorial_scr_file}\nusing #{tutorial_def_file}")
       end
-   elsif (app == "CFE_USERS_GUIDE")
-      Cosmos.open_in_web_browser("#{Osk::CFE_UG_DIR}/#{Osk::CFE_UG_FILE}")
-   elsif (app == "OSK_TOUR")
-      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_TOUR_FILE}")
-   elsif (app == "OSK_UG")
-      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_UG_FILE}")
    elsif (app == "PROTO_APPP")
       #TODO - Investigate generic text table editor or tutorial screen
 	   Cosmos.run_process("ruby lib/OskCfeFileViewer -f '/mnt/hgfs/OpenSatKit/cosmos/cfs_kit/file_server/cfe_es_syslog.dat'")
@@ -199,55 +281,14 @@ def cfs_kit_launch_demo(screen, demo)
       display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",500,50) 
    elsif (demo == "MEMORY_DEMO")
       display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
-   elsif (demo == "RECORDER_DEMO")
-      display("CFS_KIT RECORDER_MGMT_DEMO_SCREEN",500,50)
-   elsif (demo == "AUTONOMY_DEMO")
-      display("CFS_KIT HEATER_CTRL_DEMO_SCREEN",500,50)
    elsif (demo == "APP_DEMO")
       display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
-   elsif (demo == "PERF_MON_DEMO")
-      display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
    elsif (demo == "TUTORIAL")
       cfs_kit_launch_tutorial_screen
-   else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_launch_demo()"
-      #Save prompt(MSG_TBD_FEATURE)  
    end
-
+   
 end # cfs_kit_launch_demo()
 
-################################################################################
-## Send Commands
-################################################################################
-
-def cfs_kit_send_cmd(screen, cmd)
-
-   if (cmd == "TO_ENA_TELEMETRY")
-      # DOn't use Osk::flight because cmd validation would fail
-      cmd("KIT_TO ENABLE_TELEMETRY")
-   elsif (cmd == "TIME_SET_CLOCK_ZERO")
-      Osk::flight.cfe_time.send_cmd("SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0")
-      Osk::flight.cfe_time.send_cmd("SET_CLOCK with SECONDS 0, MICROSECONDS 0") 
-   elsif (cmd == "PROTO_NEW_CMD")
-	   # TODO - Some potential new commands
-      # (cmd == "DISPLAY_SB_ROUTES")
-      # (cmd == "DISPLAY_MSG_IDS")
-      # (cmd == "CFS_HTML_DOC")
-      value = combo_box("Select the command being developed", 'Put File', 'Get File', 'Display SB Routes')
-      case value
-         when 'Put File'
-            file_xfer = Osk::system.file_transfer
-            file_xfer.put(GND_TEST_PUT_FILE, FLT_TEST_PUT_FILE)
-         when 'Get File'
-            file_xfer = Osk::system.file_transfer
-            file_xfer.get(FLT_TEST_PUT_FILE,GND_TEST_PUT_FILE)
-         when 'Display SB Routes'
-            cmd("CFE_SB WRITE_ROUTING_TO_FILE with FILENAME '/cf/~sb_tmp.dat'")
-      end
-   else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_send_cmd()"
-   end
-end # cfs_kit_send_cmd()
 
 ################################################################################
 ## Create Tutorial Screen

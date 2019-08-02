@@ -1,0 +1,5 @@
+proc sample_cf_upload
+
+write(77) "cfdp put output/cfdp/ssm_fsw_v1.mcd  2.1 /ram/ssm_fsw_v1.mcd"
+
+endproc 

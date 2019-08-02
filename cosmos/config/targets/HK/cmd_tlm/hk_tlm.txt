@@ -38,7 +38,7 @@ TELEMETRY HK COMBO_PKT_1 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined
   APPEND_ITEM <%= "TBL_#{Osk::TLM_STR_CMD_ERR}" %>   8 UINT "TBL Command Error Counter."
   APPEND_ITEM TBL_NUM_REG_TABLES                    16 UINT "TBL Number of Tables Registered."
 
-# BudgetSat (bSat) 
+# Simple Sat (SimSat) 
   
 TELEMETRY HK COMBO_PKT_2 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT2_MID_STR) %>

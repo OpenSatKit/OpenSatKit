@@ -1,0 +1,45 @@
+# This file defines the JSON application definition file options. Each application must define
+# this file in its cosmos/config/targets/APP_NAME/osk/app_name.json. This is not a valid json file and
+# each line or field starting with a '#' indicates a comment.
+# 
+{
+"app": {
+   
+   "cosmos": {
+      "target": "APP_NAME"
+   },
+   
+   "doc": {
+      "html": "/hk/docs/users_guide/html/index.html" # path/file relative to cfs/apps directory
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP | CFE_LIB | CFE"  # The CFE option allows cFE apps to be targets even thought they are not loaded by cfe_es_startup.scr
+      "obj-path-file": "/cf/osk_demo_app.so",
+      "entry-symbol": "OSK_DEMO_AppMain",
+      "name": "OSK_DEMO",
+      "priority": 120,
+      "stack": 8192,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "XML Demo Table",
+                  "id": 0,
+            "filename": "osk_demo_tbl.xml"
+         },
+         { 
+                "name": "SCANF Demo Table",
+                  "id": 1,
+            "filename": "osk_demo_tbl.scanf"
+         },
+         { 
+                "name": "JSON Demo Table",
+                  "id": 2,
+            "filename": "osk_demo_tbl.json"
+         }
+      ]
+   }
+}   
+}

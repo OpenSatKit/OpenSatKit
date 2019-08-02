@@ -25,8 +25,8 @@ def app_mgmt_launch_app(screen, app)
    elsif (app == "CREATE_APP")
       display("CFS_KIT MNG_APP_DEV_SCREEN",50,50)
    elsif (app == "APP_SUMMARY")
-      display("CFS_KIT APP_CFS_SUMMARY_SCREEN",50,50)
-      display("CFS_KIT APP_KIT_SUMMARY_SCREEN",1500,50)
+      display("CFS_KIT SIMSAT_CFS_APP_SCREEN",50,50)
+      display("CFS_KIT SIMSAT_OSK_APP_SCREEN",1500,50)
    else
       raise "Error in screen definition file. Undefined command sent to app_mgmt_launch_app()"
    end

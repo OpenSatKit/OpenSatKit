@@ -1,4 +1,5 @@
 <% 
+  require 'fsw_config_param' 
   require 'osk_config' 
   require 'osk_global'
 
@@ -34,7 +35,7 @@ COMMAND CFE_TBL ACTIVATE_TBL <%= Osk::Cfg.processor_endian %> "This command will
 
 COMMAND CFE_TBL WRITE_REG_TO_FILE <%= Osk::Cfg.processor_endian %> "This command will cause Table Services to write some of the contents of the Table Registry to the command specified file. This allows the operator to see the current state and configuration of all tables that have been registered with the cFE."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Full Filename where registry data is to be written."
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_TBL_DEFAULT_REG_DUMP_FILE %> "Full Filename where registry data is to be written."
 
 COMMAND CFE_TBL TLM_REGISTRY <%= Osk::Cfg.processor_endian %> "This command will cause Table Services to telemeter the contents of the Table Registry for the command specified table."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 40) %>

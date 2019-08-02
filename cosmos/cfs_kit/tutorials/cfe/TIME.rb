@@ -51,7 +51,7 @@ wait #TIME02 - Click <Go> to review diagnostic telemetry
 spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_TIME DIAG_PKT'")
 
 wait #TIME02 - Click <Go> to send diagnostic telemetry packet
-Osk::flight.cfe_time.send_cmd("REQUEST_DIAG")
+Osk::flight.cfe_time.send_cmd("SEND_DIAG")
 
 wait #TIME02 - Click <Go> to continue to next section
 

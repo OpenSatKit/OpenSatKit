@@ -1,0 +1,154 @@
+###############################################################################
+# SimSat Data/File Management Applications Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SimSat Data/File Management Applications"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+HORIZONTAL
+
+  SETTING TEXTCOLOR black
+
+  CANVAS 1000 650
+    CANVASIMAGE "SimSat-Bubble-Data_File.png" 20 0
+  END
+  
+  
+  VERTICALBOX
+
+  VERTICALBOX "Data Storage"
+  
+    MATRIXBYCOLUMNS 3 5
+         
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DS_CMD")'
+      NAMED_WIDGET ds_cmd COMBOBOX NOOP RESET_CTRS SET_APP_STATE SET_FILTER_FILE SET_FILTER_TYPE SET_FILTER_PARAM SET_FILE_TYPE SET_FILE_STATE SET_FILE_PATH_NAME SET_FILE_BASE_NAME SET_FILE_EXT SET_FILE_MAX_SIZE SET_FILE_MAX_AGE SET_FILE_COUNT CLOSE_FILE GET_FILE_INFO ADD_FILTER_MID CLOSE_ALL
+      LABEL "    "
+
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DS_TLM")'
+      NAMED_WIDGET ds_tlm COMBOBOX FILE_INFO HOUSEKEEPING
+      LABEL "    "
+
+      BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DS_TBL")'
+      NAMED_WIDGET ds_tbl COMBOBOX FILE FILTER
+      LABEL "    "
+
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DS_DOC")'
+      SETTING BACKCOLOR 255 255 255
+      LABEL "    "
+      LABEL "    "
+
+    END # Matrix
+  END # VerticalBox
+  
+  VERTICALBOX "File Manager"
+  
+    MATRIXBYCOLUMNS 3 5
+         
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FM_CMD")'
+      NAMED_WIDGET fm_cmd COMBOBOX NOOP RESET_CTRS COPY_FILE MOVE_FILE RENAME_FILE DELETE_FILE DELETE_ALL_FILES DECOMPRESS_FILE CONCAT_FILES GET_FILE_INFO GET_OPEN_FILES CREATE_DIR DELETE_DIR WRITE_DIR_TO_FILE SEND_DIR_PKT SEND_FREE_SPACE_PKT SET_TABLE_STATE
+      LABEL "    "
+
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FM_TLM")'
+      NAMED_WIDGET fm_tlm COMBOBOX DIR_LIST FILE_INFO FREE_SPACE HOUSEKEEPING OPEN_FILES      
+      LABEL "    "
+
+      BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FM_TBL")'
+      NAMED_WIDGET fm_tbl COMBOBOX FREESPACE
+      LABEL "    "
+
+      BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FM_FILE")'
+      NAMED_WIDGET fm_file COMBOBOX DIR_LIST
+      LABEL "    "
+
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FM_DOC")'
+      SETTING BACKCOLOR 255 255 255
+      LABEL "    "
+      LABEL "    "
+
+    END # Matrix
+  END # Vertical
+
+  VERTICALBOX "Housekeeping"
+  
+    MATRIXBYCOLUMNS 3 5
+         
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "HK_CMD")'
+      NAMED_WIDGET hk_cmd COMBOBOX NOOP RESET_CTRS
+      LABEL "    "
+
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "HK_TLM")'
+      NAMED_WIDGET hk_tlm COMBOBOX HOUSEKEEPING
+      LABEL "    "
+
+      BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "HK_TBL")'
+      NAMED_WIDGET hk_tlm COMBOBOX COPY
+      LABEL "    "
+
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "HK_DOC")'
+      SETTING BACKCOLOR 255 255 255
+      LABEL "    "
+      LABEL "    "
+
+    END # Matrix
+  END # Vertical
+
+  VERTICALBOX "Trivial File Transfer Protocol(TFTP)"
+  
+    MATRIXBYCOLUMNS 3 5
+         
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TFTP_CMD")'
+      NAMED_WIDGET tftp_cmd COMBOBOX NOOP RESET_CTRS GET_FILE PUT_FILE INIT_SOCKET
+
+      LABEL "    "
+
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TFTP_TLM")'
+      NAMED_WIDGET tftp_tlm COMBOBOX HOUSEKEEPING
+      LABEL "    "
+
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TFTP_DOC")'
+      SETTING BACKCOLOR 255 255 255
+      LABEL "    "
+      LABEL "    "
+
+    END # Matrix
+  END # Vertical
+
+  VERTICALBOX "Functions"
+  
+    MATRIXBYCOLUMNS 3
+
+      BUTTON 'Manage Files' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FUNC_FILE_MGMT")'
+      BUTTON 'Manage Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FUNC_RECORDER_MGMT")'
+      BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "FUNC_TBL_MGMT", "")'
+
+    END # Matrix
+  END # Function VerticalBox
+
+  VERTICALBOX "Learn"
+  
+    MATRIXBYCOLUMNS 3 5
+
+      BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DEMO")'
+      NAMED_WIDGET demo COMBOBOX RECORDER
+      LABEL "    "
+
+      BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TUTORIAL")'
+      NAMED_WIDGET tutorial COMBOBOX Coming-Soon
+      LABEL "    "
+
+    END # Matrix
+  END # Learn VerticalBox
+  
+  END # VerticalBox
+  SETTING BACKCOLOR 162 181 205
+        
+END # Horizontal

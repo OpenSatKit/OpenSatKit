@@ -1,0 +1,109 @@
+###############################################################################
+# cFE Executive Service Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "cFE Executive Service"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX "Ground Interface"
+  
+  MATRIXBYCOLUMNS 3 5
+         
+    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "CMD")'
+    NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS RESET SHELL START_APP STOP_APP RESTART_APP RELOAD_APP SEND_APP_INFO WRITE_APP_INFO_TO_FILE CLEAR_SYSLOG WRITE_SYSLOG_TO_FILE CLEAR_ERLOG WRITE_ERLOG_TO_FILE START_LA_DATA STOP_LA_DATA SET_LA_FILTER_MASK SET_LA_TRIG_MASK OVERWRITE_SYSLOG_MODE RESET_PR_CNT SET_MAX_PR_CNT DELETE_CDS TLM_POOL_STATS WRITE_CDS_REG_TO_FILE WRITE_TASK_INFO_TO_FILE
+    LABEL "    "
+    
+    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TLM")'
+    NAMED_WIDGET tlm COMBOBOX APP_INFO HOUSEKEEPING MEM_POOL SHELL 
+    LABEL "    "
+
+    BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "FILE")'
+    NAMED_WIDGET file COMBOBOX APP_INFO CDS ER_LOG SYS_LOG TASK_INFO
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+  
+VERTICALBOX "Functions"
+  
+  MATRIXBYCOLUMNS 4
+
+    BUTTON 'App Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "FUNC_APP_MGMT")'
+    BUTTON 'Perf Mon' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "FUNC_PERF_MON")'
+    LABEL "    "
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+
+VERTICALBOX "Learn"
+  
+  MATRIXBYCOLUMNS 3 5
+
+    BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "DEMO")'
+    NAMED_WIDGET demo COMBOBOX APP_MGMT PERF_MON
+    LABEL "    "
+
+    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TUTORIAL")'
+    NAMED_WIDGET tutorial COMBOBOX OVERVIEW
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+
+
+VERTICALBOX "Status" 
+  MATRIXBYCOLUMNS 4 15
+   
+    LABEL "Cmd Valid Cnt"
+    VALUE CFE_ES HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+    LABEL "Cmd Error Cnt"
+    VALUE CFE_ES HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+
+    LABEL "Rst Type"
+    VALUE CFE_ES HK_TLM_PKT RESET_TYPE WITH_UNITS 8
+    LABEL "Rst Subtype"
+    VALUE CFE_ES HK_TLM_PKT RESET_SUBTYPE WITH_UNITS 8
+
+    LABEL "# Proc Rsts"
+    VALUE CFE_ES HK_TLM_PKT PROC_RESETS WITH_UNITS 8
+    LABEL "ErLog Entries"
+    VALUE CFE_ES HK_TLM_PKT ERLOG_ENTRIES WITH_UNITS 8
+    #LABEL "Max Proc Rsts"
+    #VALUE CFE_ES HK_TLM_PKT MAX_PROC_RESETS WITH_UNITS 8
+   
+    LABEL "Heap Free"      
+    VALUE CFE_ES HK_TLM_PKT HEAP_BYTES_FREE WITH_UNITS 8
+    LABEL "Heap Blk Free"
+    VALUE CFE_ES HK_TLM_PKT HEAP_BLOCKS_FREE WITH_UNITS 8
+
+    LABEL "Heap Max Blk"
+    VALUE CFE_ES HK_TLM_PKT HEAP_MAX_BLOCKSIZE WITH_UNITS 8
+    LABEL "ErLog Index"
+    VALUE CFE_ES HK_TLM_PKT ERLOG_INDEX WITH_UNITS 8
+   
+    LABEL "SysLog Used"
+    VALUE CFE_ES HK_TLM_PKT SYSLOG_BYTES_USED WITH_UNITS 8
+    LABEL "SysLog Size"
+    VALUE CFE_ES HK_TLM_PKT SYSLOG_SIZE WITH_UNITS 8
+
+    LABEL "SysLog Entries"
+    VALUE CFE_ES HK_TLM_PKT SYSLOG_ENTRIES WITH_UNITS 8
+    LABEL "SysLog Mode"
+    VALUE CFE_ES HK_TLM_PKT SYSLOG_MODE WITH_UNITS 8
+
+  End # Matrix
+END # Horizontal
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

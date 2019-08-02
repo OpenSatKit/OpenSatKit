@@ -68,7 +68,7 @@ module Osk
    
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_TOUR_FILE = "OSK_Tour.pdf"
+   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide-2.0"
    DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
@@ -84,7 +84,8 @@ module Osk
    TUTORIAL_PDF    = "PDF"
    TUTORIAL_SCRIPT = "SCRIPT"
 
-   CFE_UG_FILE   = "index.html"
+   CFE_UG_FILE      = "index.html"
+   CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"
    
@@ -126,15 +127,19 @@ module Osk
    TBL_MGR_DEF_CFE_EVS_LOG      = "cfe_evs_log.txt"
    TBL_MGR_DEF_CFE_EVS_APP_INFO = "cfe_evs_app_info.txt"
 
-   TBL_MGR_DEF_CFE_SB_PIPE = "cfe_sb_pipe_info.txt"
+   TBL_MGR_DEF_CFE_SB_PIPE    = "cfe_sb_pipe_info.txt"
+   TBL_MGR_DEF_CFE_SB_ROUTES  = "cfe_sb_routes.txt"
+   TBL_MGR_DEF_CFE_SB_MSG_MAP = "cfe_sb_msg_map.txt"
 
    TBL_MGR_DEF_CFE_TBL_REG = "cfe_tbl_reg.txt"
 
    TBL_MGR_DEF_DS_FILE_TBL   = "ds_file_tbl.txt"
    TBL_MGR_DEF_DS_FILTER_TBL = "ds_filter_tbl.txt"
-   TBL_MGR_DEF_FM_DIR  = "fm_dir_list.txt"
-   TBL_MGR_DEF_MD_TBL  = "md_tbl.txt"
-   TBL_MGR_DEF_MM_DMP  = "mm_dump.txt"
+   TBL_MGR_DEF_FM_DIR        = "fm_dir_list.txt"
+   TBL_MGR_DEF_FM_FREESPACE  = "fm_freespace_tbl.txt"
+   TBL_MGR_DEF_HK_COPY       = "hk_copy_tbl.txt"
+   TBL_MGR_DEF_MD_TBL        = "md_tbl.txt"
+   TBL_MGR_DEF_MM_DMP        = "mm_dump.txt"
    
    #####################
    ## Directory Paths ##

@@ -9,57 +9,89 @@
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING LABELVALUELIMITSBAR COLORBLIND TRUE
 VERTICAL
-  NAMED_WIDGET heading TITLE "cFS Starter Kit"
+  NAMED_WIDGET heading TITLE "Open Sat Kit"
   SETTING BACKCOLOR 162 181 205
   SETTING TEXTCOLOR black
   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   TABBOOK
-    TABITEM "Home"
+    TABITEM "Explore cFS/SimSat"
+      
       VERTICALBOX System
-        MATRIXBYCOLUMNS 8
-          BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "START_CFS")'
+        MATRIXBYCOLUMNS 5
+
+          BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS")'
           SETTING BACKCOLOR 0 200 0
-          BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "STOP_CFS")'
-          SETTING BACKCOLOR 255 80 80
+          BUTTON 'Start cFS/42' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS_42")'
+          SETTING BACKCOLOR 0 200 0
           LABEL "          "
-          LABEL "          "
-          LABEL "          "
-          LABEL "          "
-          LABEL "Time(secs)"
+          LABEL "System Time(secs)"
           VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
-        END
-        LABEL ""
-        MATRIXBYCOLUMNS 3
-          BUTTON 'Enable Telemetry' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TO_ENA_TELEMETRY")'
-          BUTTON 'Reset Time'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "TIME_SET_CLOCK_ZERO")'
-          BUTTON 'Set Cmd Validate' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SET_CMD_VALIDATE")'
-          BUTTON 'App Sum Pages'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "APP_SUMMARY")'
-          BUTTON 'cFE Services'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_SERVICES")'
-          BUTTON 'Mng App RunTime'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APP_RUNTIME")'
+
+          BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_CFS")'
+          SETTING BACKCOLOR 220 50 50
+          BUTTON 'Stop 42' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_42")'
+          SETTING BACKCOLOR 220 50 50
+          LABEL "          "
+          LABEL "          "
+          LABEL "          "
+
         END # Matrix
         SETTING BACKCOLOR 162 181 205
-      END # Box      
-      HORIZONTALBOX cFS-Functions 5
+        
+        LABEL "          "
+
+        HORIZONTAL
+        VERTICALBOX 'Config System'          
+        MATRIXBYCOLUMNS 2
+          BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
+          NAMED_WIDGET sys_cmd COMBOBOX ENA_TLM RESET_TIME SET_GND_CMD_MODE
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+        End # Config System Box
+        VERTICALBOX 'Documentation'
+        MATRIXBYCOLUMNS 2
+          BUTTON 'OSK Quick Start' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "OSK_QUICK_START")'
+          SETTING BACKCOLOR 255 255 255
+          BUTTON 'OSK Users Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "OSK_USERS_GUIDE")'
+          SETTING BACKCOLOR 255 255 255
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+        End # Documentation Box
+        End # HORIZONTAL
+
+        VERTICALBOX 'Scripts'
+        MATRIXBYCOLUMNS 4
+          BUTTON 'Run Ops Example' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_OPS_EXAMPLE")'
+          BUTTON 'Run Integration Test'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_INTG_TEST")'
+          LABEL "          "
+          LABEL "          "
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+        End # Scripts Box
+        SETTING BACKCOLOR 162 181 205
+      END # System Box      
+      
+      
+      HORIZONTALBOX Applications 5
         MATRIXBYCOLUMNS 3
-          BUTTON 'Manage Files'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_FILES")'
-          BUTTON 'Manage Tables'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_TABLES")'
-          BUTTON 'Manage Memory'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_MEMORY")'
-          BUTTON 'Manage Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_RECORDER")'
-          BUTTON 'Manage Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_AUTONOMY")'
-          BUTTON 'Manage Apps'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APPS")'
+          BUTTON 'Runtime Environment' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_RUNTIME")'
+          BUTTON 'Data/File Mgmt'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_DATA_FILE")'
+          BUTTON 'Autonomy'            'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_AUTONOMY")'
+          BUTTON 'Attitude Det/Ctrl'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_ADC")'
+          BUTTON 'Health & Safety'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_HEALTH_SAFETY")'
+          BUTTON 'Maintenance'         'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_MAINTENANCE")'
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # BOX
-      HORIZONTALBOX Kit-Tools 5
+      HORIZONTALBOX "core Flight Executive (cFE)" 5
         MATRIXBYCOLUMNS 3
-          BUTTON 'Verify cFS Config'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "RUN_TEST_SCRIPT")'
-          BUTTON 'Run Performance Monitor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PERF_MON")'
-          BUTTON 'Run Benchmarks'          'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "BENCHMARKS")'
-          BUTTON '42 Simulator'            'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "SIM_42")'
-          BUTTON 'PiSat Control'           'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PISAT")'
-          BUTTON 'Manage App Development'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "MANAGE_APP_DEV")'
-          ##SETTING BACKCOLOR 128 128 128
-          ##SETTING GRAY_TOLERANCE 0.1
+          BUTTON 'Event Service'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_EVENT_SERVICE")'
+          BUTTON 'Executive Service' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_EXECUTIVE_SERVICE")'
+          BUTTON 'Software Bus'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_SOFTWARE_BUS")'
+          BUTTON 'Table Service'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_TABLE_SERVICE")'
+          BUTTON 'Time Service'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_TIME_SERVICE")'
+          BUTTON 'cFE Users Guide'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_USERS_GUIDE")'
+          SETTING BACKCOLOR 255 255 255
         END # Matrix
         SETTING BACKCOLOR 162 181 205
       END # BOX
@@ -71,172 +103,131 @@ VERTICAL
         #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
         NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
       #End # Scroll Window
-    END # Tab Item Getting Started
+    END # Tab Item Explore cFS/SimSat
 
 #######################################################
 
-    TABITEM "Demos"
+    TABITEM "Develop Apps"
  
-      VERTICALBOX "" 5
-        
-        # Button order is the same as the Home tab "cFS-Functions" left to right button order
-        # Play with whitespace to get buttons and text to align
-        
-        # File Management
-        HORIZONTAL 10
-          BUTTON 'Files' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "FILE_MGMT_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Manage onboard directories/files using File Manager (FM) and transfer files"
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-        HORIZONTAL 10
-          LABEL "                     "
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "between COSMOS and the cFS using Trivial File Transfer Protocol (TFTP).     "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-        
-        # Table Management
-        HORIZONTAL 10
-          BUTTON 'Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TABLE_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Load, dump, and display tables using the cFE Table (TBL) Service.               "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        End # Horizontal
+      VERTICALBOX "Learn App Models"
+        MATRIXBYCOLUMNS 4
+          BUTTON 'cFE App Dev Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "CFE_APP_DEV_GUIDE")'
+          SETTING BACKCOLOR 255 255 255
+          BUTTON 'OSK App Dev Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_APP_DEV_GUIDE")'
+          SETTING BACKCOLOR 255 255 255
+          BUTTON 'App Training Slides' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_APP_TRAIN_SLIDES")'
+          SETTING BACKCOLOR 255 255 255
+          LABEL "    "
 
-        # Memory Management
-        HORIZONTAL 10
-          BUTTON 'Memory' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "MEMORY_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Load, dump, and monitor memory locations using Memory Manager (MM)  "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        End # Horizontal
-        HORIZONTAL 10
-          LABEL "                     "
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "and Memory Dwell (MD).                                                                               "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
+          BUTTON 'OSK Demo app' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_DEMO_APP")'
+          LABEL "    "
+          LABEL "    "
+          LABEL "    "
+        END
+        SETTING BACKCOLOR 162 181 205
+      END # Vertical Box      
 
-        # Recorder Management
-        HORIZONTAL 10
-          BUTTON 'Recorder' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "RECORDER_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Manage onboard data recorder using Data Storage (DS).                             "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
+      VERTICALBOX "Manage Apps" 5
+        MATRIXBYCOLUMNS 4
+          BUTTON 'Add App'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "ADD_APP")'
+          BUTTON 'Remove App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "REMOVE_APP")'
+          BUTTON 'Create App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "CREATE_APP")'
+          LABEL "    "
 
-        # Autonomy
-        HORIZONTAL 10
-          BUTTON 'Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "AUTONOMY_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Heater Control (HC) controls heaters simulated by Heater Sim (HSIM).        "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-        HORIZONTAL 10
-          LABEL "                     "
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Limit Checker (LC) monitors HSIM tlm and cmds Stored Command (SC)      "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-        HORIZONTAL 10
-          LABEL "                     "
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "to run stored command sequences when limits are exceeded.                    "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
+          BUTTON 'Dev ACS App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ADC_APP")'
+          BUTTON 'Dev ECI App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ECI_APP")'
+          LABEL "    "
+          LABEL "    "
 
-        # Apps
-        HORIZONTAL 10
-          BUTTON 'Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "APP_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Stop, start, and load apps using the cFE Executive Services.                        "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
+          BUTTON 'Manage App Runtime' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "MANAGE_APP_RUNTIME")'
+          LABEL "    "
+          LABEL "    "
+          LABEL "    "
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # BOX
 
-        # Performance Monitor 
-        HORIZONTAL 10
-          BUTTON 'PerfMon' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "PERF_MON_DEMO")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Configure & capture performance data using the cFE Executive Service      "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-        HORIZONTAL 10
-          LABEL "                     "
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "performance monitor. Transfer data file to COSMOS and display using the   "
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-        HORIZONTAL 10
-          LABEL "                     "
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "performance monitor tool."
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
+     VERTICALBOX "Debug & Verify Apps" 5
+        MATRIXBYCOLUMNS 3
+          BUTTON 'Perf Mon Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_MGMT")'
+          BUTTON 'Perf Mon Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_DEMO")'
+          LABEL "    "
 
-        # Command Prototype 
-        #HORIZONTAL 10
-        #  BUTTON 'Proto New Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_send_cmd(self, "PROTO_NEW_CMD")'
-        #  BUTTON 'Proto New Cmd' 'Cosmos.open_in_text_editor("Test")'
-        #  LABEL "                                                                             "
-        #END # Horizontal
-        LABEL ""
-        LABEL "Note debug events are enabled during demos"
-      END # Vertical Box
-    END # Tab Demos
+          BUTTON 'Run Unit Tests'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "UNIT_TEST")'
+          LABEL "    "
+          LABEL "    "
 
-#######################################################
-
-    TABITEM "Docs"
- 
-      VERTICALBOX "" 5
- 
-        HORIZONTAL 10
-          BUTTON 'OSK Tour' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "OSK_TOUR")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Quick tour of OpenSatKit's features"
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-
-        HORIZONTAL 10
-          BUTTON 'OSK UG' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "OSK_UG")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "OSK User's Guide"
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-
-        HORIZONTAL 10
-          BUTTON 'cFE Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFE_USERS_GUIDE")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Display the cFE HTML User's Guide in a web browser"
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
-
-        HORIZONTAL 10
-          BUTTON 'Tutorials' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_demo(self, "TUTORIAL")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Launch window to access tutorials. Must select <Update> prior to first use after kit installation."
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
- 
-        HORIZONTAL 10
-          BUTTON 'Update' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "UPDATE_TUTORIAL")'
-          SPACER 20 0 MAXIMUM FIXED          
-          LABEL "Create new tutorials page after updating the <i>osk_tutorials.json</i> definition file"
-          SPACER 50 0 MINIMUMEXPANDING FIXED          
-        END # Horizontal
+          BUTTON 'Run Intgr Tests' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "INTG_TEST")'
+          LABEL "    "
+          LABEL "    "
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # BOX
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      #SCROLLWINDOW
+        #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
+        #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
+        #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
+        NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
+      #End # Scroll Window
       
-        #HORIZONTAL 10
-        #  BUTTON 'Proto' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "PROTO_APP")'
-        #  SPACER 20 0 MAXIMUM FIXED          
-        #  LABEL "Prototype a new feature"
-        #  SPACER 50 0 MINIMUMEXPANDING FIXED          
-        #END # Horizontal
+    END # Tab App Development
 
-      END # Vertical Box
+#######################################################
 
-    END # Tab Tutorials
+    TABITEM "Extend OSK"
+ 
+      VERTICALBOX "Remote Targets"
+        MATRIXBYCOLUMNS 4
+          BUTTON 'PiSat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "PISAT")'
+          LABEL "          "
+          LABEL "          "
+          LABEL "          "
+  
+          BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "RUN_BENCHMARKS")'
+          LABEL "          "
+          LABEL "          "
+          LABEL "          "
 
-    SETTING BACKCOLOR 162 181 205
+          BUTTON 'Run Platform Cert' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "RUN_PLATFORM_CERT")'
+          LABEL "          "
+          LABEL "          "
+          LABEL "          "
+        END
+        SETTING BACKCOLOR 162 181 205
+      END # Vertical Box      
+
+      VERTICALBOX "Bridges" 5
+        MATRIXBYCOLUMNS 4
+          BUTTON 'SBN'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "SBN")'
+          BUTTON 'ROS2'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "ROS2")'
+          LABEL "          "
+          LABEL "          "
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # BOX
+
+     VERTICALBOX "Maintain Kit" 5
+        MATRIXBYCOLUMNS 4
+          BUTTON 'Update cFE'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "UPDATE_CFE")'
+          BUTTON 'Update App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "UPDATE_APP")'
+          LABEL "    "
+          LABEL "    "
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+      END # BOX
+      
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      #SCROLLWINDOW
+        #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
+        #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
+        #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
+        NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
+      #End # Scroll Window
+
+    END # Tab Extend OSK
+
   END # Tab Book
 END # Vertical

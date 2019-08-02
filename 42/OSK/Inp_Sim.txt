@@ -1,7 +1,7 @@
 <<<<<<<<<<<<<<<<<  42: The Mostly Harmless Simulator  >>>>>>>>>>>>>>>>>
 ************************** Simulation Control **************************
 FAST                            !  Time Mode (FAST, REAL, or EXTERNAL)
-5000.0   0.5                    !  Sim Duration, Step Size [sec]
+864000.0   0.5                  !  Sim Duration, Step Size [sec]
 1.0                             !  File Output Interval [sec]
 TRUE                            !  Graphics Front End?
 Inp_Cmd.txt                     !  Command Script File Name

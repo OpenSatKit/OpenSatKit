@@ -1,0 +1,97 @@
+###############################################################################
+# SimSat cFS App Summary Screen
+#
+# Notes:
+#  1. Displays the counters for the apps included in SimSat. For illusatrative
+#     purposes rather than practical for a mission.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SimSat cFS Applications"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX
+  MATRIXBYCOLUMNS 4
+    LABEL "App Name"
+    LABEL "Seq Cnt"
+    LABEL "Cmd Valid Cnt"
+    LABEL "Cmd Error Cnt"
+    LABEL "CFE_ES - cFE Exceutive Service"
+    VALUE CFE_ES HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE CFE_ES HK_TLM_PKT CMD_VALID_COUNT
+    VALUE CFE_ES HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "CFE_EVS - cFE Event Service"
+    VALUE CFE_EVS HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE CFE_EVS HK_TLM_PKT CMD_VALID_COUNT
+    VALUE CFE_EVS HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "CFE_SB - cFE Software Bus"
+    VALUE CFE_SB HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE CFE_SB HK_TLM_PKT CMD_VALID_COUNT
+    VALUE CFE_SB HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "CFE_TBL - cFE Table Service"
+    VALUE CFE_TBL HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE CFE_TBL HK_TLM_PKT CMD_VALID_COUNT
+    VALUE CFE_TBL HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "CFE_TIME - cFE Time Service"
+    VALUE CFE_TIME HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE CFE_TIME HK_TLM_PKT CMD_VALID_COUNT
+    VALUE CFE_TIME HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "CS - Checksum"
+    VALUE CS HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE CS HK_TLM_PKT CMD_VALID_COUNT
+    VALUE CS HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "DS - Data Storage"
+    VALUE DS HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE DS HK_TLM_PKT CMD_VALID_COUNT
+    VALUE DS HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "FM - File Manager"
+    VALUE FM HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE FM HK_TLM_PKT CMD_VALID_COUNT
+    VALUE FM HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "HK - House Keeping"
+    VALUE HK HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE HK HK_TLM_PKT CMD_VALID_COUNT
+    VALUE HK HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "HS - Health & Safety"
+    VALUE HS HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE HS HK_TLM_PKT CMD_VALID_COUNT
+    VALUE HS HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "LC - Limit Checker"
+    VALUE LC HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE LC HK_TLM_PKT CMD_VALID_COUNT
+    VALUE LC HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "MD - Memory Dwell"
+    VALUE MD HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE MD HK_TLM_PKT CMD_VALID_COUNT
+    VALUE MD HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "MM - Memory Manager"
+    VALUE MM HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE MM HK_TLM_PKT CMD_VALID_COUNT
+    VALUE MM HK_TLM_PKT CMD_ERROR_COUNT
+    LABEL "SC - Stored Command"
+    VALUE SC HK_TLM_PKT CCSDS_SEQUENCE
+    VALUE SC HK_TLM_PKT CMD_VALID_COUNT
+    VALUE SC HK_TLM_PKT CMD_ERROR_COUNT
+    END # Matrix
+    HORIZONTALBOX
+      NAMED_WIDGET CFS_APPS COMBOBOX CFE_ES CFE_EVS CFE_SB CFE_TBL CFE_TIME CS DS FM HK HS LC MD MM SC
+      BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("CFS_APPS").text}"].send_cmd("#{Osk::CMD_STR_NOOP}")'
+      BUTTON 'Reset Counters' 'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("CFS_APPS").text}"].send_cmd("#{Osk::CMD_STR_RESET}")'
+      #BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/fsw_app.rb"; FswApp.send_scr_cmd("#{get_named_widget("CFS_APPS").text}", "#{Osk::CMD_STR_NOOP}")'
+      #BUTTON 'Reset Counters' 'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/fsw_app.rb"; FswApp.send_scr_cmd("#{get_named_widget("CFS_APPS").text}", "#{Osk::CMD_STR_RESET}")'
+    END
+
+END # Vertical Box
+
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50
