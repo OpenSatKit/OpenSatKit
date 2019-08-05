@@ -1,0 +1,85 @@
+###############################################################################
+# cFE Event Service Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "cFE Event Service"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+
+VERTICALBOX "Ground Interface"
+  
+  MATRIXBYCOLUMNS 3 5
+         
+    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "CMD")'
+    NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS ENA_EVENT_TYPE DIS_EVENT_TYPE SET_EVENT_FMT ENA_APP_EVENT_TYPE DIS_APP_EVENT_TYPE ENA_APP_EVENT_GEN DIS_APP_EVENT_GEN RESET_APP_CTRS SET_FILTER_MASK ENA_PORT DIS_PORT RESET_FILTER_CTR RESET_ALL_FILTERS ADD_EVENT_FILTER DEL_EVENT_FILTER WRITE_APP_INFO_TO_FILE WRITE_LOG_TO_FILE SET_LOG_MODE CLEAR_LOG
+    LABEL "    "
+    
+    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "TLM")'
+    NAMED_WIDGET tlm COMBOBOX EVENT_MSG_PKT HOUSEKEEPING 
+    LABEL "    "
+
+    BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "FILE")'
+    NAMED_WIDGET file COMBOBOX APP_INFO LOCAL_LOG
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+  
+  
+VERTICALBOX "Learn"
+  
+  MATRIXBYCOLUMNS 3 5
+
+    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "TUTORIAL")'
+    NAMED_WIDGET tutorial COMBOBOX CFE_TRAINING_SLIDES EVS_EXERCISE_SCRIPT CFE_EXERCISE_SLIDES
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+
+
+VERTICALBOX "Status" 
+   MATRIXBYCOLUMNS 4 15
+   
+      LABEL "Cmd Valid Cnt"
+      VALUE CFE_EVS HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+      LABEL "Cmd Error Cnt"
+      VALUE CFE_EVS HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+      
+      LABEL "Send Count"
+      VALUE CFE_EVS HK_TLM_PKT MSG_SEND_CTR WITH_UNITS 8
+      LABEL "Msg Format"
+      VALUE CFE_EVS HK_TLM_PKT MSG_FMT_MODE WITH_UNITS 8
+      
+      LABEL "Msg Trunc"
+      VALUE CFE_EVS HK_TLM_PKT MSG_TRUNC_CTR WITH_UNITS 8
+      LABEL "Port Mask"
+      VALUE CFE_EVS HK_TLM_PKT OUTPUT_PORT WITH_UNITS 8
+      #LABEL "Unreg App"
+      #VALUE CFE_EVS HK_TLM_PKT UNREG_APP_CTR
+      
+      LABEL "Log Ena"
+      VALUE CFE_EVS HK_TLM_PKT LOG_ENA WITH_UNITS 8
+      LABEL "Log Mode"
+      VALUE CFE_EVS HK_TLM_PKT LOG_MODE WITH_UNITS 8
+      
+      LABEL "Log Full"
+      VALUE CFE_EVS HK_TLM_PKT LOG_FULL_FLAG WITH_UNITS 8
+      LABEL "Log OvFl"
+      VALUE CFE_EVS HK_TLM_PKT LOG_OVFL_CTR WITH_UNITS 8
+
+  End # Matrix
+END # Horizontal
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

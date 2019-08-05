@@ -28,6 +28,7 @@
 #include "tblmgr_msg.h"
 #include "tblmgr.h"
 #include "json.h"
+#include "faultrep.h"
 
 #endif /* _osk_app_fw_ */
 

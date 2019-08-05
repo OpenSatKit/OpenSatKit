@@ -7,7 +7,7 @@
   
 %>  
 
-COMMAND <%= @APP_PREFIX_STR %> CF_GND_TO_SPACE_PDU <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+COMMAND <%= @APP_PREFIX_STR %> CF_GND_TO_SPACE_PDU <%= Osk::Cfg.processor_endian %> "Ground-to-space PDU"
   <%= Osk::Cfg.cfdp_pdu_cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR) %>
 
   #EVS Port1 42/1/CF 70: PDU Rcv Error:PDU Hdr illegal size - 7, must be 12 bytes
@@ -29,5 +29,5 @@ COMMAND <%= @APP_PREFIX_STR %> CF_GND_TO_SPACE_PDU <%= Osk::Cfg.processor_endian
   #APPEND_PARAMETER PAYLOAD 0 BLOCK "" "Binary Data"
 
   APPEND_PARAMETER PAYLOAD 0 BLOCK "" "Binary Data"
-  DISABLE_MESSAGES
+  ##DISABLE_MESSAGES
 

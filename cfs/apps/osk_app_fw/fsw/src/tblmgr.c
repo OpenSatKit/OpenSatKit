@@ -206,6 +206,7 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    if (LoadTblCmd->Id < TblMgr->NextAvailableId)
    {
 
+      TblMgr->Tbl[LoadTblCmd->Id].LastAction       = TBLMGR_ACTION_LOAD;
       TblMgr->Tbl[LoadTblCmd->Id].LastActionStatus = TBLMGR_STATUS_INVALID;
       TblMgr->LastActionTblId = LoadTblCmd->Id;
       /* Errors reported by utility so no need for else clause */
@@ -215,9 +216,13 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
          if (DBG_TBLMGR) OS_printf("TBLMGR_LoadTblCmd() Before Tbl->LoadFuncPtr call\n");
          Tbl = &(TblMgr->Tbl[LoadTblCmd->Id]);
          RetStatus = (Tbl->LoadFuncPtr) (Tbl, LoadTblCmd->LoadType, LoadTblCmd->Filename);
-         if (RetStatus) 
+         if (RetStatus) {
             TblMgr->Tbl[LoadTblCmd->Id].LastActionStatus = TBLMGR_STATUS_VALID;
-         
+            CFE_EVS_SendEvent(TBLMGR_LOAD_SUCCESS_EID, CFE_EVS_INFORMATION, 
+                              "Sucessfully %sd table %d using file %s",
+                              TBLMGR_LoadTypeStr(LoadTblCmd->LoadType),
+                              LoadTblCmd->Id, LoadTblCmd->Filename);
+         }
       }
    }
    else
@@ -230,6 +235,33 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    return RetStatus;
   
 } /* End TBLMGR_LoadTblCmd() */
+
+
+/******************************************************************************
+** Function: TBLMGR_LoadTypeStr
+**
+*/
+const char* TBLMGR_LoadTypeStr(int8 LoadType)
+{
+
+   static char* LoadTypeStr[] = {
+      "Replace",
+      "Update",
+      "Undefined" 
+   };
+
+   uint8 i = 2;
+   
+   if ( LoadType == TBLMGR_LOAD_TBL_REPLACE ||
+        LoadType == TBLMGR_LOAD_TBL_UPDATE) {
+   
+      i = LoadType;
+   
+   }
+        
+   return LoadTypeStr[i];
+
+} /* End TBLMGR_LoadTypeStr() */
 
 
 /******************************************************************************
@@ -251,14 +283,19 @@ boolean TBLMGR_DumpTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
       
    if (DumpTblCmd->Id < TblMgr->NextAvailableId)
    {
+      TblMgr->Tbl[DumpTblCmd->Id].LastAction       = TBLMGR_ACTION_DUMP;
       TblMgr->Tbl[DumpTblCmd->Id].LastActionStatus = TBLMGR_STATUS_INVALID;
       TblMgr->LastActionTblId = DumpTblCmd->Id;
       if (AppFw_VerifyDirForWrite(DumpTblCmd->Filename))
       {
          Tbl = &TblMgr->Tbl[DumpTblCmd->Id];
          RetStatus = (Tbl->DumpFuncPtr) (Tbl, DumpTblCmd->DumpType, DumpTblCmd->Filename);
-         if (RetStatus) 
+         if (RetStatus) {
             TblMgr->Tbl[DumpTblCmd->Id].LastActionStatus = TBLMGR_STATUS_VALID;
+            CFE_EVS_SendEvent(TBLMGR_DUMP_SUCCESS_EID, CFE_EVS_INFORMATION, 
+                              "Sucessfully dumped table %d to file %s",
+                              DumpTblCmd->Id, DumpTblCmd->Filename);
+         }
       }
    }
    else
@@ -304,5 +341,7 @@ static boolean DumpTblStub(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename
    return FALSE;
 
 } /* End DumpTblStub() */
+
+
 
 /* end of file */

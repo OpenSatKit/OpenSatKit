@@ -1,11 +1,10 @@
 TITLE 'cFS Command and Telemetry Server'
 
-PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
-
 # Visiona CFDP Interface
 BACKGROUND_TASK cfdp_engine_task.rb
-INTERFACE_TARGET CFDP cmd_tlm_server.txt
 
+#PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
+  
 #AUTO_INTERFACE_TARGETS # Use cmd_tlm_server.txt from all targets declared in system.txt
 
 #INTERFACE CFS_PI_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
@@ -17,6 +16,11 @@ INTERFACE_TARGET CFDP cmd_tlm_server.txt
 # and then remap the targets.
 #INTERFACE PISAT_CFS_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
 INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
+  PROTOCOL READ interfaces/cfdp_test_protocol
+  PROTOCOL READ interfaces/cfdp_protocol
+  PROTOCOL WRITE interfaces/cfdp_protocol  
+  PROTOCOL WRITE interfaces/cfdp_test_protocol
+
   TARGET CFE_ES
   TARGET CFE_EVS
   TARGET CFE_SB
@@ -46,23 +50,37 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   TARGET I42
   TARGET ISIM
   # CFDP Engine
-  TARGET PDU
   TARGET CFDP_TEST
-  PROTOCOL READ interfaces/cfdp_test_protocol
-  PROTOCOL READ interfaces/cfdp_protocol
-  PROTOCOL WRITE interfaces/cfdp_protocol  
-  PROTOCOL WRITE interfaces/cfdp_test_protocol
+  TARGET PDU
+
   # PiSat Apps
   TARGET HB
+
   # User Apps
 
-#<cfs_kit>Create app tool will add target between the cfs_kit tags
+  #<cfs_kit>Create app tool will add target between the cfs_kit tags
 
-#</cfs_kit>
+  #</cfs_kit>
+  
+  
   
 INTERFACE COSMOSINT cmd_tlm_server_interface.rb
   TARGET COSMOS
   DISABLE_DISCONNECT
 
+
+# Visiona CFDP Interface
+#INTERFACE_TARGET CFDP cmd_tlm_server.txt
+INTERFACE CFDP_INT interfaces/visiona_cfdp_interface.rb
+  TARGET CFDP
+  DISABLE_DISCONNECT
+  PROTOCOL READ interfaces/cfdp_test_protocol
+  PROTOCOL READ interfaces/cfdp_protocol
+  PROTOCOL WRITE interfaces/cfdp_protocol  
+  PROTOCOL WRITE interfaces/cfdp_test_protocol
+  
+
 INTERFACE PISAT_CONTROL_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
   TARGET PICONTROL
+  DONT_CONNECT
+  

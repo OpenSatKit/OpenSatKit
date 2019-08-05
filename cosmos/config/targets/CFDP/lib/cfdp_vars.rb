@@ -35,4 +35,4 @@ ERRORLOG = "CFDP_Error_Log"
 SLEEP_TIME_BTW_PDUS = 0.01 	# time sleeping between sending pdus
 
 # OTHERS
-DEBUG = 0
+DEBUG = 1

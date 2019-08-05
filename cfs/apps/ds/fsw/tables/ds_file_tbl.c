@@ -77,15 +77,7 @@
 **       when creating ground system database entries that require
 **       file index numbers for command arguments.
 */
-#define FILE_ALL_EVENTS       0
-
-#define FILE_ALL_APP_HK_PKTS  1
-#define FILE_ALL_APP_TLM_PKTS 2
-
-#define FILE_ALL_HW_TLM_PKTS  3
-
-#define FILE_CFE_APP_HK_PKTS  4
-#define FILE_CFE_APP_TLM_PKTS 5
+/* Moved definitions to ds_platfororm_cfg.h */
 
 
 /*
@@ -93,7 +85,7 @@
 */
 DS_DestFileTable_t DS_DestFileTable =
 {
-  /* .Descriptor = */ "Sample File Table Data",
+  /* .Descriptor = */ "OpenSatKit Default",
   /* .File       = */
   {
     /* File Index 00 -- event packets only */
@@ -101,7 +93,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/bsat",
+      /* .Pathname      = */ "/cf/simsat",
       /* .Basename      = */ "events",
       /* .Extension     = */ ".dat",
 
@@ -111,12 +103,29 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .MaxFileAge    = */ (60 * 45),                 /* 45 minutes */
       /* .SequenceCount = */ 1000,
     },
-    /* File Index 01 -- application housekeeping packets */
+
+    /* File Index 01 -- cFE housekeeping packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Pathname      = */ "/cf/simsat",
+      /* .Basename      = */ "cfe",
+      /* .Extension     = */ ".hk",
+
+      /* .FileNameType  = */ DS_BY_COUNT,
+      /* .EnableState   = */ DS_DISABLED,
+      /* .MaxFileSize   = */ (1024 * 1024 * 2),         /* 2 M-bytes */
+      /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
+      /* .SequenceCount = */ 4000,
+    },
+
+    /* File Index 02 -- application housekeeping packets */
+    {
+#if (DS_MOVE_FILES == TRUE)
+      /* .Movename      = */ DS_EMPTY_STRING,
+#endif
+      /* .Pathname      = */ "/cf/simsat",
       /* .Basename      = */ "app",
       /* .Extension     = */ ".hk",
 
@@ -126,12 +135,13 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
       /* .SequenceCount = */ DS_UNUSED,
     },
-    /* File Index 02 -- application telemetry packets */
+
+    /* File Index 03 -- application telemetry packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Pathname      = */ "/cf/simsat",
       /* .Basename      = */ "app",
       /* .Extension     = */ ".tlm",
 
@@ -141,12 +151,13 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
       /* .SequenceCount = */ 2000,
     },
-    /* File Index 03 -- hardware telemetry packets */
+
+    /* File Index 04 -- hardware telemetry packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Pathname      = */ "/cf/simsat",
       /* .Basename      = */ "hw",
       /* .Extension     = */ "tlm",
 
@@ -156,27 +167,13 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
       /* .SequenceCount = */ 3000,
     },
-    /* File Index 04 -- cFE housekeeping packets */
-    {
-#if (DS_MOVE_FILES == TRUE)
-      /* .Movename      = */ DS_EMPTY_STRING,
-#endif
-      /* .Pathname      = */ "set_by_cmd_b4_enable",
-      /* .Basename      = */ "cfe",
-      /* .Extension     = */ "hk",
 
-      /* .FileNameType  = */ DS_BY_COUNT,
-      /* .EnableState   = */ DS_DISABLED,
-      /* .MaxFileSize   = */ (1024 * 1024 * 2),         /* 2 M-bytes */
-      /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
-      /* .SequenceCount = */ 4000,
-    },
     /* File Index 05 -- cFE telemetry packets */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "set_by_cmd_b4_enable",
+      /* .Pathname      = */ "/cf/simsat",
       /* .Basename      = */ "cfe",
       /* .Extension     = */ "tlm",
 
@@ -186,12 +183,13 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .MaxFileAge    = */ (60 * 60 * 2),             /* 2 hours */
       /* .SequenceCount = */ 5000,
     },
+
     /* File Index 06 */
     {
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/bsat",
+      /* .Pathname      = */ "/cf/simsat",
       /* .Basename      = */ "sci_aux",
       /* .Extension     = */ ".dat",
 

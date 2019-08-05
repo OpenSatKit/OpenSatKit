@@ -23,7 +23,6 @@
 */
 
 #include "app_fw_cfg.h"
-#include "cfe.h"
 
 /*
 ** Event Message IDs
@@ -34,6 +33,8 @@
 #define TBLMGR_DUMP_ID_ERR_EID       (TBLMGR_BASE_EID + 2)
 #define TBLMGR_LOAD_STUB_ERR_EID     (TBLMGR_BASE_EID + 3)
 #define TBLMGR_DUMP_STUB_ERR_EID     (TBLMGR_BASE_EID + 4)
+#define TBLMGR_LOAD_SUCCESS_EID      (TBLMGR_BASE_EID + 5)
+#define TBLMGR_DUMP_SUCCESS_EID      (TBLMGR_BASE_EID + 6)
 
 /*
 ** Table status
@@ -191,5 +192,16 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 ** 
 */
 boolean TBLMGR_DumpTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: TBLMGR_LoadTypeStr
+**
+** Note:
+**  1. Returns a pointer to a string that describes the load type 
+** 
+*/
+const char* TBLMGR_LoadTypeStr(int8 LoadType);
+
 
 #endif /* _tblmgr_ */

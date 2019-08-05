@@ -1,0 +1,37 @@
+{
+"app": {
+   
+   "cosmos": {
+      "target": "OSK_DEMO"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/osk_demo_app.so",
+      "entry-symbol": "OSK_DEMO_AppMain",
+      "name": "OSK_DEMO",
+      "priority": 120,
+      "stack": 8192,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "XML Demo Table",
+                  "id": 0,
+            "filename": "osk_demo_tbl.xml"
+         },
+         { 
+                "name": "SCANF Demo Table",
+                  "id": 1,
+            "filename": "osk_demo_tbl.scanf"
+         },
+         { 
+                "name": "JSON Demo Table",
+                  "id": 2,
+            "filename": "osk_demo_tbl.json"
+         }
+      ]
+   }
+}   
+}

@@ -30,7 +30,6 @@ require 'osk_ops'
 # start name with 'aa' to make it listed first in directory listing
 FMD_FLT_TEMP_DIR = "#{Osk::FLT_SRV_DIR}/aatmp"  
 
-FMD_DIR_LIST_FILE = "fm_demo_dir.dat"
 FMD_DEMO_PUT_FILE = "fm_demo_put.txt"
 
 FMD_FLT_PUT_FILE = "#{FMD_FLT_TEMP_DIR}/#{FMD_DEMO_PUT_FILE}"
@@ -62,8 +61,8 @@ FMD_INFO_0 = "\n\n\
 The TFTP App is configured as a server and the COSMOS ground system is configured as a client. COSMOS \
 does not come with TFTP support so an open source GEM has been installed.\n\n\
 \
-The File Management screen contains telemetry from two FM packets. The housekeeping packet provides command\
-counters and the directory listing packet provides information about a specific directory that is\
+The File Management screen contains telemetry from two FM packets. The housekeeping packet provides command \
+counters and the directory listing packet provides information about a specific directory that is \
 is sent in response to the SEND_DIR_PKT command."
 
 # 1 - Display directory
@@ -82,10 +81,10 @@ the directory listing. An offset of 0 is used through out this demo.\n\n\
 FM's WRITE_DIR_TO_FILE cmd can be used to write an entire directory listing to a file.\n\n\
 \
 Application command execution counters typically mean a command has been successfully processed. \
-However there are often situations when a command may take a while to process and the activity can\
-occur in the background. In these situations a child task performs the function and its command\
-execution counters (pass/fail) indicate whether the command was completed successfully. The parent\
-application's execution counter simply means the command was successfully/unsuccessfully parsed and\
+However there are often situations when a command may take a while to process and the activity can \
+occur in the background. In these situations a child task performs the function and its command \
+execution counters (pass/fail) indicate whether the command was completed successfully. The parent \
+application's execution counter simply means the command was successfully/unsuccessfully parsed and \
 passed to the child task."
 
 
@@ -117,7 +116,7 @@ FMD_INSTRUCT_4 = ["Demonstrate writing a directory to a file and transferring th
                   "<Demo> Send FM's WRITE_DIR_TO_FILE cmd to write directory listing of #{Osk::FLT_SRV_DIR}",
                   "               to the file #{FMD_FLT_PUT_FILE}",
                   "<Demo> Send TFTP get cmd to transfer the file from the cFS and write it to the ",
-                  "               ground file #{Osk::GND_SRV_DIR}/#{FMD_DIR_LIST_FILE}",
+                  "               ground file #{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}",
                   ""]
 FMD_INFO_4 = Osk::DEMO_STEP_NO_INFO
 
@@ -132,7 +131,8 @@ FMD_INSTRUCT_5 = ["Delete the demo directory. All of the files in the directory 
 FMD_INFO_5 = Osk::DEMO_STEP_NO_INFO
 
 FMD_INSTRUCT_ARRAY = [FMD_INSTRUCT_0, FMD_INSTRUCT_1, FMD_INSTRUCT_2, FMD_INSTRUCT_3, FMD_INSTRUCT_4, FMD_INSTRUCT_5]
-FMD_LAST_STEP = 5
+FMD_LAST_STEP = FMD_INSTRUCT_ARRAY.length - 1
+
 
 def fmd_set_instruct_text(num)
 
@@ -231,13 +231,13 @@ def file_mgmt_demo(screen, button)
          # 4 - Write directory listing to file and transfer to the ground
          when 4
             if ($fmd_demo == 0)
-               Osk::flight.fm.send_cmd("WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{FMD_FLT_TEMP_DIR}/#{FMD_DIR_LIST_FILE}")
+               Osk::flight.fm.send_cmd("WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{FMD_FLT_TEMP_DIR}/#{Osk::TMP_BIN_FILE}")
                wait (2)
                Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIRLISTOFFSET 0")
                $fmd_demo += 1
             elsif ($fmd_demo == 1)
-               if (Osk::Ops.get_flt_file("#{FMD_FLT_TEMP_DIR}/#{FMD_DIR_LIST_FILE}","#{Osk::GND_SRV_DIR}/#{FMD_DIR_LIST_FILE}"))
-                  Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, FMD_DIR_LIST_FILE, Osk::TBL_MGR_DEF_FM_DIR)
+               if (Osk::Ops.get_flt_file("#{FMD_FLT_TEMP_DIR}/#{Osk::TMP_BIN_FILE}","#{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}"))
+                  Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, Osk::TMP_BIN_FILE, Osk::TBL_MGR_DEF_FM_DIR)
                else
                   raise "FM Demo - File transfer from flight to ground failed" 
                end    

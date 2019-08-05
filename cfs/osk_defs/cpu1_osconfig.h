@@ -78,7 +78,7 @@
 /* 
 ** The maximum length for a file name 
 */
-#define OS_MAX_FILE_NAME    20
+#define OS_MAX_FILE_NAME    24
 
 /* 
 ** These defines are for OS_printf

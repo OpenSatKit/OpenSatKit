@@ -1,12 +1,12 @@
 {
-   "name": "BudgetSat (Bsat) Instrument Simulator (ISIM)",
+   "name": "SimpleSat (Simsat) Instrument Simulator (ISIM)",
    "description": "Define parameters used to control the instrument simulation",
    "instrument": {
       "pwr-init-cycles": 20
    },
    "sci-file": {
-      "path-base-filename":   "/cf/bsat/isim_",
+      "path-base-filename":   "/cf/simsat/isim_",
       "file-extension":       ".txt",
-      "cycles-per-file":      300
+      "cycles-per-file":      60
    }
 }

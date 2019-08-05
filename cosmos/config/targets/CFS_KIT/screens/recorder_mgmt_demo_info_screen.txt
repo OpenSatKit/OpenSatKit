@@ -16,6 +16,6 @@ TITLE "Recorder Management Demo"
  
 VERTICALBOX
   NAMED_WIDGET msg_box TEXTBOX CFS_KIT PSEUDO_MSG_PKT TXT_MSG 512 300
-  BUTTON 'Press for More Information' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_demo_screen.rb"; table_mgmt_demo_more_info(self)'
+  BUTTON 'Press for More Information' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_demo_screen.rb"; recorder_mgmt_demo_more_info(self)'
 END # Vertical Box
   

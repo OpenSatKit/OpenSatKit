@@ -240,7 +240,7 @@
             }},
 
             {"activity": {
-               "name":  "CF Hosekeeping",
+               "name":  "CF Housekeeping",
                "descr": "",
                "index": 8,
                "enable": "true",
@@ -253,9 +253,9 @@
                "name":  "CF Execution",
                "descr": "",
                "index": 9,
-               "enable": "false",
-               "frequency": 1,
-               "offset": 2,
+               "enable": "true",
+               "frequency": 2,
+               "offset": 0,
                "msg-id": 27
             }}
                         

@@ -1,4 +1,7 @@
 AUTO_START
 
 COMPONENT "cFS Event Messages" evs_msg_viewer.rb
-   PACKET EVS EVENT_MSG_PKT
+   PACKET CFE_EVS EVENT_MSG_PKT
+
+COMPONENT "CFDP PDUs from Target" pdu_from_target_viewer.rb
+  PACKET PDU CF_SPACE_TO_GND_PDU

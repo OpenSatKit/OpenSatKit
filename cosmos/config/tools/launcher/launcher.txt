@@ -11,7 +11,7 @@ MULTITOOL_START "COSMOS" NULL
   TOOL "LAUNCH ScriptRunner -x 4 -y 2 -w 805 -t 545"
   TOOL "LAUNCH CmdSender -x 4 -y 586 -w 805 -t 533"
 MULTITOOL_END
-MULTITOOL_START "cFS Starter Kit" CFS_Logo_Blue-_C100_M40_Y0_B15-300x220.png
+MULTITOOL_START "OpenSatKit" CFS_Logo_Blue-_C100_M40_Y0_B15-300x220.png
   TOOL "LAUNCH CmdTlmServer -x 1500 -y 1000 -c cmd_tlm_server.txt"
   #TOOL "LAUNCH CmdTlmServer --minimized -c cmd_tlm_server.txt"
   DELAY 2 

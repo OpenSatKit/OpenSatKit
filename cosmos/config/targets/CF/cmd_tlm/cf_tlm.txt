@@ -2,9 +2,10 @@
   require 'osk_config' 
   require 'osk_global'
 
-  @APP_PREFIX_STR = "CF"
-  @HK_TLM_MID_STR = "CF_HK_TLM_MID"
-  
+  @APP_PREFIX_STR     = "CF"
+  @HK_TLM_MID_STR     = "CF_HK_TLM_MID"
+  @TRANS_TLM_MID_STR  = "CF_TRANS_TLM_MID"
+  @CONFIG_TLM_MID_STR = "CF_CONFIG_TLM_MID"
 %>  
 
 TELEMETRY CF HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "CFDP housekeeping Packet"
@@ -91,4 +92,78 @@ TELEMETRY CF HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "CFDP housekeeping Pack
   APPEND_ITEM CH1_PENDING_Q_CHECKED            32 UINT "PendingQChecked"
   APPEND_ITEM CH1_SEM_VALUE                    32 UINT "SemValue"
 
+
+# In response to CF_SEND_TRANS_DIAG_DATA_CC(12) => CF_SendTransDataCmd()
+TELEMETRY CF TRANS_DIAG_PKT <%= Osk::Cfg.processor_endian %> "Active Transaction Diagnostic Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @TRANS_TLM_MID_STR) %>
+  
+  # CF_EngTransStat_t
+  APPEND_ITEM TRANS_LEN       8 UINT ""
+  APPEND_ITEM TRANS_Val       8 UINT ""
+  APPEND_ITEM NAKS            8 UINT "How many Nak PDUs have been sent/recd?"
+  APPEND_ITEM PART_LEN        8 UINT ""
+  APPEND_ITEM PART_VAL        8 UINT "Who is this transaction with?"
+  APPEND_ITEM PHASE           8 UINT "Either 1, 2, 3, or 4"
+  APPEND_ITEM SPARE_1         8 UINT ""
+  APPEND_ITEM SPARE_2         8 UINT ""
+  APPEND_ITEM FLAGS          32 UINT ""
+  APPEND_ITEM TRANS_NUM      32 UINT ""
+  APPEND_ITEM ATTEMPTS       32 UINT "How many attempts to send current PDU?"
+  APPEND_ITEM COND_CODE      32 UINT ""
+  APPEND_ITEM DELI_CODE      32 UINT ""
+  APPEND_ITEM FD_OFFSET      32 UINT "Offset of last Filedata sent/received"
+  APPEND_ITEM FD_LEN         32 UINT "Length of last Filedata sent/received"
+  APPEND_ITEM CHECKSUM       32 UINT ""
+  APPEND_ITEM FINAL_STAT     32 UINT ""
+  APPEND_ITEM FILE_SIZE      32 UINT ""
+  APPEND_ITEM RCVD_FILE_SIZE 32 UINT ""
+  APPEND_ITEM ROLE           32 UINT "(e.g. Receiver Class 1)"
+  APPEND_ITEM STATE          32 UINT ""
+  APPEND_ITEM START_TIME     32 UINT "When was this transaction started?"
+  APPEND_ITEM SRC_FILE      512 STRING ""
+  APPEND_ITEM DST_FILE      512 STRING ""
+  APPEND_ITEM TMP_FILE      512 STRING ""
+
+  # CF_AppTransStat_t
+
+  APPEND_ITEM APP_STATUS          32 UINT ""
+  APPEND_ITEM APP_COND_CODE       32 UINT ""
+  APPEND_ITEM APP_PRIORITY        32 UINT "applies only to playback files"
+  APPEND_ITEM APP_CLASS           32 UINT ""
+  APPEND_ITEM APP_CHAN_NUM        32 UINT "applies only to playback files"
+  APPEND_ITEM APP_SOURCE          32 UINT "from poll dir,playbackfile cmd or playback dir cmd"
+  APPEND_ITEM APP_NODE_TYPE       32 UINT ""
+  APPEND_ITEM APP_TRANS_NUM       32 UINT ""
+  APPEND_ITEM APP_SRC_ENTITY_ID  128 STRING ""
+  APPEND_ITEM APP_SRC_FILE       512 STRING ""
+  APPEND_ITEM APP_DST_FILE       512 STRING ""
+
+
+# In response to CF_SEND_CFG_PARAMS_CC(14) => CF_SendCfgParams()
+TELEMETRY CF CONFIG_PKT <%= Osk::Cfg.processor_endian %> "Configuration Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @CONFIG_TLM_MID_STR) %>
+
+  # CF_ConfigPacket_t
+  APPEND_ITEM ENG_CYC_PER_WAKEUP    32 UINT ""
+  APPEND_ITEM ACK_LIM               32 UINT ""
+  APPEND_ITEM ACK_TIMEOUT           32 UINT ""
+  APPEND_ITEM NAK_LIM               32 UINT ""
+  APPEND_ITEM NACK_TIMEOUT          32 UINT ""
+  APPEND_ITEM INACT_TIMEOUT         32 UINT ""
+  APPEND_ITEM DEF_OUT_CHUNK_SIZE    32 UINT ""
+  APPEND_ITEM PIPE_DEPTH            32 UINT ""
+  APPEND_ITEM MAX_SIMULT_TRANS      32 UINT ""
+  APPEND_ITEM IN_PDU_BUF_SIZE       32 UINT ""
+  APPEND_ITEM OUT_PDU_BUF_SIZE      32 UINT ""
+  APPEND_ITEM NUM_IN_CHAN           32 UINT ""
+  APPEND_ITEM MAX_PLAYBACK_CHAN     32 UINT ""
+  APPEND_ITEM MAX_POLL_DIR_PER_CHAN 32 UINT ""
+  APPEND_ITEM MM_POOL_BYTES         32 UINT ""
+  APPEND_ITEM DEBUG_COMPILED_IN     32 UINT ""
+  APPEND_ITEM SAVE_INCOMP_FILES     64 STRING ""
+  APPEND_ITEM PIPE_NAME            160 STRING ""
+  APPEND_ITEM TMP_FILE_PREFIX      512 STRING ""
+  APPEND_ITEM CFG_TBL_NAME         512 STRING ""
+  APPEND_ITEM CFG_TBL_FILENAME     512 STRING ""
+  APPEND_ITEM DEF_Q_INFO_FILEENAME 512 STRING ""
 

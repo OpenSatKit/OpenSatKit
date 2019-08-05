@@ -425,10 +425,13 @@ module CFDP
       #    Can raise exception if input error
       #   or if it can't build a PDUPacket
     # end function description
-    def handlePDUReceived(pdu)
-
+    #dcm def handlePDUReceived(pdu)
+    def handlePDUReceived(pdu_queue)
+    
       @transactionsMutex.synchronize {
 
+        pdu = pdu_queue.pop #dcm
+        
         Utils_visiona.verifyInput(Array, pdu.class)
 
         begin

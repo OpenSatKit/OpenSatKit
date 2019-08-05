@@ -60,10 +60,9 @@
 ** Event Service 
 */
 
-#define  FAULTREP_EVS_INV_DETECTOR_ID      0
-#define  FAULTREP_EVS_CONFIG_CMD_ERR       1
+#define  FAULTREP_EVS_INV_DETECTOR_ID  (FAULTREP_BASE_EID + 0)
+#define  FAULTREP_EVS_CONFIG_CMD_ERR   (FAULTREP_BASE_EID + 1)
 
-#define  FAULTREP_EVS_MSG_CNT              2
 
 
 /*
@@ -105,8 +104,8 @@
 typedef enum
 {
 
-   FAULTREP_NEW_REPORT,   /* Output a new report                     */
-   FAULTREP_MERGE_REPORT  /* Output a new report OR'ed with previous */
+   FAULTREP_NEW_REPORT   = 1,  /* Only report new faults since last report   */
+   FAULTREP_MERGE_REPORT = 2   /* Boolean OR new faults with previous report */
 
 } FaultRep_TlmMode;
 
@@ -128,31 +127,35 @@ typedef struct
 {
 
    uint8          Hdr[CFE_SB_TLM_HDR_SIZE];
-
    FaultRep_Data  Tlm;
 
 } FaultRep_TlmMsg;
+#define FAULTREP_FAULT_REP_PKT_LEN  sizeof(FaultRep_TlmMsg)
 
 
-/*
-** Ground Commands
+/******************************************************************************
+** Command Messages
 */
 
 typedef struct
 {
 
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
    uint16   FaultDetId;      /* Single identifier or FAULTREP_SELECT_ALL */
 
-} FaultRep_ClearFaultDetCmdParam;
+} FaultRep_ClearFaultDetCmdMsg;
+#define FAULTREP_CLR_FAULT_DET_CMD_DATA_LEN  (sizeof(FaultRep_ClearFaultDetCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct
 {
 
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
    uint16   FaultDetId;      /* Single FD identifier or FAULTREP_SELECT_ALL */
-   boolean  Enable;          /* TRUE - Enable a FD; FALSE - Disable a FD    */
+   uint16   Enable;          /* TRUE - Enable a FD; FALSE - Disable a FD (keep word aligned) */
 
-} FaultRep_ConfigFaultDetCmdParam;
+} FaultRep_ConfigFaultDetCmdMsg;
+#define FAULTREP_CFG_FAULT_DET_CMD_DATA_LEN  (sizeof(FaultRep_ConfigFaultDetCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 
@@ -188,7 +191,6 @@ typedef struct
 typedef struct
 {
 
-   uint16             EvsIdBase;
    FaultRep_TlmMode   TlmMode;
    FaultRep_FaultDet  FaultDet;
    FaultRep_Data      NewReport;  /* Collected between SendTlmMsg() calls */
@@ -202,7 +204,9 @@ typedef struct
 */
 
 
-/*
+/******************************************************************************
+** Function: FaultRep_Constructor
+**
 ** Purpose:  Initialize a FaultRep object.
 **
 ** Notes:
@@ -214,13 +218,14 @@ typedef struct
 **      default is FAULTREP_NEW_REPORT.
 **
 */
-void FaultRep_Constructor(FaultRep_Class*  FaultRepObjParam, 
-                          uint16           FaultIdCnt,       /* Number of fault detector IDs used (not an index, but a count) */
-                          uint16*          EvsIdBase);       /* Starting event message ID */
+void FaultRep_Constructor(FaultRep_Class*  FaultRep, 
+                          uint16           FaultIdCnt);      /* Number of fault detector IDs used (not an index, but a count) */
                              
 
 
-/*
+/******************************************************************************
+** Function: FaultRep_FaultDetFailed
+**
 ** Report that a fault detector failed
 **
 ** Notes:
@@ -228,12 +233,14 @@ void FaultRep_Constructor(FaultRep_Class*  FaultRepObjParam,
 **      of error should only occur during integration.
 **
 */
-void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRepObj,
+void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRep,
                              uint16           FaultDetId);  /* Integer identifier (not a bit bit mask */
 
 
 
-/*
+/******************************************************************************
+** Function: FaultRep_SetTlmMode
+**
 ** Set the telemetry reporting mode.
 **
 ** Notes:
@@ -243,11 +250,13 @@ void FaultRep_FaultDetFailed(FaultRep_Class*  FaultRepObj,
 **      continue to count for a detected fault.
 **
 */
-void FaultRep_SetTlmMode(FaultRep_Class*  FaultRepObj,
+void FaultRep_SetTlmMode(FaultRep_Class*  FaultRep,
                          FaultRep_TlmMode TlmMode);
 
 
-/*
+/******************************************************************************
+** Function: FaultRep_ClearFaultDetCmd
+**
 ** Purpose: Clear the latched status flag and the status flag in the report
 **          packet for a single fault detector ID or for all of the IDs.
 **
@@ -262,13 +271,14 @@ void FaultRep_SetTlmMode(FaultRep_Class*  FaultRepObj,
 **   FALSE - Command rejected: An event message is issued describing the
 **           cause of the failure.
 */
-boolean FaultRep_ClearFaultDetCmd(      void* CmdObjPtr,    /* Pointer to an instance of a FaultRep_Class */
-                                  const void* CmdParamPtr); /* Pointer to a FaultRep_ClearCmd structure.  */
+boolean FaultRep_ClearFaultDetCmd(                void* ObjDataPtr,  /* Pointer to an instance of a FaultRep_Class  */
+                                  const CFE_SB_MsgPtr_t MsgPtr);     /* Pointer to FaultRep_ClearFaultDetCmd struct */
                                  
 
 
-
-/*
+/******************************************************************************
+** Function: FaultRep_ConfigFaultDetCmd
+**
 ** Purpose:  Configure a fault detector to be enabled or disabled.
 **
 ** Note:
@@ -284,11 +294,13 @@ boolean FaultRep_ClearFaultDetCmd(      void* CmdObjPtr,    /* Pointer to an ins
 **   FALSE - Command rejected: An event message is issued describing the
 **           cause of the failure.
 */
-boolean FaultRep_ConfigFaultDetCmd(      void* CmdObjPtr,    /* Pointer to an instance of a FaultRep_Class */
-                                   const void* CmdParamPtr); /* Pointer to a FaultRep_ConfigCmd structure. */
+boolean FaultRep_ConfigFaultDetCmd(                void* ObjDataPtr,  /* Pointer to an instance of a FaultRep_Class   */
+                                   const CFE_SB_MsgPtr_t MsgPtr);     /* Pointer to FaultRep_ConfigFaultDetCmd struct */
                                       
 
-/*
+/******************************************************************************
+** Function: FaultRep_GenTlmMsg
+**
 ** Purpose: Update the fault report telemetry message.
 **
 ** Notes:
@@ -298,8 +310,19 @@ boolean FaultRep_ConfigFaultDetCmd(      void* CmdObjPtr,    /* Pointer to an in
 **   2. An Applicaton can use FaultRep_SetTlmMode to change the behavior 
 **      of this function. See FaultRep_SetTlmMode prologue.
 */
-void FaultRep_GenTlmMsg(void*            TlmObjPtr,   /* Pointer to an instance of a FaultRep_Class */
-                        CFE_SB_MsgPtr_t  TlmMsgPtr);  /* Pointer to FaultRep's telemetry message.   */
+void FaultRep_GenTlmMsg(FaultRep_Class*  FaultRep,
+                        FaultRep_TlmMsg* TlmMsg);
                            
+                           
+/******************************************************************************
+** Function: FaultRep_TlmModeStr
+**
+** Purpose: Return a pointer to a string describing teh enumerated type
+**
+** Notes:
+**   None
+*/
+const char* FaultRep_TlmModeStr(FaultRep_TlmMode  TlmMode);
+
 
 #endif  /* _faultrep_ */

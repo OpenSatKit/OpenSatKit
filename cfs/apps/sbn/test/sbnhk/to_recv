@@ -1,0 +1,230 @@
+#!/usr/bin/env python
+
+import socket, struct
+
+def hexdump(src, length=16):
+    FILTER = ''.join([(len(repr(chr(x))) == 3) and chr(x) or '.' for x in range(256)])
+    lines = []
+    for c in xrange(0, len(src), length):
+        chars = src[c:c+length]
+        hex = ' '.join(["%02x" % ord(x) for x in chars])
+        printable = ''.join(["%s" % ((ord(x) <= 127 and FILTER[ord(x)]) or '.') for x in chars])
+        lines.append("%04x  %-*s  %s\n" % (c, length*3, hex, printable))
+    return ''.join(lines)
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(("127.0.0.1", 1235))
+
+class SBN_Peer:
+    structstr = '>4B8s5I5H'
+    structstrsz = struct.calcsize(structstr)
+    
+    def __init__(self, data):
+        (self.CC, self.QoSPri, self.QoSRel, self.NameLen, self.Name, self.ProcessorID, self.LastSendSec, self.LastSendUSec, self.LastRecvSec, self.LastRecvUSec, self.SendCnt, self.RecvCnt, self.SendErrCnt, self.RecvErrCnt, self.SubCnt) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '<SBN_Peer Name="%s" ProcessorID=%d LastSend=%d.%d LastRecv=%d.%d SendCnt=%d RecvCnt=%d SendErrCnt=%d RecvErrCnt=%d SubCnt=%d>''' % (self.Name, self.ProcessorID, self.LastSendSec, self.LastSendUSec, self.LastRecvUSec, self.LastRecvUSec, self.SendCnt, self.RecvCnt, self.SendErrCnt, self.RecvErrCnt, self.SubCnt)
+
+class SBN_Net:
+    structstr = '>2B16sBH'
+    structstrsz = struct.calcsize(structstr)
+    
+    def __init__(self, data):
+        (self.CC, self.NameLen, self.Name, self.ProtocolID, self.PeerCnt) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '''<SBN_Net Name=%s ProtocolID=%d PeerCnt=%d>''' % ( self.Name, self.ProtocolID, self.PeerCnt)
+
+class SBN_Housekeeping:
+    structstr = '>B4H'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        (self.CC, self.CmdCnt, self.CmdErrCnt, self.SubCnt, self.NetCnt) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '<SBN_Housekeeping CmdCnt=%d CmdErrCnt=%d SubCnt=%d NetCnt=%d>''' % (self.CmdCnt, self.CmdErrCnt, self.SubCnt, self.NetCnt)
+
+class SBN_Sub:
+    structstr = '>H'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        (self.MID) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __repr__(self):
+        return '<SBN_Sub MID=0x%x>' % (self.MID)
+
+    def __str__(self):
+        return self.__repr__()
+
+class SBN_SubHk:
+    structstr = '>BH'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        offset = 0
+        (self.CC, self.SubCnt) = struct.unpack(self.structstr, data[0:self.structstrsz])
+        offset = offset + self.structstrsz
+        self.SubList = []
+        for i in range(0, self.SubCnt):
+            self.SubList.append(SBN_Sub(
+                data[offset:offset + SBN_Sub.structstrsz]));
+            offset = offset + SBN_Sub.structstrsz
+
+    def __repr__(self):
+        return '<SBN_SubHk SubCnt=%d %r>' % (self.SubCnt, self.SubList)
+
+    def __str__(self):
+        return self.__repr__()
+
+class SBN_PeerSubHk:
+    structstr = '>B3H'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        offset = 0
+        (self.CC, self.NetIdx, self.PeerIdx, self.SubCnt) = struct.unpack(self.structstr, data[0:self.structstrsz])
+        offset = offset + self.structstrsz
+        self.SubList = []
+        for i in range(0, self.SubCnt):
+            self.SubList.append(SBN_Sub(
+                data[offset:offset + SBN_Sub.structstrsz]));
+            offset = offset + SBN_Sub.structstrsz
+
+    def __repr__(self):
+        return '<SBN_PeerSubHk NetIdx=%d PeerIdx=%d SubCnt=%d %r>' % (self.NetIdx, self.PeerIdx, self.SubCnt, self.SubList)
+
+    def __str__(self):
+        return self.__repr__()
+
+class DS_REPLAY_Hk:
+    structstr = '>BBBBH'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        offset = 0
+        (self.CC, Padding, self.CmdCnt, self.ErrCnt, self.MIDConfigCnt) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __repr__(self):
+        return '<DS_REPLAY_Hk CC=%d CmdCnt=%d ErrCnt=%d MIDConfigCnt=%d>' % (self.CC, self.CmdCnt, self.ErrCnt, self.MIDConfigCnt)
+
+    def __str__(self):
+        return self.__repr__()
+
+class DS_REPLAY_MIDConfig:
+    structstr = '>BBHH'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        offset = 0
+        (self.CC, self.MIDConfigNum, self.FromMID, self.ToMID) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __repr__(self):
+        return '<DS_REPLAY_MIDConfig CC=%d MIDConfigNum=%d FromMID=0x%04X ToMID=0x%04X>' % (self.CC, self.MIDConfigNum, self.FromMID, self.ToMID)
+
+    def __str__(self):
+        return self.__repr__()
+
+class DS_REPLAY_Task:
+    structstr = '>BBHIBBBBL'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        offset = 0
+        (self.CC, self.TaskNum, Padding, self.ReplayRate, self.RateIsHz, self.Status, self.Stop, self.FileCnt, self.TaskID) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __repr__(self):
+        return '<DS_REPLAY_Task CC=%d Rate=%d Hz=%d Status=%d Stop=%d FileCnt=%d TaskID=0x%04X>' % (self.CC, self.ReplayRate, self.RateIsHz, self.Status, self.Stop, self.FileCnt, self.TaskID)
+
+    def __str__(self):
+        return self.__repr__()
+
+class DS_REPLAY_File:
+    structstr = '>BBBB32sIBBBB'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        offset = 0
+        (self.CC, self.TaskNum, self.FileNum, Padding, self.FileName, self.FileOffset, self.SwapCCSDSPri, self.TimestampFormat, self.TimestampLittleEndian, self.TimestampOverwrite) = struct.unpack(self.structstr, data[0:self.structstrsz])
+
+    def __repr__(self):
+        return '<DS_REPLAY_File CC=%d TaskNum=%d FileNum=%d FileName=%s FileOffset=%d SwapCCSDSPri=%d TimestampFormat=%d TimestampLittleEndian=%d TimestampOverwrite=%d>' % (self.CC, self.TaskNum, self.FileNum, self.FileName, self.FileOffset, self.SwapCCSDSPri, self.TimestampFormat, self.TimestampLittleEndian, self.TimestampOverwrite)
+
+    def __str__(self):
+        return self.__repr__()
+
+class CCSDSPri:
+    structstr = '>HHH'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        (self.MID, self.Seq, self.Len) = struct.unpack(self.structstr,
+            data[0:self.structstrsz])
+
+    def __repr__(self):
+        return '<CCSDSPri MID=0x%x Seq=%d Len=%d>' % (
+            self.MID, self.Seq, self.Len)
+    def __str__(self):
+        return self.__repr__()
+
+class CCSDSTlmSec:
+    structstr = '>HHH'
+    structstrsz = struct.calcsize(structstr)
+
+    def __init__(self, data):
+        (self.MID, self.Seq, self.Len) = struct.unpack(self.structstr,
+            data[0:self.structstrsz])
+
+SBN_tlm_map = {
+    10: SBN_Housekeeping,
+    11: SBN_Net,
+    12: SBN_Peer,
+    13: SBN_PeerSubHk,
+    14: SBN_SubHk,
+}
+
+def SBN_tlm(data):
+    (CC,) = struct.unpack('B', data[0])
+    print 'CC: %d' % CC
+    if SBN_tlm_map.has_key(CC):
+        print '%r' % SBN_tlm_map[CC](data)
+
+DS_REPLAY_tlm_map = {
+    0x20: DS_REPLAY_Hk,
+    0x21: DS_REPLAY_MIDConfig,
+    0x22: DS_REPLAY_Task,
+    0x23: DS_REPLAY_File,
+}
+def DS_REPLAY_tlm(data):
+    (CC,) = struct.unpack('B', data[0])
+    print 'CC: %d' % CC
+    if DS_REPLAY_tlm_map.has_key(CC):
+        print '%r' % DS_REPLAY_tlm_map[CC](data)
+
+decodemap = {
+    0x08FC: SBN_tlm,
+    0x0843: DS_REPLAY_tlm,
+}
+
+while True:
+    print '--waiting for TO messages--'
+    data, addr = sock.recvfrom(4096)
+    print '--received from TO (len=%d)--' % len(data)
+    print hexdump(data)
+    pri = CCSDSPri(data)
+    print '%r' % pri
+    if pri.MID & 0x1000:
+        print 'cmd'
+    else:
+        if decodemap.has_key(pri.MID):
+            decodemap[pri.MID](data[12:])

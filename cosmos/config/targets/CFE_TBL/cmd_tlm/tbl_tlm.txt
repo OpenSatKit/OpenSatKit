@@ -9,7 +9,7 @@
   
 %>  
 
-TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Table Services Housekeeping Packet"
+TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data (general status) autonomously sent"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT         8 UINT "Count of valid commands received."
   APPEND_ITEM CMD_ERROR_COUNT         8 UINT "Count of invalid commands received."
@@ -36,7 +36,7 @@ TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Table Services Ho
   APPEND_ITEM LAST_FILE_DUMPED      512 STRING "Path and Name of last file dumped to."
   APPEND_ITEM LAST_TABLE_LOADED     320 STRING "Name of the last table loaded."
 
-TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= Osk::Cfg.processor_endian %> "Table Registry Info Packet"
+TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= Osk::Cfg.processor_endian %> "Table Registry Info Packet sent in response to a SEND_REGISTRY command"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @REG_TLM_MID_STR) %>
   APPEND_ITEM SIZE                     32 UINT "Size, in bytes, of Table."
   APPEND_ITEM CRC                      32 UINT "Most recently calculated CRC of Table."
@@ -51,8 +51,8 @@ TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= Osk::Cfg.processor_endian %> "Table Regis
   APPEND_ITEM LOAD_PENDING              8 UINT "Flag indicating an inactive buffer is ready to be copied."
   APPEND_ITEM DUMP_ONLY                 8 UINT "Flag indicating Table is NOT to be loaded."
   APPEND_ITEM DBL_BUFFERED              8 UINT "Flag indicating Table has a dedicated inactive buffer."
-  APPEND_ITEM NAME                    304 STRING "Processor specific table name."
+  APPEND_ITEM NAME                    320 STRING "Processor specific table name."
   APPEND_ITEM LAST_FILE_LOADED        512 STRING "Filename of last file loaded into table."
-  APPEND_ITEM OWNER_APP_NAME          160 STRING "Name of owning application."
+  APPEND_ITEM OWNER_APP_NAME          176 STRING "Name of owning application."
   APPEND_ITEM CRITICAL                  8 UINT "Indicates whether table is Critical or not."
   APPEND_ITEM BYTE_ALIGN_4              8 UINT "Spare byte to maintain byte alignment."

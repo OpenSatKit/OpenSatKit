@@ -1,0 +1,52 @@
+#!/bin/bash
+
+ENDIAN=little
+
+SBN_MID=0x18FA
+
+SBN_NOOP_CC=0
+SBN_RESET_CC=1
+SBN_RESET_PEER_CC=2
+
+SBN_HK_CC=10
+SBN_HK_NET_CC=11
+SBN_HK_PEER_CC=12
+SBN_HK_PEER_SUBS_CC=13
+SBN_HK_SUBS_CC=14
+
+echo 'sending NOOP command'
+./cisend --mid=$SBN_MID --cc=$SBN_NOOP_CC --ccendian=$ENDIAN < /dev/null
+echo -n 'press return to continue: '
+read a
+
+#./cisend --mid=$SBN_MID --cc=$SBN_RESET_CC --ccendian=$ENDIAN < /dev/null
+
+echo 'sending HK command'
+./cisend --mid=$SBN_MID --cc=$SBN_HK_CC --ccendian=$ENDIAN < /dev/null
+echo -n 'press return to continue: '
+read a
+
+echo 'sending HK command for net 0'
+printf '\x00' | ./cisend --mid=$SBN_MID --cc=$SBN_HK_NET_CC --ccendian=$ENDIAN
+echo -n 'press return to continue: '
+read a
+
+echo 'sending HK command for net 0, peer 0'
+printf '\x00\x00' | ./cisend --mid=$SBN_MID --cc=$SBN_HK_PEER_CC --ccendian=$ENDIAN
+echo -n 'press return to continue: '
+read a
+
+echo 'sending HK command for net 0, peer 1'
+printf '\x00\x01' | ./cisend --mid=$SBN_MID --cc=$SBN_HK_PEER_CC --ccendian=$ENDIAN
+echo -n 'press return to continue: '
+read a
+
+echo 'sending subs HK command for net 0, peer 1'
+printf '\x00\x01' | ./cisend --mid=$SBN_MID --cc=$SBN_HK_PEER_SUBS_CC --ccendian=$ENDIAN
+echo -n 'press return to continue: '
+read a
+
+echo 'sending subs HK command'
+./cisend --mid=$SBN_MID --cc=$SBN_HK_SUBS_CC --ccendian=$ENDIAN < /dev/null
+echo -n 'press return to continue: '
+read a

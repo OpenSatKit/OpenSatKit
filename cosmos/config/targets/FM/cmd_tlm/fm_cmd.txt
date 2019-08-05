@@ -1,4 +1,5 @@
 <% 
+  require 'fsw_config_param' 
   require 'osk_config' 
   require 'osk_global'
 
@@ -49,7 +50,7 @@ COMMAND FM CONCAT_FILES <%= Osk::Cfg.processor_endian %> "Concatenate two source
   APPEND_PARAMETER SOURCE2 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Source 2 filename"
   APPEND_PARAMETER TARGET  512 STRING <%= Osk::CMD_DEF_FILENAME %> "Target filename"
 
-COMMAND FM GET_FILE_INFO <%= Osk::Cfg.processor_endian %> "Create a file information telemetry packet for the specified file"
+COMMAND FM SEND_FILE_INFO <%= Osk::Cfg.processor_endian %> "Create a file information telemetry packet for the specified file"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 68) %>
   APPEND_PARAMETER FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Filename"
   APPEND_PARAMETER CRC       32 UINT MIN_UINT32 MAX_UINT32 2         "CRC method"
@@ -59,26 +60,26 @@ COMMAND FM GET_OPEN_FILES <%= Osk::Cfg.processor_endian %> "Creates an 'open fil
 
 COMMAND FM CREATE_DIR <%= Osk::Cfg.processor_endian %> "Create the source directory. Source must be a valid directory name that does not exist"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 64) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Directory name"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Directory to be created"
 
 COMMAND FM DELETE_DIR <%= Osk::Cfg.processor_endian %> "Delete the source directory, it does not delete the contents of the directory. Source must be a valid directory name that exists."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 64) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Directory name"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_FILENAME %> "Directory to be deleted"
 
 COMMAND FM WRITE_DIR_TO_FILE <%= Osk::Cfg.processor_endian %> "Write a listing of the contents of the source directory to the target file. If the target filename buffer is empty, then the default target filename FM_DIR_LIST_FILE_DEFNAME is used. The command will overwrite a previous copy of the target file, if one exists. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but reading the directory will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 128) %>
-  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_DIR_NAME %> "Directory name"
-  APPEND_PARAMETER FILENAME  512 STRING <%= Osk::CMD_DEF_FILENAME %> "Filename"
+  APPEND_PARAMETER DIRECTORY 512 STRING <%= Osk::CMD_DEF_DIR_NAME %> "Directory to be listed"
+  APPEND_PARAMETER FILENAME  512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::FM_DIR_LIST_FILE_DEFNAME %> "Filename"
 
 COMMAND FM SEND_DIR_PKT <%= Osk::Cfg.processor_endian %> "Creates a telemetry packet that contains a listing of the entries in the specified directory. Since the packet will likely hold fewer entries than will be possible in a directory, the command also provides an index argument to define which entry in the directory is the first entry reported in the telemetry packet. After reading the directory list and skipping entries until reaching the index of the first entry reported, the remaining entries in the packet are filled sequentially until either the packet is full or until there are no more entries in the directory. The first entry index is zero based - thus, when the first entry index is zero the first directory entry will be the first packet entry. The number of entries per packet FM_DIR_LIST_PKT_ENTRIES is a platform configuration definition. Because of the possibility that this command might take a very long time to complete, command argument validation will be done immediately but reading the directory will be performed by a lower priority child task. As such, the return value for this function only refers to the result of command argument verification and being able to place the command on the child task interface queue."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 68) %>
-  APPEND_PARAMETER DIRECTORY     512 STRING <%= Osk::CMD_DEF_DIR_NAME %>  "Directory name"
+  APPEND_PARAMETER DIRECTORY     512 STRING <%= Osk::CMD_DEF_DIR_NAME %>  "Directory to bee listed"
   APPEND_PARAMETER DIRLISTOFFSET  32 UINT MIN_UINT32 MAX_UINT32 0 "Index of 1st dir entry to put in packet"
 
 COMMAND FM SEND_FREE_SPACE_PKT <%= Osk::Cfg.processor_endian %> "Queries the amount of free space for each of the enabled entries in the file system free space table. The data is then placed in a telemetry packet and sent to ground."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 0) %>
 
-COMMAND FM SET_TABLE_STATE <%= Osk::Cfg.processor_endian %> "This command enables or disables a single entry in the FM file system free space table. Only table entries that are currently enabled or disabled may be modified by command. Unused table entries cannot be modified."
+COMMAND FM SET_TABLE_STATE <%= Osk::Cfg.processor_endian %> "Enable/disable a single entry in the FM file system free space table. Unused table entries cannot be modified."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 8) %>
   APPEND_PARAMETER TABLEENTRYINDEX 32 UINT MIN_UINT32 MAX_UINT32 0 "Table entry index"
   APPEND_PARAMETER TABLEENTRYSTATE 32 UINT MIN_UINT32 MAX_UINT32 0 "New table entry state"

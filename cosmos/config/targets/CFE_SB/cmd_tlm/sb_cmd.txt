@@ -1,4 +1,5 @@
 <% 
+  require 'fsw_config_param' 
   require 'osk_config' 
   require 'osk_global'
 
@@ -13,12 +14,12 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_e
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset command counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND CFE_SB SEND_STATS <%= Osk::Cfg.processor_endian %> "This command will cause the SB task to send a statistics packet containing current utilization figures and high water marks which may be useful for checking the margin of the SB platform configuration settings."
+COMMAND CFE_SB SEND_STATS <%= Osk::Cfg.processor_endian %> "Send a statistics packet containing current utilization figures and high water marks which may be useful for checking the margin of the SB platform configuration settings."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 0) %>
 
-COMMAND SB WRITE_ROUTING_TO_FILE <%= Osk::Cfg.processor_endian %> "This command will create a file containing the software bus routing information. The routing information contains information about every subscription that has been received through the SB subscription APIs. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_ROUTING_FILENAME."
+COMMAND SB WRITE_ROUTING_TO_FILE <%= Osk::Cfg.processor_endian %> "Create a file containing the software bus routing information. The routing information contains information about every subscription that has been received through the SB subscription APIs. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_ROUTING_FILENAME."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Path and Filename of data to be loaded."
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_SB_DEFAULT_ROUTING_FILENAME %> "Path and Filename of data to be loaded."
 
 COMMAND CFE_SB ENA_ROUTE <%= Osk::Cfg.processor_endian %> "This command will enable a particular destination. The destination is specified in terms of MsgID and PipeID. The MsgId and PipeID are parmaters in the command. All destinations are enabled by default. This command is needed only after a CFE_SB_DISABLE_ROUTE_CC command is used."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 0) %>
@@ -34,11 +35,11 @@ COMMAND CFE_SB DIS_ROUTE <%= Osk::Cfg.processor_endian %> "This command will dis
 
 COMMAND CFE_SB WRITE_PIPE_TO_FILE <%= Osk::Cfg.processor_endian %> "This command will create a file containing the software bus pipe information. The pipe information contains information about every pipe that has been created through the CFE_SB_CreatePipe API. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_PIPE_FILENAME."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Path and Filename of data to be loaded."
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_SB_DEFAULT_PIPE_FILENAME %> "Path and Filename of data to be loaded."
 
 COMMAND CFE_SB WRITE_MAP_TO_FILE <%= Osk::Cfg.processor_endian %> "map information. The message map is a lookup table (an array of uint16s)that allows fast access to the correct routing table element during a softeware bus send operation. This is diasgnostic information that may be needed due to the dynamic nature of the cFE software bus. An abosulte path and filename may be specified in the command. If this command field contains an empty string (NULL terminator as the first character) the default file path and name is used. The default file path and name is defined in the platform configuration file as CFE_SB_DEFAULT_MAP_FILENAME."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Path and Filename of data to be loaded."
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_SB_DEFAULT_MAP_FILENAME %> "Path and Filename to recieve data"
 
 COMMAND CFE_SB ENA_SUB_REPORTING <%= Osk::Cfg.processor_endian %> "be used only by the CFS SBN (Software Bus Networking) Application. It is not intended to be sent from the ground or used by operations. When subscription reporting is enabled, SB will generate and send a software bus packet for each subscription received. The software bus packet that is sent contains the information received in the subscription API. This subscription report is neeeded by SBN if offboard routing is required."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 0) %>

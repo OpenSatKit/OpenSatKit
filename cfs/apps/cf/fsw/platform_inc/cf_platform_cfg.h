@@ -160,7 +160,7 @@
 **      - The last character should not be a slash.
 **
 */
-#define CF_ENGINE_TEMP_FILE_PREFIX          "/ram/cftmp"
+#define CF_ENGINE_TEMP_FILE_PREFIX          "/cf/cftmp"
 
 /**
 **  \cfcfg Name of the CF Configuration Table 
@@ -285,7 +285,7 @@
 **       The length of each string, including the NULL terminator cannot exceed 
 **       the OS_MAX_PATH_LEN value.
 */
-#define CF_DEFAULT_QUEUE_INFO_FILENAME      "/ram/cf_queue_info.dat"
+#define CF_DEFAULT_QUEUE_INFO_FILENAME      "/cf/cf_queue_info.dat"
 
 
 /**
@@ -417,7 +417,7 @@
 **  \par Limits:
 **       Must be defined or commented out.
 */
-/* #define CF_DEBUG */
+#define CF_DEBUG
 
 
 

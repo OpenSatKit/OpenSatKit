@@ -1,0 +1,107 @@
+###############################################################################
+# cFE Table Service Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "cFE Table Service"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX "Ground Interface"
+  
+  MATRIXBYCOLUMNS 3 5
+         
+    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "CMD")'
+    NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL VALIDATE_TBL ACTIVATE_TBL WRITE_REG_TO_FILE SEND_REGISTRY DELETE_CDS ABORT_LOAD
+    LABEL "    "
+    
+    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TLM")'
+    NAMED_WIDGET tlm COMBOBOX HOUSEKEEPING REGISTRY 
+    LABEL "    "
+
+    BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "FILE")'
+    NAMED_WIDGET file COMBOBOX REGISTRY
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+  
+VERTICALBOX "Functions"
+  
+  MATRIXBYCOLUMNS 4
+
+    BUTTON 'Tbl Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "FUNC_TBL_MGMT")'
+    LABEL "    "
+    LABEL "    "
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+
+VERTICALBOX "Learn"
+  
+  MATRIXBYCOLUMNS 3 5
+
+    BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "DEMO")'
+    NAMED_WIDGET demo COMBOBOX LOAD_DUMP
+    LABEL "    "
+
+    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TUTORIAL")'
+    NAMED_WIDGET tutorial COMBOBOX CFE_TRAINING_SLIDES TBL_EXERCISE_SCRIPT CFE_EXERCISE_SLIDES
+    LABEL "    "
+
+  END # Matrix
+END # Vertical
+
+
+VERTICALBOX "Status" 
+  MATRIXBYCOLUMNS 4 15
+   
+      LABEL "Cmd Valid Cnt"
+      VALUE CFE_TBL HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+      LABEL "Cmd Error Cnt"
+      VALUE CFE_TBL HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+
+      LABEL "# Tbl Reg"
+      VALUE CFE_TBL HK_TLM_PKT NUM_TABLES WITH_UNITS 8
+      LABEL "Load Pend"
+      VALUE CFE_TBL HK_TLM_PKT NUM_LOAD_PEND WITH_UNITS 8
+      
+      LABEL "Free Buf"
+      VALUE CFE_TBL HK_TLM_PKT NUM_FREE_SHARED_BUFS WITH_UNITS 8
+      LABEL "Last Update Sec"
+      VALUE CFE_TBL HK_TLM_PKT LAST_UPD_TIME_SECONDS WITH_UNITS 8
+      
+      LABEL "Valid Cnt"
+      VALUE CFE_TBL HK_TLM_PKT VALIDATION_CTR WITH_UNITS 8
+      LABEL "Valid Status"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_STATUS WITH_UNITS 8
+      
+      LABEL "Valid Buf"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_BUFFER WITH_UNITS 8
+      LABEL "Valid Tbl"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_TBL_NAME WITH_UNITS 8
+      
+      LABEL "Valid Pass"
+      VALUE CFE_TBL HK_TLM_PKT SUCCESS_VAL_CTR WITH_UNITS 8
+      LABEL "Valid Fail"
+      VALUE CFE_TBL HK_TLM_PKT FAILED_VAL_CTR WITH_UNITS 8
+      LABEL "Valid Req"
+      
+      VALUE CFE_TBL HK_TLM_PKT NUM_VAL_REQUESTS WITH_UNITS 8
+      LABEL "Valid CRC"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_CRC WITH_UNITS 8
+
+  End # Matrix
+END # Horizontal
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

@@ -26,13 +26,21 @@ def file_mgmt_send_cmd(screen, cmd)
  
 
    if (cmd == "GET_FILE")
-      # Update screen with working directories to help remind user where tables are stored
+      # Update screen with working directories to help remind user where files are stored
       Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_DIR, Osk::FLT_SRV_DIR)
       if (Osk::Ops::get_flt_file_prompt(Osk::GND_SRV_DIR))
          Osk::Ops::set_work_dir_widget(screen)
       end
+   elsif (cmd == "GET_BIN_FILE")
+      # Update screen with working directories to help remind user where files are stored
+      Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_DIR, Osk::FLT_SRV_DIR)
+      flt_path_filename = ask_string("Enter full FSW /path/filename.","#{Osk::FLT_SRV_DIR}/")
+      gnd_filename = ask_string("Enter ground filename without path. File will be located in #{Osk::GND_SRV_DIR}.",File.basename(flt_path_filename))
+      if (Osk::Ops::get_flt_bin_file(flt_path_filename, Osk::REL_SRV_DIR, gnd_filename, "corresponding"))
+         Osk::Ops::set_work_dir_widget(screen)
+      end
    elsif (cmd == "PUT_FILE")
-      # Update screen with working directories to help remind user where tables are stored
+      # Update screen with working directories to help remind user where files are stored
       Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_DIR, Osk::FLT_SRV_DIR)
       if (Osk::Ops::put_flt_file_prompt(Osk::GND_SRV_DIR))
          Osk::Ops::set_work_dir_widget(screen)
@@ -79,10 +87,10 @@ def file_mgmt_send_cmd(screen, cmd)
       src2_file_name = ask_string("Enter second full source /path/filename.")
       dst_file_name = ask_string("Enter full destination /path/filename.")
       Osk::flight.fm.send_cmd("CONCAT_FILES with SOURCE1 #{src1_file_name}, SOURCE2 #{src2_file_name}, TARGET #{dst_file_name}")  
-   elsif (cmd == "GET_FILE_INFO")
+   elsif (cmd == "SEND_FILE_INFO")
       file_name = ask_string("Enter full source /path/filename.", Osk::FLT_SRV_DIR)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'FM FILE_INFO_PKT'")
-      Osk::flight.fm.send_cmd("GET_FILE_INFO with FILENAME #{file_name}, CRC 2")  
+      Osk::flight.fm.send_cmd("SEND_FILE_INFO with FILENAME #{file_name}, CRC 2")  
    elsif (cmd == "LIST_OPEN_FILES")
       Cosmos.run_process("ruby tools/PacketViewer -p \"FM OPEN_FILES_PKT\"")
       wait (2)

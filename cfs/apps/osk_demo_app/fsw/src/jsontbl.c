@@ -203,7 +203,7 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
       JsonTblPtr = (JsonTbl->GetTblPtrFunc)();
 
-      sprintf(DumpRecord,"\n{\n\"name\": \"Object Table\",\n");
+      sprintf(DumpRecord,"{\n\"name\": \"Object Table\",\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       sprintf(DumpRecord,"\"description\": \"Example table for object-based application template.\",\n");
@@ -212,9 +212,21 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       sprintf(DumpRecord,"\"data-array\": [\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
-      for (i=0; i < JSONTBL_MAX_ENTRY_ID; i++) {
+      /* 
+      ** Can't end last record with a comma so start of for loop finishes 
+      ** previous record's line with ",\n" so write first line before the
+      ** loop starts.      
+      */
+      sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}",
+              0, JsonTblPtr->Entry[0].Data1, JsonTblPtr->Entry[0].Data2, JsonTblPtr->Entry[0].Data3);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
-         sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d, \n},\n",
+      for (i=1; i < JSONTBL_MAX_ENTRY_ID; i++) {
+      
+         sprintf(DumpRecord,",\n");
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+         sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}",
                  i, JsonTblPtr->Entry[i].Data1, JsonTblPtr->Entry[i].Data2, JsonTblPtr->Entry[i].Data3);
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       

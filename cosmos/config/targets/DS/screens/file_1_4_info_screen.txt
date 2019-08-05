@@ -14,6 +14,8 @@ TITLE "Data Storage Files 1..4 Information"
   SETTING BACKCOLOR 162 181 205
   SETTING TEXTCOLOR black
 
+BUTTON 'Send File Info' 'require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.ds.send_cmd("SEND_FILE_INFO")'
+
 VERTICALBOX "File 1" 10
   HORIZONTAL 5
     LABEL "Name"

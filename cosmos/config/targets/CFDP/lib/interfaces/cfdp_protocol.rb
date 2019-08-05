@@ -13,6 +13,7 @@ module Cosmos
     def initialize(allow_empty_data = false)
 
       super(allow_empty_data)
+      @pdu_queue = Queue.new  #dcm
     end
 
     def getCFDPTask
@@ -30,13 +31,15 @@ module Cosmos
 
         packetPayload = identified_packet.read('PAYLOAD', :RAW)
         pdu = CFDP::PDUPacket.new(packetPayload.bytes)
+        @pdu_queue << packetPayload.bytes   #dcm
         cfdpTask = getCFDPTask
 
         unless cfdpTask.break
 
           cfdpTask.update_received_counter(pdu.pduPayload.class) unless cfdpTask.nil?
           Thread.new do
-            CFDP::CFDPEngine.instance.handlePDUReceived(packetPayload.bytes)
+            #dcm CFDP::CFDPEngine.instance.handlePDUReceived(packetPayload.bytes)
+            CFDP::CFDPEngine.instance.handlePDUReceived(@pdu_queue)  #dcm
           end
         end
       end

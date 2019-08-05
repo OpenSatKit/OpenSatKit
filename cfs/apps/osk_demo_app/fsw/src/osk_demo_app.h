@@ -24,6 +24,7 @@
 
 #include "app_cfg.h"
 #include "demobj.h"
+#include "demofr.h"
 
 /*
 ** Macro Definitions
@@ -41,8 +42,12 @@
 typedef struct
 {
 
-   CMDMGR_Class   CmdMgr;
-   TBLMGR_Class   TblMgr;
+   CMDMGR_Class    CmdMgr;
+   TBLMGR_Class    TblMgr;
+   FaultRep_Class  FaultRep;
+   
+   DEMOFR_Class   DemoFr;
+   
    DEMOBJ_Class   DemObj;
    XMLTBL_Class   XmlTbl;
    SCANFTBL_Class ScanfTbl;
@@ -68,8 +73,19 @@ typedef struct
    ** - Loaded with status from the last table action 
    */
 
-   uint8    LastAction;
-   uint8    LastActionStatus;
+   uint8    LastTblId;
+   uint8    LastTblAction;
+   uint8    LastTblActionStatus;
+
+   /*
+   ** FaultRep & DEMOFR
+   */
+
+   uint8   FaultRepTlmMode;
+   uint8   SimEnabled;
+   uint8   SimMode;
+   uint16  FaultRepEnabled;
+   uint16  FaultRepLatched;
 
    /*
    ** DEMOBJ Data

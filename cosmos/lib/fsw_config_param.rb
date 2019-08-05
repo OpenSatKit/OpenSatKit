@@ -5,6 +5,7 @@
 #   1. All configuration parameters are contained in this file.
 #   2. The names are identical to the FSW #define
 #   3. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
+#   4. TODO - Not all defintiions are config params. See MD and OSK_APP_FW
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -16,6 +17,7 @@ require "erb"
 
 module FswConfigParam
 
+  BOOT_PATH = "/cf"
 
   ##########
   ## OSAL ##
@@ -35,18 +37,34 @@ module FswConfigParam
   CFE_ES_ER_LOG_ENTRIES          =   20
   CFE_ES_ER_LOG_MAX_CONTEXT_SIZE =  128
   CFE_ES_SYSTEM_LOG_SIZE         = 3072
+  CFE_ES_DEFAULT_APP_LOG_FILE      = "cfe_es_app_info.log"
+  CFE_ES_DEFAULT_CDS_REG_DUMP_FILE = "cfe_cds_reg.log"
+  CFE_ES_DEFAULT_ER_LOG_FILE       = "cfe_erlog.log"
+  CFE_ES_DEFAULT_SYSLOG_FILE       = "cfe_es_syslog.log"
+  CFE_ES_DEFAULT_TASK_LOG_FILE     = "cfe_es_task_info.log"
   
   CFE_EVS_LOG_MAX            =   20
   CFE_EVS_MAX_EVENT_FILTERS  =    8
   CFE_EVS_MAX_MESSAGE_LENGTH =  122
+  CFE_EVS_DEFAULT_APP_DATA_FILE = "cfe_evs_app.dat"
+  CFE_EVS_DEFAULT_LOG_FILE      = "cfe_evs.log"
   
   CFE_SB_MAX_PIPES = 64
+  CFE_SB_DEFAULT_MAP_FILENAME     = "cfe_sb_msgmap.dat"
+  CFE_SB_DEFAULT_PIPE_FILENAME    = "cfe_sb_pipe.dat"
+  CFE_SB_DEFAULT_ROUTING_FILENAME = "cfe_sb_route.dat"
 
   CFE_TBL_MAX_FULL_NAME_LEN  =   40
   CFE_TBL_MAX_NAME_LENGTH    =   16
   CFE_TBL_MAX_NUM_TABLES     =  128
-
+  CFE_TBL_DEFAULT_REG_DUMP_FILE  =  "cfe_tbl_reg.log"
   
+  ####################
+  ## App - Checksum ##
+  ####################
+
+  CS_USERS_GUIDE_FILE = "CFS HS User Guide Doc No 582-2013-002"
+
   ########################
   ## App - Data Storage ##
   ########################
@@ -60,7 +78,9 @@ module FswConfigParam
   DS_FILTERS_PER_PACKET   =  4
   DS_DESCRIPTOR_BUFSIZE   = 32
   DS_DESTINATION_TBL_NAME = "FILE_TBL"
+  DS_DEF_DEST_FILENAME    = "ds_file_tbl.tbl"
   DS_FILTER_TBL_NAME      = "FILTER_TBL"
+  DS_DEF_FILTER_FILENAME  = "ds_filter_tbl.tbl"
   
   ###################
   ## App - Example ##
@@ -72,15 +92,20 @@ module FswConfigParam
   ## App - File Manager ##
   ########################
 
+  FM_DIR_LIST_FILE_DEFNAME = "fm_dirlist.out"
+
   FM_TABLE_CFE_NAME    = "FreeSpace"
+  FM_TABLE_DEF_NAME    = "fm_freespace.tbl"
   FM_TABLE_ENTRY_COUNT = 8
+  FM_TABLE_FILENAME    = "fm_freespace.tbl"
   
   #########################
   ## App - House Keeping ##
   #########################
 
-  HK_COPY_TABLE_ENTRIES = 128
-  HK_COPY_TBL_NAME      = "CopyTable"
+  HK_COPY_TABLE_ENTRIES  = 128
+  HK_COPY_TBL_NAME       = "CopyTable"
+  HK_COPY_TABLE_FILENAME = "hk_cpy_tbl.tbl"
   
   ##########################
   ## App - Limit Checker  ##
@@ -102,6 +127,26 @@ module FswConfigParam
   MD_SIGNATURE_FIELD_LENGTH = 32              # Number of character's in signature text
   MD_DWELL_TABLE_SIZE       = 25              # Number of dwell entries per table
 
+  ##########################
+  ## App - Memory Manager ##
+  ##########################
+
+  # MM_AppData+256 is a safe area in MM's global data structure that can be used
+  # as a working buffer during the demo
+
+  MM_SYMBOL = "MM_AppData"
+  MM_OFFSET_W0 = 256
+  MM_OFFSET_W1 = 260
+  MM_OFFSET_W2 = 264
+  MM_OFFSET_W3 = 268
+
+  ########################
+  ## App - OSK_APP_FSW  ##
+  ########################
+
+  # Table load command 
+  OSK_TBL_REPLACE    = 0 
+  OSK_TBL_UPDATE_REC = 1
 
   ##########################
   ## App - Stored Command ##

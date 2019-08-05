@@ -63,6 +63,17 @@
 #ifndef _ds_platform_cfg_h_
 #define _ds_platform_cfg_h_
 
+/*
+** File Table Indices
+*/
+
+#define FILE_ALL_EVENTS       0
+#define FILE_CFE_APP_HK_PKTS  1
+#define FILE_ALL_APP_HK_PKTS  2
+#define FILE_ALL_APP_TLM_PKTS 3
+#define FILE_ALL_HW_TLM_PKTS  4
+#define FILE_CFE_APP_TLM_PKTS 5
+
 
 /**
 **  \dscfg Destination File Table -- logical table name

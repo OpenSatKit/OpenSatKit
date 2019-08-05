@@ -1,4 +1,4 @@
-<% 
+ <% 
   require 'osk_config' 
   require 'osk_global'
 
@@ -85,7 +85,7 @@ COMMAND DS CLOSE_FILE <%= Osk::Cfg.processor_endian %> "Close the commanded Dest
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 4) %>
   APPEND_PARAMETER FILE_TBL_IDX 32 UINT MIN_UINT32 MAX_UINT32 0 "Index into Destination File Table"
 
-COMMAND DS GET_FILE_INFO <%= Osk::Cfg.processor_endian %> "This command will send the DS File Info Packet."
+COMMAND DS SEND_FILE_INFO <%= Osk::Cfg.processor_endian %> "Send the DS File Info Packet."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 0) %>
 
 COMMAND DS ADD_FILTER_MID <%= Osk::Cfg.processor_endian %> "Insert the commanded Message ID to an unused Packet Filter Table entry"

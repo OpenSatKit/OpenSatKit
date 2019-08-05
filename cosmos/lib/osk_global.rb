@@ -46,6 +46,13 @@ module Osk
    CFS_TLM_PORT  = "1235"
 
    ###################
+   ## CFDP Settings ##
+   ###################
+
+   CFDP_APP_ENTITY_ID = "23"     # Ground tool prepends "0."
+   CFDP_GND_ENTITY_ID = "0.21"
+   
+   ###################
    ## Text Messages ##
    ###################
 
@@ -58,10 +65,10 @@ module Osk
    ################
    ## File Names ##
    ################
-
+   
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_TOUR_FILE = "OSK_Tour.pdf"
+   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide-2.0.pdf"
    DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
@@ -72,12 +79,17 @@ module Osk
    CREATE_APP_SCR_FILE      = "create_app_scr.txt"
    TEMPLATE_INFO_SCR_FILE   = "template_info_scr.txt"
 
+   OSK_TRAINING_SIMSAT = "OSK_Training-SimSat.pdf"
+   
    # Tutorial file format types
    TUTORIAL_HTML   = "HTML"
    TUTORIAL_PDF    = "PDF"
    TUTORIAL_SCRIPT = "SCRIPT"
 
-   CFE_UG_FILE   = "index.html"
+   CFE_UG_FILE      = "index.html"
+   CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
+   CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
+   CFE_EXERCISE_SLIDES_FILE = "OSK_Training-cFE_Exercises.pdf"
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"
    
@@ -103,6 +115,9 @@ module Osk
    TMP_GET_BIN_FILE_SCR_FILE = "osk_tmp_get_bin_file_scr.txt"
    TMP_GET_BIN_FILE_SCR_STR  = "OSK_TMP_GET_BIN_FILE_SCR"
 
+   # Tag appended to dump file basename to identify as a dump file
+   DMP_FILE_TAG = "~"
+   
    #########################################
    ## Table Manager Definition File Names ##
    #########################################
@@ -116,13 +131,19 @@ module Osk
    TBL_MGR_DEF_CFE_EVS_LOG      = "cfe_evs_log.txt"
    TBL_MGR_DEF_CFE_EVS_APP_INFO = "cfe_evs_app_info.txt"
 
-   TBL_MGR_DEF_CFE_SB_PIPE = "cfe_sb_pipe_info.txt"
+   TBL_MGR_DEF_CFE_SB_PIPE    = "cfe_sb_pipe_info.txt"
+   TBL_MGR_DEF_CFE_SB_ROUTES  = "cfe_sb_routes.txt"
+   TBL_MGR_DEF_CFE_SB_MSG_MAP = "cfe_sb_msg_map.txt"
 
    TBL_MGR_DEF_CFE_TBL_REG = "cfe_tbl_reg.txt"
 
-   TBL_MGR_DEF_FM_DIR = "fm_dir_list.txt"
-   TBL_MGR_DEF_MD_TBL = "md_tbl.txt"
-   TBL_MGR_DEF_MM_DMP = "mm_dump.txt"
+   TBL_MGR_DEF_DS_FILE_TBL   = "ds_file_tbl.txt"
+   TBL_MGR_DEF_DS_FILTER_TBL = "ds_filter_tbl.txt"
+   TBL_MGR_DEF_FM_DIR        = "fm_dir_list.txt"
+   TBL_MGR_DEF_FM_FREESPACE  = "fm_freespace_tbl.txt"
+   TBL_MGR_DEF_HK_COPY       = "hk_copy_tbl.txt"
+   TBL_MGR_DEF_MD_TBL        = "md_tbl.txt"
+   TBL_MGR_DEF_MM_DMP        = "mm_dump.txt"
    
    #####################
    ## Directory Paths ##
@@ -151,17 +172,18 @@ module Osk
    LIB_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
    SCR_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/screens"
    
-   APPS_JSON_DIR  = "#{Cosmos::USERPATH}/cfs_kit/apps"
-
    CFE_DOCS_DIR   = "#{Cosmos::USERPATH}/cfs_kit/docs"
    CFE_UG_DIR     = "#{CFE_DOCS_DIR}/cfe_users_guide"
 
    REL_TUTORIAL_DIR  = "cfs_kit/tutorials"
    TUTORIAL_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tutorials"
+   CFE_TRAINING_DIR  = "#{Osk::TUTORIAL_DIR}/cfe/training"
 
    TOOLS_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tools"
    PERF_MON_DIR   = "#{TOOLS_DIR}/perf-monitor"
    CREATE_APP_DIR = "#{TOOLS_DIR}/create-app"
+
+   PROC_DIR        = "#{Cosmos::USERPATH}/procedures"
    
    COSMOS_CFG_EDITOR  = "#{Cosmos::USERPATH}/tools/ConfigEditor"
    COSMOS_PKT_VIEWER  = "#{Cosmos::USERPATH}/tools/PacketViewer"
@@ -204,5 +226,17 @@ module Osk
    TLM_STR_HK_PKT    = "HK_TLM_PKT"
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
+   
+   def Osk::target_dir_file(target, subdir, file)
+   
+      return "#{target_dir(target,subdir)}/#{file}"
+   
+   end
+   
+   def Osk::target_dir(target,subdir)
+   
+      return "#{Cosmos::USERPATH}/config/targets/#{target.upcase}/#{subdir.downcase}"
+   
+   end
    
 end # Module Osk

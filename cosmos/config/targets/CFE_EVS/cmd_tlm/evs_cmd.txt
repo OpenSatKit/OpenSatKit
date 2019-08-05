@@ -1,4 +1,5 @@
 <% 
+  require 'fsw_config_param' 
   require 'osk_config' 
   require 'osk_global'
 
@@ -88,13 +89,13 @@ COMMAND CFE_EVS DEL_EVENT_FILTER <%= Osk::Cfg.processor_endian %> "This command 
   APPEND_PARAMETER APP_NAME 160 STRING "default" "Application name to use in the command."
   APPEND_PARAMETER EVENT_ID  16 UINT MIN_UINT16 MAX_UINT16 0 "Event ID to use in the command."
 
-COMMAND CFE_EVS WRITE_APP_INFO_TO_FILE <%= Osk::Cfg.processor_endian %> "Writes application registry & current data to a file. Registry includes the App ID, Active Flag, Event Count, Event Types Active Flag, and Filter Data."
+COMMAND CFE_EVS WRITE_APP_INFO_TO_FILE <%= Osk::Cfg.processor_endian %> "Write application registry & status to a file"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Full path/filename where applicaton data is to be written"
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_EVS_DEFAULT_APP_DATA_FILE %> "Full path/filename where applicaton data is to be written"
 
 COMMAND CFE_EVS WRITE_LOG_TO_FILE <%= Osk::Cfg.processor_endian %> "Write the contents of the local event log to a file."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 64) %>
-  APPEND_PARAMETER FILENAME 512 STRING "default" "Full path/filename where log data is to be written"
+  APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_EVS_DEFAULT_LOG_FILE %> "Full path/filename where log data is to be written"
 
 COMMAND CFE_EVS SET_LOG_MODE <%= Osk::Cfg.processor_endian %> "Sets the logging mode to the command specified value."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 2) %>

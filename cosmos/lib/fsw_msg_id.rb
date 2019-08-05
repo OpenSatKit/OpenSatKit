@@ -86,6 +86,8 @@ module Fsw
       CF_SPARE3_TLM_MID       = "0x08B6"
       CF_SPARE4_TLM_MID       = "0x08B7"
       
+      CF_SPACE_TO_GND_PDU_MID = "0x0FFD"
+      
       # Checksum
   
       CS_CMD_MID              = "0x189F"  
@@ -180,7 +182,7 @@ module Fsw
       I42_CMD_MID      = "0x19D2"
       I42_HK_TLM_MID   = "0x09D2"
 
-      # ISIM - Budget Sat (Bsat) Instrument Simulator (Isim)
+      # ISIM - Simple Sat (Simsat) Instrument Simulator (Isim)
   
       ISIM_CMD_MID      = "0x1802"
       ISIM_HK_TLM_MID   = "0x0882"
@@ -205,6 +207,7 @@ module Fsw
   
       OSK_DEMO_CMD_MID    = "0x1866"
       OSK_DEMO_HK_TLM_MID = "0x0F03"
+      OSK_DEMO_FR_TLM_MID = "0x0F04"
 
       # OpenSatKit Create App tool
       #

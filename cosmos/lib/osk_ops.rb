@@ -49,8 +49,25 @@ module Ops
    ############################################################################
    ##  File Transfer
    ############################################################################
-   
+
    #
+   # Appends a Osk::DMP_FILE_TAG character to the end of the base filename.
+   # Note os_config.h defines the maximum filename and this extra character
+   # could cause a write error if a filename is already at the max characters.   
+   #   
+   def self.create_dmp_filename(path_filename) 
+   
+   	extension = path_filename.split(".").last
+      ext_index = path_filename.rindex(".")
+      base_path_filename = path_filename.slice(0..(ext_index - 1))
+      dmp_path_filename = base_path_filename + Osk::DMP_FILE_TAG + "." + extension
+   
+      #puts "#{path_filename}\n#{extension}\n#{base_path_filename}\n#{dmp_path_filename}\n"
+      return dmp_path_filename
+      
+   end #create_dmp_filename()
+   
+   #  
    # gnd/flt_path_file_names set to path/filename of last successful transfer. 
    # Screens can read and display them.
    #
@@ -105,7 +122,7 @@ module Ops
       gnd_filename = File.basename(gnd_path_filename)
       flt_path_filename = ask_string("Enter full FSW /path/filename.             ","#{FLT_SRV_DIR}/#{gnd_filename}")
       put_file = put_flt_file(gnd_path_filename,flt_path_filename)
-      return put_file
+      return [put_file, flt_path_filename] 
    end # End put_flt_file_prompt()
 
    
@@ -157,6 +174,7 @@ module Ops
       
    end # get_flt_bin_file()
 
+
    # 
    # Send a flight command that creates a text file 
    # 1. Issue the flight command that creates the file
@@ -205,7 +223,7 @@ module Ops
 
    #
    # Set the get/put working directories. The screens must use the 'standard'
-   # working directoru named widgets
+   # working directory named widgets
    #   
    def self.set_work_dir_widget(screen, gnd_path_filename=Osk::Ops::gnd_path_filename, flt_path_filename=Osk::Ops::flt_path_filename)
 
@@ -322,7 +340,7 @@ module Ops
             cmd_param_str = ""
             cmd_param_list.each do |param|
                cmd_param_str << "   NAMED_WIDGET param_#{param_num} LABEL '#{param[0]}'\n"         
-               cmd_param_str << "   NAMED_WIDGET value_#{param_num} TEXTFIELD 16 \"#{param[1]}\"\n"
+               cmd_param_str << "   NAMED_WIDGET value_#{param_num} TEXTFIELD 64 \"#{param[1]}\"\n"  # Large enough for filenames
                param_num += 1
             end
             
@@ -511,6 +529,79 @@ module Ops
       end
 
    end # create_get_bin_file_scr()
+
+   ############################################################################
+   ##  JSON Table Management
+   ############################################################################
+
+   
+   def self.get_app(app_name, tbl_id)
+      
+      #TODO - Error checks
+      app = Osk::flight.app[app_name]
+      tbl_filename = app.tables[tbl_id].filename
+
+      return [app, tbl_filename]
+      
+   end # get_app()
+   
+   def self.load_json_tbl(app_name, tbl_id)
+
+      app, tbl_filename = get_app(app_name, tbl_id)
+
+      put_file = combo_box("Transfer file from ground to flight?", 'Yes','No')
+      if (put_file == "Yes")
+         load_tbl, flt_path_filename = put_flt_file_prompt(GND_SRV_TBL_DIR)
+      else
+         load_tbl = true
+         flt_path_filename = "#{Osk::FLT_SRV_DIR}/#{tbl_filename}"
+      end 
+   
+      if (load_tbl == true)
+         tbl_path_filename = ask_string("Enter full FSW /path/filename of table file to be loaded.","#{flt_path_filename}")
+         load_type = combo_box("Select load type", 'Replace Table','Update Records')
+         load_type == 'Replace Table' ? type = 0 : type = 1 
+         app.send_cmd("#{Osk::CMD_STR_LOAD_TBL} with ID #{tbl_id}, TYPE #{type}, FILENAME #{tbl_path_filename}")
+      end # if load tbl
+   
+   end # load_json_tbl()
+
+   def self.dump_json_tbl(app_name, tbl_id)
+
+      app, tbl_filename = get_app(app_name, tbl_id)
+      tbl_path_filename = "#{Osk::FLT_SRV_DIR}/#{tbl_filename}"
+
+      tbl_path_filename = ask_string("Enter full flight /path/filename of file to receive the table.", create_dmp_filename(tbl_path_filename))
+      Osk::Ops::send_flt_txt_file_cmd(app_name, "#{Osk::CMD_STR_DUMP_TBL} with ID #{tbl_id}, ", flt_path_filename: tbl_path_filename) 
+
+   end # dump_json_tbl()
+
+   #
+   # Logic is tailored for dump table use case. It tries to locate a dump file and if not found it
+   # asks the user if they want to display a load file (if present) 
+   #
+   def self.display_json_tbl(app_name, tbl_id)
+
+      app, tbl_filename = get_app(app_name, tbl_id)
+
+      tbl_path_filename = "#{Osk::GND_SRV_TBL_DIR}/#{tbl_filename}"
+      dmp_tbl_path_filename = create_dmp_filename(tbl_path_filename)
+
+      if File.file?(dmp_tbl_path_filename)
+         Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{dmp_tbl_path_filename}'")
+      else
+         if File.file?(tbl_path_filename)
+            prompt("Dump file not found. Displaying load file #{tbl_path_filename}")
+            Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{tbl_path_filename}'")
+         else
+            answer = message_box("#{dmp_tbl_path_filename} and #{tbl_path_filename} do not exist. Launch empty file viewer?","Yes","No",false)
+            if (answer == "Yes")
+               Cosmos.run_process("ruby lib/OskTxtFileViewer")
+            end
+         end
+      end
+
+   end # display_json_tbl()
 
 end # Module Ops
 end # Module Osk

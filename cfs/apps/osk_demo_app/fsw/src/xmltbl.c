@@ -44,7 +44,7 @@ typedef void (*DumpTblFuncPtr)(int32 FileHandle);   /* File-specific dump table 
 ** processing.
 **
 */
-static boolean DumpTblToFile(const char* Filename, const char* FileDescr, DumpTblFuncPtr DumpTblFunc);
+static boolean DumpTblToFile(const char* Filename, DumpTblFuncPtr DumpTblFunc);
 
 
 /******************************************************************************
@@ -187,7 +187,7 @@ boolean XMLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 boolean XMLTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 {
 
-   return DumpTblToFile(Filename,"Example XML Table",WriteXmlTblToFile);
+   return DumpTblToFile(Filename,WriteXmlTblToFile);
 
 } /* End of XMLTBL_DumpCmd() */
 
@@ -368,10 +368,9 @@ static boolean ParseXmlFile(const char* FilePathName,
 ** Function: DumpTblToFile
 **
 */
-static boolean DumpTblToFile(const char* Filename, const char* FileDescr, DumpTblFuncPtr DumpTblFunc)
+static boolean DumpTblToFile(const char* Filename, DumpTblFuncPtr DumpTblFunc)
 {
 
-   CFE_FS_Header_t  CfeStdFileHeader;
    int32            FileHandle;
    int32            FileStatus;
    boolean          RetStatus = FALSE;
@@ -381,27 +380,10 @@ static boolean DumpTblToFile(const char* Filename, const char* FileDescr, DumpTb
 
    if (FileHandle >= OS_FS_SUCCESS)
    {
-      /* Initialize the standard cFE File Header for the Dump File */
-      CfeStdFileHeader.SubType = 0x74786574;
-      strcpy(&CfeStdFileHeader.Description[0], FileDescr);
 
-      /* Output the Standard cFE File Header to the Dump File */
-      FileStatus = CFE_FS_WriteHeader(FileHandle, &CfeStdFileHeader);
+      (DumpTblFunc)(FileHandle);
+      RetStatus = TRUE;
 
-      if (FileStatus == sizeof(CFE_FS_Header_t))
-      {
-         (DumpTblFunc)(FileHandle);
-         RetStatus = TRUE;
-
-      } /* End if successfully wrote file header */
-      else
-      {
-          CFE_EVS_SendEvent(XMLTBL_WRITE_CFE_HDR_ERR_EID,
-                            CFE_EVS_ERROR,
-                            "Error writing cFE File Header to '%s', Status=0x%08X",
-                            Filename, FileStatus);
-
-      }
    } /* End if file create */
    else
    {

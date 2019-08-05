@@ -122,7 +122,7 @@
 ** CF global data
 *************************************************************************/
 #ifdef CF_DEBUG
-uint32              cfdbg = 1;
+uint32              cfdbg = 6;
 #endif
 
 CF_AppData_t        CF_AppData;
@@ -798,6 +798,7 @@ void CF_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
     uint16          CommandCode;
     
     MessageID = CFE_SB_GetMsgId (MessagePtr);
+    //dcm OS_printf ("CF msg 0x%4X \n",MessageID);
     switch (MessageID)
     {
         case CF_WAKE_UP_REQ_CMD_MID:
@@ -960,7 +961,8 @@ void CF_SendPDUToEngine(CFE_SB_MsgPtr_t MessagePtr)
     CF_PDU_Hdr_t            *PduHdrPtr;
     uint8                   *IncomingPduPtr;
     uint8                   EntityIdBytes,TransSeqBytes,PduHdrBytes;
-    uint8                   *PduUint8Ptr,TempUint8; //dcm
+    uint8                   *PduUint8Ptr; //,TempUint8; //dcm
+    uint16                  DataLen; //dcm
 #ifdef CF_DEBUG
     uint8                   PduData0,PduData1;
     uint8                   *PduDataPtr;
@@ -984,7 +986,7 @@ void CF_SendPDUToEngine(CFE_SB_MsgPtr_t MessagePtr)
 
 #ifdef CF_DEBUG
     if(cfdbg > 0){
-    OS_printf("PduHdrPtr->PDataLen = %04X, %d\n", PduHdrPtr->PDataLen, PduHdrPtr->PDataLen);
+    OS_printf("PduHdrPtr->PDataLen = %04X, %d (Before byte flip fix)\n", PduHdrPtr->PDataLen, PduHdrPtr->PDataLen);
     PduDataPtr = (uint8 *)PduHdrPtr;
     OS_printf("%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n",
               PduDataPtr[0],PduDataPtr[1],PduDataPtr[2],PduDataPtr[3],
@@ -1016,11 +1018,24 @@ void CF_SendPDUToEngine(CFE_SB_MsgPtr_t MessagePtr)
         return;
     }/* end if */
 
+    /* calculate the pdu 'length' field needed by the engine */
+    //dcm CF_AppData.RawPduInputBuf.length = PduHdrPtr->PDataLen + PduHdrBytes;
+    DataLen = ntohs(PduHdrPtr->PDataLen);  //dcm
+    CF_AppData.RawPduInputBuf.length = DataLen + PduHdrBytes;  //dcm
+
+    //*PduUint8Ptr = (uint8 *)PduHdrPtr;  //dcm
+    //TempUint8 = PduUint8Ptr[2];        //dcm
+    //PduUint8Ptr[2] = PduUint8Ptr[1];   //dcm
+    //PduUint8Ptr[1] = TempUint8;        //dcm
+    //*CF_AppData.RawPduInputBuf.length = (PduUint8Ptr[1] * 256) + PduUint8Ptr[2] + PduHdrBytes; //dcm
+
 #ifdef CF_DEBUG
     if(cfdbg > 0){
         if(CFE_TST(PduHdrPtr->Octet1,4)){
-            OS_printf("CF:Received File Data PDU,len=%d\n",
-                    PduHdrPtr->PDataLen + PduHdrBytes);
+            //OS_printf("CF:Received File Data PDU,len=%d\n",
+            //        PduHdrPtr->PDataLen + PduHdrBytes);
+            OS_printf("CF:Received File Data PDU,len=%d (includes %d PduHdrBytes)\n",
+                      CF_AppData.RawPduInputBuf.length + PduHdrBytes, PduHdrBytes);
         }else{
             /* Get the values of the first two pdu data field bytes. Needed */
             /* to find out what type of file directive pdu has been received */
@@ -1031,20 +1046,15 @@ void CF_SendPDUToEngine(CFE_SB_MsgPtr_t MessagePtr)
         
             OS_printf("CF:Received ");
             CF_PrintPDUType(PduData0,PduData1);
-            OS_printf(" PDU,len=%d\n", PduHdrPtr->PDataLen + PduHdrBytes);
+            // dcm OS_printf(" PDU,len=%d\n", PduHdrPtr->PDataLen + PduHdrBytes);
+            OS_printf(" PDU,len=%d (includes %d PduHdrBytes)\n", CF_AppData.RawPduInputBuf.length + PduHdrBytes, PduHdrBytes);
+            
         }
     }/* end if */           
 #endif
 
-    /* claculate the pdu 'length' field needed by the engine */
-    //dcm CF_AppData.RawPduInputBuf.length = PduHdrPtr->PDataLen + PduHdrBytes;
-    PduUint8Ptr = (uint8 *)PduHdrPtr;  //dcm
-    //TempUint8 = PduUint8Ptr[2];        //dcm
-    //PduUint8Ptr[2] = PduUint8Ptr[1];   //dcm
-    //PduUint8Ptr[1] = TempUint8;        //dcm
-
-    CF_AppData.RawPduInputBuf.length = (PduUint8Ptr[1] * 256) + PduUint8Ptr[2] + PduHdrBytes;
-
+    // dcm - Moved CF_AppData.RawPduInputBuf.length check to before the debug statement
+    
     if(CF_AppData.RawPduInputBuf.length > CF_INCOMING_PDU_BUF_SIZE){
         CFE_EVS_SendEvent(CF_PDU_RCV_ERR2_EID, CFE_EVS_ERROR,
             "PDU Rcv Error:length %d exceeds CF_INCOMING_PDU_BUF_SIZE %d",
