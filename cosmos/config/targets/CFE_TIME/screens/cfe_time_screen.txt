@@ -34,7 +34,7 @@ VERTICALBOX "Learn"
   MATRIXBYCOLUMNS 3 5
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TIME/lib/cfe_time_screen.rb"; cfe_time_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX OVERVIEW
+    NAMED_WIDGET tutorial COMBOBOX CFE_TRAINING_SLIDES TIME_EXERCISE_SCRIPT CFE_EXERCISE_SLIDES
     LABEL "    "
 
   END # Matrix

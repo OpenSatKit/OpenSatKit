@@ -204,7 +204,11 @@ def simsat_data_file(screen, cmd)
    when "FUNC_TBL_MGMT"
       display("CFS_KIT TABLE_MGMT_SCREEN",50,50)
    when "DEMO"
-      display("CFS_KIT RECORDER_MGMT_DEMO_SCREEN",500,50)
+      demo_scr = "FILE_MGMT_DEMO_SCREEN"
+      if screen.get_named_widget("demo").text == "RECORDER"
+         demo_scr = "RECORDER_MGMT_DEMO_SCREEN"
+      end
+      display("CFS_KIT #{demo_scr}",500,50)
    when "TUTORIAL"
       prompt(Osk::MSG_TBD_FEATURE)
    else
@@ -284,7 +288,8 @@ def simsat_maintenance(screen, cmd)
    when "FUNC_MEMORY_MGMT"
       display("CFS_KIT MEMORY_MGMT_SCREEN",50,50)
    when "DEMO"
-      prompt(Osk::MSG_TBD_FEATURE)
+      # Only one option
+      display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
    when "TUTORIAL"
       prompt(Osk::MSG_TBD_FEATURE)
    else

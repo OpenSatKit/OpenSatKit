@@ -9,7 +9,7 @@
   
 %>  
 
-TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Table Services Housekeeping Packet"
+TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data (general status) autonomously sent"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT         8 UINT "Count of valid commands received."
   APPEND_ITEM CMD_ERROR_COUNT         8 UINT "Count of invalid commands received."
@@ -36,7 +36,7 @@ TELEMETRY CFE_TBL HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Table Services Ho
   APPEND_ITEM LAST_FILE_DUMPED      512 STRING "Path and Name of last file dumped to."
   APPEND_ITEM LAST_TABLE_LOADED     320 STRING "Name of the last table loaded."
 
-TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= Osk::Cfg.processor_endian %> "Table Registry Info Packet"
+TELEMETRY CFE_TBL TBL_REGISTRY_PKT <%= Osk::Cfg.processor_endian %> "Table Registry Info Packet sent in response to a SEND_REGISTRY command"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @REG_TLM_MID_STR) %>
   APPEND_ITEM SIZE                     32 UINT "Size, in bytes, of Table."
   APPEND_ITEM CRC                      32 UINT "Most recently calculated CRC of Table."

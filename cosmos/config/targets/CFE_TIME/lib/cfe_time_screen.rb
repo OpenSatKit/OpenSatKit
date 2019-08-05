@@ -31,9 +31,14 @@ def cfe_time_scr_cmd(screen, cmd)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_TIME #{scr_name}'")
  
    when "TUTORIAL"
-       # Only one combo option
-       #screen.get_named_widget("tutorial").text
-       launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TIME")
+      case screen.get_named_widget("tutorial").text
+      when "CFE_TRAINING_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
+      when "TIME_EXERCISE_SCRIPT"
+         launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TIME")
+      when "CFE_EXERCISE_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
+      end
    
    else
       raise "Error in screen definition file. Undefined command '#{cmd}' sent to cfe_time_src_cmd()"

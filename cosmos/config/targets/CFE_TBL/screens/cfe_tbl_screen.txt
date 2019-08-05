@@ -19,7 +19,7 @@ VERTICALBOX "Ground Interface"
   MATRIXBYCOLUMNS 3 5
          
     BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "CMD")'
-    NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL VALIDATE_TBL ACTIVATE_TBL WRITE_REG_TO_FILE TLM_REGISTRY DELETE_CDS ABORT_LOAD
+    NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL VALIDATE_TBL ACTIVATE_TBL WRITE_REG_TO_FILE SEND_REGISTRY DELETE_CDS ABORT_LOAD
     LABEL "    "
     
     BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TLM")'
@@ -54,7 +54,7 @@ VERTICALBOX "Learn"
     LABEL "    "
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX OVERVIEW
+    NAMED_WIDGET tutorial COMBOBOX CFE_TRAINING_SLIDES TBL_EXERCISE_SCRIPT CFE_EXERCISE_SLIDES
     LABEL "    "
 
   END # Matrix

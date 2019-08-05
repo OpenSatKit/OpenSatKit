@@ -34,7 +34,7 @@ HORIZONTAL
       BUTTON 'Delete' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "DELETE_FILE")'
       BUTTON 'Delete All' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "DELETE_ALL_FILES")'
       BUTTON 'Concat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "CONCAT_FILE")'
-      BUTTON 'Get Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "GET_FILE_INFO")'
+      BUTTON 'Get Info' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "SEND_FILE_INFO")'
       BUTTON 'List Open' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/file_mgmt_screen.rb"; file_mgmt_send_cmd(self, "LIST_OPEN_FILES")'
       END # Matrix
     End # Files vertical box

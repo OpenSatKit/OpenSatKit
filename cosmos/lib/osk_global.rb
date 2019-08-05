@@ -68,7 +68,7 @@ module Osk
    
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide-2.0"
+   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide-2.0.pdf"
    DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
@@ -79,6 +79,8 @@ module Osk
    CREATE_APP_SCR_FILE      = "create_app_scr.txt"
    TEMPLATE_INFO_SCR_FILE   = "template_info_scr.txt"
 
+   OSK_TRAINING_SIMSAT = "OSK_Training-SimSat.pdf"
+   
    # Tutorial file format types
    TUTORIAL_HTML   = "HTML"
    TUTORIAL_PDF    = "PDF"
@@ -86,6 +88,8 @@ module Osk
 
    CFE_UG_FILE      = "index.html"
    CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
+   CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
+   CFE_EXERCISE_SLIDES_FILE = "OSK_Training-cFE_Exercises.pdf"
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"
    
@@ -168,17 +172,18 @@ module Osk
    LIB_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
    SCR_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/screens"
    
-   APPS_JSON_DIR  = "#{Cosmos::USERPATH}/cfs_kit/apps"
-
    CFE_DOCS_DIR   = "#{Cosmos::USERPATH}/cfs_kit/docs"
    CFE_UG_DIR     = "#{CFE_DOCS_DIR}/cfe_users_guide"
 
    REL_TUTORIAL_DIR  = "cfs_kit/tutorials"
    TUTORIAL_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tutorials"
+   CFE_TRAINING_DIR  = "#{Osk::TUTORIAL_DIR}/cfe/training"
 
    TOOLS_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tools"
    PERF_MON_DIR   = "#{TOOLS_DIR}/perf-monitor"
    CREATE_APP_DIR = "#{TOOLS_DIR}/create-app"
+
+   PROC_DIR        = "#{Cosmos::USERPATH}/procedures"
    
    COSMOS_CFG_EDITOR  = "#{Cosmos::USERPATH}/tools/ConfigEditor"
    COSMOS_PKT_VIEWER  = "#{Cosmos::USERPATH}/tools/PacketViewer"
@@ -221,5 +226,17 @@ module Osk
    TLM_STR_HK_PKT    = "HK_TLM_PKT"
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
+   
+   def Osk::target_dir_file(target, subdir, file)
+   
+      return "#{target_dir(target,subdir)}/#{file}"
+   
+   end
+   
+   def Osk::target_dir(target,subdir)
+   
+      return "#{Cosmos::USERPATH}/config/targets/#{target.upcase}/#{subdir.downcase}"
+   
+   end
    
 end # Module Osk

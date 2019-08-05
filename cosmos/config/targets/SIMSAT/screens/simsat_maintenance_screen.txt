@@ -97,7 +97,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
 
       BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "DEMO")'
-      NAMED_WIDGET demo COMBOBOX Coming-Soon
+      NAMED_WIDGET demo COMBOBOX MEMORY_MGMT
       LABEL "    "
 
       BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "TUTORIAL")'

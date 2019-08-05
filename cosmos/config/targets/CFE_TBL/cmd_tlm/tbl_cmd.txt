@@ -37,7 +37,7 @@ COMMAND CFE_TBL WRITE_REG_TO_FILE <%= Osk::Cfg.processor_endian %> "This command
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 64) %>
   APPEND_PARAMETER FILENAME 512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::CFE_TBL_DEFAULT_REG_DUMP_FILE %> "Full Filename where registry data is to be written."
 
-COMMAND CFE_TBL TLM_REGISTRY <%= Osk::Cfg.processor_endian %> "This command will cause Table Services to telemeter the contents of the Table Registry for the command specified table."
+COMMAND CFE_TBL SEND_REGISTRY <%= Osk::Cfg.processor_endian %> "This command will cause Table Services to telemeter the contents of the Table Registry for the command specified table."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 40) %>
   APPEND_PARAMETER TABLE_NAME 320 STRING "default" "Full Name of Table whose registry entry is to be telemetered."
 

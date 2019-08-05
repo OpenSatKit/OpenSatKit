@@ -14,7 +14,7 @@ TITLE "Data Storage Files 5..8 Information"
   SETTING BACKCOLOR 162 181 205
   SETTING TEXTCOLOR black
 
-BUTTON 'Get Info' 'require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.ds.send_cmd("GET_FILE_INFO")'
+BUTTON 'Get File Info' 'require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.ds.send_cmd("SEND_FILE_INFO")'
 
 VERTICALBOX "File 5" 10
   HORIZONTAL 5

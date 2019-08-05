@@ -1,5 +1,5 @@
 ###############################################################################
-# BudgetSat (bSat) Mission Sim Pass
+# SimpleSat (SimSat) Mission Sim Pass
 #
 # Perform operational functions during a simulated ground contact.  This script
 # is designed to make you think about what types of functions need to be
@@ -46,7 +46,7 @@ Osk::flight.cfe_evs.send_cmd("CLEAR_LOG")
 # Simple demo of deleting one file; needs to be expanded
 
 isim_filename     = "isim_00.txt"
-flt_path_filename = "/cf/bsat/#{isim_filename}"
+flt_path_filename = "/cf/simsat/#{isim_filename}"
 gnd_path_filename = "#{Cosmos::USERPATH}/#{Osk::REL_SRV_DIR}/#{isim_filename}"
 
 if (Osk::system.file_transfer.get(flt_path_filename,gnd_path_filename))

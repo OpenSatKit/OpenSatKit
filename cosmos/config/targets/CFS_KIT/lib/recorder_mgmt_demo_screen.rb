@@ -195,7 +195,7 @@ def recorder_mgmt_demo(screen, button)
                   wait 2
                   Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_TBL_IDX}, FILE_STATE 1")
                   wait 4
-                  Osk::flight.ds.send_cmd("GET_FILE_INFO")
+                  Osk::flight.ds.send_cmd("SEND_FILE_INFO")
                   wait 1
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                   $rmd_demo += 1
@@ -203,7 +203,7 @@ def recorder_mgmt_demo(screen, button)
                   ["CFE_ES", "CFE_EVS", "CFE_SB", "CFE_TBL", "CFE_TIME"].each { |cfe_srv|
                      Osk::Ops::send_flt_cmd(cfe_srv, "#{Osk::CMD_STR_NOOP}")
                      wait 1
-                     Osk::flight.ds.send_cmd("GET_FILE_INFO")
+                     Osk::flight.ds.send_cmd("SEND_FILE_INFO")
                   }                  
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                else
@@ -218,14 +218,14 @@ def recorder_mgmt_demo(screen, button)
                   wait 2
                   Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_TBL_IDX}, FILE_STATE 0")
                   wait 2
-                  Osk::flight.ds.send_cmd("GET_FILE_INFO")
+                  Osk::flight.ds.send_cmd("SEND_FILE_INFO")
                   wait 2
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                   $rmd_demo += 1
                when 1 
                   Osk::flight.ds.send_cmd("CLOSE_ALL")
                   wait 2
-                  Osk::flight.ds.send_cmd("GET_FILE_INFO")
+                  Osk::flight.ds.send_cmd("SEND_FILE_INFO")
                   wait 1
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                   $rmd_demo += 1

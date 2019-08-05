@@ -100,7 +100,7 @@ COMMAND CFE_ES DELETE_CDS <%= Osk::Cfg.processor_endian %> "This command allows 
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 21, 38) %>
   APPEND_PARAMETER CDS_NAME 304 STRING "default" "ASCII text string containing name of CDS to delete"
 
-COMMAND CFE_ES TLM_POOL_STATS <%= Osk::Cfg.processor_endian %> "This command allows the user to obtain a snapshot of the statistics maintained for a specified memory pool"
+COMMAND CFE_ES SEND_MEM_POOL_STATS <%= Osk::Cfg.processor_endian %> "This command allows the user to obtain a snapshot of the statistics maintained for a specified memory pool"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 22, 24) %>
   APPEND_PARAMETER RESERVED    160 STRING "default" "RESERVED - should be all zeros"
   APPEND_PARAMETER POOL_HANDLE  32 UINT MIN_UINT32 MAX_UINT32 0 "Handle of Pool whose statistics are to be telemetered."

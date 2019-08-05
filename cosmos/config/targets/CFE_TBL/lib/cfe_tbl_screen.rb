@@ -45,9 +45,14 @@ def cfe_tbl_scr_cmd(screen, cmd)
       display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",500,50)
 
    when "TUTORIAL"
-      # Ignore drop down since only one tutorial defined
-      screen.get_named_widget("tutorial").text
-      launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TBL")
+      case screen.get_named_widget("tutorial").text
+      when "CFE_TRAINING_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
+      when "TBL_EXERCISE_SCRIPT"
+         launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TBL")
+      when "CFE_EXERCISE_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
+      end
    
    else
       raise "Error in screen definition file. Undefined command '#{cmd}' sent to cfe_tbl_src_cmd()"

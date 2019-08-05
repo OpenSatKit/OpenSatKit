@@ -11,7 +11,8 @@
   @DS_TOTAL_FNAME_BUFSIZE = "DS_TOTAL_FNAME_BUFSIZE"
   @DS_DEST_FILE_CNT       = "DS_DEST_FILE_CNT"
 
-%>  
+%>
+
 TELEMETRY DS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "DS application housekeeping packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT       8   UINT "Count of valid commands received"

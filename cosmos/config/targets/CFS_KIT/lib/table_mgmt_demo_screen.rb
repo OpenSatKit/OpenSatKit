@@ -69,9 +69,9 @@ These are known locations that can be safety altered during the demo. \
 TMD_INSTRUCT_1 = ["The table management screen was opened. This screen is a combination of ",
                   "information from the cfE's Table Service (TBL) Housekeeping telemetry packet",
                   "and TBL Service's table registry packet that is sent in response to a",
-                  "TLM_REGISTRY command. ",
+                  "SEND_REGISTRY command. ",
                   "",
-                  "<Demo> Send TBL TLM_REGISTRY cmd with TABLENAME #{TMD_TBL_NAME}",
+                  "<Demo> Send TBL SEND_REGISTRY cmd with TABLENAME #{TMD_TBL_NAME}",
                   ""]
 # Repeat step zero's info in case the user wasn't inspired to read more earlier
 TMD_INFO_1 = "\n\
@@ -221,7 +221,7 @@ def table_mgmt_demo(screen, button)
          # 1 - Send table registry cmd
          when 1
             if ($tmd_demo == 0)
-               Osk::flight.cfe_tbl.send_cmd("TLM_REGISTRY with TABLE_NAME #{TMD_TBL_NAME}")
+               Osk::flight.cfe_tbl.send_cmd("SEND_REGISTRY with TABLE_NAME #{TMD_TBL_NAME}")
                $tmd_demo += 1
             end
 

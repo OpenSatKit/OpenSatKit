@@ -43,8 +43,14 @@ def cfe_evs_scr_cmd(screen, cmd)
       Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
 
    when "TUTORIAL"
-       screen.get_named_widget("tutorial").text
-       launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "EVS")
+      case screen.get_named_widget("tutorial").text
+      when "CFE_TRAINING_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
+      when "EVS_EXERCISE_SCRIPT"
+         launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "EVS")
+      when "CFE_EXERCISE_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
+      end
    
    else
       raise "Error in screen definition file. Undefined command '#{cmd}' sent to cfe_evs_src_cmd()"

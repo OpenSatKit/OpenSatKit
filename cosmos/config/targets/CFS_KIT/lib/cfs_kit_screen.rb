@@ -92,30 +92,32 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_UG_FILE}")
 
    when "RUN_OPS_EXAMPLE"
-      prompt(Osk::MSG_TBD_FEATURE)
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
+      display("SIMSAT SIMSAT_OPS_SCREEN",50,50)
+      spawn("evince #{Osk::target_dir_file("SIMSAT","docs",Osk::OSK_TRAINING_SIMSAT)}")
    
    when "RUN_INTG_TEST"
-      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} #{Cosmos::USERPATH}/procedures/simsat/simsat_intg_test.rb")
-      display("CFS_KIT SIMSAT_CFS_APP_SCREEN",50,50)
-      display("CFS_KIT SIMSAT_OSK_APP_SCREEN",1500,50)
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")
+      display("SIMSAT SIMSAT_CFS_APP_SCREEN",50,50)
+      display("SIMSAT SIMSAT_OSK_APP_SCREEN",1500,50)
 
    when "SIMSAT_RUNTIME"
-      display("CFS_KIT SIMSAT_RUNTIME_SCREEN",50,50)
+      display("SIMSAT SIMSAT_RUNTIME_SCREEN",50,50)
    
    when "SIMSAT_DATA_FILE"
-      display("CFS_KIT SIMSAT_DATA_FILE_SCREEN",50,50)
+      display("SIMSAT SIMSAT_DATA_FILE_SCREEN",50,50)
    
    when "SIMSAT_AUTONOMY"
-      display("CFS_KIT SIMSAT_AUTONOMY_SCREEN",50,50)
+      display("SIMSAT SIMSAT_AUTONOMY_SCREEN",50,50)
    
    when "SIMSAT_ADC"
-      display("CFS_KIT SIMSAT_ADC_SCREEN",50,50)
+      display("SIMSAT SIMSAT_ADC_SCREEN",50,50)
    
    when "SIMSAT_MAINTENANCE"
-      display("CFS_KIT SIMSAT_MAINTENANCE_SCREEN",50,50)
+      display("SIMSAT SIMSAT_MAINTENANCE_SCREEN",50,50)
    
    when "SIMSAT_HEALTH_SAFETY"
-      display("CFS_KIT SIMSAT_HEALTH_SAFETY_SCREEN",50,50)
+      display("SIMSAT SIMSAT_HEALTH_SAFETY_SCREEN",50,50)
    
    when "CFE_EVENT_SERVICE"
       display("CFE_EVS CFE_EVS_SCREEN",50,50)
@@ -241,6 +243,9 @@ def cfs_kit_scr_extend_osk(screen, cmd)
 end # cfs_kit_scr_extend_osk()
 
 
+################################################################################
+## Leftovers from OSK 1.7 that need to be migrated
+################################################################################
 
 def cfs_kit_launch_app(screen, app)
 
@@ -261,33 +266,12 @@ def cfs_kit_launch_app(screen, app)
       #Cosmos.run_process("ruby tools/ConfigEditor")
       #Cosmos::OskTblEditor.run
       #Cosmos.run_cosmos_tool('ConfigEditor')
-   elsif (app == "TODO")
-      prompt("Feature coming soon...")
-   else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_launch_app()"
+
+   elsif (app == "TUTORIAL")
+      cfs_kit_launch_tutorial_screen
    end
 
 end # cfs_kit_launch_app()
-
-################################################################################
-## Launch Demo
-################################################################################
-
-def cfs_kit_launch_demo(screen, demo)
-
-   if (demo == "FILE_MGMT_DEMO")
-      display("CFS_KIT FILE_MGMT_DEMO_SCREEN",500,50)
-   elsif (demo == "TABLE_DEMO")
-      display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",500,50) 
-   elsif (demo == "MEMORY_DEMO")
-      display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
-   elsif (demo == "APP_DEMO")
-      display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
-   elsif (demo == "TUTORIAL")
-      cfs_kit_launch_tutorial_screen
-   end
-   
-end # cfs_kit_launch_demo()
 
 
 ################################################################################

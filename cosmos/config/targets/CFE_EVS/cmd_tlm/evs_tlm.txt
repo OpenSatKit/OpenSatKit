@@ -9,7 +9,7 @@
   
 %>
 
-TELEMETRY CFE_EVS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Event Services Housekeeping Telemetry Packet"
+TELEMETRY CFE_EVS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data (general status) autonomously sent"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT 8 UINT "EVS Command Counter."
   APPEND_ITEM CMD_ERROR_COUNT 8 UINT "EVS Command Error Counter."
