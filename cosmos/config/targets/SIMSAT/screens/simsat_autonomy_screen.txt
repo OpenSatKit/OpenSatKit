@@ -32,15 +32,15 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
          
-      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_CMD")'
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_CMD")'
       NAMED_WIDGET lc_cmd COMBOBOX NOOP RESET_CTRS SET_APP_STATE SET_AP_STATE SET_AP_PERM_OFF RESET_AP_STATS RESET_WP_STATS
       LABEL "    "
 
-      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_TLM")'
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_TLM")'
       NAMED_WIDGET lc_tlm COMBOBOX HOUSEKEEPING
       LABEL "    "
 
-      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_DOC")'
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_DOC")'
       SETTING BACKCOLOR 255 255 255
       LABEL "    "
       LABEL "    "
@@ -55,15 +55,15 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
          
-      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_CMD")'
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_CMD")'
       NAMED_WIDGET sc_cmd COMBOBOX NOOP RESET_CTRS START_ATS STOP_ATS START_RTS STOP_RTS DISABLE_RTS ENABLE_RTS SWITCH_ATS JUMP_ATS CONT_ATS APPEND_ATS START_RTS_GROUP STOP_RTS_GROUP DISABLE_RTS_GROUP ENABLE_RTS_GROUP
       LABEL "    "
 
-      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_TLM")'
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_TLM")'
       NAMED_WIDGET sc_tlm COMBOBOX HOUSEKEEPING
       LABEL "    "
 
-      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_DOC")'
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_DOC")'
       SETTING BACKCOLOR 255 255 255
       LABEL "    "
       LABEL "    "
@@ -78,11 +78,11 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3
 
-      BUTTON 'Manage Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "FUNC_AUTO_MGMT")'
+      BUTTON 'Manage Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "FUNC_AUTO_MGMT")'
       LABEL "    "
       LABEL "    "
 
-      BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "FUNC_TBL_MGMT", "")'
+      BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "FUNC_TBL_MGMT", "")'
       LABEL "    "
       LABEL "    "
 
@@ -96,11 +96,11 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
 
-      BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "DEMO")'
+      BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "DEMO")'
       NAMED_WIDGET demo COMBOBOX HEATER_SIM
       LABEL "    "
 
-      BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "TUTORIAL")'
+      BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "TUTORIAL")'
       NAMED_WIDGET tutorial COMBOBOX Coming-Soon
       LABEL "    "
 

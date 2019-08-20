@@ -8,6 +8,8 @@
 #      multiple OSK components such as transferring a file between the ground
 #      and flight then it will be defined in another file within the OSK
 #      module.
+#   2. Transitioning from hardcoded app initialization to local JSON defined
+#      apps. Eventually would like to use remote repo.  
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -96,14 +98,20 @@ module Osk
          @app["SC"] = @sc
 
          # Kit Apps
-         @bm      = FswApp.new("BM",      "BM",      Osk::TLM_STR_HK_PKT, Fsw::MsgId::BM_CMD_MID)
-         @f42     = FswApp.new("F42",     "F42",     Osk::TLM_STR_HK_PKT, Fsw::MsgId::F42_CMD_MID)
-         @hc      = FswApp.new("HC",      "HC",      Osk::TLM_STR_HK_PKT, Fsw::MsgId::HC_CMD_MID)
-         @hsim    = FswApp.new("HSIM",    "HSIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID)
-         @i42     = FswApp.new("I42",     "I42",     Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
-         @isim    = FswApp.new("ISIM",    "ISIM",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
-         @tftp    = FswApp.new("TFTP",    "TFTP",    Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
+         @f42  = FswApp.new("F42",  "F42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::F42_CMD_MID)
+         @i42  = FswApp.new("I42",  "I42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
+         @isim = FswApp.new("ISIM", "ISIM", Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
+         @tftp = FswApp.new("TFTP", "TFTP", Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
         
+         app_json = Osk::System.read_target_json("BM")
+         @bm      = FswApp.new("BM",  "BM",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::BM_CMD_MID, app_json)
+
+         app_json = Osk::System.read_target_json("HC")
+         @hc      = FswApp.new("HC",  "HC",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::HC_CMD_MID, app_json)
+
+         app_json = Osk::System.read_target_json("HSIM")
+         @hsim    = FswApp.new("HSIM",  "HSIM",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID, app_json)
+         
          #app_json = read_app_json("kit_ci.json")
          app_json = Osk::System.read_target_json("KIT_CI")
          @kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID, app_json)
@@ -118,7 +126,7 @@ module Osk
 
          app_json  = Osk::System.read_target_json("OSK_DEMO")
          @osk_demo = FswApp.new("OSK_DEMO",  "OSK_DEMO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::OSK_DEMO_CMD_MID, app_json)
-         
+
          @app["BM"]       = @bm
          @app["F42"]      = @f42
          @app["HC"]       = @hc

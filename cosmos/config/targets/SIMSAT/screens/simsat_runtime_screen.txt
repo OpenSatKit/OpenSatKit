@@ -32,15 +32,15 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
          
-      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_CI_CMD")'
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_CI_CMD")'
       NAMED_WIDGET kit_ci_cmd COMBOBOX NOOP RESET_CTRS
       LABEL "    "
 
-      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_CI_TLM")'
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_CI_TLM")'
       NAMED_WIDGET kit_ci_tlm COMBOBOX HOUSEKEEPING
       LABEL "    "
 
-      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_CI_DOC")'
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_CI_DOC")'
       LABEL "    "
       LABEL "    "
 
@@ -54,19 +54,19 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
          
-      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_CMD")'
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_CMD")'
       NAMED_WIDGET kit_sch_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL CFG_SCH_ENTRY LOAD_SCH_ENTRY LOAD_MSG_ENTRY
       LABEL "    "
 
-      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_TLM")'
-      NAMED_WIDGET kit_ci_tlm COMBOBOX HOUSEKEEPING
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_TLM")'
+      NAMED_WIDGET kit_sch_tlm COMBOBOX HOUSEKEEPING
       LABEL "    "
 
-      BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_TBL")'
-      NAMED_WIDGET kit_ci_tlm COMBOBOX MESSAGE SCHEDULER
+      BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_TBL")'
+      NAMED_WIDGET kit_sch_tbl COMBOBOX MESSAGE SCHEDULER
       LABEL "    "
 
-      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_DOC")'
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_DOC")'
       LABEL "    "
       LABEL "    "
 
@@ -80,16 +80,16 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
          
-      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_CMD")'
+      BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_CMD")'
       NAMED_WIDGET kit_to_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL
 
       LABEL "    "
 
-      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_TLM")'
+      BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_TLM")'
       NAMED_WIDGET kit_to_tlm COMBOBOX HOUSEKEEPING
       LABEL "    "
 
-      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_DOC")'
+      BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_DOC")'
       LABEL "    "
       LABEL "    "
 
@@ -103,8 +103,8 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3
 
-      BUTTON 'Manage Runtime Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "FUNC_RUNTIME_MGMT")'
-      LABEL "    "
+      BUTTON 'Manage Runtime Apps' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "FUNC_RUNTIME_MGMT")'
+      BUTTON 'Exec Serv App Mgmt'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "FUNC_ES_APP_MGMT")'
       LABEL "    "
 
     END # Matrix
@@ -117,11 +117,11 @@ HORIZONTAL
   
     MATRIXBYCOLUMNS 3 5
 
-      BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "DEMO")'
+      BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "DEMO")'
       NAMED_WIDGET demo COMBOBOX Coming-Soon
       LABEL "    "
 
-      BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "TUTORIAL")'
+      BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "TUTORIAL")'
       NAMED_WIDGET tutorial COMBOBOX Coming-Soon
       LABEL "    "
 

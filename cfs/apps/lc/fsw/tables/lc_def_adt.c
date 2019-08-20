@@ -218,7 +218,7 @@ static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 */
 LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] =
 {
-    /* #0 (unused) */
+    /* #0 (HC: Battery Heaters) */
     {   .DefaultState        = LC_APSTATE_PASSIVE,
         .MaxPassiveEvents    = 0,
         .MaxPassFailEvents   = 1,
@@ -241,7 +241,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] =
                                }
     },
 
-    /* #1 (unused) */
+    /* #1 (HC: Propulsion Heaters) */
     {
         .DefaultState        = LC_APSTATE_PASSIVE,
         .MaxPassiveEvents    = 0,

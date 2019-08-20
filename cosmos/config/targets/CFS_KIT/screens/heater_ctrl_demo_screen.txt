@@ -56,17 +56,17 @@ VERTICALBOX
            
   VERTICALBOX
     # Note the text in Label1 must match the text defined for LABEL_1 in heater_ctrl_demo_screen.rb  
-    NAMED_WIDGET Label1 LABEL "This demo shows how three apps work together to autonomously control "
+    NAMED_WIDGET Label1 LABEL "This demo shows how three apps work together to autonomously"
     SETTING TEXTCOLOR 0 0 153
-    NAMED_WIDGET Label2 LABEL ""
+    NAMED_WIDGET Label2 LABEL "control the spacecraft's heaters. The Heater Control(HC) and"
     SETTING TEXTCOLOR 0 0 153
-    NAMED_WIDGET Label3 LABEL "the spacecraft's heaters. Click... "
+    NAMED_WIDGET Label3 LABEL "Heater Sim(HSIM) apps are loaded when demo enabled. Click... "
     SETTING TEXTCOLOR 0 0 153
-    NAMED_WIDGET Label4 LABEL "  <Enable HC> to start the demo "
+    NAMED_WIDGET Label4 LABEL ""
     SETTING TEXTCOLOR 0 0 153
-    NAMED_WIDGET Label5 LABEL "  <Disable HC> to stop the demo "
+    NAMED_WIDGET Label5 LABEL " <Enable/Disable HC> Start/Stop the demo "
     SETTING TEXTCOLOR 0 0 153
-    NAMED_WIDGET Label6 LABEL "  <Next> to read what each app does"
+    NAMED_WIDGET Label6 LABEL "  <Next> Provides information on each app"
     SETTING TEXTCOLOR 0 0 153
     LABEL ""
     HORIZONTALLINE
@@ -77,6 +77,11 @@ VERTICALBOX
     HORIZONTAL
       BUTTON "Enable HC" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "ENABLE")'
       BUTTON "Disable HC" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "DISABLE")'
+    END 
+    HORIZONTAL
+      LABEL ""
+      BUTTON "App Diagram" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "DIAGRAM")'
+      LABEL ""
     END 
   END # Vertical box
 

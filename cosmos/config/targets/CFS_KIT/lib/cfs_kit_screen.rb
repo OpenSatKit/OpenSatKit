@@ -218,8 +218,9 @@ def cfs_kit_scr_extend_osk(screen, cmd)
       display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
 
    when "RUN_BENCHMARKS"
-      prompt("Note this is a prototype application tht ill be updated for benchmarking remote targets")
-      display("CFS_KIT BENCHMARK_SCREEN",50,50) 
+      prompt("This is a prototype app that will be updated for benchmarking\nremote targets. The BM app will be loaded.")
+      display("CFS_KIT BENCHMARK_SCREEN",50,50)
+      Osk::Ops.load_app("BM") unless Osk::Ops.app_loaded?("BM")
 
    when "RUN_PLATFORM_CERT"
       prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run platform certification against a target")   

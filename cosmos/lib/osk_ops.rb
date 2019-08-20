@@ -47,6 +47,65 @@ module Ops
    end
 
    ############################################################################
+   ##  Application Management
+   ############################################################################
+
+   #
+   # Check if an application is loaded 
+   #  - app_name is case sensitive
+   #  - Disable events because unloaded error msg can be distracting if
+   #    just checking to determine whether an app is loaded   
+   #
+   def self.app_loaded?(app_name)
+   
+      app_loaded = false
+      
+      app = Osk::flight.app[app_name]
+      if app.nil?
+         raise_exception "osk_ops.app_loaded?() - #{app_name} not registered in osk_flight.rb"
+      else
+      
+         cmd("CFE_EVS DIS_APP_EVENT_GEN with APP_NAME CFE_ES")
+
+         seq_cnt = tlm("CFE_ES APP_INFO_TLM_PKT #{Ccsds::PRI_HDR_SEQUENCE}")
+
+         Osk::flight.cfe_es.send_cmd("SEND_APP_INFO with APP_NAME #{app_name}")
+         wait 1
+   
+         app_loaded = ( tlm("CFE_ES APP_INFO_TLM_PKT #{Ccsds::PRI_HDR_SEQUENCE}") != seq_cnt and
+                        tlm("CFE_ES APP_INFO_TLM_PKT NAME") == app_name) 
+         
+         cmd("CFE_EVS ENA_APP_EVENT_GEN with APP_NAME CFE_ES")
+      
+      
+      end
+
+      return app_loaded
+      
+   end # app_loaded?()
+   
+   #
+   # Load an app that already exists in the Osk::flight.app hash. If the app
+   # exists in the hash then this function can assume appropriate data has
+   # been defined. The data contents may be incorrect and the FSW will 
+   # verify them.
+   #
+   def self.load_app(app_name)
+   
+      app = Osk::flight.app[app_name]
+
+      # TODO - Add error checks
+      Osk::flight.cfe_es.send_cmd( \
+         "START_APP with APP_NAME #{app.fsw_name}, \
+         APP_ENTRY_POINT #{app.entry_symbol}, \
+         APP_FILENAME #{app.obj_path_filename}, \
+         STACK_SIZE #{app.stack_size},\
+         EXCEPTION_ACTION 0, \
+         PRIORITY #{app.priority}")
+   
+   end # load_app()
+
+   ############################################################################
    ##  File Transfer
    ############################################################################
 

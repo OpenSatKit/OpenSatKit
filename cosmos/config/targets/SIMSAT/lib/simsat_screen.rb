@@ -75,7 +75,7 @@ def simsat_adc(screen, cmd)
    when "I42_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
    when "FUNC_CONTROLLER_MGMT"
-      display("CFS_KIT SIM_42_SCREEN",50,50)
+      display("CFS_KIT SIM_42_SCREEN",1500,50)
    when "DEMO"
       prompt(Osk::MSG_TBD_FEATURE)
    when "TUTORIAL"
@@ -198,11 +198,11 @@ def simsat_data_file(screen, cmd)
    when "TFTP_DOC" 
       prompt(Osk::MSG_TBD_FEATURE)
    when "FUNC_FILE_MGMT"
-      display("CFS_KIT FILE_MGMT_SCREEN",50,50)
+      display("CFS_KIT FILE_MGMT_SCREEN",1500,50)
    when "FUNC_RECORDER_MGMT"
-      display("CFS_KIT RECORDER_MGMT_SCREEN",50,50)
+      display("CFS_KIT RECORDER_MGMT_SCREEN",1500,50)
    when "FUNC_TBL_MGMT"
-      display("CFS_KIT TABLE_MGMT_SCREEN",50,50)
+      display("CFS_KIT TABLE_MGMT_SCREEN",1500,50)
    when "DEMO"
       demo_scr = "FILE_MGMT_DEMO_SCREEN"
       if screen.get_named_widget("demo").text == "RECORDER"
@@ -286,7 +286,7 @@ def simsat_maintenance(screen, cmd)
    when "MM_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/mm/docs/users_guide/html/index.html")   
    when "FUNC_MEMORY_MGMT"
-      display("CFS_KIT MEMORY_MGMT_SCREEN",50,50)
+      display("CFS_KIT MEMORY_MGMT_SCREEN",1500,50)
    when "DEMO"
       # Only one option
       display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
@@ -319,6 +319,12 @@ def simsat_runtime(screen, cmd)
       # Only one option
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'KIT_SCH #{scr_name}'")
+   when "KIT_SCH_TBL"
+      tbl_id = 0;
+      if screen.get_named_widget("kit_sch_tbl").text == "SCHEDULER"
+         tbl_id = 1;
+      end
+      Osk::Ops::display_json_tbl("KIT_SCH",tbl_id)
    when "KIT_SCH_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
    when "KIT_TO_CMD" 
@@ -330,7 +336,9 @@ def simsat_runtime(screen, cmd)
    when "KIT_TO_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
    when "FUNC_RUNTIME_MGMT"
-      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",50,50)   
+      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",1500,50)   
+   when "FUNC_ES_APP_MGMT"
+      display("CFS_KIT APP_MGMT_SCREEN",1500,10)
    when "DEMO"
       prompt(Osk::MSG_TBD_FEATURE)
    when "TUTORIAL"

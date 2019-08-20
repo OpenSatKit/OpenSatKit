@@ -139,6 +139,7 @@ module Osk
 
    TBL_MGR_DEF_DS_FILE_TBL   = "ds_file_tbl.txt"
    TBL_MGR_DEF_DS_FILTER_TBL = "ds_filter_tbl.txt"
+   TBL_MGR_DEF_DS_EVENT_LOG  = "ds_event_log.txt"
    TBL_MGR_DEF_FM_DIR        = "fm_dir_list.txt"
    TBL_MGR_DEF_FM_FREESPACE  = "fm_freespace_tbl.txt"
    TBL_MGR_DEF_HK_COPY       = "hk_copy_tbl.txt"
@@ -168,6 +169,7 @@ module Osk
    GND_SRV_TBL_DIR = "#{Cosmos::USERPATH}/#{REL_SRV_TBL_DIR}"
 
    FLT_SRV_DIR = "/cf"
+   FLT_SIMSAT_SRV_DIR = "/cf/simsat"
 
    LIB_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
    SCR_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/screens"

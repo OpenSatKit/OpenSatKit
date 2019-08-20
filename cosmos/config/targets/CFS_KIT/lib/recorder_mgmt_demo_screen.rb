@@ -17,10 +17,14 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_flight'
 
-RMD_EVENT_TBL_IDX = 0
-RMD_HK_TBL_IDX    = 1
+RMD_EVENT_FILTER_TBL_IDX = 6
+RMD_EVENT_FILE_TBL_IDX   = 0
+RMD_HK_FILE_TBL_IDX      = 1
 
 RMD_TBL_PATH_FILE = "#{Osk::FLT_SRV_DIR}/#{Osk::TMP_TBL_FILE}"
+
+RMD_EVS_FILE = "events00001000.dat"
+RMD_EVS_PATH_FILE = "#{Osk::FLT_SIMSAT_SRV_DIR}/#{RMD_EVS_FILE}"
 
 ################################################################################
 ## Demo Narrative Text
@@ -58,12 +62,12 @@ RMD_INSTRUCT_1 = ["Two DS tables define its behavior. The 'filter' table defines
                   "a file. This includes a packet filtering algorithm. The 'file' table defines how a file is",
                   "named and when it should be closed.",
                   " ",
-                  "<Demo> Dump/display DS 'filter' table. Note #{CFE_EVS_EVENT_MSG_MID} event msg ID's file table index is #{RMD_EVENT_TBL_IDX}",
-                  "<Demo> Dump/display DS 'file' table. Note [#{RMD_EVENT_TBL_IDX}]=Event filter, [#{RMD_HK_TBL_IDX}]=cFE Houekeeping",
+                  "<Demo> Dump/display DS 'filter' table. Note #{Fsw::MsgId::CFE_EVS_EVENT_MSG_MID} event msg ID's file table index is #{RMD_EVENT_FILTER_TBL_IDX}",
+                  "<Demo> Dump/display DS 'file' table. Note [#{RMD_EVENT_FILE_TBL_IDX}]=Event filter, [#{RMD_HK_FILE_TBL_IDX}]=cFE Houekeeping",
                   " "]
 
 RMD_INFO_1 = "\n\n\
-Message #{CFE_EVS_EVENT_MSG_MID} is the event message ID and note that its file table index is #{RMD_EVENT_TBL_IDX}. \
+Message #{Fsw::MsgId::CFE_EVS_EVENT_MSG_MID} is the event message ID and note that its file table index is #{RMD_EVENT_FILE_TBL_IDX}. \
 Defining an event message file is a common mission design pattern. The packet filter table passes every event \
 message to the file.  The event file can be dumped at the start of a ground contact.\n\n\
 \
@@ -78,7 +82,7 @@ RMD_INSTRUCT_2 = ["DS's file table defaults to disabled. After you enable the fi
                   "and FM's open file packet are requested and displayed. ",
                   " ",
                   "<Demo> Enable DS's event and cFE housekeeping files",
-                  "<Demo> Generates to be stored by sending noop commands to each cFE service",
+                  "<Demo> Generates data to be stored by sending noop commands to each cFE service",
                   " ",
                   " "]
                
@@ -92,12 +96,12 @@ table defines a file to store this packet. \
 "
 
 # 3 - Stop recording, transfer and display event file 
-RMD_INSTRUCT_3 = ["TBD",
+RMD_INSTRUCT_3 = ["When you perform the disable and close steps, DS's file info packet and FM's",
+                  "open file packet are requested and displayed. ",
                   "",
-                  "",
-                  "<Demo> Disable event and housekeeping files",
+                  "<Demo> Disable DS's generation of event and housekeeping files",
                   "<Demo> Close event and housekeeping files",
-                  "",
+                  "<Demo> Transfer and display the event file",
                   ""]
 RMD_INFO_3 = Osk::DEMO_STEP_NO_INFO
 
@@ -191,32 +195,38 @@ def recorder_mgmt_demo(screen, button)
          when 2
             case $rmd_demo
                when 0 
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_TBL_IDX}, FILE_STATE 1")
+                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_FILE_TBL_IDX}, FILE_STATE 1")
                   wait 2
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_TBL_IDX}, FILE_STATE 1")
+                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_FILE_TBL_IDX}, FILE_STATE 1")
                   wait 4
                   Osk::flight.ds.send_cmd("SEND_FILE_INFO")
                   wait 1
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                   $rmd_demo += 1
-               when 1               
-                  ["CFE_ES", "CFE_EVS", "CFE_SB", "CFE_TBL", "CFE_TIME"].each { |cfe_srv|
-                     Osk::Ops::send_flt_cmd(cfe_srv, "#{Osk::CMD_STR_NOOP}")
-                     wait 1
-                     Osk::flight.ds.send_cmd("SEND_FILE_INFO")
-                  }                  
+               when 1      
+                  # Wait 4 allows the user to see the noop event messages. A 20s loop may seem like a long time
+                  # but when someone is learnig and there's a lot goingg on it's better to slow things down
+                  create_data = Thread.new {
+                     ["CFE_ES", "CFE_EVS", "CFE_SB", "CFE_TBL", "CFE_TIME"].each { |cfe_srv|
+                        Osk::Ops::send_flt_cmd(cfe_srv, "#{Osk::CMD_STR_NOOP}")
+                        sleep(4)
+                        Osk::flight.ds.send_cmd("SEND_FILE_INFO")
+                        sleep(1)
+                     }       
+                  } # End thread
+                  wait 2                  
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                else
                   $rmd_demo = 1
             end # Case $rmd_demo
 
-         # 3 - 
+         # 3 - Stop recording, transfer and display event file 
          when 3
             case $rmd_demo
                when 0 
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_TBL_IDX}, FILE_STATE 0")
+                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_FILE_TBL_IDX}, FILE_STATE 0")
                   wait 2
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_TBL_IDX}, FILE_STATE 0")
+                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_FILE_TBL_IDX}, FILE_STATE 0")
                   wait 2
                   Osk::flight.ds.send_cmd("SEND_FILE_INFO")
                   wait 2
@@ -229,6 +239,8 @@ def recorder_mgmt_demo(screen, button)
                   wait 1
                   Osk::flight.fm.send_cmd("GET_OPEN_FILES")
                   $rmd_demo += 1
+               when 2 
+                  Osk::Ops::get_flt_bin_file(RMD_EVS_PATH_FILE, Osk::REL_SRV_DIR, RMD_EVS_FILE, Osk::TBL_MGR_DEF_DS_EVENT_LOG)
                else
                   $rmd_demo = 0
             end # Case $rmd_demo

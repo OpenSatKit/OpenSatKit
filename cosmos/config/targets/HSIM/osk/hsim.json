@@ -1,0 +1,21 @@
+{
+"app": {
+   
+   "cosmos": {
+      "target": "HSIM"
+   },
+
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/hsim.so",
+      "entry-symbol": "SIM_AppMain",
+      "name": "HSIM",
+      "priority": 90,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "cfs",
+      "tables": []
+   }
+}   
+}

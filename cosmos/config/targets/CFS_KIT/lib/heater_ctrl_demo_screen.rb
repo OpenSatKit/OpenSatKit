@@ -11,12 +11,16 @@
 require 'cosmos'
 require 'cosmos/script'
 
-LABEL_1 = ["This demo shows how three apps work together to autonomously control ", 
-           "the spacecraft's heaters. Click... ",
+require 'osk_ops'
+
+# This label text is duplicated in heater_ctrl_demo_screen.txt and must be
+# edited in both changes
+LABEL_1 = ["This demo shows how three apps work together to autonomously", 
+           "control the spacecraft's heaters. The Heater Control(HC) and",
+           "Heater Sim(HSIM) apps are loaded when demo enabled. Click... ",
            "",
-           "  <Enable HC> to start the demo ",
-           "  <Disable HC> to stop the demo ",
-           "  <Next> to read what each app does"]
+           "  <Enable/Disable HC> Start/Stop the demo ",
+           "  <Next> Provides information on each app"]
 
 LABEL_2 = ["Heater Control (HC) monitors the temperature data from the thermistors ",
            "on each heater and calculates the average temperature for each heater. ",
@@ -26,9 +30,9 @@ LABEL_2 = ["Heater Control (HC) monitors the temperature data from the thermisto
            " "]
 
 LABEL_3 = ["Limit Checker (LC) monitors the temperature data and whether or not HC ",
-           "is ENABLED.  If it is, but the temperature gets too far out of range, ",
-           "LC will send a command to reset the heaters for the component whose ",
-           "heaters are not responding to HC.",
+           "is ENABLED.  If enabled and the temperature gets too far out of range, ",
+           "LC starts a Relative Time Sequence (RTS) that sends a command to reset",
+           "the heaters that are not responding to HC.",
            "",
            " "]
 
@@ -96,6 +100,15 @@ def heater_demo(screen, button)
       line6.text = LABEL_3[5]
     end
   elsif (button == "ENABLE")
+    # 
+    # Save time and only check one. HC&HSIM should always be managed as a group
+    # - USing "if not Osk::flight.hc.tlm_active?" took too long
+    #
+    if not Osk::Ops.app_loaded?("HC")
+       Osk::Ops.load_app("HC")
+       wait 1
+       Osk::Ops.load_app("HSIM")
+    end
     cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME LC, BITMASK 0x01") # Enable debug events
     cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME SC, BITMASK 0x01") # Enable debug events
     cmd("HC HEATER_CONTROL with HCTYPE BATTERY, HCSTATUS ENABLED")
@@ -108,6 +121,13 @@ def heater_demo(screen, button)
     cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME SC, BITMASK 0x01") # Disable debug events
     cmd("HC HEATER_CONTROL with HCTYPE BATTERY, HCSTATUS DISABLED")
     cmd("HC HEATER_CONTROL with HCTYPE PROPULSION, HCSTATUS DISABLED")
+    wait 1
+    Osk::flight.cfe_es.send_cmd("STOP_APP with APP_NAME HC")
+    wait 1
+    Osk::flight.cfe_es.send_cmd("STOP_APP with APP_NAME HSIM")
     #cmd("SC DISABLE_RTS with RTS_ID 3")
-  end
+  elsif (button == "DIAGRAM")
+    display("CFS_KIT HEATER_CTRL_DIAGRAM_SCREEN",50,50)
+  end # Button
+  
 end # heater_demo()
