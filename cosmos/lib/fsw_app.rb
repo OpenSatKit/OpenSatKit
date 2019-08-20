@@ -40,8 +40,8 @@ end # Class Table
 
 class FswApp
    
-   attr_reader :app_framework     # Application framework: cFS or OSK 
-   attr_reader :cfe_type          # cFE supports apps and libraries. These should be apps
+   attr_reader :app_framework     # Application framework: 'cfs' or 'osk' 
+   attr_reader :cfe_type          # cFE supports apps and libraries: 'app' or 'lib' These should be apps
    attr_reader :obj_path_filename # Path/Filename of object loaded during FSW startup
    attr_reader :entry_symbol
    attr_reader :fsw_name          # FSW app name also used in ground references
@@ -53,7 +53,7 @@ class FswApp
    attr_reader :cmd_mid
    attr_reader :cmd_valid         # Status of last command sent
    
-   @@validate_cmd     = false
+   @@validate_cmd     = false     # Is command counter increment validated after command sent?
    @@validate_timeout = 7         # Timeout(secs) to wait for telemetry verification
    
    #
@@ -103,7 +103,7 @@ class FswApp
             @stack_size        = nil
             @tables = []
             
-         end # If 
+         end # If JSON
       rescue Exception => e
          puts e.message
          puts e.backtrace.inspect  
@@ -121,6 +121,20 @@ class FswApp
       @target_hk_str = "#{@target} #{@hk_pkt}"
      
    end
+
+   # Check if receiving telemetry packet without stopping the script, i.e. don't
+   # use COSMOS wait/check methods.
+   def tlm_active?(tlm_pkt: Osk::TLM_STR_HK_PKT, pkt_rate: 3)
+   
+      target_tlm_pkt_str = "#{@target} #{tlm_pkt}"
+      
+      seq_cnt1 = tlm("#{target_tlm_pkt_str} #{Ccsds::PRI_HDR_SEQUENCE}")
+      wait pkt_rate + 2
+      seq_cnt2 = tlm("#{target_tlm_pkt_str} #{Ccsds::PRI_HDR_SEQUENCE}")
+      
+      return_value = (seq_cnt1 != seq_cnt2)
+            
+   end # tlm_active?
 
    def self.validate_cmd(boolean)
    

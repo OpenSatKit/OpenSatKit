@@ -1,0 +1,30 @@
+{
+"app": {
+   
+   "cosmos": {
+      "target": "HC"
+   },
+
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/hc.so",
+      "entry-symbol": "HC_AppMain",
+      "name": "HC",
+      "priority": 90,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "cfs",
+      "tables": [
+         { 
+                "name": "HC.Component",
+            "filename": "hc_component.tbl"
+         },
+         { 
+                "name": "HC.Type",
+            "filename": "hc_type.tbl"
+         }
+      ]
+   }
+}   
+}

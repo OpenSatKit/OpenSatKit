@@ -1,0 +1,25 @@
+###############################################################################
+# Heater Control Demo App Diagram Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Heater Control Demo Apps"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+HORIZONTAL
+
+  SETTING TEXTCOLOR black
+
+  CANVAS 1025 550
+    CANVASIMAGE "htr_ctrl_demo.png" 20 0
+  END
+        
+END # Horizontal
