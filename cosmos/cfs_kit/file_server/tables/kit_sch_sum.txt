@@ -28,7 +28,7 @@ Slot Activity Enabled Frequency Offset MsgTblIdx StreamId
   2     4      true       1        0       22     0xAB18
   2     5      true       4        2       23     0x9B18
   2     6      true       4        2       24     0x9C18
-  2     7      true       4        2       25     0x9C18
+  2     7      false      4        2       25     0x9C18
   2     8      true       3        2       26     0xB418
   2     9      true       2        0       27     0xB518
 ---------------------------------------------------------

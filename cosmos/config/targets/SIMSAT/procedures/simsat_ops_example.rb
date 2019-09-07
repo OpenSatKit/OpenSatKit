@@ -60,7 +60,7 @@ load_utility('simsat_instr_mgmt.rb')
 # 7. Simulate a ground pass
 #
 
-wait # Click <Go> when doen reading the scenario
+wait # Click <Go> when done reading the scenario
 
 #######################################
 ## 1. Establish the app configuration
@@ -90,8 +90,8 @@ simsat_isim_pwr_on
    # Refresh DS file info
    #
    
-   Osk::flight.isim.send_cmd("NOOP") 
-   Osk::flight.ds.send_cmd("SEND_FILE_INFO")
+   Osk::flight.send_cmd("ISIM","NOOP") 
+   Osk::flight.send_cmd("DS","SEND_FILE_INFO")
    wait 15
 
 end

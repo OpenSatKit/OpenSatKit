@@ -58,7 +58,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
 
       spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
       wait(15)
-      Osk::flight.i42.send_cmd("CONNECT_42")
+      Osk::flight.send_cmd("I42","CONNECT_42")
      
    when "STOP_CFS"
       # Hopefully ES cleans up resources and does a controlled shutdown
@@ -66,7 +66,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       #Osk::System.stop_cfs()
    
    when "STOP_42"
-      Osk::flight.i42.send_cmd("DISCONNECT_42")
+      Osk::flight.send_cmd("I42","DISCONNECT_42")
    
    when "CONFIG_SYS"
       case screen.get_named_widget("sys_cmd").text

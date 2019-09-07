@@ -20,26 +20,26 @@ def sim_42_send_cmd(screen, cmd)
       if (continue == 'Yes')
          spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
          wait(15)
-         Osk::flight.i42.send_cmd("CONNECT_42")
+         Osk::flight.send_cmd("I42","CONNECT_42")
       end
    elsif (cmd == "CONNECT_42")
       continue = message_box("The 42 simulator must be running for connect to succeed. Continue?",'Yes','No')
       if (continue == 'Yes')
-         Osk::flight.i42.send_cmd("CONNECT_42")
+         Osk::flight.send_cmd("I42","CONNECT_42")
       end
    elsif (cmd == "DISCONNECT_42")
-      Osk::flight.i42.send_cmd("DISCONNECT_42")
+      Osk::flight.send_cmd("I42","DISCONNECT_42")
    elsif (cmd == "SET_WHL_TGT_MOM")
       display("F42 WHL_TGT_MOM_CMD_SCR",50,50)
    elsif (cmd == "CONFIG_SUN_VALID")
       selection = vertical_message_box("Select SunValid Option  ",'Use 42 Sim Value','Override with Valid','Override with Invalid')
 	   case selection
 	      when 'Use 42 Sim Value'
-            Osk::flight.f42.send_cmd("SET_OVR_STATE with ID 0, STATE 1")
+            Osk::flight.send_cmd("F42","SET_OVR_STATE with ID 0, STATE 1")
 	      when 'Override with Valid'
-            Osk::flight.f42.send_cmd("SET_OVR_STATE with ID 0, STATE 2")
+            Osk::flight.send_cmd("F42","SET_OVR_STATE with ID 0, STATE 2")
 	      when 'Override with Invalid'
-            Osk::flight.f42.send_cmd("SET_OVR_STATE with ID 0, STATE 3")
+            Osk::flight.send_cmd("F42","SET_OVR_STATE with ID 0, STATE 3")
 	   end
    elsif (cmd == "MANAGE_CTRL_TBL")
       display("F42 TBL_SCR",50,50)
@@ -51,7 +51,7 @@ def sim_42_send_cmd(screen, cmd)
 	      when 'To Be Defined'
 	         new_mode = 2
 	   end
-	   Osk::flight.f42.send_cmd("SET_CTRL_MODE with NEW_MODE #{new_mode}")  
+	   Osk::flight.send_cmd("F42","SET_CTRL_MODE with NEW_MODE #{new_mode}")  
    elsif (cmd == "SET_SUN_AXIS")
       selection = combo_box("Select the target axis",'+X','-X','+Y','-Y','+Z','-Z')
 	   axis_id = 2  # Default to +Y
@@ -69,7 +69,7 @@ def sim_42_send_cmd(screen, cmd)
 	      when '-Z'
 	         axis_id = 5
 	   end
-	   Osk::flight.f42.send_cmd("SET_SUN_TARGET with AXIS #{axis_id}")  
+	   Osk::flight.send_cmd("F42","SET_SUN_TARGET with AXIS #{axis_id}")  
    elsif (cmd == "PLOT_ATT_ERR")
       spawn("ruby #{Osk::COSMOS_TLM_GRAPHER} -s -i 'F42 CONTROL_PKT ATT_ERR_X' -i 'F42 CONTROL_PKT ATT_ERR_Y' -i 'F42 CONTROL_PKT ATT_ERR_Z'")
    elsif (cmd == "PLOT_MOM_ERR")

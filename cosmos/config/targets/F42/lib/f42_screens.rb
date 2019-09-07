@@ -40,7 +40,7 @@ def f42_tbl_cmd(screen, cmd)
   
       # Get current table values from flight table and display in screen
       cmd_cnt = tlm("F42 HK_TLM_PKT CMD_VALID_COUNT")
-      Osk::flight.f42.send_cmd("DUMP_TBL with ID #{F42_CTRL_TBL_ID}, FILENAME #{FLT_TBL_FILE}"); 
+      Osk::flight.send_cmd("F42","DUMP_TBL with ID #{F42_CTRL_TBL_ID}, FILENAME #{FLT_TBL_FILE}"); 
       wait("F42 HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd count increments or timeout
       if (tlm("F42 HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
          prompt ("F42 dump table command failed");
@@ -109,7 +109,7 @@ def f42_tbl_cmd(screen, cmd)
          return
       end
       cmd_cnt = tlm("F42 HK_TLM_PKT CMD_VALID_COUNT")
-      Osk::flight.f42.send_cmd("LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{FswConfigParam::OSK_TBL_REPLACE}, FILENAME #{FLT_TBL_FILE}"); 
+      Osk::flight.send_cmd("F42","LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{FswConfigParam::OSK_TBL_REPLACE}, FILENAME #{FLT_TBL_FILE}"); 
       wait("F42 HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd count increments or timeout
       if (tlm("F42 HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
          prompt ("F42 load table command failed");
@@ -118,7 +118,7 @@ def f42_tbl_cmd(screen, cmd)
 	
    elsif (cmd == "RESTORE_DEFAULTS")
       cmd_cnt = tlm("F42 HK_TLM_PKT CMD_VALID_COUNT")
-      Osk::flight.f42.send_cmd("LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{FswConfigParam::OSK_TBL_REPLACE}, FILENAME #{FLT_DEF_TBL_FILE}"); 
+      Osk::flight.send_cmd("F42","LOAD_TBL with ID #{F42_CTRL_TBL_ID}, TYPE #{FswConfigParam::OSK_TBL_REPLACE}, FILENAME #{FLT_DEF_TBL_FILE}"); 
       wait("F42 HK_TLM_PKT CMD_VALID_COUNT == #{cmd_cnt}+1", 10)  # Delay until cmd count increments or timeout
       if (tlm("F42 HK_TLM_PKT CMD_VALID_COUNT") == cmd_cnt)
          prompt ("F42 load table command failed to restore the default values");

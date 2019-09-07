@@ -1,0 +1,29 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "ISIM"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/isim.so",
+      "entry-symbol": "ISIM_AppMain",
+      "name": "ISIM",
+      "priority": 90,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "Parameter Table",
+                  "id": 0,
+            "filename": "isim_tbl.json"
+         }
+      ],
+      "cmd-mid": "ISIM_CMD_MID"
+   }
+   
+}}
+
+

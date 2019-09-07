@@ -1,0 +1,23 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "TFTP"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/tftp.so",
+      "entry-symbol": "TFTP_AppMain",
+      "name": "TFTP",
+      "priority": 50,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [],
+      "cmd-mid": "TFTP_CMD_MID"
+   }
+   
+}}
+
+

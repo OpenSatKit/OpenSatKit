@@ -1,0 +1,33 @@
+{
+"app": {
+
+   "title": "CFDP App",
+   "version": "2.2.1",
+
+   "description": [
+
+      "CCSDS File Delivery Protocol app",
+      ""
+      ],
+
+   
+   "cosmos": {
+      "target": "CF"
+   },
+
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/cf.so",
+      "entry-symbol": "CF_AppMain",
+      "name": "CF",
+      "priority": 80,
+      "stack": 80192,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "cfs",
+      "tables": [],
+      "cmd-mid": "CF_CMD_MID"
+   }
+
+}}
+

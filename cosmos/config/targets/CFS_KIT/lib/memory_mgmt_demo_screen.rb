@@ -221,46 +221,46 @@ def memory_mgmt_demo(screen, button)
          # Lookup a symbol
          when 1
             if ($mmd_demo == 0)
-               Osk::flight.mm.send_cmd("LOOKUP_SYMBOL with SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flightsend_cmd("MM".,"LOOKUP_SYMBOL with SYMBOL_NAME #{MMD_SYMBOL}")
             # Don't increment mmd_demo; okay if user repeatedly sends lookup cmd
             end
       
          # Jam Dwell table and start a dwell
          when 2
             if ($mmd_demo == 0)
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 1, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.md.send_cmd("SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'Memory Management Demo'")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 1, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MD","SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'Memory Management Demo'")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
-               Osk::flight.md.send_cmd("START_DWELL with TABLE_MASK 0x0001")
+               Osk::flight.send_cmd("MD","START_DWELL with TABLE_MASK 0x0001")
                # Don't increment mmd_demo; okay if user repeatedly sends start dwell cmd. 
             end
 
          # 3 - Poke, Peek, and dump in event 
          when 3
             if ($mmd_demo == 0)
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x01020304, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x05060708, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0X090A0B0C, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x0D0E0F10, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x01020304, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x05060708, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0X090A0B0C, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x0D0E0F10, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
-               Osk::flight.mm.send_cmd("PEEK_MEM with DATA_SIZE  8, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.mm.send_cmd("PEEK_MEM with DATA_SIZE 16, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
-               Osk::flight.mm.send_cmd("PEEK_MEM with DATA_SIZE 32, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","PEEK_MEM with DATA_SIZE  8, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","PEEK_MEM with DATA_SIZE 16, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","PEEK_MEM with DATA_SIZE 32, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                $mmd_demo += 1
             elsif ($mmd_demo == 2)
-               Osk::flight.mm.send_cmd("DUMP_IN_EVENT with MEM_TYPE 1, NUM_BYTES 8, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","DUMP_IN_EVENT with MEM_TYPE 1, NUM_BYTES 8, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                # Don't increment mmd_demo and repeatedly send send dump in event. 
             end
 
          # 4 - Dump memory to a file and transfer file to the ground
          when 4
             if ($mmd_demo == 0)
-               Osk::flight.mm.send_cmd("DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILENAME #{MMD_FLT_PATH_FILENAME}")
+               Osk::flight.send_cmd("MM","DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILENAME #{MMD_FLT_PATH_FILENAME}")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
                Osk::system.file_transfer.get(MMD_FLT_PATH_FILENAME,MMD_GND_PATH_FILENAME)
@@ -277,14 +277,14 @@ def memory_mgmt_demo(screen, button)
          # 6 - Fill memory with pattern from command
          when 6
             if ($mmd_demo == 0)
-               Osk::flight.mm.send_cmd("FILL_MEM with MEM_TYPE 1, NUM_BYTES 8, FILL_PATTERN #{MMD_PAT_A0}, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","FILL_MEM with MEM_TYPE 1, NUM_BYTES 8, FILL_PATTERN #{MMD_PAT_A0}, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                # Don't increment mmd_demo; okay to repeat last command
             end
 
          # 7 = Load memory from dump file to restore values
          when 7
             if ($mmd_demo == 0)
-               Osk::flight.mm.send_cmd("LOAD_MEM_FROM_FILE with FILENAME #{MMD_FLT_PATH_FILENAME}")
+               Osk::flight.send_cmd("MM","LOAD_MEM_FROM_FILE with FILENAME #{MMD_FLT_PATH_FILENAME}")
                # Don't increment mmd_demo; okay to repeat last command
             end
       end # Step Case

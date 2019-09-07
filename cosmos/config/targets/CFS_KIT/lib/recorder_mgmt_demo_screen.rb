@@ -195,13 +195,13 @@ def recorder_mgmt_demo(screen, button)
          when 2
             case $rmd_demo
                when 0 
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_FILE_TBL_IDX}, FILE_STATE 1")
+                  Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_FILE_TBL_IDX}, FILE_STATE 1")
                   wait 2
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_FILE_TBL_IDX}, FILE_STATE 1")
+                  Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_FILE_TBL_IDX}, FILE_STATE 1")
                   wait 4
-                  Osk::flight.ds.send_cmd("SEND_FILE_INFO")
+                  Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                   wait 1
-                  Osk::flight.fm.send_cmd("GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
                   $rmd_demo += 1
                when 1      
                   # Wait 4 allows the user to see the noop event messages. A 20s loop may seem like a long time
@@ -210,12 +210,12 @@ def recorder_mgmt_demo(screen, button)
                      ["CFE_ES", "CFE_EVS", "CFE_SB", "CFE_TBL", "CFE_TIME"].each { |cfe_srv|
                         Osk::Ops::send_flt_cmd(cfe_srv, "#{Osk::CMD_STR_NOOP}")
                         sleep(4)
-                        Osk::flight.ds.send_cmd("SEND_FILE_INFO")
+                        Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                         sleep(1)
                      }       
                   } # End thread
                   wait 2                  
-                  Osk::flight.fm.send_cmd("GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
                else
                   $rmd_demo = 1
             end # Case $rmd_demo
@@ -224,20 +224,20 @@ def recorder_mgmt_demo(screen, button)
          when 3
             case $rmd_demo
                when 0 
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_FILE_TBL_IDX}, FILE_STATE 0")
+                  Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX #{RMD_EVENT_FILE_TBL_IDX}, FILE_STATE 0")
                   wait 2
-                  Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_FILE_TBL_IDX}, FILE_STATE 0")
+                  Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX #{RMD_HK_FILE_TBL_IDX}, FILE_STATE 0")
                   wait 2
-                  Osk::flight.ds.send_cmd("SEND_FILE_INFO")
+                  Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                   wait 2
-                  Osk::flight.fm.send_cmd("GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
                   $rmd_demo += 1
                when 1 
-                  Osk::flight.ds.send_cmd("CLOSE_ALL")
+                  Osk::flight.send_cmd("DS","CLOSE_ALL")
                   wait 2
-                  Osk::flight.ds.send_cmd("SEND_FILE_INFO")
+                  Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                   wait 1
-                  Osk::flight.fm.send_cmd("GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
                   $rmd_demo += 1
                when 2 
                   Osk::Ops::get_flt_bin_file(RMD_EVS_PATH_FILE, Osk::REL_SRV_DIR, RMD_EVS_FILE, Osk::TBL_MGR_DEF_DS_EVENT_LOG)

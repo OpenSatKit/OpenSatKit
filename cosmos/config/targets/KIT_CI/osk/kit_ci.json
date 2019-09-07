@@ -15,7 +15,8 @@
       "load_addr": 0,
       "exception-action": 0,
       "app-framework": "osk",
-      "tables": []
+      "tables": [],
+      "cmd-mid": "KIT_CI_CMD_MID"
    }
-}   
-}
+   
+}}

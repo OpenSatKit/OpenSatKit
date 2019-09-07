@@ -24,7 +24,8 @@
                 "name": "HC.Type",
             "filename": "hc_type.tbl"
          }
-      ]
+      ],
+      "cmd-mid": "HC_CMD_MID"
    }
-}   
-}
+   
+}}
