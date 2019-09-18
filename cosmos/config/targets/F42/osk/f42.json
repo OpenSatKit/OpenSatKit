@@ -1,0 +1,29 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "F42"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/f42.so",
+      "entry-symbol": "F42_AppMain",
+      "name": "F42",
+      "priority": 90,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "Control Table",
+                  "id": 0,
+            "filename": "f42_ctrl_tbl.json"
+         }
+      ],
+      "cmd-mid": "F42_CMD_MID"
+   }
+   
+}}
+
+

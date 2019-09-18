@@ -1,5 +1,18 @@
 {
 "app": {
+
+   "title": "Benchmark App",
+   "version": "0.9",
+
+   "description": [
+
+      "Prototype app that allows the user to select benchmarks to run",
+      "ranging from simple Dhrystone to complex multi-app software bus",
+      "message passing scenarios. Benchmarks are configurable including",
+      "the number of executions. Statistical reports are generated for",
+      "when multiple runs a performd."
+      ],
+
    
    "cosmos": {
       "target": "BM"
@@ -12,10 +25,11 @@
       "name": "BM",
       "priority": 80,
       "stack": 16384,
-      "load_addr": 0,
+      "load-addr": 0,
       "exception-action": 0,
       "app-framework": "cfs",
-      "tables": []
+      "tables": [],
+      "cmd-mid": "BM_CMD_MID"
    }
 }   
 }

@@ -36,8 +36,8 @@ while (test_loop < 1000)
 
    seq_cnt = tlm("FM #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}")
 
-   Osk::flight.fm.send_cmd("SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")   
-   Osk::flight.fm.send_cmd("WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{DIR_LIST_FILE}")
+   Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")   
+   Osk::flight.send_cmd("FM","WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{DIR_LIST_FILE}")
  
    wait("FM #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE} > #{seq_cnt}", 10) # Timeout will accomodate rollover
 

@@ -50,7 +50,7 @@ flt_path_filename = "/cf/simsat/#{isim_filename}"
 gnd_path_filename = "#{Cosmos::USERPATH}/#{Osk::REL_SRV_DIR}/#{isim_filename}"
 
 if (Osk::system.file_transfer.get(flt_path_filename,gnd_path_filename))
-   Osk::flight.fm.send_cmd("DELETE_FILE with FILENAME #{flt_path_filename}")
+   Osk::flight.send_cmd("FM","DELETE_FILE with FILENAME #{flt_path_filename}")
 end
  
 #

@@ -66,20 +66,20 @@ verify_noop ("FM")
 
 verify_noop ("DS")
 
-Osk::flight.ds.send_cmd("SET_APP_STATE with APP_STATE 1") # Enable DS to start creating packet files
+Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 1") # Enable DS to start creating packet files
 wait 2
 
-Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX 0, FILE_STATE 1") # Enable Event file
+Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 0, FILE_STATE 1") # Enable Event file
 wait 2
 
-Osk::flight.ds.send_cmd("SET_FILE_STATE with FILE_TBL_IDX 6, FILE_STATE 1") # Enable Science Auxiliary file
+Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 6, FILE_STATE 1") # Enable Science Auxiliary file
 
 verify_noop ("HK")
 
-Osk::flight.kit_sch.send_cmd("CFG_SCH_ENTRY with SLOT 2, ACTIVITY 6, CONFIG 1") # Enable HK Combo Pkt #1 
+Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 6, CONFIG 1") # Enable HK Combo Pkt #1 
 wait 2
 
-Osk::flight.kit_sch.send_cmd("CFG_SCH_ENTRY with SLOT 2, ACTIVITY 7, CONFIG 1") # Enable HK Combo Pkt #2
+Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 7, CONFIG 1") # Enable HK Combo Pkt #2
 wait  # Review configuration
 
 verify_noop ("TFTP",1)
@@ -91,15 +91,15 @@ verify_noop ("TFTP",1)
 
 verify_noop ("SC")
 
-Osk::flight.sc.send_cmd("ENABLE_RTS with RTS_ID 6") # Enable ISIM power off RTS
+Osk::flight.send_cmd("SC","ENABLE_RTS with RTS_ID 6") # Enable ISIM power off RTS
 wait  # Review configuration
 
 verify_noop ("LC")
 
-Osk::flight.lc.send_cmd("SET_APP_STATE with NEW_STATE 1") # Set LC to active mode
+Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE 1") # Set LC to active mode
 wait 2
 
-Osk::flight.lc.send_cmd("SET_AP_STATE with AP_ID 2, NEW_STATE 1") # Enable ISIM Fault AP
+Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 1") # Enable ISIM Fault AP
 wait  # Review configuration
 
 ########################################

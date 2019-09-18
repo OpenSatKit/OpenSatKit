@@ -1,0 +1,21 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "MD"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/md.so",
+      "entry-symbol": "MD_AppMain",
+      "name": "MD",
+      "priority": 90,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "cfs",
+      "tables": [],
+      "cmd-mid": "MD_CMD_MID"
+   }
+   
+}}

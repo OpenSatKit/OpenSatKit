@@ -82,11 +82,14 @@ HORIZONTAL
          
       BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_CMD")'
       NAMED_WIDGET kit_to_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL
-
       LABEL "    "
 
       BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_TLM")'
       NAMED_WIDGET kit_to_tlm COMBOBOX HOUSEKEEPING
+      LABEL "    "
+
+      BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_TBL")'
+      NAMED_WIDGET kit_to_tbl COMBOBOX PKT_OUTPUT
       LABEL "    "
 
       BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_DOC")'

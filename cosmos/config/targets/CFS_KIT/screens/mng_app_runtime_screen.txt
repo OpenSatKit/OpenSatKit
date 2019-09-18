@@ -43,8 +43,8 @@ VERTICAL
     
     HORIZONTALBOX "Telemetry Ouput"
     MATRIXBYCOLUMNS 3 10 20
-      BUTTON 'Add TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_ADD_PKT")'
-      BUTTON 'Rem TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_REMOVE_PKT")'
+      BUTTON 'Add TO Pkt'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_ADD_PKT")'
+      BUTTON 'Remove TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_REMOVE_PKT")'
       LABEL "                   "
     END # Matrix
     END # Horizontal

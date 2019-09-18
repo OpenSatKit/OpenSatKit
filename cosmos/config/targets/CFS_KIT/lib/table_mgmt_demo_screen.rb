@@ -229,30 +229,30 @@ def table_mgmt_demo(screen, button)
          when 2
             if ($tmd_demo == 0)
                
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 1, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 1, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W1}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W1}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W2}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W2}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.md.send_cmd("JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W3}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W3}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.md.send_cmd("SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'Table  Demo'")
+               Osk::flight.send_cmd("MD","SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'Table  Demo'")
                wait 1   
                   
                $tmd_demo += 1
             
             elsif ($tmd_demo == 1)
 
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x01020304, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x01020304, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x05060708, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W1}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x05060708, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W1}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0X090A0B0C, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W2}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0X090A0B0C, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W2}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x0D0E0F10, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W3}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x0D0E0F10, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W3}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                wait 1
-               Osk::flight.md.send_cmd("START_DWELL with TABLE_MASK 0x0001")
+               Osk::flight.send_cmd("MD","START_DWELL with TABLE_MASK 0x0001")
 
                $tmd_demo += 1
             
@@ -282,7 +282,8 @@ def table_mgmt_demo(screen, button)
          # 5 - Illustrate how MD table is monitoring memory locations
          when 5
             if ($tmd_demo == 0)
-               Osk::flight.mm.send_cmd("POKE_MEM with DATA_SIZE 8, MEM_TYPE 1, DATA #{$tmd_poke_val}, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+            
+            .send_cmd("MM","POKE_MEM with DATA_SIZE 8, MEM_TYPE 1, DATA #{$tmd_poke_val}, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                $tmd_poke_val += 1
                # Don't increment tmd_demo so user can repeatedly sends the command
             end

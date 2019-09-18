@@ -15,7 +15,8 @@
       "load_addr": 0,
       "exception-action": 0,
       "app-framework": "cfs",
-      "tables": []
+      "tables": [],
+      "cmd-mid": "HSIM_CMD_MID"
    }
-}   
-}
+   
+}}

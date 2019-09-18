@@ -87,7 +87,7 @@ def create_kit_sch_sum_file()
    
    # 1. Create hash from message table
 
-   if ( not Osk::flight.kit_sch.send_cmd("DUMP_TBL with ID #{MSG_TBL_ID}, FILENAME #{FLT_MSG_TBL_DMP_FILE}") )
+   if ( not Osk::flight.send_cmd("KIT_SCH","DUMP_TBL with ID #{MSG_TBL_ID}, FILENAME #{FLT_MSG_TBL_DMP_FILE}") )
       prompt ("KIT_SCH dump message table command failed.");
       FswApp.validate_cmd(saved_validate_state)
       return
@@ -112,7 +112,7 @@ def create_kit_sch_sum_file()
 
    # 2. Create hash from scheduler table
 
-   if ( not Osk::flight.kit_sch.send_cmd("DUMP_TBL with ID #{SCH_TBL_ID}, FILENAME #{FLT_SCH_TBL_DMP_FILE}") )
+   if ( not Osk::flight.send_cmd("KIT_SCH","DUMP_TBL with ID #{SCH_TBL_ID}, FILENAME #{FLT_SCH_TBL_DMP_FILE}") )
       prompt ("KIT_SCH dump scheduler table command failed");
       FswApp.validate_cmd(saved_validate_state)
       return
@@ -187,7 +187,7 @@ def create_kit_sch_msg_file()
 
    # 1. Create hash from message table
 
-   if ( not Osk::flight.kit_sch.send_cmd("DUMP_TBL with ID #{MSG_TBL_ID}, FILENAME #{FLT_MSG_TBL_DMP_FILE}") )
+   if ( not Osk::flight.send_cmd("KIT_SCH","DUMP_TBL with ID #{MSG_TBL_ID}, FILENAME #{FLT_MSG_TBL_DMP_FILE}") )
       prompt ("KIT_SCH dump message table command failed.");
       FswApp.validate_cmd(saved_validate_state)
       return

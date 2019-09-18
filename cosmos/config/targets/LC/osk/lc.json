@@ -1,0 +1,21 @@
+{ "app": {
+   
+   "cosmos": {
+      "target": "LC"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/lc.so",
+      "entry-symbol": "LC_AppMain",
+      "name": "LC",
+      "priority": 80,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "cfs",
+      "tables": [],
+      "cmd-mid": "LC_CMD_MID"
+   }
+   
+}}

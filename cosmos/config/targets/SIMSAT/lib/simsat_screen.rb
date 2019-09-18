@@ -324,7 +324,7 @@ def simsat_runtime(screen, cmd)
       if screen.get_named_widget("kit_sch_tbl").text == "SCHEDULER"
          tbl_id = 1;
       end
-      Osk::Ops::display_json_tbl("KIT_SCH",tbl_id)
+      Osk::Ops::dump_json_tbl("KIT_SCH",tbl_id)
    when "KIT_SCH_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
    when "KIT_TO_CMD" 
@@ -333,6 +333,10 @@ def simsat_runtime(screen, cmd)
       # Only one option
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'KIT_TO #{scr_name}'")
+   when "KIT_TO_TBL"
+      # Only one option
+      tbl_id = 0;
+      Osk::Ops::dump_json_tbl("KIT_TO",tbl_id)
    when "KIT_TO_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
    when "FUNC_RUNTIME_MGMT"

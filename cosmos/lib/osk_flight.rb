@@ -37,6 +37,12 @@ module Osk
    CFE_TIME_APP_ID = 3
    CFE_TBL_APP_ID  = 4
    
+   #
+   # This class serves as a container for all of the FSW apps.
+   #
+   # OSK is evolving/refactoring from hardcoded apps to a modular
+   # architecture where apps can be dynamically added/removed
+   #
    class Flight
    
       @@instance = nil
@@ -48,10 +54,10 @@ module Osk
       attr_reader :cfe_es, :cfe_evs, :cfe_sb, :cfe_tbl, :cfe_time
 
       # cFS Apps
-      attr_reader :cs, :ds, :fm, :hk, :hs, :lc, :md, :mm, :sc
+      #~attr_reader :cs, :ds, :fm, :hk, :hs, :lc, :md, :mm, :sc
       
-      # Kit Apps
-      attr_reader :bm, :f42, :hc, :hsim, :i42, :isim, :kit_ci, :kit_sch, :kit_to, :tftp
+      #~# Kit Apps
+      #~attr_reader :bm, :f42, :hc, :hsim, :i42, :isim, :kit_ci, :kit_sch, :kit_to, :tftp
       
       def initialize
          #puts "Osk::Flight.initialize()"
@@ -77,72 +83,99 @@ module Osk
          @app["CFE_TIME"] = @cfe_time
          
          # cFS Apps
-         @cs = FswApp.new("CS","CS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::CS_CMD_MID)
-         @ds = FswApp.new("DS","DS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::DS_CMD_MID)
-         @fm = FswApp.new("FM","FM",Osk::TLM_STR_HK_PKT,Fsw::MsgId::FM_CMD_MID)
-         @hk = FswApp.new("HK","HK",Osk::TLM_STR_HK_PKT,Fsw::MsgId::HK_CMD_MID)
-         @hs = FswApp.new("HS","HS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::HS_CMD_MID)
-         @lc = FswApp.new("LC","LC",Osk::TLM_STR_HK_PKT,Fsw::MsgId::LC_CMD_MID)
-         @md = FswApp.new("MD","MD",Osk::TLM_STR_HK_PKT,Fsw::MsgId::MD_CMD_MID)
-         @mm = FswApp.new("MM","MM",Osk::TLM_STR_HK_PKT,Fsw::MsgId::MM_CMD_MID)
-         @sc = FswApp.new("SC","SC",Osk::TLM_STR_HK_PKT,Fsw::MsgId::SC_CMD_MID)
+         #~@cs = FswApp.new("CS","CS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::CS_CMD_MID)
+         #~@ds = FswApp.new("DS","DS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::DS_CMD_MID)
+         #~@fm = FswApp.new("FM","FM",Osk::TLM_STR_HK_PKT,Fsw::MsgId::FM_CMD_MID)
+         #~@hk = FswApp.new("HK","HK",Osk::TLM_STR_HK_PKT,Fsw::MsgId::HK_CMD_MID)
+         #~@hs = FswApp.new("HS","HS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::HS_CMD_MID)
+         #~@lc = FswApp.new("LC","LC",Osk::TLM_STR_HK_PKT,Fsw::MsgId::LC_CMD_MID)
+         #~@md = FswApp.new("MD","MD",Osk::TLM_STR_HK_PKT,Fsw::MsgId::MD_CMD_MID)
+         #~@mm = FswApp.new("MM","MM",Osk::TLM_STR_HK_PKT,Fsw::MsgId::MM_CMD_MID)
+         #~@sc = FswApp.new("SC","SC",Osk::TLM_STR_HK_PKT,Fsw::MsgId::SC_CMD_MID)
       
-         @app["CS"] = @cs
-         @app["DS"] = @ds
-         @app["FM"] = @fm
-         @app["HK"] = @hk
-         @app["HS"] = @hs
-         @app["LC"] = @lc
-         @app["MD"] = @md
-         @app["MM"] = @mm
-         @app["SC"] = @sc
+         #~@app["CS"] = @cs
+         #~@app["DS"] = @ds
+         #~@app["FM"] = @fm
+         #~@app["HK"] = @hk
+         #~@app["HS"] = @hs
+         #~@app["LC"] = @lc
+         #~@app["MD"] = @md
+         #~@app["MM"] = @mm
+         #~@app["SC"] = @sc
 
-         # Kit Apps
-         @f42  = FswApp.new("F42",  "F42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::F42_CMD_MID)
-         @i42  = FswApp.new("I42",  "I42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
-         @isim = FswApp.new("ISIM", "ISIM", Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
-         @tftp = FswApp.new("TFTP", "TFTP", Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
-        
-         app_json = Osk::System.read_target_json("BM")
-         @bm      = FswApp.new("BM",  "BM",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::BM_CMD_MID, app_json)
 
-         app_json = Osk::System.read_target_json("HC")
-         @hc      = FswApp.new("HC",  "HC",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::HC_CMD_MID, app_json)
-
-         app_json = Osk::System.read_target_json("HSIM")
-         @hsim    = FswApp.new("HSIM",  "HSIM",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID, app_json)
+         osk = Osk::System.read_target_json("CFS_KIT")
+         osk["targets"].each do |target|
          
-         #app_json = read_app_json("kit_ci.json")
-         app_json = Osk::System.read_target_json("KIT_CI")
-         @kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID, app_json)
+            app_name = target.keys[0].to_s.upcase
+            config   = target.values[0]["load-on-init"]
+
+            app_json  = Osk::System.read_target_json(app_name)
+            @app[app_name] = FswApp.new(app_name, app_name,  Osk::TLM_STR_HK_PKT, Fsw::MsgId::UNUSED_MID, app_json)
+
+         end
+         
+         # Kit Apps
+         #~@f42  = FswApp.new("F42",  "F42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::F42_CMD_MID)
+         #~@i42  = FswApp.new("I42",  "I42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
+         #~@isim = FswApp.new("ISIM", "ISIM", Osk::TLM_STR_HK_PKT, Fsw::MsgId::ISIM_CMD_MID)
+         #~@tftp = FswApp.new("TFTP", "TFTP", Osk::TLM_STR_HK_PKT, Fsw::MsgId::TFTP_CMD_MID)
+        
+         #~app_json = Osk::System.read_target_json("BM")
+         #~@bm      = FswApp.new("BM",  "BM",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::BM_CMD_MID, app_json)
+
+         #~app_json = Osk::System.read_target_json("HC")
+         #~@hc      = FswApp.new("HC",  "HC",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::HC_CMD_MID, app_json)
+
+         #~app_json = Osk::System.read_target_json("HSIM")
+         #~@hsim    = FswApp.new("HSIM",  "HSIM",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::HSIM_CMD_MID, app_json)
+         
+         #~#app_json = read_app_json("kit_ci.json")
+         #~app_json = Osk::System.read_target_json("KIT_CI")
+         #~@kit_ci  = FswApp.new("KIT_CI",  "KIT_CI",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_CI_CMD_MID, app_json)
 
          #app_json = read_app_json("kit_sch.json")
-         app_json = Osk::System.read_target_json("KIT_SCH")
-         @kit_sch = FswApp.new("KIT_SCH", "KIT_SCH", Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_SCH_CMD_MID, app_json)
+         #~app_json = Osk::System.read_target_json("KIT_SCH")
+         #~@kit_sch = FswApp.new("KIT_SCH", "KIT_SCH", Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_SCH_CMD_MID, app_json)
 
          #app_json = read_app_json("kit_to.json")
-         app_json = Osk::System.read_target_json("KIT_TO")
-         @kit_to  = FswApp.new("KIT_TO",  "KIT_TO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_TO_CMD_MID, app_json)
+         #~app_json = Osk::System.read_target_json("KIT_TO")
+         #~@kit_to  = FswApp.new("KIT_TO",  "KIT_TO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::KIT_TO_CMD_MID, app_json)
 
-         app_json  = Osk::System.read_target_json("OSK_DEMO")
-         @osk_demo = FswApp.new("OSK_DEMO",  "OSK_DEMO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::OSK_DEMO_CMD_MID, app_json)
+         #~app_json  = Osk::System.read_target_json("OSK_DEMO")
+         #~@osk_demo = FswApp.new("OSK_DEMO",  "OSK_DEMO",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::OSK_DEMO_CMD_MID, app_json)
 
-         @app["BM"]       = @bm
-         @app["F42"]      = @f42
-         @app["HC"]       = @hc
-         @app["HSIM"]     = @hsim
-         @app["I42"]      = @i42
-         @app["ISIM"]     = @isim
-         @app["KIT_CI"]   = @kit_ci
-         @app["KIT_SCH"]  = @kit_sch
-         @app["KIT_TO"]   = @kit_to
-         @app["OSK_DEMO"] = @osk_demo
-         @app["TFTP"]     = @tftp
+         #~@app["BM"]       = @bm
+         #~@app["F42"]      = @f42
+         #~@app["HC"]       = @hc
+         #~@app["HSIM"]     = @hsim
+         #~@app["I42"]      = @i42
+         #~@app["ISIM"]     = @isim
+         #~@app["KIT_CI"]   = @kit_ci
+         #~@app["KIT_SCH"]  = @kit_sch
+         #~@app["KIT_TO"]   = @kit_to
+         #~@app["OSK_DEMO"] = @osk_demo
+         #~@app["TFTP"]     = @tftp
 
          Osk::create_json_table_mgmt_scr(@app)
          
       end # End init_variables()
              
+      # cmd_str - Contains the command name followed by optional command parameters 
+      def send_cmd(target, cmd_str)
+
+         cmd_valid = false
+         
+         if @app.has_key?(target)
+            cmd_valid = @app[target].send_cmd(cmd_str)
+         else
+            Osk::Ops::raise_exception "Command execution not verified. #{@fsw_name} #{@hk_pkt} not received"
+         end
+         
+         return cmd_valid
+       
+      end # send_cmd()
+          
    end # Flight class
    
    # An instance of flight is created outside of the module
