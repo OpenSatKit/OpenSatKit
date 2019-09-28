@@ -68,7 +68,7 @@ module Osk
    
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide-2.0.pdf"
+   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide.pdf"
    DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"

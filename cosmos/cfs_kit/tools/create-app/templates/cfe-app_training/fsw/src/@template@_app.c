@@ -177,8 +177,8 @@ int32 @TEMPLATE@_AppInit(void)
     @TEMPLATE@_AppData.EventFilters[2].EventID = @TEMPLATE@_LEN_ERR_EID;
     @TEMPLATE@_AppData.EventFilters[2].Mask    = CFE_EVS_FIRST_8_STOP;
 
-    //~@TEMPLATE@_AppData.EventFilters[3].EventID = @TEMPLATE@_PROCESS_INF_EID;
-    //~@TEMPLATE@_AppData.EventFilters[3].Mask    = CFE_EVS_EVERY_FOURTH_ONE;
+    @TEMPLATE@_AppData.EventFilters[3].EventID = @TEMPLATE@_PROCESS_INF_EID;
+    @TEMPLATE@_AppData.EventFilters[3].Mask    = CFE_EVS_EVERY_FOURTH_ONE;
 
     /*
     ** Register event filter table.
@@ -276,9 +276,9 @@ void @TEMPLATE@_AppPipe(CFE_SB_MsgPtr_t msg)
                     @TEMPLATE@_ResetCmd(msg);
                     break;
                     
-                //~case @TEMPLATE@_PROCESS_CC:
-                //~    @TEMPLATE@_ProcessCmd(msg);
-                //~    break;
+                //Ex#1case @TEMPLATE@_NEW_CMD_CC:
+                //Ex#1 @TEMPLATE@_NewCmd(msg);
+                //Ex#1 break;
 
                 default:
                     CFE_EVS_SendEvent(@TEMPLATE@_CC1_ERR_EID, CFE_EVS_ERROR,

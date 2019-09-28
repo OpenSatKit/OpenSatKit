@@ -21,7 +21,7 @@ VERTICAL
 
           BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS")'
           SETTING BACKCOLOR 0 200 0
-          BUTTON 'Start cFS/42' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS_42")'
+          BUTTON 'Start cFS with 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS_42")'
           SETTING BACKCOLOR 0 200 0
           LABEL "          "
           LABEL "System Time(secs)"
@@ -29,7 +29,7 @@ VERTICAL
 
           BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_CFS")'
           SETTING BACKCOLOR 220 50 50
-          BUTTON 'Stop 42' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_42")'
+          BUTTON 'Stop 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_42")'
           SETTING BACKCOLOR 220 50 50
           LABEL "          "
           LABEL "          "
@@ -41,13 +41,6 @@ VERTICAL
         LABEL "          "
 
         HORIZONTAL
-        VERTICALBOX 'Config System'          
-        MATRIXBYCOLUMNS 2
-          BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
-          NAMED_WIDGET sys_cmd COMBOBOX ENA_TLM RESET_TIME SET_GND_CMD_MODE
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-        End # Config System Box
         VERTICALBOX 'Documentation'
         MATRIXBYCOLUMNS 2
           BUTTON 'OSK Quick Start' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "OSK_QUICK_START")'
@@ -57,6 +50,13 @@ VERTICAL
         END # Matrix
         SETTING BACKCOLOR 162 181 205
         End # Documentation Box
+        VERTICALBOX 'Config System'          
+        MATRIXBYCOLUMNS 2
+          BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
+          NAMED_WIDGET sys_cmd COMBOBOX ENA_TLM RESET_TIME SET_GND_CMD_MODE
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+        End # Config System Box
         End # HORIZONTAL
 
         VERTICALBOX 'Scripts'
