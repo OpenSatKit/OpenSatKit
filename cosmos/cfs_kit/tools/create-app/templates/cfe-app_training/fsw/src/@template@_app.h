@@ -24,7 +24,7 @@
 
 #define @TEMPLATE@_NOOP_INF_EID      2    /* processed command "informational" */
 #define @TEMPLATE@_RESET_INF_EID     3
-//~#define @TEMPLATE@_PROCESS_INF_EID   4
+//Ex#1 #define @TEMPLATE@_NEW_CMD_INF_EID   4
   
 #define @TEMPLATE@_MID_ERR_EID       5    /* invalid command packet "error" */
 #define @TEMPLATE@_CC1_ERR_EID       6
@@ -38,7 +38,7 @@
 */
 #define @TEMPLATE@_NOOP_CC           0    /* no-op command */
 #define @TEMPLATE@_RESET_CC          1    /* reset counters */
-//~#define @TEMPLATE@_PROCESS_CC        2    /* Perform Routine Processing */
+//Ex#1 #define @TEMPLATE@_NEW_CMD_CC        2    /* Perform Routine Processing */
 
 /*
 ** Software Bus defines

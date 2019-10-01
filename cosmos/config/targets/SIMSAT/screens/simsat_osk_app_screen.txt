@@ -54,7 +54,7 @@ VERTICALBOX
     VALUE TFTP HK_TLM_PKT CMD_ERROR_COUNT
   END # Matrix
   HORIZONTALBOX
-    NAMED_WIDGET KIT_APPS COMBOBOX BM F42 HC HSIM I42 KIT_CI KIT_SCH KIT_TO TFTP
+    NAMED_WIDGET KIT_APPS COMBOBOX F42 I42 ISIM KIT_CI KIT_SCH KIT_TO TFTP
     BUTTON 'Noop'           'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("KIT_APPS").text}"].send_cmd("#{Osk::CMD_STR_NOOP}")'
     BUTTON 'Reset Counters' 'require "#{Cosmos::USERPATH}/lib/osk_global.rb"; require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.app["#{get_named_widget("KIT_APPS").text}"].send_cmd("#{Osk::CMD_STR_RESET}")'
   END

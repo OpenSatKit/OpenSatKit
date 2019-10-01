@@ -68,8 +68,16 @@ module Osk
    
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_TOUR_FILE = "OSK-Quick-Start-Guide-2.0.pdf"
-   DOCS_UG_FILE   = "OSK_UsersGuide.pdf"
+   DOCS_QUICK_START_FILE  = "OSK-Quick-Start-Guide.pdf"
+   DOCS_USERS_GUIDE_FILE  = "OSK-Users-Guide.pdf"
+
+   TRAIN_OSK_INTRO_FILE       = "OSK-Training-Intro.pdf"
+   TRAIN_OSK_CFE_SERVICE_FILE = "OSK-Ex-cFE_02A-cFE-Services.pdf"
+   TRAIN_OSK_CFE_APP_DEV_FILE = "OSK-Ex-cFE_02B-cFE-App-Dev.pdf"
+   
+   TRAIN_CFS_INTRO_FILE    = "cFS_Training_01-Intro.pdf"
+   TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
+   TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
    TUTORIAL_SCR_FILE  = "tutorial_scr.txt"
@@ -79,7 +87,7 @@ module Osk
    CREATE_APP_SCR_FILE      = "create_app_scr.txt"
    TEMPLATE_INFO_SCR_FILE   = "template_info_scr.txt"
 
-   OSK_TRAINING_SIMSAT = "OSK_Training-SimSat.pdf"
+   SIMSAT_OVERVIEW_FILE = "OSK-Simple-Sat.pdf"
    
    # Tutorial file format types
    TUTORIAL_HTML   = "HTML"
