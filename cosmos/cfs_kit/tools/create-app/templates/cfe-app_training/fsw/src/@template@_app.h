@@ -38,7 +38,7 @@
 */
 #define @TEMPLATE@_NOOP_CC           0    /* no-op command */
 #define @TEMPLATE@_RESET_CC          1    /* reset counters */
-//Ex#1 #define @TEMPLATE@_PROCESS_CC        2    /* Perform Routine Processing */
+//Ex#1 #define @TEMPLATE@_NEW_CMD_CC        2    /* Perform Routine Processing */
 
 /*
 ** Software Bus defines

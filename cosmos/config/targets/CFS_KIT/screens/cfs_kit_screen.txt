@@ -41,15 +41,34 @@ VERTICAL
         LABEL "          "
 
         HORIZONTAL
-        VERTICALBOX 'Documentation'
+        VERTICALBOX 'Learn OpenSatKit'
         MATRIXBYCOLUMNS 2
-          BUTTON 'OSK Quick Start' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "OSK_QUICK_START")'
+          BUTTON 'Open Doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_OSK")'
           SETTING BACKCOLOR 255 255 255
-          BUTTON 'OSK Users Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "OSK_USERS_GUIDE")'
+          NAMED_WIDGET learn_osk COMBOBOX SimpleSat_Overview OSK_Quick_Start OSK_Users_Guide
           SETTING BACKCOLOR 255 255 255
         END # Matrix
         SETTING BACKCOLOR 162 181 205
-        End # Documentation Box
+        End # Learn OpenSatKit Box
+        VERTICALBOX 'Learn cFS'          
+        MATRIXBYCOLUMNS 2
+          BUTTON 'Open doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_CFS")'
+          SETTING BACKCOLOR 255 255 255
+          NAMED_WIDGET learn_cfs COMBOBOX OSK_Training_Intro cFS_Training_Intro cFE_Service_Training OSK_cFE_Exercises cFE_App_Training OSK_cFE_App_Exercises
+          SETTING BACKCOLOR 255 255 255
+          END # Matrix
+        End # Learn cFS Box
+        SETTING BACKCOLOR 162 181 205
+        End # HORIZONTAL
+
+        HORIZONTAL
+        VERTICALBOX 'Example Scripts'
+        MATRIXBYCOLUMNS 2
+          BUTTON 'Run Ops Example' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_OPS_EXAMPLE")'
+          BUTTON 'Run Integration Test'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_INTG_TEST")'
+        END # Matrix
+        SETTING BACKCOLOR 162 181 205
+        End # Scripts Box
         VERTICALBOX 'Config System'          
         MATRIXBYCOLUMNS 2
           BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
@@ -57,18 +76,9 @@ VERTICAL
         END # Matrix
         SETTING BACKCOLOR 162 181 205
         End # Config System Box
+        SETTING BACKCOLOR 162 181 205
         End # HORIZONTAL
 
-        VERTICALBOX 'Scripts'
-        MATRIXBYCOLUMNS 4
-          BUTTON 'Run Ops Example' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_OPS_EXAMPLE")'
-          BUTTON 'Run Integration Test'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_INTG_TEST")'
-          LABEL "          "
-          LABEL "          "
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-        End # Scripts Box
-        SETTING BACKCOLOR 162 181 205
       END # System Box      
       
       

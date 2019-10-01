@@ -85,16 +85,38 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          end
       end
       
-   when "OSK_QUICK_START"
-      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_TOUR_FILE}")
+   when "LEARN_OSK"
+      # Default to first choice - SimpleSat_Overview
+      doc_dir_filename = Osk::target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
+      case screen.get_named_widget("learn_osk").text
+      when "OSK_Quick_Start"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QUICK_START_FILE}"
+      when "OSK_Users_Guide"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_USERS_GUIDE_FILE}"
+      end
+      spawn("evince #{doc_dir_filename}")
 
-   when "OSK_USERS_GUIDE"
-      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_UG_FILE}")
+   when "LEARN_CFS"
+      # Default to first choice - SimpleSat_Overview
+      doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_INTRO_FILE}"
+      case screen.get_named_widget("learn_cfs").text
+      when "cFS_Training_Intro"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFS_INTRO_FILE}"
+      when "cFE_Service_Training"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_SERVICE_FILE}"
+      when "OSK_cFE_Exercises"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_SERVICE_FILE}"
+      when "cFE_App_Training"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_APP_DEV_FILE}"
+      when "OSK_cFE_App_Exercises"
+         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_APP_DEV_FILE}"
+      end
+      spawn("evince #{doc_dir_filename}")
 
    when "RUN_OPS_EXAMPLE"
       spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
       display("SIMSAT SIMSAT_OPS_SCREEN",50,50)
-      spawn("evince #{Osk::target_dir_file("SIMSAT","docs",Osk::OSK_TRAINING_SIMSAT)}")
+      spawn("evince #{Osk::target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)}")
    
    when "RUN_INTG_TEST"
       spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")

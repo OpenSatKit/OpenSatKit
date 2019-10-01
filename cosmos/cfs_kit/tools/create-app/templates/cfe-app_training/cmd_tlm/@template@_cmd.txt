@@ -14,5 +14,5 @@ COMMAND @TEMPLATE@ RESET_CTRS <%= Osk::Cfg.processor_endian %> "Reset command co
 
 COMMAND @TEMPLATE@ NEW_CMD <%= Osk::Cfg.processor_endian %> "Training exercise command that displays the command parameter in an event message"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
-  APPEND PARAMETER USER_DATA 16 UINT UINT16_MIN UINT16_MAX 1 "Data displayed in the event message"
+  APPEND_PARAMETER USER_DATA 16 UINT MIN_UINT16 MAX_UINT16 1 "Data displayed in the event message"
  
