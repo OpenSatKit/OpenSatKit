@@ -1,5 +1,5 @@
 ###############################################################################
-# Kit Scheduler (KIT_SCH) Application Test
+# Instrument Simulator (ISIM) Application Functional Test
 #
 # Notes:
 #   1. Loaded by kit test suite so it can assume common utilities have been 
@@ -11,18 +11,19 @@
 #
 ###############################################################################
 
+require 'app_func_test'
 
-class KitSchTest < Cosmos::Test
- 
-   include OskTestApp
+class IsimFuncTest < Cosmos::Test
+
+   include AppFuncTest
    
    def initialize
       super()
-      osk_test_app_init("KIT_SCH", Fsw::MsgId::KIT_SCH_CMD_MID)
+      app_func_test_init("ISIM", Fsw::MsgId::ISIM_CMD_MID)
    end
 
    def setup
-      status_bar("setup")
+      status_bar("#{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - setup")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
       wait(2)
    end
@@ -36,5 +37,4 @@ class KitSchTest < Cosmos::Test
    def helper_method
    end
 
-end # Class KitSchTest
-
+end # Class IsimFuncTest
