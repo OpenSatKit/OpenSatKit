@@ -1,5 +1,5 @@
 ###############################################################################
-# Kit Telemetry Output (KIT_TO) Application Test
+# Trivial File Transfer Protocol (TFTP) Application Functional Test
 #
 # Notes:
 #   1. Loaded by kit test suite so it can assume common utilities have been 
@@ -11,18 +11,19 @@
 #
 ###############################################################################
 
+require 'app_func_test'
 
-class KitToTest < Cosmos::Test
+class TftpFuncTest < Cosmos::Test
 
-   include OskTestApp
+   include AppFuncTest
    
    def initialize
       super()
-      osk_test_app_init("KIT_TO", Fsw::MsgId::KIT_TO_CMD_MID)
+      app_func_test_init("TFTP", Fsw::MsgId::TFTP_CMD_MID)
    end
 
    def setup
-      status_bar("setup")
+      status_bar("#{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - setup")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
       wait(2)
    end
@@ -36,5 +37,4 @@ class KitToTest < Cosmos::Test
    def helper_method
    end
 
-end # Class KitToTest
-
+end # Class TftpFuncTest

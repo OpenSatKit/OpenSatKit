@@ -1,10 +1,10 @@
 ###############################################################################
-# OSK Test App Module
+# App Functional Test Module
 #
 # Notes:
-#   1. Provides OSK specific application test functionality that extends the
-#      COSMOS test class. Test that inherit from Cosmos::Test also include
-#      this module so it's similar to multiple inheritance. 
+#   1. Provides common test methods for use in app functional tests. Functional
+#      test inherit from Cosmos::Test so including this module is similar to 
+#      multiple inheritance or Java interfaces.
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -13,11 +13,11 @@
 ###############################################################################
 
 
-module OskTestApp
+module AppFuncTest
 
    attr_accessor :app
    
-   def osk_test_app_init (target_str,msg_id)
+   def app_func_test_init (target_str,msg_id)
       @app = FswApp.new(target_str, target_str, Osk::TLM_STR_HK_PKT, msg_id)
    end
 
@@ -36,5 +36,5 @@ module OskTestApp
       @app.send_cmd("RESET_CTRS")
    end
 
-end # Module OskTestApp
+end # Module AppFuncTest
 

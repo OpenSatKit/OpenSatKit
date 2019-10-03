@@ -79,6 +79,8 @@ module Osk
    TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
    TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
 
+   ABOUT_SCR_FILE  = "about_scr.txt"
+
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
    TUTORIAL_SCR_FILE  = "tutorial_scr.txt"
 
@@ -201,6 +203,7 @@ module Osk
    COSMOS_TBL_MANAGER = "#{Cosmos::USERPATH}/tools/TableManager"
    COSMOS_TLM_GRAPHER = "#{Cosmos::USERPATH}/tools/TlmGrapher"
    COSMOS_CMD_TLM_SRV = "#{Cosmos::USERPATH}/tools/CmdTlmServer"
+   COSMOS_TST_RUNNER  = "#{Cosmos::USERPATH}/tools/TestRunner"
    
    TMP_FLT_BIN_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_BIN_FILE}"
    TMP_GND_BIN_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_BIN_FILE}"
