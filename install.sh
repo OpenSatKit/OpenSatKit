@@ -5,7 +5,7 @@ BASE_DIR="$(pwd)"
 
 # Intentional order: OSK Archive, Dependencies, COSMOS, Build System 
 # - Dependencies cover OSK's needs, COSMOS may need additional ones
-# - OSK last ensures OSK COSMOS config files not overrriden
+# - OSK last ensures OSK COSMOS config files not overriden
 
 main()
 {
@@ -13,7 +13,7 @@ main()
 announce "INSTALLATION WILL TAKE TIME AND INCLUDES PROMPTS!"
 
 # set default path unless environment var exists
-if [ ! -n "${!OPEN_SAT_KIT_PATH}" ]; then
+if [ ! -n "${OPEN_SAT_KIT_PATH}" ]; then
    OPEN_SAT_KIT_PATH="`pwd`/OpenSatKit-master/"
 fi
 
