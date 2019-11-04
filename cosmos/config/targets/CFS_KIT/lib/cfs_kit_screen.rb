@@ -21,6 +21,9 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_flight'
 require 'fsw_app'
+require 'simsat_ops_example_utils' 
+require 'simsat_file_mgmt' 
+require 'user_version'
 
 require 'fileutils'
 
@@ -45,8 +48,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
    when "START_CFS"
    
       # Kill all instances of the cFS before starting a new instance. 
-      Osk::System.stop_cfs()
-      Osk::System.start_cfs()  # Enables telemetry
+      Osk::System.stop_cfs
+      Osk::System.start_cfs  # Enables telemetry
       
    when "START_CFS_42"
    
@@ -54,8 +57,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       
       # Kill all instances of the cFS before starting a new instance. 
 
-      Osk::System.stop_cfs()
-      Osk::System.start_cfs()  # Enables telemetry
+      Osk::System.stop_cfs
+      Osk::System.start_cfs  # Enables telemetry
 
       spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
       wait(15)
@@ -76,8 +79,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       if user_selection == "About"
          about_str = ["<b>Enable Telemetry</b> - Send command to the telemetry output app to enable telemetry.",
                       "<b>Reset Time</b> - Set cFS time to 0.",
-                      "<b>Config cmd validation</b> - Ena/Dis cmd counter telemetry verification.",
-                      "<b>cFE App Training</b> - Describes cFE application development and runtime environment."]
+                      "<b>Config cmd validation</b> - Ena/Dis cmd counter telemetry verification."]
          cfs_kit_create_about_screen("Configure System",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
@@ -100,11 +102,25 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       
    when "LEARN_OSK"
       user_selection = screen.get_named_widget("learn_osk").text
-      if user_selection == "About"
+      case user_selection
+      when "About"
          about_str = ["<b>SimSat Overview</b> - Describe Simple Sat reference architecture and operational contect.",
                       "<b>OSK Quick Start</b> - Highlights OSK features to allow a user to start experimenting.",
-                      "<b>OSK Users Guide</b> - Indepth description of all of the OSKs features with some design descriptions."]            
+                      "<b>OSK Users Guide</b> - Indepth description of all of the OSKs features with some design descriptions.",            
+                      "<b>OSK Version</b>     - Display the OpenSatKit version identifier."]
          cfs_kit_create_about_screen("Learn OSK",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      when "OSK_Version"
+         about_str = ["<b>OpenSatKit</b> provides a complete Core Flight System (cFS) training and application",
+                      "development environment that includes the <b>COSMOS</b> (<i>https://cosmosrb.com</i>) mission",
+                      "control software and the <b>42 Dynamic Simulator</b> (<i>https://software.nasa.gov/software/GSC-16720-1</i>)",
+                      " ",
+                      "A special thanks to the following open source projects:",
+                      "   NASA/Goddard Core Flight System",
+                      "   Ball Aerospace COSMOS",
+                      "   NASA/Goddard 42 Simulator",
+                      " "]
+         cfs_kit_create_about_screen("Version: #{USER_VERSION}",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
          # Default to first choice - SimpleSat_Overview
@@ -155,38 +171,47 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          cfs_kit_create_about_screen("Example Script",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
+         cfs_started = false
+         if (not Osk::System.cfs_running?)
+            continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter '#{Osk::PASSWORD}' for the password.",'Yes','No',false)            #puts "continue = #{continue}"
+            return unless continue == 'Yes' 
+            Osk::System.start_cfs  # Enables telemetry
+            cfs_started = true 
+         end
          case user_selection
          when "Functional_Test"
             # Test suite file defined in  ~\cosmos\config\tools\test_runner\test_runner.txt
             spawn("ruby #{Osk::COSMOS_TST_RUNNER}")
          when "Integration_Test"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")
-            display("SIMSAT SIMSAT_CFS_APP_SCREEN",50,50)
-            display("SIMSAT SIMSAT_OSK_APP_SCREEN",1500,50)
+            display("SIMSAT CFS_APP_SCREEN",50,50)
+            display("SIMSAT OSK_MISS_APP_SCREEN",1500,50)
          when "Ops_Example"
+            # No need to display a screen because a local screen is created by simsat_ops_example
+            status_bar("Preparing for ops example. This could take several seconds.")
+            simsat_ops_example_setup(!cfs_started)            
+            status_bar("Spawning Script Runner to run the ops example script.")
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
-            display("SIMSAT SIMSAT_OPS_SCREEN",50,50)
-            spawn("evince #{Osk::target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)}")
          end
       end
 
    when "SIMSAT_RUNTIME"
-      display("SIMSAT SIMSAT_RUNTIME_SCREEN",50,50)
+      display("SIMSAT RUNTIME_SCREEN",50,50)
    
    when "SIMSAT_DATA_FILE"
-      display("SIMSAT SIMSAT_DATA_FILE_SCREEN",50,50)
+      display("SIMSAT DATA_FILE_SCREEN",50,50)
    
    when "SIMSAT_AUTONOMY"
-      display("SIMSAT SIMSAT_AUTONOMY_SCREEN",50,50)
+      display("SIMSAT AUTONOMY_SCREEN",50,50)
    
    when "SIMSAT_ADC"
-      display("SIMSAT SIMSAT_ADC_SCREEN",50,50)
+      display("SIMSAT ADC_SCREEN",50,50)
    
    when "SIMSAT_MAINTENANCE"
-      display("SIMSAT SIMSAT_MAINTENANCE_SCREEN",50,50)
+      display("SIMSAT MAINTENANCE_SCREEN",50,50)
    
    when "SIMSAT_HEALTH_SAFETY"
-      display("SIMSAT SIMSAT_HEALTH_SAFETY_SCREEN",50,50)
+      display("SIMSAT HEALTH_SAFETY_SCREEN",50,50)
    
    when "CFE_EVENT_SERVICE"
       display("CFE_EVS CFE_EVS_SCREEN",50,50)

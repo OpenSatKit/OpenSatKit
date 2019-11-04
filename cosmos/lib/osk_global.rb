@@ -45,12 +45,23 @@ module Osk
    CFS_CMD_PORT  = "1234"
    CFS_TLM_PORT  = "1235"
 
+   # These are generic protocol-independent settings
+   GET_FILE_TIMEOUT = 15   # Telemetry get counter verification timeout 
+   PUT_FILE_TIMEOUT = 15   # Telemetry put counter verification timeout 
+
    ###################
    ## CFDP Settings ##
    ###################
 
    CFDP_APP_ENTITY_ID = "23"     # Ground tool prepends "0."
    CFDP_GND_ENTITY_ID = "0.21"
+   
+   ###################
+   ## TFTP Settings ##
+   ###################
+
+   TFTP_GET_TIMEOUT = 15   # Telemetry get counter verification timeout 
+   TFTP_PUT_TIMEOUT = 15   # Telemetry put counter verification timeout 
    
    ###################
    ## Text Messages ##
@@ -179,8 +190,7 @@ module Osk
    GND_SRV_TBL_DIR = "#{Cosmos::USERPATH}/#{REL_SRV_TBL_DIR}"
 
    FLT_SRV_DIR = "/cf"
-   FLT_SIMSAT_SRV_DIR = "/cf/simsat"
-
+   
    LIB_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
    SCR_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/screens"
    

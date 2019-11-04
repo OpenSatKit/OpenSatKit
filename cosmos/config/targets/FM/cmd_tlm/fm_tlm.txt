@@ -39,6 +39,9 @@ TELEMETRY FM DIR_LIST_PKT <%= Osk::Cfg.processor_endian %> "Get Directory Listin
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIR_LIST_TLM_MID_STR) %>
   APPEND_ITEM DIRNAME 512 STRING "Directory Name"
   APPEND_ITEM TOTALFILES 32 UINT "Number of files in the directory"
+     # These are defined for SimSat ops example. A more sophisticated approach would
+     # be required for multiple limit sets if directory sizes are important
+     LIMITS DEFAULT 3 DISABLED 0 0 40 50
   APPEND_ITEM PACKETFILES 32 UINT "Number of files in this packet"
   APPEND_ITEM FIRSTFILE 32 UINT "Index into directory files of first packet file"
   APPEND_ITEM FILE01_NAME 512 STRING "File Name"

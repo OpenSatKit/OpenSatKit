@@ -1,3 +1,3 @@
 # encoding: ascii-8bit
 
-USER_VERSION = "Unofficial"
+USER_VERSION = "OpenSatKit 2.0"

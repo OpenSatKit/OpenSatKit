@@ -99,6 +99,9 @@ module FswConfigParam
   FM_TABLE_ENTRY_COUNT = 8
   FM_TABLE_FILENAME    = "fm_freespace.tbl"
   
+  FM_DIR_FILE_HDR_LEN  = 72 # Not a config parameter but FM definition
+  FM_DIR_FILE_REC_LEN  = 72 # Not a config parameter but FM definition
+  
   #########################
   ## App - House Keeping ##
   #########################

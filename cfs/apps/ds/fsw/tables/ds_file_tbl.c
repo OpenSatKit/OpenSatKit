@@ -100,7 +100,7 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .FileNameType  = */ DS_BY_COUNT,
       /* .EnableState   = */ DS_DISABLED,
       /* .MaxFileSize   = */ (1024 * 32),               /* 32 K-bytes */
-      /* .MaxFileAge    = */ (60 * 45),                 /* 45 minutes */
+      /* .MaxFileAge    = */ (60 * 4),                  /* 4 minutes - Keep short to generate multiple files in example run */
       /* .SequenceCount = */ 1000,
     },
 
@@ -196,7 +196,7 @@ DS_DestFileTable_t DS_DestFileTable =
       /* .FileNameType  = */ DS_BY_COUNT,
       /* .EnableState   = */ DS_DISABLED,
       /* .MaxFileSize   = */ (1024 * 32),               /* 32 K-bytes */
-      /* .MaxFileAge    = */ (60 * 45),                 /* 45 minutes */
+      /* .MaxFileAge    = */ (60 * 4),                  /* 4 minutes - Keep short to generate multiple files in example run */
       /* .SequenceCount = */ 1000,
     },
         

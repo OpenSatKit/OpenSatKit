@@ -62,6 +62,17 @@ module Osk
       # 
       # Start the cFS and enable telemetry
       #      
+      def self.cfs_running?
+            
+         core = `pgrep core`
+         #puts core + " len = #{core.length}"
+         return (core.length > 1)
+      
+      end
+      
+      # 
+      # Start the cFS and enable telemetry
+      #      
       def self.start_cfs()
          
          # Start the cFS

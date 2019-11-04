@@ -138,7 +138,7 @@ static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 */
 LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
 {
-    /* #0 (unused) */
+    /* #0 (Battery Heater Enabled) */
     {
         .DataType                   = LC_DATA_UBYTE,
         .OperatorID                 = LC_OPER_EQ,
@@ -150,7 +150,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Unsigned8in32.Unsigned8 = 1,
     },
 
-    /* #1 (unused) */
+    /* #1 (Prop Heater Enabled) */
     {
         .DataType                   = LC_DATA_UBYTE,
         .OperatorID                 = LC_OPER_EQ,
@@ -162,7 +162,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
 	.ComparisonValue.Unsigned8in32.Unsigned8 = 1,
     },
 
-    /* #2 (unused) */
+    /* #2 (Battery Heater 1 < 15.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_LT,
@@ -174,7 +174,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32    = 15.0,
     },
 
-    /* #3 (unused) */
+    /* #3 (Battery Heater 1 > 55.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_GT,
@@ -186,7 +186,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 55.0,
     },
 
-    /* #4 (unused) */
+    /* #4 (Battery Heater 2 < 15.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_LT,
@@ -198,7 +198,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 15.0,
     },
 
-    /* #5 (unused) */
+    /* #5 (Battery Heater 2 > 55.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_GT,
@@ -210,7 +210,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 55.0,
     },
 
-    /* #6 (unused) */
+    /* #6 (Battery Heater 3 < 15.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_LT,
@@ -222,7 +222,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 15.0,
     },
 
-    /* #7 (unused) */
+    /* #7 (Battery Heater 3 > 55.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_GT,
@@ -234,7 +234,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 55.0,
     },
 
-    /* #8 (unused) */
+    /* #8 (Prop Heater 1 < 0.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_LT,
@@ -246,7 +246,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 0.0,
     },
 
-    /* #9 (unused) */
+    /* #9 (Prop Heater 1 > 40.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_GT,
@@ -258,7 +258,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 40.0,
     },
 
-    /* #10 (unused) */
+    /* #10 (Prop Heater 2 < 0.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_LT,
@@ -270,7 +270,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .ComparisonValue.Float32 = 0.0,
     },
 
-    /* #11 (unused) */
+    /* #11 (Prop Heater 2 > 40.0) */
     {
         .DataType                   = LC_DATA_FLOAT_LE,
         .OperatorID                 = LC_OPER_GT,

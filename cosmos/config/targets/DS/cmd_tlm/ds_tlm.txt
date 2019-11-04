@@ -22,6 +22,8 @@ TELEMETRY DS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "DS application houseke
   APPEND_ITEM FILTER_TBL_LOAD_CTR   8   UINT "Count of packet filter table loads"
   APPEND_ITEM FILTER_TBL_ERR_CTR    8   UINT "Count of failed attempts to get table data pointer"
   APPEND_ITEM APP_ENA_STATE         8   UINT "Application enable/disable state"
+    STATE DIS 0 Red
+    STATE ENA 1 Green
   APPEND_ITEM SPARE8                8   UINT "Structure alignment padding"
   APPEND_ITEM FILE_WRITE_CTR       16   UINT "Count of good destination file writes"
   APPEND_ITEM FILE_WRITE_ERR_CTR   16   UINT "Count of bad destination file writes"

@@ -16,6 +16,7 @@
 require 'osk_global'
 require 'osk_system'
 require 'osk_flight'
+require 'simsat_global'
 
 RMD_EVENT_FILTER_TBL_IDX = 6
 RMD_EVENT_FILE_TBL_IDX   = 0
@@ -24,7 +25,7 @@ RMD_HK_FILE_TBL_IDX      = 1
 RMD_TBL_PATH_FILE = "#{Osk::FLT_SRV_DIR}/#{Osk::TMP_TBL_FILE}"
 
 RMD_EVS_FILE = "events00001000.dat"
-RMD_EVS_PATH_FILE = "#{Osk::FLT_SIMSAT_SRV_DIR}/#{RMD_EVS_FILE}"
+RMD_EVS_PATH_FILE = "#{SimSat::FLT_SRV_DIR}/#{RMD_EVS_FILE}"
 
 ################################################################################
 ## Demo Narrative Text
@@ -50,7 +51,7 @@ RMD_INFO_0 = "\n\
 DS accepts packets from the Software Bus(SB) and writes them to files. Files can be generated \
 from other sources. Science payloads, cameras, etc. often have an app that manages their interface \
 and creates data files. Files are also generated in response to commands (e.g. SB routing tables). \
-These files are typically stored in a static directorstry structure.\n\n\
+These files are typically stored in a static directory structure.\n\n\
 \
 Each mission must design a file management scheme that includes when files are closed, how they are \
 downlinked in a prioritized order, and when they are deleted.  The CCSDS File Data Protocol (CFDP) \
@@ -81,7 +82,7 @@ table defines a file to store this packet. \
 RMD_INSTRUCT_2 = ["DS's file table defaults to disabled. After you enable the files, DS's file info packet",
                   "and FM's open file packet are requested and displayed. ",
                   " ",
-                  "<Demo> Enable DS's event and cFE housekeeping files",
+                  "<Demo> Enable DS's event and cFE housekeeping files (takes a few seconds)",
                   "<Demo> Generates data to be stored by sending noop commands to each cFE service",
                   " ",
                   " "]
@@ -240,7 +241,7 @@ def recorder_mgmt_demo(screen, button)
                   Osk::flight.send_cmd("FM","GET_OPEN_FILES")
                   $rmd_demo += 1
                when 2 
-                  Osk::Ops::get_flt_bin_file(RMD_EVS_PATH_FILE, Osk::REL_SRV_DIR, RMD_EVS_FILE, Osk::TBL_MGR_DEF_DS_EVENT_LOG)
+                  Osk::Ops::get_flt_bin_file(RMD_EVS_PATH_FILE, Osk::REL_SRV_DIR, RMD_EVS_FILE, Osk::TBL_MGR_DEF_DS_EVENT_LOG,25)
                else
                   $rmd_demo = 0
             end # Case $rmd_demo
