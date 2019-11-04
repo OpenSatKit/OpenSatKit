@@ -7,7 +7,7 @@
 # Written by David McComas, licensed under the copyleft GNU General
 # Public License (GPL). 
 #
-# The basis for code is 
+# The basis for code is:
 #
 # Copyright 2014 Ball Aerospace & Technologies Corp.
 # All Rights Reserved.

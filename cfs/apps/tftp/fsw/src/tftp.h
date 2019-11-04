@@ -46,7 +46,7 @@
 #define TFTP_OPCODE_ACK		4
 #define TFTP_OPCODE_ERROR	5
 
-#define TFTP_STATE_TIMEOUT    4
+#define TFTP_STATE_TIMEOUT    40  /* Length pepends on TFTP_APP_RUNLOOP_DELAY in tftp_platform_cfg.h */
 #define TFTP_DEF_TIMEOUT_SEC  0
 #define TFTP_DEF_TIMEOUT_USEC 50000
 #define TFTP_MAX_DATA_LEN     512

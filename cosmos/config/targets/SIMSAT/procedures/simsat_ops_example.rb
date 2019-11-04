@@ -12,6 +12,10 @@
 #   2. The iSim app uses more event messages than a typical flight app. The
 #      events are used for illustrative purposes.  
 #
+# Global Script Variables:
+#   simsat_ops_enable - Boolean indicating whether ops example is active
+#   simsat_ops_status - Text string displayed on ops example screen
+#
 ###############################################################################
 
 require 'cosmos'
@@ -21,7 +25,25 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_ops'
 
-load_utility('simsat_instr_mgmt.rb')
+
+#
+# Configure global variables and utility functions
+#
+
+$simsat_ops_enable = true
+
+simsat_ops_status = "Preparing Ops Example. Read scenario comments in Script Runner."
+load_utility('simsat_ops_example_utils.rb')
+load_utility('simsat_file_mgmt.rb')
+load_utility('simsat_isim_mgmt.rb')  #Provide methods for managing the instrument. E.g. power instrument on/off
+
+#
+# Create ops screen dynamically so script variables can be displayed
+#
+
+clear("SIMSAT OPS_SCREEN")  # Doesn't work for script generated screen
+simsat_create_ops_screen
+
 
 #
 # Ops Example Scenario
@@ -66,33 +88,52 @@ wait # Click <Go> when done reading the scenario
 ## 1. Establish the app configuration
 #######################################
 
-start("simsat_app_prep.rb")
+simsat_ops_status = "Configuring apps"
+start("simsat_app_config.rb")
 
 ###############################################################
 ## 2. Configure the science instrument (i.e ISIM) for science
 ###############################################################
 
+simsat_ops_status = "Powering on instrument"
 simsat_isim_pwr_on
 
 ####################################################################
 ## 3. Perform automated science ops (i.e. collect data and store
 ##    to file). Have downlink so can observe activity but no uplink
-##    so files can be transferred
+##    so files can't be transferred
 ####################################################################
 
-# The science cycle counter counts from 0 to the number of science
-# scans in a file (defaults to 60). Wait for at least 1 science file
-# to be created.
+#
+# Note  there's background "cheating" going on by a ruby thread
+# that was created when the example started.  The thread is sending
+# commands to File Manager(FM) and Data Storage(DS) to send telemetry
+# packets that are sent only in response to commands. This could be
+# automated in a stored command if needed by a mission.
+#
+# What to observe:
+# 1. The ISIM app generates a new science file every minute. ISIM
+#    simulates collecting science data at 1Hz and a new filee is 
+#    started after 60 scans.
+# 2. Data Storage creates new event and science auxiliary files
+#    every 5 minutes.
+#
+# Wait at least 5 minutes so every type of file is generated. It goes
+# by quick if you look into details of what's going on! 
+#
+#
 
-5.times do
-   #
-   # Add an event to the event file
-   # Refresh DS file info
-   #
-   
-   Osk::flight.send_cmd("ISIM","NOOP") 
-   Osk::flight.send_cmd("DS","SEND_FILE_INFO")
-   wait 15
+simsat_ops_status = "5 Minutes of automated science and DS activities"
+
+# Cycle through a few apps to create different noop events
+app_list  = ["KIT_CI", "KIT_SCH", "KIT_TO", "ISIM", "I42", "F42"]
+app_cycle = app_list.cycle
+
+20.times do |n|
+
+   puts "Ops loop #{n}"
+   Osk::flight.send_cmd(app_cycle.next,"NOOP") 
+   wait 15 # You can click Script Runner's <Go> button if you don't want to wait
 
 end
 
@@ -102,19 +143,22 @@ end
 ##    Future release will use absolute time command sequence)
 ################################################################
 
-# TODO
 # 1. Perform automated realtime health assesment 
 # 2. Close, dump and display event file
 # 3. Manage onboard files: FM dir, TFTP transfer, and FM delete file
-#    Thsi will be replaced by CFDP
-wait #
+#    This will be replaced by CFDP
+simsat_ops_status = "Ground pass"
+start("simsat_gnd_pass.rb")
+
+simsat_ops_status = "Completed a ground pass. No errors and successful recorder mgmt. Review flt/gnd simsat dir"
+wait # Review flight/ground simsat directories
 
 ################################################################
 ## 5. Continue science ops without downlink then inject a fault
 ##    and observe autonmous LC & SC response
 ################################################################
 
-
+simsat_ops_status = "Simulating an instrument fault. LC/SC will respond."
 simsat_isim_set_fault
 wait # Observe automated response
 
@@ -125,4 +169,14 @@ wait # Observe automated response
 # TODO
 # 1. Perform automated realtime health assesment. Recognize
 #    instument is off and take action to diagnose the situation 
+start("simsat_gnd_pass.rb")
 
+simsat_ops_status = "Completed a ground pass with errors. Review current flight software state"
+wait # Review current flight software state
+
+###############################
+## 8. Clean up
+###############################
+
+simsat_ops_status = "Example ops script complete"
+simsat_ops_example_teardown

@@ -156,7 +156,7 @@ def app_mgmt_demo(screen, button)
       case $amd_step
          when 1
             display("CFS_KIT APP_MGMT_SCREEN",1500,50)    
-            display("CFS_KIT SIMSAT_CFS_APP_SCREEN",50,50)    
+            display("CFS_KIT CFS_APP_SCREEN",50,50)    
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Enable debug events
             wait(2) 
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_EVS, BITMASK 0x01") # Enable debug events
@@ -168,7 +168,7 @@ def app_mgmt_demo(screen, button)
             cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Disable debug events
             $amd_step = 0
             clear("CFS_KIT APP_MGMT_SCREEN")    
-            clear("CFS_KIT SIMSAT_CFS_APP_SCREEN")   
+            clear("CFS_KIT CFS_APP_SCREEN")   
             clear("CFS_KIT APP_MGMT_DEMO_SCREEN")
             clear("CFS_KIT APP_MGMT_DEMO_INFO_SCREEN")
       end # Step Case

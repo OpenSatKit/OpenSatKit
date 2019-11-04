@@ -39,14 +39,14 @@ module Osk
          @tftp = TFTP.new(ip_addr)
       end
   
-      def get(flt_filename, gnd_filename)
+      def get(flt_filename, gnd_filename, tlm_timeout = Osk::TFTP_GET_TIMEOUT)
   
          got_file = true
          # TFTP uses UDP directly without cmd interface so can't use cmd counters to verify execution
          get_file_cnt = tlm("TFTP HK_TLM_PKT GET_FILE_COUNT")
          seq_cnt = tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE")
          @tftp.getbinaryfile(flt_filename, gnd_filename)
-         wait("TFTP HK_TLM_PKT GET_FILE_COUNT == #{get_file_cnt}+1", 10)  # Delay until get file count increments or timeout
+         wait("TFTP HK_TLM_PKT GET_FILE_COUNT == #{get_file_cnt}+1", tlm_timeout)  # Delay until get file count increments or timeout
          if (tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
             prompt ("No telemetry received to verify the error. Verify connection and telemetry output filter table.");
             got_file = false  
@@ -56,14 +56,14 @@ module Osk
     
       end # get()
 
-      def put (gnd_filename, flt_filename)
+      def put (gnd_filename, flt_filename, tlm_timeout = Osk::TFTP_PUT_TIMEOUT)
   
          put_file = true
          # TFTP uses UDP directly without cmd interface so can't use cmd counters to verify execution
          put_file_cnt = tlm("TFTP HK_TLM_PKT PUT_FILE_COUNT")
          seq_cnt = tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE")
          @tftp.putbinaryfile(gnd_filename, flt_filename)
-         wait("TFTP HK_TLM_PKT PUT_FILE_COUNT == #{put_file_cnt}+1", 10)  # Delay until put file count increments or timeout
+         wait("TFTP HK_TLM_PKT PUT_FILE_COUNT == #{put_file_cnt}+1", tlm_timeout)  # Delay until put file count increments or timeout
          if (tlm("TFTP HK_TLM_PKT CCSDS_SEQUENCE") == seq_cnt)
             prompt ("No telemetry received to verify the error. Verify connection and telemetry output filter table.");
             put_file = false  

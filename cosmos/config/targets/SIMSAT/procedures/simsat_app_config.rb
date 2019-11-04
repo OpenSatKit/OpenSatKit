@@ -1,5 +1,5 @@
 ###############################################################################
-# Simple Sat (SimSat) App Prep
+# Simple Sat (SimSat) App Config
 #
 # This script configures the apps used for an example mission sim. Some of the
 # configurations may be redundant with OSK's default configuration but they are
@@ -11,10 +11,16 @@
 #
 # Notes:
 #   1. This script is part of a training module. It is for illustrative
-#      purposes adn not intended to be an actual ops script. The verify_noop
-#      calls ensure each ap required for teh example is loaded and running.
-#   2. The iSim app uses more event messages than a typical flight app. The
+#      purposes and not intended to be an actual ops script. The verify_noop
+#      calls ensure each ap required for the example is loaded and running.
+#      The noop calls are commented out if another command is sent to an app
+#      because that command will confirm the app is running.  
+#   2. The ISIM app uses more event messages than a typical flight app. The
 #      events are used for illustrative purposes.  
+#
+# Global Script Variables:
+#   simsat_ops_enable - Boolean indicating whether ops example is active
+#   simsat_ops_status - Text string displayed on ops example screen
 #
 ###############################################################################
 
@@ -46,9 +52,9 @@ def verify_noop (target,noop_fc=0)
       result = true
     else
       if ( tlm("#{target_hk_str} #{Osk::TLM_STR_CMD_VLD}") == seq_cnt)
-        puts app.name + " HK telemetry packet not received"
+        puts target + " HK telemetry packet not received"
       end      
-      puts app.name + " NOOP test failed"
+      puts target + " NOOP test failed"
     end
 	
     return result
@@ -59,8 +65,13 @@ end # verify_noop()
 ## Runtime Environment ##
 #########################
 
+simsat_ops_status = "Verifying Command Ingest App (KIT_CI) Noop command."
 verify_noop("KIT_CI")
+
+simsat_ops_status = "Verifying Scheduler App (KIT_SCH) Noop command."
 verify_noop("KIT_SCH")
+
+simsat_ops_status = "Verifying Telemetry Output App (KIT_TO) Noop command."
 verify_noop("KIT_TO")
 
 
@@ -68,62 +79,68 @@ verify_noop("KIT_TO")
 ## Data/File Management ##
 ##########################
 
-verify_noop("FM")
+#simsat_ops_status = "Verifying File Manager App Noop command."
+#Background thread issues FM commands so can't use: verify_noop("FM")
+#Background thread issues DS commands so can't use: verify_noop("DS")
 
-verify_noop("DS")
+simsat_ops_status = "Enable Data Storage (DS) to start creating packet files"
+Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 1") 
+wait("DS HK_TLM_PKT APP_ENA_STATE == 'ENA'", 10)
 
-Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 1") # Enable DS to start creating packet files
-wait("DS HK_TLM_PKT APP_ENA_STATE == 1", 10)
 
-
+simsat_ops_status = "Enable DS event and auxiliary file generation"
 Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 0, FILE_STATE 1") # Enable Event file
-
-2.times do
-  Osk::flight.send_cmd("DS","SEND_FILE_INFO")
-  wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 2)
-end
-
+wait 1
 Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 6, FILE_STATE 1") # Enable Science Auxiliary file
 
-2.times do
-  Osk::flight.send_cmd("DS","SEND_FILE_INFO")
-  wait("DS FILE_INFO_PKT FILE7_ENABLE == 1", 2)
-end
+wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 6)
+wait("DS FILE_INFO_PKT FILE7_ENABLE == 1", 6)
 
-verify_noop("HK")
 
+#verify_noop("HK")
+
+simsat_ops_status = "Enabling Housekeeping to create auxiliary packets."
 Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 6, CONFIG 1") # Enable HK Combo Pkt #1 
 wait 2
-
 Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 7, CONFIG 1") # Enable HK Combo Pkt #2
-wait  # Review configuration
 
+simsat_ops_status = "Verifying Trivial File Transfer Protocol (TFTP) app noop command"
 verify_noop("TFTP")
 
+simsat_ops_status = "Review Data/File Management app configurations"
+wait  # Review Data/File Management app configurations
  
 ##############
 ## Autonomy ##
 ##############
 
-verify_noop("SC")
+#verify_noop("SC")
 
-Osk::flight.send_cmd("SC","ENABLE_RTS with RTS_ID 6") # Enable ISIM power off RTS
-wait  # Review configuration
+simsat_ops_status = "Enabling ISIM power off Relative Time Sequence (RTS) commands"
+Osk::flight.send_cmd("SC","ENABLE_RTS with RTS_ID 6")
+wait("SC HK_TLM_PKT RTS_6_DIS == 'FALSE'", 10)
 
-verify_noop("LC")
+#verify_noop("LC")
 
-Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE 1") # Set LC to active mode
-wait 2
+simsat_ops_status = "Setting Limit Checker to active mode"
+Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE 1")
+wait("LC HK_TLM_PKT APP_STATE == 'ACTIVE'", 10)
 
-Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 1") # Enable ISIM Fault AP
-wait  # Review configuration
+simsat_ops_status = "Enabling ISIM Fault Action Point"
+Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 1")
+wait("LC HK_TLM_PKT AP_2_STATE == 'ACTIVE'", 10)
+
+simsat_ops_status = "Review autonomy app configurations"
+wait  # Review autonomy app configurations
 
 ########################################
 ## Attitude Determination and Control ##
 ########################################
 
+simsat_ops_status = "Verfying 42 Interface (I42) app noop command"
 verify_noop("I42")
 
+simsat_ops_status = "Verifying 42 FSW Controller (F42) app noop command"
 verify_noop("F42")
 
 
@@ -131,6 +148,7 @@ verify_noop("F42")
 ## Health & Safety ##
 #####################
 
+simsat_ops_status = "Verifying Checksum (CS) app noop command"
 verify_noop("CS")
 
 # HS not loaded to due CPU function issue: verify_noop("HS")
@@ -139,7 +157,9 @@ verify_noop("CS")
 ## Maintenance ##
 #################
 
+simsat_ops_status = "Verifying Memory Dwell (MD) app noop command"
 verify_noop("MD")
 
+simsat_ops_status = "Verifying Memory Manager(MM) app noop command"
 verify_noop("MM")
 

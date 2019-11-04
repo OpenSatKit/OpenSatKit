@@ -9,6 +9,10 @@
 # Notes:
 #   1. This script is part of the cFS systems engineering training module
 #
+# Global Script Variables:
+#   simsat_ops_enable - Boolean indicating whether ops example is active
+#   simsat_ops_status - Text string displayed on ops example screen
+#
 ###############################################################################
 
 require 'cosmos'

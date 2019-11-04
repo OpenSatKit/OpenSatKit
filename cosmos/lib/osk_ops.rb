@@ -154,7 +154,7 @@ module Ops
       return got_file
    end # get_flt_file()
 
-   # Default gnd_path shold be overridden for tables that have a separate file server directory
+   # Default gnd_path should be overridden for tables that have a separate file server directory
    def self.get_flt_file_prompt(gnd_path = GND_SRV_DIR)
       flt_path_filename = ask_string("Enter full FSW /path/filename.","#{FLT_SRV_DIR}/")
       gnd_filename = ask_string("Enter ground filename without path. File will be located in #{gnd_path}.",File.basename(flt_path_filename))
@@ -173,7 +173,7 @@ module Ops
       return put_file
    end # End put_flt_file()
 
-   # Default gnd_path should be overriden for tables that have a separate file server directory
+   # Default gnd_path should be overridden for tables that have a separate file server directory
    def self.put_flt_file_prompt(gnd_path = GND_SRV_DIR)
       #gnd_filename = ask_string("Enter ground filename without path. File will be located in #{gnd_path}.")
       #gnd_path_filename = "#{gnd_path}/#{gnd_filename}"
@@ -223,9 +223,9 @@ module Ops
    # Ground relative directory path and filename passed in separately to help with user 
    # Table Manager instructions.
    #
-   def self.get_flt_bin_file(flt_path_filename, gnd_rel_path, gnd_filename, tbl_mgr_def_filename)
+   def self.get_flt_bin_file(flt_path_filename, gnd_rel_path, gnd_filename, tbl_mgr_def_filename, tlm_timeout=Osk::GET_FILE_TIMEOUT)
       gnd_path_filename = "#{Cosmos::USERPATH}/#{gnd_rel_path}/#{gnd_filename}"
-      if (Osk::system.file_transfer.get(flt_path_filename,gnd_path_filename))
+      if (Osk::system.file_transfer.get(flt_path_filename,gnd_path_filename,tlm_timeout))
          launch_tbl_mgr(gnd_rel_path, gnd_filename, tbl_mgr_def_filename)
       else  
          raise_exception "osk_ops.get_flt_bin_file() - File transfer from flight to ground failed" 

@@ -21,6 +21,8 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   PROTOCOL WRITE interfaces/cfdp_protocol  
   PROTOCOL WRITE interfaces/cfdp_test_protocol
 
+  TARGET SYSTEM
+  
   TARGET CFE_ES
   TARGET CFE_EVS
   TARGET CFE_SB
