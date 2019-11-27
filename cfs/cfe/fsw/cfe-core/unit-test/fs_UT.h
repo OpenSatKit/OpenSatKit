@@ -1,12 +1,24 @@
 /*
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 ** File:
 **    fs_UT.h
 **
@@ -21,8 +33,6 @@
 ** Notes:
 **    1. This is unit test code only, not for use in flight
 **
-** $Date: 2014/05/28 09:23:28GMT-05:00 $
-** $Revision: 1.1 $
 */
 #ifndef _fs_UT_h_
 #define _fs_UT_h_
@@ -38,7 +48,7 @@
 #include "cfe_fs.h"
 #include "cfe_fs_priv.h"
 #include "common_types.h"
-#include "ut_stubs.h"
+#include "ut_support.h"
 #include "ut_fs_zipfile.h"
 
 /* FS unit test functions */
@@ -249,21 +259,18 @@ void Test_CFE_FS_Decompress(void);
 
 /*****************************************************************************/
 /**
-** \brief Unit test specific call to process SB messages
+** \brief Tests for CFE_FS_GetUncompressedFile function
 **
 ** \par Description
-**        This function serves as a pass-through for messages coming from the
-**        CFE_SB_SendMsg() stub function.  By using a common pass-through
-**        function name, the stub can be generic for all of the tests for the
-**        various services (i.e., EVS, TBL, etc.).
+**        This function tests the CFE_FS_GetUncompressedFile() function
 **
 ** \par Assumptions, External Events, and Notes:
 **        None
 **
 ** \returns
-**        This function does not return a value.  
+**        This function does not return a value.
 **
 ******************************************************************************/
-void UT_ProcessSBMsg(CFE_SB_Msg_t *MsgPtr);
+void Test_CFE_FS_GetUncompressedFile(void);
 
 #endif /* _es_ut_h_ */

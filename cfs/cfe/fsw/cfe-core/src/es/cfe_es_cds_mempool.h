@@ -1,17 +1,27 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  File: 
 **  cfe_es_cds_mempool.h
 **
-**
-**
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement.
-** 
 **  Purpose:
 **  This file contains the Internal interface for the cFE Critical Data Store 
 **  memory pool functions.
@@ -21,18 +31,7 @@
 **     cFE Flight Software Application Developers Guide
 **
 **  Notes:
-**  $Log: cfe_es_cds_mempool.h  $
-**  Revision 1.4 2012/01/13 11:50:00GMT-05:00 acudmore 
-**  Changed license text to reflect open source
-**  Revision 1.3 2010/10/04 17:00:56EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.2 2010/10/04 15:36:30EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.1 2008/04/17 08:05:04EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
-**  Revision 1.2 2007/05/15 11:16:06EDT apcudmore 
-**  Added modification log tags.
+**
 */
 
 

@@ -1,7 +1,7 @@
 /*
-** $Id: fm_platform_cfg.h 1.19.1.3 2015/02/28 18:10:56EST sstrege Exp  $
+** $Id: fm_platform_cfg.h 1.6.1.2 2017/01/23 21:53:19EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -22,52 +22,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_platform_cfg.h  $
-** Revision 1.19.1.3 2015/02/28 18:10:56EST sstrege 
-** Added copyright information
-** Revision 1.19.1.2 2015/01/18 13:10:22EST sstrege 
-** Change FM child task priority from 200 to 205
-** Revision 1.19.1.1 2015/01/16 17:17:01EST lwalling 
-** Change FM child task priority from 162 to 200
-** Revision 1.19 2011/01/12 14:37:24EST lwalling 
-** Move mission revision number to platform config header file
-** Revision 1.18 2010/02/23 11:36:07EST lwalling 
-** Change application name from FM_APP to FM per CFS naming convention
-** Revision 1.17 2010/01/11 14:31:39EST lwalling 
-** Change default table pathname to /cf/apps/fm_freespace.tbl
-** Revision 1.16 2009/11/13 16:32:13EST lwalling 
-** Modify macro names, update all descriptive text
-** Revision 1.15 2009/11/09 16:50:31EST lwalling 
-** Change use of term destination to target
-** Revision 1.14 2009/10/30 14:02:34EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.13 2009/10/27 17:33:02EDT lwalling
-** Make file buffer configuration definitions common for all child command handlers
-** Revision 1.12 2009/10/23 14:43:05EDT lwalling
-** Define child task argument queue depth
-** Revision 1.11 2009/10/09 17:23:48EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.10 2009/10/08 15:59:02EDT lwalling
-** Create macro definition for default device table description text
-** Revision 1.9 2009/10/07 15:59:38EDT lwalling
-** Added macro for FM_APP_NAME, modified device table macro names
-** Revision 1.8 2009/09/14 16:59:14EDT lwalling
-** Create definition for FM_DIRLIST_SUBTYPE
-** Revision 1.7 2008/12/22 16:28:59EST sstrege
-** Added code for supporting default directory listing file
-** Revision 1.6 2008/12/15 15:52:32EST sstrege
-** Removed include section
-** Revision 1.5 2008/12/12 14:25:48EST sstrege
-** Updated default setting of FM_MAX_OPEN_FILE_LIST_MSG_FILES
-** Revision 1.4 2008/12/11 12:03:18EST sstrege
-** Added table definitions
-** Revision 1.3 2008/10/03 14:49:54EDT sstrege
-** Removed old performance monitor ID definition and unneeded include files
-** Revision 1.2 2008/06/20 16:21:17EDT slstrege
-** Member moved from fsw/platform_inc/fm_platform_cfg.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_platform_cfg.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/platform_inc/project.pj.
-** Revision 1.1 2008/06/20 15:21:17ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_platform_cfg_h_
@@ -94,7 +48,7 @@
 **       no limits on the definition.  Refer to CFE Executive Services
 **       for specific information on limits related to application names.
 */
-#define FM_APP_NAME "FM"
+#define FM_APP_NAME                     "FM"
 
 
 /** \fmcfg File Manager Command Pipe Name
@@ -163,7 +117,7 @@
 **       filename.  Set this parameter to the empty string if no default
 **       filename is desired.
 */
-#define FM_DIR_LIST_FILE_DEFNAME        "/ram/fm_dirlist.out"
+#define FM_DIR_LIST_FILE_DEFNAME        "/cf/fm_dirlist.out"  //dcm
 
 
 /** \fmcfg Maximum Directory List Output File Entries
@@ -272,6 +226,40 @@
 #define FM_CHILD_FILE_LOOP_COUNT        16
 #define FM_CHILD_FILE_SLEEP_MS          20
 
+/** \fmcfg Child file stat sleep
+**
+**  \par Description:
+**       OS_stat is a CPU intensive call. FM uses the OS_stat call to query a 
+**       fileâ€™s size, date, and mode when setting up directory listings. 
+**       Querying a large number of files and/or files large in size when 
+**       processing directory listing commands can cause FM to hog the CPU. To
+**       mitigate this, options to sleep a configurable number of milliseconds 
+**       between calls to OS_stat for a configurable number of files
+**       in a directory listing is provided. A large sleep cycle will not hang the CPU
+**       but it may take a long time for directory listing to complete. A shorter
+**       sleep cycle will speed up the directory listing commands but may cause
+**       FM to hog the CPU.
+**       
+**       FM_CHILD_STAT_SLEEP_MS: The number of milliseconds to sleep each
+**       cycle. One cycle is FM_CHILD_STAT_SLEEP_FILECOUNT.
+**       
+**       FM_CHILD_STAT_SLEEP_FILECOUNT: The number of files to process (OS_stat) before 
+**       sleeping FM_CHILD_STAT_SLEEP_MS.
+**       Works in tandem with FM_CHILD_STAT_SLEEP_MS to reduce CPU hogging
+**       while allowing slightly more customization to balance time the operator is waiting to
+**       get data back from a directory listing versus FM hogging the CPU with calls to OS_stat
+**        
+**       In short:
+**       High SLEEP_MS means less CPU hogging by FM but a longer time to process a dir listing command
+**       Low SLEEP_MS means more potential CPU hogging by FM but shorter time to process a dir listing command
+**       High FILECOUNT means more potential CPU hogging by FM but a shorter time to process a dir listing command
+**       Low FILECOUNT means less CPU hogging by FM but longer time to process a dir listing command
+**  \par Limits:
+**       The default is zero unless the mission needs require them to be changed.
+**
+*/
+#define FM_CHILD_STAT_SLEEP_MS 0
+#define FM_CHILD_STAT_SLEEP_FILECOUNT 0
 
 /** \fmcfg Child Task Command Queue Entry Count
 **
@@ -331,9 +319,7 @@
 **       running on the target platform.
 **
 **  \par Limits:
-**       The FM application limits this value to be no less than 50
-**       and no greater than 250.  These limits are purely arbitrary
-**       and may need to be modified for specific platforms.
+**       Value to be no less than 1 and no greater than 255.  
 **
 **  \par Priority Values:
 **       Note that a small value has higher priority than a large value.
@@ -390,7 +376,7 @@
 **       no limits on the definition.  If the named table does not
 **       exist or fails validation, the table load will fail.
 */
-#define FM_TABLE_DEF_NAME               "/cf/fm_freespace.tbl"
+#define FM_TABLE_DEF_NAME               "/cf/fm_freespace.tbl"    //dcm
 
 
 /** \fmcfg Free Space Table Name - filename without path

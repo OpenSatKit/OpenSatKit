@@ -1,0 +1,1510 @@
+##############################################################################
+## $Id: fm_test_log.txt 1.5.1.2 2017/01/25 00:20:23EST mdeschu Exp  $
+##
+## Purpose: CFS FM application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+##############################################################################
+
+FM 2.5.2.0 Unit Test Output:
+
+Running Test: FM_AppMain_Test_Nominal
+INFO EVENT ID=1 Initialization complete: version 2.5.2.0
+PKT: 08 8A C0 00 00 0F 00 00 00 00 00 00 00 00 00 32 00 00 00 00 00 00 
+ERROR EVENT ID=8 Application terminating: result = 0x00000000
+SYSTEM LOG: FM application terminating: result = 0x00000000
+
+PASS: Application terminating: result = 0x00000000
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+PASS: FM application terminating: result = 0x00000000
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: FM_AppMain_Test_RegisterAppError
+ERROR EVENT ID=8 Application terminating: result = 0xFFFFFFFF
+SYSTEM LOG: FM application terminating: result = 0xFFFFFFFF
+
+PASS: Application terminating: result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: FM application terminating: result = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: FM_AppMain_Test_AppInitError
+ERROR EVENT ID=2 Initialization error: register for event services: result = 0xFFFFFFFF
+ERROR EVENT ID=8 Application terminating: result = 0xFFFFFFFF
+SYSTEM LOG: FM application terminating: result = 0xFFFFFFFF
+
+PASS: Application terminating: result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+PASS: FM application terminating: result = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: FM_AppMain_Test_SBError
+INFO EVENT ID=1 Initialization complete: version 2.5.2.0
+ERROR EVENT ID=7 Main loop error: SB receive: result = 0xFFFFFFFF
+ERROR EVENT ID=8 Application terminating: result = 0xFFFFFFFF
+SYSTEM LOG: FM application terminating: result = 0xFFFFFFFF
+
+PASS: Main loop error: SB receive: result = 0xFFFFFFFF
+PASS: Application terminating: result = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+PASS: FM application terminating: result = 0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: FM_AppInit_Test_Nominal
+INFO EVENT ID=1 Initialization complete: version 2.5.2.0
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.FreeSpaceTableHandle == 0
+PASS: FM_GlobalData.CmdPipe == 0
+PASS: FM_GlobalData.ChildTaskID == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.Spare8a == 0
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildPreviousCC == 0
+PASS: FM_GlobalData.Spare8b == 0
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: FM_GlobalData.DirListFileStats == 0
+PASS: FM_GlobalData.DirListPkt == 0
+PASS: FM_GlobalData.FreeSpacePkt == 0
+PASS: FM_GlobalData.FileInfoPkt == 0
+PASS: FM_GlobalData.OpenFilesPkt == 0
+PASS: FM_GlobalData.HousekeepingPkt == 0
+PASS: Initialization complete: version 2.5.2.0
+PASS: Result == CFE_SUCCESS
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_AppInit_Test_EVSRegisterError
+ERROR EVENT ID=2 Initialization error: register for event services: result = 0xFFFFFFFF
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.FreeSpaceTableHandle == 0
+PASS: FM_GlobalData.CmdPipe == 0
+PASS: FM_GlobalData.ChildTaskID == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.Spare8a == 0
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildPreviousCC == 0
+PASS: FM_GlobalData.Spare8b == 0
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: FM_GlobalData.DirListFileStats == 0
+PASS: FM_GlobalData.DirListPkt == 0
+PASS: FM_GlobalData.FreeSpacePkt == 0
+PASS: FM_GlobalData.FileInfoPkt == 0
+PASS: FM_GlobalData.OpenFilesPkt == 0
+PASS: FM_GlobalData.HousekeepingPkt == 0
+PASS: Initialization error: register for event services: result = 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_AppInit_Test_SBCreatePipeError
+ERROR EVENT ID=3 Initialization error: create SB input pipe: result = 0xFFFFFFFF
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.FreeSpaceTableHandle == 0
+PASS: FM_GlobalData.CmdPipe == 0
+PASS: FM_GlobalData.ChildTaskID == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.Spare8a == 0
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildPreviousCC == 0
+PASS: FM_GlobalData.Spare8b == 0
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: FM_GlobalData.DirListFileStats == 0
+PASS: FM_GlobalData.DirListPkt == 0
+PASS: FM_GlobalData.FreeSpacePkt == 0
+PASS: FM_GlobalData.FileInfoPkt == 0
+PASS: FM_GlobalData.OpenFilesPkt == 0
+PASS: FM_GlobalData.HousekeepingPkt == 0
+PASS: Initialization error: create SB input pipe: result = 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_AppInit_Test_SBSubscribeHKError
+ERROR EVENT ID=4 Initialization error: subscribe to HK request: result = 0xFFFFFFFF
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.FreeSpaceTableHandle == 0
+PASS: FM_GlobalData.CmdPipe == 0
+PASS: FM_GlobalData.ChildTaskID == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.Spare8a == 0
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildPreviousCC == 0
+PASS: FM_GlobalData.Spare8b == 0
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: FM_GlobalData.DirListFileStats == 0
+PASS: FM_GlobalData.DirListPkt == 0
+PASS: FM_GlobalData.FreeSpacePkt == 0
+PASS: FM_GlobalData.FileInfoPkt == 0
+PASS: FM_GlobalData.OpenFilesPkt == 0
+PASS: FM_GlobalData.HousekeepingPkt == 0
+PASS: Initialization error: subscribe to HK request: result = 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_AppInit_Test_SBSubscribeFMError
+ERROR EVENT ID=5 Initialization error: subscribe to FM commands: result = 0xFFFFFFFF
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.FreeSpaceTableHandle == 0
+PASS: FM_GlobalData.CmdPipe == 0
+PASS: FM_GlobalData.ChildTaskID == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.Spare8a == 0
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildPreviousCC == 0
+PASS: FM_GlobalData.Spare8b == 0
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: FM_GlobalData.DirListFileStats == 0
+PASS: FM_GlobalData.DirListPkt == 0
+PASS: FM_GlobalData.FreeSpacePkt == 0
+PASS: FM_GlobalData.FileInfoPkt == 0
+PASS: FM_GlobalData.OpenFilesPkt == 0
+PASS: FM_GlobalData.HousekeepingPkt == 0
+PASS: Initialization error: subscribe to FM commands: result = 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_AppInit_Test_TableInitError
+ERROR EVENT ID=6 Initialization error: register free space table: result = 0xFFFFFFFF
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildSemaphore == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.ChildQueueCountSem == FM_CHILD_SEM_INVALID
+PASS: FM_GlobalData.FreeSpaceTableHandle == 0
+PASS: FM_GlobalData.CmdPipe == 0
+PASS: FM_GlobalData.ChildTaskID == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.Spare8a == 0
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildPreviousCC == 0
+PASS: FM_GlobalData.Spare8b == 0
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: FM_GlobalData.DirListFileStats == 0
+PASS: FM_GlobalData.DirListPkt == 0
+PASS: FM_GlobalData.FreeSpacePkt == 0
+PASS: FM_GlobalData.FileInfoPkt == 0
+PASS: FM_GlobalData.OpenFilesPkt == 0
+PASS: FM_GlobalData.HousekeepingPkt == 0
+PASS: Initialization error: register free space table: result = 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessPkt_Test_HK
+PKT: 08 8A C0 00 00 0F 00 00 00 00 00 00 00 00 00 32 00 00 00 00 00 00 
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ProcessPkt_Test_Cmd
+INFO EVENT ID=12 No-op command: FM version 2.5.2.0
+PASS: No-op command: FM version 2.5.2.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessPkt_Test_Error
+ERROR EVENT ID=9 Main loop error: invalid message ID: mid = 0x0063
+PASS: Main loop error: invalid message ID: mid = 0x0063
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Noop
+INFO EVENT ID=12 No-op command: FM version 2.5.2.0
+PASS: No-op command: FM version 2.5.2.0
+PASS: FM_GlobalData.CommandCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Reset
+DEBUG EVENT ID=14 Reset Counters command
+PASS: Reset Counters command
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Copy
+ERROR EVENT ID=19 Copy File error: filename is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Move
+ERROR EVENT ID=26 Move File error: filename is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Rename
+ERROR EVENT ID=32 Rename File error: filename is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Delete
+ERROR EVENT ID=38 Delete File error: filename is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_DeleteAll
+ERROR EVENT ID=44 Delete All Files error: directory name is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Decompress
+ERROR EVENT ID=49 Decompress File error: filename is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_Concat
+ERROR EVENT ID=55 Concat Files error: filename is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_GetFileInfo
+ERROR EVENT ID=62 Get File Info error: invalid name: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_GetOpenFiles
+PKT: 08 8D C0 00 10 71 00 00 00 00 00 00 32 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84 14 0A 08 8D 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=65 Get Open Files command
+PASS: Get Open Files command
+PASS: FM_GlobalData.CommandCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_CreateDir
+ERROR EVENT ID=69 Create Directory error: directory name is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_DeleteDir
+ERROR EVENT ID=74 Delete Directory error: directory name is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_GetDirFile
+ERROR EVENT ID=80 Directory List to File error: directory name is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_GetDirPkt
+ERROR EVENT ID=88 Directory List to Packet error: directory name is invalid: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_GetFreeSpace
+ERROR EVENT ID=93 Get Free Space error: file system free space table is not loaded
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_SetTableState
+ERROR EVENT ID=96 Set Table State error: file system free space table is not loaded
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_SetPermissions
+ERROR EVENT ID=0 Set Permissions error: invalid name: name = 
+PASS: FM_GlobalData.CommandErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ProcessCmd_Test_DeleteInt
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ProcessCmd_Test_InvalidCommandCode
+ERROR EVENT ID=10 Main loop error: invalid command code: cc = 99
+PASS: Main loop error: invalid command code: cc = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildInit_Test_CreateChildSemaphoreFailed
+ERROR EVENT ID=101 Child Task initialization error: create semaphore failed: result = -1
+PASS: Child Task initialization error: create semaphore failed: result = -1
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildInit_Test_CreateQueueSemaphoreFailed
+ERROR EVENT ID=101 Child Task initialization error: create queue count semaphore failed: result = -1
+PASS: Child Task initialization error: create queue count semaphore failed: result = -1
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildInit_Test_CreateTaskFailed
+ERROR EVENT ID=101 Child Task initialization error: create task failed: result = -1
+PASS: Child Task initialization error: create task failed: result = -1
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildTask_Test_Nominal
+INFO EVENT ID=100 Child Task initialization complete
+ERROR EVENT ID=102 Child Task termination error:  empty queue
+PASS: Child Task initialization complete
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildTask_Test_RegisterChildFailed
+ERROR EVENT ID=101 Child Task initialization error: register child failed: result = -1
+PASS: Child Task initialization error: register child failed: result = -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildLoop_Test_Nominal
+ERROR EVENT ID=103 Child Task execution error: invalid command code: cc = 0
+ERROR EVENT ID=102 Child Task termination error:  empty queue
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildLoop_Test_SemaphoreTakeFailed
+ERROR EVENT ID=102 Child Task termination error:  semaphore take failed: result = -1
+PASS: Child Task termination error:  semaphore take failed: result = -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildLoop_Test_EmptyQueue
+ERROR EVENT ID=102 Child Task termination error:  empty queue
+PASS: Child Task termination error:  empty queue
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildLoop_Test_InvalidQueueIndex
+ERROR EVENT ID=102 Child Task termination error:  invalid queue index: index = 3
+PASS: Child Task termination error:  invalid queue index: index = 3
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_CopyAndTooLargeReadIndex
+DEBUG EVENT ID=16 Copy File command: src = , tgt = 
+PASS: FM_GlobalData.ChildReadIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_Move
+DEBUG EVENT ID=23 Move File command: src = , tgt = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_Rename
+DEBUG EVENT ID=30 Rename File command: src = , tgt = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_Delete
+DEBUG EVENT ID=36 Delete File command: file = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_DeleteAll
+ERROR EVENT ID=46 Delete All Files error: OS_opendir failed: dir = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_Decompress
+DEBUG EVENT ID=47 Decompress File command: src = , tgt = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_Concat
+DEBUG EVENT ID=53 Concat Files command: src1 = , src2 = , tgt = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_CreateDir
+DEBUG EVENT ID=67 Create Directory command: src = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_DeleteDir
+ERROR EVENT ID=77 Delete Directory error: OS_opendir failed: dir = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_GetFileInfo
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_GetDirFile
+ERROR EVENT ID=84 Directory List to File error: OS_opendir failed: dir = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_GetDirPkt
+ERROR EVENT ID=90 Directory List to Packet error: OS_opendir failed: dir = 
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildProcess_Test_DeleteInt
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+
+Running Test: FM_ChildProcess_Test_SetPermissions
+DEBUG EVENT ID=111 Set Permissions command: file = , access = 0
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+
+Running Test: FM_ChildProcess_Test_InvalidCommandCode
+ERROR EVENT ID=103 Child Task execution error: invalid command code: cc = 99
+PASS: FM_GlobalData.ChildReadIndex == 2
+PASS: FM_GlobalData.ChildQueueCount == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Child Task execution error: invalid command code: cc = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildCopyCmd_Test_Nominal
+DEBUG EVENT ID=16 Copy File command: src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == FM_COPY_CC
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Copy File command: src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildCopyCmd_Test_CopyFailed
+ERROR EVENT ID=22 Copy File error: OS_cp failed: result = -1, src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == FM_COPY_CC
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Copy File error: OS_cp failed: result = -1, src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildMoveCmd_Test_Nominal
+DEBUG EVENT ID=23 Move File command: src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Move File command: src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildMoveCmd_Test_MoveFailed
+ERROR EVENT ID=29 Move File error: OS_mv failed: result = -1, src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Move File error: OS_mv failed: result = -1, src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildRenameCmd_Test_Nominal
+DEBUG EVENT ID=30 Rename File command: src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Rename File command: src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildRenameCmd_Test_RenameFailed
+ERROR EVENT ID=35 Rename File error: OS_rename failed: result = -1, src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Rename File error: OS_rename failed: result = -1, src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteCmd_Test_Nominal
+DEBUG EVENT ID=36 Delete File command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete File command: file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteCmd_Test_RemoveFailed
+ERROR EVENT ID=40 Delete File error: OS_remove failed: result = -1, file = source1
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete File error: OS_remove failed: result = -1, file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteAllCmd_Test_Nominal
+DEBUG EVENT ID=41 Delete All Files command: deleted 1 files: dir = source
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 1 files: dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteAllCmd_Test_opendirFailed
+ERROR EVENT ID=46 Delete All Files error: OS_opendir failed: dir = source
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files error: OS_opendir failed: dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteAllCmd_Test_FilesNotDeletedFilenameTooLarge
+DEBUG EVENT ID=41 Delete All Files command: deleted 0 files: dir = source
+INFO EVENT ID=42 Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 0 files: dir = source
+PASS: Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDeleteAllCmd_Test_FilesNotDeletedNameIsInvalid
+DEBUG EVENT ID=41 Delete All Files command: deleted 0 files: dir = source
+INFO EVENT ID=42 Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 0 files: dir = source
+PASS: Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDeleteAllCmd_Test_FilesNotDeletedNameIsNotInUse
+DEBUG EVENT ID=41 Delete All Files command: deleted 0 files: dir = source
+INFO EVENT ID=42 Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 0 files: dir = source
+PASS: Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDeleteAllCmd_Test_FilesNotDeletedFileOpen
+DEBUG EVENT ID=41 Delete All Files command: deleted 0 files: dir = source
+INFO EVENT ID=42 Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 0 files: dir = source
+PASS: Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDeleteAllCmd_Test_FilesNotDeletedFileClosed
+DEBUG EVENT ID=41 Delete All Files command: deleted 0 files: dir = source
+INFO EVENT ID=42 Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 0 files: dir = source
+PASS: Delete All Files command: one or more files could not be deleted. Files may be open : dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDeleteAllCmd_Test_DirectorySkipped
+DEBUG EVENT ID=41 Delete All Files command: deleted 0 files: dir = source
+INFO EVENT ID=42 Delete All Files command: one or more directories skipped : dir = source
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete All Files command: deleted 0 files: dir = source
+PASS: Delete All Files command: one or more directories skipped : dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDecompressCmd_Test_Nominal
+DEBUG EVENT ID=47 Decompress File command: src = source, tgt = target
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Decompress File command: src = source, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDecompressCmd_Test_DecompressFailed
+ERROR EVENT ID=52 Decompress File error: CFE_FS_Decompress failed: result = -1, src = source, tgt = target
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Decompress File error: CFE_FS_Decompress failed: result = -1, src = source, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_Nominal
+DEBUG EVENT ID=53 Concat Files command: src1 = source1, src2 = source2, tgt = target
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files command: src1 = source1, src2 = source2, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_CopyFailed
+ERROR EVENT ID=59 Concat Files error: OS_cp failed: result = -1, src = source1, tgt = target
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files error: OS_cp failed: result = -1, src = source1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_OpenFailed1
+ERROR EVENT ID=59 Concat Files error: OS_open failed: result = -1, src2 = source2
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files error: OS_open failed: result = -1, src2 = source2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_OpenFailed2
+ERROR EVENT ID=59 Concat Files error: OS_open failed: result = -1, tgt = target
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files error: OS_open failed: result = -1, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_ReadFailed
+ERROR EVENT ID=59 Concat Files error: OS_read failed: result = -1, file = source2
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files error: OS_read failed: result = -1, file = source2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_WriteFailed
+ERROR EVENT ID=59 Concat Files error: OS_write failed: result = -1, expected = 1
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files error: OS_write failed: result = -1, expected = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildConcatCmd_Test_CPUHogging
+DEBUG EVENT ID=53 Concat Files command: src1 = source1, src2 = source2, tgt = target
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Concat Files command: src1 = source1, src2 = source2, tgt = target
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildFileInfoCmd_Test_FinishedReading
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.FileInfoPkt.CRC_Computed == TRUE
+PASS: FM_GlobalData.FileInfoPkt.CRC == 0
+PASS: Get File Info command: file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildFileInfoCmd_Test_ContinueCRC
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 03 01 00 00 63 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.FileInfoPkt.CRC_Computed == TRUE
+PASS: FM_GlobalData.FileInfoPkt.CRC == 99
+PASS: Get File Info command: file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildFileInfoCmd_Test_CPUHogging
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 03 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildFileInfoCmd_Test_InvalidFileState
+INFO EVENT ID=64 Get File Info warning: unable to compute CRC: invalid file state = 99, file = source1
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 63 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: CmdArgs->FileInfoCRC == FM_IGNORE_CRC
+PASS: Get File Info warning: unable to compute CRC: invalid file state = 99, file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildFileInfoCmd_Test_InvalidCRCType
+INFO EVENT ID=64 Get File Info warning: unable to compute CRC: invalid CRC type = 99, file = source1
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: CmdArgs->FileInfoCRC == FM_IGNORE_CRC
+PASS: Get File Info warning: unable to compute CRC: invalid CRC type = 99, file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildFileInfoCmd_Test_OpenFailed
+ERROR EVENT ID=64 Get File Info warning: unable to compute CRC: OS_open result = -1, file = source1
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: Get File Info command: file = source1
+PASS: Get File Info warning: unable to compute CRC: OS_open result = -1, file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildFileInfoCmd_Test_ReadFailed
+INFO EVENT ID=64 Get File Info warning: unable to compute CRC: OS_read result = -1, file = source1
+PKT: 08 8B C0 00 00 59 00 00 00 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=60 Get File Info command: file = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: FM_GlobalData.FileInfoPkt.CRC == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: Get File Info command: file = source1
+PASS: Get File Info warning: unable to compute CRC: OS_read result = -1, file = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildCreateDirCmd_Test_Nominal
+DEBUG EVENT ID=67 Create Directory command: src = source
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Create Directory command: src = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildCreateDirCmd_Test_mkdirFailed
+ERROR EVENT ID=71 Create Directory error: OS_mkdir failed: result = -1, dir = source
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Create Directory error: OS_mkdir failed: result = -1, dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteDirCmd_Test_Nominal
+DEBUG EVENT ID=72 Delete Directory command: src = source
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete Directory command: src = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteDirCmd_Test_OpenDirFailed
+ERROR EVENT ID=77 Delete Directory error: OS_opendir failed: dir = source
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete Directory error: OS_opendir failed: dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteDirCmd_Test_DirectoryNotEmpty
+ERROR EVENT ID=76 Delete Directory error: directory is not empty: dir = source
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete Directory error: directory is not empty: dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDeleteDirCmd_Test_rmdirFailed
+ERROR EVENT ID=77 Delete Directory error: OS_rmdir failed: result = -1, dir = source
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Delete Directory error: directory is not empty: dir = source
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileCmd_Test_Nominal
+DEBUG EVENT ID=78 Directory List to File command: wrote 0 of 0 names: dir = source1, filename = target
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileCmd_Test_opendirFailed
+ERROR EVENT ID=84 Directory List to File error: OS_opendir failed: dir = source1
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Directory List to File error: OS_opendir failed: dir = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListPktCmd_Test_Nominal
+PKT: 08 8C C0 00 06 41 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 66 69 6C 65 6E 61 6D 65 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=85 Directory List to Packet command: offset = 0, dir = source1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: strncmp(FM_GlobalData.DirListPkt.DirName, 'source1', OS_MAX_PATH_LEN) == 0
+PASS: FM_GlobalData.DirListPkt.FirstFile == 0
+PASS: FM_GlobalData.DirListPkt.TotalFiles == 1
+PASS: strncmp(FM_GlobalData.DirListPkt.FileList[0].EntryName, UT_FM_GLOBAL_DirEntry.d_name, OS_MAX_PATH_LEN) == 0
+PASS: FM_GlobalData.DirListPkt.PacketFiles == 1
+PASS: Directory List to Packet command: offset = 0, dir = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListPktCmd_Test_opendirFailed
+ERROR EVENT ID=90 Directory List to Packet error: OS_opendir failed: dir = source1
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: Directory List to Packet error: OS_opendir failed: dir = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListPktCmd_Test_DirPlusEntryTooLong
+INFO EVENT ID=86 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+PKT: 08 8C C0 00 06 41 00 00 00 00 00 00 73 6F 75 72 63 65 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=85 Directory List to Packet command: offset = 0, dir = source1
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: FM_GlobalData.ChildPreviousCC == 1
+PASS: FM_GlobalData.ChildCurrentCC == 0
+PASS: strncmp(FM_GlobalData.DirListPkt.DirName, 'source1', OS_MAX_PATH_LEN) == 0
+PASS: FM_GlobalData.DirListPkt.FirstFile == 0
+PASS: FM_GlobalData.DirListPkt.TotalFiles == 1
+PASS: Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+PASS: Directory List to Packet command: offset = 0, dir = source1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDirListFileInit_Test_Nominal
+PASS: Result == TRUE
+PASS: strncmp(FM_GlobalData.DirListFileStats.DirName, 'directory', OS_MAX_PATH_LEN) == 0
+PASS: FileHandle == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ChildDirListFileInit_Test_WriteBlankStatsFailed
+ERROR EVENT ID=84 Directory List to File error: OS_write blank stats failed: result = 0, expected = 72
+PASS: Result == FALSE
+PASS: strncmp(FM_GlobalData.DirListFileStats.DirName, 'directory', OS_MAX_PATH_LEN) == 0
+PASS: FileHandle == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Directory List to File error: OS_write blank stats failed: result = 0, expected = 72
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileInit_Test_WriteHeaderFailed
+ERROR EVENT ID=84 Directory List to File error: CFE_FS_WriteHeader failed: result = 0, expected = 64
+PASS: Result == FALSE
+PASS: FileHandle == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Directory List to File error: CFE_FS_WriteHeader failed: result = 0, expected = 64
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileInit_Test_creatFailed
+ERROR EVENT ID=84 Directory List to File error: OS_creat failed: result = -1, file = filename
+PASS: Result == FALSE
+PASS: FileHandle == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Directory List to File error: OS_creat failed: result = -1, file = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileLoop_Test_Nominal
+DEBUG EVENT ID=78 Directory List to File command: wrote 1 of 1 names: dir = directory, filename = filename
+PASS: FM_GlobalData.DirListFileStats.DirEntries == 1
+PASS: FM_GlobalData.DirListFileStats.FileEntries == 1
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: Directory List to File command: wrote 1 of 1 names: dir = directory, filename = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileLoop_Test_WriteEntryFailed
+ERROR EVENT ID=84 Directory List to File error: OS_write entry failed: result = 0, expected = 76
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Directory List to File error: OS_write entry failed: result = 0, expected = 76
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildDirListFileLoop_Test_DirectoryAndNameTooLong
+INFO EVENT ID=82 Directory List to File error: combined directory and entry name too long: dir = directory, entry = aaaaaaaaaaaaaaaaaaaaaa
+DEBUG EVENT ID=78 Directory List to File command: wrote 0 of 1 names: dir = directory, filename = filename
+PASS: FM_GlobalData.ChildCmdWarnCounter == 1
+PASS: Directory List to File error: combined directory and entry name too long: dir = directory, entry = aaaaaaaaaaaaaaaaaaaaaa
+PASS: FM_GlobalData.DirListFileStats.DirEntries == 1
+PASS: FM_GlobalData.DirListFileStats.FileEntries == 0
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: Directory List to File command: wrote 0 of 1 names: dir = directory, filename = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ChildDirListFileLoop_Test_WriteUpdateStatsFailed
+ERROR EVENT ID=84 Directory List to File error: OS_write update stats failed: result = 0, expected = 72
+PASS: FM_GlobalData.DirListFileStats.DirEntries == 1
+PASS: FM_GlobalData.DirListFileStats.FileEntries == 1
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Directory List to File error: OS_write update stats failed: result = 0, expected = 72
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildSizeAndTime_Test_Nominal
+PASS: FileTime == 10
+PASS: FileSize == 5
+PASS: FileMode == 0777
+PASS: Result == OS_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ChildSizeAndTime_Test_statError
+PASS: FileTime == 0
+PASS: FileSize == 0
+PASS: FileMode == 0
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ChildSetPermissionsCmd_Test_Nominal
+DEBUG EVENT ID=111 Set Permissions command: file = /source1, access = 511
+PASS: Set Permissions command: file = /source1, access = 511
+PASS: FM_GlobalData.ChildCmdCounter == 1
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildSetPermissionsCmd_Test_OS_Error
+ERROR EVENT ID=112 Set Permissions command: OS_chmod error, RC=0xFFFFFFFF, file = /source1, access = 511
+PASS: ﻿Set Permissions command: OS_chmod error, RC=0xFFFFFFFF, file = /source1, access = 511
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ChildSleepStat_Test_GetStatsAndDoNotSleep
+PASS: FilesTillSleep == 9
+PASS: DirListData.EntrySize == 5
+PASS: DirListData.ModifyTime == 10
+PASS: DirListData.Mode == 511
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ChildSleepStat_Test_GetStatsAndSleep
+PASS: FilesTillSleep == FM_CHILD_STAT_SLEEP_FILECOUNT - 1
+PASS: DirListData.EntrySize == 5
+PASS: DirListData.ModifyTime == 10
+PASS: DirListData.Mode == 511
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ChildSleepStat_Test_DoNotGetStats
+PASS: FilesTillSleep == 1
+PASS: DirListData.EntrySize == 0
+PASS: DirListData.ModifyTime == 0
+PASS: DirListData.Mode == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_NoopCmd_Test
+INFO EVENT ID=12 No-op command: FM version 2.5.2.0
+PASS: No-op command: FM version 2.5.2.0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ResetCountersCmd_Test
+DEBUG EVENT ID=14 Reset Counters command
+PASS: Reset Counters command
+PASS: FM_GlobalData.CommandCounter == 0
+PASS: FM_GlobalData.CommandErrCounter == 0
+PASS: FM_GlobalData.ChildCmdCounter == 0
+PASS: FM_GlobalData.ChildCmdErrCounter == 0
+PASS: FM_GlobalData.ChildCmdWarnCounter == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_CopyFileCmd_Test_OverwriteZero
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_COPY_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_CopyFileCmd_Test_OverwriteNonzero
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_COPY_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_MoveFileCmd_Test_OverwriteZero
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_MOVE_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_MoveFileCmd_Test_OverwriteNonzero
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_MOVE_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_RenameFileCmd_Test
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_RENAME_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_DeleteFileCmd_Test
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_DELETE_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Filename, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_DeleteAllFilesCmd_Test
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_DELETE_ALL_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source2, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_DecompressFileCmd_Test
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_DECOMPRESS_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ConcatFilesCmd_Test
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_CONCAT_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Source1, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source2, CmdPacket.Source2, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Target, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetFileInfoCmd_Test_Nominal
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode == FM_GET_FILE_INFO_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Filename, OS_MAX_PATH_LEN) == 0
+PASS: FM_GlobalData.ChildQueue[0].FileInfoState == FM_NAME_IS_FILE_CLOSED
+PASS: FM_GlobalData.ChildQueue[0].FileInfoCRC == 0
+PASS: FM_GlobalData.ChildQueue[0].FileInfoSize == 0
+PASS: FM_GlobalData.ChildQueue[0].FileInfoTime == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetFileInfoCmd_Test_InvalidFilename
+ERROR EVENT ID=62 Get File Info error: invalid name: name = 
+PASS: Result == FALSE
+PASS: Get File Info error: invalid name: name = 
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_GetOpenFilesCmd_Test
+PKT: 08 8D C0 00 10 71 00 00 00 00 00 00 32 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=65 Get Open Files command
+PASS: Result == TRUE
+PASS: FM_GlobalData.OpenFilesPkt.NumOpenFiles == OS_MAX_NUM_OPEN_FILES
+PASS: Get Open Files command
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_CreateDirectoryCmd_Test
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_DeleteDirectoryCmd_Test
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetDirListFileCmd_Test_DefaultFilename
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_GET_DIR_FILE_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source2, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, FM_DIR_LIST_FILE_DEFNAME, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetDirListFileCmd_Test_SpecifiedFilename
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_GET_DIR_FILE_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source2, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Target, CmdPacket.Filename, OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetDirListPktCmd_Test
+PASS: Result == TRUE
+PASS: FM_GlobalData.ChildQueue[0].CommandCode = FM_GET_DIR_PKT_CC
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source1, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: strncmp(FM_GlobalData.ChildQueue[0].Source2, CmdPacket.Directory, OS_MAX_PATH_LEN) == 0
+PASS: FM_GlobalData.ChildQueue[0].DirListOffset == CmdPacket.DirListOffset
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetFreeSpaceCmd_Test_Nominal
+PKT: 08 8E C0 00 02 45 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4E 61 6D 65 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+DEBUG EVENT ID=91 Get Free Space command
+PASS: Result == TRUE
+PASS: strncmp (FM_GlobalData.FreeSpacePkt.FileSys[0].Name, 'Name', OS_MAX_PATH_LEN) == 0
+PASS: FM_GlobalData.FreeSpacePkt.FileSys[0].FreeSpace_A == 0
+PASS: Get Free Space command
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_GetFreeSpaceCmd_Test_TableNotLoaded
+ERROR EVENT ID=93 Get Free Space error: file system free space table is not loaded
+PASS: Result == FALSE
+PASS: Get Free Space error: file system free space table is not loaded
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_SetTableStateCmd_Test_Nominal
+INFO EVENT ID=94 Set Table State command: index = 0, state = 1
+PASS: Result == TRUE
+PASS: FM_GlobalData.FreeSpaceTablePtr->FileSys[CmdPacket.TableEntryIndex].State == CmdPacket.TableEntryState
+PASS: Set Table State command: index = 0, state = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_SetTableStateCmd_Test_TableNotLoaded
+ERROR EVENT ID=96 Set Table State error: file system free space table is not loaded
+PASS: Result == FALSE
+PASS: Set Table State error: file system free space table is not loaded
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_SetTableStateCmd_Test_TableIndexOutOfRange
+ERROR EVENT ID=97 Set Table State error: invalid command argument: index = 9
+PASS: Result == FALSE
+PASS: Set Table State error: invalid command argument: index = 9
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_SetTableStateCmd_Test_InvalidState
+ERROR EVENT ID=97 Set Table State error: invalid command argument: state = 99
+PASS: Result == FALSE
+PASS: Set Table State error: invalid command argument: state = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_SetTableStateCmd_Test_UnusedTable
+ERROR EVENT ID=98 Set Table State error: cannot modify unused table entry: index = 0
+PASS: Result == FALSE
+PASS: Set Table State error: cannot modify unused table entry: index = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_SetPermissionsCmd_Test_Nominal
+PASS: Result == TRUE
+
+Running Test: FM_SetPermissionsCmd_Test_InvalidPathTest
+ERROR EVENT ID=0 Set Permissions error: invalid name: name = 
+PASS: Result == FALSE
+
+Running Test: FM_TableInit_Test
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_ValidateTable_Test_NominalTableEntryEnabled
+INFO EVENT ID=104 Free Space Table verify results: good entries = 1, bad = 0, unused = 7
+PASS: Result == CFE_SUCCESS
+PASS: Free Space Table verify results: good entries = 1, bad = 0, unused = 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ValidateTable_Test_NominalTableEntryDisabled
+INFO EVENT ID=104 Free Space Table verify results: good entries = 1, bad = 0, unused = 7
+PASS: Result == CFE_SUCCESS
+PASS: Free Space Table verify results: good entries = 1, bad = 0, unused = 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_ValidateTable_Test_InvalidState
+ERROR EVENT ID=99 Table verify error: index = 0, invalid state = 99
+INFO EVENT ID=104 Free Space Table verify results: good entries = 0, bad = 8, unused = 0
+PASS: Result == FM_TABLE_VALIDATION_ERR
+PASS: Table verify error: index = 0, invalid state = 99
+PASS: Free Space Table verify results: good entries = 0, bad = 8, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ValidateTable_Test_EmptyNameString
+ERROR EVENT ID=99 Free Space Table verify error: index = 0, empty name string
+INFO EVENT ID=104 Free Space Table verify results: good entries = 0, bad = 1, unused = 7
+PASS: Result == FM_TABLE_VALIDATION_ERR
+PASS: Free Space Table verify error: index = 0, empty name string
+PASS: Free Space Table verify results: good entries = 0, bad = 1, unused = 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ValidateTable_Test_NameTooLong
+ERROR EVENT ID=99 Free Space Table verify error: index = 0, name too long
+INFO EVENT ID=104 Free Space Table verify results: good entries = 0, bad = 1, unused = 7
+PASS: Result == FM_TABLE_VALIDATION_ERR
+PASS: Free Space Table verify error: index = 0, name too long
+PASS: Free Space Table verify results: good entries = 0, bad = 1, unused = 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_ValidateTable_Test_InvalidName
+ERROR EVENT ID=99 Free Space Table verify error: index = 0, invalid name = *12345
+INFO EVENT ID=104 Free Space Table verify results: good entries = 0, bad = 1, unused = 7
+PASS: Result == FM_TABLE_VALIDATION_ERR
+PASS: Free Space Table verify error: index = 0, invalid name = *12345
+PASS: Free Space Table verify results: good entries = 0, bad = 1, unused = 7
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: FM_AcquireTablePointers_TestNeverLoaded
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_IsValidCmdPktLength_Test_InvalidPacketLength
+ERROR EVENT ID=1 Command error: invalid command packet length: expected = 1, actual = 0
+PASS: Result == FALSE
+PASS: Command error: invalid command packet length: expected = 1, actual = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyOverwrite_Test
+ERROR EVENT ID=1 Command error: invalid overwrite = 99
+PASS: Result == FALSE
+PASS: Command error: invalid overwrite = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_GetOpenFilesData_Test
+PASS: Result == OS_MAX_NUM_OPEN_FILES
+PASS: strncmp(OpenFilesData[0].LogicalName, 'name', OS_MAX_PATH_LEN) == 0
+PASS: strncmp(OpenFilesData[0].AppName, 'appname', OS_MAX_API_NAME) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetFilenameState_Test_IsDirectory
+PASS: Result == FM_NAME_IS_DIRECTORY
+PASS: FM_GlobalData.FileStatTime == 1
+PASS: FM_GlobalData.FileStatSize == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_GetFilenameState_Test_NotInUse
+PASS: Result == FM_NAME_IS_NOT_IN_USE
+PASS: FM_GlobalData.FileStatTime == 0
+PASS: FM_GlobalData.FileStatSize == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyNameValid_Test_InvalidName
+ERROR EVENT ID=1 Command error: invalid name: name = ***filename
+PASS: Result == FM_NAME_IS_INVALID
+PASS: Command error: invalid name: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileClosed_Test_InvalidFilename
+ERROR EVENT ID=1 Command error: filename is invalid: name = ***filename
+PASS: Result == FALSE
+PASS: Command error: filename is invalid: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileClosed_Test_FileDoesNotExist
+ERROR EVENT ID=1 Command error: file does not exist: name = filename
+PASS: Result == FALSE
+PASS: Command error: file does not exist: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileClosed_Test_FileAlreadyOpen
+ERROR EVENT ID=1 Command error: file is already open: name = name
+PASS: Result == FALSE
+PASS: Command error: file is already open: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileClosed_Test_FileClosed
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyFileClosed_Test_IsDirectory
+ERROR EVENT ID=1 Command error: filename is a directory: name = name
+PASS: Result == FALSE
+PASS: Command error: filename is a directory: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileExists_Test_InvalidFilename
+ERROR EVENT ID=1 Command error: filename is invalid: name = ***filename
+PASS: Result == FALSE
+PASS: Command error: filename is invalid: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileExists_Test_FileDoesNotExist
+ERROR EVENT ID=1 Command error: file does not exist: name = filename
+PASS: Result == FALSE
+PASS: Command error: file does not exist: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileExists_Test_FileOpen
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyFileExists_Test_FileClosed
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyFileExists_Test_IsDirectory
+ERROR EVENT ID=1 Command error: filename is a directory: name = name
+PASS: Result == FALSE
+PASS: Command error: filename is a directory: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNoExist_Test_InvalidFilename
+ERROR EVENT ID=1 Command error: filename is invalid: name = ***filename
+PASS: Result == FALSE
+PASS: Command error: filename is invalid: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNoExist_Test_NotInUse
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyFileNoExist_Test_FileOpen
+ERROR EVENT ID=1 Command error: file already exists: name = filename
+PASS: Result == FALSE
+PASS: Command error: file already exists: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNoExist_Test_FileClosed
+ERROR EVENT ID=1 Command error: file already exists: name = filename
+PASS: Result == FALSE
+PASS: Command error: file already exists: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNoExist_Test_IsDirectory
+ERROR EVENT ID=1 Command error: filename is a directory: name = filename
+PASS: Result == FALSE
+PASS: Command error: filename is a directory: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNotOpen_Test_InvalidFilename
+ERROR EVENT ID=1 Command error: filename is invalid: name = ***filename
+PASS: Result == FALSE
+PASS: Command error: filename is invalid: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNotOpen_Test_NotInUse
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyFileNotOpen_Test_FileOpen
+ERROR EVENT ID=1 Command error: file exists as an open file: name = name
+PASS: Result == FALSE
+PASS: Command error: file exists as an open file: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyFileNotOpen_Test_FileClosed
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyFileNotOpen_Test_IsDirectory
+ERROR EVENT ID=1 Command error: filename is a directory: name = filename
+PASS: Result == FALSE
+PASS: Command error: filename is a directory: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirExists_Test_InvalidName
+ERROR EVENT ID=1 Command error: directory name is invalid: name = ***filename
+PASS: Result == FALSE
+PASS: Command error: directory name is invalid: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirExists_Test_NotInUse
+ERROR EVENT ID=1 Command error: directory does not exist: name = filename
+PASS: Result == FALSE
+PASS: Command error: directory does not exist: name = filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirExists_Test_FileOpen
+ERROR EVENT ID=1 Command error: directory name exists as a file: name name
+PASS: Result == FALSE
+PASS: Command error: directory name exists as a file: name name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirExists_Test_FileClosed
+ERROR EVENT ID=1 Command error: directory name exists as a file: name name
+PASS: Result == FALSE
+PASS: Command error: directory name exists as a file: name name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirExists_Test_IsDirectory
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyDirNoExist_Test_InvalidName
+ERROR EVENT ID=1 Command error: directory name is invalid: name = ***filename
+PASS: Result == FALSE
+PASS: Command error: directory name is invalid: name = ***filename
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirNoExist_Test_NotInUse
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_VerifyDirNoExist_Test_FileOpen
+ERROR EVENT ID=1 Command error: directory name exists as a file: name = name
+PASS: Result == FALSE
+PASS: Command error: directory name exists as a file: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirNoExist_Test_FileClosed
+ERROR EVENT ID=1 Command error: directory name exists as a file: name = name
+PASS: Result == FALSE
+PASS: Command error: directory name exists as a file: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyDirNoExist_Test_DirectoryExists
+ERROR EVENT ID=1 Command error: directory already exists: name = name
+PASS: Result == FALSE
+PASS: Command error: directory already exists: name = name
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyChildTask_Test_ChildDisabled
+ERROR EVENT ID=1 Command error: child task is disabled
+PASS: Result == FALSE
+PASS: Command error: child task is disabled
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyChildTask_Test_ChildQueueFull
+ERROR EVENT ID=1 Command error: child task queue is full
+PASS: Result == FALSE
+PASS: Command error: child task queue is full
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyChildTask_Test_ChildInterfaceBrokenLocalQueueCount
+ERROR EVENT ID=1 Command error: child task interface is broken: count = 4, index = 1
+PASS: Result == FALSE
+PASS: Command error: child task interface is broken: count = 4, index = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyChildTask_Test_ChildInterfaceBrokenChildWriteIndex
+ERROR EVENT ID=1 Command error: child task interface is broken: count = 1, index = 3
+PASS: Result == FALSE
+PASS: Command error: child task interface is broken: count = 1, index = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: FM_VerifyChildTask_Test_Nominal
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_InvokeChildTask_Test_Nominal
+PASS: FM_GlobalData.ChildWriteIndex == 1
+PASS: FM_GlobalData.ChildQueueCount == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_InvokeChildTask_Test_WriteIndexEqualsQueueDepth
+PASS: FM_GlobalData.ChildWriteIndex == 0
+PASS: FM_GlobalData.ChildQueueCount == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: FM_AppendPathSep_Test
+PASS: strncmp(Directory, 'directory/', OS_MAX_PATH_LEN) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Tests Executed:    195
+Assert Pass Count: 897
+Assert Fail Count: 0
+
+gcov: '../src/fm_tbl.c' 100.00%  52
+gcov: '../src/fm_child.c' 100.00%  514
+gcov: '../src/fm_app.c' 100.00%  122
+gcov: '../src/fm_cmds.c' 100.00%  304
+gcov: '../src/fm_cmd_utils.c' 100.00%  172
+

@@ -73,7 +73,7 @@ def autonomy_mgmt_send_cmd(screen, cmd)
       app_state = ask_string("Enter State: 1=Active, 2=Passive, 3=Disabled")
       Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE #{app_state}")
    elsif (cmd == "TODO")
-      prompt("Feature coming soon...")
+      prompt(Osk::MSG_TBD_FEATURE)
    else
       raise "Error in screen definition file. Undefined command sent to autonomy_mgmt_send_cmd()"
    end

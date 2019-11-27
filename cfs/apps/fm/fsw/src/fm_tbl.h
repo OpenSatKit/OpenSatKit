@@ -1,7 +1,7 @@
 /*
-** $Id: fm_tbl.h 1.14 2015/02/28 17:50:54EST sstrege Exp  $
+** $Id: fm_tbl.h 1.2.1.2 2017/01/23 21:53:16EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,36 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_tbl.h  $
-** Revision 1.14 2015/02/28 17:50:54EST sstrege 
-** Added copyright information
-** Revision 1.13 2010/03/04 10:41:56EST lwalling 
-** Removed another empty Doxygen param section
-** Revision 1.12 2010/03/03 18:16:44EST lwalling 
-** Removed empty param sections, changed some pound symbols to forward slashes
-** Revision 1.11 2009/11/13 16:30:22EST lwalling 
-** Modify macro names
-** Revision 1.10 2009/11/09 16:53:11EST lwalling 
-** Cleanup and expand function prototype comments, move value defs to fm_defs.h
-** Revision 1.9 2009/10/30 16:01:44EDT lwalling 
-** Modify free space table entry state definitions
-** Revision 1.8 2009/10/30 14:02:33EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.7 2009/10/30 10:42:18EDT lwalling
-** Move table definition structures to fm_msg.h
-** Revision 1.6 2009/10/09 17:23:49EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.5 2009/10/08 15:58:18EDT lwalling
-** Remove size field from device table structure
-** Revision 1.4 2009/10/07 15:57:57EDT lwalling
-** Changed device table structure definition, changed prototype for FM_AcquireTablePointers()
-** Revision 1.3 2008/12/11 12:02:49EST sstrege
-** Moved configurable table defs to platform_cfg header file
-** Revision 1.2 2008/06/20 16:21:44EDT slstrege
-** Member moved from fsw/src/fm_tbl.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_tbl.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:44ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 **
 */
 

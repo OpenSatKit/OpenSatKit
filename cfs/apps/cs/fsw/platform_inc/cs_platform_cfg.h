@@ -43,6 +43,8 @@
 #ifndef _cs_platform_cfg_
 #define _cs_platform_cfg_
 
+#include "cfe_platform_cfg.h" //dcm
+
 /*************************************************************************
  ** Macro Definitions
  *************************************************************************/
@@ -109,7 +111,7 @@
  **       in the system. This parameter is limited to #CFE_ES_MAX_APPLICATIONS
  **
  */
-#define CS_MAX_NUM_APP_TABLE_ENTRIES        24
+#define CS_MAX_NUM_APP_TABLE_ENTRIES        CFE_ES_MAX_APPLICATIONS //dcm
 
 /** \cscfg Default number of bytes to checksum per cycle
  **  

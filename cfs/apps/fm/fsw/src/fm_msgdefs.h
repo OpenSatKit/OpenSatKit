@@ -1,7 +1,7 @@
 /*
-** $Id: fm_msgdefs.h 1.19 2015/02/28 17:50:47EST sstrege Exp  $
+** $Id: fm_msgdefs.h 1.4.1.2 2017/01/23 21:52:59EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -23,46 +23,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_msgdefs.h  $
-** Revision 1.19 2015/02/28 17:50:47EST sstrege 
-** Added copyright information
-** Revision 1.18 2011/05/31 17:08:12EDT lwalling 
-** Added definition for delete internal command - FM_DELETE_INT_CC
-** Revision 1.17 2011/04/19 15:56:39EDT lwalling 
-** Added overwrite argument to copy and move file commands
-** Revision 1.16 2010/03/04 10:43:09EST lwalling 
-** Corrected several Doxygen event ID references
-** Revision 1.15 2010/03/03 18:19:03EST lwalling 
-** Changed some Doxygen symbols, WarnCounter to WarnCtr, event ID macro names
-** Revision 1.14 2009/11/13 16:24:08EST lwalling 
-** Modify macro names, add SetTableEntryState cmd code
-** Revision 1.13 2009/11/09 17:02:14EST lwalling 
-** Move value defs to fm_defs.h, fix source indents, add process func, add size/time func
-** Revision 1.12 2009/10/30 14:02:28EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.11 2009/10/28 16:40:58EDT lwalling
-** Complete effort to replace the use of phrase device table with file system free space table
-** Revision 1.10 2009/10/26 11:31:01EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.9 2009/10/16 15:50:44EDT lwalling
-** Update command code names, comments, descriptive text
-** Revision 1.8 2009/10/09 17:23:55EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.7 2009/04/18 12:42:02EDT dkobe
-** Corrected DirList message type in doxygen comment
-** Revision 1.6 2009/04/18 12:38:17EDT dkobe
-** Corrected typos in doxygen comments
-** Revision 1.5 2009/01/07 12:40:43EST sstrege
-** Update user guide notes for DirListFile command
-** Revision 1.4 2008/11/30 16:10:48EST sstrege
-** Updated DirListTlm doxygen alias to include FM prefix
-** Revision 1.3 2008/10/01 16:18:14EDT sstrege
-** Updated FM_DIR_LIST_MSG_CC documentation to reference new FM_SourceUint32DataCmd_t
-** Revision 1.2 2008/06/20 16:21:40EDT slstrege
-** Member moved from fsw/src/fm_msgdefs.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_msgdefs.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:40ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_msgdefs_h_
@@ -849,6 +809,52 @@
 */
 #define FM_DELETE_INT_CC        18
 
+/** \fmcmd Set Permissions of a file
+**
+**  \par Description
+**       This command sets the permissions for a file. This is a direct interface
+**       to OS_chmod in the OSAL. OS_chmod accepts a uint32 to set the file's mode.
+**       The mode value also contains the type of file (regular or directory, etc) so
+**       care should be taken to not change the file type from regular to directory or vice-versa. 
+**       Examples for a regular file:
+**       
+**       0100700 (Decimal: 33216) - Read, Write and Execute
+**       0100600 (Decimal: 33152) - Read, and Write
+**       0100400 (Decimal: 33024) - Read Only
+ * 
+ *       Examples for a directory:
+**       0040700 (Decimal: 16832) - Read, Write and Execute
+**       0040600 (Decimal: 16786) - Read, and Write
+**       0040400 (Decimal: 16640) - Read Only
+ * 
+**       S_IFMT     0170000   bit mask for the file type bit field
+
+         S_IFSOCK   0140000   socket
+         S_IFLNK    0120000   symbolic link
+         S_IFREG    0100000   regular file
+         S_IFBLK    0060000   block device
+         S_IFDIR    0040000   directory
+         S_IFCHR    0020000   character device
+         S_IFIFO    0010000   FIFO
+**  \fmcmdmnemonic \FM_SetFilePerm
+**
+**  \par Command Packet Structure
+**       #FM_SetPermCmd_t
+**
+**  \par Error Conditions
+**       - Invalid command packet length
+**       - Error from call to OS_chmod
+**
+**  \par Evidence of failure may be found in the following telemetry:
+**       - Command error counter /FM_CMDEC will increment
+**       - Error event #FM_SET_PERM_ERR_EID may be sent
+**       - Error event #FM_SET_PERM_CMD_EID may be sent
+**       - Error event #FM_SET_PERM_OS_ERR_EID may be sent
+**
+**  \par Criticality
+**       - There are no critical issues related to this command.
+*/
+#define FM_SET_FILE_PERM_CC   19
 
 #endif /* _fm_msgdefs_h_ */
 

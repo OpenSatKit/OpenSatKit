@@ -23,6 +23,7 @@
 #include <netdb.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "netif.h"
 
@@ -148,7 +149,6 @@ void NETIF42_ResetStatus(void) {
 int32 NETIF42_Recv(char* BufPtr, const uint16 BufSize) 
 {
 
-   int   BytesRead = 0;
    int   TotalBytesRead = 0;
    int   BytesRemaining = (I42_SOCKET_BUF_LEN-2);
    char* InBufPtr = BufPtr;

@@ -48,6 +48,7 @@
 ** Includes
 *************************************************************************/
 #include "cfe.h"
+#include "cfe_platform_cfg.h"  //dcm
 #include "lc_msg.h"
 #include "lc_tbl.h"
 

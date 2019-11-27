@@ -1,16 +1,25 @@
 /*
-** $Id: cfe_fs_decompress.h 1.7 2012/01/13 12:11:28GMT-05:00 acudmore Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **   File: cfe_fs_decompress.h
-**
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement.
-** 
 **
 **   Author:   A. Cudmore,    NASA/GSFC Code 582
 **             Ported from JWST, which was ported from Swift/BAT, 
@@ -24,14 +33,6 @@
 ** that if you modify it and redistribute it that you include comments to
 ** that effect with your name and the date.  Thank you. [The history has been
 ** moved to the file ChangeLog.]
-**
-** $Log: cfe_fs_decompress.h  $
-** Revision 1.7 2012/01/13 12:11:28GMT-05:00 acudmore 
-** Changed license text to reflect open source
-** Revision 1.6 2012/01/10 18:37:52EST aschoeni 
-** CFE return codes set directly; FS_gz_huft_build return code is now properly redefined
-** Revision 1.5 2011/01/20 10:49:04EST lwalling 
-** Add file ID and change history log to file header
 **
 */
 

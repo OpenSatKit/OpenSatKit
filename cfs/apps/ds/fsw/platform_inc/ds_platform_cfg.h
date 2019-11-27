@@ -63,6 +63,8 @@
 #ifndef _ds_platform_cfg_h_
 #define _ds_platform_cfg_h_
 
+#include "cfe_platform_cfg.h" //dcm
+
 /*
 ** File Table Indices
 */

@@ -1,5 +1,21 @@
-
-# This is a small cmake script to generate the version.h file for identification within the final EXE
+##################################################################
+#
+# cFS version metadata collection script
+#
+# This small script runs at build time (as opposed to prep time)
+# and is intended to extract version metadata from the current source
+# tree.  It is done each time that the code is built, since the 
+# metadata could change at any time (i.e. a different branch could
+# be checked out, or additional changes committed)
+#
+# This generates two header files: 
+#   cfecfs_version_info.h -- contains version control metadata
+#   cfecfs_build_info.h -- contains build information (user,host,etc) 
+#
+# Currently only git is supported as a version control source, however
+# it could be extended to others by adding the appropriate command
+#
+##################################################################
 
 set(GIT_EXECUTABLE git)
 
@@ -16,7 +32,7 @@ function(get_version DEP)
       set(DIR ${${DEP}_MISSION_DIR})
     endif()
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty --match "${NAME}*"
+        COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
         WORKING_DIRECTORY ${DIR} 
         OUTPUT_VARIABLE GIT_DESC_OUTPUT 
         RESULT_VARIABLE GIT_RESULT
@@ -49,30 +65,30 @@ set(OSAL_MISSION_DIR ${MISSION_SOURCE_DIR}/osal)
 
 # Start the template for configure_file() -- 
 # see below why it is done this way and not written directly
-file(WRITE ${BIN}/cmake_version.h.in 
+file(WRITE ${BIN}/cfecfs_version_info.h.in 
     "/* Auto-generated version information file */\n"
-    "#define MISSION_CONFIG      \"@MISSIONCONFIG@\"\n" 
-    "#define MISSION_NAME        \"@MISSION_NAME@\"\n") 
+    "#define MISSION_CONFIG      \"\@MISSIONCONFIG\@\"\n" 
+    "#define MISSION_NAME        \"\@MISSION_NAME\@\"\n") 
     
 # Get version for all mission apps/dependencies (they may be different)
-foreach(DEP "MISSION" "osal" ${MISSION_APPS} ${MISSION_DEPS} ${MISSION_PSPMODULES})
+foreach(DEP "MISSION" ${MISSION_APPS} ${MISSION_DEPS} ${MISSION_PSPMODULES})
   get_version(${DEP})
   string(TOUPPER ${${DEP}_NAME} MACRONAME)
   string(REGEX REPLACE "[^A-Z0-9_]+" "_" MACRONAME "${MACRONAME}")
-  file(APPEND ${BIN}/cmake_version.h.in "#define ${MACRONAME}_VERSION \"@${DEP}_VERSION@\"\n") 
+  file(APPEND ${BIN}/cfecfs_version_info.h.in "#define ${MACRONAME}_VERSION \"\@${DEP}_VERSION\@\"\n") 
 endforeach()
 
 string(TOUPPER ${MISSION_NAME} MACRONAME)
-file(APPEND ${BIN}/cmake_version.h.in "\n#define MISSION_VERSION ${MACRONAME}_VERSION\n\n /* end */\n")
+file(APPEND ${BIN}/cfecfs_version_info.h.in "\n#define MISSION_VERSION ${MACRONAME}_VERSION\n\n /* end */\n")
    
 # Same for build information -
 # note this is done separately because the build time might change often -
 # only the final target EXE should include build.h (nothing else in the mission) to minimize rebuilds
-file(WRITE ${BIN}/build.h.in 
+file(WRITE ${BIN}/cfecfs_build_info.h.in 
     "/* Auto-generated build information file */\n"
-    "#define MISSION_BUILDDATE   \"@BUILDDATE@\"\n"
-    "#define MISSION_BUILDUSER   \"@USERNAME@\"\n"
-    "#define MISSION_BUILDHOST   \"@HOSTNAME@\"\n\n")
+    "#define MISSION_BUILDDATE   \"\@BUILDDATE\@\"\n"
+    "#define MISSION_BUILDUSER   \"\@USERNAME\@\"\n"
+    "#define MISSION_BUILDHOST   \"\@HOSTNAME\@\"\n\n")
 
 # OVERRIDE NOTE: 
 # All 3 of these may be passed via environment variables to force a particular
@@ -111,7 +127,7 @@ endif (NOT USERNAME)
 
 # Use configure_file() command to generate the final output file because this can detect
 # and only update it if it changes.
-configure_file(${BIN}/cmake_version.h.in ${BIN}/inc/cmake_version.h @ONLY)
-configure_file(${BIN}/build.h.in ${BIN}/inc/build.h @ONLY)
+configure_file(${BIN}/cfecfs_version_info.h.in ${BIN}/inc/cfecfs_version_info.h @ONLY)
+configure_file(${BIN}/cfecfs_build_info.h.in ${BIN}/inc/cfecfs_build_info.h @ONLY)
 
 

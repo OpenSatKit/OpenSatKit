@@ -32,7 +32,7 @@ static DEMOFR_Class*  DemoFr = NULL;
 ** Local Function Prototypes
 */
 
-static boolean AddTimedFault(DEMOFR_SimFaultCmdParam *SimFaultCmd);
+static boolean AddTimedFault(const DEMOFR_SimFaultCmdParam *SimFaultCmd);
 static void ReportTimedSimFaults(void);
 const char* SimModeStr(DEMOFR_SimMode  SimMode);
 static void StartSim(const DEMOFR_SimFaultCmdParam *SimFaultCmd);
@@ -229,7 +229,7 @@ boolean DEMOFR_SimFaultCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 ** Function: AddTimedFault
 **
 */
-static boolean AddTimedFault(DEMOFR_SimFaultCmdParam *SimFaultCmd)
+static boolean AddTimedFault(const DEMOFR_SimFaultCmdParam *SimFaultCmd)
 {
    
    int RetStatus = TRUE;

@@ -1,15 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
-** File:
-** $Id: ut_es_stubs.c 1.13 2014/09/23 13:30:51GMT-05:00 lwalling Exp  $
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: ut_es_stubs.c
 **
 ** Purpose:
 ** Unit test stubs for Executive Service routines
@@ -17,59 +27,6 @@
 ** Notes:
 ** Minimal work is done, only what is required for unit testing
 **
-** $Data:$
-** $Revision: 1.13 $
-** $Log: ut_es_stubs.c  $
-** Revision 1.13 2014/09/23 13:30:51GMT-05:00 lwalling 
-** Modify CFE_ES_GetTaskInfo() to also return an error
-** Revision 1.12 2014/05/28 10:21:50EDT wmoleski 
-** Overwriting cFE Unit Test files with the updated JSC files.
-** Revision 1.11 2012/01/13 13:59:30EST acudmore
-** Added license text
-** Revision 1.10 2010/11/03 15:15:09EDT jmdagost
-** Added cfe.h include file.
-** Revision 1.9 2010/10/20 12:39:20EDT jmdagost
-** Added ES memory pool creation with no semaphore option.
-** Revision 1.8 2009/07/29 19:22:21EDT aschoeni
-** Added GetPoolBufInfo and GetPoolInfoRtn
-** Revision 1.7 2009/05/07 15:02:28EDT rmcgraw
-** DCR7366:1 Modified ES_GetTaskInfo
-** Revision 1.6 2009/05/06 09:53:02EDT rmcgraw
-** DCR7366:1 Changed PutPool to return positive integer for success
-** Revision 1.5 2009/04/23 09:27:16EDT rmcgraw
-** DCR7366:1 Commented out the fprintfs that indicate the function was called
-** Revision 1.4 2009/04/01 16:09:08EDT rmcgraw
-** DCR7366:1 Added Stub support for PoolCreateEx and removed alternating task names
-** Revision 1.3 2008/08/15 11:27:04EDT njyanchik
-** Check in of ES Unit Test
-** Revision 1.2 2008/08/07 03:43:52BST dkobe
-** Updated Unit Tests for CFE_TIME_RegisterSynchCallback, CFE_TIME_UnregisterSynchCallback and CFE_TIME_CleanUpApp
-** Revision 1.1 2008/04/17 08:05:44EDT ruperera
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/unit-test/project.pj
-** Revision 1.18 2007/09/24 08:01:56EDT njyanchik
-** Update of EVS unit test
-** Revision 1.17 2007/09/21 15:40:18EDT David Kobe (dlkobe)
-** Modified pointer type definitions to eliminate Linux gcc compile warnings
-** Revision 1.15 2007/07/08 22:30:12EDT dlkobe
-** Enhanced simulation of CDS
-** Revision 1.14 2007/07/05 15:04:30EDT dlkobe
-** Baseline following complete TBL unit testing
-** Revision 1.13 2007/05/10 15:14:25EDT njyanchik
-** Another update of Jonathans UT
-** Revision 1.12 2007/05/04 09:12:06EDT njyanchik
-** Check in of Time UT and related changes
-** Revision 1.10 2007/05/01 13:28:23EDT njyanchik
-** I updated the ut stubs to get the each of the subsytems to compile under the unit test. I did not
-** change the unit tests themselves to cover more of the files, however.
-** Revision 1.9 2007/03/19 10:12:50EST njyanchik
-** fix a small api change in ES
-** Revision 1.8 2007/02/26 14:22:13EST njyanchik
-** initial check in files for TBL unit test, plus updates to current files
-** Revision 1.7 2006/11/02 13:53:57EST njyanchik
-** Unit test for TIME was updated to match the changes made for this DCR
-** Revision 1.6 2006/07/26 07:05:23GMT-05:00 rjmcgraw
-** Added CreatePoolRtn code
 */
 
 /*
@@ -77,59 +34,8 @@
 */
 #include <string.h>
 #include "cfe.h"
-#include "common_types.h"
-#include "cfe_time_utils.h"
-#include "cfe_es.h"
-#include "ut_stubs.h"
-
-#ifdef CFE_LINUX
-#include "stdlib.h"
-#endif
-
-#ifdef OSP_ARINC653
-#define UT_OFFSET_CFE_ES_WRITETOSYSLOG 2
-
-#define UT_BREAK_CFE_ES_WRITETOSYSLOG 7
-
-#define UT_SKIP_CFE_ES_WRITETOSYSLOG 58
-#endif
-
-/*
-** External global variables
-*/
-extern char UT_appname[80];
-extern char cMsg[];
-
-extern uint32 UT_PutPool_Fail;
-extern uint32 UT_AppID;
-extern uint32 UT_SignatureCDS;
-extern uint32 UT_StatusCDS;
-
-extern UT_SetRtn_t CreatePoolRtn;
-extern UT_SetRtn_t PoolCreateExRtn;
-extern UT_SetRtn_t PutPoolRtn;
-extern UT_SetRtn_t GetPoolRtn;
-extern UT_SetRtn_t GetPoolInfoRtn;
-extern UT_SetRtn_t ES_RegisterRtn;
-extern UT_SetRtn_t ES_CreateChildRtn;
-extern UT_SetRtn_t ES_DeleteCDSRtn;
-extern UT_SetRtn_t ES_RegisterCDSRtn;
-extern UT_SetRtn_t ES_CopyToCDSRtn;
-extern UT_SetRtn_t ES_RestoreFromCDSRtn;
-extern UT_SetRtn_t GetAppIDRtn;
-extern UT_SetRtn_t ES_ExitAppRtn;
-extern UT_SetRtn_t WriteSysLogRtn;
-extern UT_SetRtn_t GetResetTypeRtn;
-extern UT_SetRtn_t ES_GetTaskInfoRtn;
-
-extern uint8        UT_CDS[UT_CDS_SIZE];
-extern UT_CDS_Map_t UT_CDS_Map;
-extern uint32       poolBufIndex;
-
-/*
-** Global variables
-*/
-char poolBuffer[65536];
+#include "cfe_platform_cfg.h"
+#include "utstubs.h"
 
 /*
 ** Functions
@@ -162,36 +68,12 @@ int32 CFE_ES_CreateChildTask(uint32 *TaskIdPtr,
                              uint32 Priority,
                              uint32 Flags)
 {
-    int32   status = CFE_SUCCESS;
-#ifdef UT_VERBOSE
-    boolean flag = FALSE;
-#endif
+    int32 status;
 
-    if (ES_CreateChildRtn.count > 0)
-    {
-        ES_CreateChildRtn.count--;
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_CreateChildTask), TaskIdPtr);
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_CreateChildTask), TaskName);
 
-        if (ES_CreateChildRtn.count == 0)
-        {
-            status = ES_CreateChildRtn.value;
-#ifdef UT_VERBOSE
-            flag = TRUE;
-            snprintf(cMsg, UT_MAX_MESSAGE_LENGTH,
-                     "  CFE_ES_CreateChildTask called: %ld",
-                     ES_CreateChildRtn.value);
-            UT_Text(cMsg);
-#endif
-        }
-    }
-
-#ifdef UT_VERBOSE
-    if (flag == FALSE)
-    {
-        snprintf(cMsg, UT_MAX_MESSAGE_LENGTH,
-                 "  CFE_ES_CreateChildTask called: %s", TaskName);
-        UT_Text(cMsg);
-    }
-#endif
+    status = UT_DEFAULT_IMPL(CFE_ES_CreateChildTask);
 
     return status;
 }
@@ -218,17 +100,23 @@ int32 CFE_ES_CreateChildTask(uint32 *TaskIdPtr,
 ******************************************************************************/
 int32 CFE_ES_GetAppID(uint32 *pAppID)
 {
-    int32 status = CFE_SUCCESS;
+    int32 status;
+    uint32 *IdBuff;
+    uint32 BuffSize;
+    uint32 Position;
 
-    *pAppID = UT_AppID;
+    status = UT_DEFAULT_IMPL(CFE_ES_GetAppID);
 
-    if (GetAppIDRtn.count > 0)
+    if (status >= 0)
     {
-        GetAppIDRtn.count--;
-
-        if (GetAppIDRtn.count == 0)
+        UT_GetDataBuffer(UT_KEY(CFE_ES_GetAppID), (void **)&IdBuff, &BuffSize, &Position);
+        if (IdBuff != NULL && BuffSize == sizeof(*pAppID))
         {
-            status = GetAppIDRtn.value;
+            *pAppID = *IdBuff;
+        }
+        else
+        {
+            *pAppID = 0;
         }
     }
 
@@ -258,23 +146,37 @@ int32 CFE_ES_GetAppID(uint32 *pAppID)
 ******************************************************************************/
 int32 CFE_ES_GetAppIDByName(uint32 *pAppID, const char *pAppName)
 {
-    int32 status = CFE_SUCCESS;
+    uint32 UserBuffSize;
+    uint32 BuffPosition;
+    const char *NameBuff;
+    uint32 *IdBuff;
+    int32 status;
 
-    if (strcmp(pAppName, UT_appname) == 0)
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_GetAppIDByName), pAppID);
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_GetAppIDByName), pAppName);
+    status = UT_DEFAULT_IMPL(CFE_ES_GetAppIDByName);
+
+    if (status >= 0)
     {
-        *pAppID = UT_AppID;
-    }
-    else if (strcmp(pAppName, "unregistered_app") == 0)
-    {
-        *pAppID = CFE_ES_MAX_APPLICATIONS - 1;
-    }
-    else if (strcmp(pAppName, "illegal_id") == 0)
-    {
-        *pAppID = CFE_ES_MAX_APPLICATIONS + 1;
-    }
-    else
-    {
-        status = CFE_ES_ERR_APPNAME;
+        if (UT_Stub_CopyToLocal(UT_KEY(CFE_ES_GetAppIDByName), (uint8*)pAppID, sizeof(*pAppID)) < sizeof(*pAppID))
+        {
+            IdBuff = NULL;
+            UT_GetDataBuffer(UT_KEY(CFE_ES_GetAppName), (void**)&NameBuff, &UserBuffSize, &BuffPosition);
+            if (NameBuff != NULL && UserBuffSize > 0 &&
+                    strncmp(NameBuff, pAppName, UserBuffSize) == 0)
+            {
+                UT_GetDataBuffer(UT_KEY(CFE_ES_GetAppID), (void**)&IdBuff, &UserBuffSize, &BuffPosition);
+            }
+
+            if (IdBuff != NULL && UserBuffSize == sizeof(*pAppID))
+            {
+                *pAppID = *IdBuff;
+            }
+            else
+            {
+                *pAppID = 0;
+            }
+        }
     }
 
     return status;
@@ -299,9 +201,36 @@ int32 CFE_ES_GetAppIDByName(uint32 *pAppID, const char *pAppName)
 ******************************************************************************/
 int32 CFE_ES_GetAppName(char *pAppName, uint32 AppID, uint32 BufferLength)
 {
-    strncpy(pAppName, UT_appname, BufferLength);
-    pAppName[BufferLength - 1] = '\0';
-    return CFE_SUCCESS;
+    uint32 UserBuffSize;
+    uint32 BuffPosition;
+    const char *NameBuff;
+    int32 status;
+
+    status = UT_DEFAULT_IMPL(CFE_ES_GetAppName);
+
+    if (status >= 0 && BufferLength > 0)
+    {
+        UT_GetDataBuffer(UT_KEY(CFE_ES_GetAppName), (void**)&NameBuff, &UserBuffSize, &BuffPosition);
+        if (NameBuff == NULL || UserBuffSize == 0)
+        {
+            NameBuff = "UT";
+            UserBuffSize = 2;
+        }
+
+        if (UserBuffSize < BufferLength)
+        {
+            BuffPosition = UserBuffSize;
+        }
+        else
+        {
+            BuffPosition = BufferLength - 1;
+        }
+
+        strncpy(pAppName, NameBuff, BuffPosition);
+        pAppName[BuffPosition] = 0;
+    }
+
+    return status;
 }
 
 /*****************************************************************************/
@@ -326,33 +255,9 @@ int32 CFE_ES_GetAppName(char *pAppName, uint32 AppID, uint32 BufferLength)
 ******************************************************************************/
 int32 CFE_ES_RegisterApp(void)
 {
-    int32   status = CFE_SUCCESS;
-#ifdef UT_VERBOSE
-    boolean flag = FALSE;
-#endif
+    int32   status;
 
-    if (ES_RegisterRtn.count > 0)
-    {
-        ES_RegisterRtn.count--;
-
-        if (ES_RegisterRtn.count == 0)
-        {
-            status = ES_RegisterRtn.value;
-#ifdef UT_VERBOSE
-            flag = TRUE;
-            snprintf(cMsg, UT_MAX_MESSAGE_LENGTH,
-                     "  CFE_ES_RegisterApp called: %ld", ES_RegisterRtn.value);
-            UT_Text(cMsg);
-#endif
-        }
-    }
-
-#ifdef UT_VERBOSE
-    if (flag == FALSE)
-    {
-        UT_Text("  CFE_ES_RegisterApp called: SUCCESS");
-    }
-#endif
+    status = UT_DEFAULT_IMPL(CFE_ES_RegisterApp);
 
     return status;
 }
@@ -374,7 +279,11 @@ int32 CFE_ES_RegisterApp(void)
 ******************************************************************************/
 int32 CFE_ES_RegisterChildTask(void)
 {
-    return CFE_SUCCESS;
+    int32 status = CFE_SUCCESS;
+
+    status = UT_DEFAULT_IMPL(CFE_ES_RegisterChildTask);
+
+    return status;
 }
 
 /*****************************************************************************/
@@ -401,131 +310,16 @@ int32 CFE_ES_RegisterChildTask(void)
 ******************************************************************************/
 int32 CFE_ES_WriteToSysLog(const char *pSpecString, ...)
 {
-    char    tmpString[CFE_ES_MAX_SYSLOG_MSG_SIZE];
-    va_list ap;
+    int32   status;
 
-#ifdef OSP_ARINC653
-    va_start(ap, pSpecString, UT_OFFSET_CFE_ES_WRITETOSYSLOG,
-             UT_BREAK_CFE_ES_WRITETOSYSLOG, UT_SKIP_CFE_ES_WRITETOSYSLOG);
-#else
-    va_start(ap, pSpecString);
-#endif
+    status = UT_DEFAULT_IMPL(CFE_ES_WriteToSysLog);
 
-    vsnprintf(tmpString, CFE_ES_MAX_SYSLOG_MSG_SIZE, pSpecString, ap);
-    va_end(ap);
-
-    /* EVS SysLog messages */
-    if (UT_strcmp(tmpString, "EVS call to CFE_PSP_GetResetArea failed, "
-               "RC=0x~\n") == 0)
+    if (status >= 0)
     {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 1;
-    }
-    else if (UT_strcmp(tmpString, "Unexpected size from CFE_PSP_GetResetArea: "
-                    "expected = 0x~, actual = 0x00000000\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 2;
-    }
-    else if (UT_strcmp(tmpString, "EVS call to OS_MutSemCreate failed, "
-                    "RC=0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 3;
-    }
-    else if (UT_strcmp(tmpString, "Event Log cleared following power-on "
-                    "reset\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 4;
-    }
-    else if (UT_strcmp(tmpString, "Event Log cleared, n=~, c=~, f=~, m=~, "
-                    "o=~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 5;
-    }
-    else if (UT_strcmp(tmpString, "Event Log restored, n=2, c=2, f=0, m=1, "
-                    "o=0\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 6;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Application Init Failed,RC="
-                    "0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 7;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Error reading cmd pipe,RC="
-                    "0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 8;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Call to CFE_ES_RegisterApp Failed:"
-                    "RC=0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 9;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Call to CFE_ES_GetAppID Failed:RC="
-                    "0x~\n") == 0 )
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 10;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Call to CFE_SB_CreatePipe Failed:RC="
-                    "0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 12;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Subscribing to Cmds Failed:RC="
-                    "0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 13;
-    }
-    else if (UT_strcmp(tmpString, "EVS:Subscribing to HK Request Failed:"
-                    "RC=0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = EVS_SYSLOG_OFFSET + 14;
+        UT_Stub_CopyFromLocal(UT_KEY(CFE_ES_WriteToSysLog), (const uint8*)pSpecString, strlen(pSpecString));
     }
 
-    /* FS SysLog messages */
-    else if (UT_strcmp(tmpString, "FS SharedData Mutex Take Err Stat=0x~,"
-                    "App=0,Function=FunctionName\n") == 0)
-    {
-        WriteSysLogRtn.value = FS_SYSLOG_OFFSET + 1;
-    }
-    else if (UT_strcmp(tmpString, "FS SharedData Mutex Give Err Stat=0x~,"
-                    "App=0,Function=FunctionName\n") == 0)
-    {
-        WriteSysLogRtn.value = FS_SYSLOG_OFFSET + 2;
-    }
-
-    else if (UT_strcmp(tmpString, "TIME:Error reading cmd pipe,RC="
-                    "0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = TIME_SYSLOG_OFFSET + 1;
-    }
-    else if (UT_strcmp(tmpString, "TIME:Application Init Failed,RC="
-                    "0x~\n") == 0)
-    {
-        WriteSysLogRtn.value = TIME_SYSLOG_OFFSET + 2;
-    }
-    else if (strcmp(tmpString, "TIME:1Hz OS_TimerAdd failed:RC=0xFFFFFFFF\n") == 0 ||
-             strcmp(tmpString, "TIME:1Hz OS_TimerAdd failed:RC=0xffffffff\n") == 0)
-    {
-        WriteSysLogRtn.value = TIME_SYSLOG_OFFSET + 3;
-    }
-    else if (strcmp(tmpString, "TIME:1Hz OS_TimerSet failed:RC=0xFFFFFFFF\n") == 0 ||
-             strcmp(tmpString, "TIME:1Hz OS_TimerSet failed:RC=0xffffffff\n") == 0)
-    {
-        WriteSysLogRtn.value = TIME_SYSLOG_OFFSET + 4;
-    }
-
-    /* Unrecognized Syslog message */
-    else
-    {
-        WriteSysLogRtn.value = 0;
-    }
-
-    ++WriteSysLogRtn.count;
-#ifdef UT_VERBOSE
-    snprintf(cMsg, UT_MAX_MESSAGE_LENGTH, "  %s", tmpString);
-    UT_Text(cMsg);
-#endif
-    return CFE_SUCCESS;
+    return status;
 }
 
 /*****************************************************************************/
@@ -554,44 +348,57 @@ int32 CFE_ES_GetPoolBuf(uint32 **BufPtr,
                         CFE_ES_MemHandle_t HandlePtr,
                         uint32 Size)
 {
-    int32   Block = 0x8000000;
-    boolean flag = FALSE;
-
-    if (GetPoolRtn.count > 0)
+    static union
     {
-        GetPoolRtn.count--;
+        uint32 Start;
+        long long int Align1;
+        long double Align2;
+        void *Align3;
+        uint8 Bytes[CFE_PLATFORM_ES_MAX_BLOCK_SIZE];
+    } Buffer;
+    uint32 PoolSize;
+    uint32 Position;
+    uint8 *PoolPtr;
+    int32 status;
 
-        if (GetPoolRtn.count == 0)
-        {
-            *BufPtr = NULL;
-            Block = GetPoolRtn.value;
-            flag = TRUE;
-        }
-    }
+    status = UT_DEFAULT_IMPL_RC(CFE_ES_GetPoolBuf, Size);
 
-    if (flag == FALSE)
+    if (status > 0)
     {
-        if (Size > CFE_SB_MAX_SB_MSG_SIZE)
+        Size = status;
+        if (Size > CFE_PLATFORM_ES_MAX_BLOCK_SIZE)
         {
-            Block = 0xffffffff;
+            status = 0xffffffff;
         }
         else
         {
-            /* Round up the requested size to the next highest multiple of 2
-             * for the block size, similar to CFE_ES_GetBlockSize, in order to
-             * account for memory alignment requirements
-             */
-            while (!(Block >> 1 & Size))
+            UT_GetDataBuffer(UT_KEY(CFE_ES_GetPoolBuf), (void**)&PoolPtr, &PoolSize, &Position);
+            --Size;
+            Size |= Size >> 1;
+            Size |= Size >> 2;
+            Size |= Size >> 4;
+            Size |= Size >> 8;
+            Size |= Size >> 16;
+            ++Size;
+            if (Size > CFE_PLATFORM_ES_MAX_BLOCK_SIZE)
             {
-                Block >>= 1;
+                Size = CFE_PLATFORM_ES_MAX_BLOCK_SIZE;
             }
-
-            *BufPtr = (uint32 *) &poolBuffer[poolBufIndex];
-            poolBufIndex += Block;
+            memset(&Buffer, 0x55, Size);
+            status = Size;
+            if (BufPtr == NULL || (Position + Size) > PoolSize)
+            {
+                *BufPtr = &Buffer.Start;
+            }
+            else
+            {
+                *BufPtr = (uint32 *)(PoolPtr + Position);
+                UT_Stub_CopyFromLocal(UT_KEY(CFE_ES_GetPoolBuf), Buffer.Bytes, Size);
+            }
         }
     }
 
-    return Block;
+    return status;
 }
 
 /*****************************************************************************/
@@ -616,20 +423,13 @@ int32 CFE_ES_GetPoolBuf(uint32 **BufPtr,
 ******************************************************************************/
 int32 CFE_ES_PoolCreate(cpuaddr *HandlePtr, uint8 *MemPtr, uint32 Size)
 {
-    int32 status = OS_SUCCESS;
+    int32 status;
 
-#ifdef UT_VERBOSE
-    UT_Text("  CFE_ES_PoolCreate called");
-#endif
+    status = UT_DEFAULT_IMPL(CFE_ES_PoolCreate);
 
-    if (CreatePoolRtn.count > 0)
+    if (status >= 0)
     {
-        CreatePoolRtn.count--;
-
-        if (CreatePoolRtn.count == 0)
-        {
-            status = CreatePoolRtn.value;
-        }
+        UT_Stub_CopyToLocal(UT_KEY(CFE_ES_PoolCreate), (uint8*)HandlePtr, sizeof(*HandlePtr));
     }
 
     return status;
@@ -654,7 +454,16 @@ int32 CFE_ES_PoolCreateNoSem(CFE_ES_MemHandle_t *HandlePtr,
                              uint8 *MemPtr,
                              uint32 Size)
 {
-    return OS_SUCCESS;
+    int32 status;
+
+    status = UT_DEFAULT_IMPL(CFE_ES_PoolCreateNoSem);
+
+    if (status >= 0)
+    {
+        UT_Stub_CopyToLocal(UT_KEY(CFE_ES_PoolCreateNoSem), (uint8*)HandlePtr, sizeof(*HandlePtr));
+    }
+
+    return status;
 }
 
 /*****************************************************************************/
@@ -686,19 +495,7 @@ int32 CFE_ES_PoolCreateEx(cpuaddr *HandlePtr,
 {
     int32 status = CFE_SUCCESS;
 
-#ifdef UT_VERBOSE
-    UT_Text("  CFE_ES_PoolCreateEx called");
-#endif
-
-    if (PoolCreateExRtn.count > 0)
-    {
-        PoolCreateExRtn.count--;
-
-        if (PoolCreateExRtn.count == 0)
-        {
-            status = PoolCreateExRtn.value;
-        }
-    }
+    status = UT_DEFAULT_IMPL(CFE_ES_PoolCreateEx);
 
     return status;
 }
@@ -729,30 +526,8 @@ int32 CFE_ES_PoolCreateEx(cpuaddr *HandlePtr,
 int32 CFE_ES_PutPoolBuf(CFE_ES_MemHandle_t HandlePtr, uint32 *BufPtr)
 {
     int32   status;
-    boolean flag = FALSE;
 
-    if (PutPoolRtn.count > 0)
-    {
-        PutPoolRtn.count--;
-
-        if (PutPoolRtn.count == 0)
-        {
-            status = PutPoolRtn.value;
-            flag = TRUE;
-        }
-    }
-
-    if (flag == FALSE)
-    {
-        if (UT_PutPool_Fail == 0)
-        {
-            status = 16; /* Return a positive integer to indicate success */
-        }
-        else
-        {
-            status = -1;
-        }
-    }
+    status = UT_DEFAULT_IMPL_RC(CFE_ES_PutPoolBuf, 16);
 
     return status;
 }
@@ -780,23 +555,8 @@ int32 CFE_ES_PutPoolBuf(CFE_ES_MemHandle_t HandlePtr, uint32 *BufPtr)
 int32 CFE_ES_GetPoolBufInfo(CFE_ES_MemHandle_t HandlePtr, uint32 *BufPtr)
 {
     int32   status;
-    boolean flag = FALSE;
 
-    if (GetPoolInfoRtn.count > 0)
-    {
-        GetPoolInfoRtn.count--;
-
-        if (GetPoolInfoRtn.count == 0)
-        {
-            status = GetPoolInfoRtn.value;
-            flag = TRUE;
-        }
-    }
-
-    if (flag == FALSE)
-    {
-        status = 16; /* Return a positive integer to indicate success */
-    }
+    status = UT_DEFAULT_IMPL_RC(CFE_ES_GetPoolBufInfo, 16);
 
     return status;
 }
@@ -818,11 +578,10 @@ int32 CFE_ES_GetPoolBufInfo(CFE_ES_MemHandle_t HandlePtr, uint32 *BufPtr)
 ******************************************************************************/
 void CFE_ES_PerfLogAdd(uint32 Marker, uint32 EntryExit)
 {
-#ifdef UT_VERBOSE
-    snprintf(cMsg, UT_MAX_MESSAGE_LENGTH,
-             "  CFE_ES_PerfLogAdd called: EntryExit = %lu", EntryExit);
-    UT_Text(cMsg);
-#endif
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_PerfLogAdd), &Marker);
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_PerfLogAdd), &EntryExit);
+
+    UT_DEFAULT_IMPL(CFE_ES_PerfLogAdd);
 }
 
 /*****************************************************************************/
@@ -846,7 +605,16 @@ uint32 CFE_ES_CalculateCRC(const void *DataPtr,
                            uint32 InputCRC,
                            uint32 TypeCRC)
 {
-    return 332424;
+    uint32 result;
+
+    UT_DEFAULT_IMPL(CFE_ES_CalculateCRC);
+
+    if (UT_Stub_CopyToLocal(UT_KEY(CFE_ES_CalculateCRC), (uint8*)&result, sizeof(result)) < sizeof(result))
+    {
+        result = 332424;
+    }
+
+    return result;
 }
 
 /*****************************************************************************/
@@ -873,36 +641,19 @@ uint32 CFE_ES_CalculateCRC(const void *DataPtr,
 ******************************************************************************/
 int32 CFE_ES_GetTaskInfo(CFE_ES_TaskInfo_t *TaskInfo, uint32 TaskId)
 {
-
-    static uint32 cnt;
     int32   status = CFE_SUCCESS;
-    boolean flag = FALSE;
 
-    if (ES_GetTaskInfoRtn.count > 0)
+    status = UT_DEFAULT_IMPL(CFE_ES_GetTaskInfo);
+
+    if (status >= 0)
     {
-        ES_GetTaskInfoRtn.count--;
-
-        if (ES_GetTaskInfoRtn.count == 0)
+        if (UT_Stub_CopyToLocal(UT_KEY(CFE_ES_GetTaskInfo), (uint8*)TaskInfo, sizeof(*TaskInfo)) < sizeof(*TaskInfo))
         {
-            status = ES_GetTaskInfoRtn.value;
-            flag = TRUE;
+            memset(TaskInfo, 0, sizeof(*TaskInfo));
+            TaskInfo->AppId = 3; /* Fake ID number */
+            strncpy((char *) &TaskInfo->AppName, "UT", sizeof(TaskInfo->AppName));
+            strncpy((char *) &TaskInfo->TaskName, "UT", sizeof(TaskInfo->TaskName));
         }
-    }
-
-    if (flag == FALSE)
-    {
-        TaskInfo->AppId = 3; /* Fake ID number */
-        strncpy((char *) &TaskInfo->AppName, UT_appname, OS_MAX_API_NAME);
-        TaskInfo->AppName[OS_MAX_API_NAME - 1] = '\0';
-        strncpy((char *) &TaskInfo->TaskName, UT_appname, OS_MAX_API_NAME);
-        TaskInfo->TaskName[OS_MAX_API_NAME - 1] = '\0';
-
-        if (cnt % 2)
-        {
-            strcpy((char *) &TaskInfo->TaskName, "");
-        }
-
-        cnt++;
     }
 
     return status;
@@ -929,8 +680,9 @@ int32 CFE_ES_GetTaskInfo(CFE_ES_TaskInfo_t *TaskInfo, uint32 TaskId)
 ******************************************************************************/
 void CFE_ES_ExitApp(uint32 ExitStatus)
 {
-    ES_ExitAppRtn.value += ExitStatus;
-    ES_ExitAppRtn.count++;
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_ExitApp), &ExitStatus);
+    UT_DEFAULT_IMPL(CFE_ES_ExitApp);
+    UT_Stub_CopyFromLocal(UT_KEY(CFE_ES_ExitApp), (uint8*)&ExitStatus, sizeof(ExitStatus));
 }
 
 /*****************************************************************************/
@@ -955,31 +707,17 @@ void CFE_ES_ExitApp(uint32 ExitStatus)
 ******************************************************************************/
 int32 CFE_ES_CopyToCDS(CFE_ES_CDSHandle_t Handle, void *DataToCopy)
 {
-    int32   i = 0;
-    int32   status = CFE_SUCCESS;
-    boolean flag = FALSE;
+    int32   status;
 
-	if (ES_CopyToCDSRtn.count > 0)
-	{
-		ES_CopyToCDSRtn.count--;
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_CopyToCDS), (void*)Handle);
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_CopyToCDS), DataToCopy);
+    status = UT_DEFAULT_IMPL(CFE_ES_CopyToCDS);
 
-		if (ES_CopyToCDSRtn.count == 0)
-		{
-		    status = ES_CopyToCDSRtn.value;
-		    flag = TRUE;
-		}
-	}
-
-	if (flag == FALSE)
-	{
-        while (UT_CDS_Map.Handles[i] != Handle)
-        {
-            i++;
-        }
-
-        memcpy(&UT_CDS[Handle], DataToCopy, (UT_CDS_Map.Handles[i+1] -
-               UT_CDS_Map.Handles[i]));
-	}
+    if (status >= 0)
+    {
+        UT_Stub_CopyFromLocal(UT_KEY(CFE_ES_CopyToCDS), DataToCopy,
+                CFE_PLATFORM_ES_CDS_MAX_BLOCK_SIZE);
+    }
 
     return status;
 }
@@ -1006,31 +744,17 @@ int32 CFE_ES_CopyToCDS(CFE_ES_CDSHandle_t Handle, void *DataToCopy)
 ******************************************************************************/
 int32 CFE_ES_RestoreFromCDS(void *RestoreToMemory, CFE_ES_CDSHandle_t Handle)
 {
-    int32   i = 0;
-    int32   status = CFE_SUCCESS;
-    boolean flag = FALSE;
+    int32   status;
 
-	if (ES_RestoreFromCDSRtn.count > 0)
-	{
-		ES_RestoreFromCDSRtn.count--;
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_RestoreFromCDS), RestoreToMemory);
+    UT_Stub_RegisterContext(UT_KEY(CFE_ES_RestoreFromCDS), (void*)Handle);
+    status = UT_DEFAULT_IMPL(CFE_ES_RestoreFromCDS);
 
-		if (ES_RestoreFromCDSRtn.count == 0)
-		{
-		    status = ES_RestoreFromCDSRtn.value;
-            flag = TRUE;
-		}
-	}
-
-	if (flag == FALSE)
-	{
-        while (UT_CDS_Map.Handles[i] != Handle)
-        {
-            i++;
-        }
-
-        memcpy(RestoreToMemory, &UT_CDS[Handle], (UT_CDS_Map.Handles[i+1] -
-               UT_CDS_Map.Handles[i]));
-	}
+    if (status >= 0)
+    {
+        UT_Stub_CopyToLocal(UT_KEY(CFE_ES_RestoreFromCDS), RestoreToMemory,
+                CFE_PLATFORM_ES_CDS_MAX_BLOCK_SIZE);
+    }
 
     return status;
 }
@@ -1058,61 +782,19 @@ int32 CFE_ES_RestoreFromCDS(void *RestoreToMemory, CFE_ES_CDSHandle_t Handle)
 int32 CFE_ES_RegisterCDSEx(CFE_ES_CDSHandle_t *HandlePtr,
                            int32 BlockSize,
                            const char *Name,
-                           boolean CriticalTbl)
+                           bool CriticalTbl)
 {
     int32 status = CFE_SUCCESS;
 
-    *HandlePtr = UT_CDS_Map.Handles[UT_CDS_Map.NextHandle];
-    UT_CDS_Map.Handles[UT_CDS_Map.NextHandle+1] =
-        UT_CDS_Map.Handles[UT_CDS_Map.NextHandle] + BlockSize;
-    UT_CDS_Map.NextHandle++;
+    status = UT_DEFAULT_IMPL(CFE_ES_RegisterCDSEx);
 
-    if (UT_CDS_Map.NextHandle >= UT_MAX_NUM_CDS)
+    if (status >= 0)
     {
-        snprintf(cMsg, UT_MAX_MESSAGE_LENGTH,
-                 "  CFE_ES_RegisterCDSEx called: number of CDSs exceeds UT "
-                 "maximum of %d", UT_MAX_NUM_CDS);
-        UT_Text(cMsg);
-
-#ifdef CFE_ARINC653
-#ifdef CFE_LINUX
-        exit(1);
-#else
-/* TODO: Insert substitute for exit() */
-#endif
-#else
-        exit(1);
-#endif
+        if (UT_Stub_CopyToLocal(UT_KEY(CFE_ES_RegisterCDSEx), (uint8*)HandlePtr, sizeof(*HandlePtr)) < sizeof(*HandlePtr))
+        {
+            *HandlePtr = 1;
+        }
     }
-
-    if (UT_CDS_Map.Handles[UT_CDS_Map.NextHandle] >= UT_CDS_SIZE)
-    {
-        snprintf(cMsg, UT_MAX_MESSAGE_LENGTH,
-                 "  CFE_ES_RegisterCDSEx called: size of CDSs (%lu) exceeds "
-                 "UT maximum of %d", (unsigned long)UT_CDS_Map.Handles[UT_CDS_Map.NextHandle],
-                 (int)UT_CDS_SIZE);
-        UT_Text(cMsg);
-
-#ifdef CFE_ARINC653
-#ifdef CFE_LINUX
-        exit(1);
-#else
-/* TODO: Insert substitute for exit() */
-#endif
-#else
-        exit(1);
-#endif
-    }
-
-	if (ES_RegisterCDSRtn.count > 0)
-	{
-		ES_RegisterCDSRtn.count--;
-
-		if (ES_RegisterCDSRtn.count == 0)
-		{
-		    status = ES_RegisterCDSRtn.value;
-		}
-	}
 
     return status;
 }
@@ -1137,21 +819,13 @@ int32 CFE_ES_RegisterCDSEx(CFE_ES_CDSHandle_t *HandlePtr,
 **        Returns either a user-defined status flag or CFE_SUCCESS.
 **
 ******************************************************************************/
-int32 CFE_ES_DeleteCDS(const char *CDSName, boolean CalledByTblServices)
+int32 CFE_ES_DeleteCDS(const char *CDSName, bool CalledByTblServices)
 {
     int32 status = CFE_SUCCESS;
 
-    if (ES_DeleteCDSRtn.count > 0)
-	{
-		ES_DeleteCDSRtn.count--;
+    status = UT_DEFAULT_IMPL(CFE_ES_DeleteCDS);
 
-		if (ES_DeleteCDSRtn.count == 0)
-		{
-		    status = ES_DeleteCDSRtn.value;
-		}
-	}
-
-	return status;
+    return status;
 }
 
 /*****************************************************************************/
@@ -1172,7 +846,16 @@ int32 CFE_ES_DeleteCDS(const char *CDSName, boolean CalledByTblServices)
 ******************************************************************************/
 int32 CFE_ES_GetResetType(uint32 *ResetSubtypePtr)
 {
-    return GetResetTypeRtn.value;
+    int32 status = CFE_SUCCESS;
+
+    status = UT_DEFAULT_IMPL(CFE_ES_GetResetType);
+
+    if (status >= 0)
+    {
+        UT_Stub_CopyToLocal(UT_KEY(CFE_ES_GetResetType), (uint8*)ResetSubtypePtr, sizeof(*ResetSubtypePtr));
+    }
+
+    return status;
 }
 
 /*****************************************************************************/
@@ -1192,6 +875,16 @@ int32 CFE_ES_GetResetType(uint32 *ResetSubtypePtr)
 ******************************************************************************/
 void CFE_ES_IncrementTaskCounter(void)
 {
+    UT_DEFAULT_IMPL(CFE_ES_IncrementTaskCounter);
+}
+
+int32 CFE_ES_WaitForSystemState(uint32 State, uint32 Timeout)
+{
+    int32 status = CFE_SUCCESS;
+
+    status = UT_DEFAULT_IMPL(CFE_ES_WaitForSystemState);
+
+    return status;
 }
 
 /*****************************************************************************/
@@ -1211,4 +904,18 @@ void CFE_ES_IncrementTaskCounter(void)
 ******************************************************************************/
 void CFE_ES_WaitForStartupSync(uint32 Timeout)
 {
+    UT_DEFAULT_IMPL(CFE_ES_WaitForStartupSync);
 }
+
+bool CFE_ES_RunLoop(uint32 *ExitStatus)
+{
+    return UT_DEFAULT_IMPL(CFE_ES_RunLoop) != 0;
+}
+
+UT_DEFAULT_STUB(CFE_ES_RegisterCDS, (CFE_ES_CDSHandle_t *HandlePtr, int32 BlockSize, const char *Name))
+
+void CFE_ES_ExitChildTask(void)
+{
+    UT_DEFAULT_IMPL(CFE_ES_ExitChildTask);
+}
+

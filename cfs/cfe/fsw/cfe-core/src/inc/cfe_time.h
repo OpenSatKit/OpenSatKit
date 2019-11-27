@@ -1,5 +1,25 @@
 /*
-** $Id: cfe_time.h 1.6 2014/08/17 17:23:30GMT-05:00 sstrege Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe_time.h
 **
 ** Purpose:  cFE Time Services (TIME) library API header file
 **
@@ -7,39 +27,6 @@
 **
 ** Notes:
 **
-** $Log: cfe_time.h  $
-** Revision 1.6 2014/08/17 17:23:30GMT-05:00 sstrege 
-** Fixed doxygen compiler warnings.
-** Revision 1.5 2011/11/30 15:10:46EST jmdagost 
-** Replaced ifdef/ifndef preprocessor tests with if...==TRUE/if...!=TRUE tests
-** Revision 1.4 2008/12/08 12:07:21EST dkobe 
-** Updates to correct doxygen errors
-** Revision 1.3 2008/08/07 09:17:43EDT dkobe 
-** Doxygen comments corrected for CFE_TIME_RegisterSynchCallback 
-** and CFE_TIME_UnregisterSynchCallback
-** Revision 1.2 2008/08/06 22:42:28EDT dkobe 
-** Added CFE_TIME_RegisterSynchCallback, CFE_TIME_UnregisterSynchCallback and CFE_TIME_CleanUpApp
-** Revision 1.1 2008/04/17 08:05:25EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.9 2007/05/23 11:22:00EDT David Kobe (dlkobe) 
-** Added doxygen formatting
-** Revision 1.8 2007/03/07 12:03:35EST njyanchik 
-** There were errors in the previous change package, so I fixed them
-** Revision 1.7 2007/03/07 10:43:45EST njyanchik 
-** I made a new API called CFE_TIME_GetClockInfo that is functionally equivilant to CFE_TIME_GetStateFlags. The reason I made a new function is because this function
-** will get changed in a future DCR (3191).
-** Revision 1.5 2006/11/21 15:58:50EST rjmcgraw 
-** Added #define CFE_TIME_PRINTED_STRING_SIZE 24
-** Revision 1.4 2006/11/09 15:25:04EST wfmoleski 
-** Modified the function prototypes for ExternalMET, ExternalGPS and ExternalTime from int32 to void.
-** Revision 1.3 2006/05/04 09:29:00EDT njyanchik 
-** Added MET to default spacecraft time conversion
-** API is CFE_TIME_SysTime_t CFE_TIME_MET2SCTime (CFE_TIME_SysTime_t METTime)
-** Revision 1.2 2005/07/21 15:28:21EDT lswalling 
-** Add Time print API function
-** Revision 1.1 2005/06/09 10:57:51EDT rperera 
-** Initial revision
 */
 
 /*
@@ -52,6 +39,7 @@
 /*
 ** Required header files...
 */
+#include "cfe_time_extern_typedefs.h"
 #include "common_types.h"
 
 
@@ -59,6 +47,55 @@
 ** Defines
 */
 #define CFE_TIME_PRINTED_STRING_SIZE      24 /**< \brief Required size of buffer to be passed into #CFE_TIME_Print (includes null terminator) */
+
+
+/*
+ * To preserve source-code compatibility with existing code,
+ * this allows the old enum names to still work.  This should
+ * be turned off after the new names are established.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+/*
+ * Compatibility Macros for the SourceSelect enumeration
+ */
+#define CFE_TIME_USE_INTERN         CFE_TIME_SourceSelect_INTERNAL
+#define CFE_TIME_USE_EXTERN         CFE_TIME_SourceSelect_EXTERNAL
+
+/*
+ * Compatibility Macros for the ToneSignalSelect enumeration
+ */
+#define CFE_TIME_TONE_PRI           CFE_TIME_ToneSignalSelect_PRIMARY
+#define CFE_TIME_TONE_RED           CFE_TIME_ToneSignalSelect_REDUNDANT
+
+/*
+ * Compatibility Macros for the AdjustDirection enumeration
+ */
+#define CFE_TIME_ADD_ADJUST         CFE_TIME_AdjustDirection_ADD
+#define CFE_TIME_SUB_ADJUST         CFE_TIME_AdjustDirection_SUBTRACT
+
+/*
+ * Compatibility Macros for the FlywheelState enumeration
+ */
+#define CFE_TIME_NO_FLY             CFE_TIME_FlywheelState_NO_FLY
+#define CFE_TIME_IS_FLY             CFE_TIME_FlywheelState_IS_FLY
+
+/*
+ * Compatibility Macros for the SetState enumeration
+ */
+#define CFE_TIME_NOT_SET            CFE_TIME_SetState_NOT_SET
+#define CFE_TIME_WAS_SET            CFE_TIME_SetState_WAS_SET
+
+/*
+ * Compatibility Macros for the ClockState enumeration
+ */
+#define CFE_TIME_INVALID            CFE_TIME_ClockState_INVALID
+#define CFE_TIME_VALID              CFE_TIME_ClockState_VALID
+#define CFE_TIME_FLYWHEEL           CFE_TIME_ClockState_FLYWHEEL
+
+
+#endif  /* CFE_OMIT_DEPRECATED_6_6 */
+
 
 /*
 ** Type definition (system time)...
@@ -81,38 +118,11 @@ typedef struct
 } CFE_TIME_SysTime_t;
 
 /*
-** Type definition (clock state)...
+** Macro to copy systime into another systime.
+** Preferred to use this macro as it does not require the two arguments to be exactly the same type,
+** it will work with any two structures that define "Seconds" and "Subseconds" members.
 */
-/** 
-**  \brief Enumerated types identifying the quality of the current time
-**
-**  \par Description
-**       The #CFE_TIME_ClockState_t enumerations identify the three recognized states of the current time.
-**       If the clock has never been successfully synchronized with the primary onboard clock source, the
-**       time is conisdered to be #CFE_TIME_INVALID.  If the time is currently synchronized (i.e. - the
-**       primary synchronization mechanism has not been dropped for any significant amount of time), then
-**       the current time is considered to be #CFE_TIME_VALID.  If the time had, at some point in the past,
-**       been synchronized, but the synchronization with the primary onboard clock has since been lost, then
-**       the time is considered to be #CFE_TIME_FLYWHEEL.  Since different clocks drift at different rates
-**       from one another, the accuracy of the time while in #CFE_TIME_FLYWHEEL is dependent upon the time
-**       spent in that state.
-*/
-typedef enum  
-{
-  CFE_TIME_INVALID  = -1,     /**< The spacecraft time has not been set since the last clock 
-                              **   reset.  Times returned by clock routines have no relationship
-                              **   to any ground-based time reference.
-                              */
-  CFE_TIME_VALID    =  0,     /**< The spacecraft time has been set at least once since the last 
-                              **   clock reset, and it is synchronized with the primary on-board 
-                              **   time base.  Times returned by clock routines can be trusted.
-                              */
-  CFE_TIME_FLYWHEEL =  1      /**< The spacecraft time has been set at least once since the last 
-                              **   clock reset, but it is not currently synchronized with the 
-                              **   primary on-board time base.  Times returned by clock routines 
-                              **   are a "best guess" based on a non-optimal oscillator. 
-                              */
-} CFE_TIME_ClockState_t;
+#define CFE_TIME_Copy(m,t)   { (m)->Seconds = (t)->Seconds; (m)->Subseconds = (t)->Subseconds; }
 
 /*
 ** Type definition (time comparison results)...
@@ -174,8 +184,8 @@ typedef int32 (*CFE_TIME_SynchCallbackPtr_t)(void);
 ** \par Description
 **        This routine returns the current spacecraft time.  The time returned 
 **        is either TAI (no leap seconds) or UTC (including leap seconds).  This choice
-**        is made in the mission configuration file by defining either #CFE_TIME_CFG_DEFAULT_TAI
-**        or #CFE_TIME_CFG_DEFAULT_UTC as TRUE at compile time.  To maintain re-usability 
+**        is made in the mission configuration file by defining either #CFE_MISSION_TIME_CFG_DEFAULT_TAI
+**        or #CFE_MISSION_TIME_CFG_DEFAULT_UTC as true at compile time.  To maintain re-usability 
 **        across missions, most applications should be using this function 
 **        (or #CFE_TIME_GetTime) rather than the specific routines for getting UTC/TAI directly.
 **
@@ -260,8 +270,8 @@ CFE_TIME_SysTime_t  CFE_TIME_GetUTC(void);    /* returns time computed as UTC (M
 ** \par Description
 **        This function returns Spacecraft Time given MET.  Note that Spacecraft 
 **        Time is returned as either UTC or TAI depeneding on whether the mission
-**        configuration parameter #CFE_TIME_CFG_DEFAULT_UTC or #CFE_TIME_CFG_DEFAULT_TAI
-**        was set to TRUE at compile time.
+**        configuration parameter #CFE_MISSION_TIME_CFG_DEFAULT_UTC or #CFE_MISSION_TIME_CFG_DEFAULT_TAI
+**        was set to true at compile time.
 **
 ** \par Assumptions, External Events, and Notes:
 **          None
@@ -420,13 +430,13 @@ int16   CFE_TIME_GetLeapSeconds(void);        /* returns Leap Seconds portion of
 **          None
 **
 ** \returns
-** \retcode #CFE_TIME_ClockState_t \retdesc The current spacecraft clock state    \endcode
+** \retcode #CFE_TIME_ClockState_Enum_t \retdesc The current spacecraft clock state    \endcode
 ** \endreturns
 **
 ** \sa #CFE_TIME_GetSTCF, #CFE_TIME_GetLeapSeconds, #CFE_TIME_GetClockInfo
 **               
 ******************************************************************************/
-CFE_TIME_ClockState_t  CFE_TIME_GetClockState(void);   /* returns current spacecraft clock state */
+CFE_TIME_ClockState_Enum_t  CFE_TIME_GetClockState(void);   /* returns current spacecraft clock state */
 
 /*****************************************************************************/
 /**
@@ -630,7 +640,7 @@ uint32  CFE_TIME_Micro2SubSecs(uint32 MicroSeconds);   /* convert micro-seconds 
 **        Since spacecraft systems rarely use an epoch that matches a particular
 **        file system, this function provides a mechanism to translate a given
 **        spacecraft time (in seconds) to the file system's time.  The conversion
-**        is controlled by the configuration parameter #CFE_TIME_FS_FACTOR which
+**        is controlled by the configuration parameter #CFE_MISSION_TIME_FS_FACTOR which
 **        is set equal to the number of seconds between the spacecraft's epoch and
 **        the file system's epoch.
 **
@@ -658,7 +668,7 @@ uint32 CFE_TIME_CFE2FSSeconds(uint32 SecondsCFE);
 **        Since spacecraft systems rarely use an epoch that matches a particular
 **        file system, this function provides a mechanism to translate a file
 **        system time (in seconds) into the spacecraft time (in seconds).  The 
-**        conversion is controlled by the configuration parameter #CFE_TIME_FS_FACTOR 
+**        conversion is controlled by the configuration parameter #CFE_MISSION_TIME_FS_FACTOR 
 **        which is set equal to the number of seconds between the spacecraft's epoch and
 **        the file system's epoch.
 **
@@ -774,13 +784,13 @@ void  CFE_TIME_ExternalTone(void); /* OK to call from ISR */
 **
 ** \par Assumptions, External Events, and Notes:
 **          - This routine is included in the API only when 3 specific configuration 
-**            parameters are set to TRUE.  The first is #CFE_TIME_CFG_SERVER which defines 
+**            parameters are set to true.  The first is #CFE_PLATFORM_TIME_CFG_SERVER which defines 
 **            this instantiation of cFE TIME as a time server (not a client).  The 
-**            second required configuration parameter is #CFE_TIME_CFG_SOURCE which 
+**            second required configuration parameter is #CFE_PLATFORM_TIME_CFG_SOURCE which 
 **            enables time source selection commands to the cFE TIME task, and further 
 **            enables configuration definitions for the selected type of external time 
 **            data.  The third configuration parameter required for this routine is 
-**            #CFE_TIME_CFG_SRC_MET, which indicates that the external time data consists 
+**            #CFE_PLATFORM_TIME_CFG_SRC_MET, which indicates that the external time data consists 
 **            of MET.
 **
 ** \param[in]  NewMET   The MET value at the next (or previous) 1 Hz tone signal.
@@ -811,13 +821,13 @@ void CFE_TIME_ExternalMET(CFE_TIME_SysTime_t NewMET);
 **
 ** \par Assumptions, External Events, and Notes:
 **          - This routine is included in the API only when 3 specific configuration 
-**            parameters are set to TRUE.  The first is #CFE_TIME_CFG_SERVER which defines this 
+**            parameters are set to true.  The first is #CFE_PLATFORM_TIME_CFG_SERVER which defines this 
 **            instantiation of cFE TIME as a time server (not a client).  The second 
-**            required configuration parameter is #CFE_TIME_CFG_SOURCE which enables 
+**            required configuration parameter is #CFE_PLATFORM_TIME_CFG_SOURCE which enables 
 **            time source selection commands to the cFE TIME task, and further enables 
 **            configuration definitions for the selected type of external time data.  
 **            The third configuration parameter required for this routine is 
-**            #CFE_TIME_CFG_SRC_GPS, which indicates that the external time data consists 
+**            #CFE_PLATFORM_TIME_CFG_SRC_GPS, which indicates that the external time data consists 
 **            of a time value relative to a known epoch, plus a leap seconds value.
 **
 ** \param[in]  NewTime   The MET value at the next (or previous) 1 Hz tone signal.
@@ -851,13 +861,13 @@ void CFE_TIME_ExternalGPS(CFE_TIME_SysTime_t NewTime, int16 NewLeaps);
 **
 ** \par Assumptions, External Events, and Notes:
 **          - This routine is included in the API only when 3 specific configuration 
-**            parameters are set to TRUE.  The first is #CFE_TIME_CFG_SERVER which defines this 
+**            parameters are set to true.  The first is #CFE_PLATFORM_TIME_CFG_SERVER which defines this 
 **            instanciation of cFE TIME as a time server (not a client).  The second 
-**            required configuration parameter is #CFE_TIME_CFG_SOURCE which enables 
+**            required configuration parameter is #CFE_PLATFORM_TIME_CFG_SOURCE which enables 
 **            time source selection commands to the cFE TIME task, and further enables 
 **            configuration definitions for the selected type of external time data.  
 **            The third configuration parameter required for this routine is 
-**            #CFE_TIME_CFG_SRC_TIME, which indicates that the external time data consists 
+**            #CFE_PLATFORM_TIME_CFG_SRC_TIME, which indicates that the external time data consists 
 **            of a time value relative to a known epoch.
 **
 ** \param[in]  NewTime   The MET value at the next (or previous) 1 Hz tone signal.
@@ -877,7 +887,10 @@ void CFE_TIME_ExternalTime(CFE_TIME_SysTime_t NewTime);
 **        is received.
 **
 ** \par Assumptions, External Events, and Notes:
-**          None
+**        Only a single callback per application is supported, and this function should only
+**        be called from a single thread within each application (typically the apps main thread).
+**        If an application requires triggering multiple child tasks at 1Hz, it should distribute
+**        the timing signal internally, rather than registering for multiple callbacks.
 **
 ** \returns
 ** \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS  \endcode
@@ -901,7 +914,8 @@ int32  CFE_TIME_RegisterSynchCallback(CFE_TIME_SynchCallbackPtr_t CallbackFuncPt
 **        the 1Hz signal) is received.
 **
 ** \par Assumptions, External Events, and Notes:
-**          None
+**        Only a single callback per application is supported, and this function should only
+**        be called from a single thread within each application (typically the apps main thread).
 **
 ** \returns
 ** \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS  \endcode

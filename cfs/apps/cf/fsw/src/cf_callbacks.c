@@ -1137,7 +1137,7 @@ u_int_4 CF_FileSize(const char *Name)
     StatVal = OS_stat(Name,&OsStatBuf);
     if(StatVal >= OS_FS_SUCCESS)
     {
-        FileSize = OsStatBuf.st_size;        
+        FileSize = OsStatBuf.FileSize;  //dcm
     }
     else
     {

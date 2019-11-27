@@ -1,40 +1,28 @@
+/*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
 /******************************************************************************
 ** File:  ccsds.h
 **
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
-**
-**
 ** Purpose:
 **      Define typedefs and macros for CCSDS packet headers.
-**
-** $Log: ccsds.h  $
-** Revision 1.6.1.2 2014/12/02 13:48:54GMT-05:00 rmcgraw 
-** DCR22841:3 Added CFE_MAKE_BIG16 to ccsds.h in branch64
-** Revision 1.6.1.1 2014/12/01 11:18:00EST rmcgraw 
-** DCR22841:1 Reverted cmd sec hdr struct and RD/WR macros to pre-6.4.0 state
-** Revision 1.6 2014/07/10 10:24:07EDT rmcgraw
-** DCR9772:1 Changes from C. Monaco & W.M Reid from APL for endianess neutrality
-** Revision 1.5 2011/02/03 15:27:48EST lwalling
-** Modified telemetry secondary header definition to support CFE_SB_PACKET_TIME_FORMAT selection
-** Revision 1.4 2010/10/25 15:01:27EDT jmdagost
-** Corrected bad apostrophe in prologue.
-** Revision 1.3 2010/10/04 15:25:32EDT jmdagost
-** Cleaned up copyright symbol.
-** Revision 1.2 2010/09/21 16:15:16EDT jmdagost
-** Removed unused function prototypes.
-** Revision 1.1 2008/04/17 08:05:18EDT ruperera
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.4 2006/06/12 11:18:18EDT rjmcgraw
-** Added legal statement
-** Revision 1.3 2006/04/28 15:09:44EDT rjmcgraw
-** Corrected comments in CCSDS_CmdSecHdr_t definition
 **
 ******************************************************************************/
 
@@ -49,22 +37,24 @@
 #include "cfe_mission_cfg.h"
 
 
-/* Macro to convert 16 bit word from platform "endianness" to Big Endian */
+/* Macro to convert 16/32 bit types from platform "endianness" to Big Endian */
 #ifdef SOFTWARE_BIG_BIT_ORDER
   #define CFE_MAKE_BIG16(n) (n)
+  #define CFE_MAKE_BIG32(n) (n)
 #else
   #define CFE_MAKE_BIG16(n) ( (((n) << 8) & 0xFF00) | (((n) >> 8) & 0x00FF) )
+  #define CFE_MAKE_BIG32(n) ( (((n) << 24) & 0xFF000000) | (((n) << 8) & 0x00FF0000) | (((n) >> 8) & 0x0000FF00) | (((n) >> 24) & 0x000000FF) )
 #endif
 
 
 /* CCSDS_TIME_SIZE is specific to the selected CFE_SB time format */
-#if (CFE_SB_PACKET_TIME_FORMAT == CFE_SB_TIME_32_16_SUBS)
+#if (CFE_MISSION_SB_PACKET_TIME_FORMAT == CFE_MISSION_SB_TIME_32_16_SUBS)
   /* 32 bits seconds + 16 bits subseconds */
   #define CCSDS_TIME_SIZE 6
-#elif (CFE_SB_PACKET_TIME_FORMAT == CFE_SB_TIME_32_32_SUBS)
+#elif (CFE_MISSION_SB_PACKET_TIME_FORMAT == CFE_MISSION_SB_TIME_32_32_SUBS)
   /* 32 bits seconds + 32 bits subseconds */
   #define CCSDS_TIME_SIZE 8
-#elif (CFE_SB_PACKET_TIME_FORMAT == CFE_SB_TIME_32_32_M_20)
+#elif (CFE_MISSION_SB_PACKET_TIME_FORMAT == CFE_MISSION_SB_TIME_32_32_M_20)
   /* 32 bits seconds + 20 bits microsecs + 12 bits reserved */
   #define CCSDS_TIME_SIZE 8
 #else
@@ -81,6 +71,14 @@
 ** Structure definitions for CCSDS headers.  All items in the structure
 ** must be aligned on 16-bit words.  Bitfields must be avoided since
 ** some compilers (such as gcc) force them into 32-bit alignment.
+**
+** CCSDS headers must always be in network byte order per the standard.
+** MSB at the lowest address which is commonly refered to as "BIG Endian"
+**
+** CCSDS Space Packets can be version 1 or version 2.  Version 2 has 
+** an additional 32 bits for APID Qualifier fields in the secondary 
+** header. The primary header is unchanged.
+**
 **********************************************************************/
 
 /*----- CCSDS packet primary header. -----*/
@@ -92,7 +90,7 @@ typedef struct {
       /* 0x07FF    0  : application ID                            */
       /* 0x0800   11  : secondary header: 0 = absent, 1 = present */
       /* 0x1000   12  : packet type:      0 = TLM, 1 = CMD        */
-      /* 0xE000   13  : CCSDS version, always set to 0            */
+      /* 0xE000   13  : CCSDS version:    0 = ver 1, 1 = ver 2    */
 
    uint8   Sequence[2];  /* packet sequence word */
       /*  bits  shift   ------------ description ---------------- */
@@ -125,20 +123,94 @@ typedef struct {
 
 } CCSDS_TlmSecHdr_t;
 
+/*----- CCSDS Endian Flag in the APID Qualifier Field. -----*/
+#define CCSDS_BIG_ENDIAN 0
+#define CCSDS_LITTLE_ENDIAN 1
+#define CCSDS_ENDIAN_MASK 0x0400
+
+/*------ CCSDS packet playback Flag in the APID Qualifier Field. -------*/
+/* This field denotes that this packet is a playback of a stored packet */
+#define CCSDS_NON_PLAYBACK_PKT 0
+#define CCSDS_PLAYBACK_PKT 1
+#define CCSDS_PLAYBACK_PKT_MASK 0x0200
+
+/*------ CCSDS packet Electronic Data Sheet version in the APID Qualifier Field. -------*/
+/* This is the verion of the data sheet that defines the packet payload format and other */
+/* metadata like unit conversions */
+#define CCSDS_EDS_MASK 0xF800
+
+/*----- CCSDS Secondary Header APID Qualifers ----*/
+typedef struct {
+
+   uint8 APIDQSubsystem[2];
+
+      /*  bits  shift   ------------ description ---------------- */
+      /* 0x01FF   0  : Subsystem Id  mission defined              */
+      /* 0x0200   9  : Playback flag  0 = original, 1 = playback  */
+      /* 0x0400  10  : Endian:   Big = 0, Little (Intel) = 1      */
+      /* 0xF800  11  : EDS Version for packet definition used     */
+ 
+   uint8 APIDQSystemId[2];
+      /* 0xFFFF   0  : System Id      mission defined             */
+
+} CCSDS_APIDqualifiers_t;
+
+/**
+ * \brief CCSDS Primary with APID Qualifier Header Type Definition
+ */
+typedef struct{
+    CCSDS_PriHdr_t         Pri;/**< \brief CCSDS Primary Header #CCSDS_PriHdr_t */
+    CCSDS_APIDqualifiers_t ApidQ;/**< \brief CCSDS APID Qualifier Secondary Header #CCSDS_APIDqualifiers_t */
+}CCSDS_APIDQHdr_t;
+
+typedef struct
+{
+    /*
+     * In Version 1 mode, the standard / non-APID qualified header is used for all packets
+     */
+    CCSDS_PriHdr_t      Hdr;    /**< Complete "version 1" (standard) header */
+
+#ifdef MESSAGE_FORMAT_IS_CCSDS_VER_2
+
+    /*
+     * In Version 2 mode, the extended / APID qualified header is used for all packets
+     */
+    CCSDS_APIDqualifiers_t ApidQ;/**< \brief CCSDS APID Qualifier Secondary Header #CCSDS_APIDqualifiers_t */
+#endif  /* MESSAGE_FORMAT_IS_CCSDS_VER_2 */
+
+} CCSDS_SpacePacket_t;
+
+
+
+
 /*----- Generic combined command header. -----*/
 
-typedef struct {
-   CCSDS_PriHdr_t       PriHdr;
-   CCSDS_CmdSecHdr_t    SecHdr;
-} CCSDS_CmdPkt_t;
+typedef struct
+{
+    CCSDS_SpacePacket_t  SpacePacket;   /**< \brief Standard Header on all packets  */
+    CCSDS_CmdSecHdr_t    Sec;
+} CCSDS_CommandPacket_t;
 
 /*----- Generic combined telemetry header. -----*/
 
-typedef struct {
-   CCSDS_PriHdr_t       PriHdr;
-   CCSDS_TlmSecHdr_t    SecHdr;
-} CCSDS_TlmPkt_t;
+typedef struct
+{
+    CCSDS_SpacePacket_t  SpacePacket;   /**< \brief Standard Header on all packets */
+    CCSDS_TlmSecHdr_t    Sec;
+} CCSDS_TelemetryPacket_t;
 
+/*
+ * COMPATIBILITY TYPEDEFS:
+ * These types were defined by CFE 6.5 and below and applications may still use them.
+ * These typdefs provide compatibility for existing code.  These should be
+ * removed in the next CFE release.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+typedef CCSDS_CommandPacket_t     CCSDS_CmdPkt_t;
+typedef CCSDS_TelemetryPacket_t   CCSDS_TlmPkt_t;
+
+#endif /* CFE_OMIT_DEPRECATED_6_6 */
 
 /*
 ** Macro Definitions
@@ -263,6 +335,25 @@ typedef struct {
 /* Write checksum to command secondary header. */
 #define CCSDS_WR_CHECKSUM(shdr,val) CCSDS_WR_BITS((shdr).Command, 0x00FF, 0, val)
 
+/* Define additional APID Qualifier macros. */
+
+/* These macros will convert between local endianness and network endianness */
+/* The packet headers are always in network byte order */
+#define CCSDS_RD_EDS_VER(shdr)       ( ((shdr).APIDQSubsystem[0] & 0xF8) >> 3)
+#define CCSDS_RD_ENDIAN(shdr)        ( ((shdr).APIDQSubsystem[0] & 0x04) >> 2)
+#define CCSDS_RD_PLAYBACK(shdr)      ( ((shdr).APIDQSubsystem[0] & 0x02) >> 1)
+#define CCSDS_RD_SUBSYSTEM_ID(shdr)  ( (((shdr).APIDQSubsystem[0] & 0x01) << 8) + ((shdr).APIDQSubsystem[1]))
+#define CCSDS_RD_SYSTEM_ID(shdr)     ( ((shdr).APIDQSystemId[0] << 8) + ((shdr).APIDQSystemId[1]))
+
+#define CCSDS_WR_EDS_VER(shdr,val)       ( (shdr).APIDQSubsystem[0] = ((shdr).APIDQSubsystem[0] & 0x07) | (((val) & 0x1f) << 3) )
+#define CCSDS_WR_ENDIAN(shdr,val)        ( (shdr).APIDQSubsystem[0] = ((shdr).APIDQSubsystem[0] & 0xFB) | (((val) & 0x01) << 2) )
+#define CCSDS_WR_PLAYBACK(shdr,val)      ( (shdr).APIDQSubsystem[0] = ((shdr).APIDQSubsystem[0] & 0xFD) | (((val) & 0x01) << 1) )
+                                  
+#define CCSDS_WR_SUBSYSTEM_ID(shdr,val)  (((shdr).APIDQSubsystem[0] = ((shdr).APIDQSubsystem[0] & 0xFE) | ((val & 0x0100) >> 8)) ,\
+                                         ( (shdr).APIDQSubsystem[1] =  (val & 0x00ff)) )
+
+#define CCSDS_WR_SYSTEM_ID(shdr,val)     (((shdr).APIDQSystemId[0] = ((val & 0xff00) >> 8)),\
+                                         ( (shdr).APIDQSystemId[1] =  (val & 0x00ff)) )
 
 /**********************************************************************
 ** Macros for clearing a CCSDS header to a standard initial state.  All
@@ -278,6 +369,12 @@ typedef struct {
     (phdr).Sequence[1] = 0,\
     (phdr).Length[0] = 0, \
     (phdr).Length[1] = 0 )
+
+#define CCSDS_CLR_SEC_APIDQ(shdr) \
+  ( (shdr).APIDQSubsystem[0] = 0,\
+    (shdr).APIDQSubsystem[1] = 0,\
+    (shdr).APIDQSystemId[0] = 0,\
+    (shdr).APIDQSystemId[1] = 0 )
 
 /* Clear command secondary header. */
 #define CCSDS_CLR_CMDSEC_HDR(shdr) \
@@ -295,7 +392,7 @@ typedef struct {
                                              ((uint32)shdr.Time[3])
 
 /* Clear telemetry secondary header. */
-#if (CFE_SB_PACKET_TIME_FORMAT == CFE_SB_TIME_32_16_SUBS)
+#if (CFE_MISSION_SB_PACKET_TIME_FORMAT == CFE_MISSION_SB_TIME_32_16_SUBS)
   /* 32 bits seconds + 16 bits subseconds */
   #define CCSDS_CLR_TLMSEC_HDR(shdr) \
   ( (shdr).Time[0] = 0,\
@@ -311,8 +408,8 @@ typedef struct {
 
 #define CCSDS_RD_SEC_HDR_SUBSEC(shdr)        (((uint32)shdr.Time[4]) << 8)  | \
                                              ((uint32)shdr.Time[5])
-#elif ((CFE_SB_PACKET_TIME_FORMAT == CFE_SB_TIME_32_32_SUBS) ||\
-       (CFE_SB_PACKET_TIME_FORMAT == CFE_SB_TIME_32_32_M_20))
+#elif ((CFE_MISSION_SB_PACKET_TIME_FORMAT == CFE_MISSION_SB_TIME_32_32_SUBS) ||\
+       (CFE_MISSION_SB_PACKET_TIME_FORMAT == CFE_MISSION_SB_TIME_32_32_M_20))
   /* 32 bits seconds + 32 bits subseconds */
   #define CCSDS_CLR_TLMSEC_HDR(shdr) \
   ( (shdr).Time[0] = 0,\
@@ -374,34 +471,6 @@ typedef struct {
 ** Exported Functions
 */
 
-/******************************************************************************
-**  Function:  CCSDS_InitPkt()
-**
-**  Purpose:
-**    Initialize a CCSDS packet.  The primary header is initialized with
-**    specified values, and if the Clear flag is set, the rest of the packet
-**    is filled with zeros.
-**
-**  Arguments:
-**    PktPtr   : Pointer to primary header of packet.
-**    StreamId : Stream ID to use for the packet.
-**    Length   : Length of the packet in bytes.
-**    Clear    : Indicates whether to clear the entire packet:
-**                TRUE = fill sequence count and packet data with zeros
-**                       (used after a cold restart)
-**                FALSE = leave sequence count and packet data unchanged
-**                       (used after a warm restart if data must be preserved)
-**
-**  Return:
-**    (none)
-*/
-
-void CCSDS_InitPkt (CCSDS_PriHdr_t  *PktPtr,
-                    uint16           StreamId,
-                    uint16           Length,
-                    boolean          Clear );
-
-
 
 /******************************************************************************
 **  Function:  CCSDS_LoadCheckSum()
@@ -420,7 +489,7 @@ void CCSDS_InitPkt (CCSDS_PriHdr_t  *PktPtr,
 **    (none)
 */
 
-void CCSDS_LoadCheckSum (CCSDS_CmdPkt_t *PktPtr);
+void CCSDS_LoadCheckSum (CCSDS_CommandPacket_t *PktPtr);
 
 /******************************************************************************
 **  Function:  CCSDS_ValidCheckSum()
@@ -434,11 +503,11 @@ void CCSDS_LoadCheckSum (CCSDS_CmdPkt_t *PktPtr);
 **               header must be correct.
 **
 **  Return:
-**    TRUE if checksum of packet is valid; FALSE if not.
+**    true if checksum of packet is valid; false if not.
 **    A valid checksum is 0.
 */
 
-boolean CCSDS_ValidCheckSum (CCSDS_CmdPkt_t *PktPtr);
+bool CCSDS_ValidCheckSum (CCSDS_CommandPacket_t *PktPtr);
 
 /******************************************************************************
 **  Function:  CCSDS_ComputeCheckSum()
@@ -453,10 +522,10 @@ boolean CCSDS_ValidCheckSum (CCSDS_CmdPkt_t *PktPtr);
 **               header must be correct.
 **
 **  Return:
-**    TRUE if checksum of packet is valid; FALSE if not.
+**    true if checksum of packet is valid; false if not.
 */
 
-uint8 CCSDS_ComputeCheckSum (CCSDS_CmdPkt_t *PktPtr);
+uint8 CCSDS_ComputeCheckSum (CCSDS_CommandPacket_t *PktPtr);
 
 
 #endif  /* _ccsds_ */

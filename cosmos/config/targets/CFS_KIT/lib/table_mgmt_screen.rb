@@ -23,8 +23,8 @@ def table_mgmt_send_cmd(screen, cmd)
 
    if (cmd == "LOAD_TABLE")
       load_tbl = true
-      put_file = combo_box("Transfer file from ground to flight?", 'Yes','No')
-      if (put_file == "Yes")
+      put_file = combo_box("Transfer file from ground to flight?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+      if (put_file == Osk::MSG_BUTTON_YES)
          Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_TBL_DIR, Osk::FLT_SRV_DIR)
          if (Osk::Ops::put_flt_file_prompt(Osk::GND_SRV_TBL_DIR))
             Osk::Ops::set_work_dir_widget(screen)

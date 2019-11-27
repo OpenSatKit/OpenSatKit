@@ -1,7 +1,7 @@
 /*
-** $Id: fm_cmds.h 1.17 2015/02/28 17:50:41EST sstrege Exp  $
+** $Id: fm_cmds.h 1.4.1.2 2017/01/23 21:52:47EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,42 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_cmds.h  $
-** Revision 1.17 2015/02/28 17:50:41EST sstrege 
-** Added copyright information
-** Revision 1.16 2011/08/29 15:06:00EDT lwalling 
-** Removed unused ground vs internal argument to function FM_DeleteFileCmd()
-** Revision 1.15 2011/05/31 17:10:12EDT lwalling 
-** Added ground cmd vs other app arg to delete file command handler prototype
-** Revision 1.14 2009/11/13 16:18:15EST lwalling 
-** Add SetTableEntryState command
-** Revision 1.13 2009/11/09 16:56:51EST lwalling 
-** Move value definitions to fm_defs.h, cleanup prototype comments
-** Revision 1.12 2009/10/30 14:02:25EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.11 2009/10/29 11:42:27EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.10 2009/10/26 16:48:50EDT lwalling
-** Changes to structure names
-** Revision 1.9 2009/10/26 11:31:04EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.8 2009/10/16 15:46:32EDT lwalling
-** Update function names, move structures to fm_msg.h, delete obsolete functions, add descriptive text
-** Revision 1.7 2009/10/09 17:23:50EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.6 2009/10/06 11:06:12EDT lwalling
-** Clean up after create common filename verify functions
-** Revision 1.5 2009/09/28 14:15:32EDT lwalling
-** Create common filename verification functions
-** Revision 1.4 2009/09/10 13:04:27EDT lwalling
-** Remove extern reference to OS_NameChange()
-** Revision 1.3 2008/11/05 18:15:09EST sstrege
-** Added extra comments for command functions containing static local variables
-** Revision 1.2 2008/06/20 16:21:31EDT slstrege
-** Member moved from fsw/src/fm_cmds.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_cmds.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:31ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_cmds_h_
@@ -495,6 +459,27 @@ boolean FM_GetFreeSpaceCmd(CFE_SB_MsgPtr_t MessagePtr);
 **/
 boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr);
 
+
+/**
+**  \brief Set File Permissions of a file
+**
+**  \par Description
+**       This function is a direct call to OS_chmod to set the file access
+**
+**
+**  \par Assumptions, External Events, and Notes:
+**
+**  \param [in]  MessagePtr - Pointer to Software Bus command packet.
+**
+**  \returns
+**  \retcode #TRUE   \retdesc \copydoc TRUE    \endcode
+**  \retcode #FALSE  \retdesc \copydoc FALSE   \endcode
+**  \retstmt Boolean TRUE indicates command success  \endcode
+**  \endreturns
+**
+**  \sa #FM_SET_PERM_CC, #FM_SetPermCmd_t, #FM_SET_PERM_CMD_EID, #FM_SET_PERM_ERR_EID
+**/
+boolean FM_SetPermissionsCmd(CFE_SB_MsgPtr_t MessagePtr);
 
 #endif /* _fm_cmds_h_ */
 

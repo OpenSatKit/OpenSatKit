@@ -1,12 +1,22 @@
 /*
- *  Copyright (c) 2004-2015, United States government as represented by the
- *  administrator of the National Aeronautics Space Administration.
- *  All rights reserved. This software was created at NASA Glenn
- *  Research Center pursuant to government contracts.
- *
- *  This is governed by the NASA Open Source Agreement and may be used,
- *  distributed and modified only according to the terms of that agreement.
- */
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
 
 /**
  * \file cfe_es_resetdata_typedef.h
@@ -27,7 +37,7 @@
 #include "cfe_es_erlog_typedef.h"      /* Required for CFE_ES_ERLog_t definition */
 #include "cfe_es_perfdata_typedef.h"   /* Required for CFE_ES_PerfData_t definition */
 #include "cfe_evs_log_typedef.h"       /* Required for CFE_EVS_Log_t definition */
-#include "cfe_platform_cfg.h"          /* CFE_EVS_LOG_ON, CFE_ES_ER_LOG_ENTRIES, CFE_ES_SYSTEM_LOG_SIZE */
+#include "cfe_platform_cfg.h"          /* CFE_PLATFORM_EVS_LOG_ON, CFE_PLATFORM_ES_ER_LOG_ENTRIES, CFE_PLATFORM_ES_SYSTEM_LOG_SIZE */
 
 /*
 ** Reset Variables type
@@ -53,7 +63,7 @@ typedef struct
    /*
    ** Exception and Reset log declaration
    */
-   CFE_ES_ERLog_t    ERLog[CFE_ES_ER_LOG_ENTRIES];
+   CFE_ES_ERLog_t    ERLog[CFE_PLATFORM_ES_ER_LOG_ENTRIES];
    uint32            ERLogIndex;
    uint32            ERLogEntries;
    uint32            LastAppId;
@@ -61,8 +71,9 @@ typedef struct
    /*
    ** System Log declaration
    */
-   char            SystemLog[CFE_ES_SYSTEM_LOG_SIZE];
-   uint32          SystemLogIndex;
+   char            SystemLog[CFE_PLATFORM_ES_SYSTEM_LOG_SIZE];
+   size_t          SystemLogWriteIdx;
+   size_t          SystemLogEndIdx;
    uint32          SystemLogMode;
    uint32          SystemLogEntryNum;
 
@@ -82,7 +93,7 @@ typedef struct
    */
    CFE_TIME_ResetVars_t TimeResetVars;
 
-#ifdef CFE_EVS_LOG_ON
+#ifdef CFE_PLATFORM_EVS_LOG_ON
    /*
    ** EVS Log and associated variables. This needs to be preserved on a processor reset.
    */

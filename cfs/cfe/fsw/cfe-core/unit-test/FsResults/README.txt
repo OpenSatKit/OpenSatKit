@@ -1,21 +1,23 @@
 The cFE File Service (FS) unit tests were run in the following pc-linux environment:
 
-Distributor ID: RedHatEnterpriseClient
-Release:        5.11
+Distributor ID: Red Hat Enterprise Linux Workstation release 6.9 (Santiago)
+Release:        6.9
 
-Linux gs582w-cfelnx 2.6.18-407.el5PAE #1 SMP Fri Oct 16 12:08:56 EDT 2015 
-i686 i686 i386 GNU/Linux i386
+Linux gs582w-cfelnx 2.6.32-642.el6.i686 #1 SMP Wed Apr 13 00:50:26 EDT 2016 i686 i686 i386 GNU/Linux
 
-Unit tests built with gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+Unit tests built with gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
 
 The expected FS unit test pass/fail test results are located in the ut_cfe_fs_log.txt file
 
-The FS unit test results are expected to have the following coverage results for each of 
-the FS source files:
+The FS unit test results are expected to have the following
+coverage results for each of the FS source files:
 
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_api.c' 100.00%  98
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_decompress.c' 88.21%  441
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_priv.c' 100.00%  19
+ut_cfe_fs PASSED 41 tests.
+ut_cfe_fs FAILED 0 tests.
+
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/fs/cfe_fs_api.c' 100.00%  115
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/fs/cfe_fs_decompress.c' 88.24%  442
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/fs/cfe_fs_priv.c' 100.00%  21
 
 ==========================================================================
 
@@ -27,7 +29,7 @@ gcov: 'cfe_fs_priv.c' 100.00% coverage
 
 ==========================================================================
 
-cfe_fs_decompress.c - 88.21% coverage
+cfe_fs_decompress.c - 88.24% coverage
 
 cfe_fs_decompress contains the code from a public domain copy of the gzip
 utility that has been sightly modified to use the cFE variable types and

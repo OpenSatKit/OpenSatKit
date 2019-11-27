@@ -1,15 +1,25 @@
 /*
-** $Id: cfe_time_verify.h 1.6 2014/04/14 10:51:41GMT-05:00 lwalling Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement.
-**  
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe_time_verify.h
 **
 ** Purpose:  cFE Time Services (TIME) configuration verification
 **
@@ -17,25 +27,6 @@
 **
 ** Notes:
 **
-** $Log: cfe_time_verify.h  $
-** Revision 1.6 2014/04/14 10:51:41GMT-05:00 lwalling 
-** Created platform config definitions for Time 1HZ and Time TONE task priorities and stack sizes
-** Revision 1.5 2012/01/13 12:21:36EST acudmore 
-** Changed license text to reflect open source
-** Revision 1.4 2011/11/30 15:10:07EST jmdagost 
-** Replaced ifdef/ifndef preprocessor tests with if...==TRUE/if...!=TRUE tests
-** Revision 1.3 2010/10/25 15:00:05EDT jmdagost 
-** Corrected bad apostrophe in prologue.
-** Revision 1.2 2010/10/04 15:15:54EDT jmdagost 
-** Cleaned up copyright symbol.
-** Revision 1.1 2008/04/17 08:05:40EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/time/project.pj
-** Revision 1.2 2006/06/08 14:15:50EDT njyanchik 
-** I added the appropriate legal headers to all of the time files
-** Revision 1.1 2005/07/21 15:21:57EDT lswalling 
-** Initial revision
-** Member added to project d:/mksdata/MKS-CFE-REPOSITORY/cfe-core/time/project.pj
 **
 */
 
@@ -50,80 +41,80 @@
 /*
 ** Validate default time client/server selection...
 */
-#if (CFE_TIME_CFG_SERVER == TRUE)
-  #if (CFE_TIME_CFG_CLIENT == TRUE)
-    #error Cannot define both CFE_TIME_CFG_SERVER and CFE_TIME_CFG_CLIENT as TRUE!
+#if (CFE_PLATFORM_TIME_CFG_SERVER == true)
+  #if (CFE_PLATFORM_TIME_CFG_CLIENT == true)
+    #error Cannot define both CFE_PLATFORM_TIME_CFG_SERVER and CFE_PLATFORM_TIME_CFG_CLIENT as true!
   #endif
 #else
-  #if (CFE_TIME_CFG_CLIENT != TRUE)
-    #error Must define either CFE_TIME_CFG_SERVER or CFE_TIME_CFG_CLIENT as TRUE!
+  #if (CFE_PLATFORM_TIME_CFG_CLIENT != true)
+    #error Must define either CFE_PLATFORM_TIME_CFG_SERVER or CFE_PLATFORM_TIME_CFG_CLIENT as true!
   #endif
 #endif
 
 /*
 ** Validate default time format selection...
 */
-#if (CFE_TIME_CFG_DEFAULT_TAI == TRUE)
-  #if (CFE_TIME_CFG_DEFAULT_UTC == TRUE)
-    #error Cannot define both CFE_TIME_CFG_DEFAULT_UTC and CFE_TIME_CFG_DEFAULT_TAI as TRUE!
+#if (CFE_MISSION_TIME_CFG_DEFAULT_TAI == true)
+  #if (CFE_MISSION_TIME_CFG_DEFAULT_UTC == true)
+    #error Cannot define both CFE_MISSION_TIME_CFG_DEFAULT_UTC and CFE_MISSION_TIME_CFG_DEFAULT_TAI as true!
   #endif
 #else
-  #if (CFE_TIME_CFG_DEFAULT_UTC != TRUE)
-    #error Must define either CFE_TIME_CFG_DEFAULT_UTC or CFE_TIME_CFG_DEFAULT_TAI as TRUE!
+  #if (CFE_MISSION_TIME_CFG_DEFAULT_UTC != true)
+    #error Must define either CFE_MISSION_TIME_CFG_DEFAULT_UTC or CFE_MISSION_TIME_CFG_DEFAULT_TAI as true!
   #endif
 #endif
 
 /*
 ** Validate time source selection...
 */
-#if (CFE_TIME_CFG_CLIENT == TRUE)
-  #if (CFE_TIME_CFG_SOURCE == TRUE)
-    #error Cannot define both CFE_TIME_CFG_CLIENT and CFE_TIME_CFG_SOURCE as TRUE!
+#if (CFE_PLATFORM_TIME_CFG_CLIENT == true)
+  #if (CFE_PLATFORM_TIME_CFG_SOURCE == true)
+    #error Cannot define both CFE_PLATFORM_TIME_CFG_CLIENT and CFE_PLATFORM_TIME_CFG_SOURCE as true!
   #endif
 #endif
 
-#if (CFE_TIME_CFG_SOURCE == TRUE)
-  #if (CFE_TIME_CFG_VIRTUAL != TRUE)
-    #error Cannot define CFE_TIME_CFG_SOURCE as TRUE without defining CFE_TIME_CFG_VIRTUAL as TRUE!
+#if (CFE_PLATFORM_TIME_CFG_SOURCE == true)
+  #if (CFE_PLATFORM_TIME_CFG_VIRTUAL != true)
+    #error Cannot define CFE_PLATFORM_TIME_CFG_SOURCE as true without defining CFE_PLATFORM_TIME_CFG_VIRTUAL as true!
   #endif
 #endif
 
 /*
 ** Validate local MET selections...
 */
-#if (CFE_TIME_CFG_CLIENT == TRUE)
-  #if (CFE_TIME_CFG_VIRTUAL != TRUE)
-    #error Cannot define CFE_TIME_CFG_CLIENT as TRUE without defining CFE_TIME_CFG_VIRTUAL as TRUE!
+#if (CFE_PLATFORM_TIME_CFG_CLIENT == true)
+  #if (CFE_PLATFORM_TIME_CFG_VIRTUAL != true)
+    #error Cannot define CFE_PLATFORM_TIME_CFG_CLIENT as true without defining CFE_PLATFORM_TIME_CFG_VIRTUAL as true!
   #endif
 #endif
 
 /*
 ** Validate time source type selection...
 */
-#if (CFE_TIME_CFG_SRC_MET == TRUE)
-  #if (CFE_TIME_CFG_SOURCE != TRUE)
-    #error Cannot define CFE_TIME_CFG_SRC_MET as TRUE without defining CFE_TIME_CFG_SOURCE as TRUE!
+#if (CFE_PLATFORM_TIME_CFG_SRC_MET == true)
+  #if (CFE_PLATFORM_TIME_CFG_SOURCE != true)
+    #error Cannot define CFE_PLATFORM_TIME_CFG_SRC_MET as true without defining CFE_PLATFORM_TIME_CFG_SOURCE as true!
   #endif
-  #if (CFE_TIME_CFG_SRC_GPS == TRUE)
-    #error Cannot define both CFE_TIME_CFG_SRC_MET and CFE_TIME_CFG_SRC_GPS as TRUE!
+  #if (CFE_PLATFORM_TIME_CFG_SRC_GPS == true)
+    #error Cannot define both CFE_PLATFORM_TIME_CFG_SRC_MET and CFE_PLATFORM_TIME_CFG_SRC_GPS as true!
   #endif
-  #if (CFE_TIME_CFG_SRC_TIME == TRUE)
-    #error Cannot define both CFE_TIME_CFG_SRC_MET and CFE_TIME_CFG_SRC_TIME as TRUE!
-  #endif
-#endif
-
-#if (CFE_TIME_CFG_SRC_GPS == TRUE)
-  #if (CFE_TIME_CFG_SOURCE != TRUE)
-    #error Cannot define CFE_TIME_CFG_SRC_GPS as TRUE without defining CFE_TIME_CFG_SOURCE as TRUE!
-  #endif
-  #if (CFE_TIME_CFG_SRC_TIME == TRUE)
-    #error Cannot define both CFE_TIME_CFG_SRC_GPS and CFE_TIME_CFG_SRC_TIME as TRUE!
+  #if (CFE_PLATFORM_TIME_CFG_SRC_TIME == true)
+    #error Cannot define both CFE_PLATFORM_TIME_CFG_SRC_MET and CFE_PLATFORM_TIME_CFG_SRC_TIME as true!
   #endif
 #endif
 
-#if (CFE_TIME_CFG_SRC_TIME == TRUE)
-  #if (CFE_TIME_CFG_SOURCE != TRUE)
-    #error Cannot define CFE_TIME_CFG_SRC_TIME as TRUE without defining CFE_TIME_CFG_SOURCE as TRUE!
+#if (CFE_PLATFORM_TIME_CFG_SRC_GPS == true)
+  #if (CFE_PLATFORM_TIME_CFG_SOURCE != true)
+    #error Cannot define CFE_PLATFORM_TIME_CFG_SRC_GPS as true without defining CFE_PLATFORM_TIME_CFG_SOURCE as true!
+  #endif
+  #if (CFE_PLATFORM_TIME_CFG_SRC_TIME == true)
+    #error Cannot define both CFE_PLATFORM_TIME_CFG_SRC_GPS and CFE_PLATFORM_TIME_CFG_SRC_TIME as true!
+  #endif
+#endif
+
+#if (CFE_PLATFORM_TIME_CFG_SRC_TIME == true)
+  #if (CFE_PLATFORM_TIME_CFG_SOURCE != true)
+    #error Cannot define CFE_PLATFORM_TIME_CFG_SRC_TIME as true without defining CFE_PLATFORM_TIME_CFG_SOURCE as true!
   #endif
 #endif
 
@@ -131,70 +122,66 @@
 /*
 ** Validate tone signal and data packet arrival selection...
 */
-#if (CFE_TIME_AT_TONE_WAS == TRUE)
-  #if (CFE_TIME_AT_TONE_WILL_BE == TRUE)
-    #error Both CFE_TIME_AT_TONE_WAS and CFE_TIME_AT_TONE_WILL_BE have been defined as TRUE!
+#if (CFE_MISSION_TIME_AT_TONE_WAS == true)
+  #if (CFE_MISSION_TIME_AT_TONE_WILL_BE == true)
+    #error Both CFE_MISSION_TIME_AT_TONE_WAS and CFE_MISSION_TIME_AT_TONE_WILL_BE have been defined as true!
   #endif
 #else
-  #if (CFE_TIME_AT_TONE_WILL_BE != TRUE)
-    #error Either CFE_TIME_AT_TONE_WAS or CFE_TIME_AT_TONE_WILL_BE must be defined as TRUE!
+  #if (CFE_MISSION_TIME_AT_TONE_WILL_BE != true)
+    #error Either CFE_MISSION_TIME_AT_TONE_WAS or CFE_MISSION_TIME_AT_TONE_WILL_BE must be defined as true!
   #endif
 #endif
 
 /*
 ** Validate simulated tone signal and external time source selection...
 */
-#if (CFE_TIME_CFG_FAKE_TONE == TRUE)
-  #if (CFE_TIME_CFG_SOURCE == TRUE)
-    #error Cannot define both CFE_TIME_CFG_FAKE_TONE and CFE_TIME_CFG_SOURCE as TRUE!
+#if (CFE_MISSION_TIME_CFG_FAKE_TONE == true)
+  #if (CFE_PLATFORM_TIME_CFG_SOURCE == true)
+    #error Cannot define both CFE_MISSION_TIME_CFG_FAKE_TONE and CFE_PLATFORM_TIME_CFG_SOURCE as true!
   #endif
 #endif
 
 /*
 ** Validate simulated tone signal and data packet arrival selection...
 */
-#if (CFE_TIME_CFG_FAKE_TONE == TRUE)
-  #if (CFE_TIME_AT_TONE_WILL_BE == TRUE)
-    #error Cannot define both CFE_TIME_CFG_FAKE_TONE and CFE_TIME_AT_TONE_WILL_BE as TRUE!
+#if (CFE_MISSION_TIME_CFG_FAKE_TONE == true)
+  #if (CFE_MISSION_TIME_AT_TONE_WILL_BE == true)
+    #error Cannot define both CFE_MISSION_TIME_CFG_FAKE_TONE and CFE_MISSION_TIME_AT_TONE_WILL_BE as true!
   #endif
 #endif
 
 /*
 ** Validate task priorities...
 */
-#if CFE_TIME_START_TASK_PRIORITY < 0    
-    #error CFE_TIME_START_TASK_PRIORITY must be greater than or equal to zero
-#elif CFE_TIME_START_TASK_PRIORITY > 255    
-    #error CFE_TIME_START_TASK_PRIORITY must be less than or equal to 255
+#if CFE_PLATFORM_TIME_START_TASK_PRIORITY < 0    
+    #error CFE_PLATFORM_TIME_START_TASK_PRIORITY must be greater than or equal to zero
+#elif CFE_PLATFORM_TIME_START_TASK_PRIORITY > 255    
+    #error CFE_PLATFORM_TIME_START_TASK_PRIORITY must be less than or equal to 255
 #endif    
-#if CFE_TIME_TONE_TASK_PRIORITY < 0    
-    #error CFE_TIME_TONE_TASK_PRIORITY must be greater than or equal to zero
-#elif CFE_TIME_TONE_TASK_PRIORITY > 255    
-    #error CFE_TIME_TONE_TASK_PRIORITY must be less than or equal to 255
+#if CFE_PLATFORM_TIME_TONE_TASK_PRIORITY < 0    
+    #error CFE_PLATFORM_TIME_TONE_TASK_PRIORITY must be greater than or equal to zero
+#elif CFE_PLATFORM_TIME_TONE_TASK_PRIORITY > 255    
+    #error CFE_PLATFORM_TIME_TONE_TASK_PRIORITY must be less than or equal to 255
 #endif    
-#if CFE_TIME_1HZ_TASK_PRIORITY < 0    
-    #error CFE_TIME_1HZ_TASK_PRIORITY must be greater than or equal to zero
-#elif CFE_TIME_1HZ_TASK_PRIORITY > 255    
-    #error CFE_TIME_1HZ_TASK_PRIORITY must be less than or equal to 255
+#if CFE_PLATFORM_TIME_1HZ_TASK_PRIORITY < 0    
+    #error CFE_PLATFORM_TIME_1HZ_TASK_PRIORITY must be greater than or equal to zero
+#elif CFE_PLATFORM_TIME_1HZ_TASK_PRIORITY > 255    
+    #error CFE_PLATFORM_TIME_1HZ_TASK_PRIORITY must be less than or equal to 255
 #endif    
 
 /*
 ** Validate task stack sizes...
 */
-#if CFE_TIME_START_TASK_STACK_SIZE < 2048    
-    #error CFE_TIME_START_TASK_STACK_SIZE must be greater than or equal to 2048
-#elif CFE_TIME_START_TASK_STACK_SIZE > 16384
-    #error CFE_TIME_START_TASK_STACK_SIZE must be less than or equal to 16384
-#endif    
-#if CFE_TIME_TONE_TASK_STACK_SIZE < 2048
-    #error CFE_TIME_TONE_TASK_STACK_SIZE must be greater than or equal to 2048
-#elif CFE_TIME_TONE_TASK_STACK_SIZE > 16384
-    #error CFE_TIME_TONE_TASK_STACK_SIZE must be less than or equal to 16384
-#endif    
-#if CFE_TIME_1HZ_TASK_STACK_SIZE < 2048
-    #error CFE_TIME_1HZ_TASK_STACK_SIZE must be greater than or equal to 2048
-#elif CFE_TIME_1HZ_TASK_STACK_SIZE > 16384
-    #error CFE_TIME_1HZ_TASK_STACK_SIZE must be less than or equal to 16384
+#if CFE_PLATFORM_TIME_START_TASK_STACK_SIZE < 2048    
+    #error CFE_PLATFORM_TIME_START_TASK_STACK_SIZE must be greater than or equal to 2048
+#endif
+
+#if CFE_PLATFORM_TIME_TONE_TASK_STACK_SIZE < 2048
+    #error CFE_PLATFORM_TIME_TONE_TASK_STACK_SIZE must be greater than or equal to 2048
+#endif
+
+#if CFE_PLATFORM_TIME_1HZ_TASK_STACK_SIZE < 2048
+    #error CFE_PLATFORM_TIME_1HZ_TASK_STACK_SIZE must be greater than or equal to 2048
 #endif    
 
 /*************************************************************************/

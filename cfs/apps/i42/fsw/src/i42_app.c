@@ -406,6 +406,8 @@ static boolean ProcessActuatorData(void)
    CFE_EVS_SendEvent(I42_DEBUG_EID, CFE_EVS_DEBUG, "I42::ProcessActuatorData(): SensorPktSent = %d, SB Recv status = 0x%08X\n",I42.SensorPktSent, Status);
    if (Status == CFE_SUCCESS) {
 
+      OS_TaskDelay(20);  //TODO - Need to create a better throttle design after integrate latest 42
+
       I42.SensorPktSent = FALSE;
 
       MsgId = CFE_SB_GetMsgId(MsgPtr);

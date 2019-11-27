@@ -1,7 +1,7 @@
 /*
-** $Id: fm_freespace.c 1.8 2015/02/28 17:50:38EST sstrege Exp  $
+** $Id: fm_freespace.c 1.2.1.2 2017/01/23 21:52:44EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -18,24 +18,6 @@
 **
 ** Notes:
 **
-** $Log: fm_freespace.c  $
-** Revision 1.8 2015/02/28 17:50:38EST sstrege 
-** Added copyright information
-** Revision 1.7 2014/12/12 14:19:09EST lwalling 
-** Add __attribute__((__used__)) to CFE_TBL_FileDef
-** Revision 1.6 2009/11/13 16:17:17EST lwalling 
-** Remove obsolete field TableID, add new UNUSED state
-** Revision 1.5 2009/10/30 15:56:44EDT lwalling 
-** Add missing free space table entries, modify table entry state definitions
-** Revision 1.4 2009/10/30 14:02:24EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.3 2009/10/30 10:49:26EDT lwalling
-** Add include fm_msg.h to get table structure definitions
-** Revision 1.2 2009/10/28 16:40:58EDT lwalling
-** Complete effort to replace the use of phrase device table with file system free space table
-** Revision 1.1 2009/10/09 17:27:47EDT lwalling
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/tables/project.pj
 */
 
 /*************************************************************************

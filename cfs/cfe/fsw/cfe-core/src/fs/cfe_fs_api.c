@@ -1,52 +1,31 @@
 /*
-** $Id: cfe_fs_api.c 1.8 2014/08/22 17:06:20GMT-05:00 lwalling Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe_fs_api.c
 **
 ** Purpose:  cFE File Services (FS) library API source file
 **
 ** Author:   S.Walling/Microtel
 **
 ** Notes:
-**
-** $Log: cfe_fs_api.c  $
-** Revision 1.8 2014/08/22 17:06:20GMT-05:00 lwalling 
-** Change signed loop counters to unsigned
-** Revision 1.7 2012/01/13 12:11:28EST acudmore 
-** Changed license text to reflect open source
-** Revision 1.6 2010/11/03 15:09:41EDT jmdagost 
-** Added cfe.h include file.
-** Revision 1.5 2010/10/25 17:51:05EDT jmdagost 
-** Added filename length test to CFE_FS_ExtractFilenameFromPath()
-** Revision 1.4 2009/06/10 09:13:43EDT acudmore 
-** Converted OS_Mem* and OS_BSP* calls to CFE_PSP_*
-** Revision 1.3 2008/08/28 08:39:58EDT apcudmore 
-** fixed CFS names. ( CFS-->CFE )
-** Revision 1.2 2008/06/20 15:40:30EDT apcudmore 
-** Added support for OSAL based module loader
-**  - Removed calls and references to the BSP based module loader
-** Revision 1.1 2008/04/17 08:05:16EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/fs/project.pj
-** Revision 1.14 2007/09/05 09:45:01EDT David Kobe (dlkobe) 
-** Corrected OS_lseek return status data type
-** Revision 1.13 2007/09/05 09:43:12EDT David Kobe (dlkobe) 
-** Corrected usage of return codes from OS_lseek and OS_write
-** Revision 1.12 2007/05/17 13:05:09EDT wfmoleski 
-** 
-** Revision 1.11 2007/03/16 15:12:12EST dlkobe 
-** Swapped parameter list for CFE_FS_ReadHeader API.
-** Revision 1.10 2006/09/01 11:39:24GMT-05:00 dlkobe 
-** Added processor endianess check and swapped header data if necessary
-** Revision 1.9 2006/07/25 14:37:52GMT-05:00 njyanchik 
-** It turns out the both the FS app and the OSAL were incorrect where file descriptors are
-** concerned. the file descriptors should be int32 across the board.
 **
 */
 
@@ -107,7 +86,7 @@ int32 CFE_FS_ReadHeader(CFE_FS_Header_t *Hdr, int32 FileDes)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void CFE_FS_InitHeader(CFE_FS_Header_t *Hdr, const char *Description, uint32 SubType)
 {
-   CFE_PSP_MemSet(Hdr, 0, sizeof(CFE_FS_Header_t));
+   memset(Hdr, 0, sizeof(CFE_FS_Header_t));
    strncpy((char *)Hdr->Description, Description, sizeof(Hdr->Description) - 1);
    Hdr->SubType = SubType;
 }
@@ -368,13 +347,13 @@ int32 CFE_FS_ExtractFilenameFromPath(const char *OriginalPath, char *FileNameOnl
 /*  file name. The file name must end in ".gz".                            */ 
 /*                                                                         */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-boolean CFE_FS_IsGzFile(const char *FileName)
+bool CFE_FS_IsGzFile(const char *FileName)
 {
    size_t    StringLength;
    
    if ( FileName == NULL )
    {
-      return(FALSE);
+      return(false);
    }
    /*
    ** Get the string length of the SourceFile name
@@ -388,7 +367,7 @@ boolean CFE_FS_IsGzFile(const char *FileName)
    */
    if ( StringLength < 4 )
    {
-      return(FALSE);
+      return(false);
    }
 
    /*
@@ -399,15 +378,92 @@ boolean CFE_FS_IsGzFile(const char *FileName)
         (FileName[StringLength - 2] == 'g') &&
         (FileName[StringLength - 1] == 'z'))
    {
-       return(TRUE);       
+       return(true);       
    }
    else
    {
-       return(FALSE);
+       return(false);
    }
   
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                         */
+/* Function: CFE_FS_GetUncompressedFile                                    */
+/*                                                                         */
+/*  Decompress a Loadable file to prepare for loading it                   */
+/*                                                                         */
+/*  A temporary filename on the ramdisk is generated, and the file is      */
+/*  decompressed to it. The filename of the temporary file is output back  */
+/*  to the caller.                                                         */
+/*                                                                         */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+int32 CFE_FS_GetUncompressedFile(char *OutputNameBuffer, uint32 OutputNameBufferSize,
+        const char *GzipFileName, const char *TempDir)
+{
+    char    FileNameOnly[OS_MAX_PATH_LEN];
+    int32   Status;
+    int     RequiredLen;    /* using "int" per snprintf API */
+
+    /*
+    ** Extract the filename from the path
+    */
+    Status = CFE_FS_ExtractFilenameFromPath(GzipFileName, FileNameOnly);
+    if ( Status != CFE_SUCCESS )
+    {
+       CFE_ES_WriteToSysLog("FS_GetUncompressedFile: Unable to extract filename from path: %s.\n",GzipFileName);
+    }
+    else
+    {
+        /*
+        ** Build up the destination path in the RAM disk
+        */
+        RequiredLen = snprintf(OutputNameBuffer, OutputNameBufferSize,
+                "%s/%s", TempDir, FileNameOnly);
+
+        /*
+        ** Remove the ".gz" prefix from the filename
+        ** (Any input file name to this function must have a .gz extension,
+        ** i.e. it passed the CFE_FS_IsGzFile() test, of which .gz is the only possibility)
+        */
+        if (RequiredLen >= 3)
+        {
+            RequiredLen -= 3;
+        }
+
+        /*
+         * check if LoadNameBuffer got truncated
+         * (snprintf returns the _required_ length, whether or not it actually fit)
+         */
+        if (RequiredLen < 0 || RequiredLen >= OutputNameBufferSize)
+        {
+            /* Can't include the name string since it could be too long for the message */
+            CFE_ES_WriteToSysLog("FS_GetUncompressedFile: Temporary path plus file name length (%d) exceeds max allowed (%lu)\n",
+                                 RequiredLen, (unsigned long)(OutputNameBufferSize-1));
+            Status = CFE_FS_FNAME_TOO_LONG;
+        }
+        else
+        {
+            /*
+             * Actually truncate the .gz from the string
+             * (had to wait until after length verification)
+             */
+            OutputNameBuffer[RequiredLen] = 0;
+
+            /*
+            ** Decompress the file:
+            */
+            Status =  CFE_FS_Decompress( GzipFileName, OutputNameBuffer );
+            if ( Status != CFE_SUCCESS )
+            {
+                CFE_ES_WriteToSysLog("FS_GetUncompressedFile: Unable to decompress %s, error=%08lx\n",
+                        GzipFileName, (unsigned long)Status);
+            }
+        }
+    }
+
+    return Status;
+}
 
 /************************/
 /*  End of File Comment */

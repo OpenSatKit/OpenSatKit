@@ -18,6 +18,8 @@
 ** Include Files:
 */
 
+#include <unistd.h>  /* Needed for close() */
+
 #include "netif.h"
 
 

@@ -1,70 +1,31 @@
+/*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
 /******************************************************************************
 ** File: cfe_sb_msg.h
-**
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
-**
 **
 ** Purpose:
 **      This header file contains structure definitions for all SB command and
 **      telemetry packets
 **
 ** Author:   R.McGraw/SSI
-**
-** $Log: cfe_sb_msg.h  $
-** Revision 1.11 2014/07/15 08:50:49GMT-05:00 rmcgraw 
-** DCR22588:1 Add spare byte to ena/dis packet route cmd
-** Revision 1.10 2012/01/13 12:32:51EST acudmore
-** Changed license text to reflect open source
-** Revision 1.9 2011/12/20 10:53:44EST rmcgraw
-** DCR17187:2 Changed    MsgIdToPipeErrCnt to MsgLimErrCnt
-** Revision 1.8 2009/05/08 11:29:41EDT rmcgraw
-** DCR7631:1 Changed comment regarding internal error counter
-** Revision 1.7 2009/04/01 15:22:38EDT rmcgraw
-** DCR6296:4 Changed tlm item pk-mem-in-use to unmarked mem
-** Revision 1.6 2009/02/26 17:47:24EST rmcgraw
-** DCR6805:1 Corrected comment for InUse member of pipe depth stats
-** Revision 1.5 2009/02/11 14:18:49EST rmcgraw
-** DCR6269:1 Removed the 'Buf' in MemInUse names
-** Revision 1.4 2009/02/06 12:55:55EST rmcgraw
-** DCR5802:3 Removed two of four new telemetry items
-** Revision 1.3 2009/02/05 16:19:38EST rmcgraw
-** DCR5802:2 Added SB statistics to hk pkt
-** Revision 1.2 2008/12/08 12:06:58EST dkobe
-** Updates to correct doxygen errors
-** Revision 1.1 2008/04/17 08:05:23EDT ruperera
-** Initial revision
-** Member added to cfe project on tlserver3
-** Revision 1.13 2007/09/25 15:39:07EDT rjmcgraw
-** DCR5127 Added doxygen comments
-** Revision 1.12 2007/09/19 15:31:59EDT rjmcgraw
-** DCR5055 Removed SB event log items in HK tlm pkt and statistics pkt
-** Revision 1.11 2007/09/18 13:50:59EDT rjmcgraw
-** DCR5045:1 Added User Guide information in doxygen comments
-** Revision 1.10 2007/06/07 13:07:48EDT dlkobe
-** Added Command and Telemetry doxygen comments to TIME, EVS and SB
-** Revision 1.9 2007/06/02 10:10:14EDT dlkobe
-** Added doxygen comments for User's Guides
-** Revision 1.8 2007/05/23 12:06:51EDT rjmcgraw
-** Added doxygen comments
-** Revision 1.7 2007/05/16 15:13:41EDT dlkobe
-** Added MemPoolHandle members to HK packet
-** Revision 1.6 2007/04/24 11:07:59EDT rjmcgraw
-** Added PipeId to PipeDepthStats
-** Revision 1.5 2007/04/24 09:39:29EDT rjmcgraw
-** Reformatted SB statistics pkt structure and PipeDepthStats struct
-** Revision 1.4 2007/04/19 15:47:23EDT rjmcgraw
-** Moved subscription reporting structs to cfe_sb_msg.h
-** Revision 1.2 2007/03/27 13:47:41EST rjmcgraw
-** Added DupSubscriptionsCnt to HK Tlm
-** Revision 1.1 2007/03/27 08:59:54EST rjmcgraw
-** Initial revision
-** Member added to project
 **
 ******************************************************************************/
 
@@ -76,7 +37,6 @@
 */
 #include "common_types.h"
 #include "cfe_sb.h"
-#include "osconfig.h"
 #include "cfe_es.h"
 
 
@@ -152,7 +112,7 @@
 **
 **  \sa
 */
-#define CFE_SB_RESET_CTRS_CC            1
+#define CFE_SB_RESET_COUNTERS_CC            1
 
 /** \cfesbcmd Send Software Bus Statistics
 **
@@ -199,7 +159,7 @@
 **       If this command field contains an empty string (NULL terminator as
 **       the first character) the default file path and name is used.
 **       The default file path and name is defined in the platform
-**       configuration file as #CFE_SB_DEFAULT_ROUTING_FILENAME.
+**       configuration file as #CFE_PLATFORM_SB_DEFAULT_ROUTING_FILENAME.
 **
 **  \cfecmdmnemonic \SB_WRITEROUTING2FILE
 **
@@ -326,7 +286,7 @@
 **       If this command field contains an empty string (NULL terminator as
 **       the first character) the default file path and name is used.
 **       The default file path and name is defined in the platform
-**       configuration file as #CFE_SB_DEFAULT_PIPE_FILENAME.
+**       configuration file as #CFE_PLATFORM_SB_DEFAULT_PIPE_FILENAME.
 **
 **  \cfecmdmnemonic \SB_WRITEPIPE2FILE
 **
@@ -371,7 +331,7 @@
 **       in the command. If this command field contains an empty string
 **       (NULL terminator as the first character) the default file path and
 **       name is used. The default file path and name is defined in the
-**       platform configuration file as #CFE_SB_DEFAULT_MAP_FILENAME.
+**       platform configuration file as #CFE_PLATFORM_SB_DEFAULT_MAP_FILENAME.
 **
 **  \cfecmdmnemonic \SB_WRITEMAP2FILE
 **
@@ -432,7 +392,7 @@
 **  \par Criticality
 **       None
 **
-**  \sa #CFE_SB_SubRprtMsg_t, #CFE_SB_DISABLE_SUB_REPORTING_CC,
+**  \sa #CFE_SB_SingleSubscriptionTlm_t, #CFE_SB_DISABLE_SUB_REPORTING_CC,
 **      #CFE_SB_SEND_PREV_SUBS_CC
 */
 #define CFE_SB_ENABLE_SUB_REPORTING_CC  9
@@ -464,7 +424,7 @@
 **  \par Criticality
 **       None
 **
-**  \sa #CFE_SB_SubRprtMsg_t, #CFE_SB_ENABLE_SUB_REPORTING_CC,
+**  \sa #CFE_SB_SingleSubscriptionTlm_t, #CFE_SB_ENABLE_SUB_REPORTING_CC,
 **      #CFE_SB_SEND_PREV_SUBS_CC
 */
 #define CFE_SB_DISABLE_SUB_REPORTING_CC 10
@@ -496,7 +456,7 @@
 **  \par Criticality
 **       None
 **
-**  \sa #CFE_SB_PrevSubMsg_t, #CFE_SB_ENABLE_SUB_REPORTING_CC,
+**  \sa #CFE_SB_AllSubscriptionsTlm_t, #CFE_SB_ENABLE_SUB_REPORTING_CC,
 **      #CFE_SB_DISABLE_SUB_REPORTING_CC
 */
 #define CFE_SB_SEND_PREV_SUBS_CC        11
@@ -505,6 +465,20 @@
 /****************************
 **  SB Command Formats     **
 *****************************/
+
+/*
+ * SB Messages which have no payload are each
+ * given unique typedefs to follow the command handler convention
+ *
+ * For the SB application these is mapped to the CFE_SB_CmdHdr_t type,
+ * as they contain only a primary + command header.
+ */
+typedef CFE_SB_CmdHdr_t  CFE_SB_Noop_t;
+typedef CFE_SB_CmdHdr_t  CFE_SB_ResetCounters_t;
+typedef CFE_SB_CmdHdr_t  CFE_SB_EnableSubReporting_t;
+typedef CFE_SB_CmdHdr_t  CFE_SB_DisableSubReporting_t;
+typedef CFE_SB_CmdHdr_t  CFE_SB_SendSbStats_t;
+typedef CFE_SB_CmdHdr_t  CFE_SB_SendPrevSubs_t;
 
 
 /**
@@ -516,7 +490,7 @@
 **  'Write Map Info to File' #CFE_SB_SEND_MAP_INFO_CC.
 */
 typedef struct{
-   char Filename[OS_MAX_PATH_LEN];/**< \brief Path and Filename of data to be loaded */
+   char Filename[CFE_MISSION_MAX_PATH_LEN];/**< \brief Path and Filename of data to be loaded */
 } CFE_SB_WriteFileInfoCmd_Payload_t;
 
 typedef struct{
@@ -524,6 +498,12 @@ typedef struct{
     CFE_SB_WriteFileInfoCmd_Payload_t   Payload;
 }CFE_SB_WriteFileInfoCmd_t;
 
+/*
+ * Create a unique typedef for each of the commands that share this format.
+ */
+typedef CFE_SB_WriteFileInfoCmd_t CFE_SB_SendRoutingInfo_t;
+typedef CFE_SB_WriteFileInfoCmd_t CFE_SB_SendPipeInfo_t;
+typedef CFE_SB_WriteFileInfoCmd_t CFE_SB_SendMapInfo_t;
 
 /**
 **  \brief Enable/Disable Route Commands
@@ -538,13 +518,18 @@ typedef struct {
    CFE_SB_MsgId_t       MsgId;/**< \brief Message ID of route to be enabled or disabled #CFE_SB_MsgId_t */
    CFE_SB_PipeId_t      Pipe;/**< \brief Pipe ID of route to be enabled or disabled #CFE_SB_PipeId_t */
    uint8                Spare;/**<\brief Spare byte to make command even number of bytes */
-} CFE_SB_EnRoutCmd_Payload_t;
+} CFE_SB_RouteCmd_Payload_t;
 
 typedef struct{
     CFE_SB_CmdHdr_t             Hdr;/**< \brief cFE Software Bus Command Message Header #CFE_SB_CmdHdr_t */
-    CFE_SB_EnRoutCmd_Payload_t  Payload;
-} CFE_SB_EnRoutCmd_t;
+    CFE_SB_RouteCmd_Payload_t  Payload;
+} CFE_SB_RouteCmd_t;
 
+/*
+ * Create a unique typedef for each of the commands that share this format.
+ */
+typedef CFE_SB_RouteCmd_t CFE_SB_EnableRoute_t;
+typedef CFE_SB_RouteCmd_t CFE_SB_DisableRoute_t;
 
 /****************************
 **  SB Telemetry Formats   **
@@ -555,34 +540,33 @@ typedef struct{
 */
 typedef struct {
 
-    uint8           CommandCnt;/**< \cfetlmmnemonic \SB_CMDPC
+    uint8           CommandCounter;/**< \cfetlmmnemonic \SB_CMDPC
                                     \brief Count of valid commands received */
-    uint8           CmdErrCnt;/**< \cfetlmmnemonic \SB_CMDEC
+    uint8           CommandErrorCounter;/**< \cfetlmmnemonic \SB_CMDEC
                                    \brief Count of invalid commands received */
-    uint8           NoSubscribersCnt;/**< \cfetlmmnemonic \SB_NOSUBEC
+    uint8           NoSubscribersCounter;/**< \cfetlmmnemonic \SB_NOSUBEC
                                           \brief Count pkts sent with no subscribers */
-    uint8           MsgSendErrCnt;/**< \cfetlmmnemonic \SB_MSGSNDEC
+    uint8           MsgSendErrorCounter;/**< \cfetlmmnemonic \SB_MSGSNDEC
                                        \brief Count of message send errors */
 
-    uint8           MsgReceiveErrCnt;/**< \cfetlmmnemonic \SB_MSGRECEC
+    uint8           MsgReceiveErrorCounter;/**< \cfetlmmnemonic \SB_MSGRECEC
                                           \brief Count of message receive errors */
-    uint8           InternalErrCnt;/**< \cfetlmmnemonic \SB_INTERNALEC
+    uint8           InternalErrorCounter;/**< \cfetlmmnemonic \SB_INTERNALEC
                                         \brief Count of queue read or write errors */
-    uint8           CreatePipeErrCnt;/**< \cfetlmmnemonic \SB_NEWPIPEEC
+    uint8           CreatePipeErrorCounter;/**< \cfetlmmnemonic \SB_NEWPIPEEC
                                           \brief Count of errors in create pipe API */
-    uint8           SubscribeErrCnt;/**< \cfetlmmnemonic \SB_SUBSCREC
+    uint8           SubscribeErrorCounter;/**< \cfetlmmnemonic \SB_SUBSCREC
                                          \brief Count of errors in subscribe API */
-
-    uint8           Spare;/**< \cfetlmmnemonic \SB_SPARE
-                                     \brief Spare Byte */
-    uint8           DupSubscriptionsCnt;/**< \cfetlmmnemonic \SB_DUPSUBCNT
+    uint8           PipeOptsErrorCounter; /**< \cfetlmmnemonic \SB_PIPEOPTSEC
+                                        \brief Count of errors in set/get pipe options API */
+    uint8           DuplicateSubscriptionsCounter;/**< \cfetlmmnemonic \SB_DUPSUBCNT
                                              \brief Count of duplicate subscriptions */
     uint8           Spare2Align[2];/**< \cfetlmmnemonic \SB_SPARE2ALIGN
                                         \brief Spare bytes to ensure alignment */
 
-    uint16          PipeOverflowErrCnt;/**< \cfetlmmnemonic \SB_PIPEOVREC
+    uint16          PipeOverflowErrorCounter;/**< \cfetlmmnemonic \SB_PIPEOVREC
                                             \brief Count of pipe overflow errors */
-    uint16          MsgLimErrCnt;/**< \cfetlmmnemonic \SB_MSGLIMEC
+    uint16          MsgLimitErrorCounter;/**< \cfetlmmnemonic \SB_MSGLIMEC
                                            \brief Count of msg id to pipe errors */
 
     CFE_ES_MemHandle_t MemPoolHandle;/**< \cfetlmmnemonic \SB_MEMPOOLHANDLE
@@ -592,19 +576,19 @@ typedef struct {
                                             \brief Memory in use */
 
     uint32          UnmarkedMem;/**< \cfetlmmnemonic \SB_UNMARKEDMEM
-                                     \brief cfg param CFE_SB_BUF_MEMORY_BYTES minus Peak Memory in use */
-} CFE_SB_HKMsg_Payload_t;
+                                     \brief cfg param CFE_PLATFORM_SB_BUF_MEMORY_BYTES minus Peak Memory in use */
+} CFE_SB_HousekeepingTlm_Payload_t;
 
 typedef struct{
     CFE_SB_TlmHdr_t         Hdr;/**< \brief cFE Software Bus Telemetry Message Header */
-    CFE_SB_HKMsg_Payload_t  Payload;
-} CFE_SB_HKMsg_t;
+    CFE_SB_HousekeepingTlm_Payload_t  Payload;
+} CFE_SB_HousekeepingTlm_t;
 
 
 /**
 ** \brief SB Pipe Depth Statistics
 **
-** Used in SB Statistics Telemetry Packet #CFE_SB_StatMsg_t
+** Used in SB Statistics Telemetry Packet #CFE_SB_StatsTlm_t
 */
 typedef struct {
 
@@ -633,29 +617,29 @@ typedef struct {
     uint32              PeakMsgIdsInUse;/**< \cfetlmmnemonic \SB_SMPMIDIU
                                              \brief Peak number of MsgIds with a destination */
     uint32              MaxMsgIdsAllowed;/**< \cfetlmmnemonic \SB_SMMMIDALW
-                                              \brief cFE Cfg Param \link #CFE_SB_MAX_MSG_IDS \endlink */
+                                              \brief cFE Cfg Param \link #CFE_PLATFORM_SB_MAX_MSG_IDS \endlink */
 
     uint32              PipesInUse;/**< \cfetlmmnemonic \SB_SMPIU
                                         \brief Number of pipes currently in use */
     uint32              PeakPipesInUse;/**< \cfetlmmnemonic \SB_SMPPIU
                                             \brief Peak number of pipes since last reboot */
     uint32              MaxPipesAllowed;/**< \cfetlmmnemonic \SB_SMMPALW
-                                             \brief cFE Cfg Param \link #CFE_SB_MAX_PIPES \endlink */
+                                             \brief cFE Cfg Param \link #CFE_PLATFORM_SB_MAX_PIPES \endlink */
 
     uint32              MemInUse;/**< \cfetlmmnemonic \SB_SMBMIU
                                          \brief Memory bytes currently in use for SB msg transfers */
     uint32              PeakMemInUse;/**< \cfetlmmnemonic \SB_SMPBMIU
                                              \brief Peak memory bytes in use for SB msg transfers */
     uint32              MaxMemAllowed;/**< \cfetlmmnemonic \SB_SMMBMALW
-                                              \brief cFE Cfg Param \link #CFE_SB_BUF_MEMORY_BYTES \endlink */
+                                              \brief cFE Cfg Param \link #CFE_PLATFORM_SB_BUF_MEMORY_BYTES \endlink */
 
     uint32              SubscriptionsInUse;/**< \cfetlmmnemonic \SB_SMSIU
                                                 \brief Number of current subscriptions */
     uint32              PeakSubscriptionsInUse;/**< \cfetlmmnemonic \SB_SMPSIU
                                                     \brief Peak number of subscriptions */
     uint32              MaxSubscriptionsAllowed;/**< \cfetlmmnemonic \SB_SMMSALW
-                                                     \brief product of \link #CFE_SB_MAX_MSG_IDS \endlink
-                                                     and \link #CFE_SB_MAX_DEST_PER_PKT \endlink */
+                                                     \brief product of \link #CFE_PLATFORM_SB_MAX_MSG_IDS \endlink
+                                                     and \link #CFE_PLATFORM_SB_MAX_DEST_PER_PKT \endlink */
 
     uint32              SBBuffersInUse;/**< \cfetlmmnemonic \SB_SMSBBIU
                                             \brief Number of SB message buffers currently in use */
@@ -664,14 +648,14 @@ typedef struct {
 
     uint32              MaxPipeDepthAllowed;/**< \cfetlmmnemonic \SB_SMMPDALW
                                                  \brief cFE Cfg Param \link #CFE_SB_MAX_PIPE_DEPTH \endlink */
-    CFE_SB_PipeDepthStats_t PipeDepthStats[CFE_SB_MAX_PIPES];/**< \cfetlmmnemonic \SB_SMPDS
+    CFE_SB_PipeDepthStats_t PipeDepthStats[CFE_MISSION_SB_MAX_PIPES];/**< \cfetlmmnemonic \SB_SMPDS
                                                                   \brief Pipe Depth Statistics #CFE_SB_PipeDepthStats_t*/
-} CFE_SB_StatMsg_Payload_t;
+} CFE_SB_StatsTlm_Payload_t;
 
 typedef struct{
     CFE_SB_TlmHdr_t             Hdr;/**< \brief cFE Software Bus Telemetry Message Header */
-    CFE_SB_StatMsg_Payload_t    Payload;
-} CFE_SB_StatMsg_t;
+    CFE_SB_StatsTlm_Payload_t    Payload;
+} CFE_SB_StatsTlm_t;
 
 
 /**
@@ -684,8 +668,8 @@ typedef struct{
     CFE_SB_PipeId_t     PipeId;/**< \brief Pipe Id portion of the route */
     uint8               State;/**< \brief Route Enabled or Disabled */
     uint16              MsgCnt;/**< \brief Number of msgs with this MsgId sent to this PipeId */
-    char                AppName[OS_MAX_API_NAME];/**< \brief Pipe Depth Statistics */
-    char                PipeName[OS_MAX_API_NAME];/**< \brief Pipe Depth Statistics */
+    char                AppName[CFE_MISSION_MAX_API_LEN];/**< \brief Pipe Depth Statistics */
+    char                PipeName[CFE_MISSION_MAX_API_LEN];/**< \brief Pipe Depth Statistics */
  }CFE_SB_RoutingFileEntry_t;
 
 
@@ -695,8 +679,8 @@ typedef struct{
 ** Structure of one element of the map information in response to #CFE_SB_SEND_MAP_INFO_CC
 */
 typedef struct{
-    uint16  MsgId;/**< \brief Message Id which has been subscribed to */
-    uint16  Index;/**< \brief Routing table index where pipe destinations are found */
+    CFE_SB_MsgId_Atom_t        MsgId;/**< \brief Message Id which has been subscribed to */
+    CFE_SB_MsgRouteIdx_Atom_t  Index;/**< \brief Routing table index where pipe destinations are found */
 }CFE_SB_MsgMapFileEntry_t;
 
 
@@ -717,12 +701,12 @@ typedef struct {
    CFE_SB_Qos_t         Qos;/**< \brief Quality of Service, used only for interprocessor communication */
    CFE_SB_PipeId_t      Pipe;/**< \brief Destination pipe id to send above msg id  */
 
-} CFE_SB_SubRprtMsg_Payload_t;
+} CFE_SB_SingleSubscriptionTlm_Payload_t;
 
 typedef struct{
     CFE_SB_TlmHdr_t             Hdr;/**< \brief cFE Software Bus Telemetry Message Header */
-    CFE_SB_SubRprtMsg_Payload_t Payload;
-} CFE_SB_SubRprtMsg_t;
+    CFE_SB_SingleSubscriptionTlm_Payload_t Payload;
+} CFE_SB_SingleSubscriptionTlm_t;
 
 
 /**
@@ -731,7 +715,7 @@ typedef struct{
 ** This structure defines an entry used in the CFE_SB_PrevSubsPkt_t
 ** Intended to be used primarily by Software Bus Networking Application (SBN)
 **
-** Used in structure definition #CFE_SB_PrevSubMsg_t
+** Used in structure definition #CFE_SB_AllSubscriptionsTlm_t
 */
 typedef struct {
 
@@ -757,12 +741,28 @@ typedef struct {
    uint32               TotalSegments;/**< \brief Total number of pkts needed to complete the request */
    uint32               Entries;/**< \brief Number of entries in the pkt */
    CFE_SB_SubEntries_t  Entry[CFE_SB_SUB_ENTRIES_PER_PKT];/**< \brief Array of #CFE_SB_SubEntries_t entries */
-} CFE_SB_PrevSubMsg_Payload_t;
+} CFE_SB_AllSubscriptionsTlm_Payload_t;
 
 typedef struct{
     CFE_SB_TlmHdr_t             Hdr;/**< \brief cFE Software Bus Telemetry Message Header */
-    CFE_SB_PrevSubMsg_Payload_t Payload;
-} CFE_SB_PrevSubMsg_t;
+    CFE_SB_AllSubscriptionsTlm_Payload_t Payload;
+} CFE_SB_AllSubscriptionsTlm_t;
+
+/*
+ * COMPATIBILITY TYPEDEFS:
+ * In some circumstances applications may subscribe to telemetry from this component,
+ * and therefore the name changes may break existing code.  For these situations a
+ * typedef is created to continue supporting the previous name.  These should be
+ * removed in the next CFE release.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+typedef CFE_SB_HousekeepingTlm_t        CFE_SB_HKMsg_t;
+typedef CFE_SB_StatsTlm_t               CFE_SB_StatMsg_t;
+typedef CFE_SB_AllSubscriptionsTlm_t    CFE_SB_PrevSubMsg_t;
+typedef CFE_SB_SingleSubscriptionTlm_t  CFE_SB_SubRprtMsg_t;
+
+#endif /* CFE_OMIT_DEPRECATED_6_6 */
 
 
 #endif /* _cfe_sb_msg_ */

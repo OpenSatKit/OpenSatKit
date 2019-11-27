@@ -22,7 +22,6 @@ require 'cosmos'
 require 'fsw_msg_id'
 require 'fsw_app'
 require 'osk_global'
-require 'osk_system'
 require 'osk_targets'
 
 module Osk
@@ -104,13 +103,13 @@ module Osk
          #~@app["SC"] = @sc
 
 
-         osk = Osk::System.read_target_json("CFS_KIT")
+         osk = Osk::read_target_json("CFS_KIT")
          osk["targets"].each do |target|
          
             app_name = target.keys[0].to_s.upcase
             config   = target.values[0]["load-on-init"]
 
-            app_json  = Osk::System.read_target_json(app_name)
+            app_json  = Osk::read_target_json(app_name)
             @app[app_name] = FswApp.new(app_name, app_name,  Osk::TLM_STR_HK_PKT, Fsw::MsgId::UNUSED_MID, app_json)
 
          end

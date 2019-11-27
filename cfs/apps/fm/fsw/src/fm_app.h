@@ -1,7 +1,7 @@
 /*
-** $Id: fm_app.h 1.15 2015/02/28 17:50:48EST sstrege Exp  $
+** $Id: fm_app.h 1.2.1.2 2017/01/23 21:53:02EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,38 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_app.h  $
-** Revision 1.15 2015/02/28 17:50:48EST sstrege 
-** Added copyright information
-** Revision 1.14 2009/11/09 16:52:29EST lwalling 
-** Cleanup and expand function prototype comments, move struct defs to fm_msg.h
-** Revision 1.13 2009/10/30 14:02:29EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.12 2009/10/30 10:41:40EDT lwalling
-** Modify field names in child task queue structure
-** Revision 1.11 2009/10/29 11:42:26EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.10 2009/10/27 17:32:30EDT lwalling
-** Add a child task command warning counter, Make file buffer cfg defs common for all child cmd handlers
-** Revision 1.9 2009/10/26 16:47:36EDT lwalling
-** Add GetFileInfo args to child queue, changes to global structures, add global packets
-** Revision 1.8 2009/10/26 11:31:03EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.7 2009/10/23 14:42:35EDT lwalling
-** Define child task argument structure, create child task arg queue, create child task status vars
-** Revision 1.6 2009/10/16 15:42:19EDT lwalling
-** Add warning counter, global dir list packet, update structure names
-** Revision 1.5 2009/10/09 17:23:49EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.4 2009/10/07 15:58:44EDT lwalling
-** Removed unused variable DeviceTablePresent from global data structure
-** Revision 1.3 2009/09/28 14:15:31EDT lwalling
-** Create common filename verification functions
-** Revision 1.2 2008/06/20 16:21:22EDT slstrege
-** Member moved from fsw/src/fm_app.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_app.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:22ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_app_h_

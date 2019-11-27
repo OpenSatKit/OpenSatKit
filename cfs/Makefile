@@ -137,7 +137,11 @@ lcov:
 
 doc:
 	$(MAKE) --no-print-directory -C "$(O)" mission-doc
-	@/bin/echo -e "\n\nDocumentation Link: file:$(CURDIR)/$(O)/doc/html/index.html\n"
+	@/bin/echo -e "\n\nDetail Design: \nfile://$(CURDIR)/$(O)/doc/detaildesign/html/index.html\n"
+
+usersguide:
+	$(MAKE) --no-print-directory -C "$(O)" cfe-usersguide
+	@/bin/echo -e "\n\ncFE Users Guide: \nfile://$(CURDIR)/$(O)/doc/users_guide/html/index.html\n"
 
 # Make all the commands that use the build tree depend on a flag file
 # that is used to indicate the prep step has been done.  This way

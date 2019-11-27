@@ -56,6 +56,8 @@
 #ifndef _cf_platform_cfg_h_
 #define _cf_platform_cfg_h_
 
+#include "cfe_platform_cfg.h" //dcm
+
 /*************************************************************************
 ** Macro definitions
 **************************************************************************/

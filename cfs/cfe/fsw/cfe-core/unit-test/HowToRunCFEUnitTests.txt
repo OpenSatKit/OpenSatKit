@@ -1,6 +1,7 @@
 
 Running the cFE Unit tests
 
+------ Classic Build Instructions ---------------
 The cFE Core unit tests are run from the mission/build/"cpuX" directory, where 
 cpuX is either cpu1 or the name of the mission specific cpu set by the user. The 
 unit test source code resides in the mission/cfe/fsw/cfe-core/unit-test directory. 
@@ -66,3 +67,38 @@ cfe_xx_task.c.gov file since the forever loop will not have coverage.
 All files specifying results should be checked into the corresponding subproject
 under the unit-test subproject. (i.e., SbResults subproject in 
 mission/cfe/fsw/cfe-core/unit-test/)
+
+
+
+------ CMake Build Instructions -----------------------
+
+While the The cFE Core unit tests are run from the mission/build/"cpuX" directory
+for the classic build, the unit tests for the CMake build are run from
+mission/build/cpuX/cfe_core_default_cpuX/unit-tests, 
+where cpuX is either cpu1 or the name of the mission specific cpu set by the user. The 
+unit test source code resides in the mission/cfe/fsw/cfe-core/unit-test directory. 
+
+
+1. Setup the Mission Build environment via the CMake build instructions with
+   the additions:
+
+    a. Set 'ENABLE_UNIT_TESTS' to 'TRUE'
+    b. Optionally  set OSAL_USER_C_FLAGS to capture code coverage results during make prep stage. 
+
+   e.g. "make ENABLE_UNIT_TESTS=TRUE OSAL_USER_C_FLAGS='-fprofile-arcs -ftest-coverage' prep"
+
+2. Go to build/cpuX/cfe_core_default_cpuX/unit-tests
+3. Run 'make' to build the cFE unit tests
+4. Run 'make test' to run the unit tests
+5. Results are in Testing/Temporary/LastTest.log
+6. Results of failed tests are in Testing/Temporary/LastTest.log
+
+
+If OSAL_USER_C_FLAGS was set up to capture the code coverage, the results may be obtained
+via the following steps:
+
+1. From the top level run 'make lcov'
+2. Results will be under 
+   mission/build/cpu1/lcov/index.html
+   and viewable locally via a web browser
+

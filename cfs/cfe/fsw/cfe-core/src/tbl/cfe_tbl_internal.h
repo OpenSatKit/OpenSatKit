@@ -1,59 +1,31 @@
 /*
-** $Id: cfe_tbl_internal.h 1.8 2012/01/13 12:17:40GMT-05:00 acudmore Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement.
-**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe_tbl_internal.h
 **
 ** Purpose:  cFE Table Services (TBL) utility function interface file
 **
 ** Author:   D. Kobe/the Hammers Company, Inc.
 **
 ** Notes:    
-**
-** $Log: cfe_tbl_internal.h  $
-** Revision 1.8 2012/01/13 12:17:40GMT-05:00 acudmore 
-** Changed license text to reflect open source
-** Revision 1.7 2011/12/28 14:02:59EST lwalling 
-** Add validation tests for spacecraft ID and processor ID to CFE_TBL_ReadHeaders()
-** Revision 1.6 2010/10/27 13:56:54EDT dkobe 
-** Added internal function prototype for sending notification messages
-** Revision 1.5 2010/10/25 15:00:34EDT jmdagost 
-** Corrected bad apostrophe in prologue.
-** Revision 1.4 2010/10/04 15:18:53EDT jmdagost 
-** Cleaned up copyright symbol.
-** Revision 1.3 2008/12/08 16:10:53EST dkobe 
-** Correcting errors generated during detailed design document generation
-** Revision 1.2 2008/07/29 15:55:18EDT dkobe 
-** Moved CFE_TBL_DumpToBuffer from cfe_tbl_internal.c to cfe_tbl_api.c
-** Revision 1.1 2008/04/17 08:05:35EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/tbl/project.pj
-** Revision 1.20 2007/07/13 11:27:15EDT David Kobe (dlkobe) 
-** Moved prototype for CFE_TBL_UpdateCriticalTblCDS to cfe_tbl_internal.h
-** Revision 1.19 2007/07/03 10:19:19EDT dlkobe 
-** Removed unused CFE_TBL_AddAccessLink function
-** Revision 1.18 2007/04/28 14:48:58EDT dlkobe 
-** Baseline Implementation of Critical Tables
-** Revision 1.16 2007/03/16 13:57:16EST dlkobe 
-** Updated return code documentation for CFE_TBL_LoadFromFile function.
-** Revision 1.15 2007/03/16 09:10:10EST dlkobe 
-** Added CFE_TBL_CleanUpApp API
-** Revision 1.14 2006/09/01 12:07:39GMT-05:00 dlkobe 
-** Added processor endianess check to ensure the cFE TBL header is always big-endian.
-** Revision 1.13 2006/07/25 14:37:53GMT-05:00 njyanchik 
-** It turns out the both the FS app and the OSAL were incorrect where file descriptors are
-** concerned. the file descriptors should be int32 across the board.
-** Revision 1.12 2006/06/08 14:25:58EDT dlkobe 
-** Added legal statement to TBL service source and header files
-** Revision 1.11 2006/05/24 14:53:47GMT-05:00 dlkobe 
-** Created new function for initializing a record in Table Registry
-**
 **
 */
 
@@ -82,7 +54,7 @@
 ** \par Description
 **        Validates Application ID of calling App.  Validation
 **        consists of ensuring the AppID is between zero and
-**        #CFE_ES_MAX_APPLICATIONS.
+**        #CFE_PLATFORM_ES_MAX_APPLICATIONS.
 **
 ** \par Assumptions, External Events, and Notes:
 **          None
@@ -373,8 +345,8 @@ int32   CFE_TBL_UnlockRegistry(void);
 **                               a working buffer is to be obtained
 **
 ** \param[in]  CalledByApp       Boolean that identifies whether this internal API
-**                               function is being called by a user Application (TRUE)
-**                               or by the Table Services Application (FALSE)
+**                               function is being called by a user Application (true)
+**                               or by the Table Services Application (false)
 ** 
 ** \param[out] *WorkingBufferPtr Address of first byte of working buffer
 **
@@ -384,7 +356,7 @@ int32   CFE_TBL_UnlockRegistry(void);
 ******************************************************************************/
 int32   CFE_TBL_GetWorkingBuffer(CFE_TBL_LoadBuff_t **WorkingBufferPtr,
                                  CFE_TBL_RegistryRec_t *RegRecPtr,
-                                 boolean CalledByApp);
+                                 bool CalledByApp);
                                  
 
 /*****************************************************************************/

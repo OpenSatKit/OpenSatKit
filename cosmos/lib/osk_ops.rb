@@ -206,8 +206,8 @@ module Ops
    def self.send_flt_bin_file_cmd(app_name, cmd_str, tbl_mgr_def_filename, flt_path_filename: Osk::TMP_FLT_BIN_PATH_FILE, gnd_rel_path: Osk::REL_SRV_DIR)
       cmd_str = "#{cmd_str} FILENAME #{flt_path_filename}"
       if (Osk::flight.app[app_name].send_cmd(cmd_str))
-         get_file = combo_box("Transfer file from flight to ground and display it?", 'Yes','No')
-         if (get_file == "Yes")
+         get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+         if (get_file == Osk::MSG_BUTTON_YES)
             filename = File.basename(flt_path_filename)
             get_flt_bin_file(flt_path_filename, gnd_rel_path, filename, tbl_mgr_def_filename)
          end
@@ -251,8 +251,8 @@ module Ops
    def self.send_flt_txt_file_cmd(app_name, cmd_str, flt_path_filename: Osk::TMP_FLT_TXT_PATH_FILE, gnd_rel_path: Osk::REL_SRV_TBL_DIR)
       cmd_str = "#{cmd_str} FILENAME #{flt_path_filename}"
       if (Osk::flight.app[app_name].send_cmd(cmd_str))
-         get_file = combo_box("Transfer file from flight to ground and display it?", 'Yes','No')
-         if (get_file == "Yes")
+         get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+         if (get_file == Osk::MSG_BUTTON_YES)
             filename = File.basename(flt_path_filename)
             get_flt_txt_file(flt_path_filename, gnd_rel_path, filename)
          end
@@ -608,8 +608,8 @@ module Ops
 
       app, tbl_filename = get_app(app_name, tbl_id)
 
-      put_file = combo_box("Transfer file from ground to flight?", 'Yes','No')
-      if (put_file == "Yes")
+      put_file = combo_box("Transfer file from ground to flight?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+      if (put_file == Osk::MSG_BUTTON_YES)
          load_tbl, flt_path_filename = put_flt_file_prompt(GND_SRV_TBL_DIR)
       else
          load_tbl = true
@@ -653,8 +653,8 @@ module Ops
             prompt("Dump file not found. Displaying load file #{tbl_path_filename}")
             Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{tbl_path_filename}'")
          else
-            answer = message_box("#{dmp_tbl_path_filename} and #{tbl_path_filename} do not exist. Launch empty file viewer?","Yes","No",false)
-            if (answer == "Yes")
+            answer = message_box("#{dmp_tbl_path_filename} and #{tbl_path_filename} do not exist. Launch empty file viewer?",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false)
+            if (answer == Osk::MSG_BUTTON_YES)
                Cosmos.run_process("ruby lib/OskTxtFileViewer")
             end
          end

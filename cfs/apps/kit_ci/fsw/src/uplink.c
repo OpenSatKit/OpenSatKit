@@ -20,7 +20,7 @@
 
 #include <errno.h>
 #include <string.h>
-#include <unistd.h>
+#include <unistd.h>  /* Needed for close() */
 
 
 #include "uplink.h"
@@ -168,7 +168,7 @@ void UPLINK_Constructor(UPLINK_Class*  UplinkPtr, uint16 Port)
 int UPLINK_Read(uint16 MaxMsgRead)
 {
 
-	int AddrLen = sizeof(Uplink->SocketAddress);
+	 unsigned int AddrLen = sizeof(Uplink->SocketAddress);
     int i = 0;
     int Status;
 
@@ -201,8 +201,9 @@ int UPLINK_Read(uint16 MaxMsgRead)
             {
                 Uplink->RecvMsgErrCnt++;
                 CFE_EVS_SendEvent(UPLINK_RECV_LEN_ERR_EID,CFE_EVS_ERROR,
-                		          "Command dropped (too long). Header: 0x%0x 0x%0x",
-                		          *(long *)Uplink->RecvBuff, *(long *)(Uplink->RecvBuff+4) );
+                		          "Command dropped (too long). Header: 0x%02x%2x 0x%02x%2x 0x%02x%2x 0x%02x%2x",
+                		          Uplink->RecvBuff[0], Uplink->RecvBuff[1], Uplink->RecvBuff[2], Uplink->RecvBuff[3],
+                               Uplink->RecvBuff[4], Uplink->RecvBuff[5], Uplink->RecvBuff[6], Uplink->RecvBuff[7]);
             }
         }
 

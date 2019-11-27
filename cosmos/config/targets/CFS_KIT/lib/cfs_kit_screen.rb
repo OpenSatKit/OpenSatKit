@@ -52,19 +52,13 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       Osk::System.start_cfs  # Enables telemetry
       
    when "START_CFS_42"
-   
-      prompt("The 42 simulator takes about 20 seconds to initialize.")
-      
+         
       # Kill all instances of the cFS before starting a new instance. 
 
       Osk::System.stop_cfs
       Osk::System.start_cfs  # Enables telemetry
 
-      spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
-      wait(15)
-      Osk::flight.send_cmd("I42","CONNECT_42")
-     
-      display("CFS_KIT SIM_42_SCREEN",1500,50)
+      Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
               
    when "STOP_CFS"
       # Hopefully ES cleans up resources and does a controlled shutdown
@@ -72,8 +66,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       #Osk::System.stop_cfs()
    
    when "STOP_42"
-      Osk::flight.send_cmd("I42","DISCONNECT_42")
-   
+      Osk::System.stop_42
+            
    when "CONFIG_SYS"
       user_selection = screen.get_named_widget("config_sys").text
       if user_selection == "About"
@@ -91,10 +85,10 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
             Osk::flight.cfe_time.send_cmd("SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0")
             Osk::flight.cfe_time.send_cmd("SET_CLOCK with SECONDS 0, MICROSECONDS 0") 
          when "Config_Cmd_Verify"
-            enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes','No')  
-            if (enable == "Yes")
+            enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+            if (enable == Osk::MSG_BUTTON_YES)
                FswApp.validate_cmd(true)
-            elsif (enable == "No")
+            elsif (enable == Osk::MSG_BUTTON_NO)
                FswApp.validate_cmd(false)
             end
          end
@@ -111,7 +105,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          cfs_kit_create_about_screen("Learn OSK",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       when "OSK_Version"
-         about_str = ["<b>OpenSatKit</b> provides a complete Core Flight System (cFS) training and application",
+         about_str = ["<b>OpenSatKit</b> provides a complete <b>Core Flight System</b> (<i>https://github.com/nasa/cfs</i>) training and application",
                       "development environment that includes the <b>COSMOS</b> (<i>https://cosmosrb.com</i>) mission",
                       "control software and the <b>42 Dynamic Simulator</b> (<i>https://software.nasa.gov/software/GSC-16720-1</i>)",
                       " ",
@@ -173,8 +167,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       else 
          cfs_started = false
          if (not Osk::System.cfs_running?)
-            continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter '#{Osk::PASSWORD}' for the password.",'Yes','No',false)            #puts "continue = #{continue}"
-            return unless continue == 'Yes' 
+            continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter '#{Osk::PASSWORD}' for the password.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false)            #puts "continue = #{continue}"
+            return unless continue == Osk::MSG_BUTTON_YES
             Osk::System.start_cfs  # Enables telemetry
             cfs_started = true 
          end

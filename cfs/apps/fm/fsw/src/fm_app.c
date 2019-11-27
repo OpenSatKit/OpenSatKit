@@ -1,7 +1,7 @@
 /*
-** $Id: fm_app.c 1.33 2015/02/28 17:50:50EST sstrege Exp  $
+** $Id: fm_app.c 1.5.1.2 2017/01/23 21:53:08EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -24,75 +24,6 @@
 **
 ** Notes:
 **
-** $Log: fm_app.c  $
-** Revision 1.33 2015/02/28 17:50:50EST sstrege 
-** Added copyright information
-** Revision 1.32 2014/12/18 14:32:54EST lwalling 
-** Added mutex semaphore protection when accessing FM_GlobalData.ChildQueueCount
-** Revision 1.31 2014/12/04 17:52:09EST lwalling 
-** Removed unused CommandWarnCounter
-** Revision 1.30 2014/10/22 17:50:57EDT lwalling 
-** Allow zero as a valid semaphore ID, use FM_CHILD_SEM_INVALID instead
-** Revision 1.29 2011/08/29 15:11:58EDT lwalling 
-** Remove unused argument to function FM_DeleteFileCmd()
-** Revision 1.28 2011/06/09 15:48:24EDT lwalling 
-** Fixed typo that used message ID instead of command code
-** Revision 1.27 2011/05/31 17:14:04EDT lwalling 
-** Added entry for delete file internal, optimized call to get messageID
-** Revision 1.26 2011/04/15 15:18:10EDT lwalling 
-** Added current and previous child task command code to global data and housekeeping packet
-** Revision 1.25 2011/01/12 14:39:44EST lwalling 
-** Move mission revision number to platform config header file
-** Revision 1.24 2010/01/12 15:07:12EST lwalling 
-** Remove references to fm_mission_cfg.h
-** Revision 1.23 2009/11/17 13:40:48EST lwalling 
-** Remove global open files list data structure
-** Revision 1.22 2009/11/13 16:26:34EST lwalling 
-** Modify macro names, add SetTableEntryState cmd
-** Revision 1.21 2009/11/09 16:57:53EST lwalling 
-** Move value definitions to fm_defs.h, move prototypes to fm_app.h, cleanup source indents
-** Revision 1.20 2009/10/30 16:01:09EDT lwalling 
-** Include fm_msgdefs.h, add HK request command packet definition
-** Revision 1.19 2009/10/30 14:02:31EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.18 2009/10/30 10:46:46EDT lwalling
-** Remove detail from function prologs, leave detail in function prototypes
-** Revision 1.17 2009/10/29 11:42:23EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.16 2009/10/27 17:38:35EDT lwalling
-** Fix typo during creation of new child task warning counter
-** Revision 1.15 2009/10/27 17:26:42EDT lwalling
-** Add child task warning counter to housekeeping telemetry structure
-** Revision 1.14 2009/10/26 16:40:41EDT lwalling
-** Rename funcs, make global data local, change struct/var names, add child vars to HK
-** Revision 1.13 2009/10/26 11:30:58EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.12 2009/10/23 14:49:06EDT lwalling
-** Update event text and descriptions of event text
-** Revision 1.11 2009/10/16 15:47:59EDT lwalling
-** Update event text, command code names, function names, add warning counter
-** Revision 1.10 2009/10/09 17:23:51EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.9 2009/10/08 16:20:22EDT lwalling
-** Remove disk free space from HK telemetry
-** Revision 1.8 2009/10/07 15:54:16EDT lwalling
-** Fix startup w/o table load, change some data types from int8 to int32
-** Revision 1.7 2009/09/28 15:29:54EDT lwalling
-** Review and modify event text
-** Revision 1.6 2009/09/28 14:15:27EDT lwalling
-** Create common filename verification functions
-** Revision 1.5 2009/06/12 14:16:27EDT rmcgraw
-** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-** Revision 1.4 2008/10/03 15:53:22EDT sstrege
-** Added include to new fm_version.h header files
-** Added version information to application initialization event message
-** Revision 1.3 2008/09/30 16:38:01EDT sstrege
-** Removed platform_cfg.h include and replaced with include to perfids.h
-** Revision 1.2 2008/06/20 16:21:20EDT slstrege
-** Member moved from fsw/src/fm_app.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_app.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:20ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #include "cfe.h"
@@ -166,10 +97,10 @@ void FM_AppMain(void)
     {
         /* Performance Log (stop time counter) */
         CFE_ES_PerfLogExit(FM_APPMAIN_PERF_ID);
-        
+
         /* Wait for the next Software Bus message */
         Result = CFE_SB_RcvMsg(&MsgPtr, FM_GlobalData.CmdPipe, CFE_SB_PEND_FOREVER);
-        
+
         /* Performance Log (start time counter) */
         CFE_ES_PerfLogEntry(FM_APPMAIN_PERF_ID);
 
@@ -182,7 +113,7 @@ void FM_AppMain(void)
         {
             /* Process Software Bus error */
             CFE_EVS_SendEvent(FM_SB_RECEIVE_ERR_EID, CFE_EVS_ERROR,
-               "Main loop error: SB receive: result = 0x%08X", Result);
+               "Main loop error: SB receive: result = 0x%08X", (unsigned int)Result);
 
             /* Set request to terminate main loop */
             RunStatus = CFE_ES_APP_ERROR;
@@ -193,12 +124,12 @@ void FM_AppMain(void)
     ** Send an event describing the reason for the termination...
     */
     CFE_EVS_SendEvent(FM_EXIT_ERR_EID, CFE_EVS_ERROR,
-       "Application terminating: result = 0x%08X", Result);
+       "Application terminating: result = 0x%08X", (unsigned int)Result);
 
     /*
     ** In case cFE Event Services is not working...
     */
-    CFE_ES_WriteToSysLog("FM application terminating: result = 0x%08X\n", Result);
+    CFE_ES_WriteToSysLog("FM application terminating: result = 0x%08X\n", (unsigned int)Result);
 
     /*
     ** Performance Log (stop time counter)...
@@ -237,7 +168,7 @@ int32 FM_AppInit(void)
     if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(FM_STARTUP_EVENTS_ERR_EID, CFE_EVS_ERROR,
-           "%s register for event services: result = 0x%08X", ErrText, Result);
+           "%s register for event services: result = 0x%08X", ErrText, (unsigned int)Result);
     }
     else
     {
@@ -247,7 +178,7 @@ int32 FM_AppInit(void)
         if (Result != CFE_SUCCESS)
         {
             CFE_EVS_SendEvent(FM_STARTUP_CREAT_PIPE_ERR_EID, CFE_EVS_ERROR,
-               "%s create SB input pipe: result = 0x%08X", ErrText, Result);
+               "%s create SB input pipe: result = 0x%08X", ErrText, (unsigned int)Result);
         }
         else
         {
@@ -257,7 +188,7 @@ int32 FM_AppInit(void)
             if (Result != CFE_SUCCESS)
             {
                 CFE_EVS_SendEvent(FM_STARTUP_SUBSCRIB_HK_ERR_EID, CFE_EVS_ERROR,
-                   "%s subscribe to HK request: result = 0x%08X", ErrText, Result);
+                   "%s subscribe to HK request: result = 0x%08X", ErrText, (unsigned int)Result);
             }
         }
     }
@@ -271,7 +202,7 @@ int32 FM_AppInit(void)
         if (Result != CFE_SUCCESS)
         {
             CFE_EVS_SendEvent(FM_STARTUP_SUBSCRIB_GCMD_ERR_EID, CFE_EVS_ERROR,
-               "%s subscribe to FM commands: result = 0x%08X", ErrText, Result);
+               "%s subscribe to FM commands: result = 0x%08X", ErrText, (unsigned int)Result);
         }
         else
         {
@@ -281,7 +212,7 @@ int32 FM_AppInit(void)
             if (Result != CFE_SUCCESS)
             {
                 CFE_EVS_SendEvent(FM_STARTUP_TABLE_INIT_ERR_EID, CFE_EVS_ERROR,
-                   "%s register free space table: result = 0x%08X", ErrText, Result);
+                   "%s register free space table: result = 0x%08X", ErrText, (unsigned int)Result);
             }
             else
             {
@@ -421,6 +352,10 @@ void FM_ProcessCmd(CFE_SB_MsgPtr_t MessagePtr)
 
         case FM_DELETE_INT_CC:
             Result = FM_DeleteFileCmd(MessagePtr);
+            break;
+            
+        case FM_SET_FILE_PERM_CC:
+            Result = FM_SetPermissionsCmd(MessagePtr);
             break;
 
         default:

@@ -18,7 +18,7 @@ TARGET = es.o
 
 OBJS=cfe_es_start.o cfe_es_api.o cfe_es_objtab.o cfe_es_apps.o cfe_esmempool.o \
 cfe_es_perf.o cfe_es_shell.o cfe_es_cds_mempool.o cfe_es_cds.o cfe_es_erlog.o \
-cfe_es_task.o
+cfe_es_task.o cfe_es_syslog.o
 
 #==============================================================================
 # Source files required to build subsystem; used to generate dependencies.

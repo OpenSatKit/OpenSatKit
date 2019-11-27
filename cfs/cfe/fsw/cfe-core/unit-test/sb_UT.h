@@ -1,12 +1,24 @@
 /*
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 ** File:
 **    sb_UT.h
 **
@@ -21,9 +33,6 @@
 ** Notes:
 **    1. This is unit test code only, not for use in flight
 **
-** $Date: 2014/05/28 09:23:30GMT-05:00 $
-** $Revision: 1.1 $
-**
 */
 #ifndef _sb_UT_h_
 #define _sb_UT_h_
@@ -37,7 +46,7 @@
 #include "cfe_sb_priv.h"
 #include "osapi.h"
 #include "common_types.h"
-#include "ut_stubs.h"
+#include "ut_support.h"
 
 /*
 ** Macro definitions
@@ -49,7 +58,7 @@
 ** Structures
 */
 typedef struct {
-     CFE_SB_CmdHdr_t Hdr; /* 8 bytes */
+     CFE_SB_CmdHdr_t Hdr; 
      uint32          Cmd32Param1;
      uint16          Cmd16Param1;
      uint16          Cmd16Param2;
@@ -60,7 +69,7 @@ typedef struct {
 } SB_UT_Test_Cmd_t;
 
 typedef struct {
-     CFE_SB_TlmHdr_t Hdr; /* 12 bytes */
+     CFE_SB_TlmHdr_t Hdr; 
      uint32          Tlm32Param1;
      uint16          Tlm16Param1;
      uint16          Tlm16Param2;
@@ -79,10 +88,8 @@ typedef struct {
      uint16       Tlm16Param2;
 } SB_UT_TstPktWoSecHdr_t;
 
-/*
-** External global variables
-*/
-extern char cMsg[];
+#define SB_UT_CMD_MID CFE_MISSION_CMD_MID_BASE1 + 1
+#define SB_UT_TLM_MID CFE_MISSION_TLM_MID_BASE1 + 1
 
 /* SB unit test functions */
 /*****************************************************************************/
@@ -376,6 +383,7 @@ void Test_SB_Main_InitErr(void);
 ** \sa #UT_Text, #Test_SB_Cmds_Noop(), #Test_SB_Cmds_RstCtrs(),
 ** \sa #Test_SB_Cmds_Stats(), #Test_SB_Cmds_RoutingInfoDef(),
 ** \sa #Test_SB_Cmds_RoutingInfoSpec(), #Test_SB_Cmds_RoutingInfoCreateFail(),
+** \sa #Test_SB_Cmds_PipeOpts(),
 ** \sa #Test_SB_Cmds_RoutingInfoHdrFail(),
 ** \sa #Test_SB_Cmds_RoutingInfoWriteFail(), #Test_SB_Cmds_PipeInfoDef(),
 ** \sa #Test_SB_Cmds_PipeInfoSpec(), #Test_SB_Cmds_PipeInfoCreateFail(),
@@ -517,6 +525,153 @@ void Test_SB_Cmds_RoutingInfoSpec(void);
 **
 ******************************************************************************/
 void Test_SB_Cmds_RoutingInfoCreateFail(void);
+
+/*****************************************************************************/
+/**
+** \brief Function for calling SB pipe opts API test functions
+**
+** \par Description
+**        Function for calling SB pipe opts API test functions.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #Test_SetPipeOpts_BadID, #Test_SetPipeOpts_NotOwner,
+** \sa #Test_SetPipeOpts,
+** \sa #Test_GetPipeOpts_BadID, #Test_GetPipeOpts_BadPtr,
+** \sa #Test_GetPipeOpts
+**
+******************************************************************************/
+void Test_PipeOpts_API(void);
+
+/*****************************************************************************/
+/**
+** \brief Test setting pipe options with invalid pipe ID.
+**
+** \par Description
+**        This function tests the set pipe options command with an invalid
+**        pipe id.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_InitMsg, #CFE_SB_SetCmdCode,
+** \sa #UT_SetOSFail, #CFE_SB_ProcessCmdPipePkt, #UT_GetNumEventsSent,
+** \sa #UT_EventIsInHistory, #UT_Report
+**
+******************************************************************************/
+void Test_SetPipeOpts_BadID(void);
+
+/*****************************************************************************/
+/**
+** \brief Test setting pipe opts with the app not being the owner of the pipe.
+**
+** \par Description
+**        This function tests the set pipe options command with the
+**        app ID not being the owner of the pipe.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_InitMsg, #CFE_SB_SetCmdCode,
+** \sa #UT_SetOSFail, #CFE_SB_ProcessCmdPipePkt, #UT_GetNumEventsSent,
+** \sa #UT_EventIsInHistory, #UT_Report
+**
+******************************************************************************/
+void Test_SetPipeOpts_NotOwner(void);
+
+/*****************************************************************************/
+/**
+** \brief Test setting pipe options with a valid pipe ID.
+**
+** \par Description
+**        This function tests the set pipe options command with a valid
+**        pipe id.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_InitMsg, #CFE_SB_SetCmdCode,
+** \sa #UT_SetOSFail, #CFE_SB_ProcessCmdPipePkt, #UT_GetNumEventsSent,
+** \sa #UT_EventIsInHistory, #UT_Report
+**
+******************************************************************************/
+void Test_SetPipeOpts(void);
+
+/*****************************************************************************/
+/**
+** \brief Test getting pipe options with invalid pipe ID.
+**
+** \par Description
+**        This function tests the get pipe options command with an invalid
+**        pipe id.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_InitMsg, #CFE_SB_SetCmdCode,
+** \sa #UT_SetOSFail, #CFE_SB_ProcessCmdPipePkt, #UT_GetNumEventsSent,
+** \sa #UT_EventIsInHistory, #UT_Report
+**
+******************************************************************************/
+void Test_GetPipeOpts_BadID(void);
+
+/*****************************************************************************/
+/**
+** \brief Test getting pipe opts with an invalid options pointer.
+**
+** \par Description
+**        This function tests the get pipe options command with the
+**        options pointer being NULL.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_InitMsg, #CFE_SB_SetCmdCode,
+** \sa #UT_SetOSFail, #CFE_SB_ProcessCmdPipePkt, #UT_GetNumEventsSent,
+** \sa #UT_EventIsInHistory, #UT_Report
+**
+******************************************************************************/
+void Test_GetPipeOpts_BadPtr(void);
+
+/*****************************************************************************/
+/**
+** \brief Test getting pipe options with a valid pipe ID and opts ptr.
+**
+** \par Description
+**        This function tests the get pipe options command with a valid
+**        pipe id and options pointer.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_SetCmdCode,
+** \sa #UT_SetOSFail, #UT_GetNumEventsSent,
+** \sa #UT_EventIsInHistory, #UT_Report
+**
+******************************************************************************/
+void Test_GetPipeOpts(void);
 
 /*****************************************************************************/
 /**
@@ -866,7 +1021,7 @@ void Test_SB_Cmds_EnRouteInvParam2(void);
 ** \par Description
 **        This function tests the command to enable a specific route using a
 **        message ID greater than the maximum allowed
-**        (CFE_SB_HIGHEST_VALID_MSGID).
+**        (CFE_PLATFORM_SB_HIGHEST_VALID_MSGID).
 **
 ** \par Assumptions, External Events, and Notes:
 **        None
@@ -975,7 +1130,7 @@ void Test_SB_Cmds_DisRouteInvParam2(void);
 ** \par Description
 **        This function tests the command to disable a specific route using a
 **        message ID greater than the maximum allowed
-**        (CFE_SB_HIGHEST_VALID_MSGID).
+**        (CFE_PLATFORM_SB_HIGHEST_VALID_MSGID).
 **
 ** \par Assumptions, External Events, and Notes:
 **        None
@@ -1090,6 +1245,27 @@ void Test_SB_Cmds_SubRptOff(void);
 **
 ******************************************************************************/
 void Test_SB_Cmds_UnexpCmdCode(void);
+
+/*****************************************************************************/
+/**
+** \brief Test command handler response to a bad message length
+**
+** \par Description
+**        This function tests the command handler response to an invalid
+**        command length.
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest, #CFE_SB_InitMsg, #CFE_SB_SetCmdCode,
+** \sa #CFE_SB_ProcessCmdPipePkt, #UT_GetNumEventsSent, #UT_EventIsInHistory,
+** \sa #UT_Report
+**
+******************************************************************************/
+void Test_SB_Cmds_BadCmdLength(void);
 
 /*****************************************************************************/
 /**
@@ -2995,6 +3171,26 @@ void Test_CFE_SB_ChecksumUtils(void);
 
 /*****************************************************************************/
 /**
+** \brief Test validating a valid and invalid msg id
+**
+** \par Description
+**        Test validating a valid and invalid msg id
+**
+** \par Assumptions, External Events, and Notes:
+**        None
+**
+** \returns
+**        This function does not return a value.
+**
+** \sa #UT_Text, #SB_ResetUnitTest,
+** \sa #CFE_SB_ValidateMsgId, #UT_DisplayPkt,
+** \sa #UT_Report
+**
+******************************************************************************/
+void Test_CFE_SB_ValidateMsgId(void);
+
+/*****************************************************************************/
+/**
 ** \brief Function for calling SB special test cases functions
 **
 ** \par Description
@@ -3215,4 +3411,12 @@ void Test_RcvMsg_UnsubResubPath(void);
 **
 ******************************************************************************/
 void Test_MessageString(void);
+
+
+void Test_SB_Macros(void);
+
+void Test_SB_CCSDSPriHdr_Macros(void);
+void Test_SB_CCSDSSecHdr_Macros(void);
+void Test_SB_IdxPushPop(void);
+
 #endif /* _sb_ut_h_ */

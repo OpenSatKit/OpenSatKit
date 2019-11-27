@@ -1,14 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**  $Id: cfe_tbl_events.h 1.9 2014/08/19 13:38:15GMT-05:00 sstrege Exp  $
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+**  File: cfe_tbl_events.h
 **
 **  Title:   Table Services API Event ID Header File
 **
@@ -22,50 +33,20 @@
 **
 **  Notes:
 **
-**  $Log: cfe_tbl_events.h  $
-**  Revision 1.9 2014/08/19 13:38:15GMT-05:00 sstrege 
-**  Fixed doxygen warning
-**  Revision 1.8 2011/12/28 14:00:18EST lwalling 
-**  Add definition for CFE_TBL_SPACECRAFT_ID_ERR_EID and CFE_TBL_PROCESSOR_ID_ERR_EID
-**  Revision 1.7 2011/11/14 17:58:05EST lwalling 
-**  Event EID mentioned in previous log entry should have been CFE_TBL_LOAD_EXCEEDS_SIZE_ERR_EID
-**  Revision 1.6 2011/11/14 17:42:30EST lwalling 
-**  Modified event text and argument list for CFE_TBL_FILE_INCOMPLETE_ERR_EID
-**  Revision 1.5 2010/10/27 13:53:54EDT dkobe 
-**  Added error event for Notification Message send failure
-**  Revision 1.4 2010/10/25 15:01:12EDT jmdagost 
-**  Corrected bad apostrophe in prologue.
-**  Revision 1.3 2010/10/04 15:24:56EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.2 2009/05/01 12:41:44EDT dkobe 
-**  Corrected a few doxygen comments
-**  Revision 1.1 2008/04/17 08:05:24EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-**  Revision 1.28 2007/07/11 11:51:44EDT David Kobe (dlkobe) 
-**  Corrected erroneously assigned Event ID for CFE_TBL_ASSUMED_VALID_INF_EID
-**  Revision 1.27 2007/07/07 09:22:29EDT dlkobe 
-**  Added event (CFE_TBL_LOAD_PENDING_ERR_EID) for attempt to load pending load table
-**  Revision 1.26 2007/07/07 07:53:35EDT dlkobe 
-**  Added CFE_TBL_ASSUMED_VALID_INF_EID event message
-**  Revision 1.25 2007/06/02 10:10:12EDT dlkobe 
-**  Added doxygen comments for User's Guides
-**  Revision 1.24 2007/05/25 16:24:50EDT dlkobe 
-**  Continued updating doxygen comments
-**  Revision 1.23 2007/05/23 11:21:58EDT dlkobe 
-**  Added doxygen formatting
-**  Revision 1.22 2007/05/15 11:18:08EDT rjmcgraw 
-**  DCR78:11 Removed event CFE_TBL_EXIT_ERR_EID
-**  Revision 1.21 2007/05/04 15:54:39EDT dlkobe 
-**  Added event messages associated with deleting a critical table's CDS
-**  Revision 1.20 2007/03/16 14:59:41EST dlkobe 
-**  Using file version 1.14 and applying all changes since to avoid corrupted versions.
-**
-**
 **/
 
 #ifndef _cfe_tbl_events_
 #define _cfe_tbl_events_
+
+/* **************************
+** ****** Maximum EID. ******
+** **************************
+** The EID's below may not necessarily be in order, so it can be difficult to
+** determine what the next EID is to use. When you add EID's, start with MAX_EID + 1
+** and when you're done adding, set this to the highest EID you used. It may
+** be worthwhile to, on occasion, re-number the EID's to put them back in order.
+*/
+#define CFE_TBL_MAX_EID                         98
 
 /******************* Macro Definitions ***********************/
 /*
@@ -109,7 +90,7 @@
 **  \par Cause:
 **
 **  This event message is always automatically issued in response 
-**  to a cFE Table Services \link #CFE_TBL_RESET_CC Reset Counters command \endlink
+**  to a cFE Table Services \link #CFE_TBL_RESET_COUNTERS_CC Reset Counters command \endlink
 **/
 #define CFE_TBL_RESET_INF_EID                  11
   
@@ -163,7 +144,7 @@
 **  \par Cause:
 **
 **  This event message is always generated after a successful execution of 
-**  a cFE Table Services \link #CFE_TBL_DUMP_REG_CC Dump Table Registry command \endlink where
+**  a cFE Table Services \link #CFE_TBL_DUMP_REGISTRY_CC Dump Table Registry command \endlink where
 **  the command specified target filename was the same as a file already present
 **  in the onboard filesystem. If the specified file did not exist, the event
 **  message would have been #CFE_TBL_WRITE_REG_DUMP_INF_EID.
@@ -212,7 +193,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon successful execution of 
-**  a cFE Table Services \link #CFE_TBL_TLM_REG_CC Telemeter Table Registry Entry command \endlink.
+**  a cFE Table Services \link #CFE_TBL_SEND_REGISTRY_CC Telemeter Table Registry Entry command \endlink.
 **  Subsequent Table Services Housekeeping Telemetry should contain the desired Table Registry Entry data.
 **/
 #define CFE_TBL_TLM_REG_CMD_INF_EID            18
@@ -237,7 +218,7 @@
 **  \par Cause:
 **
 **  This event message is always generated after a successful execution of 
-**  a cFE Table Services \link #CFE_TBL_DUMP_REG_CC Dump Table Registry command \endlink where
+**  a cFE Table Services \link #CFE_TBL_DUMP_REGISTRY_CC Dump Table Registry command \endlink where
 **  the command specified target filename was a currently non-existent file. If
 **  the file did already exist, the event message would have been 
 **  #CFE_TBL_OVERWRITE_REG_DUMP_INF_EID.
@@ -434,7 +415,7 @@
 **  This event message is generated when either an Application calls the #CFE_TBL_Load API
 **  or a Table Load command has been received and the specified file has a \link #CFE_FS_Header_t
 **  cFE Standard File Header \endlink whose \link #CFE_FS_Header_t::SubType Sub Type \endlink 
-**  is not equal to the expected #CFE_FS_TBL_IMG_SUBTYPE. Most likely causes for this are:
+**  is not equal to the expected #CFE_FS_SubType_TBL_IMG. Most likely causes for this are:
 **   -# The specified file is not a cFE table image file.
 **   -# The specified file has been created with bad "endianess" (headers should always conform to
 **      a big endian format).
@@ -555,7 +536,7 @@
 **
 **  This event message is generated when a Table Validate command was received and there are
 **  no more free Validation Result Blocks available.  The number of simultaneous validations that
-**  can be pending is specified by the configuration parameter #CFE_TBL_MAX_NUM_VALIDATIONS
+**  can be pending is specified by the configuration parameter #CFE_PLATFORM_TBL_MAX_NUM_VALIDATIONS
 **  which is found in the cfe_platform_cfg.h file.
 **
 **  Validation Commands lock one of the Validation Result Blocks upon receipt of the validation
@@ -681,7 +662,7 @@
 **
 **  This event message is generated when a Table Dump command for a Dump-Only Table was received and there are
 **  no more free Dump Only Control Blocks available.  The number of simultaneous Dump Only Tables that
-**  can be pending is specified by the configuration parameter  #CFE_TBL_MAX_SIMULTANEOUS_LOADS which 
+**  can be pending is specified by the configuration parameter  #CFE_PLATFORM_TBL_MAX_SIMULTANEOUS_LOADS which 
 **  is found in the cfe_platform_cfg.h file.
 **/
 #define CFE_TBL_TOO_MANY_DUMPS_ERR_EID         76  
@@ -731,9 +712,9 @@
 **
 **  This event message is generated when either a Table Validate command or a Table Dump Command
 **  contains a buffer identifier that does not equal either of the valid values 
-**  (see #CFE_TBL_DumpCmd_t::ActiveTblFlag or #CFE_TBL_ValidateCmd_t::ActiveTblFlag)
+**  (see #CFE_TBL_DumpCmd_t::ActiveTableFlag or #CFE_TBL_ValidateCmd_t::ActiveTableFlag)
 **
-**  The parameter in the Event Message indicates (in hex) the value found for the ActiveTblFlag in the command.
+**  The parameter in the Event Message indicates (in hex) the value found for the ActiveTableFlag in the command.
 **/
 #define CFE_TBL_ILLEGAL_BUFF_PARAM_ERR_EID     80
 
@@ -1024,9 +1005,9 @@
 **
 **  This event message is generated when either an Application calls the #CFE_TBL_Load API or a Table
 **  Load command has been received and the specified table file has failed Spacecraft ID validation.
-**  Verification of Spacecraft ID in table files is enabled/disabled via #CFE_TBL_VALID_SCID_COUNT,
+**  Verification of Spacecraft ID in table files is enabled/disabled via #CFE_PLATFORM_TBL_VALID_SCID_COUNT,
 **  defined in the platform configuration header file.  This event message can only be generated if
-**  #CFE_TBL_VALID_SCID_COUNT has a non-zero value and the table file has a \link #CFE_FS_Header_t
+**  #CFE_PLATFORM_TBL_VALID_SCID_COUNT has a non-zero value and the table file has a \link #CFE_FS_Header_t
 **  cFE Standard File Header \endlink whose \link #CFE_FS_Header_t::SpacecraftID Spacecraft ID \endlink 
 **  does not match one of the values defined for Spacecraft ID verification in the platform config file.
 **  The most likely causes for this error are:
@@ -1034,7 +1015,7 @@
 **   -# The specified table file has been created with bad "endianess" (headers should always conform to
 **      a big endian format).
 **   -# The specified table file has become corrupted.
-**   -# The definition for #CFE_TBL_VALID_SCID_COUNT is not large enough to include all of the valid
+**   -# The definition for #CFE_PLATFORM_TBL_VALID_SCID_COUNT is not large enough to include all of the valid
 **      Spacecraft ID entries in the platform config file.
 **   -# There is no entry for this Spacecraft ID in the platform config file list of valid Spacecraft ID's.
 **
@@ -1052,9 +1033,9 @@
 **
 **  This event message is generated when either an Application calls the #CFE_TBL_Load API or a Table
 **  Load command has been received and the specified table file has failed Processor ID validation.
-**  Verification of Processor ID in table files is enabled/disabled via #CFE_TBL_VALID_PRID_COUNT,
+**  Verification of Processor ID in table files is enabled/disabled via #CFE_PLATFORM_TBL_VALID_PRID_COUNT,
 **  defined in the platform configuration header file.  This event message can only be generated if
-**  #CFE_TBL_VALID_PRID_COUNT has a non-zero value and the table file has a \link #CFE_FS_Header_t
+**  #CFE_PLATFORM_TBL_VALID_PRID_COUNT has a non-zero value and the table file has a \link #CFE_FS_Header_t
 **  cFE Standard File Header \endlink whose \link #CFE_FS_Header_t::ProcessorID Processor ID \endlink 
 **  does not match one of the values defined for Processor ID verification in the platform config file.
 **  The most likely causes for this error are:
@@ -1062,7 +1043,7 @@
 **   -# The specified table file has been created with bad "endianess" (headers should always conform to
 **      a big endian format).
 **   -# The specified table file has become corrupted.
-**   -# The definition for #CFE_TBL_VALID_PRID_COUNT is not large enough to include all of the valid
+**   -# The definition for #CFE_PLATFORM_TBL_VALID_PRID_COUNT is not large enough to include all of the valid
 **      Processor ID entries in the platform config file.
 **   -# There is no entry for this Processor ID in the platform config file list of valid Processor ID's.
 **

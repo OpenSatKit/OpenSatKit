@@ -206,7 +206,7 @@ def file_mgmt_demo(screen, button)
          # 1 - Send directory cmd
          when 1
             if ($fmd_demo == 0)
-               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
                # Don't increment fmd_demo; okay if user repeatedly sends the directory cmd
             end
       
@@ -215,7 +215,7 @@ def file_mgmt_demo(screen, button)
             if ($fmd_demo == 0)
                Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{FMD_FLT_TEMP_DIR}")
                wait (1)
-               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
                # Don't increment fmd_demo; okay if user repeatedly sends the create dir to see an error
             end
 
@@ -224,7 +224,7 @@ def file_mgmt_demo(screen, button)
             if ($fmd_demo == 0)
                Osk::Ops::put_flt_file(FMD_GND_PUT_FILE,FMD_FLT_PUT_FILE)
                wait (1)
-               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIR_LIST_OFFSET 0")
                # Don't increment fmd_demo; okay if user repeatedly sends the command
             end
 
@@ -233,7 +233,7 @@ def file_mgmt_demo(screen, button)
             if ($fmd_demo == 0)
                Osk::flight.send_cmd("FM","WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{FMD_FLT_TEMP_DIR}/#{Osk::TMP_BIN_FILE}")
                wait (2)
-               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIR_LIST_OFFSET 0")
                $fmd_demo += 1
             elsif ($fmd_demo == 1)
                if (Osk::Ops.get_flt_file("#{FMD_FLT_TEMP_DIR}/#{Osk::TMP_BIN_FILE}","#{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}"))
@@ -249,12 +249,12 @@ def file_mgmt_demo(screen, button)
             if ($fmd_demo == 0)
                Osk::flight.send_cmd("FM","DELETE_ALL_FILES with DIRECTORY #{FMD_FLT_TEMP_DIR}")
                wait (2)
-               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIR_LIST_OFFSET 0")
                $fmd_demo += 1
             elsif ($fmd_demo == 1)
                Osk::flight.send_cmd("FM","DELETE_DIR with DIRECTORY #{FMD_FLT_TEMP_DIR}")
                wait (2)
-               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+               Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
                # Don't increment fmd_demo; okay if user repeatedly sends the command
             end
 

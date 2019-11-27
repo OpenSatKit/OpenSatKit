@@ -8,6 +8,12 @@
 **   2. The functions in this file were taken directly from 42fsw.c. 42's FSW
 **      data structure is used for all I/O. See function prologues for 
 **      change details.
+**   3. cFE 6.7 change the usage of "--whole-archive" as part of the CFE core
+**      linking procedure.  The intent is to make sure that complete libraries
+**      are linked in even if CFE itself doesn't call them. orbkit was included
+**      because it defines FindCLN(). However it has a lot of external dependencies
+**      so instead of bring those dependencies in from 42 I decided to cut and paste
+**      FindCLN(). 
 **
 ** References:
 **   1. See 42 open source repository at https://sourceforge.net/projects/fortytwospacecraftsimulation/
@@ -17,6 +23,7 @@
 */
 
 #include <stdlib.h>
+#include <math.h>
 
 #include "fswtypes.h"
 #include "fswkit.h"
@@ -24,12 +31,11 @@
 #include "dcmkit.h"
 #include "ThreeAxisFsw.h"
 
-#define FALSE 0
-#define TRUE 1
-
 #define Pi 3.141592653589793
 #define TwoPi 6.283185307179586
 #define D2R 1.74532925199433E-2
+
+static void FindCLN(double r[3], double v[3], double CLN[3][3], double wln[3]);  // See prologue notes
 
 /******************************************************************************
 ** Function: InitFSW
@@ -51,7 +57,7 @@
 void InitFSW(struct FSWType *FSW)
 {
  
-    long Ig,i,j;
+    long i,j; // dcm - Removed Ig since unused
     
     /* Align components with s/c axes */
     double Awhl[3][3] = {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
@@ -66,7 +72,7 @@ void InitFSW(struct FSWType *FSW)
     FSW->Ngim = 1;
     FSW->Gim = (struct FswGimType *) calloc(FSW->Ngim,sizeof(struct FswGimType));
     FSW->GimCmd = (struct CmdType *) calloc(FSW->Ngim,sizeof(struct CmdType));
-    /* dcm
+    /* dcm-start
 	 for(Ig=0;Ig<FSW->Ngim;Ig++) {
         FSW->Gim[Ig].IsSpherical = S->G[Ig].IsSpherical;
         FSW->Gim[Ig].RotDOF = S->G[Ig].RotDOF;
@@ -80,7 +86,7 @@ void InitFSW(struct FSWType *FSW)
                 FSW->Gim[Ig].CBoGo[i][j] = S->G[Ig].CBoGo[i][j];
             }
         }
-    } /* End inner gimbal loop */
+    }  dcm-end End inner gimbal loop */
     FSW->Gim[0].RotSeq = 231;
 	 /* dcm - Copied from 42init.c using SC_Aura.txt definitions*/
 	 A2C(312,0.0*D2R,0.0*D2R,0.0*D2R,FSW->Gim[0].CGiBi);
@@ -226,3 +232,52 @@ void ThreeAxisFSW(struct FSWType *FSW)
  
 } /* End ThreeAxisFSW() */
 
+/**********************************************************************/
+static void FindCLN(double r[3], double v[3], double CLN[3][3], double wln[3])
+{
+      double L1[3],L2[3],L3[3],m,h[3],rr,hh;
+      long i;
+
+      h[0] = r[1]*v[2]-r[2]*v[1];
+      h[1] = r[2]*v[0]-r[0]*v[2];
+      h[2] = r[0]*v[1]-r[1]*v[0];
+      rr = r[0]*r[0]+r[1]*r[1]+r[2]*r[2];
+      hh = h[0]*h[0]+h[1]*h[1]+h[2]*h[2];
+
+      for(i=0;i<3;i++) {
+         wln[i] = h[i]/rr;
+         L3[i] = -r[i];
+         L2[i] = -h[i];
+      }
+
+      m=sqrt(rr);
+      L3[0] /= m;
+      L3[1] /= m;
+      L3[2] /= m;
+
+      if (hh == 0.0) { /* Rectlinear Motion */
+         PerpBasis(L3,L1,L2);
+      }
+      else {
+         m=sqrt(L2[0]*L2[0]+L2[1]*L2[1]+L2[2]*L2[2]);
+         L2[0] /= m;
+         L2[1] /= m;
+         L2[2] /= m;
+
+         L1[0] = L2[1]*L3[2]-L2[2]*L3[1];
+         L1[1] = L2[2]*L3[0]-L2[0]*L3[2];
+         L1[2] = L2[0]*L3[1]-L2[1]*L3[0];
+
+         m=sqrt(L1[0]*L1[0]+L1[1]*L1[1]+L1[2]*L1[2]);
+         L1[0] /= m;
+         L1[1] /= m;
+         L1[2] /= m;
+      }
+
+      for(i=0;i<3;i++){
+         CLN[0][i] = L1[i];
+         CLN[1][i] = L2[i];
+         CLN[2][i] = L3[i];
+      }
+
+}

@@ -1,14 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  File: cfe_sb_events.h
-**
-**      Copyright (c) 2004-2006, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
-**
 **
 **  Purpose:
 **      cFE Software Bus (SB) Event IDs
@@ -17,49 +28,19 @@
 **     Flight Software Branch C Coding Standard Version 1.0a
 **     cFE Flight Software Application Developers Guide
 **
-**
-** $Log: cfe_sb_events.h  $
-** Revision 1.7 2011/12/20 10:52:41GMT-05:00 rmcgraw 
-** DCR15187:2 Removed event CFE_SB_MSGCNT_ERR1_EID (23)
-** Revision 1.6 2009/05/08 11:29:10EDT rmcgraw 
-** DCR7631:1 Removed 2 events rergarding index error and renumbered events
-** Revision 1.5 2009/02/10 11:24:46EST rmcgraw 
-** DCR1699:1 Removed pipe owner in five events
-** Revision 1.4 2009/02/03 11:03:45EST rmcgraw 
-** DCR5801:2 Added event CFE_SB_DEST_BLK_ERR_EID
-** Revision 1.3 2009/01/23 15:00:06EST rmcgraw 
-** DCR5802:1 Removed redundant events in cfe_sb_buf.c
-** Revision 1.2 2008/12/08 12:07:07EST dkobe 
-** Updates to correct doxygen errors
-** Revision 1.1 2008/04/17 08:05:23EDT ruperera 
-** Initial revision
-** Member added to cfe project on tlserver3
-** Revision 1.21 2007/09/19 14:37:06EDT rjmcgraw 
-** Removed Use Count Error events 1 and 4
-** Revision 1.20 2007/07/12 16:46:22EDT rjmcgraw
-** DCR4680:1 Removed events associated with SB event log
-** Revision 1.19 2007/07/06 13:16:38EDT rjmcgraw
-** DCR469:1 Added 3 events for new GetLastSender code
-** Revision 1.18 2007/06/02 10:10:10EDT dlkobe
-** Added doxygen comments for User's Guides
-** Revision 1.17 2007/05/25 16:24:48EDT dlkobe
-** Continued updating doxygen comments
-** Revision 1.16 2007/05/25 15:59:30EDT rjmcgraw
-** Added comments to events
-** Revision 1.15 2007/03/23 09:50:16EST rjmcgraw
-** DCR3217 Removed event 29
-** Revision 1.14 2007/03/19 14:46:00EST rjmcgraw
-** Removed #define for create pipe duplicate name event id
-** Revision 1.13 2007/03/16 15:30:36EST rjmcgraw
-** New event for duplicate pipe name check
-** Revision 1.12 2007/03/16 14:09:04EST rjmcgraw
-** Added new event for array index out of range in subscribe
-** Revision 1.11 2007/03/16 09:57:54EST rjmcgraw
-** Added new events related to pipe owner checks
-**
 **************************************************************************/
 #ifndef _cfe_sb_events_
 #define _cfe_sb_events_
+
+/* **************************
+** ****** Maximum EID. ******
+** **************************
+** The EID's below are not necessarily in order, so it can be difficult to
+** determine what the next EID is to use. When you add EID's, start with MAX_EID + 1
+** and when you're done adding, set this to the highest EID you used. It may
+** be worthwhile to, on occasion, re-number the EID's to put them back in order.
+*/
+#define CFE_SB_MAX_EID                  61
 
 /*
 ** SB task event message ID's.
@@ -89,7 +70,7 @@
 **
 **  This error event message is issued when the #CFE_SB_CreatePipe API receives a bad
 **  argument. In this case, a bad argument is defined by the following:
-**  A NULL PipeIdPtr, PipeDepth = 0 and PipeDepth > cfg param #CFE_SB_MAX_PIPE_DEPTH
+**  A NULL PipeIdPtr, PipeDepth = 0 and PipeDepth > cfg param #CFE_PLATFORM_SB_MAX_PIPE_DEPTH
 **/
 #define CFE_SB_CR_PIPE_BAD_ARG_EID      2
 
@@ -101,7 +82,7 @@
 **  \par Cause:
 **
 **  This error event message is issued when the #CFE_SB_CreatePipe API is called and
-**  the maximum number of pipes (defined by cfg param #CFE_SB_MAX_PIPES) are in use.
+**  the maximum number of pipes (defined by cfg param #CFE_PLATFORM_SB_MAX_PIPES) are in use.
 **/
 #define CFE_SB_MAX_PIPES_MET_EID        3
 
@@ -132,6 +113,76 @@
 **/
 #define CFE_SB_PIPE_ADDED_EID           5
 
+/** \brief <tt> 'SetPipeOptsErr:Invalid pipe id (\%d).app \%s' </tt>
+**  \event <tt> 'SetPipeOptsErr:Invalid pipe id (\%d).app \%s' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This error event message is issued when the #CFE_SB_SetPipeOpts API is called and
+**  the PipeID is invalid.
+**/
+#define CFE_SB_SETPIPEOPTS_ID_ERR_EID        55
+
+/** \brief <tt> 'SetPipeOptsErr:Caller not owner (\%d).app \%s' </tt>
+**  \event <tt> 'SetPipeOptsErr:Caller not owner (\%d).app \%s' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This error event message is issued when the #CFE_SB_SetPipeOpts API is called and
+**  the pipe is owned by another app ID.
+**/
+#define CFE_SB_SETPIPEOPTS_OWNER_ERR_EID        56
+
+/** \brief <tt> 'SetPipeOpts: Options set (\%d). app \%s' </tt>
+** \event <tt> 'SetPipeOpts: Options set (\%d). app \%s' </tt>
+**
+**  \par Type: DEBUG
+**
+**  \par Cause:
+**
+**  This debug event is generated when options are set.
+**/
+#define CFE_SB_SETPIPEOPTS_EID        57
+
+/** \brief <tt> 'GetPipeOptsErr:Invalid pipe id (\%d).app \%s' </tt>
+**  \event <tt> 'GetPipeOptsErr:Invalid pipe id (\%d).app \%s' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This error event message is issued when the #CFE_SB_GetPipeOpts API is called and
+**  the PipeID is invalid.
+**/
+#define CFE_SB_GETPIPEOPTS_ID_ERR_EID        58
+
+/** \brief <tt> 'GetPipeOptsErr:Invalid opts ptr.app \%s' </tt>
+**  \event <tt> 'GetPipeOptsErr:Invalid opts ptr.app \%s' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This error event message is issued when the #CFE_SB_GetPipeOpts API is called and
+**  the pointer is invalid.
+**/
+#define CFE_SB_GETPIPEOPTS_PTR_ERR_EID        59
+
+/** \brief <tt> 'GetPipeOpts: Options retrieved. app \%s' </tt>
+** \event <tt> 'GetPipeOpts: Options retrieved. app \%s' </tt>
+**
+**  \par Type: DEBUG
+**
+**  \par Cause:
+**
+**  This debug event is generated when options are retrieved.
+**/
+#define CFE_SB_GETPIPEOPTS_EID        60
+
 
 /** \brief <tt> 'Subscribe Err:Bad Arg,MsgId 0x\%x,PipeId \%d,app \%s,scope \%d' </tt>
 **  \event <tt> 'Subscribe Err:Bad Arg,MsgId 0x\%x,PipeId \%d,app \%s,scope \%d' </tt>
@@ -142,7 +193,7 @@
 **
 **  This error event message is issued when one of the Subscribe API's are called
 **  with an invalid MsgId. An invalid MsgId is defined as being greater than the
-**  cfg param #CFE_SB_HIGHEST_VALID_MSGID.
+**  cfg param #CFE_PLATFORM_SB_HIGHEST_VALID_MSGID.
 **
 **/
 #define CFE_SB_SUB_ARG_ERR_EID          6
@@ -175,7 +226,7 @@
 **  This error event message is issued when one of the SB subscribe APIs are called
 **  with a new MsgId, and SB cannot accommodate the new MsgId because the maximum
 **  number of MsgIds are in use. The maximum number of MsgIds is defined by cfg param
-**  #CFE_SB_MAX_MSG_IDS. This cfg param dictates the number of elements in the SB
+**  #CFE_PLATFORM_SB_MAX_MSG_IDS. This cfg param dictates the number of elements in the SB
 **  routing table. There is one element per MsgId. The user may monitor the routing
 **  table utilization figures (msgids currently in use, high water mark and max
 **  allowed) by sending the SB cmd to dump the SB statistics data.
@@ -191,7 +242,7 @@
 **
 **  This error event message is issued when a subscription request is received and
 **  all destinations for that MsgId are in use. The number of destinations per msgid
-**  is a configuration parameter named #CFE_SB_MAX_DEST_PER_PKT. A destination is
+**  is a configuration parameter named #CFE_PLATFORM_SB_MAX_DEST_PER_PKT. A destination is
 **  defined as a pipe.
 **/
 #define CFE_SB_MAX_DESTS_MET_EID        9
@@ -217,8 +268,8 @@
 **
 **  This error event message is issued when a request to unsubscribe fails due to
 **  an invalid msgid or an invalid pipeid in one of SB's unsubscribe API's. The msgid
-**  must be less than cfg param #CFE_SB_HIGHEST_VALID_MSGID and the pipeid must have
-**  been created and have a value less than cfg param #CFE_SB_MAX_PIPES. The SB pipe
+**  must be less than cfg param #CFE_PLATFORM_SB_HIGHEST_VALID_MSGID and the pipeid must have
+**  been created and have a value less than cfg param #CFE_PLATFORM_SB_MAX_PIPES. The SB pipe
 **  table may be viewed to verify its value or existence.
 **/
 #define CFE_SB_UNSUB_ARG_ERR_EID        11
@@ -275,7 +326,7 @@
 **
 **  This error event message is issued when the #CFE_SB_SendMsg API is called and the
 **  packet length field in the message header implies that the message size exceeds
-**  the max size defined by mission cfg param #CFE_SB_MAX_SB_MSG_SIZE. The request to
+**  the max size defined by mission cfg param #CFE_MISSION_SB_MAX_SB_MSG_SIZE. The request to
 **  send the message is denied, there is no partial packet sent.
 **/
 #define CFE_SB_MSG_TOO_BIG_EID          15
@@ -289,7 +340,7 @@
 **
 **  This error event message is issued when the #CFE_SB_SendMsg API fails to receive
 **  the necessary buffer memory from the ES memory pool. This could be an indication
-**  that the cfg param #CFE_SB_BUF_MEMORY_BYTES is set too low. To check this, send SB
+**  that the cfg param #CFE_PLATFORM_SB_BUF_MEMORY_BYTES is set too low. To check this, send SB
 **  cmd to dump the SB statistics pkt and view the buffer memory parameters.
 **/
 #define CFE_SB_GET_BUF_ERR_EID          16
@@ -363,7 +414,7 @@
 **
 **  This error event message is issued when the #CFE_SB_SendMsg API is called and
 **  the SB discovers that the message to send has a msg id that is invalid. It may be
-**  due to a msg id  that is greater than cfg parameter #CFE_SB_HIGHEST_VALID_MSGID
+**  due to a msg id  that is greater than cfg parameter #CFE_PLATFORM_SB_HIGHEST_VALID_MSGID
 **/
 #define CFE_SB_SEND_INV_MSGID_EID       21
 
@@ -534,8 +585,8 @@
 **
 **  This error event message is issued when SB receives a cmd to enable a route and
 **  the MsgId or PipeId does not pass the validation checks. The MsgId must be less
-**  than cfg param #CFE_SB_HIGHEST_VALID_MSGID. The PipeId must exist and be less than
-**  cfg param #CFE_SB_MAX_PIPES. The SB pipe table may be viewed to verify the PipeId
+**  than cfg param #CFE_PLATFORM_SB_HIGHEST_VALID_MSGID. The PipeId must exist and be less than
+**  cfg param #CFE_PLATFORM_SB_MAX_PIPES. The SB pipe table may be viewed to verify the PipeId
 **  existence.
 **/
 #define CFE_SB_ENBL_RTE3_EID            35
@@ -573,8 +624,8 @@
 **
 **  This error event message is issued when SB receives a cmd to disable a route and
 **  the MsgId or PipeId does not pass the validation checks. The MsgId must be less
-**  than cfg param #CFE_SB_HIGHEST_VALID_MSGID. The PipeId must exist and be less than
-**  cfg param #CFE_SB_MAX_PIPES. The SB pipe table may be viewed to verify the PipeId
+**  than cfg param #CFE_PLATFORM_SB_HIGHEST_VALID_MSGID. The PipeId must exist and be less than
+**  cfg param #CFE_PLATFORM_SB_MAX_PIPES. The SB pipe table may be viewed to verify the PipeId
 **  existence.
 **/
 #define CFE_SB_DSBL_RTE3_EID            38
@@ -788,6 +839,24 @@
 **  that created the pipe or ES(for cleanup purposes).
 **/
 #define CFE_SB_DEL_PIPE_ERR2_EID        54
+
+/** \brief <tt> 'Invalid cmd length: ID = 0x\%X, CC = \%d, Exp Len = \%d, Len = \%d' </tt>
+**  \event <tt> 'Invalid cmd length: ID = 0x\%X, CC = \%d, Exp Len = \%d, Len = \%d' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is generated when a message with the #CFE_SB_CMD_MID
+**  message ID has arrived but whose packet length does not match the expected
+**  length for the specified command code.
+**
+**  The \c ID field in the event message specifies the Message ID (in hex), the \c CC field
+**  specifies the Command Code (in decimal), the \c Exp Len field specified the Expected
+**  Length (in decimal ), and \c Len specifies the message Length (in decimal)
+**  found in the message.
+**/
+#define CFE_SB_LEN_ERR_EID              61
 
 
 #endif /* _cfe_sb_events_ */

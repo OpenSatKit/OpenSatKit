@@ -1,23 +1,24 @@
 The cFE Event Service (EVS) unit tests were run in the following pc-linux environment:
 
-Distributor ID: RedHatEnterpriseClient
-Release:        5.11
+Distributor ID: Red Hat Enterprise Linux Workstation release 6.9 (Santiago)
+Release:        6.9
 
-Linux gs582w-cfelnx 2.6.18-407.el5PAE #1 SMP Fri Oct 16 12:08:56 EDT 2015 
-i686 i686 i386 GNU/Linux i386
+Linux gs582w-cfelnx 2.6.32-642.el6.i686 #1 SMP Wed Apr 13 00:50:26 EDT 2016 i686 i686 i386 GNU/Linux
 
-Unit tests built with gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+Unit tests built with gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
 
 The expected EVS unit test pass/fail test results are located in the ut_cfe_evs_log.txt file
 
-The EVS unit test results are expected to have the following coverage results for each of 
-the EVS source files:
+The EVS unit test results are expected to have the following
+coverage results for each of the EVS source files:
 
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs.c' 100.00%  119
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_log.c' 100.00%  63
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_task.c' 99.61%  517
-gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_utils.c' 100.00%  123
+ut_cfe_evs PASSED 198 tests.
+ut_cfe_evs FAILED 0 tests.
 
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/evs/cfe_evs.c' 100.00%  98
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/evs/cfe_evs_log.c' 100.00%  75
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/evs/cfe_evs_task.c' 99.60%  499
+gcov: '/home/mdeschu/cfe-660-ut/cfe/fsw/cfe-core/src/evs/cfe_evs_utils.c' 100.00%  129
 
 ==========================================================================
 

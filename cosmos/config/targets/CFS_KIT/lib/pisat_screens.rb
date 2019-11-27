@@ -70,7 +70,7 @@ end # End pisat_connection()
 #
 # Useful code snippets
 #
-#sel = message_box("Press #{BUTTON_CONT} to continue",BUTTON_CONT)
-#if (sel != BUTTON_CONT) then return end  
+#sel = message_box("Press #{MSG_BUTTON_CONT} to continue",MSG_BUTTON_CONT)
+#if (sel != MSG_BUTTON_CONT) then return end
 #
 #Cosmos.run_process("ruby tools/CmdSender -p \"CFE_ES START_APP\"")

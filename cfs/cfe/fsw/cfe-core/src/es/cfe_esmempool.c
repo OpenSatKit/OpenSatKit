@@ -1,16 +1,26 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  File:
 **  cfe_esmempool.c
-**
-**
-**
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
 **
 **  Purpose:
 **  Set of services for management of discrete sized memory pools.
@@ -18,52 +28,6 @@
 **  References:
 **     Flight Software Branch C Coding Standard Version 1.0a
 **     cFE Flight Software Application Developers Guide
-**
-**  $Log: cfe_esmempool.c  $
-**  Revision 1.12 2014/07/07 10:57:32GMT-05:00 acudmore 
-**  Modified CFE_ES_ValidateHandle to conditionally compile alignment check.
-**  Revision 1.11 2012/01/13 11:50:17GMT-05:00 acudmore 
-**  Changed license text to reflect open source
-**  Revision 1.10 2011/03/18 11:41:54EDT lwalling 
-**  Add memory range test to pool handle verification function
-**  Revision 1.9 2010/11/23 13:22:43EST jmdagost 
-**  Corrected getPoolBuf and putPoolBuf error messages.
-**  Revision 1.8 2010/11/04 14:17:32EDT acudmore 
-**  Added option to disable memory pool alignment check.
-**  Revision 1.7 2010/10/25 15:02:12EDT jmdagost 
-**  Corrected bad apostrophe in prologue.
-**  Revision 1.6 2010/10/20 12:34:54EDT jmdagost 
-**  Major revision to make semaphore use for memory pool creation optional.  Also added NULL pointer tests.
-**  Revision 1.5 2010/10/04 15:37:57EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.4 2010/09/21 16:26:21EDT jmdagost 
-**  Moved calls to CFE_ES_GetAppID() to inside error condition blocks.
-**  Revision 1.3 2010/09/21 16:09:20EDT jmdagost 
-**  Added cfe_es_task.h.
-**  Revision 1.2 2009/07/29 15:55:42EDT aschoeni 
-**  Added GetPoolBufInfo function to return size or invalidity of a buffer in a pool
-**  Revision 1.1 2008/04/17 08:05:11EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
-**  Revision 1.30 2007/08/07 12:52:44EDT David Kobe (dlkobe) 
-**  Modified CFE_ES_GetPoolBuf API's first parameter to be of type uint32**
-**  Revision 1.29 2007/05/04 20:07:53EDT dlkobe 
-**  Added command to telemeter memory pool statistics
-**  Revision 1.28 2007/04/04 16:27:58EDT dlkobe 
-**  Syntax errors
-**  Revision 1.26 2007/04/04 16:06:37EDT dlkobe 
-**  Made numerous changes to correct issues identified during ES code walkthrough
-**  Revision 1.25 2006/11/13 10:55:33GMT-05:00 njyanchik 
-**  This CP fixes the errors that were found in the LDRA testing. The list of specific errors fixed is
-**  in the solution to this DCR
-**  Revision 1.24 2006/11/07 11:29:00GMT-05:00 dlkobe 
-**  Changed CFE_ES_MIN_BLOCK_SIZE to CFE_ES_MEM_BLOCK_SIZE_01
-**  Revision 1.21 2006/10/31 13:44:10GMT-05:00 dlkobe 
-**  Replaced memory pool block sizes with symbols that are defined in the cfe_platform_cfg.h file
-**  Revision 1.20 2006/10/31 10:35:31GMT-05:00 dlkobe 
-**  Modified parameters to CFE_ES_GetBlockSize to be of correct uint32 type
-**  Revision 1.19 2006/10/31 10:28:54GMT-05:00 dlkobe 
-**  Added "Allocated" flag to memory block descriptor to prevent multiple deallocations
 **
 */
 
@@ -74,7 +38,34 @@
 #include "cfe_esmempool.h"
 #include "cfe_es.h"
 #include "cfe_es_task.h"
+#include "cfe_es_log.h"
 #include <stdio.h>
+
+/**
+ * Macro that determines the native alignment requirement of a specific type
+ *
+ * By getting the offset of the structure after following a single char,
+ * this effectively gets how much padding the compiler added, which in turn reveals its
+ * minimum alignment requirement.  (C99 is lacking a standardized "alignof" operator,
+ * and this is intended to substitute).
+ */
+#define ALIGN_OF(type)      ((cpuaddr)&((struct { char Byte; type Align; } *)0)->Align)
+
+/**
+ * Union to assist/simplify the pointer manipulation when allocating buffers in a pool
+ *
+ * When allocating buffers, the memory is calculated using raw addresses (cpuaddr) and then
+ * used as either buffer descriptor pointer (BD_t*) or user buffer pointers (uint32*).
+ *
+ * This union assists with casting between the 3 types.  It is still a cast, but at least
+ * it limits the casting to these intended data types so it is slightly safer in that regard.
+ */
+typedef union
+{
+    BD_t *BdPtr;        /**< Use when interpreting pool memory as a descriptor */
+    uint32 *UserPtr;    /**< Use when interpreting pool memory as a user buffer */
+    cpuaddr Addr;       /**< Use when interpreting pool memory as a memory address */
+} MemPoolAddr_t;
 
 /*****************************************************************************/
 /*
@@ -91,23 +82,23 @@
 
 uint32 CFE_ES_MemPoolDefSize[CFE_ES_MAX_MEMPOOL_BLOCK_SIZES] =
 {
-    CFE_ES_MAX_BLOCK_SIZE,
-    CFE_ES_MEM_BLOCK_SIZE_16,
-    CFE_ES_MEM_BLOCK_SIZE_15,
-    CFE_ES_MEM_BLOCK_SIZE_14,
-    CFE_ES_MEM_BLOCK_SIZE_13,
-    CFE_ES_MEM_BLOCK_SIZE_12,
-    CFE_ES_MEM_BLOCK_SIZE_11,
-    CFE_ES_MEM_BLOCK_SIZE_10,
-    CFE_ES_MEM_BLOCK_SIZE_09,
-    CFE_ES_MEM_BLOCK_SIZE_08,
-    CFE_ES_MEM_BLOCK_SIZE_07,
-    CFE_ES_MEM_BLOCK_SIZE_06,
-    CFE_ES_MEM_BLOCK_SIZE_05,
-    CFE_ES_MEM_BLOCK_SIZE_04,
-    CFE_ES_MEM_BLOCK_SIZE_03,
-    CFE_ES_MEM_BLOCK_SIZE_02,
-    CFE_ES_MEM_BLOCK_SIZE_01
+    CFE_PLATFORM_ES_MAX_BLOCK_SIZE,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_16,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_15,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_14,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_13,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_12,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_11,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_10,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_09,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_08,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_07,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_06,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_05,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_04,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_03,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_02,
+    CFE_PLATFORM_ES_MEM_BLOCK_SIZE_01
 };
 
 /*****************************************************************************/
@@ -153,6 +144,8 @@ int32 CFE_ES_PoolCreateEx(CFE_ES_MemHandle_t  *HandlePtr,
 {
     char     MutexName[OS_MAX_API_NAME];
     cpuaddr  MemAddr;
+    cpuaddr  MemAlignSize;
+    Pool_t  *PoolPtr;
     uint32   i;
     uint32   j;
     uint32   k;
@@ -160,25 +153,28 @@ int32 CFE_ES_PoolCreateEx(CFE_ES_MemHandle_t  *HandlePtr,
     uint32   BlockSizeArraySize;
     uint32   MinBlockSize;
 
-   /*
-   ** Local Variables
-   */
-   Pool_t *PoolPtr = (Pool_t *)MemPtr;
-   MemAddr         = (cpuaddr)MemPtr;
-   *HandlePtr      = MemAddr;
+    /*
+     * Verify basic sanity checks early, before doing anything.
+     *
+     * Previously this code would fill the PoolPtr structure prior to even verifying
+     * if the size was at least sizeof(Pool_t) -- possibly overrunning memory.
+     *
+     * The absolute minimum memory required for a pool to be usable would be
+     * enough to store a Pool_t plus at least sizeof(BD_t) plus alignment
+     *
+     * Note that alignment adjustments (if enabled) or a larger minimum block size may make
+     * it so its not possible to obtain even a single buffer allocation, even if this criteria
+     * is met.  But this will protect against overrunning memory which is the most important thing.
+     */
+    MinBlockSize = sizeof(Pool_t) + sizeof(BD_t) + sizeof(CFE_ES_STATIC_POOL_TYPE(CFE_PLATFORM_ES_MEMPOOL_ALIGN_SIZE_MIN));
+    if ( Size < MinBlockSize )
+    {  /* must be able make Pool management structure and at least one of the smallest blocks  */
+        CFE_ES_WriteToSysLog("CFE_ES:poolCreate Pool size(%u) too small for management structure, need >=(%u)\n",
+                (unsigned int)Size,
+                (unsigned int)MinBlockSize);
+        return(CFE_ES_BAD_ARGUMENT);
+    }
 
-   /* Force the size given to be 32 bit aligned */
-   Size &= 0xFFFFFFFC;
-
-#ifdef CFE_ES_MEMPOOL_ALIGNED
-   /* Determine if the memory pool address is 32-bit aligned */
-   if ((MemAddr & 0x00000003) != 0)
-   {
-      CFE_ES_WriteToSysLog("CFE_ES:poolCreate Pool Address(0x%08lX) is not 32-bit aligned.\n", (unsigned long)MemAddr);
-      return(CFE_ES_BAD_ARGUMENT);
-   }
-#endif
-   
    /* If too many sizes are specified, return an error */
    if (NumBlockSizes > CFE_ES_MAX_MEMPOOL_BLOCK_SIZES)
    {
@@ -193,7 +189,36 @@ int32 CFE_ES_PoolCreateEx(CFE_ES_MemHandle_t  *HandlePtr,
                            UseMutex, CFE_ES_NO_MUTEX, CFE_ES_USE_MUTEX);
       return(CFE_ES_BAD_ARGUMENT);
    }
-   
+
+   /*
+    * First align for the pool itself.
+    * This only needs meet requirements to store a Pool_t
+    */
+   MemAlignSize = ALIGN_OF(Pool_t) - 1;
+   MemAlignSize |= MemAlignSize >> 1;
+   MemAlignSize |= MemAlignSize >> 2;
+   MemAlignSize |= MemAlignSize >> 4;
+   MemAlignSize |= MemAlignSize >> 8;
+   MemAlignSize |= MemAlignSize >> 16;
+   MemAddr = ((cpuaddr)MemPtr + MemAlignSize) & ~MemAlignSize;
+
+   /*
+    * Determine alignment requirements of pool buffers
+    * This needs to meet alignment requirements of CFE_ES_PoolAlign_t, or
+    * the user specified CFE_PLATFORM_ES_MEMPOOL_ALIGN_SIZE_MIN, whichever is greater.
+    */
+   MemAlignSize = ALIGN_OF(CFE_ES_PoolAlign_t) - 1;
+   MemAlignSize |= CFE_PLATFORM_ES_MEMPOOL_ALIGN_SIZE_MIN - 1;
+   MemAlignSize |= MemAlignSize >> 1;
+   MemAlignSize |= MemAlignSize >> 2;
+   MemAlignSize |= MemAlignSize >> 4;
+   MemAlignSize |= MemAlignSize >> 8;
+   MemAlignSize |= MemAlignSize >> 16;
+
+   /* Set the pointers after alignment adjustment (if enabled) */
+   PoolPtr         = (Pool_t *)MemAddr;
+   *HandlePtr      = MemAddr;
+
    if (UseMutex == CFE_ES_USE_MUTEX)
    {
       /*
@@ -205,19 +230,16 @@ int32 CFE_ES_PoolCreateEx(CFE_ES_MemHandle_t  *HandlePtr,
 
       /* create a semphore to protect this memory pool */
       OS_MutSemCreate(&(PoolPtr->MutexId), MutexName, 0);
-
-      /* Take the semaphore to ensure the mem pool is not being used during its creation */
-      OS_MutSemTake(PoolPtr->MutexId);
    }
-   
-   PoolPtr->Start        = (cpuaddr *)*HandlePtr;
-   PoolPtr->End          = MemAddr + Size;
-   PoolPtr->Size         = Size;
-   PoolPtr->Current      = (uint32 *)(MemAddr + sizeof(Pool_t));
-   PoolPtr->SizeDescPtr  = NULL;
 
-   PoolPtr->CheckErrCntr = 0;
-   PoolPtr->RequestCntr  = 0;
+   PoolPtr->PoolHandle    = MemAddr;
+   PoolPtr->End           = (cpuaddr)MemPtr + Size;  /* End is based off the _original_ baseaddr and size */
+   PoolPtr->Size          = PoolPtr->End - MemAddr;  /* Adjusts for any size lost due to alignment */
+   PoolPtr->AlignMask     = MemAlignSize;
+   PoolPtr->CurrentAddr   = MemAddr + sizeof(Pool_t);
+   PoolPtr->SizeDescPtr   = NULL;
+   PoolPtr->CheckErrCntr  = 0;
+   PoolPtr->RequestCntr   = 0;
    
    PoolPtr->UseMutex     = UseMutex;
 
@@ -272,26 +294,6 @@ int32 CFE_ES_PoolCreateEx(CFE_ES_MemHandle_t  *HandlePtr,
         }
    }
 
-   if (Size <= (sizeof(Pool_t) + MinBlockSize + sizeof(BD_t) ) )
-   {  /* must be able make Pool management structure and at least one of the smallest blocks  */
-      CFE_ES_WriteToSysLog("CFE_ES:poolCreate Pool size(%d) too small for management structure, need >=(%d)\n",
-                            (int)Size,
-                            (int)(sizeof(Pool_t) + MinBlockSize + sizeof(BD_t)) );
-                            
-      if (UseMutex == CFE_ES_USE_MUTEX)
-      {
-         /* Mutex is no longer needed with error in initialization.  Give it and delete it */        
-         OS_MutSemGive(PoolPtr->MutexId);
-         OS_MutSemDelete(PoolPtr->MutexId);
-      }        
-      return(CFE_ES_BAD_ARGUMENT);
-   }
-
-   if (UseMutex == CFE_ES_USE_MUTEX)
-   {
-       OS_MutSemGive(PoolPtr->MutexId);
-   }
-
    return(CFE_SUCCESS);
 }
 
@@ -307,13 +309,13 @@ int32 CFE_ES_GetPoolBuf(uint32             **BufPtr,
                         uint32               Size )
 {
    Pool_t  * PoolPtr = (Pool_t *)Handle;
-   uint32    Block;
-   BD_t    * BdPtr;
+   uint32   BlockSize;
+   MemPoolAddr_t BlockAddr;
    uint32    AppId= 0xFFFFFFFF;
 
    if (PoolPtr != NULL)
    {
-      if (Handle != (CFE_ES_MemHandle_t)PoolPtr->Start)
+      if (Handle != PoolPtr->PoolHandle)
       {
          CFE_ES_GetAppID(&AppId);
          CFE_ES_WriteToSysLog("CFE_ES:getPoolBuf err:Bad handle(0x%08lX) AppId=%d\n",(unsigned long)Handle,(int)AppId);
@@ -335,14 +337,18 @@ int32 CFE_ES_GetPoolBuf(uint32             **BufPtr,
 
    *BufPtr = NULL;
 
-   Block = CFE_ES_GetBlockSize(PoolPtr, Size);
-   if (Block == 0xFFFFFFFF)
+   BlockSize = CFE_ES_GetBlockSize(PoolPtr, Size);
+   if (BlockSize > PoolPtr->SizeDesc[0].MaxSize)
    {
-      CFE_ES_WriteToSysLog("CFE_ES:getPoolBuf err:size(%d) > max(%d).\n",(int)Size,(int)PoolPtr->SizeDesc[0].MaxSize);
+      /* save off the max size prior to release, for the log message */
+      BlockSize = PoolPtr->SizeDesc[0].MaxSize;
       if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
       {
          OS_MutSemGive(PoolPtr->MutexId);
       }
+      CFE_ES_WriteToSysLog("CFE_ES:getPoolBuf err:size(%u) > max(%u).\n",
+                  (unsigned int)Size,
+                  (unsigned int)BlockSize);
       return(CFE_ES_ERR_MEM_BLOCK_SIZE);
    }
 
@@ -354,53 +360,73 @@ int32 CFE_ES_GetPoolBuf(uint32             **BufPtr,
          /*
          ** Get it off the top on the list
          */
-         BdPtr = PoolPtr->SizeDescPtr->Top;
+         BlockAddr.BdPtr = PoolPtr->SizeDescPtr->Top;
 
-         BdPtr->CheckBits          = CFE_ES_CHECK_PATTERN;
-         BdPtr->Allocated          = CFE_ES_MEMORY_ALLOCATED; /* Flag memory block as allocated */
-         BdPtr->Size               = Block;
-         PoolPtr->SizeDescPtr->Top = (BD_t *)BdPtr->Next;
+         PoolPtr->SizeDescPtr->Top = BlockAddr.BdPtr->Next;
          PoolPtr->SizeDescPtr->NumFree--;
-         BdPtr->Next               = NULL;
-         *BufPtr                   = (uint32 *)(BdPtr + 1);
+
+         BlockAddr.BdPtr->CheckBits       = CFE_ES_CHECK_PATTERN;
+         BlockAddr.BdPtr->Allocated       = CFE_ES_MEMORY_ALLOCATED; /* Flag memory block as allocated */
+         BlockAddr.BdPtr->Size            = BlockSize;
+         BlockAddr.BdPtr->Next            = NULL;
+
+         ++BlockAddr.BdPtr;
+         *BufPtr                = BlockAddr.UserPtr;
     }
     else /* go make one */
     {
-         BdPtr = (BD_t *)PoolPtr->Current; /* point to new memory block   */
-         if ( ((cpuaddr)BdPtr + sizeof(BD_t) + Block ) >= PoolPtr->End ){ /* can't fit in remaing mem */
-            CFE_ES_WriteToSysLog("CFE_ES:getPoolBuf err:Request won't fit in remaining memory\n");
+         /*
+          * Determine the memory address of the new user block,
+          * which must be aligned according to the AlignMask member.
+          *
+          * Account for the space required for the buffer descriptor, which
+          * be placed before the user buffer in memory.
+          */
+         BlockAddr.Addr = (PoolPtr->CurrentAddr + sizeof(BD_t) + PoolPtr->AlignMask) &
+                 ~PoolPtr->AlignMask;
+
+         /*
+          * Check if there is enough space remaining in the pool -- the
+          * proposed start address plus the block size must not exceed the pool end.
+          * Note it is checked this way in case the pool is at the end of memory, i.e.
+          * if the pool ends at 0xFFFFFFFF on a 32 bit machine, a comparison of simply
+          * (addr > end) will not work.
+          */
+         if ( (PoolPtr->End - (BlockAddr.Addr + BlockSize)) >= PoolPtr->Size ){ /* can't fit in remaing mem */
             if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
             {
                OS_MutSemGive(PoolPtr->MutexId);
             }
+            CFE_ES_WriteToSysLog("CFE_ES:getPoolBuf err:Request won't fit in remaining memory\n");
             return(CFE_ES_ERR_MEM_BLOCK_SIZE);
          }
 
+         /* point to new memory block */
+         *BufPtr = BlockAddr.UserPtr;
+
+         /*
+         ** adjust pool current pointer and other recordkeeping in the Pool_t
+         */
+         PoolPtr->CurrentAddr = BlockAddr.Addr + BlockSize;
          PoolPtr->SizeDescPtr->NumCreated++;
          PoolPtr->RequestCntr++;
 
          /*
          ** create the buffer descriptor at the front of it
          */
-         BdPtr->CheckBits = CFE_ES_CHECK_PATTERN;
-         BdPtr->Allocated = CFE_ES_MEMORY_ALLOCATED; /* Flag memory block as allocated */
-         BdPtr->Size      = Block;
-         BdPtr->Next      = NULL;
-         *BufPtr          = (uint32 *)(BdPtr + 1);
+         --BlockAddr.BdPtr;
+         BlockAddr.BdPtr->CheckBits = CFE_ES_CHECK_PATTERN;
+         BlockAddr.BdPtr->Allocated = CFE_ES_MEMORY_ALLOCATED; /* Flag memory block as allocated */
+         BlockAddr.BdPtr->Size      = BlockSize;
+         BlockAddr.BdPtr->Next      = NULL;
 
-         /*
-         ** adjust pool current pointer
-         */
-         PoolPtr->Current = (uint32 *)( (uint8 *)PoolPtr->Current
-                                             + Block
-                                             + sizeof(BD_t) );
      }
 
      if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
      {
         OS_MutSemGive(PoolPtr->MutexId);
      }
-     return (int32)Block;
+     return (int32)BlockSize;
 }
 
 /*
@@ -410,56 +436,54 @@ int32 CFE_ES_GetPoolBufInfo(CFE_ES_MemHandle_t   Handle,
                             uint32             * BufPtr)
 {
   Pool_t   *PoolPtr =  (Pool_t *)Handle;
-  BD_t     *BdPtr    = (BD_t *) ((uint8 *)BufPtr - sizeof(BD_t));
+  MemPoolAddr_t BlockAddr;
+  int32 Status;
 
-  if (PoolPtr != NULL)
+  BlockAddr.UserPtr = BufPtr;
+
+  if (PoolPtr == NULL || Handle != PoolPtr->PoolHandle)
   {
-     if ( ((cpuaddr)BdPtr < Handle) || ((cpuaddr)BdPtr >= (PoolPtr->End - sizeof(BD_t))) )
-     {
-         /* sanity check */
-         return(CFE_ES_BUFFER_NOT_IN_POOL);
-     }
+      /* bad handle */
+      Status = CFE_ES_ERR_MEM_HANDLE;
+  }
+  else if ( (BlockAddr.Addr < (Handle + sizeof(Pool_t) + sizeof(BD_t))) ||
+          (BlockAddr.Addr >= PoolPtr->End) )
+  {
+      /* sanity check */
+      Status = CFE_ES_BUFFER_NOT_IN_POOL;
   }
   else
   {
-      /* bad handle */
-      return(CFE_ES_ERR_MEM_HANDLE);
-  }
-  
-  if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-  {
-     OS_MutSemTake(PoolPtr->MutexId);
-  }
+      /*
+      ** Move to the descriptor (immediately preceding the user buffer)
+      ** and perform simple sanity checks for descriptor.
+      ** This must be done while locked, if the USE_MUTEX flag is set.
+      */
+      --BlockAddr.BdPtr;
 
-  /*
-  ** Simple sanity checks for descriptor
-  */
-  
-  /* If a block is no longer allocated, report an error */
-  if (BdPtr->Allocated != CFE_ES_MEMORY_ALLOCATED)
-  {
+      if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
+      {
+         OS_MutSemTake(PoolPtr->MutexId);
+      }
+
+      /* If a block is no longer allocated, report an error */
+      if (BlockAddr.BdPtr->Allocated != CFE_ES_MEMORY_ALLOCATED ||
+              BlockAddr.BdPtr->CheckBits != CFE_ES_CHECK_PATTERN)
+      {
+          Status = CFE_ES_ERR_MEM_HANDLE;
+      }
+      else
+      {
+          Status = BlockAddr.BdPtr->Size;
+      }
+
       if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
       {
          OS_MutSemGive(PoolPtr->MutexId);
       }
-      return(CFE_ES_ERR_MEM_HANDLE);
   }
   
-  if (BdPtr->CheckBits != CFE_ES_CHECK_PATTERN)
-  {
-      if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-      {
-         OS_MutSemGive(PoolPtr->MutexId);
-      }
-      return(CFE_ES_ERR_MEM_HANDLE);
-  }
-
-  
-  if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-  {
-     OS_MutSemGive(PoolPtr->MutexId);
-  }
-  return ((int32) (BdPtr->Size));
+  return Status;
 }
 
 /*
@@ -469,85 +493,96 @@ int32 CFE_ES_PutPoolBuf(CFE_ES_MemHandle_t   Handle,
                         uint32             * BufPtr)
 {
   Pool_t   *PoolPtr =  (Pool_t *)Handle;
-  BD_t     *BdPtr    = (BD_t *) ((uint8 *)BufPtr - sizeof(BD_t));
-  uint32    Block;
-  cpuaddr   BdAddr;
+  MemPoolAddr_t BlockAddr;
+  uint32 BlockSize;
+  int32 Status;
+  char LogMessage[CFE_ES_MAX_SYSLOG_MSG_SIZE];
 
-  BdAddr = (cpuaddr)BdPtr;
+  LogMessage[0] = 0;
+  BlockAddr.UserPtr = BufPtr;
 
-  if (PoolPtr != NULL)
+  if (PoolPtr == NULL || Handle != PoolPtr->PoolHandle)
   {
-     if ( (BdAddr < Handle) || (BdAddr >= (PoolPtr->End - sizeof(BD_t))) )
-     {
-         /* sanity check */
-         CFE_ES_WriteToSysLog("CFE_ES:putPoolBuf err:Invalid Memory Handle (0x%08lX) or memory block (0x%08lX).\n",
-                              (unsigned long) Handle, (unsigned long)BdAddr);
-         return(CFE_ES_ERR_MEM_HANDLE);
-     }
+      /* bad handle */
+      CFE_ES_SysLog_snprintf(LogMessage, sizeof(LogMessage),
+              "CFE_ES:putPoolBuf err:Invalid Memory Handle (0x%08lX).\n", (unsigned long) Handle);
+      Status = CFE_ES_ERR_MEM_HANDLE;
+  }
+  else if ( (BlockAddr.Addr < (Handle + sizeof(Pool_t) + sizeof(BD_t))) ||
+          (BlockAddr.Addr >= PoolPtr->End) )
+  {
+      /* sanity check */
+      CFE_ES_SysLog_snprintf(LogMessage, sizeof(LogMessage),
+              "CFE_ES:putPoolBuf err:Invalid Memory Handle (0x%08lX) or memory block (0x%08lX).\n",
+                           (unsigned long) Handle, (unsigned long)BufPtr);
+      Status = CFE_ES_ERR_MEM_HANDLE;
   }
   else
   {
-      /* sanity check */
-      CFE_ES_WriteToSysLog("CFE_ES:putPoolBuf err:Invalid Memory Handle (0x%08lX).\n", (unsigned long) Handle);
-      return(CFE_ES_ERR_MEM_HANDLE);
-  }
+      /*
+      ** Move to the descriptor (immediately preceding the user buffer)
+      ** and perform simple sanity checks for descriptor.
+      ** This must be done while locked, if the USE_MUTEX flag is set.
+      */
+      --BlockAddr.BdPtr;
 
-  
-  if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-  {
-     OS_MutSemTake(PoolPtr->MutexId);
-  }
+      if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
+      {
+         OS_MutSemTake(PoolPtr->MutexId);
+      }
 
-  /*
-  ** Simple sanity checks for descriptor
-  */
-  
-  /* Don't allow a block that has already been deallocated to be deallocated again */
-  if (BdPtr->Allocated != CFE_ES_MEMORY_ALLOCATED)
-  {
-      PoolPtr->CheckErrCntr++;
-      CFE_ES_WriteToSysLog("CFE_ES:putPoolBuf err:Deallocating unallocated memory block @ 0x%08lX\n", (unsigned long)BdAddr);
+      /* If a block is no longer allocated, report an error */
+      if (BlockAddr.BdPtr->Allocated != CFE_ES_MEMORY_ALLOCATED)
+      {
+          PoolPtr->CheckErrCntr++;
+          CFE_ES_SysLog_snprintf(LogMessage, sizeof(LogMessage),
+                  "CFE_ES:putPoolBuf err:Deallocating unallocated memory block @ 0x%08lX\n",
+                  (unsigned long)BufPtr);
+          Status = CFE_ES_ERR_MEM_HANDLE;
+      }
+      else if (BlockAddr.BdPtr->CheckBits != CFE_ES_CHECK_PATTERN)
+      {
+          PoolPtr->CheckErrCntr++;
+          CFE_ES_SysLog_snprintf(LogMessage, sizeof(LogMessage),
+                  "CFE_ES:putPoolBuf err:Invalid/Corrupted Memory descriptor @ 0x%08lX\n",
+                  (unsigned long)BufPtr);
+          Status = CFE_ES_ERR_MEM_HANDLE;
+      }
+      else
+      {
+          BlockSize = CFE_ES_GetBlockSize(PoolPtr, BlockAddr.BdPtr->Size);
+
+          if (BlockSize > PoolPtr->SizeDesc[0].MaxSize)
+          {
+              PoolPtr->CheckErrCntr++;
+              CFE_ES_SysLog_snprintf(LogMessage, sizeof(LogMessage),
+                      "CFE_ES:putPoolBuf err:size(%d) > max(%d).\n",
+                      (unsigned int)BlockAddr.BdPtr->Size,(unsigned int)PoolPtr->SizeDesc[0].MaxSize);
+              Status = CFE_ES_ERR_MEM_HANDLE;
+          }
+          else
+          {
+              BlockAddr.BdPtr->Allocated = CFE_ES_MEMORY_DEALLOCATED;
+              BlockAddr.BdPtr->Next = PoolPtr->SizeDescPtr->Top; /* Set by GetBlockSize call */
+              PoolPtr->SizeDescPtr->Top = BlockAddr.BdPtr;
+              PoolPtr->SizeDescPtr->NumFree++;
+              Status = BlockSize;
+          }
+      }
+
       if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
       {
          OS_MutSemGive(PoolPtr->MutexId);
       }
-      return(CFE_ES_ERR_MEM_HANDLE);
-  }
-  
-  if (BdPtr->CheckBits != CFE_ES_CHECK_PATTERN)
-  {
-      PoolPtr->CheckErrCntr++;
-      CFE_ES_WriteToSysLog("CFE_ES:putPoolBuf err:Invalid/Corrupted Memory descriptor @ 0x%08lX\n", (unsigned long)BdAddr);
-      if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-      {
-         OS_MutSemGive(PoolPtr->MutexId);
-      }
-      return(CFE_ES_ERR_MEM_HANDLE);
   }
 
-  Block = CFE_ES_GetBlockSize(PoolPtr, BdPtr->Size);
-  
-  if (Block == 0xFFFFFFFF)
+  /* Output the message to syslog once the OTHER resource is unlocked */
+  if (LogMessage[0] != 0)
   {
-      PoolPtr->CheckErrCntr++;
-      CFE_ES_WriteToSysLog("CFE_ES:putPoolBuf err:size(%d) > max(%d).\n",(int)BdPtr->Size,(int)PoolPtr->SizeDesc[0].MaxSize);
-      if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-      {
-         OS_MutSemGive(PoolPtr->MutexId);
-      }
-      return(CFE_ES_ERR_MEM_HANDLE);
+      CFE_ES_SYSLOG_APPEND(LogMessage);
   }
 
-  BdPtr->Allocated = CFE_ES_MEMORY_DEALLOCATED;
-  BdPtr->Next = (uint32 *)PoolPtr->SizeDescPtr->Top; /* Set by GetBlockSize call */
-  PoolPtr->SizeDescPtr->Top = BdPtr;
-  PoolPtr->SizeDescPtr->NumFree++;
-
-  if (PoolPtr->UseMutex == CFE_ES_USE_MUTEX)
-  {
-     OS_MutSemGive(PoolPtr->MutexId);
-  }
-  return (int32)Block;
+  return Status;
 }
 
 /*
@@ -598,7 +633,7 @@ int32 CFE_ES_GetMemPoolStats(CFE_ES_MemPoolStats_t *BufPtr,
     
     PoolPtr = (Pool_t *)Handle;
 
-    if (Handle != (CFE_ES_MemHandle_t)PoolPtr->Start)
+    if (PoolPtr == NULL || Handle != PoolPtr->PoolHandle)
     {
         CFE_ES_GetAppID(&AppId);
         CFE_ES_WriteToSysLog("CFE_ES:getMemPoolStats err:Bad handle(0x%08lX) AppId=%d\n", (unsigned long)Handle, (int)AppId);
@@ -608,7 +643,7 @@ int32 CFE_ES_GetMemPoolStats(CFE_ES_MemPoolStats_t *BufPtr,
     BufPtr->PoolSize = PoolPtr->Size;
     BufPtr->NumBlocksRequested = PoolPtr->RequestCntr;
     BufPtr->CheckErrCtr = PoolPtr->CheckErrCntr;
-    BufPtr->NumFreeBytes = PoolPtr->End - ((cpuaddr)PoolPtr->Current);
+    BufPtr->NumFreeBytes = PoolPtr->End - PoolPtr->CurrentAddr;
     
     for (i=0; i<CFE_ES_MAX_MEMPOOL_BLOCK_SIZES; i++)
     {
@@ -628,9 +663,9 @@ int32 CFE_ES_GetMemPoolStats(CFE_ES_MemPoolStats_t *BufPtr,
 ** Purpose:
 **   Insures that the handle passed in meets all of the requirements of a valid handle.
 */
-boolean CFE_ES_ValidateHandle(CFE_ES_MemHandle_t  Handle)
+bool CFE_ES_ValidateHandle(CFE_ES_MemHandle_t  Handle)
 {
-    boolean   HandleValid = TRUE;
+    bool      HandleValid = true;
     Pool_t   *PoolPtr;
     
     PoolPtr = (Pool_t *)Handle;
@@ -640,44 +675,22 @@ boolean CFE_ES_ValidateHandle(CFE_ES_MemHandle_t  Handle)
     if ( PoolPtr == NULL )
     /* Test #1) Handle must not be a NULL pointer */
     {
-        HandleValid = FALSE;
+        HandleValid = false;
     }
-#ifdef CFE_ES_MEMPOOL_ALIGNED
-    /* Test #2) Handle must be an address on a 32-bit boundary */
-    else if ((Handle & 0x03) != 0)
-    {
-        HandleValid = FALSE;
-    }
-#endif
-    /* Test #3) Handle must be a valid memory address (allows both RAM and EEPROM) */
+    /* Test #2) Handle must be a valid memory address (allows both RAM and EEPROM) */
     else if (CFE_PSP_MemValidateRange(Handle, sizeof(Pool_t), CFE_PSP_MEM_ANY) != CFE_PSP_SUCCESS)
     {
-        HandleValid = FALSE;
+        HandleValid = false;
     }
-    /* Test #4) First field of pool structure must be start address of Pool */
-    else if (Handle != (CFE_ES_MemHandle_t)PoolPtr->Start)
+    /* Test #3) First field of pool structure must be start address of Pool */
+    else if (Handle != PoolPtr->PoolHandle)
     {
-        HandleValid = FALSE;
+        HandleValid = false;
     }
-    /* Test #5) Size of memory pool must be a multiple of 4 bytes */
-    else if ((PoolPtr->Size & 0x03) != 0)
+    /* Test #4) Pool structure must have End ptr equal to Start plus Size */
+    else if ((PoolPtr->PoolHandle + PoolPtr->Size) != PoolPtr->End)
     {
-        HandleValid = FALSE;
-    }
-    /* Test #6) Pool structure must have End ptr equal to Start plus Size */
-    else if ((*PoolPtr->Start + PoolPtr->Size) != PoolPtr->End)
-    {
-        /*
-        ** The test above deserves some explanation (it fooled me - LSW)
-        **
-        ** The first field in a Pool_t structure is "uint32 *Start;"
-        ** The Start field is set to point to the beginning of the Pool structure.
-        ** Therefore, the Start field actually points to itself.
-        ** So, (PoolPtr->Start) is the Start address in the form of a pointer to a uint32.
-        ** And, (*PoolPtr->Start) is the Start address in the form of a uint32.
-        ** Thus, (*PoolPtr->Start) has same result as ((uint32) PoolPtr->Start).
-        */
-        HandleValid = FALSE;
+        HandleValid = false;
     }
     
     return(HandleValid);

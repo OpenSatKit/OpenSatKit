@@ -1,50 +1,31 @@
 /*
-** $Id: cfe_time_msg.h 1.6 2011/11/30 15:10:45GMT-05:00 jmdagost Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**    http://www.apache.org/licenses/LICENSE-2.0
 **
-*
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe_time_msg.h
+**
 ** Purpose:  cFE Time Services (TIME) SB message definitions header file
 **
 ** Author:   S.Walling/Microtel
 **
 ** Notes:
-**
-** $Log: cfe_time_msg.h  $
-** Revision 1.6 2011/11/30 15:10:45GMT-05:00 jmdagost 
-** Replaced ifdef/ifndef preprocessor tests with if...==TRUE/if...!=TRUE tests
-** Revision 1.5 2010/10/25 15:01:13EDT jmdagost 
-** Corrected bad apostrophe in prologue.
-** Revision 1.4 2010/10/04 15:25:01EDT jmdagost 
-** Cleaned up copyright symbol.
-** Revision 1.3 2009/06/08 16:13:08EDT lwalling 
-** Change 1Hz adjust cmd arg from micro-seconds to sub-seconds
-** Revision 1.2 2008/12/08 12:07:17EST dkobe 
-** Updates to correct doxygen errors
-** Revision 1.1 2008/04/17 08:05:26EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.12 2007/09/12 09:46:04EDT David Kobe (dlkobe) 
-** Added doxygen comments to commands and some configuration parameters
-** Revision 1.11 2007/06/07 13:07:49EDT dlkobe 
-** Added Command and Telemetry doxygen comments to TIME, EVS and SB
-** Revision 1.10 2007/05/23 11:22:01EDT dlkobe 
-** Added doxygen formatting
-** Revision 1.9 2007/04/27 12:31:07EDT njyanchik 
-** I changed EVS and TIME to not have a telemetry counter for SB pipe reads in the main loop. 
-** Instead, I have added a syslog message to state the problem
-** Revision 1.8 2007/04/11 11:02:10EDT njyanchik 
-** Remove the TaskDelay in the main loop for TIME. I also addeda counterin telemtry that will
-** notify the ground of an error in reading the command pipe.
-** Revision 1.7 2007/03/07 12:03:37EST njyanchik 
-** There were errors in the previous change package, so I fixed them
 **
 */
 
@@ -102,11 +83,11 @@
 **
 **  \par Description
 **       This command resets the following counters within the Time
-**       Services \link CFE_TIME_HkPacket_t Housekeeping Telemetry \endlink:
+**       Services \link CFE_TIME_HousekeepingTlm_t Housekeeping Telemetry \endlink:
 **       - Command Execution Counter (\TIME_CMDPC)
 **       - Command Error Counter (\TIME_CMDEC)
 **       This command also resets the following counters within the
-**       Time Services \link CFE_TIME_DiagPacket_t Diagnostic Telemetry \endlink:
+**       Time Services \link CFE_TIME_DiagnosticTlm_t Diagnostic Telemetry \endlink:
 **       - Tone Signal Detected Software Bus Message Counter (\TIME_TSDETCNT)
 **       - Time at the Tone Data Software Bus Message Counter (\TIME_TATTCNT)
 **       - Tone Signal/Data Verify Counter (\TIME_VERIFYCNT)
@@ -140,7 +121,7 @@
 **
 **  \sa 
 */
-#define CFE_TIME_RESET_CC        1    /* reset counters */
+#define CFE_TIME_RESET_COUNTERS_CC        1    /* reset counters */
 
 /** \cfetimecmd Request TIME Diagnostic Telemetry
 **
@@ -148,7 +129,7 @@
 **       This command requests that the Time Service generate a message 
 **       containing various data values not included in the normal Time 
 **       Service housekeeping message.  The command requests only a single 
-**       copy of the diagnostic message.  Refer to #CFE_TIME_DiagPacket_t for 
+**       copy of the diagnostic message.  Refer to #CFE_TIME_DiagnosticTlm_t for 
 **       a description of the Time Service diagnostic message contents. 
 **
 **  \cfecmdmnemonic \TIME_REQUESTDIAG
@@ -160,7 +141,7 @@
 **       Successful execution of this command may be verified with the 
 **       following telemetry:
 **       - \b \c \TIME_CMDPC - command execution counter will increment
-**       - Sequence Counter for #CFE_TIME_DiagPacket_t will increment
+**       - Sequence Counter for #CFE_TIME_DiagnosticTlm_t will increment
 **       - The #CFE_TIME_DIAG_EID debug event message will be generated
 **
 **  \par Error Conditions
@@ -174,7 +155,7 @@
 **
 **  \sa 
 */
-#define CFE_TIME_DIAG_TLM_CC     2    /* request diagnostic hk telemetry */
+#define CFE_TIME_SEND_DIAGNOSTIC_TLM_CC     2    /* request diagnostic hk telemetry */
 
 /** \cfetimecmd Set Time Source
 **
@@ -195,8 +176,8 @@
 **       - Operating in FLYWHEEL mode is not considered a choice related 
 **         to clock source, but rather an element of the clock state.  See below 
 **         for a description of the #CFE_TIME_SET_STATE_CC command.
-**       - This command is only valid when the #CFE_TIME_CFG_SOURCE configuration
-**         parameter in the cfe_platform_cfg.h file has been set to TRUE.
+**       - This command is only valid when the #CFE_PLATFORM_TIME_CFG_SOURCE configuration
+**         parameter in the cfe_platform_cfg.h file has been set to true.
 **
 **  \cfecmdmnemonic \TIME_SETSOURCE
 **
@@ -213,7 +194,7 @@
 **
 **  \par Error Conditions
 **       - Invalid Source selection 
-**         (a value other than #CFE_TIME_USE_INTERN or #CFE_TIME_USE_EXTERN was specified)
+**         (a value other than #CFE_TIME_SourceSelect_INTERNAL or #CFE_TIME_SourceSelect_EXTERNAL was specified)
 **       - Time source selection not allowed on this platform
 **       <BR><BR>Evidence of failure may be found in the following telemetry:
 **       - \b \c \TIME_CMDEC - Command Error counter will increment
@@ -264,7 +245,7 @@
 **
 **  \par Error Conditions
 **       - Invalid State selection 
-**         (a value other than #CFE_TIME_INVALID, #CFE_TIME_VALID or #CFE_TIME_FLYWHEEL was specified)
+**         (a value other than #CFE_TIME_ClockState_INVALID, #CFE_TIME_ClockState_VALID or #CFE_TIME_ClockState_FLYWHEEL was specified)
 **       - Time source selection not allowed on this platform
 **       <BR><BR>Evidence of failure may be found in the following telemetry:
 **       - \b \c \TIME_CMDEC - Command Error counter will increment
@@ -399,7 +380,7 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_SET_MET_CC, #CFE_TIME_SET_STCF_CC, #CFE_TIME_SET_LEAPS_CC
+**  \sa #CFE_TIME_SET_MET_CC, #CFE_TIME_SET_STCF_CC, #CFE_TIME_SET_LEAP_SECONDS_CC
 */
 #define CFE_TIME_SET_TIME_CC     7    /* set time */
 
@@ -439,7 +420,7 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_SET_TIME_CC, #CFE_TIME_SET_STCF_CC, #CFE_TIME_SET_LEAPS_CC
+**  \sa #CFE_TIME_SET_TIME_CC, #CFE_TIME_SET_STCF_CC, #CFE_TIME_SET_LEAP_SECONDS_CC
 */
 #define CFE_TIME_SET_MET_CC      8    /* set MET */
 
@@ -476,7 +457,7 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_SET_TIME_CC, #CFE_TIME_SET_MET_CC, #CFE_TIME_SET_LEAPS_CC
+**  \sa #CFE_TIME_SET_TIME_CC, #CFE_TIME_SET_MET_CC, #CFE_TIME_SET_LEAP_SECONDS_CC
 */
 #define CFE_TIME_SET_STCF_CC     9    /* set STCF */
 
@@ -513,7 +494,7 @@
 **
 **  \sa #CFE_TIME_SET_TIME_CC, #CFE_TIME_SET_MET_CC, #CFE_TIME_SET_STCF_CC
 */
-#define CFE_TIME_SET_LEAPS_CC    10   /* set Leap Seconds */
+#define CFE_TIME_SET_LEAP_SECONDS_CC    10   /* set Leap Seconds */
 
 /** \cfetimecmd Add Delta to Spacecraft Time Correlation Factor 
 **
@@ -546,7 +527,7 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_SUB_ADJUST_CC, #CFE_TIME_ADD_1HZADJ_CC, #CFE_TIME_SUB_1HZADJ_CC
+**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_SUB_ADJUST_CC, #CFE_TIME_ADD_1HZ_ADJUSTMENT_CC, #CFE_TIME_SUB_1HZ_ADJUSTMENT_CC
 */
 #define CFE_TIME_ADD_ADJUST_CC   11   /* add one time STCF adjustment */
 
@@ -580,7 +561,7 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_ADD_1HZADJ_CC, #CFE_TIME_SUB_1HZADJ_CC
+**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_ADD_1HZ_ADJUSTMENT_CC, #CFE_TIME_SUB_1HZ_ADJUSTMENT_CC
 */
 #define CFE_TIME_SUB_ADJUST_CC   12   /* subtract one time STCF adjustment */
 
@@ -626,9 +607,9 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_SUB_ADJUST_CC, #CFE_TIME_SUB_1HZADJ_CC
+**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_SUB_ADJUST_CC, #CFE_TIME_SUB_1HZ_ADJUSTMENT_CC
 */
-#define CFE_TIME_ADD_1HZADJ_CC   13   /* add 1Hz STCF adjustment */
+#define CFE_TIME_ADD_1HZ_ADJUSTMENT_CC   13   /* add 1Hz STCF adjustment */
 
 /** \cfetimecmd Subtract Delta from Spacecraft Time Correlation Factor each 1Hz 
 **
@@ -674,9 +655,9 @@
 **       Inappropriately setting the clock may result in other sub-systems performing incorrect 
 **       time based calculations.  The specific risk is dependent upon the behavior of those sub-systems.
 **
-**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_SUB_ADJUST_CC, #CFE_TIME_ADD_1HZADJ_CC
+**  \sa #CFE_TIME_ADD_ADJUST_CC, #CFE_TIME_SUB_ADJUST_CC, #CFE_TIME_ADD_1HZ_ADJUSTMENT_CC
 */
-#define CFE_TIME_SUB_1HZADJ_CC   14   /* subtract 1Hz STCF adjustment */
+#define CFE_TIME_SUB_1HZ_ADJUSTMENT_CC   14   /* subtract 1Hz STCF adjustment */
 
 
 /** \cfetimecmd Set Tone Signal Source
@@ -688,8 +669,8 @@
 **       may be available to both the Time Server and Time Clients, depending on 
 **       hardware configuration.<BR><BR>
 **       Notes: 
-**       - This command is only valid when the #CFE_TIME_CFG_SIGNAL configuration
-**         parameter in the cfe_platform_cfg.h file has been set to TRUE.
+**       - This command is only valid when the #CFE_PLATFORM_TIME_CFG_SIGNAL configuration
+**         parameter in the cfe_platform_cfg.h file has been set to true.
 **
 **  \cfecmdmnemonic \TIME_SETSIGNAL
 **
@@ -708,7 +689,7 @@
 **
 **  \par Error Conditions
 **       - Invalid Signal selection 
-**         (a value other than #CFE_TIME_TONE_PRI or #CFE_TIME_TONE_RED was specified)
+**         (a value other than #CFE_TIME_ToneSignalSelect_PRIMARY or #CFE_TIME_ToneSignalSelect_REDUNDANT was specified)
 **       - Multiple Tone Signal Sources not available on this platform
 **       <BR><BR>Evidence of failure may be found in the following telemetry:
 **       - \b \c \TIME_CMDEC - Command Error counter will increment
@@ -720,51 +701,6 @@
 **  \sa #CFE_TIME_SET_STATE_CC, #CFE_TIME_SET_SOURCE_CC
 */
 #define CFE_TIME_SET_SIGNAL_CC   15    /* set clock signal (pri vs red) */
-/** \} */
-
-/*
-** Clock source command arguments...
-*/
-/** \name Clock Source Selection Parameters */
-/** \{ */
-#define CFE_TIME_USE_INTERN      1
-#define CFE_TIME_USE_EXTERN      2
-/** \} */
-
-/*
-** Clock signal command arguments...
-*/
-/** \name Clock Signal Selection Parameters */
-/** \{ */
-#define CFE_TIME_TONE_PRI        1
-#define CFE_TIME_TONE_RED        2
-/** \} */
-
-/*
-** STCF adjustment direction (for both "one time" and "1Hz" adjustments)...
-*/
-/** \name Spacecraft Time Correlation Factor Adjustment Parameters */
-/** \{ */
-#define CFE_TIME_ADD_ADJUST      1    /* add STCF adjustment value */
-#define CFE_TIME_SUB_ADJUST      2    /* subtract STCF adjustment value */
-/** \} */
-
-/*
-** Fly-wheel status values (are we currently fly-wheeling)...
-*/
-/** \name Fly-wheel status values */
-/** \{ */
-#define CFE_TIME_NO_FLY          0
-#define CFE_TIME_IS_FLY          1
-/** \} */
-
-/*
-** Clock "set" status values (has the clock been set to correct time)...
-*/
-/** \name Clock "set" status values */
-/** \{ */
-#define CFE_TIME_NOT_SET         0
-#define CFE_TIME_WAS_SET         1
 /** \} */
 
 /*
@@ -798,6 +734,14 @@ typedef struct
 
 } CFE_TIME_NoArgsCmd_t;
 
+/*
+ * A separate typedef for each of the commands that share this definition
+ * This follows the convention for command handler prototypes and allows
+ * each one to independently evolve as necessary.
+ */
+typedef CFE_TIME_NoArgsCmd_t CFE_TIME_Noop_t;
+typedef CFE_TIME_NoArgsCmd_t CFE_TIME_ResetCounters_t;
+typedef CFE_TIME_NoArgsCmd_t CFE_TIME_SendDiagnosticTlm_t;
 
 /*
 ** Type definition (leap seconds command)...
@@ -811,7 +755,7 @@ typedef struct
 {
   uint8                         CmdHeader[CFE_SB_CMD_HDR_SIZE];
   CFE_TIME_LeapsCmd_Payload_t   Payload;
-} CFE_TIME_LeapsCmd_t;
+} CFE_TIME_SetLeapSeconds_t;
 
 
 /*
@@ -819,9 +763,9 @@ typedef struct
 */
 typedef struct
 {
-    int16                 ClockState;                    /**< \brief #CFE_TIME_INVALID=Spacecraft time has not been accurately set,
-                                                                     #CFE_TIME_VALID=Spacecraft clock has been accurately set,
-                                                                     #CFE_TIME_FLYWHEEL=Force into FLYWHEEL mode   */
+    int16                 ClockState;                    /**< \brief #CFE_TIME_ClockState_INVALID=Spacecraft time has not been accurately set,
+                                                                     #CFE_TIME_ClockState_VALID=Spacecraft clock has been accurately set,
+                                                                     #CFE_TIME_ClockState_FLYWHEEL=Force into FLYWHEEL mode   */
                                                          /**< Selects the current clock state */
 } CFE_TIME_StateCmd_Payload_t;
 
@@ -829,7 +773,7 @@ typedef struct
 {
   uint8                         CmdHeader[CFE_SB_CMD_HDR_SIZE];
   CFE_TIME_StateCmd_Payload_t   Payload;
-} CFE_TIME_StateCmd_t;
+} CFE_TIME_SetState_t;
 
 
 /*
@@ -837,8 +781,8 @@ typedef struct
 */
 typedef struct
 {
-    int16                 TimeSource;                    /**< \brief #CFE_TIME_USE_INTERN=Internal Source,
-                                                                     #CFE_TIME_USE_EXTERN=External Source   */
+    int16                 TimeSource;                    /**< \brief #CFE_TIME_SourceSelect_INTERNAL=Internal Source,
+                                                                     #CFE_TIME_SourceSelect_EXTERNAL=External Source   */
                                                          /**< Selects either the "Internal" and "External" clock source */
 } CFE_TIME_SourceCmd_Payload_t;
 
@@ -846,7 +790,7 @@ typedef struct
 {
   uint8                         CmdHeader[CFE_SB_CMD_HDR_SIZE];
   CFE_TIME_SourceCmd_Payload_t  Payload;
-} CFE_TIME_SourceCmd_t;
+} CFE_TIME_SetSource_t;
 
 
 /*
@@ -854,8 +798,8 @@ typedef struct
 */
 typedef struct
 {
-    int16                 ToneSource;                    /**< \brief #CFE_TIME_TONE_PRI=Primary Source,
-                                                                     #CFE_TIME_TONE_RED=Redundant Source   */
+    int16                 ToneSource;                    /**< \brief #CFE_TIME_ToneSignalSelect_PRIMARY=Primary Source,
+                                                                     #CFE_TIME_ToneSignalSelect_REDUNDANT=Redundant Source   */
                                                          /**< Selects either the "Primary" or "Redundant" tone signal source */
 } CFE_TIME_SignalCmd_Payload_t;
 
@@ -864,7 +808,7 @@ typedef struct
   uint8                         CmdHeader[CFE_SB_CMD_HDR_SIZE];
   CFE_TIME_SignalCmd_Payload_t  Payload;
 
-} CFE_TIME_SignalCmd_t;
+} CFE_TIME_SetSignal_t;
 
 
 /*
@@ -882,6 +826,19 @@ typedef struct
   CFE_TIME_TimeCmd_Payload_t    Payload;
 } CFE_TIME_TimeCmd_t;
 
+/*
+ * A separate typedef for each of the commands that share this definition
+ * This follows the convention for command handler prototypes and allows
+ * each one to independently evolve as necessary.
+ */
+typedef CFE_TIME_TimeCmd_t CFE_TIME_AddDelay_t;
+typedef CFE_TIME_TimeCmd_t CFE_TIME_SubDelay_t;
+typedef CFE_TIME_TimeCmd_t CFE_TIME_SetMET_t;
+typedef CFE_TIME_TimeCmd_t CFE_TIME_SetSTCF_t;
+typedef CFE_TIME_TimeCmd_t CFE_TIME_AddAdjust_t;
+typedef CFE_TIME_TimeCmd_t CFE_TIME_SubAdjust_t;
+typedef CFE_TIME_TimeCmd_t CFE_TIME_SetTime_t;
+
 
 /*
 ** Type definition (1Hz STCF adjustment "time argument" command)...
@@ -891,15 +848,22 @@ typedef struct
     uint32                Seconds;
     uint32                Subseconds;
 
-} CFE_TIME_1HzAdjCmd_Payload_t;
+} CFE_TIME_OneHzAdjustmentCmd_Payload_t;
 
 typedef struct
 {
   uint8                         CmdHeader[CFE_SB_CMD_HDR_SIZE];
-  CFE_TIME_1HzAdjCmd_Payload_t  Payload;
+  CFE_TIME_OneHzAdjustmentCmd_Payload_t  Payload;
 
-} CFE_TIME_1HzAdjCmd_t;
+} CFE_TIME_OneHzAdjustmentCmd_t;
 
+/*
+ * A separate typedef for each of the commands that share this definition
+ * This follows the convention for command handler prototypes and allows
+ * each one to independently evolve as necessary.
+ */
+typedef CFE_TIME_OneHzAdjustmentCmd_t CFE_TIME_Add1HZAdjustment_t;
+typedef CFE_TIME_OneHzAdjustmentCmd_t CFE_TIME_Sub1HZAdjustment_t;
 
 /*
 ** Type definition (local 1Hz wake-up command)...
@@ -938,7 +902,7 @@ typedef struct
 {
     CFE_TIME_SysTime_t    AtToneMET;    /**< \brief MET at time of tone */
     CFE_TIME_SysTime_t    AtToneSTCF;   /**< \brief STCF at time of tone */
-    int16                 AtToneLeaps;  /**< \brief Leap Seconds at time of tone */
+    int16                 AtToneLeapSeconds;  /**< \brief Leap Seconds at time of tone */
     int16                 AtToneState;  /**< \brief Clock state at time of tone */
 } CFE_TIME_ToneDataCmd_Payload_t;
 
@@ -959,9 +923,9 @@ typedef struct
     /*
     ** Task command interface counters...
     */
-    uint8                 CmdCounter;       /**< \cfetlmmnemonic \TIME_CMDPC
+    uint8                 CommandCounter;       /**< \cfetlmmnemonic \TIME_CMDPC
                                                  \brief Time Command Execution Counter */
-    uint8                 ErrCounter;       /**< \cfetlmmnemonic \TIME_CMDEC
+    uint8                 CommandErrorCounter;       /**< \cfetlmmnemonic \TIME_CMDEC
                                                  \brief Time Command Error Counter */
 
     /*
@@ -994,7 +958,7 @@ typedef struct
     /*
     ** 1Hz STCF adjustment values (server only)...
     */
-    #if (CFE_TIME_CFG_SERVER == TRUE)
+    #if (CFE_PLATFORM_TIME_CFG_SERVER == true)
     uint32                Seconds1HzAdj;    /**< \cfetlmmnemonic \TIME_1HZADJSECS
                                                  \brief Current 1 Hz SCTF adjustment (seconds) */
     uint32                Subsecs1HzAdj;    /**< \cfetlmmnemonic \TIME_1HZADJSSECS
@@ -1004,20 +968,20 @@ typedef struct
     /*
     ** Time at tone delay values (client only)...
     */
-    #if (CFE_TIME_CFG_CLIENT == TRUE)
+    #if (CFE_PLATFORM_TIME_CFG_CLIENT == true)
     uint32                SecondsDelay;     /**< \cfetlmmnemonic \TIME_1HZDLYSECS
                                                  \brief Current 1 Hz SCTF Delay (seconds) */
     uint32                SubsecsDelay;     /**< \cfetlmmnemonic \TIME_1HZDLYSSECS
                                                  \brief Current 1 Hz SCTF Delay (sub-seconds) */
     #endif
 
-} CFE_TIME_HkPacket_Payload_t;
+} CFE_TIME_HousekeepingTlm_Payload_t;
 
 typedef struct
 {
   uint8                         TlmHeader[CFE_SB_TLM_HDR_SIZE];
-  CFE_TIME_HkPacket_Payload_t   Payload;
-} CFE_TIME_HkPacket_t;
+  CFE_TIME_HousekeepingTlm_Payload_t   Payload;
+} CFE_TIME_HousekeepingTlm_t;
 
 
 /*************************************************************************/
@@ -1039,7 +1003,7 @@ typedef struct
     CFE_TIME_SysTime_t    AtToneLatch;    /**< \cfetlmmnemonic \TIME_TVALIDS
 	                                             \brief Local clock latched at time of tone */
 
-    int16                 AtToneLeaps;    /**< \cfetlmmnemonic \TIME_LEAPS
+    int16                 AtToneLeapSeconds;    /**< \cfetlmmnemonic \TIME_LEAPS
 	                                             \brief Leap Seconds at time of tone */
     int16                 ClockStateAPI;  /**< \cfetlmmnemonic \TIME_APISTATE
 	                                             \brief Clock state as per API */
@@ -1109,25 +1073,25 @@ typedef struct
     /*
      ** Miscellaneous counters (subject to reset command)...
      */
-    uint32                ToneMatchCount;   /**< \cfetlmmnemonic \TIME_VERIFYCNT
+    uint32                ToneMatchCounter;   /**< \cfetlmmnemonic \TIME_VERIFYCNT
 	                                               \brief  Tone signal / data verification count */
-    uint32                ToneMatchErrors;  /**< \cfetlmmnemonic \TIME_VERIFYER
+    uint32                ToneMatchErrorCounter;  /**< \cfetlmmnemonic \TIME_VERIFYER
 	                                               \brief  Tone signal / data verification error count */
-    uint32                ToneSignalCount;  /**< \cfetlmmnemonic \TIME_TSDETCNT
+    uint32                ToneSignalCounter;  /**< \cfetlmmnemonic \TIME_TSDETCNT
 	                                               \brief  Tone signal detected SB message count */
-    uint32                ToneDataCount;    /**< \cfetlmmnemonic \TIME_TATTCNT
+    uint32                ToneDataCounter;    /**< \cfetlmmnemonic \TIME_TATTCNT
 	                                               \brief  Time at the tone data SB message count */
-    uint32                ToneIntCount;     /**< \cfetlmmnemonic \TIME_TSISRCNT
+    uint32                ToneIntCounter;     /**< \cfetlmmnemonic \TIME_TSISRCNT
 	                                               \brief  Tone signal ISR execution count */
-    uint32                ToneIntErrors;    /**< \cfetlmmnemonic \TIME_TSISRERR
+    uint32                ToneIntErrorCounter;    /**< \cfetlmmnemonic \TIME_TSISRERR
 	                                               \brief  Tone signal ISR error count */
-    uint32                ToneTaskCount;    /**< \cfetlmmnemonic \TIME_TSTASKCNT
+    uint32                ToneTaskCounter;    /**< \cfetlmmnemonic \TIME_TSTASKCNT
 	                                               \brief  Tone task execution count */
-    uint32                VersionCount;     /**< \cfetlmmnemonic \TIME_VERSIONCNT
+    uint32                VersionCounter;     /**< \cfetlmmnemonic \TIME_VERSIONCNT
 	                                               \brief  Count of mods to time at tone reference data (version) */
-    uint32                LocalIntCount;    /**< \cfetlmmnemonic \TIME_1HZISRCNT
+    uint32                LocalIntCounter;    /**< \cfetlmmnemonic \TIME_1HZISRCNT
 	                                               \brief  Local 1Hz ISR execution count */
-    uint32                LocalTaskCount;   /**< \cfetlmmnemonic \TIME_1HZTASKCNT
+    uint32                LocalTaskCounter;   /**< \cfetlmmnemonic \TIME_1HZTASKCNT
 	                                               \brief  Local 1Hz task execution count */
 
     /*
@@ -1169,16 +1133,31 @@ typedef struct
      */
     uint32                DataStoreStatus;  /**< \cfetlmmnemonic \TIME_ATASTSTAT
 	                                               \brief Data Store status (preserved across processor reset) */
-} CFE_TIME_DiagPacket_Payload_t;
+} CFE_TIME_DiagnosticTlm_Payload_t;
 
 typedef struct
 {
   uint8                 		TlmHeader[CFE_SB_TLM_HDR_SIZE];
-  CFE_TIME_DiagPacket_Payload_t Payload;
-} CFE_TIME_DiagPacket_t;
+  CFE_TIME_DiagnosticTlm_Payload_t Payload;
+} CFE_TIME_DiagnosticTlm_t;
 
 
 /*************************************************************************/
+
+/*
+ * COMPATIBILITY TYPEDEFS:
+ * In some circumstances applications may subscribe to telemetry from this component,
+ * and therefore the name changes may break existing code.  For these situations a
+ * typedef is created to continue supporting the previous name.  These should be
+ * removed in the next CFE release.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+typedef CFE_TIME_HousekeepingTlm_t  CFE_TIME_HkPacket_t;
+typedef CFE_TIME_DiagnosticTlm_t    CFE_TIME_DiagPacket_t;
+
+#endif /* CFE_OMIT_DEPRECATED_6_6 */
+
 
 #endif /* _cfe_time_msg_ */
 

@@ -1,7 +1,7 @@
 /*
-** $Id: fm_tbl.c 1.17 2015/02/28 17:50:59EST sstrege Exp  $
+** $Id: fm_tbl.c 1.3.1.2 2017/01/23 21:53:22EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -19,42 +19,6 @@
 **
 ** Notes:
 **
-** $Log: fm_tbl.c  $
-** Revision 1.17 2015/02/28 17:50:59EST sstrege 
-** Added copyright information
-** Revision 1.16 2011/01/12 15:29:57EST lwalling 
-** Add code to count good table entries during validation
-** Revision 1.15 2010/04/12 11:30:30EDT lwalling 
-** Added table verify summary event, changed verify to count all errs
-** Revision 1.14 2009/11/13 16:33:39EST lwalling 
-** Modify macro names, update table validation function, remove TableID
-** Revision 1.13 2009/11/09 16:58:32EST lwalling 
-** Change order of functions to match order of use
-** Revision 1.12 2009/10/30 16:01:55EDT lwalling 
-** Modify free space table entry state definitions
-** Revision 1.11 2009/10/30 14:02:35EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.10 2009/10/30 10:46:55EDT lwalling
-** Remove detail from function prologs, leave detail in function prototypes
-** Revision 1.9 2009/10/28 16:40:59EDT lwalling
-** Complete effort to replace the use of phrase device table with file system free space table
-** Revision 1.8 2009/10/28 16:30:11EDT lwalling
-** Modify events generated during table verification
-** Revision 1.7 2009/10/09 17:23:52EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.6 2009/10/07 15:59:29EDT lwalling
-** Changed table load and manage strategy to allow startup w/o device table
-** Revision 1.5 2008/12/11 12:07:28EST sstrege
-** Removed all table source references and replaced table load backup from source with table file check
-** Revision 1.4 2008/11/30 14:30:02EST sstrege
-** Updated device table to register as a single vs. double buffered table
-** Revision 1.3 2008/09/24 12:11:20EDT sstrege
-** Removed #ifdef UNIT_TEST statement
-** Revision 1.2 2008/06/20 16:21:43EDT slstrege
-** Member moved from fsw/src/fm_tbl.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_tbl.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:43ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 **
 */
 
@@ -156,7 +120,7 @@ int32 FM_ValidateTable(void *TableData)
                 if (CountBad == 1)
                 {
                     CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
-                       "Free Space Table verify error: index = %d, empty name string", i);
+                       "Free Space Table verify error: index = %d, empty name string", (int)i);
                 }
             }
             else if (NameLength == OS_MAX_PATH_LEN)
@@ -168,7 +132,7 @@ int32 FM_ValidateTable(void *TableData)
                 if (CountBad == 1)
                 {
                     CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
-                       "Free Space Table verify error: index = %d, name too long", i);
+                       "Free Space Table verify error: index = %d, name too long", (int)i);
                 }
             }
             else if (!CFS_IsValidFilename(TablePtr->FileSys[i].Name, NameLength))
@@ -181,7 +145,7 @@ int32 FM_ValidateTable(void *TableData)
                 {
                     CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
                        "Free Space Table verify error: index = %d, invalid name = %s",
-                                      i, TablePtr->FileSys[i].Name);
+                                      (int)i, TablePtr->FileSys[i].Name);
                 }
             }
             else
@@ -205,7 +169,7 @@ int32 FM_ValidateTable(void *TableData)
             {
                 CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
                    "Table verify error: index = %d, invalid state = %d",
-                                  i, TablePtr->FileSys[i].State);
+                                  (int)i, (int)TablePtr->FileSys[i].State);
             }
         }
     }
@@ -213,7 +177,7 @@ int32 FM_ValidateTable(void *TableData)
     /* Display verify results */
     CFE_EVS_SendEvent(FM_TABLE_VERIFY_EID, CFE_EVS_INFORMATION,
        "Free Space Table verify results: good entries = %d, bad = %d, unused = %d",
-                      CountGood, CountBad, CountUnused);
+                      (int)CountGood, (int)CountBad, (int)CountUnused);
 
     if (CountBad != 0)
     {

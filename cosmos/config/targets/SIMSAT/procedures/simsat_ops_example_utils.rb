@@ -177,7 +177,7 @@ class ReqTlmThread < Thread
             Osk::flight.send_cmd("DS","SEND_FILE_INFO")
             wait 2
          
-            Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{SimSat::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+            Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{SimSat::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
             wait 2
 
             @ops_active = !File.exist?(@stop_ops_example_file)

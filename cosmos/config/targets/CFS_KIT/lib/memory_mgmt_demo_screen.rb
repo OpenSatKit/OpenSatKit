@@ -221,7 +221,7 @@ def memory_mgmt_demo(screen, button)
          # Lookup a symbol
          when 1
             if ($mmd_demo == 0)
-               Osk::flightsend_cmd("MM".,"LOOKUP_SYMBOL with SYMBOL_NAME #{MMD_SYMBOL}")
+               Osk::flight.send_cmd("MM","LOOKUP_SYMBOL with SYMBOL_NAME #{MMD_SYMBOL}")
             # Don't increment mmd_demo; okay if user repeatedly sends lookup cmd
             end
       

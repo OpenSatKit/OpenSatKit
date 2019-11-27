@@ -9,9 +9,8 @@ include_directories(./../inc)
 include_directories(fsw/src/PUB)
 include_directories(fsw/src/PRI)
 
-include_directories(${osk_app_fw_MISSION_DIR}/fsw/platform_inc)
-include_directories(${osk_app_fw_MISSION_DIR}/fsw/mission_inc)
 include_directories(${cfs_lib_MISSION_DIR}/fsw/public_inc)
+include_directories(${cfs_lib_PLATFORM_DIR}/fsw/public_inc)
 
 aux_source_directory(fsw/src APP_SRC_FILES)
 aux_source_directory(fsw/tables APP_TABLE_FILES)

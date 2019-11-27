@@ -194,7 +194,7 @@
  * This should be left disabled in a normal build as it may affect real time performance as
  * well as producing extra console output.
  */
-#undef OS_DEBUG_PRINTF
+#define OS_DEBUG_PRINTF
 
 /*
  * If OSAL_EXTRA_DEBUG is defined, this will include extra debug features into the

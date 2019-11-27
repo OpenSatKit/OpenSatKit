@@ -28,6 +28,8 @@ module FswConfigParam
   OS_MAX_SYM_LEN   = 64
   OS_MAX_TASKS     = 64
 
+  OS_MAX_NUM_OPEN_FILES = 50
+
   #########
   ## cFE ##
   #########
@@ -93,6 +95,7 @@ module FswConfigParam
   ########################
 
   FM_DIR_LIST_FILE_DEFNAME = "fm_dirlist.out"
+  FM_DIR_LIST_PKT_ENTRIES  = 20
 
   FM_TABLE_CFE_NAME    = "FreeSpace"
   FM_TABLE_DEF_NAME    = "fm_freespace.tbl"
@@ -100,7 +103,7 @@ module FswConfigParam
   FM_TABLE_FILENAME    = "fm_freespace.tbl"
   
   FM_DIR_FILE_HDR_LEN  = 72 # Not a config parameter but FM definition
-  FM_DIR_FILE_REC_LEN  = 72 # Not a config parameter but FM definition
+  FM_DIR_FILE_REC_LEN  = 76 # Not a config parameter but FM definition
   
   #########################
   ## App - House Keeping ##
