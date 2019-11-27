@@ -44,6 +44,10 @@ def simsat_manage_recorder
 
    if (Osk::system.file_transfer.get(SimSat::FLT_DIR_LIST_FILE,SimSat::GND_DIR_LIST_FILE,20))
       file_hash = simsat_create_file_hash(SimSat::GND_DIR_LIST_FILE)
+      if file_hash.length == 0
+         message_box("No files to download. Verify flight software configuration.",false)
+         return
+      end
       file_hash.each do |file_type, file_list|
          file_list.each do |file| 
             flt_dir_filename = "#{SimSat::FLT_SRV_DIR}/#{file}"

@@ -1,13 +1,24 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 ** File:
 **    time_UT.h
 **
@@ -21,49 +32,6 @@
 **
 ** Notes:
 **    1. This is unit test code only, not for use in flight
-**
-** $Date: 2014/05/28 09:23:30GMT-05:00 $
-** $Revision: 1.1 $
-** $Log: time_UT.h  $
-** Revision 1.1 2014/05/28 09:23:30GMT-05:00 wmoleski
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/unit-test/project.pj
-** Revision 1.6 2012/10/01 18:47:09EDT aschoeni
-** Removed relative paths in includes, this is now done by makefile
-** Revision 1.5 2012/01/13 13:59:29EST acudmore
-** Added license text
-** Revision 1.4 2011/12/07 19:19:32EST aschoeni
-** Removed returns for TIME and SB for cleaning up apps
-** Revision 1.3 2011/11/30 15:09:08EST jmdagost
-** Replaced ifdef/ifndef preprocessor tests with if...==TRUE/if...!=TRUE tests
-** Revision 1.2 2008/08/06 22:43:48EDT dkobe
-** Updated Unit Tests for CFE_TIME_RegisterSynchCallback, CFE_TIME_UnregisterSynchCallback and CFE_TIME_CleanUpApp
-** Revision 1.1 2008/04/17 08:05:44EDT ruperera
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/unit-test/project.pj
-** Revision 1.9 2007/05/15 15:16:31EDT njyanchik
-** Updated unit test for new code
-** Revision 1.8 2007/05/04 09:10:25EDT njyanchik
-** Check in of Time UT and related changes
-** Revision 1.7 2007/05/01 13:28:14EDT njyanchik
-** I updated the ut stubs to get the each of the subsytems to compile under the unit test. I did not
-** change the unit tests themselves to cover more of the files, however.
-** Revision 1.6 2006/11/02 13:53:58EST njyanchik
-** Unit test for TIME was updated to match the changes made for this DCR
-** Revision 1.5 2006/11/01 12:46:54GMT-05:00 njyanchik
-** Changed the Unit test to reflect the changes from removing the CDS functionality from TIME
-** Revision 1.4 2006/10/30 14:09:28GMT-05:00 njyanchik
-** I changed TIME to use the new ES_CDS implementation. This involved using the
-** new functions, as well as modifying the CFE_TIME_TaskData structure as well as
-** the CFE_TIME_DiagPacket structure. They both made reference to the address
-** of the TIME CDS (the old implementation). Now they both use the new
-** CFE_ES_CDSHandle_t. Also, the Unit Test for Time was updated. No new paths
-** through the code were created, but since return codes from the CDS functions
-** changed, there needed to be updates to the UT.
-** Revision 1.3 2006/05/31 08:33:15GMT-05:00 jjhageman
-** Addition of CFE_TIME_MET2SCTime testing and added case to CFE_TIME_Sub2MicroSec for full coverage.
-** Revision 1.2 2006/05/31 08:29:37EDT jjhageman
-** Additions for code coverage with different defines
 **
 */
 #ifndef _time_UT_h_
@@ -79,7 +47,7 @@
 #include "cfe_time_msg.h"
 #include "cfe_time_utils.h"
 #include "common_types.h"
-#include "ut_stubs.h"
+#include "ut_support.h"
 
 /*
 ** Function prototypes
@@ -239,10 +207,10 @@ void Test_Print(void);
 **        None
 **
 ** \returns
-**        This function does not return a value.
+**        This function returns CFE_SUCCESS
 **
 ******************************************************************************/
-void ut_time_MyCallbackFunc(void);
+int32 ut_time_MyCallbackFunc(void);
 
 /*****************************************************************************/
 /**
@@ -255,8 +223,8 @@ void ut_time_MyCallbackFunc(void);
 ** \par Assumptions, External Events, and Notes:
 **        None
 **
-** \param[in] reportResults  Set to TRUE to report test results for calls to
-**                           CFE_TIME_RegisterSynchCallback.  Set to FALSE
+** \param[in] reportResults  Set to true to report test results for calls to
+**                           CFE_TIME_RegisterSynchCallback.  Set to false
 **                           to perform the function without reporting (this
 **                           function is used by other tests so reporting
 **                           is only needed once).
@@ -267,7 +235,7 @@ void ut_time_MyCallbackFunc(void);
 ** \sa #UT_Text, #UT_InitData, #CFE_TIME_RegisterSynchCallback, #UT_Report
 **
 ******************************************************************************/
-void Test_RegisterSyncCallback(boolean reportResults);
+void Test_RegisterSyncCallback(bool reportResults);
 
 /*****************************************************************************/
 /**
@@ -479,23 +447,5 @@ void Test_UnregisterSynchCallback(void);
 **
 ******************************************************************************/
 void Test_CleanUpApp(void);
-
-/*****************************************************************************/
-/**
-** \brief Unit test specific call to process SB messages
-**
-** \par Description
-**        Unit test specific call to process SB messages.
-**
-** \par Assumptions, External Events, and Notes:
-**        None
-**
-** \returns
-**        This function does not return a value.
-**
-** \sa #CFE_TIME_TaskPipe
-**
-******************************************************************************/
-void UT_ProcessSBMsg(CFE_SB_Msg_t *MsgPtr);
 
 #endif /* _time_ut_h_ */

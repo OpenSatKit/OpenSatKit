@@ -72,7 +72,6 @@
 #include "hs_custom.h"
 #include "hs_tbldefs.h"
 #include "hs_events.h"
-
 #include <string.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,7 +1,7 @@
 /*
-** $Id: fm_msg.h 1.29 2015/02/28 17:50:45EST sstrege Exp  $
+** $Id: fm_msg.h 1.7.1.3 2017/01/23 21:52:57EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -22,66 +22,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_msg.h  $
-** Revision 1.29 2015/02/28 17:50:45EST sstrege 
-** Added copyright information
-** Revision 1.28 2014/12/18 14:32:55EST lwalling 
-** Added mutex semaphore protection when accessing FM_GlobalData.ChildQueueCount
-** Revision 1.27 2014/12/04 17:52:10EST lwalling 
-** Removed unused CommandWarnCounter
-** Revision 1.26 2011/07/04 13:57:22EDT lwalling 
-** Change all housekeeping values from 16 to 8 bits
-** Revision 1.25 2011/07/04 13:38:13EDT lwalling 
-** Change cmd counter from 16 to 8 bits
-** Revision 1.24 2011/05/16 14:30:20EDT lwalling 
-** Cleanup comments in description of housekeeping data structure
-** Revision 1.23 2011/04/19 15:57:22EDT lwalling 
-** Added overwrite argument to copy and move file commands
-** Revision 1.22 2011/04/15 15:17:34EDT lwalling 
-** Added current and previous child task command code to global data and housekeeping packet
-** Revision 1.21 2010/03/08 15:49:39EST lwalling 
-** Remove uint64 data type from free space packet
-** Revision 1.20 2010/03/03 18:20:09EST lwalling 
-** Changed WarnCounter to WarnCtr to match ASIST database
-** Revision 1.19 2010/01/12 15:06:58EST lwalling 
-** Remove references to fm_mission_cfg.h
-** Revision 1.18 2009/11/17 13:40:52EST lwalling 
-** Remove global open files list data structure
-** Revision 1.17 2009/11/13 16:23:24EST lwalling 
-** Modify macro names, add CRC arg to GetFileInfo cmd pkt, add SetTableEntryState cmd pkt
-** Revision 1.16 2009/11/09 16:55:55EST lwalling 
-** Cleanup doxygen comments, change structure names, add app global data
-** Revision 1.15 2009/10/30 16:00:31EDT lwalling 
-** Remove include fm_msgdefs.h, add HK request command packet definition
-** Revision 1.14 2009/10/30 14:02:27EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.13 2009/10/30 10:45:58EDT lwalling
-** Add table structures, create command specific packet structures
-** Revision 1.12 2009/10/29 11:42:26EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.11 2009/10/27 17:31:14EDT lwalling
-** Add a child task command warning counter
-** Revision 1.10 2009/10/26 16:44:57EDT lwalling
-** Add child task vars to housekeeping pkt, change some structure and variable names
-** Revision 1.9 2009/10/26 11:31:02EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.8 2009/10/23 14:49:08EDT lwalling
-** Update event text and descriptions of event text
-** Revision 1.7 2009/10/16 15:45:05EDT lwalling
-** Update comments, descriptive text, command code names, structure names
-** Revision 1.6 2009/10/09 17:23:50EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.5 2009/10/08 16:20:23EDT lwalling
-** Remove disk free space from HK telemetry
-** Revision 1.4 2009/09/28 14:15:30EDT lwalling
-** Create common filename verification functions
-** Revision 1.3 2008/10/01 16:16:00EDT sstrege
-** Updated FM_SourceUint16DataCmd_t to FM_SourceUint32DataCmd_t
-** Revision 1.2 2008/06/20 16:21:38EDT slstrege
-** Member moved from fsw/src/fm_msg.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_msg.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:38ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_msg_h_
@@ -293,7 +233,9 @@ typedef struct
     uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB cmd hdr */
     char    Directory[OS_MAX_PATH_LEN];     /**< \brief Directory name */
     char    Filename[OS_MAX_PATH_LEN];      /**< \brief Filename */
-
+    uint8   GetSizeTimeMode;                /**< \brief Option to query size, time, and mode of files (CPU intensive) */
+    uint8   Spare01[3];                     /**< \brief Padding to 32 bit boundary */
+ 
 } FM_GetDirFileCmd_t;
 
 
@@ -307,6 +249,8 @@ typedef struct
     uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB cmd hdr */
     char    Directory[OS_MAX_PATH_LEN];     /**< \brief Directory name */
     uint32  DirListOffset;                  /**< \brief Index of 1st dir entry to put in packet */
+    uint8   GetSizeTimeMode;                /**< \brief Option to query size, time, and mode of files (CPU intensive) */
+    uint8   Spare01[3];                     /**< \brief Padding to 32 bit boundary */
 
 } FM_GetDirPktCmd_t;
 
@@ -337,6 +281,20 @@ typedef struct
 } FM_SetTableStateCmd_t;
 
 
+/*
+**  \brief Set Permissions for a file
+**
+**  For command details see #FM_SET_PERM_CC
+*/
+typedef struct
+{
+    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE SB cmd hdr */
+    char    FileName[OS_MAX_PATH_LEN];      /**< \brief File name of the permissions to set */
+    uint32  Mode;                           /**< \brief Permissions, passed directly to OS_chmod */
+
+} FM_SetPermCmd_t;
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* FM -- get directory listing telemetry structures                */
@@ -354,6 +312,8 @@ typedef struct
                                                  \brief Directory Listing File Size */
     uint32  ModifyTime;                     /**< \fmtlmmnemonic \FM_DLModTime
                                                  \brief Directory Listing File Last Modification Times */
+    uint32  Mode;                           /**< \fmtlmmnemonic \FM_DLMode
+                                                 \brief Mode of the file (Permissions) */
 } FM_DirListEntry_t;
 
 /**
@@ -419,6 +379,9 @@ typedef struct
                                                  \brief File Size */
     uint32  LastModifiedTime;               /**< \fmtlmmnemonic \FM_ModTime
                                                  \brief Last Modification Time of File */
+    uint32  Mode;                           /**< \fmtlmmnemonic \FM_Mode
+                                                 \brief Mode of the file (Permissions) */
+    
     char    Filename[OS_MAX_PATH_LEN];      /**< \fmtlmmnemonic \FM_InfoFileName
                                                  \brief Name of File */
 } FM_FileInfoPkt_t;
@@ -576,7 +539,8 @@ typedef struct
     char    Source1[OS_MAX_PATH_LEN];       /**< \brief First source file or directory name command argument */
     char    Source2[OS_MAX_PATH_LEN];       /**< \brief Second source filename command argument */
     char    Target[OS_MAX_PATH_LEN];        /**< \brief Target filename command argument */
-
+    uint8   GetSizeTimeMode;                /**< \brief Whether to invoke stat call for size and time (CPU intensive) */
+    uint32  Mode;                           /**< \brief File Mode */
 } FM_ChildQueueEntry_t;
 
 

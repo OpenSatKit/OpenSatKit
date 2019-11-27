@@ -1,58 +1,31 @@
 /*
-** $Id: cfe_tbl_msg.h 1.9 2014/08/19 13:49:24GMT-05:00 sstrege Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe_tbl_msg.h
 **
 ** Purpose:  cFE Table Services (TBL) SB message definitions header file
 **
 ** Author:   D.Kobe/Hammers
 **
 ** Notes:
-**
-** $Log: cfe_tbl_msg.h  $
-** Revision 1.9 2014/08/19 13:49:24GMT-05:00 sstrege 
-** Fixed doxygen warning
-** Revision 1.8 2014/06/09 18:27:05EDT lwalling 
-** Removed pad bytes from TBL housekeeping packet
-** Revision 1.7 2014/06/09 10:30:25EDT lwalling 
-** Add LastTableLoaded to TBL housekeeping structure
-** Revision 1.6 2010/10/27 16:33:44EDT dkobe 
-** Added CRC to Registry Entry Telemetry Message
-** Revision 1.5 2010/10/27 13:54:24EDT dkobe 
-** Added command message data structure for TBL notification messages
-** Revision 1.4 2010/10/25 15:01:11EDT jmdagost 
-** Corrected bad apostrophe in prologue.
-** Revision 1.3 2010/10/04 15:24:58EDT jmdagost 
-** Cleaned up copyright symbol.
-** Revision 1.2 2008/12/08 12:07:10EST dkobe 
-** Updates to correct doxygen errors
-** Revision 1.1 2008/04/17 08:05:25EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.20 2007/09/27 15:53:53EDT David Kobe (dlkobe) 
-** Added relevant "See Also" doxygen comment references.
-** Revision 1.19 2007/07/05 15:39:17EDT dlkobe 
-** Added Critical Table Flag to Tbl Registry Record Tlm Command
-** Revision 1.18 2007/06/07 13:07:46EDT dlkobe 
-** Added Command and Telemetry doxygen comments to TIME, EVS and SB
-** Revision 1.17 2007/06/02 10:10:11EDT dlkobe 
-** Added doxygen comments for User's Guides
-** Revision 1.16 2007/05/25 16:24:49EDT dlkobe 
-** Continued updating doxygen comments
-** Revision 1.14 2007/05/16 15:13:39EDT dlkobe 
-** Added MemPoolHandle members to HK packet
-** Revision 1.13 2007/05/04 15:55:06EDT dlkobe 
-** Added Delete CDS Command
-** Revision 1.12 2006/11/10 15:14:35GMT-05:00 dlkobe 
-** Updated comments to conform with doxygen
-** Revision 1.11 2006/10/31 12:21:44GMT-05:00 dlkobe 
-** Removed all references to the TBL_MOD_DUMP_ONLY option command
 **
 */
 
@@ -146,7 +119,7 @@
 **
 **  \sa 
 */
-#define CFE_TBL_RESET_CC        1
+#define CFE_TBL_RESET_COUNTERS_CC        1
 
 /** \cfetblcmd Load Table
 **
@@ -380,9 +353,9 @@
 **       file in the file system and could, if performed repeatedly without 
 **       sufficient file management by the operator, fill the file system.
 **
-**  \sa  #CFE_TBL_TLM_REG_CC
+**  \sa  #CFE_TBL_SEND_REGISTRY_CC
 */
-#define CFE_TBL_DUMP_REG_CC     6
+#define CFE_TBL_DUMP_REGISTRY_CC     6
 
 /** \cfetblcmd Telemeter One Table Registry Entry
 **
@@ -399,7 +372,7 @@
 **       Successful execution of this command may be verified with the 
 **       following telemetry:
 **       - \b \c \TBL_CMDPC -  command execution counter will increment
-**       - Receipt of a Table Registry Info Packet (see #CFE_TBL_TblRegPacket_t)
+**       - Receipt of a Table Registry Info Packet (see #CFE_TBL_TableRegistryTlm_t)
 **       - The #CFE_TBL_TLM_REG_CMD_INF_EID debug event message will 
 **         be generated
 **
@@ -415,9 +388,9 @@
 **       This command is not inherently dangerous.  It will generate 
 **       additional telemetry.
 **
-**  \sa  #CFE_TBL_DUMP_REG_CC
+**  \sa  #CFE_TBL_DUMP_REGISTRY_CC
 */
-#define CFE_TBL_TLM_REG_CC      7
+#define CFE_TBL_SEND_REGISTRY_CC      7
 
 /** \cfetblcmd Delete Critical Table from Critical Data Store
 **
@@ -459,7 +432,7 @@
 **       This command will cause the loss of the specified table's contents
 **       before the owning Application was terminated.
 **
-**  \sa  #CFE_ES_DUMP_CDS_REG_CC, #CFE_ES_DELETE_CDS_CC
+**  \sa  #CFE_ES_DUMP_CDS_REGISTRY_CC, #CFE_ES_DELETE_CDS_CC
 */
 #define CFE_TBL_DELETE_CDS_CC   8
 
@@ -503,15 +476,6 @@
 #define CFE_TBL_ABORT_LOAD_CC   9
 /** \} */
 
-/*
-** Validate Command Buffer Selection Parameters
-*/
-/** \name Validate and Dump Command Buffer Selection Parameters */
-/** \{ */
-#define CFE_TBL_INACTIVE_BUFFER 0
-#define CFE_TBL_ACTIVE_BUFFER   1
-/** \} */
-
 /*************************************************************************/
 
 /********************************/
@@ -524,13 +488,21 @@
 ** This includes:
 ** -# The Housekeeping Request Message
 ** -# The No-Op Command (For details, see #CFE_TBL_NOOP_CC)
-** -# The Reset Counters Command (For details, see #CFE_TBL_RESET_CC)
+** -# The Reset Counters Command (For details, see #CFE_TBL_RESET_COUNTERS_CC)
 */
 typedef struct
 {
     uint8                 CmdHeader[CFE_SB_CMD_HDR_SIZE];   /**< \brief cFE Software Bus Command Message Header */
 
 } CFE_TBL_NoArgsCmd_t;
+
+/*
+ * Typedefs for each of the messages that share the command format
+ * Allows each command to evolve independently, while following the command
+ * handler prototype convention
+ */
+typedef CFE_TBL_NoArgsCmd_t CFE_TBL_Noop_t;
+typedef CFE_TBL_NoArgsCmd_t CFE_TBL_ResetCounters_t;
 
 /**
 ** \brief Load Table Command
@@ -540,7 +512,7 @@ typedef struct
 **/
 typedef struct
 {
-    char                  LoadFilename[OS_MAX_PATH_LEN];  /**< \brief Filename (and path) of data to be loaded */
+    char                  LoadFilename[CFE_MISSION_MAX_PATH_LEN];  /**< \brief Filename (and path) of data to be loaded */
                                                           /**< ASCII Character string containing full path 
                                                                filename for file to be loaded */
 } CFE_TBL_LoadCmd_Payload_t;
@@ -549,7 +521,7 @@ typedef struct
 {
     uint8                       CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
     CFE_TBL_LoadCmd_Payload_t   Payload;
-} CFE_TBL_LoadCmd_t;
+} CFE_TBL_Load_t;
 
 /**
 ** \brief Dump Table Command
@@ -558,16 +530,16 @@ typedef struct
 */
 typedef struct
 {
-    uint16                ActiveTblFlag;                        /**< \brief #CFE_TBL_INACTIVE_BUFFER=Inactive Table, 
-                                                                            #CFE_TBL_ACTIVE_BUFFER=Active Table */
+    uint16                ActiveTableFlag;                        /**< \brief #CFE_TBL_BufferSelect_INACTIVE=Inactive Table, 
+                                                                            #CFE_TBL_BufferSelect_ACTIVE=Active Table */
                                                                 /**< Selects either the "Inactive" 
-                                                                     (#CFE_TBL_INACTIVE_BUFFER) buffer or the 
-                                                                     "Active" (#CFE_TBL_ACTIVE_BUFFER) buffer 
+                                                                     (#CFE_TBL_BufferSelect_INACTIVE) buffer or the 
+                                                                     "Active" (#CFE_TBL_BufferSelect_ACTIVE) buffer 
                                                                      to be dumped */
-    char                  TableName[CFE_TBL_MAX_FULL_NAME_LEN]; /**< \brief Full name of table to be dumped */
+    char                  TableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN]; /**< \brief Full name of table to be dumped */
                                                                 /**< ASCII string containing full table name 
                                                                      identifier of table to be dumped */
-    char                  DumpFilename[OS_MAX_PATH_LEN];        /**< \brief Full Filename where data is to be written */
+    char                  DumpFilename[CFE_MISSION_MAX_PATH_LEN];        /**< \brief Full Filename where data is to be written */
                                                                 /**< ASCII string containing full path of filename 
                                                                      where data is to be dumped */
 } CFE_TBL_DumpCmd_Payload_t;
@@ -576,7 +548,7 @@ typedef struct
 {
     uint8                       CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
     CFE_TBL_DumpCmd_Payload_t   Payload;
-} CFE_TBL_DumpCmd_t;
+} CFE_TBL_Dump_t;
 
 /**
 ** \brief Validate Table Command
@@ -585,13 +557,13 @@ typedef struct
 */
 typedef struct
 {
-    uint16                ActiveTblFlag;                         /**< \brief #CFE_TBL_INACTIVE_BUFFER=Inactive Table, 
-                                                                             #CFE_TBL_ACTIVE_BUFFER=Active Table */
+    uint16                ActiveTableFlag;                         /**< \brief #CFE_TBL_BufferSelect_INACTIVE=Inactive Table, 
+                                                                             #CFE_TBL_BufferSelect_ACTIVE=Active Table */
                                                                  /**< Selects either the "Inactive" 
-                                                                      (#CFE_TBL_INACTIVE_BUFFER) buffer or the 
-                                                                      "Active" (#CFE_TBL_ACTIVE_BUFFER) buffer 
+                                                                      (#CFE_TBL_BufferSelect_INACTIVE) buffer or the 
+                                                                      "Active" (#CFE_TBL_BufferSelect_ACTIVE) buffer 
                                                                       to be validated */
-    char                  TableName[CFE_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table to be validated */
+    char                  TableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table to be validated */
                                                                  /**< ASCII string containing full table name 
                                                                       identifier of table to be validated */
 } CFE_TBL_ValidateCmd_Payload_t;
@@ -600,7 +572,7 @@ typedef struct
 {
     uint8                           CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
     CFE_TBL_ValidateCmd_Payload_t   Payload;
-} CFE_TBL_ValidateCmd_t;
+} CFE_TBL_Validate_t;
 
 /**
 ** \brief Activate Table Command
@@ -609,7 +581,7 @@ typedef struct
 */
 typedef struct
 {
-    char                  TableName[CFE_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table to be activated */
+    char                  TableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table to be activated */
                                                                  /**< ASCII string containing full table name 
                                                                       identifier of table to be activated */
 } CFE_TBL_ActivateCmd_Payload_t;
@@ -618,46 +590,46 @@ typedef struct
 {
     uint8                           CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
     CFE_TBL_ActivateCmd_Payload_t   Payload;
-} CFE_TBL_ActivateCmd_t;
+} CFE_TBL_Activate_t;
 
 /**
 ** \brief Dump Registry Command
 **
-** For command details, see #CFE_TBL_DUMP_REG_CC
+** For command details, see #CFE_TBL_DUMP_REGISTRY_CC
 */
 typedef struct
 {
-    char                  DumpFilename[OS_MAX_PATH_LEN];        /**< \brief Full Filename where dumped data is to be 
+    char                  DumpFilename[CFE_MISSION_MAX_PATH_LEN];        /**< \brief Full Filename where dumped data is to be 
                                                                      written */
                                                                 /**< ASCII string containing full path of filename 
                                                                      where registry is to be dumped */
-} CFE_TBL_DumpRegCmd_Payload_t;
+} CFE_TBL_DumpRegistryCmd_Payload_t;
 
 typedef struct
 {
     uint8                           CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
-    CFE_TBL_DumpRegCmd_Payload_t    Payload;
-} CFE_TBL_DumpRegCmd_t;
+    CFE_TBL_DumpRegistryCmd_Payload_t    Payload;
+} CFE_TBL_DumpRegistry_t;
 
 /**
 ** \brief Telemeter Table Registry Entry Command
 **
-** For command details, see #CFE_TBL_TLM_REG_CC
+** For command details, see #CFE_TBL_SEND_REGISTRY_CC
 */
 typedef struct
 {
-    char                  TableName[CFE_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table whose registry entry 
+    char                  TableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table whose registry entry
                                                                       is to be telemetered */
                                                                  /**< ASCII string containing full table name 
                                                                       identifier of table whose registry entry is
-                                                                      to be telemetered via #CFE_TBL_TblRegPacket_t */
-} CFE_TBL_TlmRegCmd_Payload_t;
+                                                                      to be telemetered via #CFE_TBL_TableRegistryTlm_t */
+} CFE_TBL_SendRegistryCmd_Payload_t;
 
 typedef struct
 {
     uint8                       CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
-    CFE_TBL_TlmRegCmd_Payload_t Payload;
-} CFE_TBL_TlmRegCmd_t;
+    CFE_TBL_SendRegistryCmd_Payload_t Payload;
+} CFE_TBL_SendRegistry_t;
 
 /**
 ** \brief Delete Critical Table CDS Command
@@ -666,7 +638,7 @@ typedef struct
 */
 typedef struct
 {
-    char                  TableName[CFE_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table whose CDS is 
+    char                  TableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table whose CDS is
                                                                       to be deleted */
                                                                  /**< ASCII string containing full table name 
                                                                       identifier of a critical table whose 
@@ -677,7 +649,7 @@ typedef struct
 {
     uint8                       CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
     CFE_TBL_DelCDSCmd_Payload_t Payload;
-} CFE_TBL_DelCDSCmd_t;
+} CFE_TBL_DeleteCDS_t;
 
 /**
 ** \brief Abort Load Command
@@ -686,16 +658,16 @@ typedef struct
 */
 typedef struct
 {
-    char                  TableName[CFE_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table whose load is to be aborted */
+    char                  TableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN];  /**< \brief Full Name of Table whose load is to be aborted */
                                                                  /**< ASCII string containing full table name 
                                                                       identifier of a table whose load is to be aborted */
-} CFE_TBL_AbortLdCmd_Payload_t;
+} CFE_TBL_AbortLoadCmd_Payload_t;
 
 typedef struct
 {
     uint8                           CmdHeader[CFE_SB_CMD_HDR_SIZE]; /**< \brief cFE Software Bus Command Message Header */
-    CFE_TBL_AbortLdCmd_Payload_t    Payload;
-} CFE_TBL_AbortLdCmd_t;
+    CFE_TBL_AbortLoadCmd_Payload_t    Payload;
+} CFE_TBL_AbortLoad_t;
 
 
 /*************************************************************************/
@@ -734,9 +706,9 @@ typedef struct
     /*
     ** Task command interface counters...
     */
-    uint8                 CmdCounter;                           /**< \cfetlmmnemonic \TBL_CMDPC 
+    uint8                 CommandCounter;                           /**< \cfetlmmnemonic \TBL_CMDPC 
                                                                      \brief Count of valid commands received */
-    uint8                 ErrCounter;                           /**< \cfetlmmnemonic \TBL_CMDEC 
+    uint8                 CommandErrorCounter;                           /**< \cfetlmmnemonic \TBL_CMDEC 
                                                                      \brief Count of invalid commands received */
 
     /*
@@ -750,19 +722,19 @@ typedef struct
     /*
     ** Last Table Validation Results
     */
-    uint16                ValidationCtr;                        /**< \cfetlmmnemonic \TBL_VALCOMPLTDCTR 
+    uint16                ValidationCounter;                        /**< \cfetlmmnemonic \TBL_VALCOMPLTDCTR 
                                                                      \brief Number of completed table validations */
     uint32                LastValCrc;                           /**< \cfetlmmnemonic \TBL_LASTVALCRC 
                                                                      \brief Data Integrity Value computed for last table validated */
     int32                 LastValStatus;                        /**< \cfetlmmnemonic \TBL_LASTVALS 
                                                                      \brief Returned status from validation function for last table validated */
-    boolean               ActiveBuffer;                         /**< \cfetlmmnemonic \TBL_LASTVALBUF 
+    bool                  ActiveBuffer;                         /**< \cfetlmmnemonic \TBL_LASTVALBUF 
                                                                      \brief Indicator of whether table buffer validated was 0=Inactive, 1=Active */ 
-    char                  LastValTableName[CFE_TBL_MAX_FULL_NAME_LEN]; /**< \cfetlmmnemonic \TBL_LASTVALTBLNAME 
+    char                  LastValTableName[CFE_MISSION_TBL_MAX_FULL_NAME_LEN]; /**< \cfetlmmnemonic \TBL_LASTVALTBLNAME
                                                                             \brief Name of last table validated */
-    uint8                 SuccessValCtr;                        /**< \cfetlmmnemonic \TBL_VALSUCCESSCTR 
+    uint8                 SuccessValCounter;                        /**< \cfetlmmnemonic \TBL_VALSUCCESSCTR 
                                                                      \brief Total number of successful table validations */
-    uint8                 FailedValCtr;                         /**< \cfetlmmnemonic \TBL_VALFAILEDCTR 
+    uint8                 FailedValCounter;                         /**< \cfetlmmnemonic \TBL_VALFAILEDCTR 
                                                                      \brief Total number of unsuccessful table validations */
     uint8                 NumValRequests;                       /**< \cfetlmmnemonic \TBL_VALREQCTR 
                                                                      \brief Number of times Table Services has requested validations from Apps */
@@ -778,21 +750,21 @@ typedef struct
                                                                      \brief Handle to TBL's memory pool */
     CFE_TIME_SysTime_t    LastUpdateTime;                       /**< \cfetlmmnemonic \TBL_LASTUPDTIME 
                                                                      \brief Time of last table update */
-    char                  LastUpdatedTbl[CFE_TBL_MAX_FULL_NAME_LEN]; /**< \cfetlmmnemonic \TBL_LASTUPDTBLNAME 
+    char                  LastUpdatedTable[CFE_MISSION_TBL_MAX_FULL_NAME_LEN]; /**< \cfetlmmnemonic \TBL_LASTUPDTBLNAME
                                                                           \brief Name of the last table updated */
-    char                  LastFileLoaded[OS_MAX_PATH_LEN];      /**< \cfetlmmnemonic \TBL_LASTFILELOADED 
+    char                  LastFileLoaded[CFE_MISSION_MAX_PATH_LEN];      /**< \cfetlmmnemonic \TBL_LASTFILELOADED 
                                                                      \brief Path and Name of last table image file loaded */
-    char                  LastFileDumped[OS_MAX_PATH_LEN];      /**< \cfetlmmnemonic \TBL_LASTFILEDUMPED 
+    char                  LastFileDumped[CFE_MISSION_MAX_PATH_LEN];      /**< \cfetlmmnemonic \TBL_LASTFILEDUMPED 
                                                                      \brief Path and Name of last file dumped to */
-    char                  LastTableLoaded[CFE_TBL_MAX_FULL_NAME_LEN]; /**< \cfetlmmnemonic \TBL_LASTTABLELOADED 
+    char                  LastTableLoaded[CFE_MISSION_TBL_MAX_FULL_NAME_LEN]; /**< \cfetlmmnemonic \TBL_LASTTABLELOADED
                                                                           \brief Name of the last table loaded */
-} CFE_TBL_HkPacket_Payload_t;
+} CFE_TBL_HousekeepingTlm_Payload_t;
 
 typedef struct
 {
     uint8                       TlmHeader[CFE_SB_TLM_HDR_SIZE];       /**< \brief cFE Software Bus Telemetry Message Header */
-    CFE_TBL_HkPacket_Payload_t  Payload;
-} CFE_TBL_HkPacket_t;
+    CFE_TBL_HousekeepingTlm_Payload_t  Payload;
+} CFE_TBL_HousekeepingTlm_t;
 
 
 /** 
@@ -816,21 +788,21 @@ typedef struct
                                                                      \brief File creation time from last file loaded into table */
     uint32                      FileCreateTimeSubSecs;          /**< \cfetlmmnemonic \TBL_FILECSUBSECONDS 
                                                                      \brief File creation time from last file loaded into table */
-    boolean                     TableLoadedOnce;                /**< \cfetlmmnemonic \TBL_LOADEDONCE 
+    bool                        TableLoadedOnce;                /**< \cfetlmmnemonic \TBL_LOADEDONCE 
                                                                      \brief Flag indicating whether table has been loaded once or not */
-    boolean                     LoadPending;                    /**< \cfetlmmnemonic \TBL_UPDATEPNDNG 
+    bool                        LoadPending;                    /**< \cfetlmmnemonic \TBL_UPDATEPNDNG 
                                                                      \brief Flag indicating an inactive buffer is ready to be copied */
-    boolean                     DumpOnly;                       /**< \cfetlmmnemonic \TBL_DUMPONLY 
+    bool                        DumpOnly;                       /**< \cfetlmmnemonic \TBL_DUMPONLY 
                                                                      \brief Flag indicating Table is NOT to be loaded */
-    boolean                     DblBuffered;                    /**< \cfetlmmnemonic \TBL_DBLBUFFERED 
+    bool                        DoubleBuffered;                    /**< \cfetlmmnemonic \TBL_DBLBUFFERED 
                                                                      \brief Flag indicating Table has a dedicated inactive buffer */
-    char                        Name[CFE_TBL_MAX_FULL_NAME_LEN];/**< \cfetlmmnemonic \TBL_NAME 
+    char                        Name[CFE_MISSION_TBL_MAX_FULL_NAME_LEN];/**< \cfetlmmnemonic \TBL_NAME
                                                                      \brief Processor specific table name */
-    char                        LastFileLoaded[OS_MAX_PATH_LEN];/**< \cfetlmmnemonic \TBL_LASTFILEUPD 
+    char                        LastFileLoaded[CFE_MISSION_MAX_PATH_LEN];/**< \cfetlmmnemonic \TBL_LASTFILEUPD 
                                                                      \brief Filename of last file loaded into table */
-    char                        OwnerAppName[OS_MAX_API_NAME];  /**< \cfetlmmnemonic \TBL_OWNERAPP 
+    char                        OwnerAppName[CFE_MISSION_MAX_API_LEN];  /**< \cfetlmmnemonic \TBL_OWNERAPP 
                                                                      \brief Name of owning application */
-    boolean                     Critical;                       /**< \cfetlmmnemonic \TBL_CRITICAL
+    bool                        Critical;                       /**< \cfetlmmnemonic \TBL_CRITICAL
                                                                      \brief Indicates whether table is Critical or not */
     uint8                       ByteAlign4;                     /**< \cfetlmmnemonic \TBL_SPARE4
                                                                      \brief Spare byte to maintain byte alignment */
@@ -840,9 +812,24 @@ typedef struct
 {
     uint8                           TlmHeader[CFE_SB_TLM_HDR_SIZE];       /**< \brief cFE Software Bus Telemetry Message Header */
     CFE_TBL_TblRegPacket_Payload_t  Payload;
-} CFE_TBL_TblRegPacket_t;
+} CFE_TBL_TableRegistryTlm_t;
 
 /*************************************************************************/
+
+/*
+ * COMPATIBILITY TYPEDEFS:
+ * In some circumstances applications may subscribe to telemetry from this component,
+ * and therefore the name changes may break existing code.  For these situations a
+ * typedef is created to continue supporting the previous name.  These should be
+ * removed in the next CFE release.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+typedef CFE_TBL_HousekeepingTlm_t        CFE_TBL_HkPacket_t;
+typedef CFE_TBL_TableRegistryTlm_t       CFE_TBL_TblRegPacket_t;
+
+#endif /* CFE_OMIT_DEPRECATED_6_6 */
+
 
 #endif /* _cfe_tbl_msg_ */
 

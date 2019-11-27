@@ -36,13 +36,13 @@ while (test_loop < 1000)
 
    seq_cnt = tlm("FM #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE}")
 
-   Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")   
+   Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")   
    Osk::flight.send_cmd("FM","WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{DIR_LIST_FILE}")
  
    wait("FM #{Osk::TLM_STR_HK_PKT} #{Ccsds::PRI_HDR_SEQUENCE} > #{seq_cnt}", 10) # Timeout will accomodate rollover
 
    app_cmd_valid_cnt   = tlm("FM #{Osk::TLM_STR_HK_PKT} #{Osk::TLM_STR_CMD_VLD}")
-   child_cmd_valid_cnt = tlm("FM #{Osk::TLM_STR_HK_PKT} CHILDCMDCOUNTER")
+   child_cmd_valid_cnt = tlm("FM #{Osk::TLM_STR_HK_PKT} CHILD_CMD_CTR")
    
    if (app_cmd_valid_cnt != child_cmd_valid_cnt)
       prompt ("Command Counter Synch Error: App=#{app_cmd_valid_cnt} Child=#{child_cmd_valid_cnt} ");

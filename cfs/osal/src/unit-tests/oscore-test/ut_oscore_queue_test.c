@@ -491,13 +491,13 @@ void UT_os_queue_get_test()
     UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_UOF)
 
     /*-----------------------------------------------------*/
-    testDesc = "#8 Nominal";
+    testDesc = "#8 Nominal Pend";
 
     /* Setup */
     res = OS_QueueCreate(&queue_id, "QueueGet", 10, 4, 0);
     if ( res != OS_SUCCESS )
     {
-        testDesc = "#8 Nominal - Queue Create failed";
+        testDesc = "#8 Nominal Pend - Queue Create failed";
         UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_TSF)
     }
     else
@@ -506,12 +506,72 @@ void UT_os_queue_get_test()
         res = OS_QueuePut(queue_id, (void *)&queue_data_out, 4, 0);
         if ( res != OS_SUCCESS )
         {
-            testDesc = "#8 Nominal - Queue Put failed";
+            testDesc = "#8 Nominal Pend - Queue Put failed";
             UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_TSF)
         }
         else
         {
             res = OS_QueueGet(queue_id, (void *)&queue_data_in, 4, &data_size, OS_PEND);
+            if ( res == OS_SUCCESS )
+                UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_PASSED)
+            else
+                UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_FAILED)
+        }
+        res = OS_QueueDelete(queue_id);
+    }
+
+    /*-----------------------------------------------------*/
+    testDesc = "#9 Nominal timeout";
+
+    /* Setup */
+    res = OS_QueueCreate(&queue_id, "QueueGet", 10, 4, 0);
+    if ( res != OS_SUCCESS )
+    {
+        testDesc = "#9 Nominal timeout - Queue Create failed";
+        UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_TSF)
+    }
+    else
+    {
+        queue_data_out = 0x11223344;
+        res = OS_QueuePut(queue_id, (void *)&queue_data_out, 4, 0);
+        if ( res != OS_SUCCESS )
+        {
+            testDesc = "#9 Nominal timeout - Queue Put failed";
+            UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_TSF)
+        }
+        else
+        {
+            res = OS_QueueGet(queue_id, (void *)&queue_data_in, 4, &data_size, 20);
+            if ( res == OS_SUCCESS )
+                UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_PASSED)
+            else
+                UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_FAILED)
+        }
+        res = OS_QueueDelete(queue_id);
+    }
+
+    /*-----------------------------------------------------*/
+    testDesc = "#10 Nominal check";
+
+    /* Setup */
+    res = OS_QueueCreate(&queue_id, "QueueGet", 10, 4, 0);
+    if ( res != OS_SUCCESS )
+    {
+        testDesc = "#10 Nominal check - Queue Create failed";
+        UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_TSF)
+    }
+    else
+    {
+        queue_data_out = 0x11223344;
+        res = OS_QueuePut(queue_id, (void *)&queue_data_out, 4, 0);
+        if ( res != OS_SUCCESS )
+        {
+            testDesc = "#10 Nominal check - Queue Put failed";
+            UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_TSF)
+        }
+        else
+        {
+            res = OS_QueueGet(queue_id, (void *)&queue_data_in, 4, &data_size, OS_CHECK);
             if ( res == OS_SUCCESS )
                 UT_OS_SET_TEST_RESULT_MACRO(apiInfo, idx, testDesc, UT_OS_PASSED)
             else

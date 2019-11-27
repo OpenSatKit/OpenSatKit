@@ -428,8 +428,8 @@ int32 CF_QueueDirectoryFiles(CF_QueueDirFiles_t  *Ptr)
         CFE_ES_PerfLogEntry(CF_QDIRFILES_PERF_ID);
     
         /* if file is a 'dot' directory... continue to next file */
-        if((strcmp(direntp->d_name,".") == 0) || 
-           (strcmp(direntp->d_name,"..") == 0))
+        if((strcmp(OS_DIRENTRY_NAME(*direntp),".") == 0) ||  //dcm
+           (strcmp(OS_DIRENTRY_NAME(*direntp),"..") == 0))   //dcm
         {
             CFE_ES_PerfLogExit(CF_QDIRFILES_PERF_ID);
             continue;
@@ -458,7 +458,7 @@ int32 CF_QueueDirectoryFiles(CF_QueueDirFiles_t  *Ptr)
             return CF_ERROR;
         }
 
-        if(CF_ChkTermination(direntp->d_name,OS_MAX_PATH_LEN)==CF_ERROR)
+        if(CF_ChkTermination(OS_DIRENTRY_NAME(*direntp),OS_MAX_PATH_LEN)==CF_ERROR)  //dcm
         {
             CFE_EVS_SendEvent(CF_QDIR_INV_NAME1_EID,CFE_EVS_ERROR,
                 "File not queued from %s,Filename not terminated or too long",Ptr->SrcPath);
@@ -467,7 +467,7 @@ int32 CF_QueueDirectoryFiles(CF_QueueDirFiles_t  *Ptr)
             continue;
         }        
         
-        FilenameLength = strlen(direntp->d_name);
+        FilenameLength = strlen(OS_DIRENTRY_NAME(*direntp));   //dcm
         
         if(((FilenameLength + SrcPathLength) >= OS_MAX_PATH_LEN) ||
            ((FilenameLength + DstPathLength) >= OS_MAX_PATH_LEN))
@@ -483,11 +483,11 @@ int32 CF_QueueDirectoryFiles(CF_QueueDirFiles_t  *Ptr)
                 
         /* Append filename to src path */ 
         strcat(FullSrcName,Ptr->SrcPath);
-        strcat(FullSrcName,direntp->d_name);
+        strcat(FullSrcName,OS_DIRENTRY_NAME(*direntp));  //dcm
 
         /* Append filename to dst path */
         strcat(FullDstName,Ptr->DstPath);
-        strcat(FullDstName,direntp->d_name);
+        strcat(FullDstName,OS_DIRENTRY_NAME(*direntp));  //dcm
                 
         /* check that the file is not already pending or active */            
         if((CF_FileIsOnQueue(Ptr->Chan, CF_PB_PENDINGQ, FullSrcName)==CF_TRUE)||

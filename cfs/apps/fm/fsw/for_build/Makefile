@@ -4,29 +4,6 @@
 # Purpose:
 #   Compile the CFS File Manager (FM) Application.
 #
-# $Log: Makefile  $
-# Revision 1.7 2009/10/30 14:02:30EDT lwalling 
-# Remove trailing white space from all lines
-# Revision 1.6 2009/10/23 14:38:47EDT lwalling
-# Add fm_child.o to build list
-# Revision 1.5 2009/07/09 11:41:24EDT rmcgraw
-# DCR8291:1 Changed CFE_MISSION_INC to CFS_MISSION_INC and added log if needed
-# Revision 1.4 2009/06/11 11:51:36EDT rmcgraw
-# DCR82191:1 Changed BSP to PSP
-# Revision 1.3 2009/06/03 12:35:21EDT rmcgraw
-# DCR8291:1 Environment variable changes for new repository structure
-# Revision 1.2 2009/04/20 17:35:31EDT dkobe
-# Removed device table source file that magically re-appeared during doxygen update
-# Revision 1.1 2009/04/16 17:30:46EDT dkobe
-# Initial revision
-# Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/for_build/project.pj
-# Revision 1.3 2008/10/09 08:43:27EDT sstrege
-# Moved device table from the source section into the object section.
-# Revision 1.2 2008/06/26 16:47:30EDT slstrege
-# Member moved from fsw/src/Makefile in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to Makefile in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-# Revision 1.1 2008/06/26 15:47:30ACT slstrege
-# Initial revision
-# Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 #
 ###############################################################################
 #

@@ -8,4 +8,4 @@ aux_source_directory(fsw/src APP_SRC_FILES)
 
 # Create the app module
 add_cfe_app(bm ${APP_SRC_FILES})
-
+target_link_libraries (bm m)

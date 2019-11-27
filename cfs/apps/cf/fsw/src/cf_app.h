@@ -62,6 +62,8 @@
 ** Includes
 *************************************************************************/
 #include "cfe.h"
+#include "cfe_msgids.h"  //dcm
+#include "cfe_platform_cfg.h"  //dcm
 #include "cf_msg.h"
 #include "cf_defs.h"
 #include "cf_tbldefs.h"
@@ -69,7 +71,15 @@
 #include "cf_platform_cfg.h"
 #include "cfdp_data_structures.h"
 
-
+//dcm - Copy FM's OS_DIRENTRY_NAME(x)
+/************************************************************************
+** OSAL Compatibility for directory name access
+** New OSAL version have an access macro to get the string.  If that
+** macro is defined, use it, otherwise assume "d_name" structure member.
+*************************************************************************/
+#ifndef OS_DIRENTRY_NAME
+#define OS_DIRENTRY_NAME(x)     ((x).d_name)
+#endif
 
 /************************************************************************
 ** Type Definitions

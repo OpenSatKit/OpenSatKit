@@ -1,7 +1,7 @@
 /*
-** $Id: fm_defs.h 1.7 2015/02/28 17:50:51EST sstrege Exp  $
+** $Id: fm_defs.h 1.2.1.2 2017/01/23 21:53:09EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,22 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_defs.h  $
-** Revision 1.7 2015/02/28 17:50:51EST sstrege 
-** Added copyright information
-** Revision 1.6 2014/12/12 16:23:51EST lwalling 
-** Change table state definitions such that 0 = disabled, 1 = enabled, 2 = unused
-** Revision 1.5 2014/10/22 17:51:02EDT lwalling 
-** Allow zero as a valid semaphore ID, use FM_CHILD_SEM_INVALID instead
-** Revision 1.4 2010/03/04 15:44:14EST lwalling 
-** Remove include of cfe.h - not needed
-** Revision 1.3 2010/02/25 13:31:01EST lwalling 
-** Remove local definition of uint64 data type
-** Revision 1.2 2009/11/13 16:28:17EST lwalling 
-** Modify macro names, move some macros to platform cfg file, delete TableID
-** Revision 1.1 2009/11/09 16:47:46EST lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj
 */
 
 #ifndef _fm_defs_h_

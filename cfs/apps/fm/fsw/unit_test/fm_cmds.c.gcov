@@ -1,1086 +1,1041 @@
         -:    0:Source:../src/fm_cmds.c
-        -:    0:Graph:fm_cmds.gcno
-        -:    0:Data:fm_cmds.gcda
-        -:    0:Runs:1
-        -:    0:Programs:1
+        -:    0:Programs:5
         -:    1:/*
-        -:    2:** $Id: fm_cmds.c.gcov 1.7 2009/11/20 15:40:38EST lwalling Exp  $
+        -:    2:** $Id: fm_cmds.c.gcov 1.2.1.1 2017/01/25 00:20:21EST mdeschu Exp  $
         -:    3:**
-        -:    4:** Title: File Manager (FM) Application Ground Commands
-        -:    5:**
-        -:    6:** Purpose: Provides functions for the execution of the FM ground commands
+        -:    4:**  Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    5:**  Administrator of the National Aeronautics and Space Administration. 
+        -:    6:**  All Other Rights Reserved.  
         -:    7:**
-        -:    8:** Author: Susanne L. Strege, Code 582 NASA GSFC
-        -:    9:**
-        -:   10:** Notes:
-        -:   11:**
-        -:   12:** $Log: fm_cmds.c.gcov  $
-        -:   12:** Revision 1.7 2009/11/20 15:40:38EST lwalling 
-        -:   12:** Unit test updates
-        -:   13:** Revision 1.38 2009/11/20 15:32:18EST lwalling 
-        -:   14:** Remove return code and error events from FM_AppendPathSep
-        -:   15:** Revision 1.37 2009/11/17 13:40:49EST lwalling 
-        -:   16:** Remove global open files list data structure
-        -:   17:** Revision 1.36 2009/11/13 16:22:43EST lwalling 
-        -:   18:** Modify macro names, add CRC arg to GetFileInfo cmd, add SetTableEntryState cmd
-        -:   19:** Revision 1.35 2009/11/09 17:01:12EST lwalling 
-        -:   20:** Fix return code for ResetCounters cmd, change dest to target, cleanup event text
-        -:   21:** Revision 1.34 2009/10/30 15:59:40EDT lwalling 
-        -:   22:** Add include fm_msgdefs.h, modify free space table state definitions
-        -:   23:** Revision 1.33 2009/10/30 14:02:26EDT lwalling 
-        -:   24:** Remove trailing white space from all lines
-        -:   25:** Revision 1.32 2009/10/30 10:47:37EDT lwalling
-        -:   26:** Remove detail from function prologs, use command specific packet structures
-        -:   27:** Revision 1.31 2009/10/29 11:42:24EDT lwalling
-        -:   28:** Make common structure for open files list and open file telemetry packet, change open file to open files
-        -:   29:** Revision 1.30 2009/10/27 17:28:36EDT lwalling
-        -:   30:** Add a command warning counter for child task command handlers
-        -:   31:** Revision 1.29 2009/10/26 16:42:41EDT lwalling
-        -:   32:** Move GetFileInfo cmd to child task, change struct/var names, add child vars to reset cmd
-        -:   33:** Revision 1.28 2009/10/26 11:31:00EDT lwalling
-        -:   34:** Remove Close File command from FM application
-        -:   35:** Revision 1.27 2009/10/23 14:36:29EDT lwalling
-        -:   36:** Create FM child task to process slow commands, event text updates
-        -:   37:** Revision 1.26 2009/10/16 15:49:50EDT lwalling
-        -:   38:** Update event text, event ID names, function names, add global directory list structures
-        -:   39:** Revision 1.25 2009/10/09 17:23:53EDT lwalling
-        -:   40:** Create command to generate file system free space packet, replace device table with free space table
-        -:   41:** Revision 1.24 2009/10/06 11:06:11EDT lwalling
-        -:   42:** Clean up after create common filename verify functions
-        -:   43:** Revision 1.23 2009/09/29 13:41:24EDT lwalling
-        -:   44:** Perform tests for file open against current system list of open files, allow open files for copy/move/rename commands
-        -:   45:** Revision 1.22 2009/09/28 15:29:55EDT lwalling
-        -:   46:** Review and modify event text
-        -:   47:** Revision 1.21 2009/09/28 14:15:27EDT lwalling
-        -:   48:** Create common filename verification functions
-        -:   49:** Revision 1.20 2009/09/14 16:10:32EDT lwalling
-        -:   50:** Removed insert string term and modified calls to FM_IsValidPathname() in all cmd handlers
-        -:   51:** Revision 1.19 2009/09/10 13:03:05EDT lwalling
-        -:   52:** Modified FM_CloseFileCmd() to change from OS_NameChange() to OS_TranslatePath()
-        -:   53:** Revision 1.18 2009/06/12 14:16:27EDT rmcgraw
-        -:   54:** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-        -:   55:** Revision 1.17 2008/12/30 14:56:18EST sstrege
-        -:   56:** Updated event message reporting
-        -:   57:** Revision 1.16 2008/12/24 16:24:42EST sstrege
-        -:   58:** Updated DeleteFile and DeleteAllFiles command functions
-        -:   59:** Revision 1.15 2008/12/22 16:28:54EST sstrege
-        -:   60:** Added code for supporting default directory listing file
-        -:   61:** Revision 1.14 2008/12/22 15:45:47EST sstrege
-        -:   62:** Updated IsValidDeleteFile utility function to accept Event Type as an input parameter
-        -:   63:** Revision 1.13 2008/12/08 18:41:50EST sstrege
-        -:   64:** Concat command updated to copy source file 1 to destination, before destination is opened
-        -:   65:** Revision 1.12 2008/11/30 17:25:30EST sstrege
-        -:   66:** Concat command updated to open src file 2 before destination file
-        -:   67:** Revision 1.11 2008/11/30 16:51:09EST sstrege
-        -:   68:** Moved OS_cp call in concat command
-        -:   69:** Revision 1.10 2008/11/30 15:22:03EST sstrege
-        -:   70:** Removed double existence check on concat command destination file
-        -:   71:** Revision 1.9 2008/11/05 18:17:07EST sstrege
-        -:   72:** Updated local variable OpenFileMsg to be static
-        -:   73:** Prepended "FM_" to all static local variables and added extra comments
-        -:   74:** Revision 1.8 2008/10/06 11:29:05EDT sstrege
-        -:   75:** Added call to OS_lseek before writing directory listing statistics to the directory listing file
-        -:   76:** Revision 1.7 2008/10/03 16:22:00EDT sstrege
-        -:   77:** Removed OS_NameChange calls in DecompressFileCmd and replaced OS_BSBDecompress call with CFE_FS_Decompress
-        -:   78:** Revision 1.6 2008/10/03 15:53:49EDT sstrege
-        -:   79:** Added include to new fm_version.h header files
-        -:   80:** Added version information to noop command event message
-        -:   81:** Revision 1.5 2008/10/01 16:20:04EDT sstrege
-        -:   82:** Updated FM_DirListMsgCmd to use new FM_SourceUint32DataCmd_t and removed local DirListOffset variable
-        -:   83:** Revision 1.4 2008/09/30 17:35:12EDT sstrege
-        -:   84:** Removed Delete All Files command invalidation for OS error and path too long conditions
-        -:   85:** Revision 1.3 2008/09/30 16:40:05EDT sstrege
-        -:   86:** Added include statement for fm_perfids.h
-        -:   87:** Revision 1.2 2008/06/20 16:21:28EDT slstrege
-        -:   88:** Member moved from fsw/src/fm_cmds.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_cmds.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-        -:   89:** Revision 1.1 2008/06/20 15:21:28ACT slstrege
-        -:   90:** Initial revision
-        -:   91:** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
-        -:   92:*/
-        -:   93:
-        -:   94:#include "cfe.h"
-        -:   95:#include "fm_msg.h"
-        -:   96:#include "fm_msgdefs.h"
-        -:   97:#include "fm_msgids.h"
-        -:   98:#include "fm_events.h"
-        -:   99:#include "fm_app.h"
-        -:  100:#include "fm_cmds.h"
-        -:  101:#include "fm_cmd_utils.h"
-        -:  102:#include "fm_perfids.h"
-        -:  103:#include "fm_platform_cfg.h"
-        -:  104:#include "fm_version.h"
-        -:  105:#include "fm_verify.h"
+        -:    8:**  This software was created at NASA's Goddard Space Flight Center.
+        -:    9:**  This software is governed by the NASA Open Source Agreement and may be 
+        -:   10:**  used, distributed and modified only pursuant to the terms of that 
+        -:   11:**  agreement.
+        -:   12:**
+        -:   13:** Title: File Manager (FM) Application Ground Commands
+        -:   14:**
+        -:   15:** Purpose: Provides functions for the execution of the FM ground commands
+        -:   16:**
+        -:   17:** Author: Susanne L. Strege, Code 582 NASA GSFC
+        -:   18:**
+        -:   19:** Notes:
+        -:   20:**
+        -:   21:*/
+        -:   22:
+        -:   23:#include "cfe.h"
+        -:   24:#include "fm_msg.h"
+        -:   25:#include "fm_msgdefs.h"
+        -:   26:#include "fm_msgids.h"
+        -:   27:#include "fm_events.h"
+        -:   28:#include "fm_app.h"
+        -:   29:#include "fm_cmds.h"
+        -:   30:#include "fm_cmd_utils.h"
+        -:   31:#include "fm_perfids.h"
+        -:   32:#include "fm_platform_cfg.h"
+        -:   33:#include "fm_version.h"
+        -:   34:#include "fm_verify.h"
+        -:   35:
+        -:   36:#include <string.h>
+        -:   37:
+        -:   38:
+        -:   39:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   40:/*                                                                 */
+        -:   41:/* FM command handler -- NOOP                                      */
+        -:   42:/*                                                                 */
+        -:   43:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   44:
+        3:   45:boolean FM_NoopCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:   46:{
+        3:   47:    char *CmdText = "No-op";
+        -:   48:    boolean CommandResult;
+        -:   49:
+        -:   50:    /* Verify message length */
+        3:   51:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_NoopCmd_t),
+        -:   52:                                           FM_NOOP_PKT_ERR_EID, CmdText);
+        -:   53:
+        -:   54:    /* Send command completion event (info) */
+        3:   55:    if (CommandResult == TRUE)
+        -:   56:    {
+        3:   57:        CFE_EVS_SendEvent(FM_NOOP_CMD_EID, CFE_EVS_INFORMATION,
+        -:   58:                         "%s command: FM version %d.%d.%d.%d", CmdText,
+        -:   59:                          FM_MAJOR_VERSION, FM_MINOR_VERSION, FM_REVISION, FM_MISSION_REV);
+        -:   60:    }
+        -:   61:
+        3:   62:    return(CommandResult);
+        -:   63:
+        -:   64:} /* End of FM_NoopCmd() */
+        -:   65:
+        -:   66:
+        -:   67:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   68:/*                                                                 */
+        -:   69:/* FM command handler -- Reset Counters                            */
+        -:   70:/*                                                                 */
+        -:   71:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   72:
+        2:   73:boolean FM_ResetCountersCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:   74:{
+        2:   75:    char *CmdText = "Reset Counters";
+        -:   76:    boolean CommandResult;
+        -:   77:
+        -:   78:    /* Verify message length */
+        2:   79:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_ResetCmd_t),
+        -:   80:                                           FM_RESET_PKT_ERR_EID, CmdText);
+        -:   81:
+        -:   82:    /* Reset command counters */
+        2:   83:    if (CommandResult == TRUE)
+        -:   84:    {
+        2:   85:        FM_GlobalData.CommandCounter = 0;
+        2:   86:        FM_GlobalData.CommandErrCounter = 0;
+        -:   87:
+        2:   88:        FM_GlobalData.ChildCmdCounter = 0;
+        2:   89:        FM_GlobalData.ChildCmdErrCounter = 0;
+        2:   90:        FM_GlobalData.ChildCmdWarnCounter = 0;
+        -:   91:
+        -:   92:        /* Send command completion event (debug) */
+        2:   93:        CFE_EVS_SendEvent(FM_RESET_CMD_EID, CFE_EVS_DEBUG, "%s command", CmdText);
+        -:   94:    }
+        -:   95:
+        2:   96:    return(CommandResult);
+        -:   97:
+        -:   98:} /* End of FM_ResetCountersCmd() */
+        -:   99:
+        -:  100:
+        -:  101:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  102:/*                                                                 */
+        -:  103:/* FM command handler -- Copy File                                 */
+        -:  104:/*                                                                 */
+        -:  105:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  106:
-        -:  107:#include <string.h>
-        -:  108:
-        -:  109:
-        -:  110:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  111:/*                                                                 */
-        -:  112:/* FM command handler -- NOOP                                      */
-        -:  113:/*                                                                 */
-        -:  114:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  115:
-        -:  116:boolean FM_NoopCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_NoopCmd called 4 returned 100% blocks executed 100%
-        4:  117:{
-        4:  118:    char *CmdText = "No-op";
-        4:  119:    boolean CommandResult;
-        -:  120:
-        -:  121:    /* Verify message length */
-        4:  122:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_NoopCmd_t),
-        -:  123:                                           FM_NOOP_PKT_ERR_EID, CmdText);
+        3:  107:boolean FM_CopyFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  108:{
+        3:  109:    FM_CopyFileCmd_t *CmdPtr = (FM_CopyFileCmd_t *) MessagePtr;
+        -:  110:    FM_ChildQueueEntry_t *CmdArgs;
+        3:  111:    char *CmdText = "Copy File";
+        -:  112:    boolean CommandResult;
+        -:  113:
+        -:  114:    /* Verify command packet length */
+        3:  115:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_CopyFileCmd_t),
+        -:  116:                                           FM_COPY_PKT_ERR_EID, CmdText);
+        -:  117:
+        -:  118:    /* Verify that overwrite argument is valid */
+        3:  119:    if (CommandResult == TRUE)
+        -:  120:    {
+        3:  121:        CommandResult = FM_VerifyOverwrite(CmdPtr->Overwrite,
+        -:  122:                                           FM_COPY_OVR_ERR_EID, CmdText);
+        -:  123:    }
         -:  124:
-        -:  125:    /* Send command completion event (info) */
-        4:  126:    if (CommandResult == TRUE)
+        -:  125:    /* Verify that source file exists and is not a directory */
+        3:  126:    if (CommandResult == TRUE)
         -:  127:    {
-        2:  128:        CFE_EVS_SendEvent(FM_NOOP_CMD_EID, CFE_EVS_INFORMATION,
-        -:  129:                         "%s command: FM version %d.%d.%d.%d", CmdText,
-        -:  130:                          FM_MAJOR_VERSION, FM_MINOR_VERSION, FM_REVISION, FM_MISSION_REV);
-        -:  131:    }
-        -:  132:
-        4:  133:    return(CommandResult);
-        -:  134:
-        -:  135:} /* End of FM_NoopCmd() */
-        -:  136:
-        -:  137:
-        -:  138:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  139:/*                                                                 */
-        -:  140:/* FM command handler -- Reset Counters                            */
-        -:  141:/*                                                                 */
-        -:  142:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  143:
-        -:  144:boolean FM_ResetCountersCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_ResetCountersCmd called 3 returned 100% blocks executed 100%
-        3:  145:{
-        3:  146:    char *CmdText = "Reset Counters";
-        3:  147:    boolean CommandResult;
-        -:  148:
-        -:  149:    /* Verify message length */
-        3:  150:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_ResetCmd_t),
-        -:  151:                                           FM_RESET_PKT_ERR_EID, CmdText);
+        3:  128:        CommandResult = FM_VerifyFileExists(CmdPtr->Source, sizeof(CmdPtr->Source),
+        -:  129:                                            FM_COPY_SRC_ERR_EID, CmdText);
+        -:  130:    }
+        -:  131:
+        -:  132:    /* Verify target filename per the overwrite argument */
+        3:  133:    if (CommandResult == TRUE)
+        -:  134:    {
+        2:  135:        if (CmdPtr->Overwrite == 0)
+        -:  136:        {
+        1:  137:            CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  138:                                                 FM_COPY_TGT_ERR_EID, CmdText);
+        -:  139:        }
+        -:  140:        else
+        -:  141:        {
+        1:  142:            CommandResult = FM_VerifyFileNotOpen(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  143:                                                 FM_COPY_TGT_ERR_EID, CmdText);
+        -:  144:        }
+        -:  145:    }
+        -:  146:
+        -:  147:    /* Check for lower priority child task availability */
+        3:  148:    if (CommandResult == TRUE)
+        -:  149:    {
+        2:  150:        CommandResult = FM_VerifyChildTask(FM_COPY_CHILD_ERR_EID, CmdText);
+        -:  151:    }
         -:  152:
-        -:  153:    /* Reset command counters */
+        -:  153:    /* Prepare command for child task execution */
         3:  154:    if (CommandResult == TRUE)
         -:  155:    {
-        1:  156:        FM_GlobalData.CommandCounter = 0;
-        1:  157:        FM_GlobalData.CommandErrCounter = 0;
-        1:  158:        FM_GlobalData.CommandWarnCounter = 0;
-        -:  159:
-        1:  160:        FM_GlobalData.ChildCmdCounter = 0;
-        1:  161:        FM_GlobalData.ChildCmdErrCounter = 0;
-        1:  162:        FM_GlobalData.ChildCmdWarnCounter = 0;
-        -:  163:
-        -:  164:        /* Send command completion event (debug) */
-        1:  165:        CFE_EVS_SendEvent(FM_RESET_CMD_EID, CFE_EVS_DEBUG, "%s command", CmdText);
-        -:  166:    }
-        -:  167:
-        3:  168:    return(CommandResult);
-        -:  169:
-        -:  170:} /* End of FM_ResetCountersCmd() */
+        2:  156:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  157:
+        -:  158:        /* Set handshake queue command args */
+        2:  159:        CmdArgs->CommandCode = FM_COPY_CC;
+        2:  160:        strcpy(CmdArgs->Source1, CmdPtr->Source);
+        2:  161:        strcpy(CmdArgs->Target,  CmdPtr->Target);
+        -:  162:
+        -:  163:        /* Invoke lower priority child task */
+        2:  164:        FM_InvokeChildTask();
+        -:  165:    }
+        -:  166:
+        3:  167:    return(CommandResult);
+        -:  168:
+        -:  169:} /* End of FM_CopyFileCmd() */
+        -:  170:
         -:  171:
-        -:  172:
-        -:  173:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  174:/*                                                                 */
-        -:  175:/* FM command handler -- Copy File                                 */
-        -:  176:/*                                                                 */
-        -:  177:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  178:
-        -:  179:boolean FM_CopyFileCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_CopyFileCmd called 5 returned 100% blocks executed 100%
-        5:  180:{
-        5:  181:    FM_CopyFileCmd_t *CmdPtr = (FM_CopyFileCmd_t *) MessagePtr;
-        5:  182:    FM_ChildQueueEntry_t *CmdArgs;
-        5:  183:    char *CmdText = "Copy File";
-        5:  184:    boolean CommandResult;
-        -:  185:
-        -:  186:    /* Verify command packet length */
-        5:  187:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_CopyFileCmd_t),
-        -:  188:                                           FM_COPY_PKT_ERR_EID, CmdText);
-        -:  189:
-        -:  190:    /* Verify that source file exists and is not a directory */
-        5:  191:    if (CommandResult == TRUE)
-        -:  192:    {
-        3:  193:        CommandResult = FM_VerifyFileExists(CmdPtr->Source, sizeof(CmdPtr->Source),
-        -:  194:                                            FM_COPY_SRC_ERR_EID, CmdText);
-        -:  195:    }
-        -:  196:
-        -:  197:    /* Verify that target file does not exist */
-        5:  198:    if (CommandResult == TRUE)
-        -:  199:    {
-        2:  200:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
-        -:  201:                                             FM_COPY_TGT_ERR_EID, CmdText);
-        -:  202:    }
-        -:  203:
-        -:  204:    /* Check for lower priority child task availability */
-        5:  205:    if (CommandResult == TRUE)
-        -:  206:    {
-        1:  207:        CommandResult = FM_VerifyChildTask(FM_COPY_CHILD_ERR_EID, CmdText);
-        -:  208:    }
-        -:  209:
-        -:  210:    /* Prepare command for child task execution */
-        5:  211:    if (CommandResult == TRUE)
-        -:  212:    {
-        1:  213:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
-        -:  214:
-        -:  215:        /* Set handshake queue command args */
-        1:  216:        CmdArgs->CommandCode = FM_COPY_CC;
-        1:  217:        strcpy(CmdArgs->Source1, CmdPtr->Source);
-        1:  218:        strcpy(CmdArgs->Target,  CmdPtr->Target);
-        -:  219:
-        -:  220:        /* Invoke lower priority child task */
-        1:  221:        FM_InvokeChildTask();
+        -:  172:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  173:/*                                                                 */
+        -:  174:/* FM command handler -- Move File                                 */
+        -:  175:/*                                                                 */
+        -:  176:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  177:
+        3:  178:boolean FM_MoveFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  179:{
+        3:  180:    FM_MoveFileCmd_t  *CmdPtr = (FM_MoveFileCmd_t *) MessagePtr;
+        -:  181:    FM_ChildQueueEntry_t *CmdArgs;
+        3:  182:    char *CmdText = "Move File";
+        -:  183:    boolean CommandResult;
+        -:  184:
+        -:  185:    /* Verify command packet length */
+        3:  186:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_MoveFileCmd_t),
+        -:  187:                                           FM_MOVE_PKT_ERR_EID, CmdText);
+        -:  188:
+        -:  189:    /* Verify that overwrite argument is valid */
+        3:  190:    if (CommandResult == TRUE)
+        -:  191:    {
+        3:  192:        CommandResult = FM_VerifyOverwrite(CmdPtr->Overwrite,
+        -:  193:                                           FM_MOVE_OVR_ERR_EID, CmdText);
+        -:  194:    }
+        -:  195:
+        -:  196:    /* Verify that source file exists and not a directory */
+        3:  197:    if (CommandResult == TRUE)
+        -:  198:    {
+        3:  199:        CommandResult = FM_VerifyFileExists(CmdPtr->Source, sizeof(CmdPtr->Source),
+        -:  200:                                            FM_MOVE_SRC_ERR_EID, CmdText);
+        -:  201:    }
+        -:  202:
+        -:  203:    /* Verify target filename per the overwrite argument */
+        3:  204:    if (CommandResult == TRUE)
+        -:  205:    {
+        2:  206:        if (CmdPtr->Overwrite == 0)
+        -:  207:        {
+        1:  208:            CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  209:                                                 FM_MOVE_TGT_ERR_EID, CmdText);
+        -:  210:        }
+        -:  211:        else
+        -:  212:        {
+        1:  213:            CommandResult = FM_VerifyFileNotOpen(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  214:                                                 FM_MOVE_TGT_ERR_EID, CmdText);
+        -:  215:        }
+        -:  216:    }
+        -:  217:
+        -:  218:    /* Check for lower priority child task availability */
+        3:  219:    if (CommandResult == TRUE)
+        -:  220:    {
+        2:  221:        CommandResult = FM_VerifyChildTask(FM_MOVE_CHILD_ERR_EID, CmdText);
         -:  222:    }
         -:  223:
-        5:  224:    return(CommandResult);
-        -:  225:
-        -:  226:} /* End of FM_CopyFileCmd() */
-        -:  227:
+        -:  224:    /* Prepare command for child task execution */
+        3:  225:    if (CommandResult == TRUE)
+        -:  226:    {
+        2:  227:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
         -:  228:
-        -:  229:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  230:/*                                                                 */
-        -:  231:/* FM command handler -- Move File                                 */
-        -:  232:/*                                                                 */
-        -:  233:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  234:
-        -:  235:boolean FM_MoveFileCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_MoveFileCmd called 6 returned 100% blocks executed 100%
-        6:  236:{
-        6:  237:    FM_MoveFileCmd_t  *CmdPtr = (FM_MoveFileCmd_t *) MessagePtr;
-        6:  238:    char *CmdText = "Move File";
-        6:  239:    boolean CommandResult;
-        6:  240:    int32 OS_Status;
+        -:  229:        /* Set handshake queue command args */
+        2:  230:        CmdArgs->CommandCode = FM_MOVE_CC;
+        2:  231:        strcpy(CmdArgs->Source1, CmdPtr->Source);
+        2:  232:        strcpy(CmdArgs->Target,  CmdPtr->Target);
+        -:  233:
+        -:  234:        /* Invoke lower priority child task */
+        2:  235:        FM_InvokeChildTask();
+        -:  236:    }
+        -:  237:
+        3:  238:    return(CommandResult);
+        -:  239:
+        -:  240:} /* End of FM_MoveFileCmd() */
         -:  241:
-        -:  242:    /* Verify command packet length */
-        6:  243:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_MoveFileCmd_t),
-        -:  244:                                           FM_MOVE_PKT_ERR_EID, CmdText);
-        -:  245:
-        -:  246:    /* Verify that source file exists and not a directory */
-        6:  247:    if (CommandResult == TRUE)
-        -:  248:    {
-        4:  249:        CommandResult = FM_VerifyFileExists(CmdPtr->Source, sizeof(CmdPtr->Source),
-        -:  250:                                            FM_MOVE_SRC_ERR_EID, CmdText);
-        -:  251:    }
-        -:  252:
-        -:  253:    /* Verify that target file does not exist */
-        6:  254:    if (CommandResult == TRUE)
-        -:  255:    {
-        3:  256:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
-        -:  257:                                             FM_MOVE_TGT_ERR_EID, CmdText);
-        -:  258:    }
+        -:  242:
+        -:  243:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  244:/*                                                                 */
+        -:  245:/* FM command handler -- Rename File                               */
+        -:  246:/*                                                                 */
+        -:  247:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  248:
+        2:  249:boolean FM_RenameFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  250:{
+        2:  251:    FM_RenameFileCmd_t  *CmdPtr = (FM_RenameFileCmd_t *) MessagePtr;
+        -:  252:    FM_ChildQueueEntry_t *CmdArgs;
+        2:  253:    char *CmdText = "Rename File";
+        -:  254:    boolean CommandResult;
+        -:  255:
+        -:  256:    /* Verify command packet length */
+        2:  257:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_RenameFileCmd_t),
+        -:  258:                                           FM_RENAME_PKT_ERR_EID, CmdText);
         -:  259:
-        -:  260:    /* Move source file to target file */
-        6:  261:    if (CommandResult == TRUE)
+        -:  260:    /* Verify that source file exists and is not a directory */
+        2:  261:    if (CommandResult == TRUE)
         -:  262:    {
-        2:  263:        OS_Status = OS_mv(CmdPtr->Source, CmdPtr->Target);
-        -:  264:
-        2:  265:        if (OS_Status != OS_SUCCESS)
-        -:  266:        {
-        1:  267:            CommandResult = FALSE;
-        1:  268:            CFE_EVS_SendEvent(FM_MOVE_OS_ERR_EID, CFE_EVS_ERROR,
-        -:  269:                             "%s error: OS_mv failed: result = %d, src = %s, tgt = %s",
-        -:  270:                              CmdText, OS_Status, CmdPtr->Source, CmdPtr->Target);
-        -:  271:        }
-        -:  272:        else
-        -:  273:        {
-        -:  274:            /* Send command completion event (info) */
-        1:  275:            CFE_EVS_SendEvent(FM_MOVE_CMD_EID, CFE_EVS_INFORMATION,
-        -:  276:                             "%s command: src = %s, tgt = %s",
-        -:  277:                              CmdText, CmdPtr->Source, CmdPtr->Target);
-        -:  278:        }
-        -:  279:    }
-        -:  280:
-        6:  281:    return(CommandResult);
-        -:  282:
-        -:  283:} /* End of FM_MoveFileCmd() */
+        2:  263:        CommandResult = FM_VerifyFileExists(CmdPtr->Source, sizeof(CmdPtr->Source),
+        -:  264:                                            FM_RENAME_SRC_ERR_EID, CmdText);
+        -:  265:    }
+        -:  266:
+        -:  267:    /* Verify that target file does not exist */
+        2:  268:    if (CommandResult == TRUE)
+        -:  269:    {
+        1:  270:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  271:                                             FM_RENAME_TGT_ERR_EID, CmdText);
+        -:  272:    }
+        -:  273:
+        -:  274:    /* Check for lower priority child task availability */
+        2:  275:    if (CommandResult == TRUE)
+        -:  276:    {
+        1:  277:        CommandResult = FM_VerifyChildTask(FM_RENAME_CHILD_ERR_EID, CmdText);
+        -:  278:    }
+        -:  279:
+        -:  280:    /* Prepare command for child task execution */
+        2:  281:    if (CommandResult == TRUE)
+        -:  282:    {
+        1:  283:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
         -:  284:
-        -:  285:
-        -:  286:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  287:/*                                                                 */
-        -:  288:/* FM command handler -- Rename File                               */
-        -:  289:/*                                                                 */
-        -:  290:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  291:
-        -:  292:boolean FM_RenameFileCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_RenameFileCmd called 6 returned 100% blocks executed 100%
-        6:  293:{
-        6:  294:    FM_RenameFileCmd_t  *CmdPtr = (FM_RenameFileCmd_t *) MessagePtr;
-        6:  295:    char *CmdText = "Rename File";
-        6:  296:    boolean CommandResult;
-        6:  297:    int32 OS_Status;
+        -:  285:        /* Set handshake queue command args */
+        1:  286:        CmdArgs->CommandCode = FM_RENAME_CC;
+        1:  287:        strcpy(CmdArgs->Source1, CmdPtr->Source);
+        1:  288:        strcpy(CmdArgs->Target,  CmdPtr->Target);
+        -:  289:
+        -:  290:        /* Invoke lower priority child task */
+        1:  291:        FM_InvokeChildTask();
+        -:  292:    }
+        -:  293:
+        2:  294:    return(CommandResult);
+        -:  295:
+        -:  296:} /* End of FM_RenameFileCmd() */
+        -:  297:
         -:  298:
-        -:  299:    /* Verify command packet length */
-        6:  300:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_RenameFileCmd_t),
-        -:  301:                                           FM_RENAME_PKT_ERR_EID, CmdText);
-        -:  302:
-        -:  303:    /* Verify that source file exists and is not a directory */
-        6:  304:    if (CommandResult == TRUE)
-        -:  305:    {
-        4:  306:        CommandResult = FM_VerifyFileExists(CmdPtr->Source, sizeof(CmdPtr->Source),
-        -:  307:                                            FM_RENAME_SRC_ERR_EID, CmdText);
-        -:  308:    }
-        -:  309:
-        -:  310:    /* Verify that target file does not exist */
-        6:  311:    if (CommandResult == TRUE)
-        -:  312:    {
-        3:  313:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
-        -:  314:                                             FM_RENAME_TGT_ERR_EID, CmdText);
-        -:  315:    }
-        -:  316:
-        -:  317:    /* Rename source filename to target filename */
-        6:  318:    if (CommandResult == TRUE)
-        -:  319:    {
-        2:  320:        OS_Status = OS_rename(CmdPtr->Source, CmdPtr->Target);
-        -:  321:
-        2:  322:        if (OS_Status != OS_SUCCESS)
-        -:  323:        {
-        1:  324:            CommandResult = FALSE;
-        1:  325:            CFE_EVS_SendEvent(FM_RENAME_OS_ERR_EID, CFE_EVS_ERROR,
-        -:  326:                             "%s error: OS_rename failed: result = %d, src = %s, tgt = %s",
-        -:  327:                              CmdText, OS_Status, CmdPtr->Source, CmdPtr->Target);
-        -:  328:        }
-        -:  329:        else
-        -:  330:        {
-        -:  331:            /* Send command completion event (info) */
-        1:  332:            CFE_EVS_SendEvent(FM_RENAME_CMD_EID, CFE_EVS_INFORMATION,
-        -:  333:                             "%s command: %s to %s",
-        -:  334:                              CmdText, CmdPtr->Source, CmdPtr->Target);
-        -:  335:        }
-        -:  336:    }
+        -:  299:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  300:/*                                                                 */
+        -:  301:/* FM command handler -- Delete File                               */
+        -:  302:/*                                                                 */
+        -:  303:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  304:
+        3:  305:boolean FM_DeleteFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  306:{
+        3:  307:    FM_DeleteFileCmd_t *CmdPtr = (FM_DeleteFileCmd_t *) MessagePtr;
+        -:  308:    FM_ChildQueueEntry_t *CmdArgs;
+        3:  309:    char *CmdText = "Delete File";
+        -:  310:    boolean CommandResult;
+        -:  311:
+        -:  312:    /* Verify command packet length */
+        3:  313:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DeleteFileCmd_t),
+        -:  314:                                           FM_DELETE_PKT_ERR_EID, CmdText);
+        -:  315:
+        -:  316:    /* Verify that file exists, is not a directory and is not open */
+        3:  317:    if (CommandResult == TRUE)
+        -:  318:    {
+        3:  319:        CommandResult = FM_VerifyFileClosed(CmdPtr->Filename, sizeof(CmdPtr->Filename),
+        -:  320:                                            FM_DELETE_SRC_ERR_EID, CmdText);
+        -:  321:    }
+        -:  322:
+        -:  323:    /* Check for lower priority child task availability */
+        3:  324:    if (CommandResult == TRUE)
+        -:  325:    {
+        2:  326:        CommandResult = FM_VerifyChildTask(FM_DELETE_CHILD_ERR_EID, CmdText);
+        -:  327:    }
+        -:  328:
+        -:  329:    /* Prepare command for child task execution */
+        3:  330:    if (CommandResult == TRUE)
+        -:  331:    {
+        2:  332:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  333:
+        -:  334:        /* Set handshake queue command args - might be global or internal CC */
+        2:  335:        CmdArgs->CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+        2:  336:        strcpy(CmdArgs->Source1, CmdPtr->Filename);
         -:  337:
-        6:  338:    return(CommandResult);
-        -:  339:
-        -:  340:} /* End of FM_RenameFileCmd() */
+        -:  338:        /* Invoke lower priority child task */
+        2:  339:        FM_InvokeChildTask();
+        -:  340:    }
         -:  341:
-        -:  342:
-        -:  343:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  344:/*                                                                 */
-        -:  345:/* FM command handler -- Delete File                               */
-        -:  346:/*                                                                 */
+        3:  342:    return(CommandResult);
+        -:  343:
+        -:  344:} /* End of FM_DeleteFileCmd() */
+        -:  345:
+        -:  346:
         -:  347:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  348:
-        -:  349:boolean FM_DeleteFileCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_DeleteFileCmd called 5 returned 100% blocks executed 100%
-        5:  350:{
-        5:  351:    FM_DeleteFileCmd_t *CmdPtr = (FM_DeleteFileCmd_t *) MessagePtr;
-        5:  352:    char *CmdText = "Delete File";
-        5:  353:    boolean CommandResult;
-        5:  354:    int32 OS_Status;
-        -:  355:
-        -:  356:    /* Verify command packet length */
-        5:  357:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DeleteFileCmd_t),
-        -:  358:                                           FM_DELETE_PKT_ERR_EID, CmdText);
-        -:  359:
-        -:  360:    /* Verify that file exists, is not a directory and is not open */
-        5:  361:    if (CommandResult == TRUE)
-        -:  362:    {
-        3:  363:        CommandResult = FM_VerifyFileClosed(CmdPtr->Filename, sizeof(CmdPtr->Filename),
-        -:  364:                                            FM_DELETE_SRC_ERR_EID, CmdText);
-        -:  365:    }
-        -:  366:
-        -:  367:    /* Delete selected file */
-        5:  368:    if (CommandResult == TRUE)
-        -:  369:    {
-        3:  370:        OS_Status = OS_remove(CmdPtr->Filename);
+        -:  348:/*                                                                 */
+        -:  349:/* FM command handler -- Delete All Files                          */
+        -:  350:/*                                                                 */
+        -:  351:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  352:
+        2:  353:boolean FM_DeleteAllFilesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  354:{
+        2:  355:    FM_DeleteAllCmd_t *CmdPtr = (FM_DeleteAllCmd_t *) MessagePtr;
+        2:  356:    char *CmdText = "Delete All Files";
+        -:  357:    char DirWithSep[OS_MAX_PATH_LEN];
+        -:  358:    FM_ChildQueueEntry_t *CmdArgs;
+        -:  359:    boolean CommandResult;
+        -:  360:
+        -:  361:    /* Verify message length */
+        2:  362:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DeleteAllCmd_t),
+        -:  363:                                           FM_DELETE_ALL_PKT_ERR_EID, CmdText);
+        -:  364:
+        -:  365:    /* Verify that the directory exists */
+        2:  366:    if (CommandResult == TRUE)
+        -:  367:    {
+        2:  368:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
+        -:  369:                                           FM_DELETE_ALL_SRC_ERR_EID, CmdText);
+        -:  370:    }
         -:  371:
-        3:  372:        if (OS_Status != OS_SUCCESS)
-        -:  373:        {
-        1:  374:            CommandResult = FALSE;
-        1:  375:            CFE_EVS_SendEvent(FM_DELETE_OS_ERR_EID, CFE_EVS_ERROR,
-        -:  376:                             "%s error: OS_remove failed: result = %d, file = %s",
-        -:  377:                              CmdText, OS_Status, CmdPtr->Filename);
-        -:  378:        }
-        -:  379:        else
-        -:  380:        {
-        -:  381:            /* Send command completion event (info) */
-        2:  382:            CFE_EVS_SendEvent(FM_DELETE_CMD_EID, CFE_EVS_INFORMATION,
-        -:  383:                             "%s command: file = %s", CmdText, CmdPtr->Filename);
-        -:  384:        }
-        -:  385:    }
+        2:  372:    if (CommandResult == TRUE)
+        -:  373:    {
+        -:  374:        /* Append a path separator to the end of the directory name */
+        1:  375:        strcpy(DirWithSep, CmdPtr->Directory);
+        1:  376:        FM_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN);
+        -:  377:
+        -:  378:        /* Check for lower priority child task availability */
+        1:  379:        CommandResult = FM_VerifyChildTask(FM_DELETE_ALL_CHILD_ERR_EID, CmdText);
+        -:  380:    }
+        -:  381:
+        -:  382:    /* Prepare command for child task execution */
+        2:  383:    if (CommandResult == TRUE)
+        -:  384:    {
+        1:  385:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
         -:  386:
-        5:  387:    return(CommandResult);
-        -:  388:
-        -:  389:} /* End of FM_DeleteFileCmd() */
-        -:  390:
+        -:  387:        /* Set handshake queue command args */
+        1:  388:        CmdArgs->CommandCode = FM_DELETE_ALL_CC;
+        1:  389:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
+        1:  390:        strcpy(CmdArgs->Source2, DirWithSep);
         -:  391:
-        -:  392:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  393:/*                                                                 */
-        -:  394:/* FM command handler -- Delete All Files                          */
-        -:  395:/*                                                                 */
-        -:  396:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  392:        /* Invoke lower priority child task */
+        1:  393:        FM_InvokeChildTask();
+        -:  394:    }
+        -:  395:
+        2:  396:    return(CommandResult);
         -:  397:
-        -:  398:boolean FM_DeleteAllFilesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_DeleteAllFilesCmd called 4 returned 100% blocks executed 100%
-        4:  399:{
-        4:  400:    FM_DeleteAllCmd_t *CmdPtr = (FM_DeleteAllCmd_t *) MessagePtr;
-        4:  401:    char *CmdText = "Delete All Files";
-        4:  402:    char DirWithSep[OS_MAX_PATH_LEN];
-        4:  403:    FM_ChildQueueEntry_t *CmdArgs;
-        4:  404:    boolean CommandResult;
-        -:  405:
-        -:  406:    /* Verify message length */
-        4:  407:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DeleteAllCmd_t),
-        -:  408:                                           FM_DELETE_ALL_PKT_ERR_EID, CmdText);
-        -:  409:
-        -:  410:    /* Verify that the directory exists */
-        4:  411:    if (CommandResult == TRUE)
-        -:  412:    {
-        2:  413:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
-        -:  414:                                           FM_DELETE_ALL_SRC_ERR_EID, CmdText);
-        -:  415:    }
-        -:  416:
-        4:  417:    if (CommandResult == TRUE)
-        -:  418:    {
-        -:  419:        /* Append a path separator to the end of the directory name */
-        1:  420:        strcpy(DirWithSep, CmdPtr->Directory);
-        1:  421:        FM_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN);
-        -:  422:
-        -:  423:        /* Check for lower priority child task availability */
-        1:  424:        CommandResult = FM_VerifyChildTask(FM_DELETE_ALL_CHILD_ERR_EID, CmdText);
-        -:  425:    }
-        -:  426:
-        -:  427:    /* Prepare command for child task execution */
-        4:  428:    if (CommandResult == TRUE)
-        -:  429:    {
-        1:  430:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  398:} /* End of FM_DeleteAllFilesCmd() */
+        -:  399:
+        -:  400:
+        -:  401:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  402:/*                                                                 */
+        -:  403:/* FM command handler -- Decompress File                           */
+        -:  404:/*                                                                 */
+        -:  405:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  406:
+        2:  407:boolean FM_DecompressFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  408:{
+        2:  409:    FM_DecompressCmd_t  *CmdPtr = (FM_DecompressCmd_t *) MessagePtr;
+        2:  410:    char *CmdText = "Decompress File";
+        -:  411:    FM_ChildQueueEntry_t *CmdArgs;
+        -:  412:    boolean CommandResult;
+        -:  413:
+        -:  414:    /* Verify command packet length */
+        2:  415:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DecompressCmd_t),
+        -:  416:                                           FM_DECOM_PKT_ERR_EID, CmdText);
+        -:  417:
+        -:  418:    /* Verify that source file exists, is not a directory and is not open */
+        2:  419:    if (CommandResult == TRUE)
+        -:  420:    {
+        2:  421:        CommandResult = FM_VerifyFileClosed(CmdPtr->Source, sizeof(CmdPtr->Source),
+        -:  422:                                            FM_DECOM_SRC_ERR_EID, CmdText);
+        -:  423:    }
+        -:  424:
+        -:  425:    /* Verify that target file does not exist */
+        2:  426:    if (CommandResult == TRUE)
+        -:  427:    {
+        1:  428:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  429:                                             FM_DECOM_TGT_ERR_EID, CmdText);
+        -:  430:    }
         -:  431:
-        -:  432:        /* Set handshake queue command args */
-        1:  433:        CmdArgs->CommandCode = FM_DELETE_ALL_CC;
-        1:  434:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
-        1:  435:        strcpy(CmdArgs->Source2, DirWithSep);
-        -:  436:
-        -:  437:        /* Invoke lower priority child task */
-        1:  438:        FM_InvokeChildTask();
-        -:  439:    }
-        -:  440:
-        4:  441:    return(CommandResult);
+        -:  432:    /* Check for lower priority child task availability */
+        2:  433:    if (CommandResult == TRUE)
+        -:  434:    {
+        1:  435:        CommandResult = FM_VerifyChildTask(FM_DECOM_CHILD_ERR_EID, CmdText);
+        -:  436:    }
+        -:  437:
+        -:  438:    /* Prepare command for child task execution */
+        2:  439:    if (CommandResult == TRUE)
+        -:  440:    {
+        1:  441:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
         -:  442:
-        -:  443:} /* End of FM_DeleteAllFilesCmd() */
-        -:  444:
-        -:  445:
-        -:  446:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  447:/*                                                                 */
-        -:  448:/* FM command handler -- Decompress File                           */
-        -:  449:/*                                                                 */
-        -:  450:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  443:        /* Set handshake queue command args */
+        1:  444:        CmdArgs->CommandCode = FM_DECOMPRESS_CC;
+        1:  445:        strcpy(CmdArgs->Source1, CmdPtr->Source);
+        1:  446:        strcpy(CmdArgs->Target, CmdPtr->Target);
+        -:  447:
+        -:  448:        /* Invoke lower priority child task */
+        1:  449:        FM_InvokeChildTask();
+        -:  450:    }
         -:  451:
-        -:  452:boolean FM_DecompressFileCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_DecompressFileCmd called 5 returned 100% blocks executed 100%
-        5:  453:{
-        5:  454:    FM_DecompressCmd_t  *CmdPtr = (FM_DecompressCmd_t *) MessagePtr;
-        5:  455:    char *CmdText = "Decompress File";
-        5:  456:    FM_ChildQueueEntry_t *CmdArgs;
-        5:  457:    boolean CommandResult;
-        -:  458:
-        -:  459:    /* Verify command packet length */
-        5:  460:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DecompressCmd_t),
-        -:  461:                                           FM_DECOM_PKT_ERR_EID, CmdText);
+        2:  452:    return(CommandResult);
+        -:  453:
+        -:  454:} /* End of FM_DecompressFileCmd() */
+        -:  455:
+        -:  456:
+        -:  457:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  458:/*                                                                 */
+        -:  459:/* FM command handler -- Concatenate Files                         */
+        -:  460:/*                                                                 */
+        -:  461:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  462:
-        -:  463:    /* Verify that source file exists, is not a directory and is not open */
-        5:  464:    if (CommandResult == TRUE)
-        -:  465:    {
-        3:  466:        CommandResult = FM_VerifyFileClosed(CmdPtr->Source, sizeof(CmdPtr->Source),
-        -:  467:                                            FM_DECOM_SRC_ERR_EID, CmdText);
-        -:  468:    }
+        2:  463:boolean FM_ConcatFilesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  464:{
+        2:  465:    FM_ConcatCmd_t *CmdPtr = (FM_ConcatCmd_t *) MessagePtr;
+        2:  466:    char *CmdText = "Concat Files";
+        -:  467:    FM_ChildQueueEntry_t *CmdArgs;
+        -:  468:    boolean CommandResult;
         -:  469:
-        -:  470:    /* Verify that target file does not exist */
-        5:  471:    if (CommandResult == TRUE)
-        -:  472:    {
-        2:  473:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
-        -:  474:                                             FM_DECOM_TGT_ERR_EID, CmdText);
-        -:  475:    }
-        -:  476:
-        -:  477:    /* Check for lower priority child task availability */
-        5:  478:    if (CommandResult == TRUE)
-        -:  479:    {
-        1:  480:        CommandResult = FM_VerifyChildTask(FM_DECOM_CHILD_ERR_EID, CmdText);
-        -:  481:    }
-        -:  482:
-        -:  483:    /* Prepare command for child task execution */
-        5:  484:    if (CommandResult == TRUE)
-        -:  485:    {
-        1:  486:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  470:    /* Verify command packet length */
+        2:  471:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_ConcatCmd_t),
+        -:  472:                                           FM_CONCAT_PKT_ERR_EID, CmdText);
+        -:  473:
+        -:  474:    /* Verify that source file #1 exists, is not a directory and is not open */
+        2:  475:    if (CommandResult == TRUE)
+        -:  476:    {
+        2:  477:        CommandResult = FM_VerifyFileClosed(CmdPtr->Source1, sizeof(CmdPtr->Source1),
+        -:  478:                                            FM_CONCAT_SRC1_ERR_EID, CmdText);
+        -:  479:    }
+        -:  480:
+        -:  481:    /* Verify that source file #2 exists, is not a directory and is not open */
+        2:  482:    if (CommandResult == TRUE)
+        -:  483:    {
+        1:  484:        CommandResult = FM_VerifyFileClosed(CmdPtr->Source2, sizeof(CmdPtr->Source2),
+        -:  485:                                            FM_CONCAT_SRC2_ERR_EID, CmdText);
+        -:  486:    }
         -:  487:
-        -:  488:        /* Set handshake queue command args */
-        1:  489:        CmdArgs->CommandCode = FM_DECOMPRESS_CC;
-        1:  490:        strcpy(CmdArgs->Source1, CmdPtr->Source);
-        1:  491:        strcpy(CmdArgs->Target, CmdPtr->Target);
-        -:  492:
-        -:  493:        /* Invoke lower priority child task */
-        1:  494:        FM_InvokeChildTask();
-        -:  495:    }
-        -:  496:
-        5:  497:    return(CommandResult);
-        -:  498:
-        -:  499:} /* End of FM_DecompressFileCmd() */
+        -:  488:    /* Verify that target file does not exist */
+        2:  489:    if (CommandResult == TRUE)
+        -:  490:    {
+        1:  491:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
+        -:  492:                                             FM_CONCAT_TGT_ERR_EID, CmdText);
+        -:  493:    }
+        -:  494:
+        -:  495:    /* Check for lower priority child task availability */
+        2:  496:    if (CommandResult == TRUE)
+        -:  497:    {
+        1:  498:        CommandResult = FM_VerifyChildTask(FM_CONCAT_CHILD_ERR_EID, CmdText);
+        -:  499:    }
         -:  500:
-        -:  501:
-        -:  502:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  503:/*                                                                 */
-        -:  504:/* FM command handler -- Concatenate Files                         */
-        -:  505:/*                                                                 */
-        -:  506:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  507:
-        -:  508:boolean FM_ConcatFilesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_ConcatFilesCmd called 6 returned 100% blocks executed 100%
-        6:  509:{
-        6:  510:    FM_ConcatCmd_t *CmdPtr = (FM_ConcatCmd_t *) MessagePtr;
-        6:  511:    char *CmdText = "Concat Files";
-        6:  512:    FM_ChildQueueEntry_t *CmdArgs;
-        6:  513:    boolean CommandResult;
-        -:  514:
-        -:  515:    /* Verify command packet length */
-        6:  516:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_ConcatCmd_t),
-        -:  517:                                           FM_CONCAT_PKT_ERR_EID, CmdText);
-        -:  518:
-        -:  519:    /* Verify that source file #1 exists, is not a directory and is not open */
-        6:  520:    if (CommandResult == TRUE)
-        -:  521:    {
-        4:  522:        CommandResult = FM_VerifyFileClosed(CmdPtr->Source1, sizeof(CmdPtr->Source1),
-        -:  523:                                            FM_CONCAT_SRC1_ERR_EID, CmdText);
-        -:  524:    }
-        -:  525:
-        -:  526:    /* Verify that source file #2 exists, is not a directory and is not open */
-        6:  527:    if (CommandResult == TRUE)
-        -:  528:    {
-        3:  529:        CommandResult = FM_VerifyFileClosed(CmdPtr->Source2, sizeof(CmdPtr->Source2),
-        -:  530:                                            FM_CONCAT_SRC2_ERR_EID, CmdText);
-        -:  531:    }
-        -:  532:
-        -:  533:    /* Verify that target file does not exist */
-        6:  534:    if (CommandResult == TRUE)
-        -:  535:    {
-        2:  536:        CommandResult = FM_VerifyFileNoExist(CmdPtr->Target, sizeof(CmdPtr->Target),
-        -:  537:                                             FM_CONCAT_TGT_ERR_EID, CmdText);
-        -:  538:    }
-        -:  539:
-        -:  540:    /* Check for lower priority child task availability */
-        6:  541:    if (CommandResult == TRUE)
-        -:  542:    {
-        2:  543:        CommandResult = FM_VerifyChildTask(FM_CONCAT_CHILD_ERR_EID, CmdText);
-        -:  544:    }
-        -:  545:
-        -:  546:    /* Prepare command for child task execution */
-        6:  547:    if (CommandResult == TRUE)
-        -:  548:    {
-        2:  549:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  501:    /* Prepare command for child task execution */
+        2:  502:    if (CommandResult == TRUE)
+        -:  503:    {
+        1:  504:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  505:
+        -:  506:        /* Set handshake queue command args */
+        1:  507:        CmdArgs->CommandCode = FM_CONCAT_CC;
+        1:  508:        strcpy(CmdArgs->Source1, CmdPtr->Source1);
+        1:  509:        strcpy(CmdArgs->Source2, CmdPtr->Source2);
+        1:  510:        strcpy(CmdArgs->Target, CmdPtr->Target);
+        -:  511:
+        -:  512:        /* Invoke lower priority child task */
+        1:  513:        FM_InvokeChildTask();
+        -:  514:    }
+        -:  515:
+        2:  516:    return(CommandResult);
+        -:  517:
+        -:  518:} /* End of FM_ConcatFilesCmd() */
+        -:  519:
+        -:  520:
+        -:  521:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  522:/*                                                                 */
+        -:  523:/* FM command handler -- Get File Info                             */
+        -:  524:/*                                                                 */
+        -:  525:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  526:
+        3:  527:boolean FM_GetFileInfoCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  528:{
+        3:  529:    FM_GetFileInfoCmd_t *CmdPtr = (FM_GetFileInfoCmd_t *) MessagePtr;
+        3:  530:    char *CmdText = "Get File Info";
+        -:  531:    FM_ChildQueueEntry_t *CmdArgs;
+        -:  532:    boolean CommandResult;
+        -:  533:    uint32 FilenameState;
+        -:  534:
+        -:  535:    /* Verify command packet length */
+        3:  536:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetFileInfoCmd_t),
+        -:  537:                                           FM_GET_FILE_INFO_PKT_ERR_EID, CmdText);
+        -:  538:
+        -:  539:    /* Verify that the source name is valid for a file or directory */
+        3:  540:    if (CommandResult == TRUE)
+        -:  541:    {
+        3:  542:        FilenameState = FM_VerifyNameValid(CmdPtr->Filename, sizeof(CmdPtr->Filename),
+        -:  543:                                           FM_GET_FILE_INFO_SRC_ERR_EID, CmdText);
+        -:  544:
+        3:  545:        if (FilenameState == FM_NAME_IS_INVALID)
+        -:  546:        {
+        2:  547:            CommandResult = FALSE;
+        -:  548:        }
+        -:  549:    }
         -:  550:
-        -:  551:        /* Set handshake queue command args */
-        2:  552:        CmdArgs->CommandCode = FM_CONCAT_CC;
-        2:  553:        strcpy(CmdArgs->Source1, CmdPtr->Source1);
-        2:  554:        strcpy(CmdArgs->Source2, CmdPtr->Source2);
-        2:  555:        strcpy(CmdArgs->Target, CmdPtr->Target);
+        -:  551:    /* Check for lower priority child task availability */
+        3:  552:    if (CommandResult == TRUE)
+        -:  553:    {
+        1:  554:        CommandResult = FM_VerifyChildTask(FM_GET_FILE_INFO_CHILD_ERR_EID, CmdText);
+        -:  555:    }
         -:  556:
-        -:  557:        /* Invoke lower priority child task */
-        2:  558:        FM_InvokeChildTask();
-        -:  559:    }
-        -:  560:
-        6:  561:    return(CommandResult);
-        -:  562:
-        -:  563:} /* End of FM_ConcatFilesCmd() */
-        -:  564:
-        -:  565:
-        -:  566:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  567:/*                                                                 */
-        -:  568:/* FM command handler -- Get File Info                             */
-        -:  569:/*                                                                 */
-        -:  570:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  557:    /* Prepare command for child task execution */
+        3:  558:    if (CommandResult == TRUE)
+        -:  559:    {
+        1:  560:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  561:
+        -:  562:        /* Set handshake queue command args */
+        1:  563:        CmdArgs->CommandCode = FM_GET_FILE_INFO_CC;
+        1:  564:        strcpy(CmdArgs->Source1, CmdPtr->Filename);
+        1:  565:        CmdArgs->FileInfoState = FilenameState;
+        1:  566:        CmdArgs->FileInfoCRC = CmdPtr->FileInfoCRC;
+        -:  567:
+        -:  568:        /* Global data set during call to FM_VerifyNameValid */
+        1:  569:        CmdArgs->FileInfoSize = FM_GlobalData.FileStatSize;
+        1:  570:        CmdArgs->FileInfoTime = CFE_TIME_FS2CFESeconds(FM_GlobalData.FileStatTime);
         -:  571:
-        -:  572:boolean FM_GetFileInfoCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_GetFileInfoCmd called 9 returned 100% blocks executed 100%
-        9:  573:{
-        9:  574:    FM_GetFileInfoCmd_t *CmdPtr = (FM_GetFileInfoCmd_t *) MessagePtr;
-        9:  575:    char *CmdText = "Get File Info";
-        9:  576:    FM_ChildQueueEntry_t *CmdArgs;
-        9:  577:    boolean CommandResult;
-        9:  578:    uint32 FilenameState;
+        -:  572:        /* Invoke lower priority child task */
+        1:  573:        FM_InvokeChildTask();
+        -:  574:    }
+        -:  575:
+        3:  576:    return(CommandResult);
+        -:  577:
+        -:  578:} /* End of FM_GetFileInfoCmd() */
         -:  579:
-        -:  580:    /* Verify command packet length */
-        9:  581:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetFileInfoCmd_t),
-        -:  582:                                           FM_GET_FILE_INFO_PKT_ERR_EID, CmdText);
-        -:  583:
-        -:  584:    /* Verify that the source name is valid for a file or directory */
-        9:  585:    if (CommandResult == TRUE)
-        -:  586:    {
-        7:  587:        FilenameState = FM_VerifyNameValid(CmdPtr->Filename, sizeof(CmdPtr->Filename),
-        -:  588:                                           FM_GET_FILE_INFO_SRC_ERR_EID, CmdText);
-        -:  589:
-        7:  590:        if (FilenameState == FM_NAME_IS_INVALID)
-        -:  591:        {
-        1:  592:            CommandResult = FALSE;
-        -:  593:        }
-        -:  594:    }
-        -:  595:
-        -:  596:    /* Check for lower priority child task availability */
-        9:  597:    if (CommandResult == TRUE)
-        -:  598:    {
-        6:  599:        CommandResult = FM_VerifyChildTask(FM_GET_FILE_INFO_CHILD_ERR_EID, CmdText);
-        -:  600:    }
+        -:  580:
+        -:  581:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  582:/*                                                                 */
+        -:  583:/* FM command handler -- Get List of Open Files                    */
+        -:  584:/*                                                                 */
+        -:  585:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  586:
+        2:  587:boolean FM_GetOpenFilesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  588:{
+        2:  589:    char *CmdText = "Get Open Files";
+        -:  590:    boolean CommandResult;
+        -:  591:    uint32 NumOpenFiles;
+        -:  592:
+        -:  593:    /* Verify command packet length */
+        2:  594:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetOpenFilesCmd_t),
+        -:  595:                                           FM_GET_OPEN_FILES_PKT_ERR_EID, CmdText);
+        2:  596:    if (CommandResult == TRUE)
+        -:  597:    {
+        -:  598:        /* Initialize open files telemetry packet */
+        2:  599:        CFE_SB_InitMsg(&FM_GlobalData.OpenFilesPkt, FM_OPEN_FILES_TLM_MID,
+        -:  600:                        sizeof(FM_OpenFilesPkt_t), TRUE);
         -:  601:
-        -:  602:    /* Prepare command for child task execution */
-        9:  603:    if (CommandResult == TRUE)
-        -:  604:    {
-        6:  605:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
-        -:  606:
-        -:  607:        /* Set handshake queue command args */
-        6:  608:        CmdArgs->CommandCode = FM_GET_FILE_INFO_CC;
-        6:  609:        strcpy(CmdArgs->Source1, CmdPtr->Filename);
-        6:  610:        CmdArgs->FileInfoState = FilenameState;
-        6:  611:        CmdArgs->FileInfoCRC = CmdPtr->FileInfoCRC;
-        -:  612:
-        -:  613:        /* Global data set during call to FM_VerifyNameValid */
-        6:  614:        CmdArgs->FileInfoSize = FM_GlobalData.FileStatSize;
-        6:  615:        CmdArgs->FileInfoTime = CFE_TIME_FS2CFESeconds(FM_GlobalData.FileStatTime);
+        -:  602:        /* Get list of open files and count */
+        2:  603:        NumOpenFiles = FM_GetOpenFilesData(FM_GlobalData.OpenFilesPkt.OpenFilesList);
+        2:  604:        FM_GlobalData.OpenFilesPkt.NumOpenFiles = NumOpenFiles;
+        -:  605:
+        -:  606:        /* Timestamp and send open files telemetry packet */
+        2:  607:        CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FM_GlobalData.OpenFilesPkt);
+        2:  608:        CFE_SB_SendMsg((CFE_SB_Msg_t *) &FM_GlobalData.OpenFilesPkt);
+        -:  609:
+        -:  610:        /* Send command completion event (debug) */
+        2:  611:        CFE_EVS_SendEvent(FM_GET_OPEN_FILES_CMD_EID, CFE_EVS_DEBUG,
+        -:  612:                         "%s command", CmdText);
+        -:  613:    }
+        -:  614:
+        2:  615:    return(CommandResult);
         -:  616:
-        -:  617:        /* Invoke lower priority child task */
-        6:  618:        FM_InvokeChildTask();
-        -:  619:    }
-        -:  620:
-        9:  621:    return(CommandResult);
-        -:  622:
-        -:  623:} /* End of FM_GetFileInfoCmd() */
-        -:  624:
+        -:  617:} /* End of FM_GetOpenFilesCmd() */
+        -:  618:
+        -:  619:
+        -:  620:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  621:/*                                                                 */
+        -:  622:/* FM command handler -- Create Directory                          */
+        -:  623:/*                                                                 */
+        -:  624:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  625:
-        -:  626:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  627:/*                                                                 */
-        -:  628:/* FM command handler -- Get List of Open Files                    */
-        -:  629:/*                                                                 */
-        -:  630:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  631:
-        -:  632:boolean FM_GetOpenFilesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_GetOpenFilesCmd called 3 returned 100% blocks executed 100%
-        3:  633:{
-        3:  634:    char *CmdText = "Get Open Files";
-        3:  635:    boolean CommandResult;
-        3:  636:    uint32 NumOpenFiles;
-        -:  637:
-        -:  638:    /* Verify command packet length */
-        3:  639:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetOpenFilesCmd_t),
-        -:  640:                                           FM_GET_OPEN_FILES_PKT_ERR_EID, CmdText);
-        3:  641:    if (CommandResult == TRUE)
-        -:  642:    {
-        -:  643:        /* Initialize open files telemetry packet */
-        1:  644:        CFE_SB_InitMsg(&FM_GlobalData.OpenFilesPkt, FM_OPEN_FILES_TLM_MID,
-        -:  645:                        sizeof(FM_OpenFilesPkt_t), TRUE);
-        -:  646:
-        -:  647:        /* Get list of open files and count */
-        1:  648:        NumOpenFiles = FM_GetOpenFilesData(FM_GlobalData.OpenFilesPkt.OpenFilesList);
-        1:  649:        FM_GlobalData.OpenFilesPkt.NumOpenFiles = NumOpenFiles;
-        -:  650:
-        -:  651:        /* Timestamp and send open files telemetry packet */
-        1:  652:        CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FM_GlobalData.OpenFilesPkt);
-        1:  653:        CFE_SB_SendMsg((CFE_SB_Msg_t *) &FM_GlobalData.OpenFilesPkt);
+        2:  626:boolean FM_CreateDirectoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  627:{
+        2:  628:    FM_CreateDirCmd_t *CmdPtr = (FM_CreateDirCmd_t *) MessagePtr;
+        -:  629:    FM_ChildQueueEntry_t *CmdArgs;
+        2:  630:    char *CmdText = "Create Directory";
+        -:  631:    boolean CommandResult;
+        -:  632:
+        -:  633:    /* Verify command packet length */
+        2:  634:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_CreateDirCmd_t),
+        -:  635:                                           FM_CREATE_DIR_PKT_ERR_EID, CmdText);
+        -:  636:
+        -:  637:    /* Verify that the directory name is not already in use */
+        2:  638:    if (CommandResult == TRUE)
+        -:  639:    {
+        2:  640:        CommandResult = FM_VerifyDirNoExist(CmdPtr->Directory, sizeof(CmdPtr->Directory),
+        -:  641:                                            FM_CREATE_DIR_SRC_ERR_EID, CmdText);
+        -:  642:    }
+        -:  643:
+        -:  644:    /* Check for lower priority child task availability */
+        2:  645:    if (CommandResult == TRUE)
+        -:  646:    {
+        1:  647:        CommandResult = FM_VerifyChildTask(FM_CREATE_DIR_CHILD_ERR_EID, CmdText);
+        -:  648:    }
+        -:  649:
+        -:  650:    /* Prepare command for child task execution */
+        2:  651:    if (CommandResult == TRUE)
+        -:  652:    {
+        1:  653:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
         -:  654:
-        -:  655:        /* Send command completion event (debug) */
-        1:  656:        CFE_EVS_SendEvent(FM_GET_OPEN_FILES_CMD_EID, CFE_EVS_DEBUG,
-        -:  657:                         "%s command", CmdText);
-        -:  658:    }
-        -:  659:
-        3:  660:    return(CommandResult);
-        -:  661:
-        -:  662:} /* End of FM_GetOpenFilesCmd() */
-        -:  663:
+        -:  655:        /* Set handshake queue command args */
+        1:  656:        CmdArgs->CommandCode = FM_CREATE_DIR_CC;
+        1:  657:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
+        -:  658:
+        -:  659:        /* Invoke lower priority child task */
+        1:  660:        FM_InvokeChildTask();
+        -:  661:    }
+        -:  662:
+        2:  663:    return(CommandResult);
         -:  664:
-        -:  665:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  666:/*                                                                 */
-        -:  667:/* FM command handler -- Create Directory                          */
-        -:  668:/*                                                                 */
-        -:  669:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  670:
-        -:  671:boolean FM_CreateDirectoryCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_CreateDirectoryCmd called 5 returned 100% blocks executed 100%
-        5:  672:{
-        5:  673:    FM_CreateDirCmd_t *CmdPtr = (FM_CreateDirCmd_t *) MessagePtr;
-        5:  674:    char *CmdText = "Create Directory";
-        5:  675:    boolean CommandResult;
-        5:  676:    int32 OS_Status;
-        -:  677:
-        -:  678:    /* Verify command packet length */
-        5:  679:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_CreateDirCmd_t),
-        -:  680:                                           FM_CREATE_DIR_PKT_ERR_EID, CmdText);
-        -:  681:
-        -:  682:    /* Verify that the directory name is not already in use */
-        5:  683:    if (CommandResult == TRUE)
-        -:  684:    {
-        3:  685:        CommandResult = FM_VerifyDirNoExist(CmdPtr->Directory, sizeof(CmdPtr->Directory),
-        -:  686:                                            FM_CREATE_DIR_SRC_ERR_EID, CmdText);
-        -:  687:    }
-        -:  688:
-        -:  689:    /* Create the directory */
-        5:  690:    if (CommandResult == TRUE)
-        -:  691:    {
-        2:  692:        OS_Status = OS_mkdir(CmdPtr->Directory, 0);
-        -:  693:
-        2:  694:        if (OS_Status != OS_SUCCESS)
-        -:  695:        {
-        1:  696:            CommandResult = FALSE;
+        -:  665:} /* End of FM_CreateDirectoryCmd() */
+        -:  666:
+        -:  667:
+        -:  668:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  669:/*                                                                 */
+        -:  670:/* FM command handler -- Delete Directory                          */
+        -:  671:/*                                                                 */
+        -:  672:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  673:
+        2:  674:boolean FM_DeleteDirectoryCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  675:{
+        2:  676:    FM_DeleteDirCmd_t *CmdPtr = (FM_DeleteDirCmd_t *) MessagePtr;
+        -:  677:    FM_ChildQueueEntry_t *CmdArgs;
+        2:  678:    char *CmdText = "Delete Directory";
+        -:  679:    boolean CommandResult;
+        -:  680:
+        -:  681:    /* Verify command packet length */
+        2:  682:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DeleteDirCmd_t),
+        -:  683:                                           FM_DELETE_DIR_PKT_ERR_EID, CmdText);
+        -:  684:
+        -:  685:    /* Verify that the directory exists */
+        2:  686:    if (CommandResult == TRUE)
+        -:  687:    {
+        2:  688:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
+        -:  689:                                           FM_DELETE_DIR_SRC_ERR_EID, CmdText);
+        -:  690:    }
+        -:  691:
+        -:  692:    /* Check for lower priority child task availability */
+        2:  693:    if (CommandResult == TRUE)
+        -:  694:    {
+        1:  695:        CommandResult = FM_VerifyChildTask(FM_DELETE_DIR_CHILD_ERR_EID, CmdText);
+        -:  696:    }
         -:  697:
-        1:  698:            CFE_EVS_SendEvent(FM_CREATE_DIR_OS_ERR_EID, CFE_EVS_ERROR,
-        -:  699:                             "%s error: OS_mkdir failed: result = %d, dir = %s",
-        -:  700:                              CmdText, OS_Status, CmdPtr->Directory);
-        -:  701:        }
-        -:  702:        else
-        -:  703:        {
-        -:  704:            /* Send command completion event (info) */
-        1:  705:            CFE_EVS_SendEvent(FM_CREATE_DIR_CMD_EID, CFE_EVS_INFORMATION,
-        -:  706:                             "%s command: dir = %s", CmdText, CmdPtr->Directory);
-        -:  707:        }
-        -:  708:    }
-        -:  709:
-        5:  710:    return(CommandResult);
-        -:  711:
-        -:  712:} /* End of FM_CreateDirectoryCmd() */
-        -:  713:
+        -:  698:    /* Prepare command for child task execution */
+        2:  699:    if (CommandResult == TRUE)
+        -:  700:    {
+        1:  701:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  702:
+        -:  703:        /* Set handshake queue command args */
+        1:  704:        CmdArgs->CommandCode = FM_DELETE_DIR_CC;
+        1:  705:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
+        -:  706:
+        -:  707:        /* Invoke lower priority child task */
+        1:  708:        FM_InvokeChildTask();
+        -:  709:    }
+        -:  710:
+        2:  711:    return(CommandResult);
+        -:  712:
+        -:  713:} /* End of FM_DeleteDirectoryCmd() */
         -:  714:
-        -:  715:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  716:/*                                                                 */
-        -:  717:/* FM command handler -- Delete Directory                          */
-        -:  718:/*                                                                 */
-        -:  719:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  720:
-        -:  721:boolean FM_DeleteDirectoryCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_DeleteDirectoryCmd called 6 returned 100% blocks executed 96%
-        6:  722:{
-        6:  723:    FM_DeleteDirCmd_t *CmdPtr = (FM_DeleteDirCmd_t *) MessagePtr;
-        6:  724:    char *CmdText = "Delete Directory";
-        6:  725:    boolean CommandResult;
-        6:  726:    int32 OS_Status;
-        6:  727:    os_dirp_t DirPtr;
-        6:  728:    os_dirent_t *DirEntry;
-        -:  729:
-        -:  730:    /* Verify command packet length */
-        6:  731:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_DeleteDirCmd_t),
-        -:  732:                                           FM_DELETE_DIR_PKT_ERR_EID, CmdText);
-        -:  733:
-        -:  734:    /* Verify that the directory exists */
-        6:  735:    if (CommandResult == TRUE)
-        -:  736:    {
-        4:  737:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
-        -:  738:                                           FM_DELETE_DIR_SRC_ERR_EID, CmdText);
-        -:  739:    }
-        -:  740:
-        -:  741:    /* Open directory so we can read directory listing data */
-        6:  742:    if (CommandResult == TRUE)
-        -:  743:    {
-        3:  744:        DirPtr = OS_opendir(CmdPtr->Directory);
-        -:  745:
-        3:  746:        if (DirPtr == NULL)
+        -:  715:
+        -:  716:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  717:/*                                                                 */
+        -:  718:/* FM command handler -- Get List of Directory Entries (to file)   */
+        -:  719:/*                                                                 */
+        -:  720:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  721:
+        3:  722:boolean FM_GetDirListFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  723:{
+        3:  724:    FM_GetDirFileCmd_t *CmdPtr = (FM_GetDirFileCmd_t *) MessagePtr;
+        3:  725:    char *CmdText = "Directory List to File";
+        -:  726:    char DirWithSep[OS_MAX_PATH_LEN];
+        -:  727:    char Filename[OS_MAX_PATH_LEN];
+        -:  728:    FM_ChildQueueEntry_t *CmdArgs;
+        -:  729:    boolean CommandResult;
+        -:  730:
+        -:  731:    /* Verify command packet length */
+        3:  732:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetDirFileCmd_t),
+        -:  733:                                           FM_GET_DIR_FILE_PKT_ERR_EID, CmdText);
+        -:  734:
+        -:  735:    /* Verify that source directory exists */
+        3:  736:    if (CommandResult == TRUE)
+        -:  737:    {
+        3:  738:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
+        -:  739:                                           FM_GET_DIR_FILE_SRC_ERR_EID, CmdText);
+        -:  740:    }
+        -:  741:
+        -:  742:    /* Verify that target file is not already open */
+        3:  743:    if (CommandResult == TRUE)
+        -:  744:    {
+        -:  745:        /* Use default filename if not specified in the command */
+        2:  746:        if (CmdPtr->Filename[0] == '\0')
         -:  747:        {
-    #####:  748:            CommandResult = FALSE;
-        -:  749:
-    #####:  750:            CFE_EVS_SendEvent(FM_DELETE_DIR_OS_ERR_EID, CFE_EVS_ERROR,
-        -:  751:                             "%s error: OS_opendir failed: dir = %s",
-        -:  752:                              CmdText, CmdPtr->Directory);
+        1:  748:            strcpy(Filename, FM_DIR_LIST_FILE_DEFNAME);
+        -:  749:        }
+        -:  750:        else
+        -:  751:        {
+        1:  752:            CFE_PSP_MemCpy(Filename, CmdPtr->Filename, OS_MAX_PATH_LEN);
         -:  753:        }
-        -:  754:    }
-        -:  755:
-        -:  756:    /* Search for files and sub-directories */
-        6:  757:    if (CommandResult == TRUE)
-        -:  758:    {
-       10:  759:        while (((DirEntry = OS_readdir(DirPtr)) != NULL) && (CommandResult == TRUE))
-        -:  760:        {
-        -:  761:            /* Ignore the "." and ".." directory entries */
-        7:  762:            if ((strcmp(DirEntry->d_name, FM_THIS_DIRECTORY) != 0) &&
-        -:  763:                (strcmp(DirEntry->d_name, FM_PARENT_DIRECTORY) != 0))
-        -:  764:            {
-        -:  765:                /* Found something in the directory */
-        1:  766:                CommandResult = FALSE;
-        -:  767:
-        1:  768:                CFE_EVS_SendEvent(FM_DELETE_DIR_EMPTY_ERR_EID, CFE_EVS_ERROR,
-        -:  769:                                 "%s error: directory is not empty: dir = %s",
-        -:  770:                                  CmdText, CmdPtr->Directory);
-        -:  771:            }
-        -:  772:        }
-        -:  773:
-        3:  774:        OS_closedir(DirPtr);
-        -:  775:    }
-        -:  776:
-        -:  777:    /* Delete the empty directory */
-        6:  778:    if (CommandResult == TRUE)
-        -:  779:    {
-        2:  780:        OS_Status = OS_rmdir(CmdPtr->Directory);
+        -:  754:
+        -:  755:        /* Note: it is OK for this file to overwrite a previous version of the file */
+        2:  756:        CommandResult = FM_VerifyFileNotOpen(Filename, sizeof(Filename),
+        -:  757:                                             FM_GET_DIR_FILE_TGT_ERR_EID, CmdText);
+        -:  758:    }
+        -:  759:
+        -:  760:    /* Check for lower priority child task availability */
+        3:  761:    if (CommandResult == TRUE)
+        -:  762:    {
+        2:  763:        CommandResult = FM_VerifyChildTask(FM_GET_DIR_FILE_CHILD_ERR_EID, CmdText);
+        -:  764:    }
+        -:  765:
+        -:  766:    /* Prepare command for child task execution */
+        3:  767:    if (CommandResult == TRUE)
+        -:  768:    {
+        2:  769:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  770:
+        -:  771:        /* Append a path separator to the end of the directory name */
+        2:  772:        strcpy(DirWithSep, CmdPtr->Directory);
+        2:  773:        FM_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN);
+        -:  774:
+        -:  775:        /* Set handshake queue command args */
+        2:  776:        CmdArgs->CommandCode = FM_GET_DIR_FILE_CC;
+        2:  777:        CmdArgs->GetSizeTimeMode = CmdPtr->GetSizeTimeMode;
+        2:  778:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
+        2:  779:        strcpy(CmdArgs->Source2, DirWithSep);
+        2:  780:        strcpy(CmdArgs->Target, Filename);
         -:  781:
-        2:  782:        if (OS_Status != OS_SUCCESS)
-        -:  783:        {
-        1:  784:            CommandResult = FALSE;
-        1:  785:            CFE_EVS_SendEvent(FM_DELETE_DIR_OS_ERR_EID, CFE_EVS_ERROR,
-        -:  786:                             "%s error: OS_rmdir failed: result = %d, dir = %s",
-        -:  787:                              CmdText, OS_Status, CmdPtr->Directory);
-        -:  788:        }
-        -:  789:        else
-        -:  790:        {
-        -:  791:            /* Send command completion event (info) */
-        1:  792:            CFE_EVS_SendEvent(FM_DELETE_DIR_CMD_EID, CFE_EVS_INFORMATION,
-        -:  793:                             "%s command: dir = %s", CmdText, CmdPtr->Directory);
-        -:  794:        }
-        -:  795:    }
+        -:  782:        /* Invoke lower priority child task */
+        2:  783:        FM_InvokeChildTask();
+        -:  784:    }
+        -:  785:
+        3:  786:    return(CommandResult);
+        -:  787:
+        -:  788:} /* End of FM_GetDirListFileCmd() */
+        -:  789:
+        -:  790:
+        -:  791:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  792:/*                                                                 */
+        -:  793:/* FM command handler -- Get List of Directory Entries (to pkt)    */
+        -:  794:/*                                                                 */
+        -:  795:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  796:
-        6:  797:    return(CommandResult);
-        -:  798:
-        -:  799:} /* End of FM_DeleteDirectoryCmd() */
-        -:  800:
-        -:  801:
-        -:  802:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  803:/*                                                                 */
-        -:  804:/* FM command handler -- Get List of Directory Entries (to file)   */
-        -:  805:/*                                                                 */
-        -:  806:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  807:
-        -:  808:boolean FM_GetDirListFileCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_GetDirListFileCmd called 5 returned 100% blocks executed 100%
-        5:  809:{
-        5:  810:    FM_GetDirFileCmd_t *CmdPtr = (FM_GetDirFileCmd_t *) MessagePtr;
-        5:  811:    char *CmdText = "Directory List to File";
-        5:  812:    char DirWithSep[OS_MAX_PATH_LEN];
-        5:  813:    char Filename[OS_MAX_PATH_LEN];
-        5:  814:    FM_ChildQueueEntry_t *CmdArgs;
-        5:  815:    boolean CommandResult;
-        -:  816:
-        -:  817:    /* Verify command packet length */
-        5:  818:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetDirFileCmd_t),
-        -:  819:                                           FM_GET_DIR_FILE_PKT_ERR_EID, CmdText);
-        -:  820:
-        -:  821:    /* Verify that source directory exists */
-        5:  822:    if (CommandResult == TRUE)
-        -:  823:    {
-        3:  824:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
-        -:  825:                                           FM_GET_DIR_FILE_SRC_ERR_EID, CmdText);
-        -:  826:    }
-        -:  827:
-        5:  828:    if (CommandResult == TRUE)
-        -:  829:    {
-        -:  830:        /* Use default filename if not specified in the command */
-        2:  831:        if (CmdPtr->Filename[0] == '\0')
-        -:  832:        {
-        1:  833:            strcpy(Filename, FM_DIR_LIST_FILE_DEFNAME);
-        -:  834:        }
-        -:  835:        else
-        -:  836:        {
-        1:  837:            CFE_PSP_MemCpy(Filename, CmdPtr->Filename, OS_MAX_PATH_LEN);
-        -:  838:        }
-        -:  839:
-        -:  840:        /* Note: it is OK for this file to overwrite a previous version of the file */
-        2:  841:        CommandResult = FM_VerifyFileNotOpen(Filename, sizeof(Filename),
-        -:  842:                                             FM_GET_DIR_FILE_TGT_ERR_EID, CmdText);
-        -:  843:    }
-        -:  844:
-        -:  845:    /* Check for lower priority child task availability */
-        5:  846:    if (CommandResult == TRUE)
-        -:  847:    {
-        2:  848:        CommandResult = FM_VerifyChildTask(FM_GET_DIR_FILE_CHILD_ERR_EID, CmdText);
-        -:  849:    }
-        -:  850:
-        -:  851:    /* Prepare command for child task execution */
-        5:  852:    if (CommandResult == TRUE)
-        -:  853:    {
-        2:  854:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
-        -:  855:
-        -:  856:        /* Append a path separator to the end of the directory name */
-        2:  857:        strcpy(DirWithSep, CmdPtr->Directory);
-        2:  858:        FM_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN);
+        2:  797:boolean FM_GetDirListPktCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  798:{
+        2:  799:    FM_GetDirPktCmd_t *CmdPtr = (FM_GetDirPktCmd_t *) MessagePtr;
+        2:  800:    char *CmdText = "Directory List to Packet";
+        -:  801:    char DirWithSep[OS_MAX_PATH_LEN];
+        -:  802:    FM_ChildQueueEntry_t *CmdArgs;
+        -:  803:    boolean CommandResult;
+        -:  804:
+        -:  805:    /* Verify command packet length */
+        2:  806:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetDirPktCmd_t),
+        -:  807:                                           FM_GET_DIR_PKT_PKT_ERR_EID, CmdText);
+        -:  808:
+        -:  809:    /* Verify that source directory exists */
+        2:  810:    if (CommandResult == TRUE)
+        -:  811:    {
+        2:  812:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
+        -:  813:                                           FM_GET_DIR_PKT_SRC_ERR_EID, CmdText);
+        -:  814:    }
+        -:  815:
+        -:  816:    /* Check for lower priority child task availability */
+        2:  817:    if (CommandResult == TRUE)
+        -:  818:    {
+        1:  819:        CommandResult = FM_VerifyChildTask(FM_GET_DIR_PKT_CHILD_ERR_EID, CmdText);
+        -:  820:    }
+        -:  821:
+        -:  822:    /* Prepare command for child task execution */
+        2:  823:    if (CommandResult == TRUE)
+        -:  824:    {
+        1:  825:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  826:
+        -:  827:        /* Append a path separator to the end of the directory name */
+        1:  828:        strcpy(DirWithSep, CmdPtr->Directory);
+        1:  829:        FM_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN);
+        -:  830:
+        -:  831:        /* Set handshake queue command args */
+        1:  832:        CmdArgs->CommandCode = FM_GET_DIR_PKT_CC;
+        1:  833:        CmdArgs->GetSizeTimeMode = CmdPtr->GetSizeTimeMode;
+        1:  834:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
+        1:  835:        strcpy(CmdArgs->Source2, DirWithSep);
+        1:  836:        CmdArgs->DirListOffset = CmdPtr->DirListOffset;
+        -:  837:
+        -:  838:        /* Invoke lower priority child task */
+        1:  839:        FM_InvokeChildTask();
+        -:  840:    }
+        -:  841:
+        2:  842:    return(CommandResult);
+        -:  843:
+        -:  844:} /* End of FM_GetDirListPktCmd() */
+        -:  845:
+        -:  846:
+        -:  847:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  848:/*                                                                 */
+        -:  849:/* FM command handler -- Get File System Free Space                */
+        -:  850:/*                                                                 */
+        -:  851:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  852:
+        3:  853:boolean FM_GetFreeSpaceCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  854:{
+        3:  855:    char *CmdText = "Get Free Space";
+        -:  856:    boolean CommandResult;
+        -:  857:    uint32 i;
+        -:  858:    uint64 FreeSpace64;
         -:  859:
-        -:  860:        /* Set handshake queue command args */
-        2:  861:        CmdArgs->CommandCode = FM_GET_DIR_FILE_CC;
-        2:  862:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
-        2:  863:        strcpy(CmdArgs->Source2, DirWithSep);
-        2:  864:        strcpy(CmdArgs->Target, Filename);
-        -:  865:
-        -:  866:        /* Invoke lower priority child task */
-        2:  867:        FM_InvokeChildTask();
-        -:  868:    }
-        -:  869:
-        5:  870:    return(CommandResult);
-        -:  871:
-        -:  872:} /* End of FM_GetDirListFileCmd() */
-        -:  873:
-        -:  874:
-        -:  875:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  876:/*                                                                 */
-        -:  877:/* FM command handler -- Get List of Directory Entries (to pkt)    */
-        -:  878:/*                                                                 */
-        -:  879:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  880:
-        -:  881:boolean FM_GetDirListPktCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_GetDirListPktCmd called 6 returned 100% blocks executed 100%
-        6:  882:{
-        6:  883:    FM_GetDirPktCmd_t *CmdPtr = (FM_GetDirPktCmd_t *) MessagePtr;
-        6:  884:    char *CmdText = "Directory List to Packet";
-        6:  885:    char DirWithSep[OS_MAX_PATH_LEN];
-        6:  886:    FM_ChildQueueEntry_t *CmdArgs;
-        6:  887:    boolean CommandResult;
+        -:  860:
+        -:  861:    /* Verify command packet length */
+        3:  862:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetFreeSpaceCmd_t),
+        -:  863:                                           FM_GET_FREE_SPACE_PKT_ERR_EID, CmdText);
+        3:  864:    if (CommandResult == TRUE)
+        -:  865:    {
+        -:  866:        /* Verify that we have a pointer to the file system table data */
+        3:  867:        if (FM_GlobalData.FreeSpaceTablePtr == (FM_FreeSpaceTable_t *) NULL)
+        -:  868:        {
+        2:  869:            CommandResult = FALSE;
+        -:  870:
+        2:  871:            CFE_EVS_SendEvent(FM_GET_FREE_SPACE_TBL_ERR_EID, CFE_EVS_ERROR,
+        -:  872:                             "%s error: file system free space table is not loaded", CmdText);
+        -:  873:        }
+        -:  874:        else
+        -:  875:        {
+        -:  876:            /* Initialize the file system free space telemetry packet */
+        1:  877:            CFE_SB_InitMsg(&FM_GlobalData.FreeSpacePkt, FM_FREE_SPACE_TLM_MID,
+        -:  878:                           sizeof(FM_FreeSpacePkt_t), TRUE);
+        -:  879:
+        -:  880:            /* Process enabled file system table entries */
+        9:  881:            for (i = 0; i < FM_TABLE_ENTRY_COUNT; i++)
+        -:  882:            {
+        8:  883:                if (FM_GlobalData.FreeSpaceTablePtr->FileSys[i].State == FM_TABLE_ENTRY_ENABLED)
+        -:  884:                {
+        -:  885:                    /* Get file system name */
+        1:  886:                    strcpy(FM_GlobalData.FreeSpacePkt.FileSys[i].Name,
+        1:  887:                           FM_GlobalData.FreeSpaceTablePtr->FileSys[i].Name);
         -:  888:
-        -:  889:    /* Verify command packet length */
-        6:  890:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetDirPktCmd_t),
-        -:  891:                                           FM_GET_DIR_PKT_PKT_ERR_EID, CmdText);
+        -:  889:                    /* Get file system free space */
+        1:  890:                    FreeSpace64 = 0;
+        1:  891:                    OS_fsBytesFree(FM_GlobalData.FreeSpacePkt.FileSys[i].Name,  &FreeSpace64);
         -:  892:
-        -:  893:    /* Verify that source directory exists */
-        6:  894:    if (CommandResult == TRUE)
-        -:  895:    {
-        4:  896:        CommandResult = FM_VerifyDirExists(CmdPtr->Directory, sizeof(CmdPtr->Directory),
-        -:  897:                                           FM_GET_DIR_PKT_SRC_ERR_EID, CmdText);
-        -:  898:    }
-        -:  899:
-        -:  900:    /* Check for lower priority child task availability */
-        6:  901:    if (CommandResult == TRUE)
-        -:  902:    {
-        3:  903:        CommandResult = FM_VerifyChildTask(FM_GET_DIR_PKT_CHILD_ERR_EID, CmdText);
-        -:  904:    }
-        -:  905:
-        -:  906:    /* Prepare command for child task execution */
-        6:  907:    if (CommandResult == TRUE)
-        -:  908:    {
-        3:  909:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -:  893:                    /* Store as bytes to avoid boundary, endian and strict-aliasing issues */
+        1:  894:                    CFE_PSP_MemCpy(&FM_GlobalData.FreeSpacePkt.FileSys[i].FreeSpace_A,
+        -:  895:                                   &FreeSpace64, sizeof(uint64));
+        -:  896:                }
+        -:  897:            }
+        -:  898:
+        -:  899:            /* Timestamp and send file system free space telemetry packet */
+        1:  900:            CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FM_GlobalData.FreeSpacePkt);
+        1:  901:            CFE_SB_SendMsg((CFE_SB_Msg_t *) &FM_GlobalData.FreeSpacePkt);
+        -:  902:
+        -:  903:            /* Send command completion event (debug) */
+        1:  904:            CFE_EVS_SendEvent(FM_GET_FREE_SPACE_CMD_EID, CFE_EVS_DEBUG,
+        -:  905:                             "%s command", CmdText);
+        -:  906:        }
+        -:  907:    }
+        -:  908:
+        3:  909:    return(CommandResult);
         -:  910:
-        -:  911:        /* Append a path separator to the end of the directory name */
-        3:  912:        strcpy(DirWithSep, CmdPtr->Directory);
-        3:  913:        FM_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN);
-        -:  914:
-        -:  915:        /* Set handshake queue command args */
-        3:  916:        CmdArgs->CommandCode = FM_GET_DIR_PKT_CC;
-        3:  917:        strcpy(CmdArgs->Source1, CmdPtr->Directory);
-        3:  918:        strcpy(CmdArgs->Source2, DirWithSep);
-        3:  919:        CmdArgs->DirListOffset = CmdPtr->DirListOffset;
-        -:  920:
-        -:  921:        /* Invoke lower priority child task */
-        3:  922:        FM_InvokeChildTask();
-        -:  923:    }
-        -:  924:
-        6:  925:    return(CommandResult);
-        -:  926:
-        -:  927:} /* End of FM_GetDirListPktCmd() */
-        -:  928:
-        -:  929:
-        -:  930:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  931:/*                                                                 */
-        -:  932:/* FM command handler -- Get File System Free Space                */
-        -:  933:/*                                                                 */
-        -:  934:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  911:} /* End of FM_GetFreeSpaceCmd() */
+        -:  912:
+        -:  913:
+        -:  914:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  915:/*                                                                 */
+        -:  916:/* FM command handler -- Set Table Entry Enable/Disable State      */
+        -:  917:/*                                                                 */
+        -:  918:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  919:
+        6:  920:boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  921:{
+        6:  922:    FM_SetTableStateCmd_t *CmdPtr = (FM_SetTableStateCmd_t *) MessagePtr;
+        6:  923:    char *CmdText = "Set Table State";
+        -:  924:    boolean CommandResult;
+        -:  925:
+        -:  926:    /* Verify command packet length */
+        6:  927:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_SetTableStateCmd_t),
+        -:  928:                                           FM_SET_TABLE_STATE_PKT_ERR_EID, CmdText);
+        6:  929:    if (CommandResult == TRUE)
+        -:  930:    {
+        6:  931:        if (FM_GlobalData.FreeSpaceTablePtr == (FM_FreeSpaceTable_t *) NULL)
+        -:  932:        {
+        -:  933:            /* File system table has not been loaded */
+        2:  934:            CommandResult = FALSE;
         -:  935:
-        -:  936:boolean FM_GetFreeSpaceCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_GetFreeSpaceCmd called 4 returned 100% blocks executed 100%
-        4:  937:{
-        4:  938:    char *CmdText = "Get Free Space";
-        4:  939:    boolean CommandResult;
-        4:  940:    uint32 i;
-        -:  941:
-        -:  942:    /* Verify command packet length */
-        4:  943:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_GetFreeSpaceCmd_t),
-        -:  944:                                           FM_GET_FREE_SPACE_PKT_ERR_EID, CmdText);
-        4:  945:    if (CommandResult == TRUE)
-        -:  946:    {
-        -:  947:        /* Verify that we have a pointer to the file system table data */
-        2:  948:        if (FM_GlobalData.FreeSpaceTablePtr == (FM_FreeSpaceTable_t *) NULL)
+        2:  936:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_TBL_ERR_EID, CFE_EVS_ERROR,
+        -:  937:               "%s error: file system free space table is not loaded", CmdText);
+        -:  938:        }
+        4:  939:        else if (CmdPtr->TableEntryIndex >= FM_TABLE_ENTRY_COUNT)
+        -:  940:        {
+        -:  941:            /* Table index argument is out of range */
+        1:  942:            CommandResult = FALSE;
+        -:  943:
+        1:  944:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
+        -:  945:               "%s error: invalid command argument: index = %d", CmdText, (int)CmdPtr->TableEntryIndex);
+        -:  946:        }
+        5:  947:        else if ((CmdPtr->TableEntryState != FM_TABLE_ENTRY_ENABLED) &&
+        1:  948:            (CmdPtr->TableEntryState != FM_TABLE_ENTRY_DISABLED))
         -:  949:        {
-        1:  950:            CommandResult = FALSE;
-        -:  951:
-        1:  952:            CFE_EVS_SendEvent(FM_GET_FREE_SPACE_TBL_ERR_EID, CFE_EVS_ERROR,
-        -:  953:                             "%s error: file system free space table is not loaded", CmdText);
-        -:  954:        }
-        -:  955:        else
-        -:  956:        {
-        -:  957:            /* Initialize the file system free space telemetry packet */
-        1:  958:            CFE_SB_InitMsg(&FM_GlobalData.FreeSpacePkt, FM_FREE_SPACE_TLM_MID,
-        -:  959:                           sizeof(FM_FreeSpacePkt_t), TRUE);
+        -:  950:            /* State argument must be either enabled or disabled */
+        1:  951:            CommandResult = FALSE;
+        -:  952:
+        1:  953:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
+        -:  954:               "%s error: invalid command argument: state = %d", CmdText, (int)CmdPtr->TableEntryState);
+        -:  955:        }
+        2:  956:        else if (FM_GlobalData.FreeSpaceTablePtr->FileSys[CmdPtr->TableEntryIndex].State == FM_TABLE_ENTRY_UNUSED)
+        -:  957:        {
+        -:  958:            /* Current table entry state must not be unused */
+        1:  959:            CommandResult = FALSE;
         -:  960:
-        -:  961:            /* Process enabled file system table entries */
-        9:  962:            for (i = 0; i < FM_TABLE_ENTRY_COUNT; i++)
-        -:  963:            {
-        8:  964:                if (FM_GlobalData.FreeSpaceTablePtr->FileSys[i].State == FM_TABLE_ENTRY_ENABLED)
-        -:  965:                {
-        -:  966:                    /* Get file system name */
-        1:  967:                    strcpy(FM_GlobalData.FreeSpacePkt.FileSys[i].Name,
-        -:  968:                           FM_GlobalData.FreeSpaceTablePtr->FileSys[i].Name);
-        -:  969:
-        -:  970:                    /* Get file system free space */
-        -:  971:/*
-        -:  972:                    OS_fsFreeBytes(FM_GlobalData.FreeSpacePkt.FileSys[i].Name,
-        -:  973:                                  &FM_GlobalData.FreeSpacePkt.FileSys[i].FreeSpace.OneUint64);
-        -:  974:*/
-        -:  975:                }
-        -:  976:            }
+        1:  961:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_UNUSED_ERR_EID, CFE_EVS_ERROR,
+        -:  962:               "%s error: cannot modify unused table entry: index = %d", CmdText, (int)CmdPtr->TableEntryIndex);
+        -:  963:        }
+        -:  964:        else
+        -:  965:        {
+        -:  966:            /* Update the table entry state as commanded */
+        1:  967:            FM_GlobalData.FreeSpaceTablePtr->FileSys[CmdPtr->TableEntryIndex].State = CmdPtr->TableEntryState;
+        -:  968:
+        -:  969:            /* Notify cFE that we have modified the table data */
+        1:  970:            CFE_TBL_Modified(FM_GlobalData.FreeSpaceTableHandle);
+        -:  971:
+        -:  972:            /* Send command completion event (info) */
+        1:  973:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_CMD_EID, CFE_EVS_INFORMATION,
+        -:  974:               "%s command: index = %d, state = %d", CmdText, (int)CmdPtr->TableEntryIndex, (int)CmdPtr->TableEntryState);
+        -:  975:        }
+        -:  976:    }
         -:  977:
-        -:  978:            /* Timestamp and send file system free space telemetry packet */
-        1:  979:            CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FM_GlobalData.FreeSpacePkt);
-        1:  980:            CFE_SB_SendMsg((CFE_SB_Msg_t *) &FM_GlobalData.FreeSpacePkt);
+        6:  978:    return(CommandResult);
+        -:  979:
+        -:  980:} /* End of FM_SetTableStateCmd() */
         -:  981:
-        -:  982:            /* Send command completion event (debug) */
-        1:  983:            CFE_EVS_SendEvent(FM_GET_FREE_SPACE_CMD_EID, CFE_EVS_DEBUG,
-        -:  984:                             "%s command", CmdText);
-        -:  985:        }
-        -:  986:    }
-        -:  987:
-        4:  988:    return(CommandResult);
-        -:  989:
-        -:  990:} /* End of FM_GetFreeSpaceCmd() */
-        -:  991:
-        -:  992:
-        -:  993:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  994:/*                                                                 */
-        -:  995:/* FM command handler -- Set Table Entry Enable/Disable State      */
-        -:  996:/*                                                                 */
-        -:  997:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  998:
-        -:  999:boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
-function FM_SetTableStateCmd called 7 returned 100% blocks executed 100%
-        7: 1000:{
-        7: 1001:    FM_SetTableStateCmd_t *CmdPtr = (FM_SetTableStateCmd_t *) MessagePtr;
-        7: 1002:    char *CmdText = "Set Table State";
-        7: 1003:    boolean CommandResult;
-        -: 1004:
-        -: 1005:    /* Verify command packet length */
-        7: 1006:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_SetTableStateCmd_t),
-        -: 1007:                                           FM_SET_TABLE_STATE_PKT_ERR_EID, CmdText);
-        7: 1008:    if (CommandResult == TRUE)
-        -: 1009:    {
-        5: 1010:        if (FM_GlobalData.FreeSpaceTablePtr == (FM_FreeSpaceTable_t *) NULL)
-        -: 1011:        {
-        -: 1012:            /* File system table has not been loaded */
-        1: 1013:            CommandResult = FALSE;
-        -: 1014:
-        1: 1015:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_TBL_ERR_EID, CFE_EVS_ERROR,
-        -: 1016:               "%s error: file system free space table is not loaded", CmdText);
-        -: 1017:        }
-        4: 1018:        else if (CmdPtr->TableEntryIndex >= FM_TABLE_ENTRY_COUNT)
-        -: 1019:        {
-        -: 1020:            /* Table index argument is out of range */
-        1: 1021:            CommandResult = FALSE;
-        -: 1022:
-        1: 1023:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
-        -: 1024:               "%s error: invalid command argument: index = %d", CmdText, CmdPtr->TableEntryIndex);
-        -: 1025:        }
-        3: 1026:        else if ((CmdPtr->TableEntryState != FM_TABLE_ENTRY_ENABLED) &&
-        -: 1027:            (CmdPtr->TableEntryState != FM_TABLE_ENTRY_DISABLED))
-        -: 1028:        {
-        -: 1029:            /* State argument must be either enabled or disabled */
-        1: 1030:            CommandResult = FALSE;
+        -:  982:
+        -:  983:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  984:/*                                                                 */
+        -:  985:/* FM command handler -- Set Permissions for a file                */
+        -:  986:/*                                                                 */
+        -:  987:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  988:
+        3:  989:boolean FM_SetPermissionsCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  990:{
+        3:  991:    FM_SetPermCmd_t *CmdPtr = (FM_SetPermCmd_t *) MessagePtr;
+        -:  992:    FM_ChildQueueEntry_t *CmdArgs;
+        3:  993:    char *CmdText = "Set Permissions";
+        -:  994:    boolean CommandResult;
+        -:  995:    boolean FilenameState;
+        -:  996:
+        -:  997:    /* Verify command packet length */
+        3:  998:    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_SetPermCmd_t),
+        -:  999:                                           FM_SET_PERM_ERR_EID, CmdText);
+        -: 1000:    
+        -: 1001:    
+        3: 1002:    if(CommandResult == TRUE)
+        -: 1003:    {
+        3: 1004:        FilenameState = FM_VerifyNameValid(CmdPtr->FileName, sizeof(CmdPtr->FileName),
+        -: 1005:                                            0, CmdText);
+        -: 1006:        
+        3: 1007:        if (FilenameState == FM_NAME_IS_INVALID)
+        -: 1008:        {
+        2: 1009:            CommandResult = FALSE;
+        -: 1010:        }
+        -: 1011:    }
+        -: 1012:    
+        -: 1013:    /* Check for lower priority child task availability */
+        3: 1014:    if (CommandResult == TRUE)
+        -: 1015:    {
+        1: 1016:        CommandResult = FM_VerifyChildTask(FM_SET_PERM_ERR_EID, CmdText);
+        -: 1017:    }
+        -: 1018:
+        -: 1019:    /* Prepare command for child task execution */
+        3: 1020:    if (CommandResult == TRUE)
+        -: 1021:    {
+        1: 1022:        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        -: 1023:        /* Set handshake queue command args */
+        1: 1024:        CmdArgs->CommandCode = FM_SET_FILE_PERM_CC;
+        1: 1025:        strcpy(CmdArgs->Source1, CmdPtr->FileName);
+        1: 1026:        CmdArgs->Mode = CmdPtr->Mode;
+        -: 1027:
+        -: 1028:        /* Invoke lower priority child task */
+        1: 1029:        FM_InvokeChildTask();
+        -: 1030:    }
         -: 1031:
-        1: 1032:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
-        -: 1033:               "%s error: invalid command argument: state = %d", CmdText, CmdPtr->TableEntryState);
-        -: 1034:        }
-        2: 1035:        else if (FM_GlobalData.FreeSpaceTablePtr->FileSys[CmdPtr->TableEntryIndex].State == FM_TABLE_ENTRY_UNUSED)
-        -: 1036:        {
-        -: 1037:            /* Current table entry state must not be unused */
-        1: 1038:            CommandResult = FALSE;
+        3: 1032:    return(CommandResult);
+        -: 1033:
+        -: 1034:} /* End of FM_SetPermissionsCmd() */
+        -: 1035:
+        -: 1036:/************************/
+        -: 1037:/*  End of File Comment */
+        -: 1038:/************************/
         -: 1039:
-        1: 1040:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_UNUSED_ERR_EID, CFE_EVS_ERROR,
-        -: 1041:               "%s error: cannot modify unused table entry: index = %d", CmdText, CmdPtr->TableEntryIndex);
-        -: 1042:        }
-        -: 1043:        else
-        -: 1044:        {
-        -: 1045:            /* Update the table entry state as commanded */
-        1: 1046:            FM_GlobalData.FreeSpaceTablePtr->FileSys[CmdPtr->TableEntryIndex].State = CmdPtr->TableEntryState;
-        -: 1047:
-        -: 1048:            /* Send command completion event (info) */
-        1: 1049:            CFE_EVS_SendEvent(FM_SET_TABLE_STATE_EID, CFE_EVS_INFORMATION,
-        -: 1050:               "%s command: index = %d, state = %d", CmdText, CmdPtr->TableEntryIndex, CmdPtr->TableEntryState);
-        -: 1051:        }
-        -: 1052:    }
-        -: 1053:
-        7: 1054:    return(CommandResult);
-        -: 1055:
-        -: 1056:} /* End of FM_SetTableStateCmd() */
-        -: 1057:
-        -: 1058:
-        -: 1059:/************************/
-        -: 1060:/*  End of File Comment */
-        -: 1061:/************************/
-        -: 1062:

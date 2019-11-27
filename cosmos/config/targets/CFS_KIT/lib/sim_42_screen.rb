@@ -8,6 +8,7 @@
 ################################################################################
 
 require 'osk_global'
+require 'osk_system'
 
 ################################################################################
 ## Send Commands
@@ -15,20 +16,19 @@ require 'osk_global'
 
 def sim_42_send_cmd(screen, cmd)
 
-   if (cmd == "RUN_42_SIM")
-      continue = message_box("This runs an example simulation with 42. It takes 20 seconds to start. Continue?",'Yes','No')
-      if (continue == 'Yes')
-         spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
-         wait(15)
+   if (cmd == "START_42_SIM")
+      if tlm("I42 HK_TLM_PKT CONNECTED") == "FALSE"
+         Osk::System.start_42
+      else
+         continue = message_box("42 not started. It's already running and connected.",Osk::MSG_BUTTON_CONT,false)
+      end      
+   elsif (cmd == "STOP_42_SIM")
+      Osk::System.stop_42
+   elsif (cmd == "RECONNECT_42")
+      continue = message_box("This should only be used in an erroneous situaton when the 42 simulator is running but not connected. It may terminate the 42 simulator if it is currently conneccted. Do you want to Continue?",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false)
+      if (continue == Osk::MSG_BUTTON_YES)
          Osk::flight.send_cmd("I42","CONNECT_42")
       end
-   elsif (cmd == "CONNECT_42")
-      continue = message_box("The 42 simulator must be running for connect to succeed. Continue?",'Yes','No')
-      if (continue == 'Yes')
-         Osk::flight.send_cmd("I42","CONNECT_42")
-      end
-   elsif (cmd == "DISCONNECT_42")
-      Osk::flight.send_cmd("I42","DISCONNECT_42")
    elsif (cmd == "SET_WHL_TGT_MOM")
       display("F42 WHL_TGT_MOM_CMD_SCR",50,50)
    elsif (cmd == "CONFIG_SUN_VALID")
@@ -83,7 +83,7 @@ def sim_42_send_cmd(screen, cmd)
    elsif (cmd == "PLOT_WHL_TGT_MOM_CMD")
       spawn("ruby #{Osk::COSMOS_TLM_GRAPHER} -s -i 'F42 HK_TLM_PKT WHL_1_TGT_MOM' -i 'F42 HK_TLM_PKT WHL_2_TGT_MOM' -i 'F42 HK_TLM_PKT WHL_3_TGT_MOM'")
    elsif (cmd == "TODO")
-      prompt("Feature coming soon...")
+      prompt(Osk::MSG_TBD_FEATURE)
    else
       raise "Error in screen definition file. Undefined command sent to sim_42_send_cmd()"
    end

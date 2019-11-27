@@ -16,10 +16,11 @@ TITLE "42 Simulation"
 
 VERTICALBOX 
   MATRIXBYCOLUMNS 3
-    BUTTON 'Run 42 Sim'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RUN_42_SIM")'
+    BUTTON 'Start 42 Sim'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "START_42_SIM")'
     SETTING BACKCOLOR 0 200 0
-    BUTTON 'Reconnect 42'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONNECT_42")'
-    BUTTON 'Disconnect 42'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "DISCONNECT_42")'
+    BUTTON 'Stop 42 Sim'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "STOP_42_SIM")'
+    SETTING BACKCOLOR 220 50 50
+    BUTTON 'Reconnect 42'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RECONNECT_42")'
     BUTTON 'Set Whl Tgt Mom'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_WHL_TGT_MOM")'
     BUTTON 'Manage Ctrl Tbl'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "MANAGE_CTRL_TBL")'
     BUTTON 'Config SunValid'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONFIG_SUN_VALID")'

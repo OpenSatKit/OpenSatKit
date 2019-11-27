@@ -82,6 +82,7 @@ static char* JsonFileStatusStr[] = {
 ** Local File Function Prototypes
 */
 
+static size_t StrLen(const char *Str, size_t MaxLen);
 
 /******************************************************************************
 ** Function: ProcessContainerToken
@@ -184,7 +185,7 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
          
          if (!LowFileMem) {
             if (AppFw_ReadLine (FileHandle, &(Json->FileBuf[Indx]), JSON_MAX_FILE_LINE_CHAR)) {
-               Len = strnlen(&(Json->FileBuf[Indx]),JSON_MAX_FILE_LINE_CHAR);
+               Len = StrLen(&(Json->FileBuf[Indx]),JSON_MAX_FILE_LINE_CHAR);
             }
             else {
                ReadingFile = FALSE;
@@ -192,7 +193,7 @@ boolean JSON_OpenFile(JSON_Class* Json, const char* Filename)
          } /* End if !LowFileMem */
          else {
             if (AppFw_ReadLine (FileHandle, LowMemBuf, JSON_MAX_FILE_LINE_CHAR)) {
-               Len = strnlen(LowMemBuf,JSON_MAX_FILE_LINE_CHAR);
+               Len = StrLen(LowMemBuf,JSON_MAX_FILE_LINE_CHAR);
                if ( (Indx+Len) >= JSON_MAX_FILE_CHAR) {
                   Json->FileStatus = JSON_FILE_CHAR_ERR;
                   ReadingFile = FALSE;
@@ -674,7 +675,6 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
    int   i, ContainTokenCnt = 0, ContainTokenMax;
    int   StartIdx = TokenId;
    int   TokenIdx = TokenId;
-   char  ContainerChar;
    jsmntok_t* KeyToken;
 
    LocalDepth = ++ContainerDepth;
@@ -723,8 +723,9 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
 
       if (Json->FileTokens[TokenIdx].type == JSMN_OBJECT || Json->FileTokens[TokenIdx].type == JSMN_ARRAY) {
          
-         ContainerChar = Json->FileBuf[Json->FileTokens[TokenIdx].start];
          /*
+         char  ContainerChar;
+         ContainerChar = Json->FileBuf[Json->FileTokens[TokenIdx].start];
          if (ContainerChar == '{' || ContainerChar == '[') {
          else if (ContainerChar == '}' || ContainerChar == ']') {
          
@@ -754,3 +755,17 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
 
 } /* End ProcessContainerToken() */
 
+
+/******************************************************************************
+** Function: StrLen
+**
+** Notes:
+**   1. Was sing strnlen but wrote my own to avoid compiler warning. I wanted
+**      the length protection because reading JSON data from a file 
+*/
+static size_t StrLen(const char *Str, size_t MaxLen)
+{
+     size_t i;
+     for(i = 0; i < MaxLen && Str[i]; i++);
+     return i;
+}

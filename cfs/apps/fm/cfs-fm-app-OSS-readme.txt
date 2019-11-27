@@ -1,10 +1,10 @@
 core Flight System (cFS) File Manager Application (FM) 
 Open Source Release Readme
 
-FM Release 2.4.2 
+FM Release 2.5.2 
 
 Date: 
-February 27, 2015
+January 30, 2017
 
 Introduction:
   The File Manager application (FM) is a core Flight System (cFS) application 
@@ -30,7 +30,7 @@ Introduction:
   available in cfs-fm-2.4.2-OSS-release/docs/users_guide
   
   There are also "Quick start" instructions provided in 
-  cFE-6.4.1-OSS-release/cfe-OSS-readme.txt   
+  cFE-6.5.0-OSS-release/cfe-OSS-readme.txt   
   
   The OSAL is available at http://sourceforge.net/projects/osal/ and 
   github.com/nasa/
@@ -42,7 +42,7 @@ Introduction:
  
  
 Software Included:
-  File Manager application (FM) 2.4.2
+  File Manager application (FM) 2.5.2
   
  
 Software Required:

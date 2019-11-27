@@ -1,84 +1,12 @@
+##################################################################
 #
 # cFS Mission global CMake function definitions
 #
 # This is included by the top-level script and can define
-# routines and variables that that are referenced in both 
+# common routines and variables that may be referenced in both 
 # the mission (non-arch) and arch-specific builds
 #
-
 ##################################################################
-#
-# FUNCTION: setup_globals
-#
-# Set up global mission configuration variables.
-# This function determines the mission configuration directory and 
-# also reads any startup state info from file(s) on the disk
-#
-function(setup_globals)
-
-  # First read in any variables that are passed in from the parent process
-  # There may be many of these and they may not all be passable via -D options
-  # Although these are NOT officially cache variables, this is one of the first
-  # things done and the file will be re-read with each subsequent CMake run so
-  # the values will effectively persist just like cache variables do.
-  if (EXISTS "${CMAKE_BINARY_DIR}/mission_archbuild_vars.cache")
-  
-    file(STRINGS "${CMAKE_BINARY_DIR}/mission_archbuild_vars.cache" PARENTVARS)
-    set(VARNAME)
-    foreach(PV ${PARENTVARS})
-      if (VARNAME)
-        set(${VARNAME} ${PV})
-        set(${VARNAME} ${PV} PARENT_SCOPE)
-        set(VARNAME)
-      else()
-        set(VARNAME ${PV})
-      endif()
-    endforeach(PV ${PARENTVARS})
-    
-  else()      
-
-    # this is the parent (mission) build and variable values must be determined
-    # Obtain the "real" top-level source directory and set it in parent scope
-    if (NOT DEFINED MISSION_SOURCE_DIR)
-      get_filename_component(MISSION_SOURCE_DIR "${CMAKE_SOURCE_DIR}/.." ABSOLUTE)
-      set(MISSION_SOURCE_DIR "${MISSION_SOURCE_DIR}" CACHE PATH "Top level mission source directory")
-    endif(NOT DEFINED MISSION_SOURCE_DIR)
-
-    if (NOT "$ENV{SIMULATION}" STREQUAL "")
-      set(SIMULATION "$ENV{SIMULATION}" CACHE STRING "Enable simulation mode using specified toolchain")
-    endif()
-
-    # The configuration should be in a subdirectory named "<mission>_defs".  If there is one
-    # and only one of these, this is assumed to be it.  If there is more than one then the
-    # user MUST specify which one is intended to be used by setting MISSIONCONFIG in the environment
-    if (NOT MISSIONCONFIG)
-      set(MCTEMP $ENV{MISSIONCONFIG})
-      if ("${MCTEMP}" STREQUAL "")
-        file(GLOB DEFDIRS RELATIVE "${MISSION_SOURCE_DIR}" "${MISSION_SOURCE_DIR}/*_defs")
-        list(LENGTH DEFDIRS DDLEN)
-        if (NOT DDLEN EQUAL 1)
-          message(FATAL_ERROR "Unable to automatically determine the mission config directory.  Specify it with the MISSIONCONFIG variable.")
-        endif (NOT DDLEN EQUAL 1)
-        string(REPLACE "_defs" "" MCTEMP ${DEFDIRS})
-        message(STATUS "Mission configuration ${MCTEMP} automatically selected")
-      endif ("${MCTEMP}" STREQUAL "")
-      # Set the MISSIONCONFIG as a CMake cache variable so it will be preserved for future runs     
-      set(MISSIONCONFIG ${MCTEMP} CACHE STRING "Mission configuration selection")
-    endif(NOT MISSIONCONFIG)
-    
-    # Export values to parent level 
-    set(MISSION_DEFS "${MISSION_SOURCE_DIR}/${MISSIONCONFIG}_defs" PARENT_SCOPE)
-    set(MISSION_BINARY_DIR ${CMAKE_BINARY_DIR} PARENT_SCOPE)
-         
-  endif()
-
-  # Define the "_ENHANCED_BUILD_" preprocessor directive which can be used to 
-  # gate code that should only be compiled when using these CMake scripts.  This
-  # can perserve compatibility with the old makefiles such that the code
-  # can still be built using the old method without the new features.
-  add_definitions("-D_ENHANCED_BUILD_")
-
-endfunction(setup_globals)
 
 
 ##################################################################
@@ -248,14 +176,14 @@ endfunction(read_targetconfig)
 # add_definitions() will be added to the output list.  The contents of these will be
 # obtained via the properities of the current source directory. 
 #
-function(get_current_cflags OUTPUT_LIST INPUT_FLAGS)
+function(get_current_cflags OUTPUT_LIST)
 
   # Start by converting the supplied string to a list 
   set(FLAGLIST)
-  foreach (FLGSTR ${INPUT_FLAGS} ${ARGN})
+  foreach (FLGSTR ${ARGN})
     string(REGEX REPLACE " +" ";" TEMPFLG ${FLGSTR})
     list(APPEND FLAGLIST ${TEMPFLG})
-  endforeach (FLGSTR ${INPUT_FLAGS} ${ARGN})
+  endforeach (FLGSTR ${ARGN})
   
   # Append any compile definitions from the directory properties
   get_directory_property(CURRENT_DEFS COMPILE_DEFINITIONS)

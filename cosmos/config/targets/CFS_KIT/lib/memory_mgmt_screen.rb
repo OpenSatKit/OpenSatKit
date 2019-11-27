@@ -47,8 +47,8 @@ def memory_mgmt_send_cmd(screen, cmd)
       addr_offset = ask_string("Enter offset from symbol or absolute address if no symbol specified")
       Osk::flight.send_cmd("MM","FILL_MEM with MEM_TYPE #{mem_type}, NUM_BYTES #{num_bytes}, FILL_PATTERN #{fill_pattern}, ADDR_OFFSET #{addr_offset}, ADDR_SYMBOL_NAME #{addr_symbol_name}")
 	elsif (cmd == "LOAD_FROM_FILE")
-      put_file = combo_box("Transfer file from ground to flight?", 'Yes','No')
-      if (put_file == "Yes")
+      put_file = combo_box("Transfer file from ground to flight?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+      if (put_file == Osk::MSG_BUTTON_YES)
          Osk::Ops::set_work_dir_widget(screen, Osk::GND_SRV_DIR, Osk::FLT_SRV_DIR)
          if (Osk::Ops::put_flt_file_prompt(Osk::GND_SRV_DIR))
             Osk::Ops::set_work_dir_widget(screen)
@@ -92,7 +92,7 @@ def memory_mgmt_send_cmd(screen, cmd)
          Osk::Ops::set_work_dir_widget(screen)
       end
    elsif (cmd == "TODO")
-      prompt("Feature coming soon...")
+      prompt(Osk::MSG_TBD_FEATURE)
    else
       raise "Error in screen definition file. Undefined command sent to memory_mgmt_send_cmd()"
    end

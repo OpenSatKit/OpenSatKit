@@ -23,8 +23,10 @@
 
   \verbatim  
   $Log: cfs_fm.dox  $
-  Revision 1.3.1.1 2014/12/19 12:38:03EST sstrege 
-  Fixed cut-and-paste error referencing CS vs. FM
+  Revision 1.2 2015/11/12 15:07:19EST wmoleski 
+  Updated files from MKS 2009 to MKS 10. Mostly adding Copyright comments.
+  Revision 1.4 2014/12/19 12:59:42EST sstrege 
+  Fixed cut-and-paste error where SC was referenced vs. FM
   Revision 1.3 2010/03/08 08:30:17EST wmoleski 
   Updated the command and telemetry mnemonic mapping files and the User's Guide source file.
   Revision 1.2 2009/04/18 12:38:15EDT dkobe 

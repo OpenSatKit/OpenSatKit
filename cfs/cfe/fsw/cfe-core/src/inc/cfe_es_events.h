@@ -1,17 +1,25 @@
 /*
-**  File: 
-**  cfe_es_events.h
-**  $Id: cfe_es_events.h 1.6 2014/08/21 15:34:53GMT-05:00 sstrege Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
+**    http://www.apache.org/licenses/LICENSE-2.0
 **
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+**  File: cfe_es_events.h
 **
 **  Purpose:
 **  cFE Executive Services (ES) Event IDs
@@ -22,44 +30,20 @@
 **
 **  Notes:
 **
-**
-** $Log: cfe_es_events.h  $
-** Revision 1.6 2014/08/21 15:34:53GMT-05:00 sstrege 
-** Updated CFE_ES_ERREXIT_APP_ERR_EID from 31 to 33
-** Revision 1.5 2014/08/19 14:40:27EDT sstrege 
-** Fixed doxygen warnings
-** Revision 1.4 2014/05/05 15:56:42EDT acudmore 
-** Fixed misleading event message text.
-** Revision 1.3 2010/11/04 16:17:43GMT-05:00 jmdagost 
-** Updated Perf Analyzer start message, inserted perf analyzer error msg, updated subsequent event IDs.
-** Revision 1.2 2008/12/08 12:07:19EST dkobe 
-** Updates to correct doxygen errors
-** Revision 1.1 2008/04/17 08:05:19EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.32 2007/09/20 10:52:56EDT apcudmore 
-** Added Query All Tasks command, file definition, events, error codes etc.
-** Revision 1.31 2007/09/18 16:39:10EDT apcudmore 
-** Updated ES invalid command length event message to make it clear.
-** Revision 1.30 2007/06/02 10:10:10EDT dlkobe 
-** Added doxygen comments for User's Guides
-** Revision 1.29 2007/05/25 11:51:39EDT dlkobe 
-** Modified doxygen to improve supporting docs
-** Revision 1.28 2007/05/14 15:43:45EDT apcudmore 
-** Cleaned up events and disabled debug code for application restart.
-** Revision 1.27 2007/05/11 11:59:05EDT apcudmore 
-** Removed Event IDs 33 and 34.
-** They were no longer needed with the revised startup sync code.
-** Revision 1.26 2007/05/11 10:15:07EDT rjmcgraw 
-** Added information to comments for CFE_ES_PERF_STOPCMD_EID
-** Revision 1.25 2007/05/11 09:32:54EDT rjmcgraw 
-** DCR3211:2 Added 3 new perf events for 'in progress' checks
-** Revision 1.24 2007/05/09 12:41:24EDT dlkobe 
-** Added event messages associated with Dump CDS Registry command
 */
 /*************************************************************************/
 #ifndef _cfe_es_events_
 #define _cfe_es_events_
+
+/* **************************
+** ****** Maximum EID. ******
+** **************************
+** The EID's below may not necessarily be in order, so it can be difficult to
+** determine what the next EID is to use. When you add EID's, start with MAX_EID + 1
+** and when you're done adding, set this to the highest EID you used. It may
+** be worthwhile to, on occasion, re-number the EID's to put them back in order.
+*/
+#define CFE_ES_MAX_EID            92
 
 /*
 ** ES task event message ID's.
@@ -113,7 +97,7 @@
 **  \par Cause:
 **
 **  This event message is always automatically issued in response 
-**  to a cFE Executive Services \link #CFE_ES_RESET_CC Reset Counters command \endlink
+**  to a cFE Executive Services \link #CFE_ES_RESET_COUNTERS_CC Reset Counters command \endlink
 **/
 #define CFE_ES_RESET_INF_EID      4
 
@@ -125,7 +109,7 @@
 **  \par Cause:
 **
 **  This event message is always automatically issued in response
-**  to a cFE Executive Services \link #CFE_ES_SHELL_CMD_CC Shell Command \endlink
+**  to a cFE Executive Services \link #CFE_ES_SHELL_CC Shell Command \endlink
 **
 **  The \c 's' string contains the actual shell command string issued.
 **/
@@ -255,7 +239,7 @@
 **  \par Cause:
 **
 **  This event message is issued when the cFE finishes exiting/cleaning up an 
-**  application that called the CFE_ES_ExitApp API with the CFE_ES_APP_EXIT parameter.
+**  application that called the CFE_ES_ExitApp API with the CFE_ES_RunStatus_APP_EXIT parameter.
 **  When an App calls this API, the request is recorded and the Executive Services App will
 **  actually delete cFE Application before issuing this event message.
 **
@@ -272,7 +256,7 @@
 **
 **  This event message is issued when the cFE finishes exiting/cleaning up an 
 **  application that called the CFE_ES_ExitApp API with an ERROR condition. 
-**  When an App calls this API, with the CFE_ES_APP_ERROR parameter, it indicates
+**  When an App calls this API, with the CFE_ES_RunStatus_APP_ERROR parameter, it indicates
 **  that the Application exited due to an error condition. The details of the 
 **  error that occurred should be given by the Application through an event message,
 **  System Log entry, or both.
@@ -353,7 +337,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon successful completion of the cFE Executive
-**  Services \link #CFE_ES_CLEAR_ERLOG_CC Clear Exception Reset Log command \endlink
+**  Services \link #CFE_ES_CLEAR_ER_LOG_CC Clear Exception Reset Log command \endlink
 **/
 #define CFE_ES_ERLOG1_INF_EID    19
 
@@ -365,7 +349,7 @@
 **  \par Cause:
 **
 **  This event message is generated when the Exception Reset Log has been successfully written
-**  to a file after receiving the cFE Executive Services \link #CFE_ES_WRITE_ERLOG_CC Write Executive
+**  to a file after receiving the cFE Executive Services \link #CFE_ES_WRITE_ER_LOG_CC Write Executive
 **  Services Exception Reset Log command \endlink
 **
 **  The \c 's' field identifies the name of the file written to and the \c Size field specifies, in decimal,
@@ -440,8 +424,8 @@
 **
 **  This event message is issued when the cFE Executive Services receives a
 **  \link #CFE_ES_RESTART_CC cFE Restart Command \endlink whose parameter
-**  identifying the restart type is not equal to either #CFE_ES_PROCESSOR_RESET
-**  or #CFE_ES_POWERON_RESET.
+**  identifying the restart type is not equal to either #CFE_PSP_RST_TYPE_PROCESSOR
+**  or #CFE_PSP_RST_TYPE_POWERON.
 **
 **  The 'd' field identifies the numeric, in decimal, of the restart type found
 **  in the received cFE Restart Command Packet.
@@ -456,7 +440,7 @@
 **  \par Cause:
 **
 **  This event message is generated whenever the cFE Executive Services receives an OS Shell
-**  command, via the \link #CFE_ES_SHELL_CMD_CC Executive Services Shell Command \endlink, and
+**  command, via the \link #CFE_ES_SHELL_CC Executive Services Shell Command \endlink, and
 **  the underlying OS returns an error code.
 **
 **  The 's' field in the message identifies the shell command string that was issued
@@ -543,7 +527,7 @@
 **  to an Executive Services \link #CFE_ES_START_APP_CC Start Application Command \endlink.
 **
 **  This message reports a command failure when the Application Stack Size parameter is 
-**  less than the default stack size defined in the cfe_platform_cfg.h file: CFE_ES_DEFAULT_STACK_SIZE.
+**  less than the default stack size defined in the cfe_platform_cfg.h file: CFE_PLATFORM_ES_DEFAULT_STACK_SIZE.
 **
 **  The \c 'd' term identifies the size of the stack that was given in the command.  
 **/
@@ -593,7 +577,7 @@
 **  \par Cause:
 **
 **  This event message is generated when ES is completing the processing of the 
-**  CFE_ES_ExitApp API call with the CFE_ES_APP_ERROR parameter and the call to CFE_ES_CleanUpApp fails. 
+**  CFE_ES_ExitApp API call with the CFE_ES_RunStatus_APP_ERROR parameter and the call to CFE_ES_CleanUpApp fails. 
 **  At this point the Application will likely be stopped or deleted, but it may be in an unknown state.
 **
 **  The \c 's' field identifies the name of the Application which was attempted to be
@@ -957,7 +941,7 @@
 **
 **  \par Cause:
 **
-**  This event message is generated when an Executive Services \link #CFE_ES_WRITE_ERLOG_CC Dump Exception Reset Log
+**  This event message is generated when an Executive Services \link #CFE_ES_WRITE_ER_LOG_CC Dump Exception Reset Log
 **  Command \endlink fails while attempting to create the specified file.
 **
 **  The \c 's' field identifies the name of the file that was attempted to be created and the \c stat field
@@ -973,7 +957,7 @@
 **  \par Cause:
 **
 **  This event message is generated in response to receiving an Executive Services
-**  \link #CFE_ES_PERF_STARTDATA_CC Start Performance Analyzer Data Collection Command \endlink
+**  \link #CFE_ES_START_PERF_DATA_CC Start Performance Analyzer Data Collection Command \endlink
 **
 **  The \c 'd' field identifies the requested trigger mode.  Valid values are #CFE_ES_PerfMode_t CFE_ES_PERF_TRIGGER_START (0),
 **  #CFE_ES_PerfMode_t CFE_ES_PERF_TRIGGER_CENTER (1), and #CFE_ES_PerfMode_t CFE_ES_PERF_TRIGGER_END (2)
@@ -988,7 +972,7 @@
 **  \par Cause:
 **
 **  This event message is generated in response to receiving an Executive Services
-**  \link #CFE_ES_PERF_STARTDATA_CC Start Performance Analyzer Data Collection Command \endlink
+**  \link #CFE_ES_START_PERF_DATA_CC Start Performance Analyzer Data Collection Command \endlink
 **/
 #define CFE_ES_PERF_STARTCMD_ERR_EID      58
 
@@ -1000,7 +984,7 @@
 **
 **  \par Cause:
 **
-**  This event message is generated when an Executive Services \link #CFE_ES_PERF_STARTDATA_CC 
+**  This event message is generated when an Executive Services \link #CFE_ES_START_PERF_DATA_CC 
 **  Start Performance Analyzer Data Collection Command \endlink command is received with a bad
 **  value for the requested trigger mode.
 **
@@ -1020,7 +1004,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon receipt of a successful Performance Data Stop
-**  Command after receiving the cFE Executive Services \link #CFE_ES_PERF_STOPDATA_CC Stop 
+**  Command after receiving the cFE Executive Services \link #CFE_ES_STOP_PERF_DATA_CC Stop 
 **  Performance Analyzer Data Collection Command \endlink
 **
 **  The \c 's' field identifies the name of the file write task that has begun execution.
@@ -1040,7 +1024,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon receipt of an unsuccessful Performance Data Stop
-**  Command after receiving the cFE Executive Services \link #CFE_ES_PERF_STOPDATA_CC Stop 
+**  Command after receiving the cFE Executive Services \link #CFE_ES_STOP_PERF_DATA_CC Stop 
 **  Performance Analyzer Data Collection Command \endlink
 **
 **  The \c 'RC' field specifies, in hex, the error code returned by the #CFE_ES_CreateChildTask API
@@ -1057,7 +1041,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon receipt of an unsuccessful Performance Data Stop
-**  Command after receiving the cFE Executive Services \link #CFE_ES_PERF_STOPDATA_CC Stop 
+**  Command after receiving the cFE Executive Services \link #CFE_ES_STOP_PERF_DATA_CC Stop 
 **  Performance Analyzer Data Collection Command \endlink
 **
 **/
@@ -1072,24 +1056,24 @@
 **  \par Cause:
 **
 **  This event message is generated in response to receiving an Executive Services
-**  \link #CFE_ES_PERF_SETFILTERMASK_CC Set Performance Analyzer Filter Mask Command \endlink.
+**  \link #CFE_ES_SET_PERF_FILTER_MASK_CC Set Performance Analyzer Filter Mask Command \endlink.
 **
 **/
 #define CFE_ES_PERF_FILTMSKCMD_EID  63
 
 /** \brief  <tt> 'Error:Performance Filter Mask Index value  
 ** greater than CFE_ES_PERF_32BIT_WORDS_IN_MASK (which is a whole number derived from 
-** CFE_ES_PERF_MAX_IDS / 32)' </tt>
+** CFE_PLATFORM_ES_PERF_MAX_IDS / 32)' </tt>
 **  \event <tt> 'Error:Performance Filter Mask Index value  
 ** greater than CFE_ES_PERF_32BIT_WORDS_IN_MASK (which is a whole number derived from 
-** CFE_ES_PERF_MAX_IDS / 32)' </tt>
+** CFE_PLATFORM_ES_PERF_MAX_IDS / 32)' </tt>
 **
 **  \par Type: ERROR
 **
 **  \par Cause:
 **
 **  This event message is generated in response to receiving an Executive Services
-**  \link #CFE_ES_PERF_SETFILTERMASK_CC Set Performance Analyzer Filter Mask Command \endlink.
+**  \link #CFE_ES_SET_PERF_FILTER_MASK_CC Set Performance Analyzer Filter Mask Command \endlink.
 **
 **/
 #define CFE_ES_PERF_FILTMSKERR_EID  64
@@ -1103,24 +1087,24 @@
 **  \par Cause:
 **
 **  This event message is generated in response to receiving an Executive Services
-**  \link #CFE_ES_PERF_SETTRIGMASK_CC Set Performance Analyzer Trigger Mask Command \endlink.
+**  \link #CFE_ES_SET_PERF_TRIGGER_MASK_CC Set Performance Analyzer Trigger Mask Command \endlink.
 **
 **/
 #define CFE_ES_PERF_TRIGMSKCMD_EID 65
 
 /** \brief  <tt> 'Error: Performance Trigger Mask Index value  
 ** greater than CFE_ES_PERF_32BIT_WORDS_IN_MASK (which is a whole number derived from 
-** CFE_ES_PERF_MAX_IDS / 32)' </tt>
+** CFE_PLATFORM_ES_PERF_MAX_IDS / 32)' </tt>
 **  \event <tt> 'Error: Performance Trigger Mask Index value  
 ** greater than CFE_ES_PERF_32BIT_WORDS_IN_MASK (which is a whole number derived from 
-** CFE_ES_PERF_MAX_IDS / 32)' </tt>
+** CFE_PLATFORM_ES_PERF_MAX_IDS / 32)' </tt>
 **
 **  \par Type: ERROR
 **
 **  \par Cause:
 **
 **  This event message is generated in response to receiving an Executive Services
-**  \link #CFE_ES_PERF_SETTRIGMASK_CC Set Performance Analyzer Trigger Mask Command \endlink.
+**  \link #CFE_ES_SET_PERF_TRIGGER_MASK_CC Set Performance Analyzer Trigger Mask Command \endlink.
 **
 **/
 #define CFE_ES_PERF_TRIGMSKERR_EID 66
@@ -1134,7 +1118,7 @@
 **  \par Cause:
 **
 **  This event message is generated when an Executive Services 
-**  \link #CFE_ES_PERF_STOPDATA_CC Stop Performance Analyzer Data Collection Command \endlink
+**  \link #CFE_ES_STOP_PERF_DATA_CC Stop Performance Analyzer Data Collection Command \endlink
 **  fails to create the associated logic analyzer dump file.
 **
 **  The \c 's' field identifies the name of the file that was attempted to be created and the \c stat field
@@ -1151,7 +1135,7 @@
 **  \par Cause:
 **
 **  This event message is generated when the Performance Log has been successfully written
-**  to a file after receiving the cFE Executive Services \link #CFE_ES_PERF_STOPDATA_CC Stop 
+**  to a file after receiving the cFE Executive Services \link #CFE_ES_STOP_PERF_DATA_CC Stop 
 **  Performance Analyzer Data Collection Command \endlink
 **
 **  The \c 's' field identifies the name of the file written to, the \c Size field specifies, in decimal,
@@ -1184,11 +1168,11 @@
 **
 **  \par Cause:
 **
-**  This event message is generated upon successful completion of an Executive Services \link #CFE_ES_OVERWRITE_SYSLOG_CC
+**  This event message is generated upon successful completion of an Executive Services \link #CFE_ES_OVER_WRITE_SYSLOG_CC
 **  Set System Log Overwrite Mode Command \endlink.
 **
 **  The \c setting field identifies the newly chosen Overwrite Mode and should be equal to either
-**  #CFE_ES_LOG_OVERWRITE or #CFE_ES_LOG_DISCARD.
+**  #CFE_ES_LogMode_OVERWRITE or #CFE_ES_LogMode_DISCARD.
 **/
 #define CFE_ES_SYSLOGMODE_EID           70
 
@@ -1199,11 +1183,11 @@
 **
 **  \par Cause:
 **
-**  This event message is generated upon unsuccessful completion of an Executive Services \link #CFE_ES_OVERWRITE_SYSLOG_CC
+**  This event message is generated upon unsuccessful completion of an Executive Services \link #CFE_ES_OVER_WRITE_SYSLOG_CC
 **  Set System Log Overwrite Mode Command \endlink.
 **
 **  The \c setting field identifies the illegal Overwrite Mode found in the command message.  The mode
-**  must be either #CFE_ES_LOG_OVERWRITE (0) or #CFE_ES_LOG_DISCARD (1).
+**  must be either #CFE_ES_LogMode_OVERWRITE (0) or #CFE_ES_LogMode_DISCARD (1).
 **/
 #define CFE_ES_ERR_SYSLOGMODE_EID       71
 
@@ -1354,7 +1338,7 @@
 **  \par Cause:
 **
 **  This event message is generated following successful execution of the 
-**  \link #CFE_ES_TLM_POOL_STATS_CC Telemeter Memory Statistics Command \endlink.
+**  \link #CFE_ES_SEND_MEM_POOL_STATS_CC Telemeter Memory Statistics Command \endlink.
 **/
 #define CFE_ES_TLM_POOL_STATS_INFO_EID  81
 
@@ -1366,7 +1350,7 @@
 **  \par Cause:
 **
 **  This event message is generated when an Executive Services 
-**  \link #CFE_ES_TLM_POOL_STATS_CC Telemeter Memory Statistics Command \endlink
+**  \link #CFE_ES_SEND_MEM_POOL_STATS_CC Telemeter Memory Statistics Command \endlink
 **  specifies a memory pool handle that is invalid.  A handle is determined to
 **  be invalid when any of the following are true:
 **  -# The handle does not contain a value that is an integral multiple of 4
@@ -1387,7 +1371,7 @@
 **  \par Cause:
 **
 **  This event message is generated when an Executive Services 
-**  \link #CFE_ES_DUMP_CDS_REG_CC Dump Critical Data Store Registry Command \endlink
+**  \link #CFE_ES_DUMP_CDS_REGISTRY_CC Dump Critical Data Store Registry Command \endlink
 **  is successfully executed.  The specified file should have been created
 **  and contains the CDS Registry Entries. 
 **
@@ -1405,7 +1389,7 @@
 **  \par Cause:
 **
 **  This event message is generated when an Executive Services 
-**  \link #CFE_ES_DUMP_CDS_REG_CC Dump Critical Data Store Registry Command \endlink
+**  \link #CFE_ES_DUMP_CDS_REGISTRY_CC Dump Critical Data Store Registry Command \endlink
 **  was being performed and it encountered a filesystem write error while writing
 **  a CDS Registry record. 
 **
@@ -1422,7 +1406,7 @@
 **  \par Cause:
 **
 **  This event message is generated when an Executive Services 
-**  \link #CFE_ES_DUMP_CDS_REG_CC Dump Critical Data Store Registry Command \endlink
+**  \link #CFE_ES_DUMP_CDS_REGISTRY_CC Dump Critical Data Store Registry Command \endlink
 **  command successfully created the CDS Dump File onboard but encountered an error
 **  while writing the standard cFE File Header to the file. 
 **
@@ -1439,7 +1423,7 @@
 **  \par Cause:
 **
 **  This event message is generated when an Executive Services 
-**  \link #CFE_ES_DUMP_CDS_REG_CC Dump Critical Data Store Registry Command \endlink
+**  \link #CFE_ES_DUMP_CDS_REGISTRY_CC Dump Critical Data Store Registry Command \endlink
 **  is unable to create the specified file on the onboard filesystem. 
 **
 **  The \c 's' field identifies the CDS Registry Dump Filename.

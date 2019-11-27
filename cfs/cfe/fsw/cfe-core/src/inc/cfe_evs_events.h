@@ -1,17 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  Filename: cfe_evs_events.h
-**
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASAs Goddard 
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
-**
-**
-**  $Id: cfe_evs_events.h 1.7 2011/06/02 17:06:44GMT-05:00 lwalling Exp  $
 **
 **  Purpose:
 **	           cFE Event Services (EVS) Event IDs
@@ -20,42 +28,21 @@
 **
 **  References:
 **     Flight Software Branch C Coding Standard Version 1.0a
-**  $Date: 2011/06/02 17:06:44GMT-05:00 $
-**  $Revision: 1.7 $
-**  $Log: cfe_evs_events.h  $
-**  Revision 1.7 2011/06/02 17:06:44GMT-05:00 lwalling 
-**  Updated text and descriptions for Write Application Data to File command events
-**  Revision 1.6 2011/06/01 17:38:43EDT lwalling 
-**  Update Write Log File and Set Log Mode command events
-**  Revision 1.5 2011/05/23 15:40:20EDT lwalling 
-**  Update descriptions for event log command events when event log is disabled
-**  Revision 1.4 2010/10/04 15:25:17EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.3 2009/07/31 19:54:05EDT aschoeni 
-**  added length check error message and changed reported bitmask lengths
-**  Revision 1.2 2009/07/28 17:16:33EDT aschoeni 
-**  Added event message when filtering limit is reached.
-**  Revision 1.1 2008/04/17 08:05:21EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-**  Revision 1.13 2007/07/18 15:48:00EDT njyanchik 
-**  Jonathan added text into each error event in the two functions that write files (WriteLog and WriteAppData), as well as updated the doxygen comments in the header file
-**  Revision 1.11 2007/06/02 10:10:12EDT dlkobe 
-**  Added doxygen comments for User's Guides
-**  Revision 1.10 2007/05/23 11:21:59EDT dlkobe 
-**  Added doxygen formatting
-**  Revision 1.9 2007/05/07 10:42:03EDT njyanchik 
-**  I added a sending of an Event message from EVS on the first time an EVS-unregistered
-**  application tries to send an event message. A system log message is also written
-**  Revision 1.8 2007/03/05 14:08:43EST njyanchik 
-**  This CP fixes the fact that there were multiple event messages using the same event ID, but 
-**  using different (but similar) event text. The issue was fixed by making all the text generic, and 
-**  providing a command code parameter that specified what command the message was comming
-**  from.
+**
 */
 
 #ifndef _cfe_evs_events_
 #define _cfe_evs_events_
+
+/* **************************
+** ****** Maximum EID. ******
+** **************************
+** The EID's below may not necessarily be in order, so it can be difficult to
+** determine what the next EID is to use. When you add EID's, start with MAX_EID + 1
+** and when you're done adding, set this to the highest EID you used. It may
+** be worthwhile to, on occasion, re-number the EID's to put them back in order.
+*/
+#define CFE_EVS_MAX_EID                    43
 
 /* Event Service event ID's */
 
@@ -67,7 +54,7 @@
 **  \par Cause:
 **
 **  This event message is always automatically issued in response 
-**  to a cFE Event Services \link #CFE_EVS_NO_OPERATION_CC NO-OP command \endlink
+**  to a cFE Event Services \link #CFE_EVS_NOOP_CC NO-OP command \endlink
 **/
 #define CFE_EVS_NOOP_EID                   0    /* Noop event identifier */
 
@@ -95,7 +82,7 @@
 **
 **  The message text identifies the event log filename and specifies the return value, in hex,
 **  from the system function call.  The expected return value is the number of bytes written,
-**  which in this case should be equal to the size of a #CFE_EVS_Packet_t structure.  Error
+**  which in this case should be equal to the size of a #CFE_EVS_LongEventTlm_t structure.  Error
 **  codes are negative.
 **/
 #define CFE_EVS_ERR_WRLOGFILE_EID          2
@@ -212,8 +199,8 @@
 **
 **  This event message is generated when a "Set Event Format Mode" command
 **  message has arrived and the #CFE_EVS_ModeCmd_t::Mode field is equal to
-**  neither #CFE_EVS_SHORT_FORMAT or #CFE_EVS_LONG_FORMAT.  These are the 
-**  only allowed values for the mode field.
+**  neither #CFE_EVS_MsgFormat_SHORT or #CFE_EVS_MsgFormat_LONG.  These are
+**  the only allowed values for the mode field.
 **  
 **  The \c Mode field in the event message identifies
 **  the Mode value (in hex) that was found in the message.
@@ -229,11 +216,11 @@
 **
 **  This event message is generated upon receipt of an "Add Filter" command
 **  and the specified Application has already reached the maximum number of
-**  filters allowed (#CFE_EVS_MAX_EVENT_FILTERS).
+**  filters allowed (#CFE_PLATFORM_EVS_MAX_EVENT_FILTERS).
 **
 **  The \c max field in the event message identifies the maximum number of
 **  event filters allowed per Application.  This value should be equal to
-**  the configuration parameter #CFE_EVS_MAX_EVENT_FILTERS.
+**  the configuration parameter #CFE_PLATFORM_EVS_MAX_EVENT_FILTERS.
 **/
 #define CFE_EVS_ERR_MAXREGSFILTER_EID     11
 
@@ -385,7 +372,7 @@
 **  This event message is generated upon successful completion of the "Set Event Format Mode" command.
 **
 **  The \c Mode field contains the newly chosen Event Format Mode (specified in hex).  Acceptable values
-**  for this parameter are: #CFE_EVS_SHORT_FORMAT or #CFE_EVS_LONG_FORMAT
+**  for this parameter are: #CFE_EVS_MsgFormat_SHORT or #CFE_EVS_MsgFormat_LONG
 **/
 #define CFE_EVS_SETEVTFMTMOD_EID          22
 
@@ -524,7 +511,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon successful completion of the 
-**  \link #CFE_EVS_FILE_WRITE_APP_DATA_CC "Write Event Services Application Information to File" \endlink command.
+**  \link #CFE_EVS_WRITE_APP_DATA_FILE_CC "Write Event Services Application Information to File" \endlink command.
 **
 **  The message text identifies the event log filename and specifies the number, in decimal,
 **  of events written to the file.
@@ -539,7 +526,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon successful completion of the 
-**  \link #CFE_EVS_FILE_WRITE_LOG_DATA_CC "Write Event Log to File" \endlink command.
+**  \link #CFE_EVS_WRITE_LOG_DATA_FILE_CC "Write Event Log to File" \endlink command.
 **
 **  The message text identifies the event log filename and specifies the number, in decimal,
 **  of events written to the file.
@@ -556,7 +543,7 @@
 **  This event message is generated upon receipt of a "Set Log Mode"
 **  command when the use of the Event Log has been disabled.  To enable
 **  the Event Log, the cFE code must be compiled for the target with
-**  the \b CFE_EVS_LOG_ON macro defined.  The EVS task must also succeed
+**  the \b CFE_PLATFORM_EVS_LOG_ON macro defined.  The EVS task must also succeed
 **  during task initialization in acquiring a pointer to the cFE reset
 **  area and in the creation of a serializing semaphore to control
 **  access to the Event Log.
@@ -573,7 +560,7 @@
 **  This event message is generated upon receipt of a "Clear Log"
 **  command when the use of the Event Log has been disabled.  To enable
 **  the Event Log, the cFE code must be compiled for the target with
-**  the \b CFE_EVS_LOG_ON macro defined.  The EVS task must also succeed
+**  the \b CFE_PLATFORM_EVS_LOG_ON macro defined.  The EVS task must also succeed
 **  during task initialization in acquiring a pointer to the cFE reset
 **  area and in the creation of a serializing semaphore to control
 **  access to the Event Log.
@@ -590,7 +577,7 @@
 **  This event message is generated upon receipt of a "Write Log"
 **  command when the use of the Event Log has been disabled.  To enable
 **  the Event Log, the cFE code must be compiled for the target with
-**  the \b CFE_EVS_LOG_ON macro defined.  The EVS task must also succeed
+**  the \b CFE_PLATFORM_EVS_LOG_ON macro defined.  The EVS task must also succeed
 **  during task initialization in acquiring a pointer to the cFE reset
 **  area and in the creation of a serializing semaphore to control
 **  access to the Event Log.

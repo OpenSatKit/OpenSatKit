@@ -1,7 +1,7 @@
 /*
-** $Id: fm_verify.h 1.9 2015/02/28 17:50:42EST sstrege Exp  $
+** $Id: fm_verify.h 1.6.1.2 2017/01/23 21:52:54EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,26 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_verify.h  $
-** Revision 1.9 2015/02/28 17:50:42EST sstrege 
-** Added copyright information
-** Revision 1.8 2011/01/12 14:38:47EST lwalling 
-** Move mission revision number to platform config header file, add validation tests
-** Revision 1.7 2010/01/12 15:06:43EST lwalling 
-** Remove references to fm_mission_cfg.h
-** Revision 1.6 2009/11/13 16:21:30EST lwalling 
-** Modify macro names, update all configuration verification tests
-** Revision 1.5 2009/10/30 14:02:26EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.4 2009/10/27 17:25:52EDT lwalling
-** Make file buffer configuration definitions common for all child command handlers
-** Revision 1.3 2009/10/09 17:23:54EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.2 2008/06/20 16:21:46EDT slstrege
-** Member moved from fsw/src/fm_verify.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_verify.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:46ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_verify_h_
@@ -67,16 +47,6 @@
 /* Input command pipe */
 #ifndef FM_APP_PIPE_NAME
     #error FM_APP_PIPE_NAME must be defined!
-#endif
-
-
-/* Number of packets that may queue in command pipe */
-#ifndef FM_APP_PIPE_DEPTH
-    #error FM_APP_PIPE_DEPTH must be defined!
-#elif FM_APP_PIPE_DEPTH < 4
-    #error FM_APP_PIPE_DEPTH cannot be less than 4
-#elif FM_APP_PIPE_DEPTH > 20
-    #error FM_APP_PIPE_DEPTH cannot be greater than 20
 #endif
 
 
@@ -194,10 +164,10 @@
 /* Child task priority */
 #ifndef FM_CHILD_TASK_PRIORITY
     #error FM_CHILD_TASK_PRIORITY must be defined!
-#elif FM_CHILD_TASK_PRIORITY < 50
-    #error FM_CHILD_TASK_PRIORITY cannot be less than 50
-#elif FM_CHILD_TASK_PRIORITY > 250
-    #error FM_CHILD_TASK_PRIORITY cannot be greater than 250
+#elif FM_CHILD_TASK_PRIORITY < 1
+    #error FM_CHILD_TASK_PRIORITY must be greater than 0
+#elif FM_CHILD_TASK_PRIORITY > 255
+    #error FM_CHILD_TASK_PRIORITY cannot be greater than 255
 #endif
 
 
@@ -242,7 +212,7 @@
     #error FM_TABLE_ENTRY_COUNT must be defined!
 #elif FM_TABLE_ENTRY_COUNT < 1
     #error FM_TABLE_ENTRY_COUNT cannot be less than 1
-#elif FM_FILE_SYS_ENTRIES > 32
+#elif FM_TABLE_ENTRY_COUNT > 32
     #error FM_TABLE_ENTRY_COUNT cannot be greater than 32
 #endif
 

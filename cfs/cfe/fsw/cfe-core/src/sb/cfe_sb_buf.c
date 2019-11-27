@@ -1,79 +1,31 @@
+/*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
 /******************************************************************************
 ** File: cfe_sb_buf.c
-**
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
-**
-**
 **
 ** Purpose:
 **      This file contains the source code for the SB memory management
 **      functions.
 **
 ** Author:   R.McGraw/SSI
-**
-**
-** $Log: cfe_sb_buf.c  $
-** Revision 1.17 2014/04/24 09:57:05GMT-05:00 rmcgraw 
-** DCR19487:1 - Remove size argument in CFE_SB_GetBufferFromCaller
-** Revision 1.16 2012/01/13 12:15:12EST acudmore
-** Changed license text to reflect open source
-** Revision 1.15 2011/12/20 10:26:04EST rmcgraw
-** DCR15187:1 Removed function CFE_SB_DecrMsgLimCnt
-** Revision 1.14 2011/09/09 14:25:44EDT aschoeni
-** Added fix for ZeroCopy issues
-** Revision 1.13 2010/10/25 16:02:56EDT aschoeni
-** Allocation for sb message buffer now includes descriptor instead of separate allocation for descriptor
-** Revision 1.12 2009/07/29 12:02:50EDT aschoeni
-** Updated GetBufferFromPool to deallocate the first buffer if the second buffer creation fails
-** Revision 1.11 2009/07/29 11:51:52EDT aschoeni
-** Updated GetBufferFromCaller to deallocate the message buffer if the descriptor buffer fails to be created (otherwise it is never reclaimed)
-** Revision 1.10 2009/07/24 18:23:57EDT aschoeni
-** Added Zero Copy Mode
-** Revision 1.9 2009/07/20 14:09:30EDT aschoeni
-** Made GetAppTskName reentrant
-** Revision 1.8 2009/06/26 17:02:04EDT aschoeni
-** Updated SB to use __func__ instead of __FILE__ for lock and unlock errors
-** Revision 1.7 2009/04/08 13:25:26EDT rmcgraw
-** DCR5802:4 Change data type int to int32
-** Revision 1.6 2009/02/11 14:19:50EST rmcgraw
-** DCR6269:1 Removed the 'Buf' in mem pool names
-** Revision 1.5 2009/02/06 11:29:04EST rmcgraw
-** DCR5801:2 General Cleanup
-** Revision 1.4 2009/02/03 11:06:58EST rmcgraw
-** DCR5801:2 Changed destination desciptors from array based to linked list
-** Revision 1.3 2009/01/30 11:13:08EST rmcgraw
-** DCR5801:6 Moved semaphore unlock to above GetAppid call in DecrMsgLimCnt
-** Revision 1.2 2009/01/23 15:00:16EST rmcgraw
-** DCR5802:1 Removed redundant events in cfe_sb_buf.c
-** Revision 1.1 2008/04/17 08:05:31EDT ruperera
-** Initial revision
-** Member added to cfe project on tlserver3
-** Revision 1.34 2007/09/19 17:03:57EDT rjmcgraw
-** Fixed compiler error
-** Revision 1.33 2007/09/19 14:39:25EDT rjmcgraw
-** DCR4421 Removed use count error processing
-** Revision 1.32 2007/08/17 15:59:51EDT rjmcgraw
-** Changes to free semaphore before calling SendEventWithAppId
-** Revision 1.31 2007/08/07 12:52:40EDT dlkobe
-** Modified CFE_ES_GetPoolBuf API's first parameter to be of type uint32**
-** Revision 1.30 2007/07/12 17:05:05EDT rjmcgraw
-** DCR4680:1 Replaced calls to CFE_SB_LogEvent with SendEventWithAppid
-** Revision 1.29 2007/03/27 08:57:03EST rjmcgraw
-** Added #include cfe_sb_events.h
-** Revision 1.28 2007/03/22 13:05:45EST rjmcgraw
-** DCR246:Replace SB stat Descriptors in use to Peak Buffers In Use
-** Revision 1.27 2006/10/16 14:30:43EDT rjmcgraw
-** Minor changes to comply with MISRA standard
-** Revision 1.26 2006/09/11 16:38:03EDT rjmcgraw
-** Added condition to update statistics only if 'put' is successful
-** Revision 1.25 2006/09/01 11:07:26EDT kkaudra
-** IV&V:Removed cfe_evs.h
 **
 ******************************************************************************/
 
@@ -92,7 +44,7 @@
 **
 **  Purpose:
 **    Request a buffer from the SB buffer pool. The SB buffer pool is a
-**    pre-allocated block of memory of size CFE_SB_BUF_MEMORY_BYTES. It is used
+**    pre-allocated block of memory of size CFE_PLATFORM_SB_BUF_MEMORY_BYTES. It is used
 **    by the SB to dynamically allocate memory to hold the message and a buffer
 **    descriptor associated with the message during the sending of a message.
 **
@@ -105,7 +57,7 @@
 **    could not be allocated.
 */
 
-CFE_SB_BufferD_t * CFE_SB_GetBufferFromPool(uint16 MsgId, uint16 Size) {
+CFE_SB_BufferD_t * CFE_SB_GetBufferFromPool(CFE_SB_MsgId_t MsgId, uint16 Size) {
    int32                stat1;
    uint8               *address = NULL;
    CFE_SB_BufferD_t    *bd = NULL;
@@ -162,7 +114,7 @@ CFE_SB_BufferD_t * CFE_SB_GetBufferFromPool(uint16 MsgId, uint16 Size) {
 **    descriptor could not be allocated.
 */
 
-CFE_SB_BufferD_t * CFE_SB_GetBufferFromCaller(uint16 MsgId,
+CFE_SB_BufferD_t * CFE_SB_GetBufferFromCaller(CFE_SB_MsgId_t MsgId,
                                               void *Address) {
    CFE_SB_BufferD_t    *bd = (CFE_SB_BufferD_t *)(((uint8 *)Address) - sizeof(CFE_SB_BufferD_t));
 

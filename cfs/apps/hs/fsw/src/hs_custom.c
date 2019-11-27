@@ -248,7 +248,9 @@ void HS_MarkIdleCallback(void)
     /*
     ** Capture the CPU Utilization (at a consistant time)
     */
-    HS_UtilizationMark();
+    //dcm - I don't know the history of this code and why it's read from a file
+    //dcm HS_UtilizationMark();
+    HS_CustomData.Utilization = 0; //dcm
 
     return;
 

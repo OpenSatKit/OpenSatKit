@@ -1,6 +1,25 @@
+/*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
 /******************************************************************************
 ** File: network_includes.h
-** $Id: network_includes.h 1.3 2009/07/31 10:20:30GMT-05:00 acudmore Exp  $
 **
 ** Purpose:
 **   This header file contains the correct set of network include
@@ -9,31 +28,6 @@
 ** Author:   R.McGraw/SSI
 **
 ** Notes:
-**
-** $Date: 2009/07/31 10:20:30GMT-05:00 $
-** $Revision: 1.3 $
-** $Log: network_includes.h  $
-** Revision 1.3 2009/07/31 10:20:30GMT-05:00 acudmore 
-** Updated RTEMS section to define a MSG_DONTWAIT flag that ci_lab uses.
-** Revision 1.2 2009/07/17 14:18:09EDT acudmore 
-** Updated includes to prevent warnings from ARC suggestions.
-** Revision 1.1 2008/04/17 08:05:27EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.5 2006/06/08 14:20:29EDT apcudmore 
-** Re-ordered include files to prevent warnings/errors for vxWorks and REMS
-** Revision 1.4 2006/03/03 16:28:38GMT apcudmore 
-** Created conditional compilation for systems that dont have the fcntl function
-** Revision 1.3 2006/03/03 15:11:03GMT apcudmore 
-** Fixed non-blocking socket problem with CI
-** Revision 1.2 2005/07/29 18:16:40GMT apcudmore 
-** Updated for mac and linux builds
-** Revision 1.1 2005/06/09 09:57:51CDT rperera 
-** Initial revision
-** Member added to project d:/mksdata/MKS-CFE-REPOSITORY/cfe-core/inc/project.pj
-** Revision 1.1  2005/03/23 16:04:15  rmcgraw
-** Initial Release
-**
 **
 ******************************************************************************/
 

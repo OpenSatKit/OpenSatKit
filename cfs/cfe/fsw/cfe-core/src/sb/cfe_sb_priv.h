@@ -1,81 +1,31 @@
+/*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
 /******************************************************************************
 ** File: cfe_sb_priv.h
-**
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
-**
-**
 **
 ** Purpose:
 **      This header file contains prototypes for private functions and type
 **      definitions for SB internal use.
 **
 ** Author:   R.McGraw/SSI
-**
-** $Log: cfe_sb_priv.h  $
-** Revision 1.21 2014/04/24 09:57:06GMT-05:00 rmcgraw 
-** DCR19487:1 - Remove size argument in CFE_SB_GetBufferFromCaller
-** Revision 1.20 2012/01/13 12:15:13EST acudmore
-** Changed license text to reflect open source
-** Revision 1.19 2011/12/20 10:26:54EST rmcgraw
-** DCR15187:1 Removed error return code CFE_SB_MSGCNT_ERR
-** Revision 1.18 2011/12/07 19:19:48EST aschoeni
-** Removed returns for TIME and SB for cleaning up apps
-** Revision 1.17 2011/04/28 10:10:15EDT rmcgraw
-** DCR14592:1 Fix for the SB Send semaphore problem
-** Revision 1.16 2010/11/08 14:55:21EST aschoeni
-** Moved CFE_SB_DEFAULT_MSG_LIMIT from cfe_sb_priv to cfe_platform_cfg
-** Revision 1.15 2010/11/04 16:41:51EDT aschoeni
-** Added optional sender information storage
-** Revision 1.14 2010/11/04 14:43:59EDT jmdagost
-** Added cfe.h to include list.
-** Revision 1.13 2010/11/04 14:24:13EDT aschoeni
-** Optimized usage of locking
-** Revision 1.12 2009/07/29 19:22:41EDT aschoeni
-** Updated for ZeroCopyHandle_t
-** Revision 1.11 2009/07/24 18:26:22EDT aschoeni
-** Added Zero Copy Mode
-** Revision 1.10 2009/07/20 14:10:24EDT aschoeni
-** Made GetAppTskName reentrant
-** Revision 1.9 2009/07/17 19:42:30EDT aschoeni
-** Added PassMsg API to sb to support sequence count preservation
-** Revision 1.8 2009/07/17 18:01:30EDT aschoeni
-** Updated MsgMap and associated variables to be CFE_SB_MsgId_t
-** Revision 1.7 2009/06/26 17:02:05EDT aschoeni
-** Updated SB to use __func__ instead of __FILE__ for lock and unlock errors
-** Revision 1.6 2009/05/06 09:34:35EDT rmcgraw
-** DCR5801:12 Removed unused function prototype GetRoutingPtr
-** Revision 1.5 2009/02/11 14:23:04EST rmcgraw
-** DCR6269:1 Removed 'Buf' in mem pool names.
-** Revision 1.4 2009/02/06 11:29:06EST rmcgraw
-** DCR5801:2 General Cleanup
-** Revision 1.3 2009/02/03 11:07:00EST rmcgraw
-** DCR5801:2 Changed destination desciptors from array based to linked list
-** Revision 1.2 2009/01/30 10:37:57EST rmcgraw
-** DCR5801:1 Removed function prototype CFE_SB_GetNumberOfSubscribers and added
-** destinations to CFE_SB_RouteEntry_t
-** Revision 1.1 2008/04/17 08:05:32EDT ruperera
-** Initial revision
-** Member added to cfe project on tlserver3
-** Revision 1.63 2007/09/13 09:36:44EDT rjmcgraw
-** DCR4861 New prototype for RequestToSendEvent, new array in sb_t
-** Revision 1.62 2007/09/04 16:22:01EDT rjmcgraw
-** Renamed #define to CFE_SB_MAX_CFG_FILE_EVENTS_TO_FILTER
-** Revision 1.61 2007/07/12 16:48:28EDT rjmcgraw
-** DCR4680:1 Added AppId to cfe_sb_t struct, removed sb event log related items
-** Revision 1.60 2007/07/06 15:59:24EDT rjmcgraw
-** DCR469:1 Added member 'Sender' to buffer descriptor struct
-** Revision 1.59 2007/05/03 11:44:07EDT rjmcgraw
-** Added prototype for CFE_SB_CleanUpApp
-** Revision 1.58 2007/05/01 09:43:35EDT rjmcgraw
-** DCR3052:7 Removed function proto for SendNetworkInfo
-** Revision 1.57 2007/04/27 14:55:19EDT rjmcgraw
-** DCR2987:4 Standardize app init error code
 **
 ******************************************************************************/
 
@@ -96,9 +46,8 @@
 ** Macro Definitions
 */
 
-#define CFE_SB_AVAILABLE                0xFFFF
-#define CFE_SB_NO_ROUTING_IDX           0xFFFF
-#define CFE_SB_INVALID_MSG_ID           0xFFFF
+#define CFE_SB_INVALID_ROUTE_IDX        ((CFE_SB_MsgRouteIdx_t){ .RouteIdx = 0 })
+#define CFE_SB_INVALID_MSG_KEY          ((CFE_SB_MsgKey_t){ .KeyIdx = 0 })
 #define CFE_SB_UNUSED_QUEUE             0xFFFF
 #define CFE_SB_INVALID_PIPE             0xFF
 #define CFE_SB_NO_DESTINATION           0xFF
@@ -153,8 +102,62 @@
 #define CFE_SB_Q_WR_ERR_EID_BIT         4
 
 /*
+ * Using the default configuration where there is a 1:1 mapping between MsgID
+ * and message key values, the number of keys is equal to the number of MsgIDs.
+ *
+ * If using an alternative key function / hash, this may change.
+ */
+#define CFE_SB_MAX_NUMBER_OF_MSG_KEYS   (1+CFE_PLATFORM_SB_HIGHEST_VALID_MSGID)
+/*
 ** Type Definitions
 */
+
+
+/******************************************************************************
+**  Typedef:  CFE_SB_MsgKey_Atom_t
+**
+**  Purpose:
+**           Defines the an integer type for the numeric key that is used for routing
+**           table lookups.  This is the "raw value" type and typically should not
+**           be used directly, except by internal table lookups.
+**
+*/
+typedef uint16  CFE_SB_MsgKey_Atom_t;
+
+/******************************************************************************
+**  Typedef:  CFE_SB_MsgKey_t
+**
+**  Purpose:
+**           This is a "holding structure" for the related integer CFE_SB_MsgKey_Atom_t values.
+**           This defines the data type that is stored in other structures and/or passed between
+**           software bus functions.
+**
+**           It is implemented this way to improve type safety and help ensure that "MsgKey"
+**           values are not inadvertently exchanged with MsgId or Routing Index values.
+**
+*/
+typedef struct
+{
+    CFE_SB_MsgKey_Atom_t KeyIdx;    /**< Holding value, do not use directly */
+} CFE_SB_MsgKey_t;
+
+/******************************************************************************/
+/**
+ * @brief An wrapper for holding a routing table index
+ *
+ * This is intended as a form of "strong typedef" where direct assignments should
+ * be restricted.  Software bus uses numeric indexes into multiple tables to perform
+ * its duties, and it is important that these index values are distinct and separate
+ * and not mixed together.
+ *
+ * Using this holding structure prevents assignment directly into a different index
+ * or direct usage as numeric value.
+ */
+typedef struct
+{
+    CFE_SB_MsgRouteIdx_Atom_t RouteIdx;     /**< Holding value, do not use directly in code */
+} CFE_SB_MsgRouteIdx_t;
+
 
 /******************************************************************************
 **  Typedef:  CFE_SB_BufferD_t
@@ -228,7 +231,7 @@ typedef struct {
 */
 
 typedef struct {
-     CFE_SB_MsgId_t        MsgId;
+     CFE_SB_MsgId_t        MsgId;    /**< Original Message Id when the subscription was created */
      uint16                Destinations;
      uint32                SeqCnt;
      CFE_SB_DestinationD_t *ListHeadPtr;
@@ -248,7 +251,8 @@ typedef struct {
      CFE_SB_PipeId_t    PipeId;
      char               PipeName[OS_MAX_API_NAME];
      char               AppName[OS_MAX_API_NAME];
-     uint16             Spare;
+     uint8              Opts;
+     uint8              Spare;
      uint32             AppId;
      uint32             SysQueueId;
      uint32             LastSender;
@@ -269,7 +273,7 @@ typedef struct {
 typedef struct {
 
    CFE_ES_MemHandle_t PoolHdl;
-   uint8              Partition[CFE_SB_BUF_MEMORY_BYTES];
+   CFE_ES_STATIC_POOL_TYPE(CFE_PLATFORM_SB_BUF_MEMORY_BYTES) Partition;
 
 } CFE_SB_MemParams_t;
 
@@ -285,19 +289,23 @@ typedef struct {
     uint32              SubscriptionReporting;
     uint32              SenderReporting;
     uint32              AppId;
-    uint32              StopRecurseFlags[CFE_ES_MAX_APPLICATIONS];
+    uint32              StopRecurseFlags[CFE_PLATFORM_ES_MAX_APPLICATIONS];
     void               *ZeroCopyTail;
-    CFE_SB_PipeD_t      PipeTbl[CFE_SB_MAX_PIPES];
-    CFE_SB_HKMsg_t      HKTlmMsg;
-    CFE_SB_StatMsg_t    StatTlmMsg;
+    CFE_SB_PipeD_t      PipeTbl[CFE_PLATFORM_SB_MAX_PIPES];
+    CFE_SB_HousekeepingTlm_t        HKTlmMsg;
+    CFE_SB_StatsTlm_t               StatTlmMsg;
     CFE_SB_PipeId_t     CmdPipe;
     CFE_SB_Msg_t        *CmdPipePktPtr;
     CFE_SB_MemParams_t  Mem;
-    CFE_SB_MsgId_t      MsgMap[CFE_SB_HIGHEST_VALID_MSGID + 1];
-    CFE_SB_RouteEntry_t RoutingTbl[CFE_SB_MAX_MSG_IDS];
-    CFE_SB_PrevSubMsg_t PrevSubMsg;
-    CFE_SB_SubRprtMsg_t SubRprtMsg;
+    CFE_SB_MsgRouteIdx_t      MsgMap[CFE_SB_MAX_NUMBER_OF_MSG_KEYS];
+    CFE_SB_RouteEntry_t RoutingTbl[CFE_PLATFORM_SB_MAX_MSG_IDS];
+    CFE_SB_AllSubscriptionsTlm_t    PrevSubMsg;
+    CFE_SB_SingleSubscriptionTlm_t  SubRprtMsg;
     CFE_EVS_BinFilter_t EventFilters[CFE_SB_MAX_CFG_FILE_EVENTS_TO_FILTER];
+
+    uint16 RouteIdxTop;
+    CFE_SB_MsgRouteIdx_t RouteIdxStack[CFE_PLATFORM_SB_MAX_MSG_IDS];
+
 }cfe_sb_t;
 
 
@@ -322,7 +330,7 @@ typedef struct{
 */
 typedef struct{
   uint32    EvtsToSnd;
-  CFE_SB_SendErrEventBuf_t  EvtBuf[CFE_SB_MAX_DEST_PER_PKT];
+  CFE_SB_SendErrEventBuf_t  EvtBuf[CFE_PLATFORM_SB_MAX_DEST_PER_PKT];
 }CFE_SB_EventBuf_t;
 
 
@@ -335,8 +343,11 @@ int32  CFE_SB_InitBuffers(void);
 void   CFE_SB_InitPipeTbl(void);
 void   CFE_SB_InitMsgMap(void);
 void   CFE_SB_InitRoutingTbl(void);
+void   CFE_SB_InitIdxStack(void);
 void   CFE_SB_ResetCounts(void);
-uint16 CFE_SB_GetAvailRoutingIdx(void);
+void  CFE_SB_RouteIdxPush_Unsync(CFE_SB_MsgRouteIdx_t idx);
+CFE_SB_MsgRouteIdx_t  CFE_SB_RouteIdxPop_Unsync(void);
+CFE_SB_MsgKey_t CFE_SB_ConvertMsgIdtoMsgKey(CFE_SB_MsgId_t MsgId);
 void   CFE_SB_LockSharedData(const char *FuncName, int32 LineNumber);
 void   CFE_SB_UnlockSharedData(const char *FuncName, int32 LineNumber);
 void   CFE_SB_ReleaseBuffer (CFE_SB_BufferD_t *bd, CFE_SB_DestinationD_t *dest);
@@ -344,25 +355,22 @@ int32  CFE_SB_ReadQueue(CFE_SB_PipeD_t *pd,uint32 TskId,
                         CFE_SB_TimeOut_t time_out,CFE_SB_BufferD_t **message );
 int32  CFE_SB_WriteQueue(CFE_SB_PipeD_t *pd,uint32 TskId,
                          const CFE_SB_BufferD_t *bd,CFE_SB_MsgId_t MsgId );
-CFE_SB_MsgId_t CFE_SB_GetRoutingTblIdx(CFE_SB_MsgId_t MsgId);
+CFE_SB_MsgRouteIdx_t CFE_SB_GetRoutingTblIdx(CFE_SB_MsgKey_t MsgKey);
 uint8  CFE_SB_GetPipeIdx(CFE_SB_PipeId_t PipeId);
 int32  CFE_SB_ReturnBufferToPool(CFE_SB_BufferD_t *bd);
 void   CFE_SB_ProcessCmdPipePkt(void);
-int32  CFE_SB_DuplicateSubscribeCheck(CFE_SB_MsgId_t MsgId,CFE_SB_PipeId_t PipeId);
-int32  CFE_SB_SetRoutingTblIdx(CFE_SB_MsgId_t MsgId,CFE_SB_MsgId_t Value);
-void   CFE_SB_SendHKTlmPkt(void);
+int32  CFE_SB_DuplicateSubscribeCheck(CFE_SB_MsgKey_t MsgKey,CFE_SB_PipeId_t PipeId);
+void   CFE_SB_SetRoutingTblIdx(CFE_SB_MsgKey_t MsgKey, CFE_SB_MsgRouteIdx_t Value);
+CFE_SB_RouteEntry_t* CFE_SB_GetRoutePtrFromIdx(CFE_SB_MsgRouteIdx_t RouteIdx);
 void   CFE_SB_ResetCounters(void);
 char   *CFE_SB_GetPipeName(CFE_SB_PipeId_t PipeId);
 void   CFE_SB_SetMsgSeqCnt(CFE_SB_MsgPtr_t MsgPtr,uint32 Count);
-void   CFE_SB_SendStats(void);
-void   CFE_SB_EnableRoute(CFE_SB_MsgPayloadPtr_t Payload);
-void   CFE_SB_DisableRoute(CFE_SB_MsgPayloadPtr_t Payload);
 char   *CFE_SB_GetAppTskName(uint32 TaskId, char* FullName);
 CFE_SB_BufferD_t *CFE_SB_GetBufferFromPool(CFE_SB_MsgId_t MsgId, uint16 size);
 CFE_SB_BufferD_t *CFE_SB_GetBufferFromCaller(CFE_SB_MsgId_t MsgId, void *Address);
 CFE_SB_PipeD_t   *CFE_SB_GetPipePtr(CFE_SB_PipeId_t PipeId);
 CFE_SB_PipeId_t  CFE_SB_GetAvailPipeIdx(void);
-CFE_SB_DestinationD_t *CFE_SB_GetDestPtr (CFE_SB_MsgId_t MsgId, CFE_SB_PipeId_t PipeId);
+CFE_SB_DestinationD_t *CFE_SB_GetDestPtr (CFE_SB_MsgKey_t MsgKey, CFE_SB_PipeId_t PipeId);
 int32 CFE_SB_DeletePipeWithAppId(CFE_SB_PipeId_t PipeId,uint32 AppId);
 int32 CFE_SB_DeletePipeFull(CFE_SB_PipeId_t PipeId,uint32 AppId);
 int32 CFE_SB_SubscribeFull(CFE_SB_MsgId_t   MsgId,
@@ -385,11 +393,7 @@ int32 CFE_SB_ZeroCopyReleaseAppId(uint32         AppId);
 int32 CFE_SB_DecrBufUseCnt(CFE_SB_BufferD_t *bd);
 int32 CFE_SB_ValidateMsgId(CFE_SB_MsgId_t MsgId);
 int32 CFE_SB_ValidatePipeId(CFE_SB_PipeId_t PipeId);
-int32 CFE_SB_GetPktType(CFE_SB_MsgId_t MsgId);
-void CFE_SB_ProcessSendRtgInfoCmd(CFE_SB_MsgPayloadPtr_t Payload);
-void CFE_SB_ProcessSendPipeInfoCmd(CFE_SB_MsgPayloadPtr_t Payload);
-void CFE_SB_ProcessSendMapInfoCmd(CFE_SB_MsgPayloadPtr_t Payload);
-void CFE_SB_SendPrevSubs(void);
+uint8 CFE_SB_GetPktType(CFE_SB_MsgId_t MsgId);
 void CFE_SB_IncrCmdCtr(int32 status);
 void CFE_SB_FileWriteByteCntErr(const char *Filename,uint32 Requested,uint32 Actual);
 void CFE_SB_SetSubscriptionReporting(uint32 state);
@@ -398,14 +402,173 @@ uint32 CFE_SB_RequestToSendEvent(uint32 TaskId, uint32 Bit);
 void CFE_SB_FinishSendEvent(uint32 TaskId, uint32 Bit);
 CFE_SB_DestinationD_t *CFE_SB_GetDestinationBlk(void);
 int32 CFE_SB_PutDestinationBlk(CFE_SB_DestinationD_t *Dest);
-int32 CFE_SB_AddDest(uint16 RtgTblIdx, CFE_SB_DestinationD_t *Dest);
-int32 CFE_SB_RemoveDest(uint16 RtgTblIdx, CFE_SB_DestinationD_t *Dest);
+int32 CFE_SB_AddDest(CFE_SB_RouteEntry_t *RouteEntry, CFE_SB_DestinationD_t *Dest);
+int32 CFE_SB_RemoveDest(CFE_SB_RouteEntry_t *RouteEntry, CFE_SB_DestinationD_t *Dest);
+
+
+/*****************************************************************************/
+/** 
+** \brief Get the size of a software bus message header.
+**
+** \par Description
+**          This routine returns the number of bytes in a software bus message header.  
+**          This can be used for sizing buffers that need to store SB messages.  SB 
+**          message header formats can be different for each deployment of the cFE.  
+**          So, applications should use this function and avoid hard coding their buffer 
+**          sizes.
+**
+** \par Assumptions, External Events, and Notes:
+**          - For statically defined messages, a function call will not work.  The 
+**            macros #CFE_SB_CMD_HDR_SIZE and #CFE_SB_TLM_HDR_SIZE are available for use 
+**            in static message buffer sizing or structure definitions.  
+**
+** \param[in]  MsgId   The message ID to calculate header size for.  The size of the message 
+**                     header may depend on the MsgId in some implementations.  For example, 
+**                     if SB messages are implemented as CCSDS packets, the size of the header 
+**                     is different for command vs. telemetry packets.
+**
+** \returns
+** \retstmt The number of bytes in the software bus message header for 
+**          messages with the given \c MsgId. endstmt
+** \endreturns
+**
+** \sa #CFE_SB_GetUserData, #CFE_SB_GetMsgId, #CFE_SB_GetUserDataLength, #CFE_SB_GetTotalMsgLength,
+**     #CFE_SB_GetMsgTime, #CFE_SB_GetCmdCode, #CFE_SB_GetChecksum 
+**/
+uint16 CFE_SB_MsgHdrSize(const CFE_SB_Msg_t *MsgPtr);
+
+
+/*
+ * Software Bus Message Handler Function prototypes
+ */
+int32 CFE_SB_NoopCmd(const CFE_SB_Noop_t *data);
+int32 CFE_SB_ResetCountersCmd(const CFE_SB_ResetCounters_t *data);
+int32 CFE_SB_EnableSubReportingCmd(const CFE_SB_EnableSubReporting_t *data);
+int32 CFE_SB_DisableSubReportingCmd(const CFE_SB_DisableSubReporting_t *data);
+int32 CFE_SB_SendHKTlmCmd(const CCSDS_CommandPacket_t *data);
+int32 CFE_SB_EnableRouteCmd(const CFE_SB_EnableRoute_t *data);
+int32 CFE_SB_DisableRouteCmd(const CFE_SB_DisableRoute_t *data);
+int32 CFE_SB_SendStatsCmd(const CFE_SB_SendSbStats_t *data);
+int32 CFE_SB_SendRoutingInfoCmd(const CFE_SB_SendRoutingInfo_t *data);
+int32 CFE_SB_SendPipeInfoCmd(const CFE_SB_SendPipeInfo_t *data);
+int32 CFE_SB_SendMapInfoCmd(const CFE_SB_SendMapInfo_t *data);
+int32 CFE_SB_SendPrevSubsCmd(const CFE_SB_SendPrevSubs_t *data);
+
 
 /*
  * External variables private to the software bus module
  */
 
 extern cfe_sb_t CFE_SB;
+
+
+
+/* ---------------------------------------------------------
+ * HELPER FUNCTIONS FOR TYPE-SAFE WRAPPERS / HOLDING STRUCTS
+ *
+ * These functions implement the type conversions between "bare numbers" and
+ * the holding structures, as well as sanity tests for the holding structures.
+ *
+ * The data within the holding structures should never be directly in the app,
+ * one of these helpers should be used once it is verified that the conversion
+ * or use case is legitimate.
+ * --------------------------------------------------------- */
+
+/**
+ * @brief Identifies whether a given CFE_SB_MsgId_t is valid
+ *
+ * Implements a basic sanity check on the value provided
+ *
+ * @returns true if sanity checks passed, false otherwise.
+ */
+static inline bool CFE_SB_IsValidMsgId(CFE_SB_MsgId_t MsgId)
+{
+    /* cppcheck-suppress redundantCondition */
+    return (MsgId != CFE_SB_INVALID_MSG_ID && MsgId <= CFE_PLATFORM_SB_HIGHEST_VALID_MSGID);
+}
+
+/**
+ * @brief Identifies whether a given CFE_SB_MsgKey_t is valid
+ *
+ * Implements a basic sanity check on the value provided
+ *
+ * @returns true if sanity checks passed, false otherwise.
+ */
+static inline bool CFE_SB_IsValidMsgKey(CFE_SB_MsgKey_t MsgKey)
+{
+    return (MsgKey.KeyIdx != 0 && MsgKey.KeyIdx <= CFE_SB_MAX_NUMBER_OF_MSG_KEYS);
+}
+
+/**
+ * @brief Identifies whether a given CFE_SB_MsgRouteIdx_t is valid
+ *
+ * Implements a basic sanity check on the value provided
+ *
+ * @returns true if sanity checks passed, false otherwise.
+ */
+static inline bool CFE_SB_IsValidRouteIdx(CFE_SB_MsgRouteIdx_t RouteIdx)
+{
+    return (RouteIdx.RouteIdx != 0 && RouteIdx.RouteIdx <= CFE_PLATFORM_SB_MAX_MSG_IDS);
+}
+
+/**
+ * @brief Converts between a CFE_SB_MsgKey_t and a raw value
+ *
+ * Converts the supplied value into a "bare number" suitable for performing
+ * array lookups or other tasks for which the holding structure cannot be used directly.
+ *
+ * Use with caution, as this removes the type safety information from the value.
+ *
+ * @note It is assumed the value has already been validated using CFE_SB_IsValidMsgKey()
+ *
+ * @returns The underlying index value
+ */
+static inline CFE_SB_MsgKey_Atom_t CFE_SB_MsgKeyToValue(CFE_SB_MsgKey_t MsgKey)
+{
+    return (MsgKey.KeyIdx - 1);
+}
+
+/**
+ * @brief Converts between a CFE_SB_MsgKey_t and a raw value
+ *
+ * Converts the supplied "bare number" into a type-safe CFE_SB_MsgKey_t value
+ *
+ * @returns A CFE_SB_MsgKey_t value
+ */
+static inline CFE_SB_MsgKey_t CFE_SB_ValueToMsgKey(CFE_SB_MsgKey_Atom_t KeyIdx)
+{
+    return ((CFE_SB_MsgKey_t){ .KeyIdx = 1 + KeyIdx });
+}
+
+/**
+ * @brief Converts between a CFE_SB_MsgRouteIdx_t and a raw value
+ *
+ * Converts the supplied "bare number" into a type-safe CFE_SB_MsgRouteIdx_t value
+ *
+ * @returns A CFE_SB_MsgRouteIdx_t value
+ */
+static inline CFE_SB_MsgRouteIdx_t CFE_SB_ValueToRouteIdx(CFE_SB_MsgRouteIdx_Atom_t TableIdx)
+{
+    return ((CFE_SB_MsgRouteIdx_t){ .RouteIdx = 1 + TableIdx });
+}
+
+/**
+ * @brief Converts between a CFE_SB_MsgRouteIdx_t and a raw value
+ *
+ * Converts the supplied value into a "bare number" suitable for performing
+ * array lookups or other tasks for which the holding structure cannot be used directly.
+ *
+ * Use with caution, as this removes the type safety information from the value.
+ *
+ * @note It is assumed the value has already been validated using CFE_SB_IsValidRouteIdx()
+ *
+ * @returns The underlying index value
+ */
+static inline CFE_SB_MsgRouteIdx_Atom_t CFE_SB_RouteIdxToValue(CFE_SB_MsgRouteIdx_t RouteIdx)
+{
+    return (RouteIdx.RouteIdx - 1);
+}
+
 
 #endif /* _cfe_sb_priv_ */
 /*****************************************************************************/

@@ -283,7 +283,7 @@ def table_mgmt_demo(screen, button)
          when 5
             if ($tmd_demo == 0)
             
-            .send_cmd("MM","POKE_MEM with DATA_SIZE 8, MEM_TYPE 1, DATA #{$tmd_poke_val}, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
+               Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 8, MEM_TYPE 1, DATA #{$tmd_poke_val}, ADDR_OFFSET #{FswConfigParam::MM_OFFSET_W0}, ADDR_SYMBOL_NAME #{FswConfigParam::MM_SYMBOL}")
                $tmd_poke_val += 1
                # Don't increment tmd_demo so user can repeatedly sends the command
             end

@@ -1,7 +1,7 @@
 /*
-** $Id: fm_msgids.h 1.6 2015/02/28 17:50:52EST sstrege Exp  $
+** $Id: fm_msgids.h 1.2.1.2 2017/01/23 21:53:14EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -22,27 +22,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_msgids.h  $
-** Revision 1.6 2015/02/28 17:50:52EST sstrege 
-** Added copyright information
-** Revision 1.5 2009/11/13 16:29:01EST lwalling 
-** Modify macro names
-** Revision 1.4 2009/10/30 14:02:31EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.3 2009/10/16 15:51:06EDT lwalling
-** Update message ID name
-** Revision 1.2 2009/10/09 17:24:01EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.1 2008/10/09 18:16:04EDT sstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/platform_inc/project.pj
-** Revision 1.3 2008/09/24 12:01:09EDT sstrege
-** Updated Message IDs to those specified in CFS Development Standards
-** Revision 1.2 2008/06/20 16:21:42EDT slstrege
-** Member moved from fsw/src/fm_msgids.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_msgids.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:42ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_msgids_h_

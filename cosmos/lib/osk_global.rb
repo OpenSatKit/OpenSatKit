@@ -67,11 +67,13 @@ module Osk
    ## Text Messages ##
    ###################
 
-   BUTTON_CONT   = "OK"
-   BUTTON_CANCEL = "Cancel"  # Equal to hard coded message_box() string
-   UNDEFSTR = "Undefined"
+   MSG_BUTTON_YES    = "Yes"
+   MSG_BUTTON_NO     = "No"
+   MSG_BUTTON_CONT   = "OK"
+   MSG_BUTTON_CANCEL = "Cancel"  # Equal to hard coded message_box() string
+   MSG_UNDEFSTR      = "Undefined"
 
-   MSG_TBD_FEATURE = "Coming Soon"
+   MSG_TBD_FEATURE = "Feature coming soon..."
 
    ################
    ## File Names ##

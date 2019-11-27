@@ -1,7 +1,7 @@
 /*
-** $Id: fm_cmd_utils.c 1.36 2015/02/28 17:50:55EST sstrege Exp  $
+** $Id: fm_cmd_utils.c 1.3.1.2 2017/01/23 21:53:21EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -19,80 +19,6 @@
 **
 ** Notes:
 **
-** $Log: fm_cmd_utils.c  $
-** Revision 1.36 2015/02/28 17:50:55EST sstrege 
-** Added copyright information
-** Revision 1.35 2014/12/18 14:32:54EST lwalling 
-** Added mutex semaphore protection when accessing FM_GlobalData.ChildQueueCount
-** Revision 1.34 2014/12/11 17:15:03EST lwalling 
-** Remove unnecessary include of osapi-os-filesys.h
-** Revision 1.33 2014/10/22 17:51:01EDT lwalling 
-** Allow zero as a valid semaphore ID, use FM_CHILD_SEM_INVALID instead
-** Revision 1.32 2014/06/09 16:59:51EDT lwalling 
-** Change all binary semaphores to count semaphores
-** Revision 1.31 2011/04/20 11:34:30EDT lwalling 
-** Cast unsigned app name buffer to (char *), remove unused local variable
-** Revision 1.30 2011/04/19 16:41:03EDT lwalling 
-** Added function FM_VerifyOverwrite to validate overwrite command arguments
-** Revision 1.29 2011/04/19 10:30:24EDT lwalling 
-** Fail child task commands rather than execute them in context of parent task
-** Revision 1.28 2010/01/12 16:35:28EST lwalling 
-** Temp fix to use Binary instead of Counting semaphore
-** Revision 1.27 2009/11/20 15:32:27EST lwalling 
-** Remove return code and error events from FM_AppendPathSep
-** Revision 1.26 2009/11/17 13:40:51EST lwalling 
-** Remove global open files list data structure
-** Revision 1.25 2009/11/13 16:32:46EST lwalling 
-** Modify macro names, remove VerifyFileOpen function
-** Revision 1.24 2009/11/09 16:54:53EST lwalling 
-** Add FileInfo arg to GetState func, add test for lost semaphore to VerifyChild func
-** Revision 1.23 2009/10/30 14:02:34EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.22 2009/10/30 10:44:01EDT lwalling
-** Remove detail from function prologs, modify directory list structure field names
-** Revision 1.21 2009/10/29 11:42:25EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.20 2009/10/26 16:43:34EDT lwalling
-** Change some structure and variable names
-** Revision 1.19 2009/10/26 11:31:02EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.18 2009/10/23 14:40:05EDT lwalling
-** Create FM child task to process slow commands, update event text, move slow util fncs to fm_child.c
-** Revision 1.17 2009/10/16 15:43:46EDT lwalling
-** Update event text, function names, arg names, comments, add no dir verify function
-** Revision 1.16 2009/10/06 11:06:10EDT lwalling
-** Clean up after create common filename verify functions
-** Revision 1.15 2009/09/29 13:41:24EDT lwalling
-** Perform tests for file open against current system list of open files, allow open files for copy/move/rename commands
-** Revision 1.14 2009/09/28 15:29:56EDT lwalling
-** Review and modify event text
-** Revision 1.13 2009/09/28 14:15:27EDT lwalling
-** Create common filename verification functions
-** Revision 1.12 2009/09/14 16:58:35EDT lwalling
-** Modify FM_DirListFileInit() to reference FM_DIRLIST_SUBTYPE from platform config file
-** Revision 1.11 2009/09/14 16:08:12EDT lwalling
-** Modified FM_IsValidPathname() to find string terminator or fail verification
-** Revision 1.10 2009/09/10 13:04:01EDT lwalling
-** Modified FM_GetOpenFileList() to remove call to OS_NameChange()
-** Revision 1.9 2009/06/12 14:16:26EDT rmcgraw
-** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-** Revision 1.8 2009/01/07 12:39:52EST sstrege
-** Fixed bug in DirListFileInit event
-** Revision 1.7 2008/12/24 16:20:40EST sstrege
-** Added directory check in IsValidDeleteFile function
-** Revision 1.6 2008/12/22 15:45:46EST sstrege
-** Updated IsValidDeleteFile utility function to accept Event Type as an input parameter
-** Revision 1.5 2008/12/12 12:59:25EST sstrege
-** Fixed bug in FM utility function FM_GetOpenFileList
-** Revision 1.4 2008/10/06 11:32:04EDT sstrege
-** Updated DirListFileInit function to write the directory listing statistics structure
-** Revision 1.3 2008/09/30 18:36:30EDT sstrege
-** Replaced Directory Listing File Header initialization code with call to CFS_FS_WriteHeader
-** Revision 1.2 2008/06/20 16:21:24EDT slstrege
-** Member moved from fsw/src/fm_cmd_utils.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_cmd_utils.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:24ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #include "cfe.h"
@@ -106,6 +32,16 @@
 #include <string.h>
 #include <ctype.h>
 
+typedef struct
+{
+   const char *name_entry;
+   uint32     active_id;
+   uint32     creator;
+   uint16     refcount;
+   uint16     flags;
+}OS_common_record_t;
+
+extern OS_common_record_t *OS_GetCommonRec(uint32 id);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -158,6 +94,30 @@ boolean FM_VerifyOverwrite(uint16 Overwrite, uint32 EventID, char *CmdText)
 } /* End FM_VerifyOverwrite */
 
 
+//dcm - Added for OSK
+static uint32 open_file_cnt = 0;
+static void LoadOpenFileData(OS_query_record_t *query_rec, void *callback_arg)
+{
+
+    FM_OpenFilesEntry_t *OpenFilesData = (FM_OpenFilesEntry_t *)callback_arg;
+    CFE_ES_TaskInfo_t   TaskInfo;
+ 
+    if (OpenFilesData != (FM_OpenFilesEntry_t *) NULL)
+    {
+        /* FDTableEntry.Path has logical filename saved when file was opened */
+        strcpy(OpenFilesData[open_file_cnt].LogicalName, query_rec->name_entry);
+
+        /* Get the name of the application that opened the file */
+        CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+        if (CFE_ES_GetTaskInfo(&TaskInfo, query_rec->creator) == CFE_SUCCESS)
+        {
+            strcpy(OpenFilesData[open_file_cnt].AppName, (char *) TaskInfo.AppName);
+        } 
+    }
+    ++open_file_cnt;
+       
+} /* End LoadOpenFileData() */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* FM utility function -- get open files data                      */
@@ -166,40 +126,14 @@ boolean FM_VerifyOverwrite(uint16 Overwrite, uint32 EventID, char *CmdText)
 
 uint32 FM_GetOpenFilesData(FM_OpenFilesEntry_t *OpenFilesData)
 {
-    uint32 OpenFilesCount = 0;
-    int32 FDTableIndex;
-    OS_FDTableEntry FDTableEntry;
-    CFE_ES_TaskInfo_t TaskInfo;
 
-    /* Get system info for each file descriptor table entry */
-    for (FDTableIndex = 0; FDTableIndex < OS_MAX_NUM_OPEN_FILES; FDTableIndex++)
-    {
-        OS_FDGetInfo(FDTableIndex, &FDTableEntry);
-
-        /* If FD table entry is valid - then file is open */
-        if (FDTableEntry.IsValid == TRUE)
-        {
-            /* Getting the list of filenames is optional */
-            if (OpenFilesData != (FM_OpenFilesEntry_t *) NULL)
-            {
-                /* FDTableEntry.Path has logical filename saved when file was opened */
-                strcpy(OpenFilesData[OpenFilesCount].LogicalName, FDTableEntry.Path);
-
-                /* Get the name of the application that opened the file */
-                CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
-                if (CFE_ES_GetTaskInfo(&TaskInfo, FDTableEntry.User) == CFE_SUCCESS)
-                {
-                    strcpy(OpenFilesData[OpenFilesCount].AppName, (char *) TaskInfo.AppName);
-                }
-            }
-
-            /* File count is not optional */
-            OpenFilesCount++;
-        }
-    }
-
-    return(OpenFilesCount);
-
+    OS_query_record_t query_rec;
+   
+    open_file_cnt = 0;
+    OS_QueryObjectType (OS_OBJECT_TYPE_OS_STREAM, LoadOpenFileData, &query_rec, (void *)OpenFilesData);
+       
+    return open_file_cnt;
+    
 } /* End FM_GetOpenFilesData */
 
 
@@ -242,7 +176,11 @@ uint32 FM_GetFilenameState(char *Filename, uint32 BufferSize, boolean FileInfoCm
         if (OS_stat(Filename, &FileStatus) == OS_SUCCESS)
         {
             /* Filename is in use, is it also a directory? */
+#ifdef OS_FILESTAT_ISDIR
+            if (OS_FILESTAT_ISDIR(FileStatus))
+#else
             if (S_ISDIR(FileStatus.st_mode))
+#endif
             {
                 /* Filename is a directory */
                 FilenameState = FM_NAME_IS_DIRECTORY;
@@ -256,10 +194,8 @@ uint32 FM_GetFilenameState(char *Filename, uint32 BufferSize, boolean FileInfoCm
                 for (i = 0; i < OS_MAX_NUM_OPEN_FILES; i++)
                 {
                     /* Get system info for each file descriptor table entry */
-                    OS_FDGetInfo(i, &FDTableEntry);
-
                     /* If the FD table entry is valid - then the file is open */
-                    if (FDTableEntry.IsValid == TRUE)
+                    if (OS_FDGetInfo(i, &FDTableEntry) == OS_FS_SUCCESS)
                     {
                         if (strcmp(FDTableEntry.Path, Filename) == 0)
                         {
@@ -273,8 +209,16 @@ uint32 FM_GetFilenameState(char *Filename, uint32 BufferSize, boolean FileInfoCm
             /* Save the last modify time and file size for File Info commands */
             if (FileInfoCmd)
             {
+#ifdef OS_FILESTAT_TIME
+                FM_GlobalData.FileStatTime = OS_FILESTAT_TIME(FileStatus);
+#else
                 FM_GlobalData.FileStatTime = FileStatus.st_mtime;
-                FM_GlobalData.FileStatSize = FileStatus.st_size;
+#endif
+#ifdef OS_FILESTAT_SIZE
+                FM_GlobalData.FileStatSize = OS_FILESTAT_SIZE(FileStatus);
+#else
+                FM_GlobalData.FileStatSize = FileStatus.FileSize; //dcm
+#endif
             }
         }
         else

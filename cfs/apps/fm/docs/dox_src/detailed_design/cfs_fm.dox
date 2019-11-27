@@ -23,6 +23,9 @@
 
   \verbatim  
   $Log: cfs_fm.dox  $
+  Revision 1.1 2015/07/25 14:57:02EDT rperera 
+  Initial revision
+  Member added to project /CFS-APPs-PROJECT/fm/docs/dox_src/detailed_design/project.pj
   Revision 1.2 2009/04/18 12:38:16EDT dkobe 
   Corrected typos in doxygen comments
   Revision 1.1 2009/04/16 17:40:20EDT dkobe 

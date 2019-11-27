@@ -98,7 +98,7 @@ int32 OS_statHook(const char *path, os_fstat_t *filestats);
 int32 OS_statHook(const char *path, os_fstat_t *filestats)
 {
 
-    filestats->st_size = 123;
+    filestats->FileSize = 123;    //dcm
     
     return OS_FS_SUCCESS;
 }

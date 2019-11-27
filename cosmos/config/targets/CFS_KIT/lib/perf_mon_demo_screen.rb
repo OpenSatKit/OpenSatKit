@@ -250,11 +250,11 @@ def perf_mon_demo(screen, button)
                collect_data = Thread.new {
                   Osk::flight.cfe_es.send_cmd("START_LA_DATA with TRIG_MODE 0")
                   sleep (4)
-                  Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+                  Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
                   sleep (4)
                   Osk::flight.send_cmd("FM","WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{PMD_DIR_LIST_FLT_FILE}")
                   sleep (4)
-                  Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIRLISTOFFSET 0")
+                  Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{Osk::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
                   sleep (4)
 
                   cmd_valid_cnt = tlm("CFE_ES HK_TLM_PKT CMD_VALID_COUNT")

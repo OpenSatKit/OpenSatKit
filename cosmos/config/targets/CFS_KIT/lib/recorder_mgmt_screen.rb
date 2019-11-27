@@ -116,7 +116,7 @@ def recorder_mgmt_send_cmd(screen, cmd)
       end
    elsif (cmd == "TODO")
       mem_file_name = ask_string("Enter full FSW /path/filename file to received the dump")
-      prompt("Feature coming soon...")
+      prompt(Osk::MSG_TBD_FEATURE)
    else
       raise "Error in screen definition file. Undefined command sent to recorder_mgmt_send_cmd()"
    end

@@ -1,13 +1,25 @@
 /*
-** $Id: cfe.h 1.4 2010/10/25 14:01:09GMT-05:00 jmdagost Exp  $
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: cfe.h
 **
 ** Purpose:  cFE header file
 **
@@ -16,28 +28,6 @@
 ** Notes:    This header file centralizes the includes for all cFE
 **           Applications.  It includes all header files necessary
 **           to completely define the cFE interface.
-**
-** $Log: cfe.h  $
-** Revision 1.4 2010/10/25 14:01:09GMT-05:00 jmdagost 
-** Corrected bad apostrophe in prologue.
-** Revision 1.3 2010/10/04 15:24:39EDT jmdagost 
-** Cleaned up copyright symbol.
-** Revision 1.2 2009/06/10 13:28:30EDT acudmore 
-** added cfe_psp.h include
-** Revision 1.1 2008/04/17 08:05:18EDT ruperera 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-** Revision 1.4 2006/06/08 14:28:31EDT David Kobe (dlkobe) 
-** Added NASA Open Source Legal Statement
-** Revision 1.3 2005/11/04 15:27:51GMT-05:00 rjmcgraw 
-** Added cfe_tbl.h
-** Revision 1.2 2005/07/05 10:57:21EDT lswalling 
-** add cfe_error.h to included header files
-** Revision 1.1 2005/06/09 10:57:50EDT rperera 
-** Initial revision
-** Member added to project d:/mksdata/MKS-CFE-REPOSITORY/cfe-core/inc/project.pj
-** Revision 1.1  2005/04/28 19:30:28  swalling
-** initial version
 **
 */
 
@@ -55,18 +45,6 @@
 
 #include "cfe_mission_cfg.h"  /* Define mission configuration parameters */
 
-/*
- * Note that the platform configuration is _not_ included with cfe.h anymore.
- *
- * Most applications should not depend on any of the #defines in that file.
- * If an application truly does need a value from the platform config, then
- * it can retrieve it from the mission data dictionary using a public API.
- */
-#if !defined(_ENHANCED_BUILD_)
-#include "cfe_platform_cfg.h" /* Define platform configuration parameters */
-#endif
-
-#include "cfe_msgids.h"       /* Define common cFE Message IDs */
 #include "cfe_error.h"        /* Define common cFE error codes */
 
 #include "cfe_es.h"           /* Define Executive Service API */

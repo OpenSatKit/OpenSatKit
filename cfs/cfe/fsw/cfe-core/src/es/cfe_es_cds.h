@@ -1,15 +1,26 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  File: 
 **  cfe_es_cds.h
-**
-**
-**      Copyright (c) 2004-2012, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement.
 **
 **  Purpose:
 **  This file contains the Internal interface for the cFE Critical Data Store functions.
@@ -20,20 +31,7 @@
 **     cFE Flight Software Application Developers Guide
 **
 **  Notes:
-**  $Log: cfe_es_cds.h  $
-**  Revision 1.5 2012/01/13 11:50:01GMT-05:00 acudmore 
-**  Changed license text to reflect open source
-**  Revision 1.4 2010/10/04 17:01:27EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.3 2009/06/10 09:08:54EDT acudmore 
-**  Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
-**  Revision 1.2 2008/12/08 16:10:52EST dkobe 
-**  Correcting errors generated during detailed design document generation
-**  Revision 1.1 2008/04/17 08:05:03EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
-**  Revision 1.3.1.6 2007/05/15 11:16:06EDT apcudmore 
-**  Added modification log tags.
+**
 */
 
 
@@ -69,8 +67,8 @@ typedef struct
     char                      Name[CFE_ES_CDS_MAX_FULL_NAME_LEN];
     CFE_ES_CDSBlockHandle_t   MemHandle;
     uint32                    Size;           /**< \brief Size, in bytes, of the CDS memory block */
-    boolean                   Taken;          /**< \brief Flag that indicates whether the registry record is in use */
-    boolean                   Table;          /**< \brief Flag that indicates whether CDS contains a Critical Table */
+    bool                      Taken;          /**< \brief Flag that indicates whether the registry record is in use */
+    bool                      Table;          /**< \brief Flag that indicates whether CDS contains a Critical Table */
 } CFE_ES_CDS_RegRec_t;
 
 typedef struct
@@ -79,7 +77,7 @@ typedef struct
     uint32               CDSSize;                               /**< \brief Total size of the CDS as reported by BSP */
     uint32               MemPoolSize;
     uint32               MaxNumRegEntries;                      /**< \brief Maximum number of Registry entries */
-    CFE_ES_CDS_RegRec_t  Registry[CFE_ES_CDS_MAX_NUM_ENTRIES];  /**< \brief CDS Registry (Local Copy) */
+    CFE_ES_CDS_RegRec_t  Registry[CFE_PLATFORM_ES_CDS_MAX_NUM_ENTRIES];  /**< \brief CDS Registry (Local Copy) */
     char                 ValidityField[8];
 } CFE_ES_CDSVariables_t;
 
@@ -118,7 +116,7 @@ int32 CFE_ES_UpdateCDSRegistry(void);
 ** \par Description
 **        Validates Application ID of calling App.  Validation
 **        consists of ensuring the AppID is between zero and
-**        #CFE_ES_MAX_APPLICATIONS.
+**        #CFE_PLATFORM_ES_MAX_APPLICATIONS.
 **
 ** \par Assumptions, External Events, and Notes:
 **          None

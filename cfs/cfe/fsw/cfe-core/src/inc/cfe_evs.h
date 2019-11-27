@@ -1,17 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  Filename: cfe_evs.h
-**
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
-**
-*
-**  $Id: cfe_evs.h 1.4 2010/10/26 16:01:08GMT-05:00 jmdagost Exp  $
 **
 **  Title:    Event Services API Application Library Header File
 **
@@ -22,57 +30,13 @@
 **
 **  References:
 **     Flight Software Branch C Coding Standard Version 1.0a
-**
-**  $Date: 2010/10/26 16:01:08GMT-05:00 $
-**  $Revision: 1.4 $
-**  $Log: cfe_evs.h  $
-**  Revision 1.4 2010/10/26 16:01:08GMT-05:00 jmdagost 
-**  Made CFE_EVS_ResetFilter() argument a signed int.
-**  Revision 1.3 2010/10/04 17:06:06EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.2 2008/12/08 12:07:11EST dkobe 
-**  Updates to correct doxygen errors
-**  Revision 1.1 2008/04/17 08:05:21EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-**  Revision 1.19 2007/09/20 08:37:52EDT njyanchik 
-**  I added the doxygen comments to CFE_EVS_Log_t
-**  Revision 1.18 2007/07/18 11:53:06EDT njyanchik 
-**  The two structures specified in DCR 4407 were moved to cfe_evs_msg.h
-**  Revision 1.17 2007/07/12 16:45:13EDT rjmcgraw 
-**  DCR4680:1 Added #defines for more filtering options
-**  Revision 1.16 2007/06/07 16:03:55EDT dlkobe 
-**  Corrected doxygen comment syntax errors
-**  Revision 1.15 2007/06/07 13:07:49EDT dlkobe 
-**  Added Command and Telemetry doxygen comments to TIME, EVS and SB
-**  Revision 1.14 2007/05/23 11:21:58EDT dlkobe 
-**  Added doxygen formatting
-**  Revision 1.13 2007/05/14 10:26:04EDT apcudmore 
-**  Preserve the EVS Local event log on a processor restart:
-**  - moved the EVS Log to the ES reset data structure
-**  - Added a couple of EVS Log related variables into the EVS_Log_t structure
-**  - Added a routine to the EVS early init to get a pointer to the EVS Log 
-**  - Added code to the EVS housekeeping service routine to copy Log variables into TLM
-**  Revision 1.12 2007/03/01 11:54:34EST njyanchik 
-**  This cp handles issues 1,6,7,8 as described in the DCR
-**  Revision 1.11 2006/11/17 16:46:10EST dlkobe 
-**  Updated with Doxygen formatted comments
-**  Revision 1.10 2006/06/08 13:14:53GMT-05:00 njyanchik 
-**  I added the appropriate legal headers to all of the evs files
-**  Revision 1.9 2005/11/01 15:27:35EST njyanchik 
-**  Added header for CFE_EVS_SendEventWithAppID function in /evs/cfe_evs.c
-**  Revision 1.8 2005/10/21 16:02:04EDT kkaudra 
-**  Exposure of the EVS event packet types
-**  Revision 1.7 2005/09/08 17:47:51EDT sstrege 
-**  Added Event Mask CFE_EVS_EVERY_FOURTH_ONE
-**  Revision 1.6 2005/08/23 14:10:07EDT kkaudra 
-**  Make Command Code definitions public
 **/
 
 #ifndef _cfe_evs_
 #define _cfe_evs_
 
 /********************************** Include Files  ************************************/
+#include "cfe_evs_extern_typedefs.h"
 #include "common_types.h"    /* Basic data types */
 #include "cfe_time.h"        /* Time library function definitions */
 #include "cfe_evs_msg.h"        /* EVS command codes and data structures*/
@@ -95,11 +59,6 @@
 #define OS_PRINTF(m,n) 
 #endif
 
-/** \name Event Filter Schemes */
-/** \{ */
-#define CFE_EVS_BINARY_FILTER    0
-/** \} */
-
 /** \name Common Event Filter Mask Values  */
 /** \{ */
 #define  CFE_EVS_NO_FILTER        0x0000       /**< \brief Stops any filtering.  All messages are sent. */
@@ -115,21 +74,36 @@
 #define  CFE_EVS_EVERY_FOURTH_ONE 0x0003       /**< \brief Sends every fourth event message.  All others are filtered. */
 /** \} */
 
-/** \name Event Types */
-/** \{ */
-#define CFE_EVS_DEBUG            0x01          /**< \brief Events that are intended only for debugging, not nominal operations */
-#define CFE_EVS_INFORMATION      0x02          /**< \brief Events that identify a state change or action that is not an error */
-#define CFE_EVS_ERROR            0x03          /**< \brief Events that identify an error but are not catastrophic (e.g. - bad command */
-#define CFE_EVS_CRITICAL         0x04          /**< \brief Events that identify errors that are unrecoverable autonomously. */
-/** \} */
 
-/** \name Output Ports */
-/** \{ */
-#define CFE_EVS_PORT1            0x01
-#define CFE_EVS_PORT2            0x02
-#define CFE_EVS_PORT3            0x03
-#define CFE_EVS_PORT4            0x04
-/** \} */
+/*
+ * To preserve source-code compatibility with existing code,
+ * this allows the old enum names to still work.  This should
+ * be turned off after the new names are established.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+/*
+ * Compatibility Macros for the EventFilter enumeration
+ */
+#define CFE_EVS_BINARY_FILTER    CFE_EVS_EventFilter_BINARY
+
+/*
+ * Compatibility Macros for the OutputPort enumeration
+ */
+#define CFE_EVS_PORT1            CFE_EVS_EventOutput_PORT1
+#define CFE_EVS_PORT2            CFE_EVS_EventOutput_PORT2
+#define CFE_EVS_PORT3            CFE_EVS_EventOutput_PORT3
+#define CFE_EVS_PORT4            CFE_EVS_EventOutput_PORT4
+
+/*
+ * Compatibility Macros for the EventType enumeration
+ */
+#define CFE_EVS_DEBUG            CFE_EVS_EventType_DEBUG
+#define CFE_EVS_INFORMATION      CFE_EVS_EventType_INFORMATION
+#define CFE_EVS_ERROR            CFE_EVS_EventType_ERROR
+#define CFE_EVS_CRITICAL         CFE_EVS_EventType_CRITICAL
+
+#endif  /* CFE_OMIT_DEPRECATED_6_6 */
 
 /******************  Structure Definitions *********************/
 
@@ -164,7 +138,7 @@ typedef struct {
 **                for binary filters).
 **
 **          <b> Filter Scheme: </b> Binary <BR>
-**          <b> Code: </b> CFE_EVS_BINARY_FILTER <BR>
+**          <b> Code: </b> CFE_EVS_EventFilter_BINARY <BR>
 **          <b> Filter Structure: </b> 
 **          \code
 **                     typedef struct {
@@ -178,10 +152,10 @@ typedef struct {
 **                               (see Filter Schemes mentioned above) 
 **
 ** \param[in] NumFilteredEvents  The number of event message filters included in this call.  This must be less than
-**                               or equal to the maximum number of events allowed per application (#CFE_EVS_MAX_EVENT_FILTERS).
+**                               or equal to the maximum number of events allowed per application (#CFE_PLATFORM_EVS_MAX_EVENT_FILTERS).
 **
 ** \param[in] FilterScheme       The event filtering scheme that this application will use.  For the first implementation of 
-**                               the event services, only filter type #CFE_EVS_BINARY_FILTER will be supported.
+**                               the event services, only filter type #CFE_EVS_EventFilter_BINARY will be supported.
 **
 ** \returns
 ** \retcode #CFE_SUCCESS                    \retdesc  \copydoc CFE_SUCCESS                   \endcode
@@ -238,16 +212,16 @@ int32 CFE_EVS_Unregister( void );
 **                               The \c EventID is defined and supplied by the application sending the event.   
 **
 ** \param[in] EventType          A numeric literal used to classify an event, one of:
-**                                   \arg #CFE_EVS_DEBUG          
-**                                   \arg #CFE_EVS_INFORMATION    
-**                                   \arg #CFE_EVS_ERROR          
-**                                   \arg #CFE_EVS_CRITICAL       
+**                                   \arg #CFE_EVS_EventType_DEBUG          
+**                                   \arg #CFE_EVS_EventType_INFORMATION    
+**                                   \arg #CFE_EVS_EventType_ERROR          
+**                                   \arg #CFE_EVS_EventType_CRITICAL       
 **  
 ** \param[in] Spec               A pointer to a null terminated text string describing the output format 
 **                               for the event.  This is the same type of format string used for the ANSI 
 **                               \c printf function.  Nominally the post-conversion string is limited to 80 
 **                               characters, but this limit is configurable through the parameter 
-**                               #CFE_EVS_MAX_MESSAGE_LENGTH.  Characters beyond the limit will be truncated.  
+**                               #CFE_MISSION_EVS_MAX_MESSAGE_LENGTH.  Characters beyond the limit will be truncated.  
 **                               Do not use floating point conversions (%f, %e, %E, %g, and %G) in the format 
 **                               string unless your application will be running in a system that supports 
 **                               floating point arithmetic.  Do not use non-printable characters (\\t, \\n, etc.) 
@@ -287,10 +261,10 @@ int32 CFE_EVS_SendEvent (uint16 EventID,
 **                               The \c EventID is defined and supplied by the application sending the event.   
 **
 ** \param[in] EventType          A numeric literal used to classify an event, one of:
-**                                   \arg #CFE_EVS_DEBUG
-**                                   \arg #CFE_EVS_INFORMATION
-**                                   \arg #CFE_EVS_ERROR
-**                                   \arg #CFE_EVS_CRITICAL
+**                                   \arg #CFE_EVS_EventType_DEBUG
+**                                   \arg #CFE_EVS_EventType_INFORMATION
+**                                   \arg #CFE_EVS_EventType_ERROR
+**                                   \arg #CFE_EVS_EventType_CRITICAL
 **  
 ** \param[in] AppID              The Application ID from which the event message should appear.   
 **
@@ -298,7 +272,7 @@ int32 CFE_EVS_SendEvent (uint16 EventID,
 **                               for the event.  This is the same type of format string used for the ANSI 
 **                               \c printf function.  Nominally the post-conversion string is limited to 80 
 **                               characters, but this limit is configurable through the parameter 
-**                               #CFE_EVS_MAX_MESSAGE_LENGTH.  Characters beyond the limit will be truncated.  
+**                               #CFE_MISSION_EVS_MAX_MESSAGE_LENGTH.  Characters beyond the limit will be truncated.  
 **                               Do not use floating point conversions (%f, %e, %E, %g, and %G) in the format 
 **                               string unless your application will be running in a system that supports 
 **                               floating point arithmetic.  Do not use non-printable characters (\\t, \\n, etc.) 
@@ -341,16 +315,16 @@ int32 CFE_EVS_SendEventWithAppID (uint16 EventID,
 **                               The \c EventID is defined and supplied by the application sending the event.   
 **
 ** \param[in] EventType          A numeric literal used to classify an event, one of:
-**                                   \arg #CFE_EVS_DEBUG          
-**                                   \arg #CFE_EVS_INFORMATION    
-**                                   \arg #CFE_EVS_ERROR          
-**                                   \arg #CFE_EVS_CRITICAL       
+**                                   \arg #CFE_EVS_EventType_DEBUG          
+**                                   \arg #CFE_EVS_EventType_INFORMATION    
+**                                   \arg #CFE_EVS_EventType_ERROR          
+**                                   \arg #CFE_EVS_EventType_CRITICAL       
 **  
 ** \param[in] Spec               A pointer to a null terminated text string describing the output format 
 **                               for the event.  This is the same type of format string used for the ANSI 
 **                               \c printf function.  Nominally the post-conversion string is limited to 80 
 **                               characters, but this limit is configurable through the parameter 
-**                               #CFE_EVS_MAX_MESSAGE_LENGTH.  Characters beyond the limit will be truncated.  
+**                               #CFE_MISSION_EVS_MAX_MESSAGE_LENGTH.  Characters beyond the limit will be truncated.  
 **                               Do not use floating point conversions (%f, %e, %E, %g, and %G) in the format 
 **                               string unless your application will be running in a system that supports 
 **                               floating point arithmetic.  Do not use non-printable characters (\\t, \\n, etc.) 
@@ -379,7 +353,7 @@ int32 CFE_EVS_SendTimedEvent (CFE_TIME_SysTime_t Time,
 **
 ** \par Description
 **          The effect of resetting an event filter depends on the filter scheme.  
-**          The #CFE_EVS_BINARY_FILTER scheme resets the filter counter for the specified Event ID. 
+**          The #CFE_EVS_EventFilter_BINARY scheme resets the filter counter for the specified Event ID. 
 **
 ** \par Assumptions, External Events, and Notes:
 **          None

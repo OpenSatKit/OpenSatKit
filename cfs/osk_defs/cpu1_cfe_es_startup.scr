@@ -4,7 +4,7 @@ CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,       EXPAT_LIB,      0,    8192, 0x0,
 CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,   KIT_TO,        30,   16384, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,   KIT_CI,        20,   16384, 0x0, 0;
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,  KIT_SCH,       10,   16384, 0x0, 0;
-CFE_APP, /cf/ds.so,           DS_AppMain,       DS,            80,   16384, 0x0, 0;
+CFE_APP, /cf/ds.so,           DS_AppMain,       DS,            70,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,       FM,            80,   16384, 0x0, 0;
 CFE_APP, /cf/lc.so,           LC_AppMain,       LC,            80,   16384, 0x0, 0;
 CFE_APP, /cf/md.so,           MD_AppMain,       MD,            90,   16384, 0x0, 0;
@@ -12,17 +12,19 @@ CFE_APP, /cf/sc.so,           SC_AppMain,       SC,            80,   16384, 0x0,
 CFE_APP, /cf/cs.so,           CS_AppMain,       CS,            90,   16384, 0x0, 0;
 CFE_APP, /cf/mm.so,           MM_AppMain,       MM,            90,   16384, 0x0, 0;
 CFE_APP, /cf/hk.so,           HK_AppMain,       HK,            90,   16384, 0x0, 0;
-CFE_APP, /cf/tftp.so,         TFTP_AppMain,     TFTP,          50,   16384, 0x0, 0;
-CFE_APP, /cf/f42.so,          F42_AppMain,      F42,           90,   16384, 0x0, 0;
-CFE_APP, /cf/i42.so,          I42_AppMain,      I42,           90,   80192, 0x0, 0;
+CFE_APP, /cf/tftp.so,         TFTP_AppMain,     TFTP,          60,   16384, 0x0, 0;
+CFE_APP, /cf/f42.so,          F42_AppMain,      F42,           50,   16384, 0x0, 0;
+CFE_APP, /cf/i42.so,          I42_AppMain,      I42,          100,   80192, 0x0, 0;
 CFE_APP, /cf/isim.so,         ISIM_AppMain,     ISIM,          90,   16384, 0x0, 0;
+CFE_APP, /cf/hs.so,           HS_AppMain,       HS,           120,   16384, 0x0, 0;
+! I42 & F42 are set low so 42 Simulator-to-FSW closed looped doesn't hog the system. The
+! current design has a crude throttling and rate limiting mechanism
 !CFE_APP, /cf/hc.so,           HC_AppMain,       HC,            80,   16384, 0x0, 0;
 !CFE_APP, /cf/hsim.so,         SIM_AppMain,      HSIM,          90,   16384, 0x0, 0;
 !CFE_APP, /cf/osk_demo_app.so, OSK_DEMO_AppMain, OSK_DEMO,     120,    8192, 0x0, 0;
 !CFE_APP, /cf/cf.so,           CF_AppMain,       CF,           100,   80192, 0x0, 0;
 !CFE_APP, /cf/bm.so,           BM_AppMain,       BM,            80,   16384, 0x0, 0;
 !CFE_APP, /cf/example.so,      EXAMPLE_AppMain,  EXAMPLE,       90,   16384, 0x0, 0;
-!CFE_APP, /cf/hs.so,           HS_AppMain,       HS,            80,   16384, 0x0, 0;
 !CFE_LIB, /cf/sample_lib.so,  SAMPLE_LibInit,  SAMPLE_LIB,    0,      0,  0x0, 0;
 !CFE_APP,cfs /cf/sample_app.so,  SAMPLE_AppMain,  SAMPLE_APP,  150,   16384, 0x0, 0;
 !CFE_LIB, /cf/math_lib.so,    Math_Init,       MATH_LIB,      0,  8192,  0x0, 0;

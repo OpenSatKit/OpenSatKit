@@ -2,7 +2,7 @@
 
   require 'osk_config' 
 
-  @APP_PREFIX_STR = "FM"
+  @APP_PREFIX_STR = "FM"  # Version 2.5.2
   
 %>
 TABLE "FM Dir Listing" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Directory Listing"
@@ -12,6 +12,7 @@ TABLE "FM Dir Listing" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Directo
   APPEND_PARAMETER "DIR_ENTRIES"    32 UINT 0 MAX_UINT32 0  " "
   APPEND_PARAMETER "FILE_ENTRIES"   32 UINT 0 MAX_UINT32 0  " "
   
+  # fm_msg.h: FM_DirListEntry_t
   <% 
     max_entries = 50  # The actual size is variable and not a configuration parameter
     append_items = ""
@@ -19,6 +20,7 @@ TABLE "FM Dir Listing" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Directo
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_NAME\"     512 STRING \"UNDEF\"     \" \"" << "\n"
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_SIZE\"      32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
       append_items << "APPEND_PARAMETER \"ENTRY#{i}_MOD_TIME\"  32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_MODE\"      32 UINT 0 MAX_UINT32 0  \" \"" << "\n"
     end
   %>
   <%= append_items %>

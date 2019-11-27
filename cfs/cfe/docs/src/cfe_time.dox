@@ -29,6 +29,7 @@
        <LI> \subpage cfetimeugtoneorder <BR>
        <LI> \subpage cfetimeugtonewindow <BR>
        <LI> \subpage cfetimeugserver <BR>
+       <LI> \subpage cfetimeugendian <BR>
        <LI> \subpage cfetimeugvirtualmet <BR>
        <LI> \subpage cfetimeugsource <BR>
        <LI> \subpage cfetimeugsignal <BR>
@@ -59,8 +60,6 @@
     <LI> \subpage cfetimeugfaq <BR> 
   </UL>
 
-  \subpage cfetimerevhist <BR>
-    
 **/
 
 /**
@@ -108,9 +107,11 @@
   (IERS) maintains the count of leap seconds as a signed whole number that is 
   subject to update twice a year.  Although it is possible to have a negative 
   leap second count if the earth rotates too fast, it is highly unlikely.  The initial 
-  count of leap seconds (10) was established in January of 1972, the first leap second 
-  was added to the initial count in June of 1972, and the current count of leap seconds 
-  is 33.
+  count of leap seconds (10) was established in January of 1972 and the first leap second 
+  was added to the initial count in June of 1972.  The most recent leap seconds are announced 
+  by the International Earth Rotation Service (IERS): <a href="https://www.iers.org"> 
+  https://www.iers.org </a> in IERS Bulletin C (leap second announcements).  Search the IERS site 
+  for "Bulletin C" to obtain the latest issue/announcement. 
 
     
   Next: \ref cfetimeugstruct <BR>
@@ -232,6 +233,7 @@
      <LI> \subpage cfetimeugtoneorder <BR>
      <LI> \subpage cfetimeugtonewindow <BR>
      <LI> \subpage cfetimeugserver <BR>
+     <LI> \subpage cfetimeugendian <BR>
      <LI> \subpage cfetimeugvirtualmet <BR>
      <LI> \subpage cfetimeugsource <BR>
      <LI> \subpage cfetimeugsignal <BR>
@@ -377,8 +379,29 @@
   \sa #CFE_TIME_CFG_SERVER, #CFE_TIME_CFG_CLIENT
 
   
-  Next: \ref cfetimeugvirtualmet <BR>
+  Next: \ref cfetimeugendian <BR>
   Prev: \ref cfetimeugtonewindow <BR>
+  Up To: \ref cfetimeugconfig
+**/
+
+/**
+  \page cfetimeugendian Specifying Time Tone Byte Order
+
+  By default, the CFE time tone message is a payload of integers in 
+  platform-endian order (containing the tone's timestamp, the leap seconds,
+  and state information.) In some configurations, it may be better to
+  have the payload produced in big-endian order--particularly in mixed-endian
+  environments.
+
+  In order to force the tone message to be in big-endian order, you must
+  define the following:
+
+  \verbatim
+  #define CFE_PLATFORM_TIME_CFG_BIGENDIAN
+  \endverbatim
+
+  Next: \ref cfetimeugvirtualmet <BR>
+  Prev: \ref cfetimeugserver <BR>
   Up To: \ref cfetimeugconfig
 **/
 
@@ -395,7 +418,7 @@
   
 
   Next: \ref cfetimeugsource <BR>
-  Prev: \ref cfetimeugserver <BR>
+  Prev: \ref cfetimeugendian <BR>
   Up To: \ref cfetimeugconfig
 **/
 
@@ -816,25 +839,3 @@
 **  either for each platform or for a mission as a whole.
 **/
 
-
-/**
-  \page cfetimerevhist cFE Time Services Documentation Revision History
-  
-  \verbatim
-  $Log: cfe_time.dox  $
-  Revision 1.5 2014/08/17 17:29:34GMT-05:00 sstrege 
-  Corrected CFE_TIME_CFG_SRC_GPM to CFE_TIME_CFG_SRC_GPS
-  Revision 1.4 2011/11/30 15:11:51EST jmdagost 
-  Updated to reflect use of TRUE/FALSE instead of defined/not defined for TIME preprocessor definitions 
-  and tests.
-  Revision 1.3 2008/12/08 12:07:06EST dkobe 
-  Updates to correct doxygen errors
-  Revision 1.2 2008/12/06 15:34:29EST dkobe 
-  Corrected formatting of revision history
-  Revision 1.1 2008/12/06 10:19:52EST dkobe 
-  Initial revision
-  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/docs/src/project.pj
-  \endverbatim
-
-  Up To: \ref cfetimeovr
-**/

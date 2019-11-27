@@ -1,16 +1,26 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
+**
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **   File:
 **    cfe_es_objtab.c
-**
-**
-**
-**      Copyright (c) 2004-2012, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
 **
 **   Purpose:
 **     This file contains the OS_object_table for MAP Build1.
@@ -20,22 +30,6 @@
 **     cFE Flight Software Application Developers Guide
 **
 **  Notes:
-**  $Log: cfe_es_objtab.c  $
-**  Revision 1.5 2014/07/25 10:56:45GMT-05:00 lwalling 
-**  Changed INCLUDE_CFE_TBL to EXCLUDE_CFE_TBL
-**  Revision 1.4 2014/07/23 11:33:21EDT lwalling 
-**  Made Table Services conditionsal based on new environment variable INCLUDE_CFE_TBL
-**  Revision 1.3 2012/01/13 11:50:03EST acudmore 
-**  Changed license text to reflect open source
-**  Revision 1.2 2008/07/08 15:40:39EDT apcudmore 
-**  Added CFE_FS global data, lock/unlock functions, log messages for decompress API.
-**  Revision 1.1 2008/04/17 08:05:06EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
-**  Revision 1.15 2007/09/21 15:40:22EDT David Kobe (dlkobe) 
-**  Modified pointer type definitions to eliminate Linux gcc compile warnings
-**  Revision 1.14 2007/05/15 11:16:05EDT apcudmore 
-**  Added modification log tags.
 **
 */
 
@@ -52,7 +46,7 @@
 ** Note: The name field in this table should be no more than OS_MAX_API_NAME -1 characters.
 **
 */
-CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_ES_OBJECT_TABLE_SIZE] =
+CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_PLATFORM_ES_OBJECT_TABLE_SIZE] =
 {
    /*
    ** Spare entries -- The spares should be distributed evenly through this table
@@ -143,8 +137,8 @@ CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_ES_OBJECT_TABLE_SIZE] =
            .ObjectType = CFE_ES_CORE_TASK,
            .ObjectName = "CFE_EVS",
            .FuncPtrUnion.MainAppPtr = CFE_EVS_TaskMain,
-           .ObjectPriority = CFE_EVS_START_TASK_PRIORITY,
-           .ObjectSize = CFE_EVS_START_TASK_STACK_SIZE
+           .ObjectPriority = CFE_PLATFORM_EVS_START_TASK_PRIORITY,
+           .ObjectSize = CFE_PLATFORM_EVS_START_TASK_STACK_SIZE
    },
    {
            .ObjectType = CFE_ES_NULL_ENTRY
@@ -153,8 +147,8 @@ CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_ES_OBJECT_TABLE_SIZE] =
            .ObjectType = CFE_ES_CORE_TASK,
            .ObjectName = "CFE_SB",
            .FuncPtrUnion.MainAppPtr = CFE_SB_TaskMain,
-           .ObjectPriority = CFE_SB_START_TASK_PRIORITY,
-           .ObjectSize = CFE_SB_START_TASK_STACK_SIZE
+           .ObjectPriority = CFE_PLATFORM_SB_START_TASK_PRIORITY,
+           .ObjectSize = CFE_PLATFORM_SB_START_TASK_STACK_SIZE
    },
    {
            .ObjectType = CFE_ES_NULL_ENTRY
@@ -163,8 +157,8 @@ CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_ES_OBJECT_TABLE_SIZE] =
            .ObjectType = CFE_ES_CORE_TASK,
            .ObjectName = "CFE_ES",
            .FuncPtrUnion.MainAppPtr = CFE_ES_TaskMain,
-           .ObjectPriority = CFE_ES_START_TASK_PRIORITY,
-           .ObjectSize = CFE_ES_START_TASK_STACK_SIZE
+           .ObjectPriority = CFE_PLATFORM_ES_START_TASK_PRIORITY,
+           .ObjectSize = CFE_PLATFORM_ES_START_TASK_STACK_SIZE
    },
    {
            .ObjectType = CFE_ES_NULL_ENTRY
@@ -173,8 +167,8 @@ CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_ES_OBJECT_TABLE_SIZE] =
            .ObjectType = CFE_ES_CORE_TASK,
            .ObjectName = "CFE_TIME",
            .FuncPtrUnion.MainAppPtr = CFE_TIME_TaskMain,
-           .ObjectPriority = CFE_TIME_START_TASK_PRIORITY,
-           .ObjectSize = CFE_TIME_START_TASK_STACK_SIZE
+           .ObjectPriority = CFE_PLATFORM_TIME_START_TASK_PRIORITY,
+           .ObjectSize = CFE_PLATFORM_TIME_START_TASK_STACK_SIZE
    },
    {
            .ObjectType = CFE_ES_NULL_ENTRY
@@ -184,8 +178,8 @@ CFE_ES_ObjectTable_t  CFE_ES_ObjectTable[CFE_ES_OBJECT_TABLE_SIZE] =
            .ObjectType = CFE_ES_CORE_TASK,
            .ObjectName = "CFE_TBL",
            .FuncPtrUnion.MainAppPtr = CFE_TBL_TaskMain,
-           .ObjectPriority = CFE_TBL_START_TASK_PRIORITY,
-           .ObjectSize = CFE_TBL_START_TASK_STACK_SIZE
+           .ObjectPriority = CFE_PLATFORM_TBL_START_TASK_PRIORITY,
+           .ObjectSize = CFE_PLATFORM_TBL_START_TASK_STACK_SIZE
    },
 #else
    {

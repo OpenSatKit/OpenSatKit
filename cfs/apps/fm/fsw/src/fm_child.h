@@ -1,7 +1,7 @@
 /*
-** $Id: fm_child.h 1.6 2015/02/28 17:50:40EST sstrege Exp  $
+** $Id: fm_child.h 1.7.1.2 2017/01/23 21:52:45EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,20 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_child.h  $
-** Revision 1.6 2015/02/28 17:50:40EST sstrege 
-** Added copyright information
-** Revision 1.5 2012/05/02 10:34:51EDT acudmore 
-** FM Delete All Files command fix.
-** Revision 1.4 2011/07/04 16:13:34EDT lwalling 
-** Add child task prototypes for move, rename, delete, create dir and delete dir command handlers
-** Revision 1.3 2011/04/19 10:11:14EDT lwalling 
-** Add prototype for FM_ChildLoop(), modify description of FM_ChildTask() and FM_ChildProcess()
-** Revision 1.2 2010/01/13 15:21:57EST lwalling 
-** Remove second command completion event from GetDirToFile
-** Revision 1.1 2009/11/09 16:47:45EST lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj
 */
 
 #ifndef _fm_child_h_
@@ -414,6 +400,27 @@ void FM_ChildDirListFileCmd(FM_ChildQueueEntry_t *CmdArgs);
 **/
 void FM_ChildDirListPktCmd(FM_ChildQueueEntry_t *CmdArgs);
 
+/**
+**  \brief Child Task Set Permissions Command Handler
+**
+**  \par Description
+**       This function is invoked when the FM child task has been granted the child
+**       task handshake semaphore and the child task command queue contains arguments
+**       that signal a set permissions / mode on the source1 file or directory
+**
+**  \par Assumptions, External Events, and Notes:
+**
+**  \param [in] CmdArgsPtr - A pointer to an entry in the child task handshake command
+**       queue which contains the arguments necessary to process this command.
+**
+**  \returns
+**  \retcode (none) \endcode
+**  \endreturns
+**
+**  \sa #FM_ChildQueueEntry_t, #FM_SetPermCmd_t
+**/
+void FM_ChildSetPermissionsCmd(FM_ChildQueueEntry_t *CmdArgs);
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -454,7 +461,7 @@ boolean FM_ChildDirListFileInit(int32 *FileHandlePtr, char *Directory, char *Fil
 **
 **  \par Description
 **       This function reads each directory entry, determines the last modify time
-**       and the size for each entry, and writes the entry data to the output file.
+**       size and mode for each entry, and writes the entry data to the output file.
 **
 **  \par Assumptions, External Events, and Notes:
 **
@@ -463,6 +470,7 @@ boolean FM_ChildDirListFileInit(int32 *FileHandlePtr, char *Directory, char *Fil
 **  \param [in] Directory - Pointer to a buffer containing the directory name.
 **  \param [in] DirWithSep - Pointer to directory name with path separator appended.
 **  \param [in] Filename - Pointer to a buffer containing the output filename.
+**  \param [in] GetSizeTimeMode - Option to call OS_stat for size, time, mode of files
 **
 **  \returns
 **  \retcode (none) \endcode
@@ -471,22 +479,23 @@ boolean FM_ChildDirListFileInit(int32 *FileHandlePtr, char *Directory, char *Fil
 **  \sa #FM_GetDirFile
 **/
 void FM_ChildDirListFileLoop(os_dirp_t DirPtr, int32 FileHandle,
-                             char *Directory, char *DirWithSep, char *Filename);
+                             char *Directory, char *DirWithSep, char *Filename, uint8 GetSizeTimeMode);
 
 
 /**
-**  \brief Child Task File Size and Time Utility Function
+**  \brief Child Task File Size Time and Mode Utility Function
 **
 **  \par Description
-**       This function is invoked to query the last modify time and current size for
+**       This function is invoked to query the last modify time, current size and mode (permissions) for
 **       each directory entry when processing either the Get Directory List to File
 **       or Get Directory List to Packet commands.
 **
 **  \par Assumptions, External Events, and Notes:
 **
 **  \param [in] Filename - Pointer to the combined directory and entry names.
-**  \param [in] FileSize - Pointer to the number containing the current entry size.
-**  \param [in] FileTime - Pointer to the number containing the last modify time.
+**  \param [out] FileSize - Pointer to the number containing the current entry size.
+**  \param [out] FileTime - Pointer to the number containing the last modify time.
+**  \param [out] FileMode - Pointer to the value containing the mode (permissions).
 **
 **  \returns
 **  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
@@ -495,7 +504,35 @@ void FM_ChildDirListFileLoop(os_dirp_t DirPtr, int32 FileHandle,
 **
 **  \sa #FM_GetDirFile, #FM_GetDirPkt
 **/
-int32 FM_ChildSizeAndTime(const char *Filename, uint32 *FileSize, uint32 *FileTime);
+int32 FM_ChildSizeTimeMode(const char *Filename, uint32 *FileSize, uint32 *FileTime, uint32 *FileMode);
+
+
+/**
+**  \brief Child Task Sleep and Stat Utility Function
+**
+**  \par Description
+**       This function is invoked to query the last modify time, current size and mode (permissions) for
+**       each directory entry when processing either the Get Directory List to File
+**       or Get Directory List to Packet commands.
+**       However it only will sleep if FM_CHILD_STAT_SLEEP_FILECOUNT reaches zero and call FM_ChildSizeTimeMode if
+**       getSizeTimeMode is TRUE, otherwise this function has no effect
+**  
+**  \par Assumptions, External Events, and Notes:
+**
+**  \param [in] Filename - Pointer to the combined directory and entry names.
+**  \param [out] DirListData - Pointer to the data containing the current entry size, last modify time, and mode
+**  \param [out] FilesTillSleep - If this is zero the function will sleep for FM_CHILD_STAT_SLEEP_MS and reset it to
+**                                 FM_CHILD_STAT_SLEEP_FILECOUNT. Otherwise it will subtract 1
+**  \param [in] GetSizeTimeMode - Whether this function should call FM_ChildSizeTimeMode
+**
+**  \returns
+**  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
+**  \retstmt Error return codes from #OS_stat            \endcode
+**  \endreturns
+**
+**  \sa #FM_GetDirFile, #FM_GetDirPkt
+**/
+void FM_ChildSleepStat(const char *Filename, FM_DirListEntry_t *DirListData, int32 *FilesTillSleep, boolean GetSizeTimeMode);
 
 
 #endif /* _fm_child_h_ */

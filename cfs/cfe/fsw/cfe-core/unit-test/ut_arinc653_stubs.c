@@ -1,15 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**      Copyright (c) 2013, United States government as represented by the
-**      administrator of the National Aeronautics Space Administration.
-**      All rights reserved. This software(cFE) was created at NASA's Goddard
-**      Space Flight Center pursuant to government contracts.
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      This is governed by the NASA Open Source Agreement and may be used,
-**      distributed and modified only pursuant to the terms of that agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
-** File:
-** $Id: ut_arinc653_stubs.c 1.1 2014/05/28 09:23:31GMT-05:00 wmoleski Exp  $
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+** File: ut_arinc653_stubs.c
 **
 ** Purpose:
 ** Unit test stubs for ARINC653 routines
@@ -17,14 +27,6 @@
 ** Notes:
 ** Minimal work is done, only what is required for unit testing
 **
-** $Data:$
-** $Revision: 1.1 $
-** $Log: ut_arinc653_stubs.c  $
-** Revision 1.1 2014/05/28 09:23:31GMT-05:00 wmoleski 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/unit-test/project.pj
-** Revision 1.00 2012/01/13 13:59:30CST rmcclune
-** Baseline version
 */
 /* Define CFE_ARINC653 when compiling using the ARINC653 version of the cFE */
 #ifdef CFE_ARINC653

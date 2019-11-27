@@ -16,6 +16,7 @@
 
 require 'cosmos'
 require 'file_transfer'
+require 'osk_flight'
 
 module Osk
    
@@ -39,25 +40,6 @@ module Osk
          @file_transfer = TftpFileTransfer.new()
       end # End init_variables()
 
-      def self.read_target_json(target_name) 
-
-         folder_name = File.join(Cosmos::USERPATH, 'config', 'targets', target_name.to_s.upcase,'osk')
-         unless Dir.exist?(folder_name)
-            raise parser.error("Undefined target folder '#{folder_name}'.")
-         end
-         path_filename = File.join(folder_name,"#{target_name.to_s.downcase}.json")
-
-         begin
-            app_json = File.read("#{path_filename}")
-            app_hash = JSON.parse(app_json)
-         rescue Exception => e
-            puts e.message
-            puts e.backtrace.inspect  
-         end
-
-         return app_hash
-       
-      end
       
       # 
       # Start the cFS and enable telemetry
@@ -143,6 +125,31 @@ module Osk
       
       end # stop_cfs()
       
+
+      # 
+      # Start the 42 simulator and connect FSW I42 app
+      #      
+      def self.start_42(display_scr=false)
+     
+         message_box("The 42 simulator takes about 20 seconds to initialize.",Osk::MSG_BUTTON_CONT,false)
+      
+         spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
+         wait(15)
+         Osk::flight.send_cmd("I42","CONNECT_42")
+     
+         display("CFS_KIT SIM_42_SCREEN",1500,50) if display_scr
+      
+      end # start_42()
+
+      # 
+      # Start the 42 simulator and connect FSW I42 app
+      #      
+      def self.stop_42
+      
+         Osk::flight.send_cmd("I42","DISCONNECT_42")
+      
+      end # stop_42()
+
 
       # Stop the COSMOS cmd-tlm-server. This is an ungraceful
       # termination. It kills the process.

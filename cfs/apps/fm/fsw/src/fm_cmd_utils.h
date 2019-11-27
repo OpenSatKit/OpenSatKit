@@ -1,7 +1,7 @@
 /*
-** $Id: fm_cmd_utils.h 1.17 2015/02/28 17:50:53EST sstrege Exp  $
+** $Id: fm_cmd_utils.h 1.2.1.2 2017/01/23 21:53:15EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -23,43 +23,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_cmd_utils.h  $
-** Revision 1.17 2015/02/28 17:50:53EST sstrege 
-** Added copyright information
-** Revision 1.16 2011/04/19 16:40:28EDT lwalling 
-** Added function FM_VerifyOverwrite to validate overwrite command arguments
-** Revision 1.15 2009/11/20 15:33:37EST lwalling 
-** Remove return code and error events from FM_AppendPathSep
-** Revision 1.14 2009/11/17 13:40:53EST lwalling 
-** Remove global open files list data structure
-** Revision 1.13 2009/11/13 16:30:01EST lwalling 
-** Remove VerifyFileOpen function prototype
-** Revision 1.12 2009/11/09 16:51:25EST lwalling 
-** Cleanup and expand function prptotype doxygen comments
-** Revision 1.11 2009/10/30 14:02:32EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.10 2009/10/29 11:42:28EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.9 2009/10/23 14:44:11EDT lwalling
-** Modify function args re event text, remove prototypes for slow util functions
-** Revision 1.8 2009/10/16 15:41:09EDT lwalling
-** Update function names
-** Revision 1.7 2009/10/06 11:06:11EDT lwalling
-** Clean up after create common filename verify functions
-** Revision 1.6 2009/09/28 14:15:32EDT lwalling
-** Create common filename verification functions
-** Revision 1.5 2009/09/14 16:08:58EDT lwalling
-** Changed second argument to FM_IsValidPathname() from string length to buffer size
-** Revision 1.4 2008/12/24 16:23:32EST sstrege
-** Added IsValidDeleteFile utility function definitions
-** Updated IsValidDeleteFile function prototype and description
-** Revision 1.3 2008/12/22 15:45:46EST sstrege
-** Updated IsValidDeleteFile utility function to accept Event Type as an input parameter
-** Revision 1.2 2008/06/20 16:21:25EDT slstrege
-** Member moved from fsw/src/fm_cmd_utils.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_cmd_utils.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:25ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_cmd_utils_h_

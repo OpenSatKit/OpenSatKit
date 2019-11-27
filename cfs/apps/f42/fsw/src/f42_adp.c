@@ -93,12 +93,12 @@ void F42_ADP_Run42Fsw(F42_ADP_SensorPkt*  SensorPkt) {
 
    CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_Run42Fsw() - About to run ThreeAxisFSW()\n");
    CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "DeltaTime = %f, SunValid  = %d\n",SensorPkt->DeltaTime,SensorPkt->SunValid);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "PosN[0] = %.6f, PosN[1] = %.6f, PosN[2] = %.6f,\n",SensorPkt->PosN[0],SensorPkt->PosN[1],SensorPkt->PosN[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "VelN[0] = %.6f, VelN[1] = %.6f, VelN[2] = %.6f,\n",SensorPkt->VelN[0],SensorPkt->VelN[1],SensorPkt->VelN[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "wbn[0] = %.6f, wbn[1] = %.6f, wbn[2] = %.6f,\n",SensorPkt->wbn[0],SensorPkt->wbn[1],SensorPkt->wbn[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "qbn[0] = %.6f, qbn[1] = %.6f, qbn[2] = %.6f,\n",SensorPkt->qbn[0],SensorPkt->qbn[1],SensorPkt->qbn[2],SensorPkt->qbn[3]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "svn[0] = %.6f, svn[1] = %.6f, svn[2] = %.6f,\n",SensorPkt->svn[0],SensorPkt->svn[1],SensorPkt->svn[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "svb[0] = %.6f, svb[1] = %.6f, svb[2] = %.6f,\n",SensorPkt->svb[0],SensorPkt->svb[1],SensorPkt->svb[2]);
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "PosN[0] = %.6f, PosN[1] = %.6f, PosN[2] = %.6f\n",SensorPkt->PosN[0],SensorPkt->PosN[1],SensorPkt->PosN[2]);
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "VelN[0] = %.6f, VelN[1] = %.6f, VelN[2] = %.6f\n",SensorPkt->VelN[0],SensorPkt->VelN[1],SensorPkt->VelN[2]);
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "wbn[0] = %.6f, wbn[1] = %.6f, wbn[2] = %.6f\n",SensorPkt->wbn[0],SensorPkt->wbn[1],SensorPkt->wbn[2]);
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "qbn[0] = %.6f, qbn[1] = %.6f, qbn[2] = %.6f, qbn[3] = %.6f\n",SensorPkt->qbn[0],SensorPkt->qbn[1],SensorPkt->qbn[2],SensorPkt->qbn[3]);
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "svn[0] = %.6f, svn[1] = %.6f, svn[2] = %.6f\n",SensorPkt->svn[0],SensorPkt->svn[1],SensorPkt->svn[2]);
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "svb[0] = %.6f, svb[1] = %.6f, svb[2] = %.6f\n",SensorPkt->svb[0],SensorPkt->svb[1],SensorPkt->svb[2]);
 
    CopySensorPktToFswStruct(SensorPkt);
    ThreeAxisFSW(&(F42Adp->Fsw));

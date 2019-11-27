@@ -1,7 +1,7 @@
 /*
-** $Id: fm_events.h 1.24.1.2 2015/02/28 18:10:52EST sstrege Exp  $
+** $Id: fm_events.h 1.5.1.2 2017/01/23 21:53:18EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -21,63 +21,6 @@
 ** References:
 **    Flight Software Branch C Coding Standard Version 1.0a
 **
-** $Log: fm_events.h  $
-** Revision 1.24.1.2 2015/02/28 18:10:52EST sstrege 
-** Added copyright information
-** Revision 1.24.1.1 2015/01/16 16:06:03EST lwalling 
-** Change event 42 type from debug to information
-** Revision 1.24 2014/06/30 17:03:39EDT sjudy 
-** Changed some command event types from INFO to DEBUG.
-** Revision 1.23 2011/07/04 15:44:06EDT lwalling 
-** Add child task events for delete, move, rename, create dir and delete dir commands
-** Revision 1.22 2011/04/19 15:54:58EDT lwalling 
-** Added overwrite argument error events for copy and move commands, renumbered events
-** Revision 1.21 2011/04/19 11:06:49EDT lwalling 
-** Change empty queue and invalid queue index from cmd execution errors to task termination errors
-** Revision 1.20 2011/04/19 10:05:31EDT lwalling 
-** Add error event text for attempt to invoke child task command handler when disabled
-** Revision 1.19 2010/04/12 11:29:11EDT lwalling 
-** Added definition for table verify summary event
-** Revision 1.18 2010/03/03 18:22:13EST lwalling 
-** Changed some Doxygen symbols, changed cmd names to match ASIST database
-** Revision 1.17 2009/11/20 15:30:58EST lwalling 
-** Remove events from FM_AppendPathSep, add events for invalid and missing directory names
-** Revision 1.16 2009/11/13 16:31:29EST lwalling 
-** Add more CRC events, modify comment text, add SetTableEntryState events
-** Revision 1.15 2009/11/09 16:59:41EST lwalling 
-** Update doxygen comments and event text for event descriptions
-** Revision 1.14 2009/10/30 14:02:33EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.13 2009/10/28 16:40:57EDT lwalling
-** Complete effort to replace the use of phrase device table with file system free space table
-** Revision 1.12 2009/10/28 16:30:10EDT lwalling
-** Modify events generated during table verification
-** Revision 1.11 2009/10/27 17:27:38EDT lwalling
-** Add a Get File Info warning event for failed CRC calculations
-** Revision 1.10 2009/10/26 16:41:25EDT lwalling
-** Add child queue error event to GetFileInfo command handler
-** Revision 1.9 2009/10/26 11:30:59EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.8 2009/10/23 14:49:07EDT lwalling
-** Update event text and descriptions of event text
-** Revision 1.7 2009/10/16 15:48:41EDT lwalling
-** Update event text, event descriptions, event ID names
-** Revision 1.6 2009/10/09 17:23:52EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.5 2009/09/28 14:15:28EDT lwalling
-** Create common filename verification functions
-** Revision 1.4 2008/12/30 15:03:49EST sstrege
-** Updated "command received" events to "command completed" events
-** Updated event types for events 51, 52, 53, 68, 71, 77, 88, 94, 97, 104
-** Removed FM_DIR_LIST_FILE_CMD_EID
-** Revision 1.3 2008/12/24 16:25:50EST sstrege
-** Added new DeleteFile and DeleteAllFiles Event IDs
-** Updated Event IDs
-** Revision 1.2 2008/06/20 16:21:36EDT slstrege
-** Member moved from fsw/src/fm_events.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_events.h in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:36ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #ifndef _fm_events_h_
@@ -1861,6 +1804,7 @@
 **  \event <tt> 'Child Task initialization error: create task failed: result = \%d' </tt>
 **  \event <tt> 'Child Task initialization error: register child failed: result = \%d' </tt>
 **  \event <tt> 'Child Task initialization error: create semaphore failed: result = \%d' </tt>
+**  \event <tt> 'Child Task initialization error: create queue count semaphore failed: result = \%d' </tt>
 **
 **  \par Type: ERROR
 **
@@ -1929,6 +1873,42 @@
 */
 #define FM_TABLE_VERIFY_EID                 104
 
+
+/** \brief <tt> 'Set Permissions error: Invalid Command Packet Length' </tt>
+**  \event <tt> 'Set Permissions error: invalid command packet length: expected = \%d, actual = \%d' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause
+**
+**  This event message is generated upon receipt of a /FM_SetPermissions
+**  command packet with an invalid length.
+*/
+#define FM_SET_PERM_ERR_EID      110
+
+/** \brief <tt> 'Set Permissions Command' </tt>
+**  \event <tt> 'Set Permissions command: filename = \%s, state = \%d' </tt>
+**
+**  \par Type: DEBUG
+**
+**  \par Cause
+**
+**  This event message signals the successful completion of a
+**  /FM_SetPerm command.
+*/
+#define FM_SET_PERM_CMD_EID      111
+
+/** \brief <tt> 'Set Permissions: OS_chmod error: ' </tt>
+**  \event <tt> 'Set Permissions: OS_chmod error, RC=0x%08X, file = %s, access = %d' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause
+**
+**  This event message is generated upon receipt of a /FM_SetPerm
+**  command packet with an invalid length.
+*/
+#define FM_SET_PERM_OS_ERR_EID      112
 
 #endif /* _fm_events_h_ */
 

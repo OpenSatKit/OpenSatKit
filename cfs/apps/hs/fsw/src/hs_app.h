@@ -60,6 +60,8 @@
 #include "hs_msg.h"
 #include "hs_tbl.h"
 #include "cfe.h"
+#include "cfe_platform_cfg.h"  //dcm
+#include "cfe_msgids.h"  //dcm
 
 /************************************************************************
 ** Macro Definitions

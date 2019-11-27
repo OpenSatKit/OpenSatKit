@@ -133,7 +133,7 @@ def create_app_manage_dir(screen, cmd)
             cosmos_target_dir.text = path_filename
          end
       elsif (cmd == "TODO")
-         prompt("Feature coming soon...")
+         prompt(Osk::MSG_TBD_FEATURE)
       else
          raise "Error in screen definition file. Undefined command sent to create_app_manage_dir()"
       end

@@ -12,3 +12,4 @@ aux_source_directory(fsw/src APP_SRC_FILES)
 add_cfe_app(f42 ${APP_SRC_FILES})
 target_link_libraries (f42 m)
 
+

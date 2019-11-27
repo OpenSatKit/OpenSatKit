@@ -1,7 +1,7 @@
 /*
-** $Id: fm_cmds.c 1.49 2015/02/28 17:50:44EST sstrege Exp  $
+** $Id: fm_cmds.c 1.8.1.2 2017/01/23 21:52:56EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -18,108 +18,6 @@
 **
 ** Notes:
 **
-** $Log: fm_cmds.c  $
-** Revision 1.49 2015/02/28 17:50:44EST sstrege 
-** Added copyright information
-** Revision 1.48 2014/12/12 15:53:08EST lwalling 
-** Cazll CFE_TBL_Modified() after freespace table update
-** Revision 1.47 2014/12/04 17:52:10EST lwalling 
-** Removed unused CommandWarnCounter
-** Revision 1.46 2011/08/29 15:08:21EDT lwalling 
-** Removed unused arg to function FM_DeleteFileCmd(), set actual CC as cmd arg to child task
-** Revision 1.45 2011/07/04 17:45:15EDT lwalling 
-** Modified to use child task to process move, rename, delete, create dir and delete dir commands.
-** Revision 1.44 2011/05/31 17:11:44EDT lwalling 
-** Added ground cmd vs other app arg to delete file command handler prototype
-** Revision 1.43 2011/05/19 14:52:06EDT lwalling 
-** Change pointer use that violates strict-aliasing rules to call CFE_PSP_MemCpy
-** Revision 1.42 2011/04/19 16:44:07EDT lwalling 
-** Modified copy and move file cmd handlers to test target filename per overwrite cmd argument
-** Revision 1.41 2010/03/08 15:49:54EST lwalling 
-** Remove uint64 data type from free space packet
-** Revision 1.40 2010/03/03 18:13:38EST lwalling 
-** Added CMD to Set Table State event ID macro name
-** Revision 1.39 2010/02/25 13:31:34EST lwalling 
-** Enable calls to OS_fsBytesFree
-** Revision 1.38 2009/11/20 15:32:18EST lwalling 
-** Remove return code and error events from FM_AppendPathSep
-** Revision 1.37 2009/11/17 13:40:49EST lwalling 
-** Remove global open files list data structure
-** Revision 1.36 2009/11/13 16:22:43EST lwalling 
-** Modify macro names, add CRC arg to GetFileInfo cmd, add SetTableEntryState cmd
-** Revision 1.35 2009/11/09 17:01:12EST lwalling 
-** Fix return code for ResetCounters cmd, change dest to target, cleanup event text
-** Revision 1.34 2009/10/30 15:59:40EDT lwalling 
-** Add include fm_msgdefs.h, modify free space table state definitions
-** Revision 1.33 2009/10/30 14:02:26EDT lwalling 
-** Remove trailing white space from all lines
-** Revision 1.32 2009/10/30 10:47:37EDT lwalling
-** Remove detail from function prologs, use command specific packet structures
-** Revision 1.31 2009/10/29 11:42:24EDT lwalling
-** Make common structure for open files list and open file telemetry packet, change open file to open files
-** Revision 1.30 2009/10/27 17:28:36EDT lwalling
-** Add a command warning counter for child task command handlers
-** Revision 1.29 2009/10/26 16:42:41EDT lwalling
-** Move GetFileInfo cmd to child task, change struct/var names, add child vars to reset cmd
-** Revision 1.28 2009/10/26 11:31:00EDT lwalling
-** Remove Close File command from FM application
-** Revision 1.27 2009/10/23 14:36:29EDT lwalling
-** Create FM child task to process slow commands, event text updates
-** Revision 1.26 2009/10/16 15:49:50EDT lwalling
-** Update event text, event ID names, function names, add global directory list structures
-** Revision 1.25 2009/10/09 17:23:53EDT lwalling
-** Create command to generate file system free space packet, replace device table with free space table
-** Revision 1.24 2009/10/06 11:06:11EDT lwalling
-** Clean up after create common filename verify functions
-** Revision 1.23 2009/09/29 13:41:24EDT lwalling
-** Perform tests for file open against current system list of open files, allow open files for copy/move/rename commands
-** Revision 1.22 2009/09/28 15:29:55EDT lwalling
-** Review and modify event text
-** Revision 1.21 2009/09/28 14:15:27EDT lwalling
-** Create common filename verification functions
-** Revision 1.20 2009/09/14 16:10:32EDT lwalling
-** Removed insert string term and modified calls to FM_IsValidPathname() in all cmd handlers
-** Revision 1.19 2009/09/10 13:03:05EDT lwalling
-** Modified FM_CloseFileCmd() to change from OS_NameChange() to OS_TranslatePath()
-** Revision 1.18 2009/06/12 14:16:27EDT rmcgraw
-** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-** Revision 1.17 2008/12/30 14:56:18EST sstrege
-** Updated event message reporting
-** Revision 1.16 2008/12/24 16:24:42EST sstrege
-** Updated DeleteFile and DeleteAllFiles command functions
-** Revision 1.15 2008/12/22 16:28:54EST sstrege
-** Added code for supporting default directory listing file
-** Revision 1.14 2008/12/22 15:45:47EST sstrege
-** Updated IsValidDeleteFile utility function to accept Event Type as an input parameter
-** Revision 1.13 2008/12/08 18:41:50EST sstrege
-** Concat command updated to copy source file 1 to destination, before destination is opened
-** Revision 1.12 2008/11/30 17:25:30EST sstrege
-** Concat command updated to open src file 2 before destination file
-** Revision 1.11 2008/11/30 16:51:09EST sstrege
-** Moved OS_cp call in concat command
-** Revision 1.10 2008/11/30 15:22:03EST sstrege
-** Removed double existence check on concat command destination file
-** Revision 1.9 2008/11/05 18:17:07EST sstrege
-** Updated local variable OpenFileMsg to be static
-** Prepended "FM_" to all static local variables and added extra comments
-** Revision 1.8 2008/10/06 11:29:05EDT sstrege
-** Added call to OS_lseek before writing directory listing statistics to the directory listing file
-** Revision 1.7 2008/10/03 16:22:00EDT sstrege
-** Removed OS_NameChange calls in DecompressFileCmd and replaced OS_BSBDecompress call with CFE_FS_Decompress
-** Revision 1.6 2008/10/03 15:53:49EDT sstrege
-** Added include to new fm_version.h header files
-** Added version information to noop command event message
-** Revision 1.5 2008/10/01 16:20:04EDT sstrege
-** Updated FM_DirListMsgCmd to use new FM_SourceUint32DataCmd_t and removed local DirListOffset variable
-** Revision 1.4 2008/09/30 17:35:12EDT sstrege
-** Removed Delete All Files command invalidation for OS error and path too long conditions
-** Revision 1.3 2008/09/30 16:40:05EDT sstrege
-** Added include statement for fm_perfids.h
-** Revision 1.2 2008/06/20 16:21:28EDT slstrege
-** Member moved from fsw/src/fm_cmds.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_cmds.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
-** Revision 1.1 2008/06/20 15:21:28ACT slstrege
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
 */
 
 #include "cfe.h"
@@ -876,6 +774,7 @@ boolean FM_GetDirListFileCmd(CFE_SB_MsgPtr_t MessagePtr)
 
         /* Set handshake queue command args */
         CmdArgs->CommandCode = FM_GET_DIR_FILE_CC;
+        CmdArgs->GetSizeTimeMode = CmdPtr->GetSizeTimeMode;
         strcpy(CmdArgs->Source1, CmdPtr->Directory);
         strcpy(CmdArgs->Source2, DirWithSep);
         strcpy(CmdArgs->Target, Filename);
@@ -931,6 +830,7 @@ boolean FM_GetDirListPktCmd(CFE_SB_MsgPtr_t MessagePtr)
 
         /* Set handshake queue command args */
         CmdArgs->CommandCode = FM_GET_DIR_PKT_CC;
+        CmdArgs->GetSizeTimeMode = CmdPtr->GetSizeTimeMode;
         strcpy(CmdArgs->Source1, CmdPtr->Directory);
         strcpy(CmdArgs->Source2, DirWithSep);
         CmdArgs->DirListOffset = CmdPtr->DirListOffset;
@@ -1042,7 +942,7 @@ boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
             CommandResult = FALSE;
 
             CFE_EVS_SendEvent(FM_SET_TABLE_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
-               "%s error: invalid command argument: index = %d", CmdText, CmdPtr->TableEntryIndex);
+               "%s error: invalid command argument: index = %d", CmdText, (int)CmdPtr->TableEntryIndex);
         }
         else if ((CmdPtr->TableEntryState != FM_TABLE_ENTRY_ENABLED) &&
             (CmdPtr->TableEntryState != FM_TABLE_ENTRY_DISABLED))
@@ -1051,7 +951,7 @@ boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
             CommandResult = FALSE;
 
             CFE_EVS_SendEvent(FM_SET_TABLE_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
-               "%s error: invalid command argument: state = %d", CmdText, CmdPtr->TableEntryState);
+               "%s error: invalid command argument: state = %d", CmdText, (int)CmdPtr->TableEntryState);
         }
         else if (FM_GlobalData.FreeSpaceTablePtr->FileSys[CmdPtr->TableEntryIndex].State == FM_TABLE_ENTRY_UNUSED)
         {
@@ -1059,7 +959,7 @@ boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
             CommandResult = FALSE;
 
             CFE_EVS_SendEvent(FM_SET_TABLE_STATE_UNUSED_ERR_EID, CFE_EVS_ERROR,
-               "%s error: cannot modify unused table entry: index = %d", CmdText, CmdPtr->TableEntryIndex);
+               "%s error: cannot modify unused table entry: index = %d", CmdText, (int)CmdPtr->TableEntryIndex);
         }
         else
         {
@@ -1071,7 +971,7 @@ boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
 
             /* Send command completion event (info) */
             CFE_EVS_SendEvent(FM_SET_TABLE_STATE_CMD_EID, CFE_EVS_INFORMATION,
-               "%s command: index = %d, state = %d", CmdText, CmdPtr->TableEntryIndex, CmdPtr->TableEntryState);
+               "%s command: index = %d, state = %d", CmdText, (int)CmdPtr->TableEntryIndex, (int)CmdPtr->TableEntryState);
         }
     }
 
@@ -1079,6 +979,59 @@ boolean FM_SetTableStateCmd(CFE_SB_MsgPtr_t MessagePtr)
 
 } /* End of FM_SetTableStateCmd() */
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* FM command handler -- Set Permissions for a file                */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+boolean FM_SetPermissionsCmd(CFE_SB_MsgPtr_t MessagePtr)
+{
+    FM_SetPermCmd_t *CmdPtr = (FM_SetPermCmd_t *) MessagePtr;
+    FM_ChildQueueEntry_t *CmdArgs;
+    char *CmdText = "Set Permissions";
+    boolean CommandResult;
+    boolean FilenameState;
+
+    /* Verify command packet length */
+    CommandResult = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_SetPermCmd_t),
+                                           FM_SET_PERM_ERR_EID, CmdText);
+    
+    
+    if(CommandResult == TRUE)
+    {
+        FilenameState = FM_VerifyNameValid(CmdPtr->FileName, sizeof(CmdPtr->FileName),
+                                            0, CmdText);
+        
+        if (FilenameState == FM_NAME_IS_INVALID)
+        {
+            CommandResult = FALSE;
+        }
+    }
+    
+    /* Check for lower priority child task availability */
+    if (CommandResult == TRUE)
+    {
+        CommandResult = FM_VerifyChildTask(FM_SET_PERM_ERR_EID, CmdText);
+    }
+
+    /* Prepare command for child task execution */
+    if (CommandResult == TRUE)
+    {
+        CmdArgs = &FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex];
+        /* Set handshake queue command args */
+        CmdArgs->CommandCode = FM_SET_FILE_PERM_CC;
+        strcpy(CmdArgs->Source1, CmdPtr->FileName);
+        CmdArgs->Mode = CmdPtr->Mode;
+
+        /* Invoke lower priority child task */
+        FM_InvokeChildTask();
+    }
+
+    return(CommandResult);
+
+} /* End of FM_SetPermissionsCmd() */
 
 /************************/
 /*  End of File Comment */

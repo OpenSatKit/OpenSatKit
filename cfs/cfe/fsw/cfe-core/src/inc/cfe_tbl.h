@@ -1,14 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
-**  $Id: cfe_tbl.h 1.9 2014/08/24 16:59:51GMT-05:00 sstrege Exp  $
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
 **
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
 **
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
+**  File: cfe_tbl.h
 **
 **  Title:   Table Services API Application Library Header File
 **
@@ -22,42 +33,14 @@
 **
 **  Notes:
 **
-**  $Log: cfe_tbl.h  $
-**  Revision 1.9 2014/08/24 16:59:51GMT-05:00 sstrege 
-**  Updated CFE_TBL_MAX_FULL_NAME_LEN definition to always fall on 4-byte boundary
-**  Revision 1.8 2010/10/27 16:34:31EDT dkobe 
-**  Added CRC field to Table Buffer data structure
-**  Revision 1.7 2010/10/27 13:55:07EDT dkobe 
-**  Added TBL Notification API
-**  Revision 1.6 2010/10/04 15:24:59EDT jmdagost 
-**  Cleaned up copyright symbol.
-**  Revision 1.5 2009/05/01 16:38:54EDT dkobe 
-**  Updated documentation for CFE_TBL_Register dealing with Validation functions
-**  Revision 1.4 2009/05/01 14:26:33EDT dkobe 
-**  Modified return code contents to emphasize success vs failure of API calls
-**  Revision 1.3 2008/07/29 18:32:18EDT dkobe 
-**  Added CFE_TBL_Modified API
-**  Revision 1.2 2008/07/29 15:55:19EDT dkobe 
-**  Moved CFE_TBL_DumpToBuffer from cfe_tbl_internal.c to cfe_tbl_api.c
-**  Revision 1.1 2008/04/17 08:05:24EDT ruperera 
-**  Initial revision
-**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/inc/project.pj
-**  Revision 1.13 2007/05/23 11:22:00EDT David Kobe (dlkobe) 
-**  Added doxygen formatting
-**  Revision 1.12 2007/04/28 14:48:57EDT dlkobe 
-**  Baseline Implementation of Critical Tables
-**  Revision 1.11 2007/03/28 15:18:17EST rjmcgraw 
-**  Moved file related defines from cfe_tbl.h to cfe_fs.h
-**  Revision 1.10 2006/11/03 15:41:43EST dlkobe 
-**  Modified cfe_tbl.h so that the CFE_TBL_OPT_USR_DEF_ADDR 
-**  macro includes the CFE_TBL_OPT_DUMP_ONLY option
-**
 **/
 
 #ifndef _cfe_tbl_
 #define _cfe_tbl_
 
 /********************* Include Files  ************************/
+#include "cfe_tbl_extern_typedefs.h"
+#include "cfe_sb_extern_typedefs.h"
 #include "common_types.h"  /* Basic Data Types */
 #include "cfe_time.h"
 #include "osconfig.h"
@@ -81,13 +64,33 @@
 
 #define CFE_TBL_OPT_DEFAULT      (CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_LOAD_DUMP)
 
-/** Computation for maximum length allowed for a table name. <BR>
-** NOTE: "+2" is for NULL Character and "." (i.e. - "AppName.TblName") */
-#define CFE_TBL_MAX_FULL_NAME_LEN_COMP (CFE_TBL_MAX_NAME_LENGTH + OS_MAX_API_NAME + 2)
-/* Ensure the table name falls on a 4-byte boundary */
-#define CFE_TBL_MAX_FULL_NAME_LEN (((CFE_TBL_MAX_FULL_NAME_LEN_COMP + 3)/4)*4)
+/*
+ * The full length of table names is defined at the mission scope.
+ * This is defined here to support applications that depend on cfe_tbl.h
+ * providing this value.
+ */
+#define CFE_TBL_MAX_FULL_NAME_LEN (CFE_MISSION_TBL_MAX_FULL_NAME_LEN)
 
 #define CFE_TBL_BAD_TABLE_HANDLE  (CFE_TBL_Handle_t) 0xFFFF
+
+
+/*
+ * To preserve source-code compatibility with existing code,
+ * this allows the old enum names to still work.  This should
+ * be turned off after the new names are established.
+ */
+#ifndef CFE_OMIT_DEPRECATED_6_6
+
+/*
+ * Compatibility Macros for the BufferSelect enumeration
+ */
+#define CFE_TBL_INACTIVE_BUFFER             CFE_TBL_BufferSelect_INACTIVE
+#define CFE_TBL_ACTIVE_BUFFER               CFE_TBL_BufferSelect_ACTIVE
+
+
+#endif  /* CFE_OMIT_DEPRECATED_6_6 */
+
+
 
 /******************  Data Type Definitions *********************/
 
@@ -119,11 +122,11 @@ typedef struct
     uint32                FileCreateTimeSubSecs;            /**< \brief File creation time from last file loaded into table */
     uint32                Crc;                              /**< \brief Most recently calculated CRC by TBL services on table contents */
     CFE_TIME_SysTime_t    TimeOfLastUpdate;                 /**< \brief Time when Table was last updated */
-    boolean               TableLoadedOnce;                  /**< \brief Flag indicating whether table has been loaded once or not */
-    boolean               DumpOnly;                         /**< \brief Flag indicating Table is NOT to be loaded */
-    boolean               DblBuffered;                      /**< \brief Flag indicating Table has a dedicated inactive buffer */
-    boolean               UserDefAddr;                      /**< \brief Flag indicating Table address was defined by Owner Application */
-    boolean               Critical;                         /**< \brief Flag indicating Table contents are maintained in a CDS */
+    bool                  TableLoadedOnce;                  /**< \brief Flag indicating whether table has been loaded once or not */
+    bool                  DumpOnly;                         /**< \brief Flag indicating Table is NOT to be loaded */
+    bool                  DoubleBuffered;                      /**< \brief Flag indicating Table has a dedicated inactive buffer */
+    bool                  UserDefAddr;                      /**< \brief Flag indicating Table address was defined by Owner Application */
+    bool                  Critical;                         /**< \brief Flag indicating Table contents are maintained in a CDS */
     char                  LastFileLoaded[OS_MAX_PATH_LEN];  /**< \brief Filename of last file loaded into table */
 } CFE_TBL_Info_t;
 
@@ -853,6 +856,6 @@ int32   CFE_TBL_Modified( CFE_TBL_Handle_t TblHandle );
 ** \sa #CFE_TBL_Register
 **
 ******************************************************************************/
-int32 CFE_TBL_NotifyByMessage(CFE_TBL_Handle_t TblHandle, uint32 MsgId, uint16 CommandCode, uint32 Parameter);
+int32 CFE_TBL_NotifyByMessage(CFE_TBL_Handle_t TblHandle, CFE_SB_MsgId_t MsgId, uint16 CommandCode, uint32 Parameter);
 
 #endif  /* _cfe_tbl_ */

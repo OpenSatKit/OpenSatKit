@@ -21,8 +21,6 @@
     <LI> \subpage cfeevsugfaq <BR> 
   </UL>
   
-  \subpage cfeevsrevhist <BR>
-  
 **/
 
 /**
@@ -64,12 +62,15 @@
   Data Storage can then subscribe to these messages making them telemetry.  For 
   the purposes of this document, any references to telemetry assumes that a telemetry 
   application subscribes to the EVS event software bus message and routes it to the 
-  ground as telemetry.
+  ground as telemetry.  Note that short format event messages on the Software Bus
+  have different message lengths than long form messages and do not include
+  any part of the long format message string.
 
   The EVS can be configured via ground command to send event messages out one or 
   more message ports.  These message ports may include ports such as debug, console, 
   and UART.  Messages sent out of the message ports will be in ASCII text format.  
-  This is generally used for lab purposes.
+  This is generally used for lab purposes.  Note that the event mode (short or
+  long) does affect the event message content sent out these message ports.
 
 
   Next: \ref cfeevsuglog <BR>
@@ -87,7 +88,9 @@
   during non-deterministic processor initialization sequences and during failure 
   scenarios.  In order to obtain the contents of the Local Event Log, a command must 
   be sent to write the contents of the buffer to a file which can then be sent to the 
-  ground via a file transfer mechanism.  
+  ground via a file transfer mechanism.  Note that event messages stored in the EVS
+  Local Event Log are always long format messages and are not affected by the
+  event mode (short or long).
 
   EVS provides a command in order to \link #CFE_EVS_CLEAR_LOG_CC clear the Local Event Log \endlink.  
 
@@ -493,28 +496,3 @@
 **  either for each platform or for a mission as a whole.
 **/
 
-
-/**
-  \page cfeevsrevhist cFE Event Services Documentation Revision History
-  
-  \verbatim
-  $Log: cfe_evs.dox  $
-  Revision 1.7 2014/05/20 13:44:13GMT-05:00 sstrege 
-  Added clarification on event log preservation following a processor reset
-  Revision 1.6 2010/10/27 16:38:17EDT jmdagost 
-  Updated processor reset effects to describe LogMode behavior.
-  Revision 1.5 2009/07/31 20:08:34EDT aschoeni 
-  Updated comment on event message filtering maximum
-  Revision 1.4 2009/07/28 17:31:51EDT aschoeni 
-  Added information on filter count maximum
-  Revision 1.3 2008/12/08 12:07:12EST dkobe 
-  Updates to correct doxygen errors
-  Revision 1.2 2008/12/06 15:34:31EST dkobe 
-  Corrected formatting of revision history
-  Revision 1.1 2008/12/06 10:19:48EST dkobe 
-  Initial revision
-  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/docs/src/project.pj
-  \endverbatim
-
-  Up To: \ref cfeevsovr
-**/

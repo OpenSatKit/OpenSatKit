@@ -1,17 +1,25 @@
 /*
+**  GSC-18128-1, "Core Flight Executive Version 6.6"
 **
+**  Copyright (c) 2006-2019 United States Government as represented by
+**  the Administrator of the National Aeronautics and Space Administration.
+**  All Rights Reserved.
+**
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**
+**    http://www.apache.org/licenses/LICENSE-2.0
+**
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+*/
+
+/*
 **  Filename: cfe_time_events.h
-**
-**      Copyright (c) 2004-2006, United States government as represented by the 
-**      administrator of the National Aeronautics Space Administration.  
-**      All rights reserved. This software(cFE) was created at NASA's Goddard 
-**      Space Flight Center pursuant to government contracts.
-**
-**      This is governed by the NASA Open Source Agreement and may be used, 
-**      distributed and modified only pursuant to the terms of that agreement. 
-**
-*
-**  $Id: cfe_time_events.h 1.5 2011/11/30 15:10:44GMT-05:00 jmdagost Exp  $
 **
 **  Purpose:
 **	           cFE Time Services (Time) Event IDs
@@ -21,14 +29,20 @@
 **  References:
 **     Flight Software Branch C Coding Standard Version 1.0a
 **
-**
-**  $Date: 2011/11/30 15:10:44GMT-05:00 $
-**  $Revision: 1.5 $
-**  $Log $
 */
 
 #ifndef _cfe_time_events_
 #define _cfe_time_events_
+
+/* **************************
+** ****** Maximum EID. ******
+** **************************
+** The EID's below may not necessarily be in order, so it can be difficult to
+** determine what the next EID is to use. When you add EID's, start with MAX_EID + 1
+** and when you're done adding, set this to the highest EID you used. It may
+** be worthwhile to, on occasion, re-number the EID's to put them back in order.
+*/
+#define CFE_TIME_MAX_EID         49
 
 /*
 ** Event message ID's...
@@ -65,7 +79,7 @@
 **  \par Cause:
 **
 **  This event message is always automatically issued in response 
-**  to a cFE Time Services \link #CFE_TIME_RESET_CC Reset Counters command \endlink
+**  to a cFE Time Services \link #CFE_TIME_RESET_COUNTERS_CC Reset Counters command \endlink
 **/
 #define CFE_TIME_RESET_EID       5
 
@@ -77,7 +91,7 @@
 **  \par Cause:
 **
 **  This event message is always automatically issued in response 
-**  to a cFE Time Services \link #CFE_TIME_DIAG_TLM_CC Request Diagnostics command \endlink
+**  to a cFE Time Services \link #CFE_TIME_SEND_DIAGNOSTIC_TLM_CC Request Diagnostics command \endlink
 **/
 #define CFE_TIME_DIAG_EID        6
 
@@ -143,7 +157,7 @@
 **  field specifies the delay in micro-seconds, the \c ssecs field is
 **  the micro-seconds field converted to Spacecraft Time sub-seconds and
 **  the \c dir field identifies the direction of the delay.  The direction
-**  can be either #CFE_TIME_ADD_ADJUST or #CFE_TIME_SUB_ADJUST.
+**  can be either #CFE_TIME_AdjustDirection_ADD or #CFE_TIME_AdjustDirection_SUBTRACT.
 **/
 #define CFE_TIME_DELAY_EID       11
 
@@ -212,7 +226,7 @@
 **  the \c usecs field specifies the number of micro-seconds, the \c ssecs field is
 **  the micro-seconds field converted to Spacecraft Time sub-seconds and the \c dir
 **  field identifies whether the adjustment was added or subtracted. The direction
-**  can be either #CFE_TIME_ADD_ADJUST or #CFE_TIME_SUB_ADJUST.
+**  can be either #CFE_TIME_AdjustDirection_ADD or #CFE_TIME_AdjustDirection_SUBTRACT.
 **/
 #define CFE_TIME_DELTA_EID       15
 
@@ -225,14 +239,14 @@
 **
 **  This event message is generated upon successful completion 
 **  of any of the following cFE Time Services STCF Adjustment Commands:
-**   - \link #CFE_TIME_ADD_1HZADJ_CC Add STCF Adjustment each second command \endlink
-**   - \link #CFE_TIME_SUB_1HZADJ_CC Subtract STCF Adjustment each second command \endlink
+**   - \link #CFE_TIME_ADD_1HZ_ADJUSTMENT_CC Add STCF Adjustment each second command \endlink
+**   - \link #CFE_TIME_SUB_1HZ_ADJUSTMENT_CC Subtract STCF Adjustment each second command \endlink
 **
 **  The \c secs field specifies the number of seconds the STCF is to be adjusted by,
 **  the \c ssecs field specifies the number of sub-seconds (1/2^32 seconds) the STCF
 **  is to be adjusted by and the \c dir field identifies whether the adjustment was
-**  added or subtracted. The direction value can be either #CFE_TIME_ADD_ADJUST or
-**  #CFE_TIME_SUB_ADJUST.
+**  added or subtracted. The direction value can be either #CFE_TIME_AdjustDirection_ADD or
+**  #CFE_TIME_AdjustDirection_SUBTRACT.
 **/
 #define CFE_TIME_1HZ_EID         16
 
@@ -244,7 +258,7 @@
 **  \par Cause:
 **
 **  This event message is generated upon successful completion 
-**  of the \link #CFE_TIME_SET_LEAPS_CC Set Leap Seconds command \endlink
+**  of the \link #CFE_TIME_SET_LEAP_SECONDS_CC Set Leap Seconds command \endlink
 **
 **  The \c \%d field contains the number of seconds the Spacecraft's Leap Seconds
 **  has been set to.
@@ -317,9 +331,9 @@
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_STATE_CC Set Clock State Command \endlink
 **  that contains a desired clock state that is none of the following:
-**  - #CFE_TIME_INVALID
-**  - #CFE_TIME_VALID
-**  - #CFE_TIME_FLYWHEEL
+**  - #CFE_TIME_ClockState_INVALID
+**  - #CFE_TIME_ClockState_VALID
+**  - #CFE_TIME_ClockState_FLYWHEEL
 **
 **  The \c State field specifies, in hex, the state value received 
 **  in the command message.
@@ -336,8 +350,8 @@
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_SOURCE_CC Set Clock Source Command \endlink
 **  that contains a desired clock source that is none of the following:
-**  - #CFE_TIME_USE_INTERN
-**  - #CFE_TIME_USE_EXTERN
+**  - #CFE_TIME_SourceSelect_INTERNAL
+**  - #CFE_TIME_SourceSelect_EXTERNAL
 **
 **  The \c Source field specifies, in hex, the source value received 
 **  in the command message.
@@ -354,8 +368,8 @@
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_SIGNAL_CC Set Clock Signal Command \endlink
 **  that contains a desired clock source that is none of the following:
-**  - #CFE_TIME_TONE_PRI
-**  - #CFE_TIME_TONE_RED
+**  - #CFE_TIME_ToneSignalSelect_PRIMARY
+**  - #CFE_TIME_ToneSignalSelect_REDUNDANT
 **
 **  The \c Source field specifies, in hex, the signal source value received 
 **  in the command message.
@@ -451,7 +465,7 @@
 **  The \c secs field specifies the number of seconds the STCF is to be adjusted by,
 **  the \c usecs field specifies the number of micro-seconds that was in error, the \c dir
 **  field identifies whether the adjustment was to be added or subtracted. The direction
-**  can be either #CFE_TIME_ADD_ADJUST or #CFE_TIME_SUB_ADJUST.
+**  can be either #CFE_TIME_AdjustDirection_ADD or #CFE_TIME_AdjustDirection_SUBTRACT.
 **/
 #define CFE_TIME_DELTA_ERR_EID   37
 
@@ -459,8 +473,8 @@
 **/
 #define CFE_TIME_1HZ_ERR_EID     38
 
-/** \brief <tt> 'Set Source commands invalid without CFE_TIME_CFG_SOURCE set to TRUE' </tt>
-**  \event <tt> 'Set Source commands invalid without CFE_TIME_CFG_SOURCE set to TRUE' </tt> 
+/** \brief <tt> 'Set Source commands invalid without CFE_PLATFORM_TIME_CFG_SOURCE set to true' </tt>
+**  \event <tt> 'Set Source commands invalid without CFE_PLATFORM_TIME_CFG_SOURCE set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -468,13 +482,13 @@
 **
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_SOURCE_CC Set Clock Source Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SOURCE has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SOURCE has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_SOURCE_CFG_EID  40   /* cmd disabled per cfg "error" */
 
-/** \brief <tt> 'Set Signal commands invalid without CFE_TIME_CFG_SIGNAL set to TRUE' </tt>
-**  \event <tt> 'Set Signal commands invalid without CFE_TIME_CFG_SIGNAL set to TRUE' </tt> 
+/** \brief <tt> 'Set Signal commands invalid without CFE_PLATFORM_TIME_CFG_SIGNAL set to true' </tt>
+**  \event <tt> 'Set Signal commands invalid without CFE_PLATFORM_TIME_CFG_SIGNAL set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -482,13 +496,13 @@
 **
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_SIGNAL_CC Set Clock Signal Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SIGNAL has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SIGNAL has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_SIGNAL_CFG_EID  41
 
-/** \brief <tt> 'Set Delay commands invalid without CFE_TIME_CFG_CLIENT set to TRUE' </tt>
-**  \event <tt> 'Set Delay commands invalid without CFE_TIME_CFG_CLIENT set to TRUE' </tt> 
+/** \brief <tt> 'Set Delay commands invalid without CFE_PLATFORM_TIME_CFG_CLIENT set to true' </tt>
+**  \event <tt> 'Set Delay commands invalid without CFE_PLATFORM_TIME_CFG_CLIENT set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -497,13 +511,13 @@
 **  This event message is generated whenever Time Services receives
 **  either a \link #CFE_TIME_ADD_DELAY_CC Add Tone Delay Command \endlink
 **  OR a \link #CFE_TIME_SUB_DELAY_CC Subtract Tone Delay Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_CLIENT has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_CLIENT has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_DELAY_CFG_EID   42
 
-/** \brief <tt> 'Set Time commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt>
-**  \event <tt> 'Set Time commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt> 
+/** \brief <tt> 'Set Time commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt>
+**  \event <tt> 'Set Time commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -511,13 +525,13 @@
 **
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_TIME_CC Set Spacecraft Time Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SERVER has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SERVER has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_TIME_CFG_EID    43
 
-/** \brief <tt> 'Set MET commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt>
-**  \event <tt> 'Set MET commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt> 
+/** \brief <tt> 'Set MET commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt>
+**  \event <tt> 'Set MET commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -525,13 +539,13 @@
 **
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_MET_CC Set Mission Elapsed Time Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SERVER has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SERVER has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_MET_CFG_EID     44
 
-/** \brief <tt> 'Set STCF commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt>
-**  \event <tt> 'Set STCF commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt> 
+/** \brief <tt> 'Set STCF commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt>
+**  \event <tt> 'Set STCF commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -539,27 +553,27 @@
 **
 **  This event message is generated whenever Time Services receives
 **  a \link #CFE_TIME_SET_STCF_CC Set Spacecraft Time Correlation Factor Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SERVER has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SERVER has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_STCF_CFG_EID    45
 
-/** \brief <tt> 'Set Leaps commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt>
-**  \event <tt> 'Set Leaps commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt> 
+/** \brief <tt> 'Set Leaps commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt>
+**  \event <tt> 'Set Leaps commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt> 
 **
 **  \par Type: ERROR
 **
 **  \par Cause:
 **
 **  This event message is generated whenever Time Services receives
-**  a \link #CFE_TIME_SET_LEAPS_CC Set Leap Seconds Command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SERVER has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  a \link #CFE_TIME_SET_LEAP_SECONDS_CC Set Leap Seconds Command \endlink
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SERVER has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_LEAPS_CFG_EID   46
 
-/** \brief <tt> 'STCF Adjust commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt>
-**  \event <tt> 'STCF Adjust commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt> 
+/** \brief <tt> 'STCF Adjust commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt>
+**  \event <tt> 'STCF Adjust commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt> 
 **
 **  \par Type: ERROR
 **
@@ -568,25 +582,42 @@
 **  This event message is generated whenever Time Services receives
 **  either a \link #CFE_TIME_ADD_ADJUST_CC Add Single STCF Adjustment Command \endlink
 **  OR a \link #CFE_TIME_SUB_ADJUST_CC Subtract Single STCF Adjustment command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SERVER has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SERVER has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_DELTA_CFG_EID   47
 
-/** \brief <tt> '1Hz Adjust commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt>
-**  \event <tt> '1Hz Adjust commands invalid without CFE_TIME_CFG_SERVER set to TRUE' </tt> 
+/** \brief <tt> '1Hz Adjust commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt>
+**  \event <tt> '1Hz Adjust commands invalid without CFE_PLATFORM_TIME_CFG_SERVER set to true' </tt> 
 **
 **  \par Type: ERROR
 **
 **  \par Cause:
 **
 **  This event message is generated whenever Time Services receives
-**  either a \link #CFE_TIME_ADD_1HZADJ_CC Add STCF Adjustment each second Command \endlink
-**  OR a \link #CFE_TIME_SUB_1HZADJ_CC Subtract STCF Adjustment each second command \endlink
-**  and the Time Services configuration parameter #CFE_TIME_CFG_SERVER has
-**  not been set to TRUE in the cfe_platform_cfg.h file.
+**  either a \link #CFE_TIME_ADD_1HZ_ADJUSTMENT_CC Add STCF Adjustment each second Command \endlink
+**  OR a \link #CFE_TIME_SUB_1HZ_ADJUSTMENT_CC Subtract STCF Adjustment each second command \endlink
+**  and the Time Services configuration parameter #CFE_PLATFORM_TIME_CFG_SERVER has
+**  not been set to true in the cfe_platform_cfg.h file.
 **/
 #define CFE_TIME_1HZ_CFG_EID     48
 
+/** \brief <tt> 'Invalid cmd length: ID = 0x\%X, CC = \%d, Exp Len = \%d, Len = \%d' </tt>
+**  \event <tt> 'Invalid cmd length: ID = 0x\%X, CC = \%d, Exp Len = \%d, Len = \%d' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is generated when a message with the #CFE_TIME_CMD_MID
+**  message ID has arrived but whose packet length does not match the expected
+**  length for the specified command code.
+**
+**  The \c ID field in the event message specifies the Message ID (in hex), the \c CC field
+**  specifies the Command Code (in decimal), the \c Exp Len field specified the Expected
+**  Length (in decimal ), and \c Len specifies the message Length (in decimal)
+**  found in the message.
+**/
+#define CFE_TIME_LEN_ERR_EID       49
 
 #endif  /* _cfe_time_events_ */
