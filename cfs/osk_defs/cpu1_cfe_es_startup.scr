@@ -16,7 +16,7 @@ CFE_APP, /cf/tftp.so,         TFTP_AppMain,     TFTP,          60,   16384, 0x0,
 CFE_APP, /cf/f42.so,          F42_AppMain,      F42,           50,   16384, 0x0, 0;
 CFE_APP, /cf/i42.so,          I42_AppMain,      I42,          100,   80192, 0x0, 0;
 CFE_APP, /cf/isim.so,         ISIM_AppMain,     ISIM,          90,   16384, 0x0, 0;
-CFE_APP, /cf/hs.so,           HS_AppMain,       HS,           120,   16384, 0x0, 0;
+!CFE_APP, /cf/hs.so,           HS_AppMain,       HS,           120,   16384, 0x0, 0;
 ! I42 & F42 are set low so 42 Simulator-to-FSW closed looped doesn't hog the system. The
 ! current design has a crude throttling and rate limiting mechanism
 !CFE_APP, /cf/hc.so,           HC_AppMain,       HC,            80,   16384, 0x0, 0;

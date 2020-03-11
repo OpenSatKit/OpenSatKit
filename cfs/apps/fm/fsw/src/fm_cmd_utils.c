@@ -96,26 +96,76 @@ boolean FM_VerifyOverwrite(uint16 Overwrite, uint32 EventID, char *CmdText)
 
 //dcm - Added for OSK
 static uint32 open_file_cnt = 0;
-static void LoadOpenFileData(OS_query_record_t *query_rec, void *callback_arg)
+static void LoadOpenFileData_(OS_query_record_t *query_rec, void *callback_arg)
 {
 
-    FM_OpenFilesEntry_t *OpenFilesData = (FM_OpenFilesEntry_t *)callback_arg;
-    CFE_ES_TaskInfo_t   TaskInfo;
+   FM_OpenFilesEntry_t *OpenFilesData = (FM_OpenFilesEntry_t *)callback_arg;
+   CFE_ES_TaskInfo_t   TaskInfo;
  
-    if (OpenFilesData != (FM_OpenFilesEntry_t *) NULL)
-    {
-        /* FDTableEntry.Path has logical filename saved when file was opened */
-        strcpy(OpenFilesData[open_file_cnt].LogicalName, query_rec->name_entry);
+   if (OpenFilesData != (FM_OpenFilesEntry_t *) NULL) {
+      
+      /* FDTableEntry.Path has logical filename saved when file was opened */
+      strcpy(OpenFilesData[open_file_cnt].LogicalName, query_rec->name_entry);
 
-        /* Get the name of the application that opened the file */
-        CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
-        if (CFE_ES_GetTaskInfo(&TaskInfo, query_rec->creator) == CFE_SUCCESS)
-        {
-            strcpy(OpenFilesData[open_file_cnt].AppName, (char *) TaskInfo.AppName);
-        } 
-    }
-    ++open_file_cnt;
+      /* Get the name of the application that opened the file */
+      CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+      if (CFE_ES_GetTaskInfo(&TaskInfo, query_rec->creator) == CFE_SUCCESS)
+      {
+          strcpy(OpenFilesData[open_file_cnt].AppName, (char *) TaskInfo.AppName);
+      } 
+   }
+   ++open_file_cnt;
        
+} /* End LoadOpenFileData() */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* FM utility function -- get open files data                      */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+uint32 FM_GetOpenFilesData_(FM_OpenFilesEntry_t *OpenFilesData)
+{
+
+   OS_query_record_t query_rec;
+   
+   open_file_cnt = 0;
+   OS_QueryObjectType (OS_OBJECT_TYPE_OS_STREAM, LoadOpenFileData_, &query_rec, (void *)OpenFilesData);
+       
+   return open_file_cnt;
+    
+} /* End FM_GetOpenFilesData */
+
+
+//dcm - Added for OSK
+//static uint32 open_file_cnt = 0;
+static void LoadOpenFileData(uint32 ObjId, void* CallbackArg)
+{
+
+   FM_OpenFilesEntry_t *OpenFilesData = (FM_OpenFilesEntry_t *)CallbackArg;
+   CFE_ES_TaskInfo_t   TaskInfo;
+   OS_file_prop_t      FdProp;
+   
+   if (OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
+      
+      if (OpenFilesData != (FM_OpenFilesEntry_t *) NULL) {
+     
+         if (OS_FDGetInfo (ObjId, &FdProp) == OS_SUCCESS) {
+           
+            strcpy(OpenFilesData[open_file_cnt].LogicalName, FdProp.Path);
+
+            /* Get the name of the application that opened the file */
+            CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+            if (CFE_ES_GetTaskInfo(&TaskInfo, FdProp.User) == CFE_SUCCESS) {
+               strcpy(OpenFilesData[open_file_cnt].AppName, (char *)TaskInfo.AppName);
+            } 
+         }
+      } /* End if load FM's data */
+      
+      ++open_file_cnt;
+      
+   } /* End if OS_OBJECT_TYPE_OS_STREAM */
+   
 } /* End LoadOpenFileData() */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -127,15 +177,12 @@ static void LoadOpenFileData(OS_query_record_t *query_rec, void *callback_arg)
 uint32 FM_GetOpenFilesData(FM_OpenFilesEntry_t *OpenFilesData)
 {
 
-    OS_query_record_t query_rec;
-   
     open_file_cnt = 0;
-    OS_QueryObjectType (OS_OBJECT_TYPE_OS_STREAM, LoadOpenFileData, &query_rec, (void *)OpenFilesData);
+    OS_ForEachObject (0, LoadOpenFileData, (void *)OpenFilesData);
        
     return open_file_cnt;
     
 } /* End FM_GetOpenFilesData */
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
