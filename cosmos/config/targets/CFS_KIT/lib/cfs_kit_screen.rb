@@ -73,7 +73,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       if user_selection == "About"
          about_str = ["<b>Enable Telemetry</b> - Send command to the telemetry output app to enable telemetry.",
                       "<b>Reset Time</b> - Set cFS time to 0.",
-                      "<b>Config cmd validation</b> - Ena/Dis cmd counter telemetry verification."]
+                      "<b>Config Cmd Validation</b> - Ena/Dis cmd counter telemetry verification.",
+                      "<b>Config App Events</b> - Ena/Dis event types for an application."]
          cfs_kit_create_about_screen("Configure System",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
@@ -91,6 +92,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
             elsif (enable == Osk::MSG_BUTTON_NO)
                FswApp.validate_cmd(false)
             end
+         when "Config_App_Events"
+            display("CFE_EVS CFG_APP_EVENT_SCREEN",50,50)
          end
       end
       
