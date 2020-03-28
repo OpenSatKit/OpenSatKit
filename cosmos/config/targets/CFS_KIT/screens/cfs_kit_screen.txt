@@ -74,7 +74,7 @@ VERTICAL
         VERTICALBOX 'Config System'          
         MATRIXBYCOLUMNS 2
           BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
-          NAMED_WIDGET config_sys COMBOBOX About Enable_Tlm Reset_Time Config_Cmd_Verify
+          NAMED_WIDGET config_sys COMBOBOX About Enable_Tlm Reset_Time Config_Cmd_Verify Config_App_Events
         END # Matrix
         SETTING BACKCOLOR 162 181 205
         End # Config System Box

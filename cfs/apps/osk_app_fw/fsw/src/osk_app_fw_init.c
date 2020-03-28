@@ -18,7 +18,6 @@
 ** Includes
 */
 
-#include "osapi.h"
 #include "app_fw_cfg.h"
 #include "app_fw_version.h"
 
@@ -33,10 +32,9 @@
 uint32 OSK_APP_FwInit(void)
 {
 
-  CFE_EVS_SendEvent(APP_FW_INIT_INFO_EID, CFE_EVS_INFORMATION,
-    "Application Framework Library Initialized. Version %d.%d.%d.%d",
-    APP_FW_LIB_MAJOR_VERSION, APP_FW_LIB_MINOR_VERSION, 
-    APP_FW_LIB_REVISION, APP_FW_LIB_MISSION_REV);
+   OS_printf("OSK C Application Framework Library Initialized. Version %d.%d.%d.%d\n",
+             APP_FW_LIB_MAJOR_VERSION, APP_FW_LIB_MINOR_VERSION, 
+             APP_FW_LIB_REVISION, APP_FW_LIB_MISSION_REV);
    
   return OS_SUCCESS;
 

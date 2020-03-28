@@ -1,0 +1,55 @@
+{
+   "name": "Object Table",
+   "description": "Example table for object-based application template. Unused entries do not have to be populated.
+                   This file is used by the unit test so any changes will impact the unit test.",
+   "data-array": [
+      "entry": {
+         "index": 0,
+         "data1": 200,
+         "data2": 201,
+         "data3": 202,
+      },
+      "entry": {
+         "index": 1,
+         "data1": 203,
+         "data2": 204,
+         "data3": 205,
+      },
+      "entry": {
+         "index": 2,
+         "data1": 206,
+         "data2": 207,
+         "data3": 208,
+      },
+      "entry": {
+         "index": 3,
+         "data1": 209,
+         "data2": 210,
+         "data3": 211,
+      },
+      "entry": {
+         "index": 4,
+         "data1": 212,
+         "data2": 213,
+         "data3": 214,
+      },
+      "entry": {
+         "index": 15,
+         "data1": 215,
+         "data2": 216,
+         "data3": 217,
+      },
+      "entry": {
+         "index": 16,
+         "data1": 218,
+         "data2": 219,
+         "data3": 220,
+      },
+      "entry": {
+         "index": 31,
+         "data1": 221,
+         "data2": 222,
+         "data3": 223,
+      },
+]
+}

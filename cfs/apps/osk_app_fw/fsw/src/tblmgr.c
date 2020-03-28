@@ -219,7 +219,7 @@ boolean TBLMGR_LoadTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
          if (RetStatus) {
             TblMgr->Tbl[LoadTblCmd->Id].LastActionStatus = TBLMGR_STATUS_VALID;
             CFE_EVS_SendEvent(TBLMGR_LOAD_SUCCESS_EID, CFE_EVS_INFORMATION, 
-                              "Sucessfully %sd table %d using file %s",
+                              "Successfully %sd table %d using file %s",
                               TBLMGR_LoadTypeStr(LoadTblCmd->LoadType),
                               LoadTblCmd->Id, LoadTblCmd->Filename);
          }
@@ -293,7 +293,7 @@ boolean TBLMGR_DumpTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
          if (RetStatus) {
             TblMgr->Tbl[DumpTblCmd->Id].LastActionStatus = TBLMGR_STATUS_VALID;
             CFE_EVS_SendEvent(TBLMGR_DUMP_SUCCESS_EID, CFE_EVS_INFORMATION, 
-                              "Sucessfully dumped table %d to file %s",
+                              "Successfully dumped table %d to file %s",
                               DumpTblCmd->Id, DumpTblCmd->Filename);
          }
       }

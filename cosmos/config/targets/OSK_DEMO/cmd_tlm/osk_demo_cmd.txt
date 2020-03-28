@@ -46,7 +46,7 @@ COMMAND OSK_DEMO SET_TLM_MODE <%= Osk::Cfg.processor_endian %> "Set the fault te
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 1) %>
   APPEND_PARAMETER MODE  8 UINT MIN_UINT8 MAX_UINT8 1 "1=New report each cycle, 2=Merge reports each cycle"
 
-COMMAND OSK_DEMO CONFIG_SIM_FAULT_DET <%= Osk::Cfg.processor_endian %> "Configuration teh fault simulation"
+COMMAND OSK_DEMO CONFIG_SIM_FAULT_DET <%= Osk::Cfg.processor_endian %> "Configure the fault simulation"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 6) %>
   APPEND_PARAMETER ENABLE  8 UINT MIN_UINT8 MAX_UINT8 1  "Enable fault sim (0=False,1=True)"
   APPEND_PARAMETER MODE    8 UINT MIN_UINT8 MAX_UINT8 1  "1=individual timed fault, 2=Walking ID fault "
