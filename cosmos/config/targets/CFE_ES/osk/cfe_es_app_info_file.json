@@ -1,0 +1,200 @@
+{
+
+"comment": [
+   "Define cFE Executive Service's app info binary file"
+   ],
+
+"cfe-file-hdr": [
+
+   {
+      "name"  : "content-type",    
+      "size"  : 4,
+      "type"  : "string",
+      "descr" : "Type file header. Should be CFE1"      
+   },
+   {
+      "name"  : "subtype",    
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "See CFE_FS_ES_ERLOG_SUBTYPE defined in cfe_fs.h"      
+   },
+   {
+      "name"  : "length",    
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Length of primary header in bytes"      
+   },
+   {
+      "name"  : "spacecraft-id",    
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Identifier of spacecraft that generated/received the file"      
+   },
+   {
+      "name"  : "processor-id",    
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Identifier of the processor on the spacecraft that generated/received the file"
+   },
+   {
+      "name"  : "application-id",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "cFE defined application identifier"   
+   },
+   {
+      "name"  : "time-sec",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "File creation timestamp (seconds)"  
+   },
+   {
+      "name"  : "time-subsec",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "File creation timestamp (sub-seconds)"  
+   },
+   {
+      "name"  : "description",    
+      "size"  : 4,
+      "type"  : "string",
+      "descr" : "Description of file contents"      
+   }
+],
+
+"array-def": {
+
+   "name"   : "app-array",
+   "length" : "CFE_ES_MAX_APPLICATIONS",
+}
+
+"app-arraY": [
+
+   {
+      "name"  : "id",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "ID assigned by ES when registered"  
+   },
+   {
+      "name"  : "type",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "TBD=CORE, TBD=User"  
+   },
+   {
+      "name"  : "name",    
+      "size"  : 20,
+      "type"  : "string",
+      "descr" : "Registered app Name"      
+   },
+   {
+      "name"  : "entry-symbol",    
+      "size"  : 20,
+      "type"  : "string",
+      "descr" : "Symbol name of app main function"      
+   },
+   {
+      "name"  : "filename",    
+      "size"  : 4,
+      "type"  : "string",
+      "descr" : "Full path/name of object file"      
+   },
+   {
+      "name"  : "stack-size",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Bytes allocated for stack"  
+   },
+   {
+      "name"  : "module-id",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "ID of the loadable module"  
+   },
+   {
+      "name"  : "valid-addr",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Code, data, and BSS are valid addresses"  
+   },
+   {
+      "name"  : "core-addr",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Address of the app code segment"  
+   },
+   {
+      "name"  : "code-size",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Size (in bytes) of code segment"  
+   },
+   {
+      "name"  : "data-addr",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Address of the app data segment"  
+   },
+   {
+      "name"  : "data-size",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Size (in bytes) of data segment"  
+   },
+   {
+      "name"  : "bss-addr",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Address of the app BSS segment"  
+   },
+   {
+      "name"  : "bss-size",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Size (in bytes) of BSS segment"  
+   },
+   {
+      "name"  : "start-addr",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Address of Entry Symbol"  
+   },
+   {
+      "name"  : "except-action",
+      "size"  : 2,
+      "type"  : "uint",
+      "descr" : "What should occur on an exception"  
+   },
+   {
+      "name"  : "id",
+      "size"  : 2,
+      "type"  : "uint",
+      "descr" : "App's main task priority"  
+   },
+   {
+      "name"  : "main-task-id",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "TBD"  
+   },
+   {
+      "name"  : "execution-ctr",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Application's execution counter"  
+   },
+   {
+      "name"  : "main-name",    
+      "size"  : 20,
+      "type"  : "string",
+      "descr" : "TBD"      
+   },
+   {
+      "name"  : "num-children",
+      "size"  : 4,
+      "type"  : "uint",
+      "descr" : "Number of child tasks"  
+   }
+
+]}

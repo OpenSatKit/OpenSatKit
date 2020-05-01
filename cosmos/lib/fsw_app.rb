@@ -40,22 +40,24 @@ end # Class Table
 
 class FswApp
    
-   attr_reader :app_framework     # Application framework: 'cfs' or 'osk' 
+   @@validate_cmd     = false     # Is command counter increment validated after command sent?
+   @@validate_timeout = 7         # Timeout(secs) to wait for telemetry verification
+
+   attr_reader :description       # Brief description of application's purpose 
+   attr_reader :app_framework     # Application framework: 'cfs', 'osk_c_fw' or 'osk_cpp_fw'
    attr_reader :cfe_type          # cFE supports apps and libraries: 'app' or 'lib' These should be apps
    attr_reader :obj_path_filename # Path/Filename of object loaded during FSW startup
    attr_reader :entry_symbol
    attr_reader :fsw_name          # FSW app name also used in ground references
    attr_reader :priority
    attr_reader :stack_size        # Size in bytes
+   attr_reader :exception_action  # 0 = Reset app, Non-zero = reset processor
    attr_reader :tables            # 
    
    attr_reader :target, :hk_pkt   # COSMOS definitions
    attr_reader :cmd_mid
    attr_reader :cmd_valid         # Status of last command sent
-   
-   @@validate_cmd     = false     # Is command counter increment validated after command sent?
-   @@validate_timeout = 7         # Timeout(secs) to wait for telemetry verification
-   
+         
    #
    # fsw_name - Name used in cfe_es_startup.screen
    # target   - COSMOS target name
@@ -72,11 +74,25 @@ class FswApp
       @hk_pkt   = hk_pkt
       @cmd_mid  = cmd_mid
       
+      # JSON definitions will override if defined  
+      @description = []
+      @tables = []
+      @app_framework     = nil 
+      @cfe_type          = nil
+      @obj_path_filename = nil
+      @entry_symbol      = nil
+      @priority          = nil
+      @stack_size        = nil
+      @exception_action  = nil
+      
       @target_hk_str = "#{@target} #{@hk_pkt}"
       
+      #~puts "FswApp: #{fsw_name}, #{@fsw_name}\n"
       begin
          if (not app_json.nil?)
          
+            @description = app_json["app"]["description"]
+
             app = app_json["app"]["fsw"]
             @app_framework     = app["app-framework"] 
             @cfe_type          = app["cfe-type"]
@@ -85,6 +101,7 @@ class FswApp
             @fsw_name          = app["name"]
             @priority          = app["priority"]
             @stack_size        = app["stack"]
+            @exception_action  = app["exception-action"]
             @tables = []
             app["tables"].each do |tbl|
                #puts tbl["name"]
@@ -93,17 +110,6 @@ class FswApp
             #puts "Tables length = " + tables.length.to_s + "\n"
             @cmd_mid = Fsw::MsgId.get_msg_val(app["cmd-mid"])
          
-         else
-         
-            @app_framework     = nil 
-            @cfe_type          = nil
-            @obj_path_filename = nil
-            @entry_symbol      = nil
-            @fsw_name          = nil
-            @priority          = nil
-            @stack_size        = nil
-            @tables = []
-            
          end # If JSON
       rescue Exception => e
          puts e.message

@@ -35,9 +35,9 @@ def table_mgmt_send_cmd(screen, cmd)
       if (load_tbl)
          tbl_path_filename = ask_string("Enter full FSW /path/filename of table file to be loaded.","#{Osk::Ops::flt_path_filename}")
          if (Osk::flight.cfe_tbl.send_cmd("LOAD_TBL with FILENAME #{tbl_path_filename}"))
-            tbl_name = ask_string("Enter app.table")
+            tbl_name = ask_string("Enter table name 'app.table' for validation/activation commands")
             if (Osk::flight.cfe_tbl.send_cmd("VALIDATE_TBL with ACTIVE_TBL_FLAG 0, TABLE_NAME #{tbl_name}"))
-               wait 5
+               wait 10 # Most apps check pending loads on housekeeping cycle (every 3-5 seconds) 
                Osk::flight.cfe_tbl.send_cmd("ACTIVATE_TBL with TABLE_NAME #{tbl_name}")
             end
          end

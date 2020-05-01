@@ -40,10 +40,11 @@ static PKTTBL_Pkt     UnusedTblPkt = {PKTTBL_UNUSED_MSG_ID, {0, 0}, 0};
 ** Local Function Prototypes
 */
 
-static void DestructorCallback(void);
-static void FlushTlmPipe(void);
-static int  StreamIdPktIdx(uint16 StreamId);
-static int  UnusedTblPktIdx(void);
+static void  DestructorCallback(void);
+static void  FlushTlmPipe(void);
+static int   StreamIdPktIdx(uint16 StreamId);
+static int32 SubscribeNewPkt(PKTTBL_Pkt* NewPkt);
+static int   UnusedTblPktIdx(void);
 
 /******************************************************************************
 ** Function: PKTMGR_Constructor
@@ -220,8 +221,8 @@ boolean PKTMGR_LoadTblEntry(uint16 PktIdx, PKTTBL_Pkt* PktArray)
 
    CFE_PSP_MemCpy(NewPkt,&PktArray[PktIdx],sizeof(PKTTBL_Pkt));
 
-   Status = CFE_SB_SubscribeEx(NewPkt->StreamId, PktMgr->TlmPipe, NewPkt->Qos, NewPkt->BufLim);
-
+   Status = SubscribeNewPkt(NewPkt);
+   
    if(Status == CFE_SUCCESS) {
       
       CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_ENTRY_INFO_EID, CFE_EVS_INFORMATION,
@@ -293,7 +294,8 @@ boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    int         PktIdx;
    PKTTBL_Pkt  NewPkt;
    boolean     RetStatus = TRUE;
-
+   int32       Status;
+   
    if ( (PktIdx = StreamIdPktIdx(CmdParam->StreamId)) < 0) {
 
       if ( (PktIdx = UnusedTblPktIdx()) >= 0 ) {
@@ -301,11 +303,19 @@ boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
          NewPkt.StreamId = CmdParam->StreamId;
          NewPkt.Qos      = CmdParam->Qos;
          NewPkt.BufLim   = CmdParam->BufLim;
-         PKTMGR_LoadTblEntry(PktIdx, &NewPkt); /* FIXME - Assumes source is also an array */
-         CFE_EVS_SendEvent(PKTMGR_ADD_PKT_INFO_EID, CFE_EVS_INFORMATION,
-                           "Added packet 0x%04X, QoS (%d,%d), BufLim %d",
-                           NewPkt.StreamId, NewPkt.Qos.Priority, NewPkt.Qos.Reliability, NewPkt.BufLim);
-
+   
+         Status = SubscribeNewPkt(&NewPkt);
+         if (Status == CFE_SUCCESS) {
+            CFE_EVS_SendEvent(PKTMGR_ADD_PKT_INFO_EID, CFE_EVS_INFORMATION,
+                              "Added packet 0x%04X, QoS (%d,%d), BufLim %d",
+                              NewPkt.StreamId, NewPkt.Qos.Priority, NewPkt.Qos.Reliability, NewPkt.BufLim);
+         }
+         else {
+            CFE_EVS_SendEvent(PKTMGR_ADD_PKT_SUBSCRIPTION_ERR_EID, CFE_EVS_ERROR,
+                              "Error aadin packet 0x%04X. Software Bus subscription failed. Return status = %i",
+                              CmdParam->StreamId, Status);
+         }
+         
       } /* end if found unused entry */
       else
       {
@@ -329,6 +339,7 @@ boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    return RetStatus;
 
 } /* End of PKTMGR_AddPktCmd() */
+
 
 /*******************************************************************
 ** Function: PKTMGR_RemovePktCmd
@@ -502,6 +513,23 @@ static int StreamIdPktIdx(uint16 StreamId)
 
 } /* End StreamIdPktIdx() */
 
+
+/******************************************************************************
+** Function: SubscribeNewPkt
+**
+*/
+static int32 SubscribeNewPkt(PKTTBL_Pkt* NewPkt)
+{
+
+   int32    Status;
+
+   Status = CFE_SB_SubscribeEx(NewPkt->StreamId, PktMgr->TlmPipe, NewPkt->Qos, NewPkt->BufLim);
+
+   return Status;
+
+} /* End SubscribeNewPkt(() */
+
+
 /******************************************************************************
 ** Function: UnusedTblPktIdx
 **
@@ -531,4 +559,4 @@ static int UnusedTblPktIdx(void)
 
 } /* End UnusedTblPktIdx() */
 
-/* end of file */
+

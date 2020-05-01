@@ -108,10 +108,9 @@ void I42_AppMain(void)
 boolean I42_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (I42_NOOP_INFO_EID,
-                      CFE_EVS_INFORMATION,
-                      "No operation command received for I42 App version %d.%d",
-                      I42_MAJOR_VERSION,I42_MINOR_VERSION);
+   CFE_EVS_SendEvent (I42_NOOP_INFO_EID, CFE_EVS_INFORMATION,
+                      "No operation command received for I42 App version %d.%d.%d",
+                      I42_MAJOR_VER, I42_MINOR_VER, I42_LOCAL_REV);
 
    return TRUE;
 
@@ -212,13 +211,9 @@ static int32 InitApp(void)
    /*
    ** Application startup event message
    */
-   Status = CFE_EVS_SendEvent(I42_INIT_APP_INFO_EID,
-                              CFE_EVS_INFORMATION,
-                              "I42 App Initialized. Version %d.%d.%d.%d",
-                              I42_MAJOR_VERSION,
-                              I42_MINOR_VERSION,
-                              I42_REVISION,
-                              I42_MISSION_REV);
+   Status = CFE_EVS_SendEvent(I42_INIT_APP_INFO_EID, CFE_EVS_INFORMATION,
+                              "I42 App Initialized. Version %d.%d.%d",
+                              I42_MAJOR_VER, I42_MINOR_VER, I42_LOCAL_REV);
 
    return(Status);
 
@@ -485,4 +480,3 @@ static void AppTermCallback(void) {
    
 } /* End AppTermCallback() */
 
-/* end of file */

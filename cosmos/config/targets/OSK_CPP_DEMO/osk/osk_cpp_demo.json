@@ -1,0 +1,47 @@
+{
+"app": {
+   
+   "title": "OSK C++ Demo App",
+   "version": "1.0",
+
+   "description": [
+
+      "Prototype app that demonstrates using the OSK C++ app framework. It",
+      "explores different JSON table parsing options as well as demonstrates",
+      "how a cFE binary table can be used in a C++ app"
+      ],
+
+   "cosmos": {
+      "target": "OSK_CPP_DEMO"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/osk_cpp_demo.so",
+      "entry-symbol": "OSK_CPP_DEMO_Main",
+      "name": "OSK_CPP_DEMO",
+      "priority": 120,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk_cpp_fw",
+      "tables": [
+         { 
+                "name": "JSON-JSMN Demo Table",
+                  "id": 1,
+            "filename": "osk_cpp_demo_tbl.json"
+         },
+         { 
+                "name": "JSON-RapidJson Demo Table",
+                  "id": 2,
+            "filename": "osk_c_demo_tbl.json"
+         },
+         { 
+                "name": "Binary Demo Table",
+                  "id": 3,
+            "filename": "osk_cpp_demo.tbl"
+         }
+      ]
+   }
+}   
+}

@@ -17,10 +17,7 @@ MULTITOOL_START "OpenSatKit" CFS_Logo_Blue-_C100_M40_Y0_B15-300x220.png
   DELAY 2 
   TOOL "LAUNCH TlmViewer -x 0 -y 1000"
   # Initialize OpenSatKit modules
-  <% 
-     require 'osk_system'  
-     require 'osk_flight' 
-  %>
+  <% require 'osk_system' %>
 MULTITOOL_END
 TOOL "Command and Telemetry Server" "LAUNCH CmdTlmServer" "cts.png" --config cmd_tlm_server.txt
 TOOL "Limits Monitor" "LAUNCH LimitsMonitor" "limits_monitor.png"

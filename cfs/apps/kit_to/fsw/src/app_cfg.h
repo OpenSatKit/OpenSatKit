@@ -25,16 +25,16 @@
 
 #include "cfe_platform_cfg.h"
 #include "kit_to_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** Telemetry Output Application Macros
 */
 
-#define  KIT_TO_MAJOR_VERSION      1
-#define  KIT_TO_MINOR_VERSION      0
-#define  KIT_TO_REVISION           0
-#define  KIT_TO_MISSION_REV        0
+#define  KIT_TO_MAJOR_VER     1
+#define  KIT_TO_MINOR_VER     1   /* Refactored for OSK 2.2 */
+#define  KIT_TO_LOCAL_REV     0
+
 
 #define  KIT_TO_CMD_PIPE_DEPTH    100
 #define  KIT_TO_CMD_PIPE_NAME     "KIT_TO_CMD_PIPE"
@@ -62,9 +62,9 @@
 ** exceeded so it is the developer's responsibility to verify the ranges. 
 */
 
-#define KIT_TO_BASE_EID  (APP_FW_APP_BASE_EID +  0)
-#define PKTTBL_BASE_EID  (APP_FW_APP_BASE_EID + 10)
-#define PKTMGR_BASE_EID  (APP_FW_APP_BASE_EID + 20)
+#define KIT_TO_APP_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
+#define PKTTBL_BASE_EID      (OSK_C_FW_APP_BASE_EID + 10)
+#define PKTMGR_BASE_EID      (OSK_C_FW_APP_BASE_EID + 20)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of

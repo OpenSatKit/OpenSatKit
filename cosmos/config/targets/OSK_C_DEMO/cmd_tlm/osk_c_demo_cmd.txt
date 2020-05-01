@@ -1,0 +1,55 @@
+<% 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR = "OSK_C_DEMO"
+  @CMD_MID_STR    = "OSK_C_DEMO_CMD_MID"
+  
+%>  
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset commnad counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND OSK_DEMO LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load example object table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=XML, 1=SCANF, 2=JSON"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_demo_tbl.json" "Full path and file name of table to be loaded"
+
+COMMAND OSK_DEMO DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump example object table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 2 2 "Table ID: 0=XML, 1=SCANF, 2=JSON"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
+  APPEND_PARAMETER FILENAME 512 STRING '/cf/osk_demo_tbl~.json' "Full path and file name to receive table dump"
+
+COMMAND OSK_DEMO ENA_TBL_DATA <%= Osk::Cfg.processor_endian %> "Enable/disable use of table data (TODO - Not sure this is right)"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 1) %>
+  APPEND_PARAMETER ENABLE 8 UINT MIN_UINT8 MAX_UINT8 1 "Enable use of table data (0=False,1=True)"
+
+COMMAND OSK_DEMO SET_TBL_INDEX <%= Osk::Cfg.processor_endian %> "Set the index into table for which parameter set to use."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
+  APPEND_PARAMETER PARAM_INDEX 16 UINT 0 31 3 "Index into table for which parameter set to use."
+
+COMMAND OSK_DEMO CONFIG_FAULT_DET <%= Osk::Cfg.processor_endian %> "Enable/disable a fault detector"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
+  APPEND_PARAMETER DET_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "Fault detector ID or 0xFFFF for all of them"
+  APPEND_PARAMETER ENABLE 16 UINT MIN_UINT8  MAX_UINT8  1 "Enable fault detector (0=False,1=True)"
+
+COMMAND OSK_DEMO CLEAR_FAULT_DET <%= Osk::Cfg.processor_endian %> "Clear fault detector latch flag"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 2) %>
+  APPEND_PARAMETER DET_ID   16 UINT MIN_UINT16 MAX_UINT16 0 "Fault detector ID or 0xFFFF for all of them"
+
+COMMAND OSK_DEMO SET_TLM_MODE <%= Osk::Cfg.processor_endian %> "Set the fault telemetry report mode"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 1) %>
+  APPEND_PARAMETER MODE  8 UINT MIN_UINT8 MAX_UINT8 1 "1=New report each cycle, 2=Merge reports each cycle"
+
+COMMAND OSK_DEMO CONFIG_SIM_FAULT_DET <%= Osk::Cfg.processor_endian %> "Configure the fault simulation"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 6) %>
+  APPEND_PARAMETER ENABLE  8 UINT MIN_UINT8 MAX_UINT8 1  "Enable fault sim (0=False,1=True)"
+  APPEND_PARAMETER MODE    8 UINT MIN_UINT8 MAX_UINT8 1  "1=individual timed fault, 2=Walking ID fault "
+  APPEND_PARAMETER DET_ID 16 UINT MIN_UINT8 MAX_UINT8 0  "Fault detector ID for timed fault. Ignored for walking fault"
+  APPEND_PARAMETER STEPS  16 UINT MIN_UINT8 MAX_UINT8 0  "Number of sim steps to keep a fault present"
+

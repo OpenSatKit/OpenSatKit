@@ -25,16 +25,15 @@
 
 #include "cfe.h"
 #include "isim_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** Isim Application Macros
 */
 
-#define  ISIM_MAJOR_VERSION      0
-#define  ISIM_MINOR_VERSION      9
-#define  ISIM_REVISION           0
-#define  ISIM_MISSION_REV        0
+#define  ISIM_MAJOR_VER      1
+#define  ISIM_MINOR_VER      0
+#define  ISIM_LOCAL_REV      0
 
 /******************************************************************************
 ** Command Macros
@@ -58,9 +57,9 @@
 ** exceeded so it is the developer's responsibility to verify the ranges. 
 */
 
-#define ISIM_APP_BASE_EID  (APP_FW_APP_BASE_EID +  0)
-#define ISIM_BASE_EID      (APP_FW_APP_BASE_EID + 10)
-#define ISIMTBL_BASE_EID   (APP_FW_APP_BASE_EID + 50)
+#define ISIM_APP_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
+#define ISIM_BASE_EID      (OSK_C_FW_APP_BASE_EID + 10)
+#define ISIMTBL_BASE_EID   (OSK_C_FW_APP_BASE_EID + 50)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of

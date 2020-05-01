@@ -15,6 +15,8 @@ Cosmos.catch_fatal_exception do
   require 'cosmos/tools/cmd_sender/cmd_sender'
   require 'cosmos/tools/tlm_viewer/screen'
   require 'cosmos/tools/tlm_viewer/tlm_viewer'
+  require 'cosmos/tools/table_manager/table_config'
+  require 'cosmos/tools/table_manager/table_manager_core'
 end
 require 'ccsds'
 require 'osk_global'
@@ -121,7 +123,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
          # Default to first choice - SimpleSat_Overview
-         doc_dir_filename = Osk::target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
+         doc_dir_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
          case user_selection
          when "OSK_Quick_Start"
             doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QUICK_START_FILE}"
@@ -256,8 +258,71 @@ def cfs_kit_scr_develop_apps(screen, cmd)
       prompt(Osk::MSG_TBD_FEATURE)   
    
    when "ADD_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Add an app from existing app library")   
-   
+      # 1. Get current FSW apps
+      #    A. Get cFE ES app log
+      #    B. Parse file and create a hash      
+      # 2. Using OSK's internal App list of compiled apps create
+      #    a list of potential apps that can be loaded by the user
+      # 3. Create user screen
+      #
+      Osk::flight.cfe_es.send_cmd("WRITE_APP_INFO_TO_FILE with FILENAME #{Osk::TMP_FLT_BIN_PATH_FILE}")
+      wait 1
+      #~if (Osk::system.file_transfer.get(Osk::TMP_FLT_BIN_PATH_FILE,Osk::TMP_GND_BIN_PATH_FILE,10)) # 10 sec timeout
+      # Directly access the FSW file without transferring it to make this more responsive
+         tbl_mgr_core = Cosmos::TableManagerCore.new                 
+         app_info_bin_path_file = File.join(Osk::GND_TO_FLT_SRV_DIR,Osk::TMP_BIN_FILE)
+         app_info_def_path_file = File.join(Osk::COSMOS_CFG_TBL_MGR_DIR,Osk::TBL_MGR_DEF_CFE_ES_APP_INFO)
+         # Expect to get an exception because binary file size will be less than max number of records
+         begin
+            tbl_mgr_core.file_open(app_info_bin_path_file, app_info_def_path_file)
+         rescue Cosmos::TableManagerCore::MismatchError => err
+            #Quietly accept the exception
+            #prompt("Caught MismatchError Exception\n#{err}")
+         end
+         fsw_apps = []
+         tbl_mgr_core.config.tables.each do |table_name, table|
+            #puts "table: Name=#{table.table_name}, rows=#{table.num_rows}, cols=#{table.num_columns}\n"
+            ttable = tbl_mgr_core.config.table(table_name)
+            ttable.sorted_items.each do |item|
+               value = table.read(item.name, :FORMATTED)
+               value = "0x" + value.simple_formatted unless value.is_printable?  # Handle binary strings
+               #puts "ttable: item.name=#{item.name}, value=#{value}\n"
+               # Find the APPxx_NAME entry and exclude the APPxx_MAIN_NAME
+               if (item.name.include? "_NAME" and not item.name.include? "_MAIN_NAME")
+                  fsw_apps << value unless value == ""
+               end 
+            end
+         end
+         app_list = Osk::flight.app.keys - fsw_apps
+         #~ Kludge to remove apps that aren't built by default
+         app_list.delete("BM")
+         app_list.delete("CF")
+         #~puts "fsw_apps: #{fsw_apps}\n"
+         #~puts "Flight.app: #{Osk::flight.app.keys}\n"
+         #~puts "Available Apps: #{app_list}\n"
+      #~end # End if downlinked App Info file
+      cfs_kit_add_app_screen("Add Application from Catalog", app_list)
+      display("CFS_KIT #{File.basename(Osk::ADD_APP_SCR_FILE,'.txt')}",1000,10)
+   when "ADD_APP_DESCR"
+      app_name = screen.get_named_widget("app_name").text
+      app_descr_array = Osk::flight.app[app_name].description 
+      i = 1
+      app_descr_array.each do |app_descr|
+         scr_descr = screen.get_named_widget("descr_#{i}")
+         scr_descr.text = app_descr
+         i += 1
+      end
+      while i < 8 do  
+         scr_descr = screen.get_named_widget("descr_#{i}")
+         scr_descr.text = "         "
+         i += 1
+      end
+   when "ADD_APP_LOAD"
+      app_name = screen.get_named_widget("app_name").text
+      app = Osk::flight.app[app_name]         
+      Osk::flight.cfe_es.send_cmd("START_APP with APP_NAME #{app.fsw_name}, APP_ENTRY_POINT #{app.entry_symbol}, APP_FILENAME #{app.obj_path_filename}, STACK_SIZE #{app.stack_size}, EXCEPTION_ACTION 0, PRIORITY #{app.priority}")
+      prompt("The cFS terminal window should display a #{app_name} initialization message.\nUse the cFS Command and Telmetry Server's window to access the app's Cmd & Tlm Packets")
+      clear("CFS_KIT #{File.basename(Osk::ADD_APP_SCR_FILE,'.txt')}")
    when "REMOVE_APP"
       prompt(Osk::MSG_TBD_FEATURE + "\n" + "Remove an app from cFE startup scr")   
    
@@ -379,11 +444,11 @@ end # cfs_kit_launch_app()
 #
 def cfs_kit_launch_tutorial_screen
 
-   tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+   tutorial_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
 
    scr_tutorial_dir = File.open(tutorial_scr_file) {|f| f.readline}
 
-   if scr_tutorial_dir.index(Osk::SCR_DIR).nil? 
+   if scr_tutorial_dir.index(Osk::CFS_KIT_SCR_DIR).nil? 
       cfs_kit_create_tutorial_screen
    end
    
@@ -400,17 +465,17 @@ def cfs_kit_create_tutorial_screen
    time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
    
    tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
-   tutorial_scr_file = "#{Osk::SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+   tutorial_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
 
    # Directory in first line is assumed by other functions
-   tutorial_scr_header = "##{Osk::SCR_DIR}
+   tutorial_scr_header = "##{Osk::CFS_KIT_SCR_DIR}
    ###############################################################################
    # cfs_kit Tutorial Screen
    #
    # Notes:
    #   1. Do not edit this file because it is automatically generated and your
    #      changes will not be saved.
-   #   2. File created by cfs_kit_screen.rb on #{time_stamp}
+   #   2. File created by cfs_kit_create_tutorial_screen.rb on #{time_stamp}
    #
    # License:
    #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -444,7 +509,104 @@ def cfs_kit_create_tutorial_screen
       #          a temp directory and not cluttter cfs_kit/screens
       #if File.exists? tutorial_scr_file
       #   filename = File.basename(tutorial_scr_file, File.extname(tutorial_scr_file))
-      #   new_filename =  "#{Osk::SCR_DIR}/#{filename}#{time_stamp}"+File.extname(tutorial_scr_file)
+      #   new_filename =  "#{Osk::CFS_KIT_SCR_DIR}/#{filename}#{time_stamp}"+File.extname(tutorial_scr_file)
+      #   File.rename(tutorial_scr_file, new_filename)
+      #end
+      
+      File.open(tutorial_scr_file,"w") do |f| 
+	     
+         f.write ("#{tutorial_scr_header}")
+         
+         json_hash["tutorials"].each do |tutorial|
+            
+            lesson_str = "#{tutorial["lessons"]}"
+            lesson_str = lesson_str[1,(lesson_str.length-2)]  # Remove brackets [] and keep quotes around elements
+            
+            tutorial_menu = "
+               HORIZONTAL 10
+               BUTTON '#{tutorial["button"]}' 'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/tutorial_screen.rb\"; tutorial = combo_box(\"#{tutorial["user-prompt"]}\",#{lesson_str}); launch_tutorial(self, \"#{tutorial["directory"]}\", \"#{tutorial["format"]}\", tutorial)'
+               SPACER 20 0 MAXIMUM FIXED          
+               LABEL \"#{tutorial["description"]}\"
+               SPACER 50 0 MINIMUMEXPANDING FIXED          
+               END # Horizontal"
+            
+            f.write (tutorial_menu)
+         
+         end # Tutorial
+         
+         f.write ("#{tutorial_scr_footer}")
+
+      end # File
+
+      status = true
+      
+   rescue Exception => e
+      puts e.message
+      puts e.backtrace.inspect  
+   end
+
+   return status
+   
+end # cfs_kit_create_tutorial_screen()
+
+
+################################################################################
+## Create Template Info Screen
+################################################################################
+
+def cfs_kit_create_tutorial_screen
+
+   status = false
+   
+   t = Time.new 
+   time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
+   
+   tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
+   tutorial_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+
+   # Directory in first line is assumed by other functions
+   tutorial_scr_header = "##{Osk::CFS_KIT_SCR_DIR}
+   ###############################################################################
+   # cfs_kit Tutorial Screen
+   #
+   # Notes:
+   #   1. Do not edit this file because it is automatically generated and your
+   #      changes will not be saved.
+   #   2. File created by cfs_kit_create_tutorial_screen.rb on #{time_stamp}
+   #
+   # License:
+   #   Written by David McComas, licensed under the copyleft GNU General Public
+   #   License (GPL).
+   #
+   ###############################################################################
+
+   SCREEN AUTO AUTO 0.5
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+   TITLE \"Tutorials\"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+      
+   VERTICALBOX \"\" 10
+   "
+
+   tutorial_scr_footer = "
+   END # Vertical Box
+   "
+   begin
+      
+      json_file = File.read(tutorial_def_file)
+      json_hash = JSON.parse(json_file)
+    
+      #puts json_hash
+      #puts json_hash["tutorials"]
+      #puts json_hash["tutorials"][0]["name"]
+
+      #3/26/19 - Not seeing benefit of saving old file. If decide to keep it should go in
+      #          a temp directory and not cluttter cfs_kit/screens
+      #if File.exists? tutorial_scr_file
+      #   filename = File.basename(tutorial_scr_file, File.extname(tutorial_scr_file))
+      #   new_filename =  "#{Osk::CFS_KIT_SCR_DIR}/#{filename}#{time_stamp}"+File.extname(tutorial_scr_file)
       #   File.rename(tutorial_scr_file, new_filename)
       #end
       
@@ -485,7 +647,7 @@ def cfs_kit_create_tutorial_screen
 end # cfs_kit_create_tutorial_screen()
 
 ################################################################################
-## Create Template Info Screen
+## Create About Info Screen
 ################################################################################
 
 
@@ -523,7 +685,7 @@ def cfs_kit_create_about_screen(scr_title, scr_text)
    END # Vertical Box
    "
    
-   scr_file = File.join(Osk::SCR_DIR,Osk::ABOUT_SCR_FILE)
+   scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::ABOUT_SCR_FILE)
 
    begin
          
@@ -554,4 +716,106 @@ def cfs_kit_create_about_screen(scr_title, scr_text)
    end
 
 end # cfs_kit_create_about_screen()
+
+
+################################################################################
+## Create Add App Screen
+################################################################################
+
+def cfs_kit_add_app_screen(scr_title, app_list)
+
+   t = Time.new 
+   time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
+
+   scr_header = "
+   ###############################################################################
+   # Create App Screen
+   #
+   # Notes:
+   #   1. Do not edit this file because it is automatically generated and your
+   #      changes will not be saved.
+   #   2. File created by cfs_kit_add_app_screen.rb on #{time_stamp}
+   #
+   # License:
+   #   Written by David McComas, licensed under the copyleft GNU General Public
+   #   License (GPL). 
+   #
+   ###############################################################################
+
+   SCREEN AUTO AUTO 0.5
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+   TITLE \"#{scr_title}\"
+     SETTING BACKCOLOR 162 181 205
+     SETTING TEXTCOLOR black
+
+   VERTICAL
+   LABEL \"              \"
+   LABEL \"              \"
+
+   LABEL \"Drop down menu contains apps in the app catalog not currently running in the FSW.\"
+   LABEL \"This is a prototype. Options will be added to\"
+   LABEL \"1. Search online resources for available apps and install them in OSK\"
+   LABEL \"2. Allow the user to control future app build and startup default behavior\"
+   LABEL \"\"
+   LABEL \"\"
+   "
+
+   scr_trailer = "
+   HORIZONTALLINE
+      HORIZONTALLINE
+      LABEL \"App Overview\"
+      SCROLLWINDOW
+      VERTICAL
+        NAMED_WIDGET descr_1 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_2 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_3 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_4 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_5 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_6 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_7 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_8 LABEL \"                                                                                                                                                \"
+      END # Vertical
+      END # Scroll Window
+
+
+   END # Vertical
+   "
+   
+   scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::ADD_APP_SCR_FILE)
+
+   begin
+         
+      # Always overwrite the temp file      
+      File.open(scr_file,"w") do |f| 
+           
+         f.write (scr_header)
+
+         combo_text = ""
+         app_list.each do |app|
+            combo_text << "'" + app + "' "
+         end
+         
+      scr_text = "
+   MATRIXBYCOLUMNS 4
+     LABEL \"Available Apps\"
+     NAMED_WIDGET app_name COMBOBOX #{combo_text} 
+     BUTTON 'Description' 'require \"/mnt/hgfs/OpenSatKit/cosmos/config/targets/CFS_KIT/lib/cfs_kit_screen.rb\"; cfs_kit_scr_develop_apps(self,\"ADD_APP_DESCR\")'
+     BUTTON 'Load App' 'require \"/mnt/hgfs/OpenSatKit/cosmos/config/targets/CFS_KIT/lib/cfs_kit_screen.rb\"; cfs_kit_scr_develop_apps(self,\"ADD_APP_LOAD\")'
+     SETTING BACKCOLOR 0 200 0
+   END # Matrix
+   "
+
+         f.write (scr_text)
+         
+         f.write (scr_trailer)
+
+      end # File
+         
+   rescue Exception => e
+      puts e.message
+      puts e.backtrace.inspect  
+   end
+
+end # cfs_kit_add_app_screen()
 

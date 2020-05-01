@@ -223,4 +223,5 @@ end # Module Osk
 
 
 Osk.system = Osk::System.new()
+Osk.flight = Osk::Flight.new()
 

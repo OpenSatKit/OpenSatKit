@@ -24,16 +24,16 @@
 */
 
 #include "tftp_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** TFTP Application Macros
 */
 
-#define  TFTP_APP_MAJOR_VERSION      1
-#define  TFTP_APP_MINOR_VERSION      0
-#define  TFTP_APP_REVISION           0
-#define  TFTP_APP_MISSION_REV        0
+#define  TFTP_MAJOR_VER   1
+#define  TFTP_MINOR_VER   1  /* Refactored for OSK 2.2 */
+#define  TFTP_LOCAL_REV   0
+
 
 #define  TFTP_CMD_PIPE_DEPTH    10
 #define  TFTP_CMD_PIPE_NAME     "TFTP_CMD_PIPE"
@@ -56,12 +56,12 @@
 ** exceeded so it is the developer's responsibility to verify the ranges. 
 */
 
-#define TO_UDP_BASE_EID  (APP_FW_APP_BASE_EID +  0)
-#define PKTMGR_BASE_EID  (APP_FW_APP_BASE_EID + 10)
+#define TO_UDP_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
+#define PKTMGR_BASE_EID  (OSK_C_FW_APP_BASE_EID + 10)
 
-#define TFTP_APP_BASE_EID  (APP_FW_APP_BASE_EID +  0)
-#define NETIF_BASE_EID     (APP_FW_APP_BASE_EID + 10)
-#define TFTP_BASE_EID      (APP_FW_APP_BASE_EID + 20)
+#define TFTP_APP_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
+#define NETIF_BASE_EID     (OSK_C_FW_APP_BASE_EID + 10)
+#define TFTP_BASE_EID      (OSK_C_FW_APP_BASE_EID + 20)
 
 
 #endif /* _app_cfg_ */

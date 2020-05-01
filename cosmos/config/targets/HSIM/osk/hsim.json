@@ -1,6 +1,15 @@
 {
 "app": {
-   
+
+   "title": "Heater Sim App",
+   "version": "2.0",
+
+   "description": [
+
+      "Prototype heater simulation app used for testing the Heater",
+      "Control (HC) app."
+      ],
+
    "cosmos": {
       "target": "HSIM"
    },

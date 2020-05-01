@@ -283,5 +283,3 @@ static void ProcessMsgTunnelMap(void)
    } /* End map loop */
 
 } /* End ProcessMsgTunnelMap() */
-
-/* end of file */

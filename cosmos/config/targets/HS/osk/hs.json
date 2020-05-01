@@ -1,5 +1,18 @@
 { "app": {
    
+   "title": "Health & Safety App",
+   "version": "2.3.0.0",
+
+   "description": [
+
+      "Performs systems level health functions and monitoring with corrective",
+      "actions. Monitors app checkin and events, services hardware watchdog,",
+      "Reports app execution counters, and provides CPU aliveness indication",
+      "via a UART.",
+      ""
+      ],
+
+   
    "cosmos": {
       "target": "HS"
    },

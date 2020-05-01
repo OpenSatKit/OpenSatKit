@@ -142,8 +142,10 @@ VERTICAL
       VERTICALBOX "Manage Apps" 5
         MATRIXBYCOLUMNS 4
           BUTTON 'Add App'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "ADD_APP")'
+          SETTING BACKCOLOR 255 255 255
           BUTTON 'Remove App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "REMOVE_APP")'
           BUTTON 'Create App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "CREATE_APP")'
+          SETTING BACKCOLOR 255 255 255
           LABEL "    "
 
           BUTTON 'Dev ACS App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ADC_APP")'
@@ -162,7 +164,9 @@ VERTICAL
      VERTICALBOX "Debug & Verify Apps" 5
         MATRIXBYCOLUMNS 3
           BUTTON 'Perf Mon Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_MGMT")'
+          SETTING BACKCOLOR 255 255 255
           BUTTON 'Perf Mon Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_DEMO")'
+          SETTING BACKCOLOR 255 255 255
           LABEL "    "
 
           BUTTON 'Run Unit Tests'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "UNIT_TEST")'

@@ -92,7 +92,8 @@ module Osk
    TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
    TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
 
-   ABOUT_SCR_FILE  = "about_scr.txt"
+   ABOUT_SCR_FILE   = "about_scr.txt"
+   ADD_APP_SCR_FILE = "add_app_scr.txt"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
    TUTORIAL_SCR_FILE  = "tutorial_scr.txt"
@@ -169,9 +170,33 @@ module Osk
    TBL_MGR_DEF_MD_TBL        = "md_tbl.txt"
    TBL_MGR_DEF_MM_DMP        = "mm_dump.txt"
    
-   #####################
-   ## Directory Paths ##
-   #####################
+   ############################
+   ## COSMOS Directory Paths ##
+   ############################
+   
+   COSMOS_CFG_TARGET_DIR = File.join(Cosmos::USERPATH, 'config', 'targets')
+   def Osk::cfg_target_dir_file(target, subdir, file)
+      return File.join(cfg_target_dir(target,subdir),file)
+   end
+   
+   def Osk::cfg_target_dir(target,subdir)
+      return File.join(COSMOS_CFG_TARGET_DIR,target.upcase,subdir.downcase)
+   end
+
+   COSMOS_CFG_TOOL_DIR   = File.join(Cosmos::USERPATH, 'config', 'tools')
+   COSMOS_CFG_TBL_MGR_DIR = File.join(COSMOS_CFG_TOOL_DIR,'table_manager')
+   
+   COSMOS_CFG_EDITOR  = "#{Cosmos::USERPATH}/tools/ConfigEditor"
+   COSMOS_PKT_VIEWER  = "#{Cosmos::USERPATH}/tools/PacketViewer"
+   COSMOS_SCR_RUNNER  = "#{Cosmos::USERPATH}/tools/ScriptRunner"
+   COSMOS_TBL_MANAGER = "#{Cosmos::USERPATH}/tools/TableManager"
+   COSMOS_TLM_GRAPHER = "#{Cosmos::USERPATH}/tools/TlmGrapher"
+   COSMOS_CMD_TLM_SRV = "#{Cosmos::USERPATH}/tools/CmdTlmServer"
+   COSMOS_TST_RUNNER  = "#{Cosmos::USERPATH}/tools/TestRunner"
+
+   #########################
+   ## OSK Directory Paths ##
+   #########################
 
    # Directory paths relative to Cosmos::USERPATH
    REL_DIR_CFS  = "../cfs"
@@ -192,9 +217,10 @@ module Osk
    GND_SRV_TBL_DIR = "#{Cosmos::USERPATH}/#{REL_SRV_TBL_DIR}"
 
    FLT_SRV_DIR = "/cf"
+   GND_TO_FLT_SRV_DIR = File.join(OSK_CFS_DIR,'build','exe','cpu1','cf')
    
-   LIB_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib"
-   SCR_DIR = "#{Cosmos::USERPATH}/config/targets/CFS_KIT/screens"
+   CFS_KIT_LIB_DIR = Osk::cfg_target_dir("CFS_KIT","lib")
+   CFS_KIT_SCR_DIR = Osk::cfg_target_dir("CFS_KIT","screens")
    
    CFE_DOCS_DIR   = "#{Cosmos::USERPATH}/cfs_kit/docs"
    CFE_UG_DIR     = "#{CFE_DOCS_DIR}/cfe_users_guide"
@@ -209,13 +235,6 @@ module Osk
 
    PROC_DIR        = "#{Cosmos::USERPATH}/procedures"
    
-   COSMOS_CFG_EDITOR  = "#{Cosmos::USERPATH}/tools/ConfigEditor"
-   COSMOS_PKT_VIEWER  = "#{Cosmos::USERPATH}/tools/PacketViewer"
-   COSMOS_SCR_RUNNER  = "#{Cosmos::USERPATH}/tools/ScriptRunner"
-   COSMOS_TBL_MANAGER = "#{Cosmos::USERPATH}/tools/TableManager"
-   COSMOS_TLM_GRAPHER = "#{Cosmos::USERPATH}/tools/TlmGrapher"
-   COSMOS_CMD_TLM_SRV = "#{Cosmos::USERPATH}/tools/CmdTlmServer"
-   COSMOS_TST_RUNNER  = "#{Cosmos::USERPATH}/tools/TestRunner"
    
    TMP_FLT_BIN_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_BIN_FILE}"
    TMP_GND_BIN_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_BIN_FILE}"
@@ -252,16 +271,5 @@ module Osk
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
    
-   def Osk::target_dir_file(target, subdir, file)
-   
-      return "#{target_dir(target,subdir)}/#{file}"
-   
-   end
-   
-   def Osk::target_dir(target,subdir)
-   
-      return "#{Cosmos::USERPATH}/config/targets/#{target.upcase}/#{subdir.downcase}"
-   
-   end
    
 end # Module Osk

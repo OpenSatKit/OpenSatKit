@@ -30,12 +30,11 @@
 ** Macro Definitions
 */
 
-#define KIT_SCH_NOOP_INFO_EID        (KIT_SCH_BASE_EID + 0)
-#define KIT_SCH_INITSTATS_INF_EID    (KIT_SCH_BASE_EID + 1)
-#define KIT_SCH_EXIT_EID             (KIT_SCH_BASE_EID + 2)
-#define KIT_SCH_INVALID_MID_ERR_EID  (KIT_SCH_BASE_EID + 3)
-#define KIT_SCH_DEBUG_EID            (KIT_SCH_BASE_EID + 4)
-#define KIT_SCH_TOTAL_EID  5
+#define KIT_SCH_APP_NOOP_EID         (KIT_SCH_APP_BASE_EID + 0)
+#define KIT_SCH_APP_INIT_EID         (KIT_SCH_APP_BASE_EID + 1)
+#define KIT_SCH_APP_EXIT_EID         (KIT_SCH_APP_BASE_EID + 2)
+#define KIT_SCH_APP_INVALID_MID_EID  (KIT_SCH_APP_BASE_EID + 3)
+#define KIT_SCH_APP_DEBUG_EID        (KIT_SCH_APP_BASE_EID + 4)
 
 
 /*

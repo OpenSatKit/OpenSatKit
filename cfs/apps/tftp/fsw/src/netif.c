@@ -282,4 +282,3 @@ static boolean InitSocket(const char* DefIpAddrStr, int16 DefServerPort)
 	
 } /* InitSocket() */
 
-/* end of file */

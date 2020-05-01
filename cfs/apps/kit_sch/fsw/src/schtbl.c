@@ -560,4 +560,3 @@ static boolean ActivityCallback (int TokenIdx)
 
 } /* ActivityCallback() */
 
-/* end of file */

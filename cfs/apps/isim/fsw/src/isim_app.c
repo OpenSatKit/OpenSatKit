@@ -103,7 +103,7 @@ void ISIM_AppMain(void)
 
    CFE_ES_WriteToSysLog("ISIM Terminating, RunLoop status = 0x%08X\n", RunStatus);
 
-   CFE_EVS_SendEvent(ISIM_APP_EXIT_ERR_EID, CFE_EVS_CRITICAL, "ISIM Terminating,  RunLoop status = 0x%08X", RunStatus);
+   CFE_EVS_SendEvent(ISIM_APP_EXIT_EID, CFE_EVS_CRITICAL, "ISIM Terminating,  RunLoop status = 0x%08X", RunStatus);
 
    CFE_ES_PerfLogExit(ISIM_MAIN_PERF_ID);
    CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
@@ -120,10 +120,9 @@ void ISIM_AppMain(void)
 boolean ISIM_NoOpCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (ISIM_APP_CMD_NOOP_INFO_EID,
-                      CFE_EVS_INFORMATION,
-                      "No operation command received for ISIM version %d.%d",
-                      ISIM_MAJOR_VERSION,ISIM_MINOR_VERSION);
+   CFE_EVS_SendEvent (ISIM_APP_CMD_NOOP_EID, CFE_EVS_INFORMATION,
+                      "No operation command received for ISIM version %d.%d.%d",
+                      ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_LOCAL_REV);
 
    return TRUE;
 
@@ -242,13 +241,9 @@ static int32 InitApp(void)
     /*
     ** Application startup event message
     */
-    Status = CFE_EVS_SendEvent(ISIM_APP_INIT_INFO_EID,
-                               CFE_EVS_INFORMATION,
-                               "ISIM Initialized. Version %d.%d.%d.%d",
-                               ISIM_MAJOR_VERSION,
-                               ISIM_MINOR_VERSION,
-                               ISIM_REVISION,
-                               ISIM_MISSION_REV);
+   Status = CFE_EVS_SendEvent(ISIM_APP_INIT_EID, CFE_EVS_INFORMATION,
+                              "ISIM App Initialized. Version %d.%d.%d",
+                              ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_LOCAL_REV);
 
     return(Status);
 
@@ -286,7 +281,7 @@ static void ProcessCommands(void)
             break;
 
          default:
-            CFE_EVS_SendEvent(ISIM_APP_CMD_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(ISIM_APP_CMD_INVALID_MID_EID, CFE_EVS_ERROR,
                               "Received invalid command packet,MID = 0x%4X",MsgId);
 
             break;
@@ -297,5 +292,3 @@ static void ProcessCommands(void)
 
 } /* End ProcessCommands() */
 
-
-/* end of file */

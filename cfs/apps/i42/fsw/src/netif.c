@@ -266,5 +266,3 @@ static boolean InitSocket(const char *HostName, uint16 Port, boolean AllowBlocki
       
 } /* End InitSocket() */
 
-
-/* end of file */

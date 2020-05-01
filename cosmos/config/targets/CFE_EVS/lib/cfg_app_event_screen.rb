@@ -43,5 +43,5 @@ def cfg_app_event_cmd(screen, cmd)
    else
       raise "Error in screen definition file. Undefined command '#{cmd}' sent to cfe_evs_config_cmd()"
    end
-  
+   clear ("CFE_EVS CFG_APP_EVENT_SCREEN")
 end # cfe_evs_config_cmd()

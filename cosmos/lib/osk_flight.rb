@@ -50,25 +50,28 @@ module Osk
       attr_reader :app
       
       # cFE Apps
-      attr_reader :cfe_es, :cfe_evs, :cfe_sb, :cfe_tbl, :cfe_time
-
-      # cFS Apps
-      #~attr_reader :cs, :ds, :fm, :hk, :hs, :lc, :md, :mm, :sc
+      attr_reader :cfe_es
+      attr_reader :cfe_evs
+      attr_reader :cfe_sb
+      attr_reader :cfe_tbl
+      attr_reader :cfe_time
       
-      #~# Kit Apps
-      #~attr_reader :bm, :f42, :hc, :hsim, :i42, :isim, :kit_ci, :kit_sch, :kit_to, :tftp
-      
+      def self.instance
+         @@instance
+      end
+    
       def initialize
-         #puts "Osk::Flight.initialize()"
          raise "Osk::Flight created twice" unless @@instance.nil?
-         init_variables()
          @@instance = self
+         create_apps()
+         Osk::create_json_table_mgmt_scr(@app)
       end # End initialize
       
-      def init_variables
+      def create_apps
+ 
          
          # cFE Apps      
-         @cfe_es   = FswApp.new("CFE_ES",  "CFE_ES",   Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_ES_CMD_MID)
+         @cfe_es   = FswApp.new("CFE_ES","CFE_ES",   Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_ES_CMD_MID)
          @cfe_evs  = FswApp.new("CFE_EVS", "CFE_EVS",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_EVS_CMD_MID)
          @cfe_sb   = FswApp.new("CFE_SB",  "CFE_SB",   Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_SB_CMD_MID)
          @cfe_tbl  = FswApp.new("CFE_TBL", "CFE_TBL",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_TBL_CMD_MID)
@@ -80,7 +83,7 @@ module Osk
          @app["CFE_SB"]   = @cfe_sb
          @app["CFE_TBL"]  = @cfe_tbl
          @app["CFE_TIME"] = @cfe_time
-         
+
          # cFS Apps
          #~@cs = FswApp.new("CS","CS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::CS_CMD_MID)
          #~@ds = FswApp.new("DS","DS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::DS_CMD_MID)
@@ -113,7 +116,7 @@ module Osk
             @app[app_name] = FswApp.new(app_name, app_name,  Osk::TLM_STR_HK_PKT, Fsw::MsgId::UNUSED_MID, app_json)
 
          end
-         
+
          # Kit Apps
          #~@f42  = FswApp.new("F42",  "F42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::F42_CMD_MID)
          #~@i42  = FswApp.new("I42",  "I42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)
@@ -156,9 +159,8 @@ module Osk
          #~@app["OSK_DEMO"] = @osk_demo
          #~@app["TFTP"]     = @tftp
 
-         Osk::create_json_table_mgmt_scr(@app)
          
-      end # End init_variables()
+      end # End create_apps()
              
       # cmd_str - Contains the command name followed by optional command parameters 
       def send_cmd(target, cmd_str)
@@ -168,7 +170,8 @@ module Osk
          if @app.has_key?(target)
             cmd_valid = @app[target].send_cmd(cmd_str)
          else
-            Osk::Ops::raise_exception "Command execution not verified. #{@fsw_name} #{@hk_pkt} not received"
+            cfs_kit_def_file = File.join(Osk::COSMOS_CFG_TARGET_DIR, 'CFS_KIT','osk','cfs_kit.json') #~FIXME - This duplicates code in osk_targets
+            Osk::Ops::raise_exception "Undefined application #{target}. Verify COSMOS target defined and target defined in #{cfs_kit_def_file}"
          end
          
          return cmd_valid
@@ -181,7 +184,4 @@ module Osk
    class << self; attr_accessor :flight; end
 
 end # Module Osk
-
-
-Osk.flight = Osk::Flight.new()
 
