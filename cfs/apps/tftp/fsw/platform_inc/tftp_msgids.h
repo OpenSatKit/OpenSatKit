@@ -31,5 +31,3 @@
 #define  TFTP_HK_TLM_MID    (0x0900)
 
 #endif /*_tftp_msgids_*/
-
-/* end of file */

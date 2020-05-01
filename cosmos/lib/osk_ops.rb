@@ -194,6 +194,8 @@ module Ops
    # 1. Issue the flight command that creates the file
    # 2. Optionally transfer file to the ground and display 
    #    the file using the COSMOS Table Manager tool
+   #    prompt - If true, then prompt the user if they want to transfer the
+   #             file. If false, then always transfer the file 
    # 
    # Use the default server directories and temporary file names
    #
@@ -203,10 +205,15 @@ module Ops
    #       FILENAME CAN SIMPLY BE APPENDED. See table_mgmt_screen.rb's
    #       'write table registry to file' for an example.    
    #
-   def self.send_flt_bin_file_cmd(app_name, cmd_str, tbl_mgr_def_filename, flt_path_filename: Osk::TMP_FLT_BIN_PATH_FILE, gnd_rel_path: Osk::REL_SRV_DIR)
+   def self.send_flt_bin_file_cmd(app_name, cmd_str, tbl_mgr_def_filename, flt_path_filename: Osk::TMP_FLT_BIN_PATH_FILE, 
+                                  gnd_rel_path: Osk::REL_SRV_DIR, prompt: true)
       cmd_str = "#{cmd_str} FILENAME #{flt_path_filename}"
       if (Osk::flight.app[app_name].send_cmd(cmd_str))
-         get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+         if (prompt)
+            get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+         else
+            get_file = Osk::MSG_BUTTON_YES
+         end
          if (get_file == Osk::MSG_BUTTON_YES)
             filename = File.basename(flt_path_filename)
             get_flt_bin_file(flt_path_filename, gnd_rel_path, filename, tbl_mgr_def_filename)
@@ -218,7 +225,7 @@ module Ops
    
    #
    # 1. Transfer a binary file from flight to ground 
-   # 2. Launch COSMOS Table Manager tool to display the file
+   # 2. Launch COSMOS Table Manager tool to display the file if 
    # 
    # Ground relative directory path and filename passed in separately to help with user 
    # Table Manager instructions.
@@ -384,7 +391,7 @@ module Ops
       #puts "Cmd param length = #{cmd_param_list.length}"
       #puts "#{cmd_param_list}"
       
-      cmd_scr_file = "#{Osk::SCR_DIR}/#{Osk::TMP_FLT_CMD_SCR_FILE}"
+      cmd_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TMP_FLT_CMD_SCR_FILE}"
       #puts "#{cmd_scr_file}"
       
       begin
@@ -475,7 +482,7 @@ module Ops
 
       tbl_mgr_scr_trailer = "\n"
    
-      tbl_mgr_scr_file = "#{Osk::SCR_DIR}/#{TMP_TBL_MGR_SCR_FILE}"
+      tbl_mgr_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{TMP_TBL_MGR_SCR_FILE}"
       
       begin
          
@@ -570,7 +577,7 @@ module Ops
 
       get_bin_file_scr_trailer = "\n"
       
-      get_bin_file_scr_file = "#{Osk::SCR_DIR}/#{TMP_GET_BIN_FILE_SCR_FILE}"
+      get_bin_file_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{TMP_GET_BIN_FILE_SCR_FILE}"
       
       begin
          

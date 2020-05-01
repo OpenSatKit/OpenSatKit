@@ -1,6 +1,15 @@
 {
 "app": {
-   
+
+   "title": "Heater Control App",
+   "version": "2.0",
+
+   "description": [
+
+      "Prototype app that demonstrates controlling heaters.",
+      ""
+      ],
+
    "cosmos": {
       "target": "HC"
    },

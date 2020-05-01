@@ -86,10 +86,14 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 # Each target board can have its own HW arch selection and set of included apps
 SET(TGT1_NAME cpu1) 
 # Matches what is loaded by default startup script except for HC & HSIM which is not loaded but needed to build LC & SC defaults
-SET(TGT1_APPLIST osk_app_fw cfs_lib cs ds expat_lib fm hs kit_ci kit_sch kit_to lc md mm sc hk tftp i42 f42 isim hc hsim)
-SET(TGT1_FILELIST cfe_es_startup.scr kit_to_pkt_tbl.json kit_sch_msg_tbl.json kit_sch_sch_tbl.json osk_demo_tbl.json osk_demo_tbl.scanf osk_demo_tbl.xml f42_ctrl_tbl.json isim_tbl.json cpp_demo_tbl.json )
-#FW Dev: SET(TGT1_APPLIST cfs_lib cpp_app_fw cpp_demo_app osk_app_fw osk_demo_app)
-#Other OSK apps available to build: bm osk_demo_app hc hs hsim cf sbn cpp_demo_app
+# Release: 
+SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw cs ds fm hs kit_ci kit_sch kit_to lc md mm sc hk tftp i42 f42 isim hc hsim osk_c_demo osk_cpp_demo)
+# Development:
+#   SET(TGT1_STATIC_APPLIST cfs_lib cpp_app_fw cpp_demo_app osk_app_fw osk_demo_app)
+#   SET(TGT1_APPLIST cfs_lib osk_c_fw osk_cpp_fw osk_c_demo osk_cpp_demo)
+#   Other OSK apps available to build: bm osk_demo_app hs cf sbn cpp_demo_app
+
+SET(TGT1_FILELIST cfe_es_startup.scr kit_to_pkt_tbl.json kit_sch_msg_tbl.json kit_sch_sch_tbl.json osk_c_demo_tbl.json osk_c_demo_tbl.scanf osk_c_demo_tbl.xml osk_cpp_tbl.json f42_ctrl_tbl.json isim_tbl.json)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 

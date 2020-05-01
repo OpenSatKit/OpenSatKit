@@ -603,4 +603,3 @@ static void CreateTimeFilename(char* Filename, SciFile_Struct* SciTbl)
 
 } /* End CreateTimeFilename() */
 
-/* end of file */

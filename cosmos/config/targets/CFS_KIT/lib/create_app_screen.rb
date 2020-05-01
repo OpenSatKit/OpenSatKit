@@ -228,7 +228,7 @@ def create_app_create_template_info_screen(template_title, template_info)
    END # Vertical Box
    "
    
-   template_scr_file = File.join(Osk::SCR_DIR,Osk::TEMPLATE_INFO_SCR_FILE)
+   template_scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::TEMPLATE_INFO_SCR_FILE)
 
    begin
          

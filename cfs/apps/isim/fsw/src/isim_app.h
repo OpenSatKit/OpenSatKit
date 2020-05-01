@@ -28,10 +28,10 @@
 ** Macro Definitions
 */
 
-#define ISIM_APP_INIT_INFO_EID            (ISIM_APP_BASE_EID + 0)
-#define ISIM_APP_EXIT_ERR_EID             (ISIM_APP_BASE_EID + 1)
-#define ISIM_APP_CMD_NOOP_INFO_EID        (ISIM_APP_BASE_EID + 2)
-#define ISIM_APP_CMD_INVALID_MID_ERR_EID  (ISIM_APP_BASE_EID + 3)
+#define ISIM_APP_INIT_EID            (ISIM_APP_BASE_EID + 0)
+#define ISIM_APP_EXIT_EID            (ISIM_APP_BASE_EID + 1)
+#define ISIM_APP_CMD_NOOP_EID        (ISIM_APP_BASE_EID + 2)
+#define ISIM_APP_CMD_INVALID_MID_EID (ISIM_APP_BASE_EID + 3)
 
 /*
 ** Type Definitions

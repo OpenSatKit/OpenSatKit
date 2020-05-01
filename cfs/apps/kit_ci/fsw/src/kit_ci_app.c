@@ -96,7 +96,7 @@ void KIT_CI_AppMain(void)
 
    CFE_ES_WriteToSysLog("KIT_CI App terminating, err = 0x%08X\n", Status);
 
-   CFE_EVS_SendEvent(KIT_CI_EXIT_EID, CFE_EVS_CRITICAL, "KIT_CI App: terminating, err = 0x%08X", Status);
+   CFE_EVS_SendEvent(KIT_CI_APP_EXIT_EID, CFE_EVS_CRITICAL, "KIT_CI App: terminating, err = 0x%08X", Status);
 
    CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
 
@@ -111,10 +111,9 @@ void KIT_CI_AppMain(void)
 boolean KIT_CI_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (KIT_CI_NOOP_INFO_EID,
-                      CFE_EVS_INFORMATION,
-                      "Kit Command Ingest (KIT_CI) version %d.%d received a no operation command",
-                      KIT_CI_MAJOR_VERSION,KIT_CI_MINOR_VERSION);
+   CFE_EVS_SendEvent (KIT_CI_APP_NOOP_EID, CFE_EVS_INFORMATION,
+                      "Kit Command Ingest (KIT_CI) version %d.%d.%d received a no operation command",
+                      KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_LOCAL_REV);
 
    return TRUE;
 
@@ -205,13 +204,9 @@ static int32 InitApp(void)
     /*
     ** Application startup event message
     */
-    Status = CFE_EVS_SendEvent(KIT_CI_INIT_APP_INFO_EID,
-                               CFE_EVS_INFORMATION,
-                               "KIT_CI Initialized. Version %d.%d.%d.%d",
-                               KIT_CI_MAJOR_VERSION,
-                               KIT_CI_MINOR_VERSION,
-                               KIT_CI_REVISION,
-                               KIT_CI_MISSION_REV);
+    Status = CFE_EVS_SendEvent(KIT_CI_APP_INIT_EID, CFE_EVS_INFORMATION,
+                               "KIT_CI Initialized. Version %d.%d.%d",
+                               KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_LOCAL_REV);
 
     return(Status);
 
@@ -247,7 +242,7 @@ static void ProcessCommands(void)
             break;
 
          default:
-            CFE_EVS_SendEvent(KIT_CI_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(KIT_CI_APP_INVALID_MID_EID, CFE_EVS_ERROR,
                               "Received invalid command packet,MID = 0x%4X",MsgId);
 
             break;
@@ -258,5 +253,3 @@ static void ProcessCommands(void)
 
 } /* End ProcessCommands() */
 
-
-/* end of file */

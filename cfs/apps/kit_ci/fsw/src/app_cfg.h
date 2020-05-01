@@ -25,17 +25,16 @@
 
 #include "cfe_platform_cfg.h"
 #include "kit_ci_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 
 /******************************************************************************
 ** Command Ingest Application Macros
 */
 
-#define  KIT_CI_MAJOR_VERSION      1
-#define  KIT_CI_MINOR_VERSION      0
-#define  KIT_CI_REVISION           0
-#define  KIT_CI_MISSION_REV        0
+#define  KIT_CI_MAJOR_VER    1
+#define  KIT_CI_MINOR_VER    1   /* Refactored for OSK 2.2 */
+#define  KIT_CI_LOCAL_REV    0
 
 #define CMDMGR_PIPE_DEPTH         10
 #define CMDMGR_PIPE_NAME          "KIT_CI_CMD_PIPE"
@@ -55,8 +54,8 @@
 ** exceeded so it is the developer's responsibility to verify the ranges. 
 */
 
-#define KIT_CI_BASE_EID  (APP_FW_APP_BASE_EID +  0)
-#define UPLINK_BASE_EID  (APP_FW_APP_BASE_EID + 10)
+#define KIT_CI_APP_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
+#define UPLINK_BASE_EID      (OSK_C_FW_APP_BASE_EID + 10)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of

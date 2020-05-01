@@ -10,6 +10,7 @@
 require 'osk_system'
 require 'osk_flight'
 require 'osk_ops'
+require 'fsw_config_param'
 
 
 ################################################################################
@@ -42,9 +43,9 @@ def app_mgmt_send_cmd(screen, cmd)
    if (cmd == "ES_APP_TASK_INFO")
       info = combo_box("Select info to write to a file","Application", "Task")
       if (info == "Application")    
-         Osk::Ops::send_flt_bin_file_cmd("CFE_ES", "WRITE_APP_INFO_TO_FILE with ", Osk::TBL_MGR_DEF_CFE_ES_APP_INFO)
+         Osk::Ops::send_flt_bin_file_cmd("CFE_ES", "WRITE_APP_INFO_TO_FILE with ", FswConfigParam::CFE_ES_DEFAULT_APP_LOG_FILE)
       elsif (info == "Task")
-         Osk::Ops::send_flt_bin_file_cmd("CFE_ES", "WRITE_TASK_INFO_TO_FILE with ", Osk::TBL_MGR_DEF_CFE_ES_TASK_INFO)
+         Osk::Ops::send_flt_bin_file_cmd("CFE_ES", "WRITE_TASK_INFO_TO_FILE with ", FswConfigParam::CFE_ES_DEFAULT_TASK_LOG_FILE)
       end
    elsif (cmd == "EVS_ENA_APP_EVENT_TYPE")
       app_name = ask_string("Enter app name")

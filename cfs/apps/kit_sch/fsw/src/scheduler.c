@@ -1017,5 +1017,3 @@ static int32 ProcessNextSlot(void)
 
 } /* End ProcessNextSlot() */
 
-
-/* end of file */

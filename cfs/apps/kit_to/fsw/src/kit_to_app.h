@@ -31,12 +31,10 @@
 ** Macro Definitions
 */
 
-#define KIT_TO_INIT_APP_INFO_EID    (KIT_TO_BASE_EID + 0)
-#define KIT_TO_NOOP_INFO_EID        (KIT_TO_BASE_EID + 1)
-#define KIT_TO_EXIT_ERR_EID         (KIT_TO_BASE_EID + 2)
-#define KIT_TO_INVALID_MID_ERR_EID  (KIT_TO_BASE_EID + 3)
-
-#define KIT_TO_TOTAL_EID  4
+#define KIT_TO_APP_INIT_EID        (KIT_TO_APP_BASE_EID + 0)
+#define KIT_TO_APP_NOOP_EID        (KIT_TO_APP_BASE_EID + 1)
+#define KIT_TO_APP_EXIT_EID        (KIT_TO_APP_BASE_EID + 2)
+#define KIT_TO_APP_INVALID_MID_EID (KIT_TO_APP_BASE_EID + 3)
 
 
 /*

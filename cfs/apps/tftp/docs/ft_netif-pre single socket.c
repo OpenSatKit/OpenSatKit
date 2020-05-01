@@ -273,5 +273,3 @@ void DistroyNetIF(void) {
 
 } /* End DistroyNetIF() */
 
-
-/* end of file */

@@ -108,10 +108,9 @@ void F42_AppMain(void)
 boolean F42_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (F42_NOOP_INFO_EID,
-                      CFE_EVS_INFORMATION,
-                      "No operation command received for F42 App version %d.%d",
-                      F42_MAJOR_VERSION,F42_MINOR_VERSION);
+   CFE_EVS_SendEvent (F42_NOOP_INFO_EID, CFE_EVS_INFORMATION,
+                      "No operation command received for F42 App version %d.%d.%d",
+                      F42_MAJOR_VER, F42_MINOR_VER, F42_LOCAL_REV);
 
    return TRUE;
 
@@ -287,13 +286,9 @@ static int32 InitApp(void)
    /*
    ** Application startup event message
    */
-   Status = CFE_EVS_SendEvent(F42_INIT_APP_INFO_EID,
-                              CFE_EVS_INFORMATION,
-                              "F42 App Initialized. Version %d.%d.%d.%d",
-                              F42_MAJOR_VERSION,
-                              F42_MINOR_VERSION,
-                              F42_REVISION,
-                              F42_MISSION_REV);
+   Status = CFE_EVS_SendEvent(F42_INIT_APP_INFO_EID, CFE_EVS_INFORMATION,
+                              "F42 App Initialized. Version %d.%d.%d",
+                              F42_MAJOR_VER, F42_MINOR_VER, F42_LOCAL_REV);
 
    return(Status);
 
@@ -438,4 +433,3 @@ static void SendCtrlTlm(void)
 
 } /* End SendCtrlTlm() */
                              
-/* end of file */

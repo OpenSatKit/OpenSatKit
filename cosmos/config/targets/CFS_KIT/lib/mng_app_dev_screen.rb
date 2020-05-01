@@ -64,7 +64,7 @@ def build_create_app_screen
    
    begin
 
-      create_app_scr_file = File.join(Osk::SCR_DIR,Osk::CREATE_APP_SCR_FILE)
+      create_app_scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::CREATE_APP_SCR_FILE)
    
       json_config_file = File.join(Osk::TOOLS_DIR,'create-app',Osk::CREATE_APP_JSON_FILE)
 

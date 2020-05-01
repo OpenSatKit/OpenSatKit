@@ -203,11 +203,16 @@ module Fsw
       KIT_TO_HK_TLM_MID        = "0x0880"
       KIT_TO_DATA_TYPE_TLM_MID = "0x0881"
 
-      # OpenSatKit Demo App 
+      # OpenSatKit C Demo App 
   
-      OSK_DEMO_CMD_MID    = "0x1866"
-      OSK_DEMO_HK_TLM_MID = "0x0F03"
-      OSK_DEMO_FR_TLM_MID = "0x0F04"
+      OSK_C_DEMO_CMD_MID    = "0x1866"
+      OSK_C_DEMO_HK_TLM_MID = "0x0F03"
+      OSK_C_DEMO_FR_TLM_MID = "0x0F04"
+
+      # OpenSatKit C++ Demo App 
+  
+      OSK_CPP_DEMO_CMD_MID    = "0x1867"
+      OSK_CPP_DEMO_HK_TLM_MID = "0x0F05"
 
       # OpenSatKit Create App tool
       #

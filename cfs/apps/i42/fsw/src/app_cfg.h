@@ -26,16 +26,15 @@
 */
 
 #include "i42_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** I42 Application Macros
 */
 
-#define  I42_MAJOR_VERSION      1
-#define  I42_MINOR_VERSION      0
-#define  I42_REVISION           0
-#define  I42_MISSION_REV        0
+#define  I42_MAJOR_VER     1
+#define  I42_MINOR_VER     1  /* Refactored for OSK 2.2 */
+#define  I42_LOCAL_REV     0
 
 #define  I42_CMD_PIPE_DEPTH     5
 #define  I42_CMD_PIPE_NAME      "I42_CMD_PIPE"
@@ -60,8 +59,8 @@
 */
 
 
-#define I42_BASE_EID    (APP_FW_APP_BASE_EID +  0)
-#define NETIF_BASE_EID  (APP_FW_APP_BASE_EID + 10)  /* Uses more than 10 IDs */
+#define I42_BASE_EID    (OSK_C_FW_APP_BASE_EID +  0)
+#define NETIF_BASE_EID  (OSK_C_FW_APP_BASE_EID + 10)  /* Uses more than 10 IDs */
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of

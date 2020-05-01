@@ -3,7 +3,7 @@
 "description": [
    "This file is named cfs_kit.json as opposed to something like",
    "app_targets.json to follow OSK naming convention. It may also",
-   "contain definitions beyound the target apps",    
+   "contain definitions beyond the target apps",    
    "Defines the FSW app targets to be available when OSK is runnning.",
    "load-on-init determines whether app is loaded when OSK starts. Each",
    "app has a json file that provides app details so this file simply",
@@ -12,27 +12,29 @@
    
 "targets": [
 
-   { "CF":      { "load-on-init": false }},
-   { "CS":      { "load-on-init": true  }},
-   { "DS":      { "load-on-init": true  }},
-   { "FM":      { "load-on-init": true  }},
-   { "HK":      { "load-on-init": true  }},
-   { "HS":      { "load-on-init": false }},
-   { "LC":      { "load-on-init": true  }},
-   { "MD":      { "load-on-init": true  }},
-   { "MM":      { "load-on-init": true  }},
-   { "SC":      { "load-on-init": true  }},
+   { "CF":  { "load-on-init": false }},
+   { "CS":  { "load-on-init": true  }},
+   { "DS":  { "load-on-init": true  }},
+   { "FM":  { "load-on-init": true  }},
+   { "HK":  { "load-on-init": true  }},
+   { "HS":  { "load-on-init": false }},
+   { "LC":  { "load-on-init": true  }},
+   { "MD":  { "load-on-init": true  }},
+   { "MM":  { "load-on-init": true  }},
+   { "SC":  { "load-on-init": true  }},
 
-   { "BM":      { "load-on-init": false }},
-   { "F42":     { "load-on-init": true  }},
-   { "HC":      { "load-on-init": false }},
-   { "HSIM":    { "load-on-init": false }},
-   { "I42":     { "load-on-init": true  }},
-   { "ISIM":    { "load-on-init": true  }},
-   { "KIT_CI":  { "load-on-init": true  }},
-   { "KIT_SCH": { "load-on-init": true  }},
-   { "KIT_TO":  { "load-on-init": true  }},
-   { "TFTP":    { "load-on-init": true  }}
+   { "BM":           { "load-on-init": false }},
+   { "F42":          { "load-on-init": true  }},
+   { "HC":           { "load-on-init": false }},
+   { "HSIM":         { "load-on-init": false }},
+   { "I42":          { "load-on-init": true  }},
+   { "ISIM":         { "load-on-init": true  }},
+   { "KIT_CI":       { "load-on-init": true  }},
+   { "KIT_SCH":      { "load-on-init": true  }},
+   { "KIT_TO":       { "load-on-init": true  }},
+   { "OSK_C_DEMO":   { "load-on-init": false }},
+   { "OSK_CPP_DEMO": { "load-on-init": false }},
+   { "TFTP":         { "load-on-init": true  }}
    
    ]
 }

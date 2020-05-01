@@ -804,4 +804,3 @@ static boolean ProcessMsg(uint8* Buf, uint16 BufLen) {
 
 } /* End ProcessMsg() */
 
-/* end of file */

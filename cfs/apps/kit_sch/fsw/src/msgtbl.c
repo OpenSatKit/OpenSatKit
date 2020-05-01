@@ -563,5 +563,3 @@ static char *SplitStr(char *Str, const char *Delim) {
 
 } /* End SplitStr() */
 
-
-/* end of file */

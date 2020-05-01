@@ -266,12 +266,13 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       */
       
       sprintf(DumpRecord,"\"packet-array\": [\n");
-
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+      
       for (i=0; i < PKTTBL_MAX_PKT_CNT; i++) {
       
          sprintf(DumpRecord,"\"packet\": {\n");
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-         sprintf(DumpRecord,"   \"dec-id\": %d,\n   \"priority\": %d,\n   \"reliability\": %d,\n   \"buf-lim\": %d\n},\n",
+         sprintf(DumpRecord,"   \"dec-id\": %d,\n   \"priority\": %d,\n   \"reliability\": %d,\n   \"buf-limit\": %d\n},\n",
                  PktTblPtr->Pkt[i].StreamId,
                  PktTblPtr->Pkt[i].Qos.Priority,
                  PktTblPtr->Pkt[i].Qos.Reliability,
@@ -359,5 +360,3 @@ static boolean PktCallback (int TokenIdx)
 
 } /* PktCallback() */
 
-
-/* end of file */

@@ -3,7 +3,7 @@
 #
 # Notes:
 #   1. Most OSK target infrastructure (screens, libs, etc) is managed in the
-#      typical COSMOS manner. Some artifcats are based on the apps that are
+#      typical COSMOS manner. Some artifacts are based on the apps that are
 #      loaded during OSK intialization. This file defines functions that 
 #      create those target artifacts.  
 #
@@ -17,9 +17,11 @@ require 'cosmos'
 
 module Osk
 
+
    def self.read_target_json(target_name) 
 
-      folder_name = File.join(Cosmos::USERPATH, 'config', 'targets', target_name.to_s.upcase,'osk')
+      #~File.join(Cosmos::USERPATH, 'config', 'targets', target_name.to_s.upcase,'osk')
+      folder_name = File.join(Osk::COSMOS_CFG_TARGET_DIR, target_name.to_s.upcase,'osk')
       unless Dir.exist?(folder_name)
          raise parser.error("Undefined target folder '#{folder_name}'.")
       end
@@ -121,7 +123,7 @@ def self.create_json_table_mgmt_scr(app_list)
    LABEL \"Flight Event Messages\"
    NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 600 50\n"
    
-   scr_file = "#{Osk::SCR_DIR}/#{Osk::JSON_TBL_MGMT_SCR_FILE}"
+   scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::JSON_TBL_MGMT_SCR_FILE}"
    #puts scr_file
    
    begin
@@ -136,7 +138,7 @@ def self.create_json_table_mgmt_scr(app_list)
          app_list.each do |key, app|
 
             if (not app.app_framework.nil?)
-               if (app.app_framework == "osk")
+               if (app.app_framework.include? Osk::JSON_APP_TYPE_OSK) 
                
                   hk_label_matrix << "       LABEL \"#{space_label}\"\n"
                   hk_label_matrix << "       LABEL \"#{space_label}\"\n"

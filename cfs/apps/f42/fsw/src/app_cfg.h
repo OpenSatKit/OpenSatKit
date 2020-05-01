@@ -25,16 +25,15 @@
 */
 
 #include "f42_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** F42 Application Macros
 */
 
-#define  F42_MAJOR_VERSION      1
-#define  F42_MINOR_VERSION      0
-#define  F42_REVISION           0
-#define  F42_MISSION_REV        0
+#define  F42_MAJOR_VER      1
+#define  F42_MINOR_VER      1  /* Refactored for OSK 2.2 */
+#define  F42_LOCAL_REV      0
 
 #define  F42_CMD_PIPE_DEPTH     10
 #define  F42_CMD_PIPE_NAME      "F42_CMD_PIPE"
@@ -65,10 +64,10 @@
 */
 
 
-#define F42_BASE_EID           (APP_FW_APP_BASE_EID +  0)
-#define F42_ADP_BASE_EID       (APP_FW_APP_BASE_EID + 10)
-#define CTRLTBL_BASE_EID       (APP_FW_APP_BASE_EID + 20)
-#define THREEAXISFSW_BASE_EID  (APP_FW_APP_BASE_EID + 30)
+#define F42_BASE_EID           (OSK_C_FW_APP_BASE_EID +  0)
+#define F42_ADP_BASE_EID       (OSK_C_FW_APP_BASE_EID + 10)
+#define CTRLTBL_BASE_EID       (OSK_C_FW_APP_BASE_EID + 20)
+#define THREEAXISFSW_BASE_EID  (OSK_C_FW_APP_BASE_EID + 30)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of

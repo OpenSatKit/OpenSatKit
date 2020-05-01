@@ -108,7 +108,7 @@ void KIT_SCH_AppMain(void)
     /*
     ** Main process loop
     */
-    CFE_EVS_SendEvent(KIT_SCH_DEBUG_EID, CFE_EVS_DEBUG,"KIT_SCH: About to enter loop\n");
+    CFE_EVS_SendEvent(KIT_SCH_APP_DEBUG_EID, CFE_EVS_DEBUG,"KIT_SCH: About to enter loop\n");
     while (CFE_ES_RunLoop(&RunStatus))
     {
 
@@ -131,7 +131,7 @@ void KIT_SCH_AppMain(void)
 
     CFE_ES_WriteToSysLog("KIT_SCH App terminating, err = 0x%08X\n", Status);
 
-    CFE_EVS_SendEvent(KIT_SCH_EXIT_EID, CFE_EVS_CRITICAL, "KIT_SCH App: terminating, err = 0x%08X", Status);
+    CFE_EVS_SendEvent(KIT_SCH_APP_EXIT_EID, CFE_EVS_CRITICAL, "KIT_SCH App: terminating, err = 0x%08X", Status);
 
     CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
 
@@ -146,10 +146,9 @@ void KIT_SCH_AppMain(void)
 boolean KIT_SCH_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (KIT_SCH_NOOP_INFO_EID,
-                      CFE_EVS_INFORMATION,
-                      "Kit Scheduler (KIT_SCH) version %d.%d received a no operation command",
-                      KIT_SCH_MAJOR_VERSION,KIT_SCH_MINOR_VERSION);
+   CFE_EVS_SendEvent (KIT_SCH_APP_NOOP_EID, CFE_EVS_INFORMATION,
+                      "Kit Scheduler (KIT_SCH) version %d.%d.%d received a no operation command",
+                      KIT_SCH_MAJOR_VER, KIT_SCH_MINOR_VER, KIT_SCH_LOCAL_REV);
 
    return TRUE;
 
@@ -275,13 +274,9 @@ static int32 InitApp(void)
     /*
     ** Application startup event message
     */
-    Status = CFE_EVS_SendEvent(KIT_SCH_INITSTATS_INF_EID,
-                               CFE_EVS_INFORMATION,
-                               "KIT_SCH Initialized. Version %d.%d.%d.%d",
-                               KIT_SCH_MAJOR_VERSION,
-                               KIT_SCH_MINOR_VERSION,
-                               KIT_SCH_REVISION,
-                               KIT_SCH_MISSION_REV);
+    Status = CFE_EVS_SendEvent(KIT_SCH_APP_INIT_EID, CFE_EVS_INFORMATION,
+                               "KIT_SCH Initialized. Version %d.%d.%d",
+                               KIT_SCH_MAJOR_VER, KIT_SCH_MINOR_VER, KIT_SCH_LOCAL_REV);
 
     return(Status);
 
@@ -310,7 +305,7 @@ static void ProcessCmdPkt(CFE_SB_MsgPtr_t CmdMsgPtr)
          break;
 
       default:
-         CFE_EVS_SendEvent(KIT_SCH_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+         CFE_EVS_SendEvent(KIT_SCH_APP_INVALID_MID_EID, CFE_EVS_ERROR,
                            "Received invalid command packet,MID = 0x%x",MsgId);
 
          break;
@@ -321,5 +316,3 @@ static void ProcessCmdPkt(CFE_SB_MsgPtr_t CmdMsgPtr)
 
 } /* End ProcessCmdPkt() */
 
-
-/* end of file */

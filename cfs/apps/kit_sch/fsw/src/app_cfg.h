@@ -25,16 +25,15 @@
 */
 
 #include "kit_sch_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** Scheduler Application Macros
 */
 
-#define  KIT_SCH_MAJOR_VERSION      1
-#define  KIT_SCH_MINOR_VERSION      0
-#define  KIT_SCH_REVISION           0
-#define  KIT_SCH_MISSION_REV        0
+#define  KIT_SCH_MAJOR_VER      1
+#define  KIT_SCH_MINOR_VER      1   /* Refactored for OSK 2.2 */
+#define  KIT_SCH_LOCAL_REV      0
 
 #define  KIT_SCH_PIPE_DEPTH       10
 #define  KIT_SCH_PIPE_NAME        "KIT_SCH_CMD_PIPE"
@@ -59,10 +58,10 @@
 **
 */
 
-#define KIT_SCH_BASE_EID    (APP_FW_APP_BASE_EID +  0)
-#define SCHTBL_BASE_EID     (APP_FW_APP_BASE_EID + 10)
-#define MSGTBL_BASE_EID     (APP_FW_APP_BASE_EID + 20)
-#define SCHEDULER_BASE_EID  (APP_FW_APP_BASE_EID + 30) /* Uses more than 10 IDs */
+#define KIT_SCH_APP_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
+#define SCHTBL_BASE_EID       (OSK_C_FW_APP_BASE_EID + 10)
+#define MSGTBL_BASE_EID       (OSK_C_FW_APP_BASE_EID + 20)
+#define SCHEDULER_BASE_EID    (OSK_C_FW_APP_BASE_EID + 30) /* Uses more than 10 IDs */
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of
