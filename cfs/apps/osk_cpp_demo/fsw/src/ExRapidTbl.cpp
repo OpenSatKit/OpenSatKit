@@ -268,7 +268,7 @@ boolean ExRapidTbl::DumpContent (const std::string& filename) {
    if (file_handle >= OS_FS_SUCCESS) {
 
 
-      sprintf(dump_record,"\n{\n\"name\": \"Example RapidJson Table\",\n");
+      sprintf(dump_record,"{\n\"name\": \"Example RapidJson Table\",\n");
       OS_write(file_handle,dump_record,strlen(dump_record));
 
       sprintf(dump_record,"\"description\": \"Example table for object-based application template.\",\n");

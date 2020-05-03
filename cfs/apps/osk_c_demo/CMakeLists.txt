@@ -15,4 +15,4 @@ aux_source_directory(fsw/tables APP_TABLE_FILES)
 
 # Create the app module
 add_cfe_app(osk_c_demo ${APP_SRC_FILES})
-
+add_cfe_tables(osk_c_demo ${APP_TABLE_FILES})

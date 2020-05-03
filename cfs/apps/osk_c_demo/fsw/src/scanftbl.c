@@ -124,7 +124,7 @@ boolean SCANFTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    ** Real flight code would validate all data is loaded for a replace.
    */
 	
-   CFE_PSP_MemSet(&(ScanfTbl->Tbl), 0, sizeof(SCANFTBL_Struct));
+   CFE_PSP_MemSet(&(ScanfTbl->Tbl), 0, sizeof(ExTblData_Param));
    
    SCANFTBL_ResetStatus(); /* Reset status helps isolate errors if they occur */
    
@@ -186,7 +186,7 @@ boolean SCANFTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
    boolean  RetStatus = FALSE;
    int32    FileHandle;
-   const SCANFTBL_Struct *ScanfTblPtr;
+   const ExTblData_Param *ScanfTblPtr;
    char  DumpRecord[256];
    int   i;
 

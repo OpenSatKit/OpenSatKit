@@ -8,7 +8,8 @@
 **   2. The example object table (DemObjTbl) defines an array of elements and
 **      each element is a 3-tuple (Data1, Data2, Data3). Two commands are
 **      defined:
-**      A. Select which table tuple is used in demobj's computation
+**      A. Select the table and which table entry is used in demobj's
+**         computation
 **      B. Enable/disable the use of the table data in the computation
 **   3. Different text-based tables were protoyped prior to selecting JSON.
 **      They ar eall retained so the ser can see how they vary.
@@ -33,21 +34,31 @@
 #include "scanftbl.h"
 #include "xmltbl.h"
 #include "jsontbl.h"
-
+#include "cfetbl.h"
 
 /*
 ** Event Message IDs
 */
 
-#define DEMOBJ_CMD_ENA_DATA_LOAD_INFO_EID   (DEMOBJ_BASE_EID + 0)
-#define DEMOBJ_CMD_SET_TBL_INDEX_INFO_EID   (DEMOBJ_BASE_EID + 1)
-#define DEMOBJ_CMD_SET_TBL_INDEX_ERR_EID    (DEMOBJ_BASE_EID + 2)
+#define DEMOBJ_CMD_ENA_TBL_DATA_EID       (DEMOBJ_BASE_EID + 0)
+#define DEMOBJ_CMD_SET_TBL_INDEX_EID      (DEMOBJ_BASE_EID + 1)
+#define DEMOBJ_CMD_SET_TBL_INDEX_ERR_EID  (DEMOBJ_BASE_EID + 2)
+#define DEMOBJ_INVALID_TBL_ID_EID         (DEMOBJ_BASE_EID + 2)
 
 
 /*
 ** Type Definitions
 */
 
+typedef enum {
+   
+   DEMOBJ_XML_TBL_ID = 0,
+   DEMOBJ_SCANF_TBL_ID,
+   DEMOBJ_JSON_TBL_ID,
+   DEMOBJ_CFE_TBL_ID,
+   DEMOBJ_UNDEF_TBL_ID
+   
+} DEMOBJ_TBL_ID;
 
 
 /******************************************************************************
@@ -56,16 +67,18 @@
 
 typedef struct {
 
-   boolean    EnableDataLoad;
-   uint8      TblIndex;
-   uint16     Data1;
-   uint16     Data2;
-   uint16     Data3;
+   boolean         TblDataEnabled;
+   DEMOBJ_TBL_ID   TblId;
+   uint8           TblIndex;
+   
+   ExTblData_Entry TblEntry;  /* "Working buffer" with active data entry */
+ 
+   ExTblData_Param  XmlTbl;
+   ExTblData_Param  ScanfTbl;
+   ExTblData_Param  JsonTbl;
 
-   XMLTBL_Struct   XmlTbl;
-   SCANFTBL_Struct ScanfTbl;
-   JSONTBL_Struct  JsonTbl;
-
+   CFETBL_Class    CfeTbl;
+   
 } DEMOBJ_Class;
 
 
@@ -73,24 +86,23 @@ typedef struct {
 ** Command Functions
 */
 
-typedef struct
-{
+typedef struct {
 
    uint8     CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   boolean   EnableDataLoad;
+   boolean   EnableTblData;
 
-} DEMOBJ_EnableDataLoadCmdParam;
-#define DEMOBJ_ENABLE_DATA_LOAD_CMD_DATA_LEN  (sizeof(DEMOBJ_EnableDataLoadCmdParam) - CFE_SB_CMD_HDR_SIZE)
+} DEMOBJ_EnableTblDataCmdParam;
+#define DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN  (sizeof(DEMOBJ_EnableTblDataCmdParam) - CFE_SB_CMD_HDR_SIZE)
 
 
-typedef struct
-{
+typedef struct {
 
-   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   uint16   TblIndex;  
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint8   TblId;       /* See DEMOBJ_TBL_ID. Enum not used here so storage size could be controlled */
+   uint8   TblIndex;  
 
-}  DEMOBJ_SetTblIndexCmdParam;
-#define DEMOBJ_SET_TBL_INDEX_CMD_DATA_LEN  (sizeof(DEMOBJ_SetTblIndexCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  DEMOBJ_SetActiveTblCmdParam;
+#define DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN  (sizeof(DEMOBJ_SetActiveTblCmdParam) - CFE_SB_CMD_HDR_SIZE)
 
 /*
 ** Exported Functions
@@ -109,22 +121,6 @@ void DEMOBJ_Constructor(DEMOBJ_Class *DemObjPtr);
 
 
 /******************************************************************************
-** Function: DEMOBJ_GetXxxTblPtr
-**
-** Return a pointer to the table.
-**
-** Notes:
-**   1. Function signature must match table objects's XXX_GetTblPtr():
-**      XMLTBL_GetTblPtr, SCANFTBL_GetTblPtr, JSONTBL_GetTblPtr.
-**   2. In a real application there would only be one function, but since this
-**      is a demo, one function is defined for each example table type.
-*/
-const XMLTBL_Struct*   DEMOBJ_GetXmlTblPtr(void);
-const SCANFTBL_Struct* DEMOBJ_GetScanfTblPtr(void);
-const JSONTBL_Struct*  DEMOBJ_GetJsonTblPtr(void);
-
-
-/******************************************************************************
 ** Function: DEMOBJ_ResetStatus
 **
 ** Reset counters and status flags to a known reset state.
@@ -138,14 +134,70 @@ void DEMOBJ_ResetStatus(void);
 
 
 /******************************************************************************
-** Function: DEMOBJ_LoadDataFromXxxTbl
+** Function: DEMOBJ_Execute
 **
-** If enabled the latest data from the table is loaded into the working buffer
-** for the example computation.
+** Execute demo object functionality during each application runloop cycle.
+**
 */
-void DEMOBJ_LoadDataFromXmlTbl(void);
-void DEMOBJ_LoadDataFromScanfTbl(void);
-void DEMOBJ_LoadDataFromJsosnTbl(void);
+void DEMOBJ_Execute(void);
+
+
+/******************************************************************************
+** Function: DEMOBJ_GetTblData
+**
+** If table data is enabled then the data entry from the active table[index]
+** is loaded into the parameter. If the table is disabled then the parameter
+** data is set to zero. 
+**
+** Return TRUE is table table is enabled, otherwise return FALSE.
+*/
+boolean DEMOBJ_GetTblData(ExTblData_Entry* TblEntryData);
+
+
+/******************************************************************************
+** Function: DEMOBJ_EnableTblDataCmd
+**
+** Enable a table's data to be used in DemoObj's working buffer and sent in 
+** telemetry
+**
+** Note:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+*/
+boolean DEMOBJ_EnableTblDataCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: DEMOBJ_SetActiveTblCmd
+**
+** Activate a specific table & data entry to be used in the working buffer.
+**
+** Note:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+*/
+boolean DEMOBJ_SetActiveTblCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+
+
+
+
+
+
+
+/******************************************************************************
+** Function: DEMOBJ_GetXxxTblPtr
+**
+** Return a pointer to the table.
+**
+** Notes:
+**   1. Function signature must match table objects's XXX_GetTblPtr():
+**      XMLTBL_GetTblPtr, SCANFTBL_GetTblPtr, JSONTBL_GetTblPtr.
+**   2. In a real application there would only be one function, but since this
+**      is a demo, one function is defined for each example table type.
+*/
+const ExTblData_Param*  DEMOBJ_GetXmlTblPtr(void);
+const ExTblData_Param*  DEMOBJ_GetScanfTblPtr(void);
+const ExTblData_Param*  DEMOBJ_GetJsonTblPtr(void);
 
 
 /******************************************************************************
@@ -161,9 +213,9 @@ void DEMOBJ_LoadDataFromJsosnTbl(void);
 **      is a demo, one function is defined for each example table type.
 **
 */
-boolean DEMOBJ_LoadXmlTbl(XMLTBL_Struct* NewTbl);
-boolean DEMOBJ_LoadScanfTbl(SCANFTBL_Struct* NewTbl);
-boolean DEMOBJ_LoadJsonTbl(JSONTBL_Struct* NewTbl);
+boolean DEMOBJ_LoadXmlTbl(ExTblData_Param* NewTbl);
+boolean DEMOBJ_LoadScanfTbl(ExTblData_Param* NewTbl);
+boolean DEMOBJ_LoadJsonTbl(ExTblData_Param* NewTbl);
 
 
 /******************************************************************************
@@ -180,31 +232,8 @@ boolean DEMOBJ_LoadJsonTbl(JSONTBL_Struct* NewTbl);
 **      is a demo, one function is defined for each example table type.
 **
 */
-boolean DEMOBJ_LoadXmlTblEntry(uint16 EntryId, XMLTBL_Entry* NewEntry);
-boolean DEMOBJ_LoadScanfTblEntry(uint16 EntryId, SCANFTBL_Entry* NewEntry);
-boolean DEMOBJ_LoadJsonTblEntry(uint16 EntryId, JSONTBL_Entry* NewEntry);
-
-
-/******************************************************************************
-** Function: DEMOBJ_EnableDataLoadCmd
-**
-** Enable the ability to load data from the table to the working data buffer.
-**
-** Note:
-**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-*/
-boolean DEMOBJ_EnableDataLoadCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
-
-
-/******************************************************************************
-** Function: DEMOBJ_SetTblIndexCmd
-**
-** Set the index that determines which set of data will be used.
-**
-** Note:
-**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-*/
-boolean DEMOBJ_SetTblIndexCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
-
+boolean DEMOBJ_LoadXmlTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry);
+boolean DEMOBJ_LoadScanfTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry);
+boolean DEMOBJ_LoadJsonTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry);
 
 #endif /* _demobj_ */

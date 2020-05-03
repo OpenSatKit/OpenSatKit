@@ -29,6 +29,7 @@
 
 #include "app_cfg.h"
 #include "json.h"
+#include "extbldata.h"
 
 /*
 ** Macro Definitions
@@ -50,41 +51,18 @@
 ** Type Definitions
 */
 
-/******************************************************************************
-** Table -  Local table copy used for table loads
-** 
-** All of the demo tables must have the same structure.
-*/
-
-typedef struct {
-
-   uint16   Data1;
-   uint16   Data2;
-   uint16   Data3;
-
-} JSONTBL_Entry;
-
-typedef struct
-{
-
-	JSONTBL_Entry Entry[JSONTBL_MAX_ENTRY_ID];
-
-} JSONTBL_Struct;
-
-
-
 /*
 ** Table Owner Callback Functions
 */
 
 /* Return pointer to owner's table data */
-typedef const JSONTBL_Struct* (*JSONTBL_GetTblPtr)(void);
+typedef const ExTblData_Param* (*JSONTBL_GetTblPtr)(void);
             
 /* Table Owner's function to load all table data */
-typedef boolean (*JSONTBL_LoadTbl)(JSONTBL_Struct* NewTable); 
+typedef boolean (*JSONTBL_LoadTbl)(ExTblData_Param* NewTable); 
 
 /* Table Owner's function to load a single table entry */
-typedef boolean (*JSONTBL_LoadTblEntry)(uint16 EntryId, JSONTBL_Entry* NewEntry);   
+typedef boolean (*JSONTBL_LoadTblEntry)(uint16 EntryId, ExTblData_Entry* NewEntry);   
 
 
 typedef struct {
@@ -94,7 +72,7 @@ typedef struct {
    uint16   DataArrayEntryIdx;
    boolean  Modified[JSONTBL_MAX_ENTRY_ID];
 
-   JSONTBL_Struct Tbl;
+   ExTblData_Param Tbl;
 
    JSONTBL_GetTblPtr    GetTblPtrFunc;
    JSONTBL_LoadTbl      LoadTblFunc;

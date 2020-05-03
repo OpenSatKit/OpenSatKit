@@ -114,7 +114,7 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    ** Flight code would validate all data.
    */
    
-   CFE_PSP_MemSet(&(JsonTbl->Tbl), 0, sizeof(JSONTBL_Struct));  /* Wouldn't do in flight but helps debug prototype */
+   CFE_PSP_MemSet(&(JsonTbl->Tbl), 0, sizeof(ExTblData_Param));  /* Wouldn't do in flight but helps debug prototype */
    
    JSONTBL_ResetStatus();  /* Reset status helps isolate errors if they occur */
 
@@ -188,14 +188,13 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 **  5. Creates a new dump file, overwriting anything that may have existed
 **     previously
 */
-boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
-{
+boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename) {
 
    boolean  RetStatus = FALSE;
    int32    FileHandle;
    char     DumpRecord[256];
    int      i;
-   const JSONTBL_Struct *JsonTblPtr;
+   const ExTblData_Param *JsonTblPtr;
 
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
@@ -217,7 +216,7 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       ** previous record's line with ",\n" so write first line before the
       ** loop starts.      
       */
-      sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}",
+      sprintf(DumpRecord,"{\"entry\": {\n  \"index\": %4d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}}",
               0, JsonTblPtr->Entry[0].Data1, JsonTblPtr->Entry[0].Data2, JsonTblPtr->Entry[0].Data3);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
@@ -226,7 +225,7 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
          sprintf(DumpRecord,",\n");
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-         sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}",
+         sprintf(DumpRecord,"{\"entry\": {\n  \"index\": %4d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}}",
                  i, JsonTblPtr->Entry[i].Data1, JsonTblPtr->Entry[i].Data2, JsonTblPtr->Entry[i].Data3);
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       

@@ -7,7 +7,7 @@ CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,       KIT_CI,        20,   16384, 
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,      KIT_SCH,       10,   16384, 0x0, 0;
 CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,   OSK_C_DEMO,   120,   16384, 0x0, 0;
 CFE_APP, /cf/osk_cpp_demo.so, OSK_CPP_DEMO_Main,    OSK_CPP_DEMO, 120,   16384, 0x0, 0;
-CFE_APP, /cf/ds.so,           DS_AppMain,           DS,            70,   16384, 0x0, 0;
+!CFE_APP, /cf/ds.so,           DS_AppMain,           DS,            70,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,           FM,            80,   16384, 0x0, 0;
 CFE_APP, /cf/lc.so,           LC_AppMain,           LC,            80,   16384, 0x0, 0;
 CFE_APP, /cf/md.so,           MD_AppMain,           MD,            90,   16384, 0x0, 0;

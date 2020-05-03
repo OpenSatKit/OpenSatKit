@@ -3,17 +3,16 @@
 **
 */
 
-#include "ExTblData.h"
-
+#include "extbldata.h"
 #include "cfe_tbl_filedef.h"
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef =
 {
-    "g_ex_cfe_tbl", "OSK_CPP_DEMO.ExCfeTbl", "Example C++ cFE Table",
-    "ExCfeTbl", sizeof (ExTblParam)
+    "OskCDemo_ExCfeTbl", "OSK_C_DEMO.ExCfeTbl", "Example cFE Table",
+    OSK_C_DEMO_CFE_TBL_NAME, sizeof (ExTblData_Param)
 };
 
-ExTblParam g_ex_cfe_tbl = {{
+ExTblData_Param OskCDemo_ExCfeTbl = {{
    {  1,  2,  3},  //  0
    {  4,  5,  6},  //  1
    {  7,  8,  9},  //  2

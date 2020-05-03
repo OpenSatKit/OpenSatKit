@@ -114,7 +114,6 @@ boolean ExJsmnTbl::LoadContent (oskfw::Tbl::LoadOption load_opt, const std::stri
    
    CFE_EVS_SendEvent(EID_LOAD_CMD_DBG, CFE_EVS_DEBUG,
                      "ExJsmnTbl: LoadContent() Entry. Option %d, File %s", load_opt, filename.c_str());
-   OS_printf("ExJsmnTbl: LoadContent() Entry. Option %d, File %s\n", load_opt, filename.c_str());
 
    /*
    ** Set all data and flags to zero. If a table replace is commanded and
@@ -195,7 +194,7 @@ boolean ExJsmnTbl::DumpContent (const std::string& filename) {
    if (file_handle >= OS_FS_SUCCESS) {
 
 
-      sprintf(dump_record,"\n{\n\"name\": \"Example JSMN Table\",\n");
+      sprintf(dump_record,"{\n\"name\": \"Example JSMN Table\",\n");
       OS_write(file_handle,dump_record,strlen(dump_record));
 
       sprintf(dump_record,"\"description\": \"Example table for object-based application template.\",\n");

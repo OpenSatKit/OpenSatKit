@@ -30,7 +30,6 @@
 
 static int32 InitApp(void);
 static void ProcessCommands(void);
-static void LoadDataFromTbl(void);
 
 /*
 ** Global Data
@@ -99,8 +98,7 @@ void OSK_C_DEMO_AppMain(void)
       OS_TaskDelay(OSK_C_DEMO_RUNLOOP_DELAY);
       CFE_ES_PerfLogEntry(OSK_C_DEMO_MAIN_PERF_ID);
 
-      LoadDataFromTbl();
-      
+      DEMOBJ_Execute();
       DEMOFR_SimStep();
       
       FaultRep_GenTlmMsg(FAULTREP_OBJ, &OskCDemoFrPkt);
@@ -157,11 +155,7 @@ boolean OSK_C_DEMO_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
    DEMOBJ_ResetStatus();
    DEMOFR_ResetStatus();
-
-   XMLTBL_ResetStatus();
-   SCANFTBL_ResetStatus();
-   JSONTBL_ResetStatus();
-   
+  
    return TRUE;
 
 } /* End OSK_C_DEMO_ResetAppCmd() */
@@ -209,12 +203,9 @@ void OSK_C_DEMO_SendHousekeepingPkt(void)
    ** - At a minimum all OBJECT variables effected by a reset must be included
    */
 
-   OskCDemoHkPkt.EnableDataLoad = OskCDemo.DemObj.EnableDataLoad;
-   OskCDemoHkPkt.TblIndex       = OskCDemo.DemObj.TblIndex;
-   OskCDemoHkPkt.Data1          = OskCDemo.DemObj.Data1;
-   OskCDemoHkPkt.Data2          = OskCDemo.DemObj.Data2;
-   OskCDemoHkPkt.Data3          = OskCDemo.DemObj.Data3;
-
+   OskCDemoHkPkt.TblDataEnabled = DEMOBJ_GetTblData(&OskCDemoHkPkt.TblData);
+   OskCDemoHkPkt.TblId    = OskCDemo.DemObj.TblId;
+   OskCDemoHkPkt.TblIndex = OskCDemo.DemObj.TblIndex;
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskCDemoHkPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskCDemoHkPkt);
@@ -259,8 +250,8 @@ static int32 InitApp(void)
     
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_LOAD_CMD_FC,     TBLMGR_OBJ,   TBLMGR_LoadTblCmd,          TBLMGR_LOAD_TBL_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_DUMP_CMD_FC,     TBLMGR_OBJ,   TBLMGR_DumpTblCmd,          TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_ENA_DATA_LOAD_CMD_FC,       DEMOBJ_OBJ,   DEMOBJ_EnableDataLoadCmd,   DEMOBJ_ENABLE_DATA_LOAD_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_SET_TBL_INDEX_CMD_FC,       DEMOBJ_OBJ,   DEMOBJ_SetTblIndexCmd,      DEMOBJ_SET_TBL_INDEX_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_ENA_TBL_DATA_CMD_FC,        DEMOBJ_OBJ,   DEMOBJ_EnableTblDataCmd,    DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN);
+    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_SET_ACTIVE_TBL_CMD_FC,      DEMOBJ_OBJ,   DEMOBJ_SetActiveTblCmd,     DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CFG_CMD_FC,        FAULTREP_OBJ, FaultRep_ConfigFaultDetCmd, FAULTREP_CFG_FAULT_DET_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CLR_CMD_FC,        FAULTREP_OBJ, FaultRep_ClearFaultDetCmd,  FAULTREP_CLR_FAULT_DET_CMD_DATA_LEN);
     CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC, DEMOFR_OBJ,   DEMOFR_SetTlmModeCmd,       DEMOFR_SET_TLM_MODE_CMD_DATA_LEN);
@@ -337,30 +328,3 @@ static void ProcessCommands(void)
    } /* End if SB received a packet */
 
 } /* End ProcessCommands() */
-
-/******************************************************************************
-** Function: LoadDataFromTbl
-**
-*/
-static void LoadDataFromTbl(void)
-{
-   const TBLMGR_Tbl* LastTbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
-  
-   /* Kludgey since ID's are registration order dependent */
-   
-   switch (LastTbl->Id) {
-      case 0:
-         DEMOBJ_LoadDataFromXmlTbl();
-         break;
-      case 1:
-         DEMOBJ_LoadDataFromScanfTbl();
-         break;
-      case 2:
-         DEMOBJ_LoadDataFromJsonTbl();
-         break;
-      default:
-         /* Do nothing. Don't flood events */
-         break;
-   }	
-
-} /* End LoadDataFromTbl() */
