@@ -32,6 +32,8 @@ static DEMOBJ_Class*  DemObj = NULL;
 /*
 ** Local Function Prototypes
 */
+static boolean ValidTblId(uint8 TblId);
+static const char* TblIdStr(uint8 TblId);
 
 
 /******************************************************************************
@@ -45,34 +47,9 @@ void DEMOBJ_Constructor(DEMOBJ_Class*  DemObjPtr)
 
    CFE_PSP_MemSet((void*)DemObj, 0, sizeof(DEMOBJ_Class));
 
+   CFETBL_Constructor(&DemObj->CfeTbl);
     
-} /* End DEMOBJ_Constructor() */
-
-
-/******************************************************************************
-** Function: DEMOBJ_GetxxxTblPtr
-**
-*/
-const XMLTBL_Struct* DEMOBJ_GetXmlTblPtr()
-{
-
-   return &(DemObj->XmlTbl);
-
-} /* End DEMOBJ_GetXmlTblPtr() */
-
-const SCANFTBL_Struct* DEMOBJ_GetScanfTblPtr()
-{
-
-   return &(DemObj->ScanfTbl);
-
-} /* End DEMOBJ_GetSCanfTblPtr() */
-
-const JSONTBL_Struct* DEMOBJ_GetJsonTblPtr()
-{
-
-   return &(DemObj->JsonTbl);
-
-} /* End DEMOBJ_GetJsonTblPtr() */
+} /* End DEMOBJ_Constructor(&DemObj->CfeTbl) */
 
 
 /******************************************************************************
@@ -81,61 +58,229 @@ const JSONTBL_Struct* DEMOBJ_GetJsonTblPtr()
 */
 void DEMOBJ_ResetStatus()
 {
+ 
+   XMLTBL_ResetStatus();
+   SCANFTBL_ResetStatus();
+   JSONTBL_ResetStatus();
+   CFETBL_ResetStatus();
 
-   DemObj->EnableDataLoad = TRUE;
+   DemObj->TblDataEnabled = FALSE;
    DemObj->TblIndex = 0;
+   DemObj->TblId = DEMOBJ_UNDEF_TBL_ID;
    
-   DEMOBJ_LoadDataFromXmlTbl();
-
 } /* End DEMOBJ_ResetStatus() */
 
 
 /******************************************************************************
-** Function: LoadDataFromXxxTbl
+** Function: DEMOBJ_Execute
+**
+** Execute demo object functionality during each application runloop cycle.
 **
 */
-void DEMOBJ_LoadDataFromXmlTbl(void)
+void DEMOBJ_Execute(void)
 {
 
-   if (DemObj->EnableDataLoad)
-   {
-  
-      DemObj->Data1 = DemObj->XmlTbl.Entry[DemObj->TblIndex].Data1;
-      DemObj->Data2 = DemObj->XmlTbl.Entry[DemObj->TblIndex].Data2;
-      DemObj->Data3 = DemObj->XmlTbl.Entry[DemObj->TblIndex].Data3;
+   /*
+   ** Load table data from the last commanded table. This is just an exmaple of
+   ** doing something during the execution cycle.
+   */   
+   if (DemObj->TblDataEnabled) {
+      
+      switch (DemObj->TblId) {
+      case DEMOBJ_XML_TBL_ID:
+         DemObj->TblEntry = DemObj->XmlTbl.Entry[DemObj->TblIndex];
+         break;
+      case DEMOBJ_SCANF_TBL_ID:
+         DemObj->TblEntry = DemObj->ScanfTbl.Entry[DemObj->TblIndex];
+         break;
+      case DEMOBJ_JSON_TBL_ID:
+         DemObj->TblEntry = DemObj->JsonTbl.Entry[DemObj->TblIndex];
+         break;
+      case DEMOBJ_CFE_TBL_ID:
+         CFETBL_GetTblEntry(&DemObj->TblEntry, DemObj->TblIndex);
+      case DEMOBJ_UNDEF_TBL_ID:
+         /* Valid state, but nothing to do */
+         break;
+      default:
+         CFE_EVS_SendEvent(999, CFE_EVS_CRITICAL,
+                           "Invalid demo object table ID %d. Set ID to %s",
+                           DemObj->TblId, TblIdStr(DEMOBJ_UNDEF_TBL_ID));
+         DemObj->TblId = DEMOBJ_UNDEF_TBL_ID;
+         break;
+      }
+   
+   } /* End if table data enabled */
+   
+} /* end DEMOBJ_Execute() */
 
-   } /* End if Data Load Enabled */
 
-} /* End DEMOBJ_LoadDataFromXmlTbl() */
-
-
-void DEMOBJ_LoadDataFromScanfTbl(void)
+/******************************************************************************
+** Function: DEMOBJ_EnableTblDataCmd
+**
+** Enable the ability to load data from a table to the DEMOBJ's data buffer.
+**
+*/
+boolean DEMOBJ_EnableTblDataCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   if (DemObj->EnableDataLoad)
-   {
-  
-      DemObj->Data1 = DemObj->ScanfTbl.Entry[DemObj->TblIndex].Data1;
-      DemObj->Data2 = DemObj->ScanfTbl.Entry[DemObj->TblIndex].Data2;
-      DemObj->Data3 = DemObj->ScanfTbl.Entry[DemObj->TblIndex].Data3;
+   const DEMOBJ_EnableTblDataCmdParam *CmdParam = (const DEMOBJ_EnableTblDataCmdParam *) MsgPtr;
 
-   } /* End if Data Load Enabled */
+   DemObj->TblDataEnabled = (CmdParam->EnableTblData == TRUE);
+   if (DemObj->TblDataEnabled) {
+      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Table Data load enabled");
+   }
+   else {
+      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Data load disabled");
+   }
 
-} /* End DEMOBJ_LoadDataFromScanfTbl() */
+   return TRUE;
 
-void DEMOBJ_LoadDataFromJsonTbl(void)
+} /* End DEMOBJ_EnableTblDataCmd() */
+
+
+/******************************************************************************
+** Function: DEMOBJ_SetActiveTblCmd
+**
+** Activate a specific table & data entry to be used in the working buffer.
+*/
+boolean DEMOBJ_SetActiveTblCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   if (DemObj->EnableDataLoad)
-   {
-  
-      DemObj->Data1 = DemObj->JsonTbl.Entry[DemObj->TblIndex].Data1;
-      DemObj->Data2 = DemObj->JsonTbl.Entry[DemObj->TblIndex].Data2;
-      DemObj->Data3 = DemObj->JsonTbl.Entry[DemObj->TblIndex].Data3;
+   const DEMOBJ_SetActiveTblCmdParam *CmdParam = (const DEMOBJ_SetActiveTblCmdParam *) MsgPtr;
+   boolean  RetStatus = FALSE;
 
-   } /* End if Data Load Enabled */
+   /* ValidateTblId() sends an event of ID is invalid */
+   if (ValidTblId(CmdParam->TblId)) {
+      
+      if (CmdParam->TblIndex < OSK_C_DEMO_TBL_MAX_ENTRY_ID) {
+      
+         RetStatus = TRUE;
+         DemObj->TblId    = CmdParam->TblId;
+         DemObj->TblIndex = CmdParam->TblIndex;
+         CFE_EVS_SendEvent(DEMOBJ_CMD_SET_TBL_INDEX_EID, CFE_EVS_INFORMATION,
+                           "Active table set to %s at index %d", 
+                           TblIdStr(DemObj->TblId), DemObj->TblIndex);
+      }
+      else
+      {
+         CFE_EVS_SendEvent(DEMOBJ_CMD_SET_TBL_INDEX_ERR_EID, CFE_EVS_ERROR,
+                           "Commanded table index %d is too big. Max table index is %d", 
+                           CmdParam->TblIndex, (OSK_C_DEMO_TBL_MAX_ENTRY_ID-1));
+      }
+   }
 
-} /* End DEMOBJ_LoadDataFromJsonTbl() */
+   return RetStatus;
+
+
+} /* End DEMOBJ_SetActiveTblCmd() */
+
+
+/******************************************************************************
+** Function: DEMOBJ_GetTblData
+**
+*/
+boolean DEMOBJ_GetTblData(ExTblData_Entry* TblEntryData) {
+   
+   boolean RetStatus = FALSE;
+   
+   if (DemObj->TblDataEnabled) {
+      memcpy(TblEntryData,&DemObj->TblEntry,sizeof(ExTblData_Entry));
+      RetStatus = TRUE;
+   }
+   else {
+      memset(TblEntryData,0,sizeof(ExTblData_Entry));
+   }
+
+   return RetStatus;
+   
+} /* End DEMOBJ_GetTblData() */
+
+
+/******************************************************************************
+** Function: ValidTblId
+**
+** Notes:
+**   1. Order of DEMOBJ_TBL_ID enum assumed.
+**   2. Typically used to verify commands so pass in uint8 since enum not used
+**      in the command parameter type definitions.
+**
+*/
+static boolean ValidTblId(uint8 TblId) {
+   
+   boolean RetStatus = FALSE;
+   
+   if (TblId >= DEMOBJ_XML_TBL_ID && TblId <= DEMOBJ_CFE_TBL_ID) {
+      RetStatus = TRUE;
+   }
+   else {
+      CFE_EVS_SendEvent(DEMOBJ_INVALID_TBL_ID_EID, CFE_EVS_ERROR,
+                        "Invalid table ID %d. Must be in the range from %d to %d.",
+                        TblId, DEMOBJ_XML_TBL_ID, DEMOBJ_CFE_TBL_ID);
+   }
+   
+   return RetStatus;
+   
+} /* End ValidTblId() */
+
+
+/******************************************************************************
+** Function: TblIdStr
+**
+** Notes:
+**   1. Order of DEMOBJ_TBL_ID enum assumed.
+**   2. Typically used in command function event messages so pass in uint8 
+**      since enum not used in the command parameter type definitions.
+*/
+static const char* TblIdStr(uint8 TblId) {
+
+   static char* IdStr[] = { "XML", "SCANF", "JSON", "cFE", "UNDEF" };
+   
+   uint8 i;
+   
+   ValidTblId(TblId) ? i = TblId : 4;
+           
+   return IdStr[i];
+
+} /* End TblIdStr() */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******************************************************************************
+** Function: DEMOBJ_GetxxxTblPtr
+**
+*/
+const ExTblData_Param* DEMOBJ_GetXmlTblPtr()
+{
+
+   return &(DemObj->XmlTbl);
+
+} /* End DEMOBJ_GetXmlTblPtr() */
+
+const ExTblData_Param* DEMOBJ_GetScanfTblPtr()
+{
+
+   return &(DemObj->ScanfTbl);
+
+} /* End DEMOBJ_GetSCanfTblPtr() */
+
+const ExTblData_Param* DEMOBJ_GetJsonTblPtr()
+{
+
+   return &(DemObj->JsonTbl);
+
+} /* End DEMOBJ_GetJsonTblPtr() */
 
 
 /******************************************************************************
@@ -146,28 +291,28 @@ void DEMOBJ_LoadDataFromJsonTbl(void)
 **      criteria.
 ** 
 */
-boolean DEMOBJ_LoadXmlTbl(XMLTBL_Struct* NewTbl)
+boolean DEMOBJ_LoadXmlTbl(ExTblData_Param* NewTbl)
 {
 
-   CFE_PSP_MemCpy(&(DemObj->XmlTbl), NewTbl, sizeof(XMLTBL_Struct));
+   CFE_PSP_MemCpy(&(DemObj->XmlTbl), NewTbl, sizeof(ExTblData_Param));
    
    return TRUE;
 
 } /* End DEMOBJ_LoadXmlTbl() */
 
-boolean DEMOBJ_LoadScanfTbl(SCANFTBL_Struct* NewTbl)
+boolean DEMOBJ_LoadScanfTbl(ExTblData_Param* NewTbl)
 {
 
-   CFE_PSP_MemCpy(&(DemObj->ScanfTbl), NewTbl, sizeof(SCANFTBL_Struct));
+   CFE_PSP_MemCpy(&(DemObj->ScanfTbl), NewTbl, sizeof(ExTblData_Param));
    
    return TRUE;
 
 } /* End DEMOBJ_LoadScanfTbl() */
 
-boolean DEMOBJ_LoadJsonTbl(JSONTBL_Struct* NewTbl)
+boolean DEMOBJ_LoadJsonTbl(ExTblData_Param* NewTbl)
 {
 
-   CFE_PSP_MemCpy(&(DemObj->JsonTbl), NewTbl, sizeof(JSONTBL_Struct));
+   CFE_PSP_MemCpy(&(DemObj->JsonTbl), NewTbl, sizeof(ExTblData_Param));
    
    return TRUE;
 
@@ -181,90 +326,31 @@ boolean DEMOBJ_LoadJsonTbl(JSONTBL_Struct* NewTbl)
 **   1. This is a simple table copy. More complex table loads may have pass/fail 
 **      criteria.
 */
-boolean DEMOBJ_LoadXmlTblEntry(uint16 EntryId, XMLTBL_Entry* NewEntry)
+boolean DEMOBJ_LoadXmlTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry)
 {
 
-   CFE_PSP_MemCpy(&(DemObj->XmlTbl.Entry[EntryId]),NewEntry,sizeof(XMLTBL_Entry));
+   CFE_PSP_MemCpy(&(DemObj->XmlTbl.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
 
    return TRUE;
 
 } /* End DEMOBJ_LoadXmlTblEntry() */
 
-boolean DEMOBJ_LoadScanfTblEntry(uint16 EntryId, SCANFTBL_Entry* NewEntry)
+boolean DEMOBJ_LoadScanfTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry)
 {
 
-   CFE_PSP_MemCpy(&(DemObj->ScanfTbl.Entry[EntryId]),NewEntry,sizeof(SCANFTBL_Entry));
+   CFE_PSP_MemCpy(&(DemObj->ScanfTbl.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
 
    return TRUE;
 
 } /* End DEMOBJ_LoadScanfTblEntry() */
 
-boolean DEMOBJ_LoadJsonTblEntry(uint16 EntryId, JSONTBL_Entry* NewEntry)
+boolean DEMOBJ_LoadJsonTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry)
 {
 
-   CFE_PSP_MemCpy(&(DemObj->JsonTbl.Entry[EntryId]),NewEntry,sizeof(JSONTBL_Entry));
+   CFE_PSP_MemCpy(&(DemObj->JsonTbl.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
 
    return TRUE;
 
 } /* End DEMOBJ_LoadJsonTblEntry() */
 
 
-/******************************************************************************
-** Function: DEMOBJ_EnableOutputCmd
-**
-** Enable the ability to load data from the table to the working data buffer.
-**
-*/
-boolean DEMOBJ_EnableDataLoadCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
-{
-
-   const DEMOBJ_EnableDataLoadCmdParam *CmdParam = (const DEMOBJ_EnableDataLoadCmdParam *) MsgPtr;
-   boolean  RetStatus = TRUE;
-
-   DemObj->EnableDataLoad = (CmdParam->EnableDataLoad == TRUE);
-   if (DemObj->EnableDataLoad)
-   {
-      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_DATA_LOAD_INFO_EID, CFE_EVS_INFORMATION,"Data load enabled");
-   }
-   else
-   {
-      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_DATA_LOAD_INFO_EID, CFE_EVS_INFORMATION,"Data load disabled");
-   }
-
-   return RetStatus;
-
-} /* End DEMOBJ_EnableDataLoadCmd() */
-
-
-/******************************************************************************
-** Function: DEMOBJ_SetTblIndexCmd
-**
-** Set the table index for the data to be used in the working data buffer.
-*/
-boolean DEMOBJ_SetTblIndexCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
-{
-
-   const DEMOBJ_SetTblIndexCmdParam *CmdParam = (const DEMOBJ_SetTblIndexCmdParam *) MsgPtr;
-   boolean  RetStatus = FALSE;
-
-   if (CmdParam->TblIndex < OSK_C_DEMO_TBL_MAX_ENTRY_ID)
-   {
-      RetStatus = TRUE;
-      DemObj->TblIndex = CmdParam->TblIndex;
-      CFE_EVS_SendEvent(DEMOBJ_CMD_SET_TBL_INDEX_INFO_EID, CFE_EVS_INFORMATION,
-                        "Table index set to %d", DemObj->TblIndex);
-   }
-   else
-   {
-      CFE_EVS_SendEvent(DEMOBJ_CMD_SET_TBL_INDEX_ERR_EID, CFE_EVS_ERROR,
-                        "Commanded table index %d is too big. Max table index is %d", 
-                        CmdParam->TblIndex, (OSK_C_DEMO_TBL_MAX_ENTRY_ID-1));
-   }
-
-   return RetStatus;
-
-
-} /* End DEMOBJ_LoadDataCmd() */
-
-
-/* end of file */

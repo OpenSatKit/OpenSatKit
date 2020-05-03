@@ -3,8 +3,8 @@
 **
 ** Notes:
 **   1. Can't register a table during construction because the app has not been
-**      registered with ES yet.
-**   2. This is proto that doesn't expose all of the cFE table services.
+**      registered with cFE Executive Services when the constructor is called.
+**   2. This is a prototype that doesn't expose all of the cFE table services.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU

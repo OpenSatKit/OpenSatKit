@@ -47,4 +47,8 @@
 #define  OSK_C_DEMO_JSON_TBL_DEF_LOAD_FILE  "/cf/osk_c_demo_tbl.json"
 #define  OSK_C_DEMO_JSON_TBL_DEF_DUMP_FILE  "/cf/osk_c_demo_tbl_d.json"
 
+#define  OSK_C_DEMO_CFE_TBL_NAME            "ExCfeTbl"
+#define  OSK_C_DEMO_CFE_TBL_DEF_LOAD_FILE   "/cf/osk_c_demo.tbl"
+
+
 #endif /* _osk_c_demo_platform_cfg_ */

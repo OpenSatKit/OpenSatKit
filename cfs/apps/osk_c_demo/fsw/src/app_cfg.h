@@ -34,7 +34,7 @@
 */
 
 #define  OSK_C_DEMO_MAJOR_VER     1
-#define  OSK_C_DEMO_MINOR_VER     2 /* Refactor updates for OSK 2.2 but no functional changes */
+#define  OSK_C_DEMO_MINOR_VER     3 /* Added cFE binary table support.  */
 #define  OSK_C_DEMO_LOCAL_REV     0
 
 /******************************************************************************
@@ -43,8 +43,8 @@
 
 #define OSK_C_DEMO_DEMOBJ_TBL_LOAD_CMD_FC      (CMDMGR_APP_START_FC + 0)
 #define OSK_C_DEMO_DEMOBJ_TBL_DUMP_CMD_FC      (CMDMGR_APP_START_FC + 1)
-#define OSK_C_DEMO_ENA_DATA_LOAD_CMD_FC        (CMDMGR_APP_START_FC + 2)
-#define OSK_C_DEMO_SET_TBL_INDEX_CMD_FC        (CMDMGR_APP_START_FC + 3)
+#define OSK_C_DEMO_ENA_TBL_DATA_CMD_FC         (CMDMGR_APP_START_FC + 2)
+#define OSK_C_DEMO_SET_ACTIVE_TBL_CMD_FC       (CMDMGR_APP_START_FC + 3)
 #define OSK_C_DEMO_FAULTREP_CFG_CMD_FC         (CMDMGR_APP_START_FC + 4)
 #define OSK_C_DEMO_FAULTREP_CLR_CMD_FC         (CMDMGR_APP_START_FC + 5)
 #define OSK_C_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC  (CMDMGR_APP_START_FC + 6)

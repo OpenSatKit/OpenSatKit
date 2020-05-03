@@ -32,7 +32,7 @@
 */
 
 #include "app_cfg.h"
-
+#include "extbldata.h"
 
 /*
 ** This length is after the parser has removed whitespace so it is just the
@@ -73,41 +73,19 @@ typedef void (*SCANFTBL_LineParser) (char* LineBuff);
 #define SCANFTBL_LOAD_LINE_ERR_EID        (SCANFTBL_BASE_EID + 6)
 #define SCANFTBL_LINE_LEN_ERR_EID         (SCANFTBL_BASE_EID + 7)
 
-/******************************************************************************
-** Table -  Local table copy used for table loads
-** 
-** All of the demo tables must have the same structure.
-*/
-
-typedef struct {
-
-   uint16   Data1;
-   uint16   Data2;
-   uint16   Data3;
-
-} SCANFTBL_Entry;
-
-typedef struct
-{
-
-	SCANFTBL_Entry Entry[SCANFTBL_MAX_ENTRY_ID];
-
-} SCANFTBL_Struct;
-
-
 
 /*
 ** Table Owner Callback Functions
 */
 
 /* Return pointer to owner's table data */
-typedef const SCANFTBL_Struct* (*SCANFTBL_GetTblPtr)(void);
+typedef const ExTblData_Param* (*SCANFTBL_GetTblPtr)(void);
             
 /* Table Owner's function to load all table data */
-typedef boolean (*SCANFTBL_LoadTbl)(SCANFTBL_Struct* NewTable); 
+typedef boolean (*SCANFTBL_LoadTbl)(ExTblData_Param* NewTable); 
 
 /* Table Owner's function to load a single table entry */
-typedef boolean (*SCANFTBL_LoadTblEntry)(uint16 EntryId, SCANFTBL_Entry* NewEntry);   
+typedef boolean (*SCANFTBL_LoadTblEntry)(uint16 EntryId, ExTblData_Entry* NewEntry);   
 
 
 typedef struct {
@@ -117,7 +95,7 @@ typedef struct {
    uint16   FileLineNum;
    boolean  Modified[SCANFTBL_MAX_ENTRY_ID];
 
-   SCANFTBL_Struct Tbl;
+   ExTblData_Param Tbl;
 
    SCANFTBL_GetTblPtr    GetTblPtrFunc;
    SCANFTBL_LoadTbl      LoadTblFunc;

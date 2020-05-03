@@ -91,11 +91,10 @@ typedef struct
    ** DEMOBJ Data
    */
 
-   boolean    EnableDataLoad;
+   boolean    TblDataEnabled;
+   uint8      TblId;
    uint8      TblIndex;
-   uint16     Data1;
-   uint16     Data2;
-   uint16     Data3;
+   ExTblData_Entry TblData;
 
 } OS_PACK OSK_C_DEMO_HkPkt;
 

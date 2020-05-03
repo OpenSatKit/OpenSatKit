@@ -38,6 +38,7 @@
 
 #include <expat.h>
 #include "app_cfg.h"
+#include "extbldata.h"
 
 /*#############################################################################
 ** XML tag definitions.
@@ -68,41 +69,18 @@
 #define XMLTBL_CMD_LOAD_PARSE_ERR_EID   (XMLTBL_BASE_EID + 6)
 
 
-
-/******************************************************************************
-** Table -  Local table copy used for table loads
-**
-** All of the demo tables must have the same structure.
-*/
-
-typedef struct {
-
-   uint16   Data1;
-   uint16   Data2;
-   uint16   Data3;
-
-} XMLTBL_Entry;
-
-typedef struct
-{
-
-   XMLTBL_Entry Entry[XMLTBL_MAX_ENTRY_ID];
-
-} XMLTBL_Struct;
-
-
 /*
 ** Table Owner Callback Functions
 */
 
 /* Return pointer to owner's table data */
-typedef const XMLTBL_Struct* (*XMLTBL_GetTblPtr)(void);
+typedef const ExTblData_Param* (*XMLTBL_GetTblPtr)(void);
             
 /* Table Owner's function to load all table data */
-typedef boolean (*XMLTBL_LoadTbl)(XMLTBL_Struct* NewTable); 
+typedef boolean (*XMLTBL_LoadTbl)(ExTblData_Param* NewTable); 
 
 /* Table Owner's function to load a single table entry */
-typedef boolean (*XMLTBL_LoadTblEntry)(uint16 EntryId, XMLTBL_Entry* NewEntry);   
+typedef boolean (*XMLTBL_LoadTblEntry)(uint16 EntryId, ExTblData_Entry* NewEntry);   
 
 typedef struct {
 
@@ -110,7 +88,7 @@ typedef struct {
    uint16   AttrErrCnt;
    boolean  Modified[XMLTBL_MAX_ENTRY_ID];
 
-   XMLTBL_Struct Tbl;
+   ExTblData_Param Tbl;
 
    XMLTBL_GetTblPtr    GetTblPtrFunc;
    XMLTBL_LoadTbl      LoadTblFunc;

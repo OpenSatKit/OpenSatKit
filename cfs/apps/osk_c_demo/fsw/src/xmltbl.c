@@ -130,7 +130,7 @@ boolean XMLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    ** AttrErrCnt - Incremented by XML parser
    */
 	
-   CFE_PSP_MemSet(&(XmlTbl->Tbl), 0, sizeof(XMLTBL_Struct));
+   CFE_PSP_MemSet(&(XmlTbl->Tbl), 0, sizeof(ExTblData_Param));
    XMLTBL_ResetStatus();
 
    TblEntryId = 0;
@@ -201,7 +201,7 @@ boolean XMLTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 */
 static void WriteXmlTblToFile(int32 FileHandle)
 {
-   const  XMLTBL_Struct  *XmlTblPtr;
+   const  ExTblData_Param  *XmlTblPtr;
    char   DumpRecord[256];
    int    i;
 
@@ -372,7 +372,6 @@ static boolean DumpTblToFile(const char* Filename, DumpTblFuncPtr DumpTblFunc)
 {
 
    int32            FileHandle;
-   int32            FileStatus;
    boolean          RetStatus = FALSE;
 
    /* Create a new dump file, overwriting anything that may have existed previously */

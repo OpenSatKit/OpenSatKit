@@ -36,6 +36,7 @@
 #define  OSK_CPP_DEMO_CMD_PIPE_DEPTH    10
 #define  OSK_CPP_DEMO_CMD_PIPE_NAME     "CPP_CMD_PIPE"
 
-#define EXTBL_DEF_LOAD_FILE "/cf/osk_cpp_tbl.json"
+#define EXTBL_JSON_DEF_LOAD_FILE "/cf/osk_cpp_tbl.json"
+#define EXTBL_CFE_DEF_LOAD_FILE  "/cf/osk_cpp_demo.tbl"
    
 #endif // _osk_cpp_demo_platform_cfg_ 

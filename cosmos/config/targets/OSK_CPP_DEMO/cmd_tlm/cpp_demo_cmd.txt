@@ -31,7 +31,7 @@ COMMAND CPP CFG_DEBUG <%= Osk::Cfg.processor_endian %> "Enable/disable debug mes
 
 COMMAND CPP DISPLAY_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Display a table entry at specified index"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 2) %>
-  APPEND_PARAMETER TABLE_ID   8 UINT MIN_UINT16 MAX_UINT16 1 "Table ID:1=JSMN, 2=RapidJSON"
+  APPEND_PARAMETER TABLE_ID   8 UINT MIN_UINT16 MAX_UINT16 1 "Table ID:1=JSMN, 2=RapidJSON, 4=cFE"
   APPEND_PARAMETER ENTRY_INDX 8 UINT MIN_UINT16 MAX_UINT16 1 "Table entry index: 0..N"
 
 
