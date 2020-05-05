@@ -2,7 +2,7 @@
 ** Purpose: Implement the demo object for the demo app.
 **
 ** Notes:
-**   1. This serves as an example object that uses a table. It does not perform
+**   1. This serves as an example object that uses a tables. It does not perform
 **      any realistic functions.
 **
 ** License:
@@ -36,6 +36,17 @@ static boolean ValidTblId(uint8 TblId);
 static const char* TblIdStr(uint8 TblId);
 
 
+static const ExTblData_Param* GetXmlParamPtr();
+static const ExTblData_Param* GetScanfParamPtr();
+static const ExTblData_Param* GetJsonParamPtr();
+static boolean LoadXmlParam(ExTblData_Param* NewParam);
+static boolean LoadScanfParam(ExTblData_Param* NewParam);
+static boolean LoadJsonParam(ExTblData_Param* NewParam);
+static boolean LoadXmlParamEntry(uint16 EntryId, ExTblData_Entry* NewEntry);
+static boolean LoadScanfParamEntry(uint16 EntryId, ExTblData_Entry* NewEntry);
+static boolean LoadJsonParamEntry(uint16 EntryId, ExTblData_Entry* NewEntry);
+
+
 /******************************************************************************
 ** Function: DEMOBJ_Constructor
 **
@@ -46,6 +57,10 @@ void DEMOBJ_Constructor(DEMOBJ_Class*  DemObjPtr)
    DemObj = DemObjPtr;
 
    CFE_PSP_MemSet((void*)DemObj, 0, sizeof(DEMOBJ_Class));
+
+   XMLTBL_Constructor(&DemObj->XmlTbl, GetXmlParamPtr, LoadXmlParam, LoadXmlParamEntry);
+   SCANFTBL_Constructor(&DemObj->ScanfTbl, GetScanfParamPtr, LoadScanfParam, LoadScanfParamEntry);
+   JSONTBL_Constructor(&DemObj->JsonTbl, GetJsonParamPtr, LoadJsonParam, LoadJsonParamEntry);
 
    CFETBL_Constructor(&DemObj->CfeTbl);
     
@@ -88,13 +103,13 @@ void DEMOBJ_Execute(void)
       
       switch (DemObj->TblId) {
       case DEMOBJ_XML_TBL_ID:
-         DemObj->TblEntry = DemObj->XmlTbl.Entry[DemObj->TblIndex];
+         DemObj->TblEntry = DemObj->XmlParam.Entry[DemObj->TblIndex];
          break;
       case DEMOBJ_SCANF_TBL_ID:
-         DemObj->TblEntry = DemObj->ScanfTbl.Entry[DemObj->TblIndex];
+         DemObj->TblEntry = DemObj->ScanfParam.Entry[DemObj->TblIndex];
          break;
       case DEMOBJ_JSON_TBL_ID:
-         DemObj->TblEntry = DemObj->JsonTbl.Entry[DemObj->TblIndex];
+         DemObj->TblEntry = DemObj->JsonParam.Entry[DemObj->TblIndex];
          break;
       case DEMOBJ_CFE_TBL_ID:
          CFETBL_GetTblEntry(&DemObj->TblEntry, DemObj->TblIndex);
@@ -127,10 +142,10 @@ boolean DEMOBJ_EnableTblDataCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    DemObj->TblDataEnabled = (CmdParam->EnableTblData == TRUE);
    if (DemObj->TblDataEnabled) {
-      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Table Data load enabled");
+      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Demo object active table data enabled");
    }
    else {
-      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Data load disabled");
+      CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Demo object active table data disabled");
    }
 
    return TRUE;
@@ -244,113 +259,93 @@ static const char* TblIdStr(uint8 TblId) {
 } /* End TblIdStr() */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /******************************************************************************
-** Function: DEMOBJ_GetxxxTblPtr
+** Function: GetxxxParamPtr
 **
 */
-const ExTblData_Param* DEMOBJ_GetXmlTblPtr()
-{
+static const ExTblData_Param* GetXmlParamPtr() {
 
-   return &(DemObj->XmlTbl);
+   return &(DemObj->XmlParam);
 
-} /* End DEMOBJ_GetXmlTblPtr() */
+} /* End GetXmlParamPtr() */
 
-const ExTblData_Param* DEMOBJ_GetScanfTblPtr()
-{
+static const ExTblData_Param* GetScanfParamPtr() {
 
-   return &(DemObj->ScanfTbl);
+   return &(DemObj->ScanfParam);
 
-} /* End DEMOBJ_GetSCanfTblPtr() */
+} /* End GetSCanfParamPtr() */
 
-const ExTblData_Param* DEMOBJ_GetJsonTblPtr()
-{
+static const ExTblData_Param* GetJsonParamPtr() {
 
-   return &(DemObj->JsonTbl);
+   return &(DemObj->JsonParam);
 
-} /* End DEMOBJ_GetJsonTblPtr() */
+} /* End GetJsonParamPtr() */
 
 
 /******************************************************************************
-** Function: DEMOBJ_LoadXxxTbl
+** Function: LoadXxxParam
 **
 ** Notes:
 **   1. This is a simple table copy. More complex table loads may have pass/fail 
 **      criteria.
 ** 
 */
-boolean DEMOBJ_LoadXmlTbl(ExTblData_Param* NewTbl)
-{
+static boolean LoadXmlParam(ExTblData_Param* NewParam) {
 
-   CFE_PSP_MemCpy(&(DemObj->XmlTbl), NewTbl, sizeof(ExTblData_Param));
+   CFE_PSP_MemCpy(&(DemObj->XmlParam), NewParam, sizeof(ExTblData_Param));
    
    return TRUE;
 
-} /* End DEMOBJ_LoadXmlTbl() */
+} /* End LoadXmlParam() */
 
-boolean DEMOBJ_LoadScanfTbl(ExTblData_Param* NewTbl)
-{
+static boolean LoadScanfParam(ExTblData_Param* NewParam) {
 
-   CFE_PSP_MemCpy(&(DemObj->ScanfTbl), NewTbl, sizeof(ExTblData_Param));
+   CFE_PSP_MemCpy(&(DemObj->ScanfParam), NewParam, sizeof(ExTblData_Param));
    
    return TRUE;
 
-} /* End DEMOBJ_LoadScanfTbl() */
+} /* End LoadScanfParam() */
 
-boolean DEMOBJ_LoadJsonTbl(ExTblData_Param* NewTbl)
-{
 
-   CFE_PSP_MemCpy(&(DemObj->JsonTbl), NewTbl, sizeof(ExTblData_Param));
+static boolean LoadJsonParam(ExTblData_Param* NewParam) {
+
+   CFE_PSP_MemCpy(&(DemObj->JsonParam), NewParam, sizeof(ExTblData_Param));
    
    return TRUE;
 
-} /* End DEMOBJ_LoadJsonTbl() */
+} /* End LoadJsonParam() */
 
 
 /******************************************************************************
-** Function: DEMOBJ_LoadXxxTblEntry
+** Function: LoadXxxParamEntry
 **
 ** Notes:
-**   1. This is a simple table copy. More complex table loads may have pass/fail 
-**      criteria.
+**   1. This is a simple table entry copy. More complex entry loads may have
+**      pass/fail criteria.
 */
-boolean DEMOBJ_LoadXmlTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry)
-{
+static boolean LoadXmlParamEntry(uint16 EntryId, ExTblData_Entry* NewEntry) {
 
-   CFE_PSP_MemCpy(&(DemObj->XmlTbl.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
-
-   return TRUE;
-
-} /* End DEMOBJ_LoadXmlTblEntry() */
-
-boolean DEMOBJ_LoadScanfTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry)
-{
-
-   CFE_PSP_MemCpy(&(DemObj->ScanfTbl.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
+   CFE_PSP_MemCpy(&(DemObj->XmlParam.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
 
    return TRUE;
 
-} /* End DEMOBJ_LoadScanfTblEntry() */
+} /* End LoadXmlParamEntry() */
 
-boolean DEMOBJ_LoadJsonTblEntry(uint16 EntryId, ExTblData_Entry* NewEntry)
-{
 
-   CFE_PSP_MemCpy(&(DemObj->JsonTbl.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
+static boolean LoadScanfParamEntry(uint16 EntryId, ExTblData_Entry* NewEntry) {
+
+   CFE_PSP_MemCpy(&(DemObj->ScanfParam.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
 
    return TRUE;
 
-} /* End DEMOBJ_LoadJsonTblEntry() */
+} /* End LoadScanfParamEntry() */
 
+
+static boolean LoadJsonParamEntry(uint16 EntryId, ExTblData_Entry* NewEntry) {
+
+   CFE_PSP_MemCpy(&(DemObj->JsonParam.Entry[EntryId]),NewEntry,sizeof(ExTblData_Entry));
+
+   return TRUE;
+
+} /* End LoadJsonParamEntry() */
 
