@@ -71,12 +71,29 @@ typedef struct {
    DEMOBJ_TBL_ID   TblId;
    uint8           TblIndex;
    
-   ExTblData_Entry TblEntry;  /* "Working buffer" with active data entry */
+   /*
+   ** 'Active' table data entry managed by ground commands and sent in
+   ** housekeeping telemetry
+   */
+   
+   ExTblData_Entry TblEntry;  
  
-   ExTblData_Param  XmlTbl;
-   ExTblData_Param  ScanfTbl;
-   ExTblData_Param  JsonTbl;
+   /*
+   ** Table values used by demo object. The cFE maintains
+   ** 'working buffer' on behalf of table owner so a buffer
+   ** is not needed for the cFE table.   
+   */
+   ExTblData_Param  XmlParam;
+   ExTblData_Param  ScanfParam;
+   ExTblData_Param  JsonParam;
 
+   /*
+   ** Table objects that manage the ground interface   
+   */
+
+   XMLTBL_Class    XmlTbl;
+   SCANFTBL_Class  ScanfTbl;
+   JSONTBL_Class   JsonTbl;   
    CFETBL_Class    CfeTbl;
    
 } DEMOBJ_Class;

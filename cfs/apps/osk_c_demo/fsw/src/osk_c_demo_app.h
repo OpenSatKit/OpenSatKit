@@ -46,12 +46,8 @@ typedef struct
    TBLMGR_Class    TblMgr;
    FaultRep_Class  FaultRep;
    
-   DEMOFR_Class   DemoFr;
-   
    DEMOBJ_Class   DemObj;
-   XMLTBL_Class   XmlTbl;
-   SCANFTBL_Class ScanfTbl;
-   JSONTBL_Class  JsonTbl;
+   DEMOFR_Class   DemoFr;
    
    CFE_SB_PipeId_t CmdPipe;
 

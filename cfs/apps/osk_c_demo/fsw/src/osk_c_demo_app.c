@@ -46,9 +46,6 @@ FaultRep_TlmMsg   OskCDemoFrPkt;
 #define  CMDMGR_OBJ   (&(OskCDemo.CmdMgr))
 #define  TBLMGR_OBJ   (&(OskCDemo.TblMgr))
 #define  DEMOBJ_OBJ   (&(OskCDemo.DemObj))
-#define  XMLTBL_OBJ   (&(OskCDemo.XmlTbl))
-#define  SCANFTBL_OBJ (&(OskCDemo.ScanfTbl))
-#define  JSONTBL_OBJ  (&(OskCDemo.JsonTbl))
 #define  FAULTREP_OBJ (&(OskCDemo.FaultRep))
 #define  DEMOFR_OBJ   (&(OskCDemo.DemoFr))
 
@@ -219,20 +216,16 @@ void OSK_C_DEMO_SendHousekeepingPkt(void)
 */
 static int32 InitApp(void)
 {
-    int32 Status = CFE_SUCCESS;
 
-    CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "OSK_C_DEMO_InitApp() Entry\n");
-    
-    /*
-    ** Initialize 'entity' objects
-    */
+   int32 Status = CFE_SUCCESS;
 
-    XMLTBL_Constructor(XMLTBL_OBJ, DEMOBJ_GetXmlTblPtr, DEMOBJ_LoadXmlTbl, DEMOBJ_LoadXmlTblEntry);
-    SCANFTBL_Constructor(SCANFTBL_OBJ, DEMOBJ_GetScanfTblPtr, DEMOBJ_LoadScanfTbl, DEMOBJ_LoadScanfTblEntry);
-    JSONTBL_Constructor(JSONTBL_OBJ, DEMOBJ_GetJsonTblPtr, DEMOBJ_LoadJsonTbl, DEMOBJ_LoadJsonTblEntry);
+   CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "OSK_C_DEMO_InitApp() Entry\n");
     
+   /*
+   ** Initialize 'entity' objects
+   */
+ 
     DEMOBJ_Constructor(DEMOBJ_OBJ);
-    
     DEMOFR_Constructor(DEMOFR_OBJ, FAULTREP_OBJ);
 
     /*
@@ -261,7 +254,7 @@ static int32 InitApp(void)
     
     /*
     ** Table IDs are assigned during registration so the order is important. COSMOS cmd/tlm definitions assume
-    ** XML, SCANF, JSON.
+    ** 0=XML, 1=SCANF, 2=JSON.
     */
     TBLMGR_Constructor(TBLMGR_OBJ);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, XMLTBL_LoadCmd,   XMLTBL_DumpCmd,   OSK_C_DEMO_XML_TBL_DEF_LOAD_FILE);

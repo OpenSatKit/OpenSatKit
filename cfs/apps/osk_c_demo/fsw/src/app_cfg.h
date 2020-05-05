@@ -34,7 +34,7 @@
 */
 
 #define  OSK_C_DEMO_MAJOR_VER     1
-#define  OSK_C_DEMO_MINOR_VER     3 /* Added cFE binary table support.  */
+#define  OSK_C_DEMO_MINOR_VER     4 /* Moved table buffers from app to DemoObj */
 #define  OSK_C_DEMO_LOCAL_REV     0
 
 /******************************************************************************

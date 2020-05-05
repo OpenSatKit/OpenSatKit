@@ -41,7 +41,11 @@ TELEMETRY OSK_DEMO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "OpenSatKit Demo 
   APPEND_ITEM TBL_DATA_ENA 8 UINT  "Table Data Enabled: 0=DIsabled, 1=Enabled"
     STATE FALSE 0
     STATE TRUE  1
-  APPEND_ITEM TBL_ID        8 UINT  "Table ID: 0=XML, 1=SCANF, 2=JSON, 3=cFE"
+  APPEND_ITEM TBL_ID       8 UINT  "Table ID: 0=XML, 1=SCANF, 2=JSON, 3=cFE"
+    STATE XML   0
+    STATE SCANF 1
+    STATE JSON  2
+    STATE cFE   3
   APPEND_ITEM TBL_INDEX     8 UINT  "Index into table to the parameter set to use"
   APPEND_ITEM DATA_1 16 UINT "Data parameter 1"
   APPEND_ITEM DATA_2 16 UINT "Data parameter 2"
