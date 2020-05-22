@@ -40,11 +40,12 @@ fi
 announce "Installing COSMOS (Includes Ruby). When prompted select Sudo and demo is optional (not needed for OSK)."
 confirm "Continue?" 1
 
+sudo apt-get install -y curl
 bash <(\curl -sSL https://raw.githubusercontent.com/BallAerospace/COSMOS/master/vendor/installers/linux_mac/INSTALL_COSMOS.sh)
 
 # Install depedencies above and beyond COSMOS
 announce "Installing dependencies"
-cmdtoapt="apt-get update -y; apt-get install -y curl; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y g++-multilib; apt-get install -y xfce4-terminal; apt-get install -y libqt4-dev; apt-get install libcanberra-gtk*; apt install dos2unix; apt-get update -y;"
+cmdtoapt="apt-get update -y; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y g++-multilib; apt-get install -y xfce4-terminal; apt-get install -y libqt4-dev; apt-get install libcanberra-gtk*; apt install dos2unix; apt-get update -y;"
 sudo bash -c "$cmdtoapt"
 
 cd OpenSatKit-master
