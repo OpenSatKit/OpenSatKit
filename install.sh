@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-OPEN_SAT_KIT_VERSION="1.6.0"
+OPEN_SAT_KIT_VERSION="2.2.0"
 BASE_DIR="$(pwd)"
 
 # Intentional order: OSK Archive, Dependencies, COSMOS, Build System 
@@ -37,15 +37,15 @@ else
    echo "Preserving existing OpenSatKit-master. Continuing installation..."
 fi
 
-announce "Installing dependencies"
-cmdtoapt="apt-get update -y; apt-get install -y cmake; apt-get install -y curl; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y xfce4-terminal; apt-get install -y gcc; apt-get install -y g++; apt-get install -y libssl-dev; apt-get install -y libyaml-dev; apt-get install -y libffi-dev; apt-get install -y libreadline6-dev; apt-get install -y zlib1g-dev; apt-get install -y libgdbm3; apt-get install -y libgdbm-dev; apt-get install -y libncurses5-dev; apt-get install -y git; apt-get install -y libgstreamer0.10-dev; apt-get install -y libgstreamer-plugins-base0.10-dev; apt-get install -y freeglut3; apt-get install -y freeglut3-dev; apt-get install -y qt4-default; apt-get install -y qt4-dev-tools;apt-get install -y libqt4-dev; apt-get install -y libsmokeqt4-dev; apt-get install libcanberra-gtk*;apt install dos2unix; apt-get update -y;"
-
-sudo bash -c "$cmdtoapt"
-
 announce "Installing COSMOS (Includes Ruby). When prompted select Sudo and demo is optional (not needed for OSK)."
 confirm "Continue?" 1
 
 bash <(\curl -sSL https://raw.githubusercontent.com/BallAerospace/COSMOS/master/vendor/installers/linux_mac/INSTALL_COSMOS.sh)
+
+# Install depedencies above and beyond COSMOS
+announce "Installing dependencies"
+cmdtoapt="apt-get update -y; apt-get install -y curl; apt-get install -y default-jre; apt-get install -y gcc-multilib; apt-get install -y g++-multilib; apt-get install -y xfce4-terminal; apt-get install -y libqt4-dev; apt-get install libcanberra-gtk*; apt install dos2unix; apt-get update -y;"
+sudo bash -c "$cmdtoapt"
 
 cd OpenSatKit-master
 
