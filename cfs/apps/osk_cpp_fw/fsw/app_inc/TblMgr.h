@@ -23,7 +23,7 @@
 ** Includes
 */
 
-#include <bits/stdc++.h>
+#include <string>
 
 #include "OskCppFwCfg.h"
 #include "Tbl.h"

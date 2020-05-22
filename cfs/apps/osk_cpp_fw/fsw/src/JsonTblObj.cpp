@@ -19,8 +19,8 @@
 */
 
 #include <string.h>
-#include "jsontblobj.h"
-#include "json.h"
+#include "JsonTblObj.h"
+#include "Json.h"
 
 
 namespace oskfw {

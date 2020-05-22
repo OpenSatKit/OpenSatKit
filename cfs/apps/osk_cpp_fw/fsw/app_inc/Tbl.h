@@ -31,7 +31,7 @@
 ** Includes
 */
 
-#include <bits/stdc++.h> 
+#include <string> 
 extern "C" {
    #include "cfe.h"
 }

@@ -24,8 +24,8 @@
 ** Includes
 */
 
-#include <bits/stdc++.h> 
-#include "tbl.h"
+#include <string> 
+#include "Tbl.h"
 
 namespace oskfw {
 

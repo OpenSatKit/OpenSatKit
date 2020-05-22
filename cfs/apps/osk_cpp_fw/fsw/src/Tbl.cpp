@@ -22,7 +22,7 @@
 */
 
 #include "OskCppFwCfg.h"
-#include "tbl.h"
+#include "Tbl.h"
 using std::string;
 
 // Event Message IDs

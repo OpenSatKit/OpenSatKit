@@ -28,7 +28,7 @@
 #include "Tbl.h"
 #include "ExTblStruct.h"
 #include "Json.h"
-#include "jsontblobj.h"
+#include "JsonTblObj.h"
 
 
 class ExJsmnTbl: public oskfw::Tbl {
