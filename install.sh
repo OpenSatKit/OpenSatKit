@@ -40,7 +40,7 @@ fi
 announce "Installing COSMOS (Includes Ruby). When prompted select Sudo and demo is optional (not needed for OSK)."
 confirm "Continue?" 1
 
-sudo apt-get install -y curl
+sudo bash -c "apt-get install -y curl;"
 bash <(\curl -sSL https://raw.githubusercontent.com/BallAerospace/COSMOS/master/vendor/installers/linux_mac/INSTALL_COSMOS.sh)
 
 # Install depedencies above and beyond COSMOS
