@@ -32,7 +32,7 @@
 
 #include <stddef.h>
 extern "C" {
-   #include "jsmn.h"
+   #include "Jsmn.h"
 }
 #include "OskCppFwCfg.h"
 #include "JsonTblObj.h"

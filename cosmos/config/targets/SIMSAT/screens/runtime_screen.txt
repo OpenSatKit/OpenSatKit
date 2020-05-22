@@ -18,15 +18,15 @@ HORIZONTAL
 
   SETTING TEXTCOLOR black
 
-  CANVAS 1000 650
-    CANVASIMAGE "SimSat-Bubble-Runtime.png" 20 0
+  CANVAS 900 275
+    CANVASIMAGE "SimSat-Bubble-Runtime.png" 0 0
   END
   
   
   VERTICALBOX
   
-  LABEL "    "
-  LABEL "    "
+  ##LABEL "    "
+  ##LABEL "    "
 
   VERTICALBOX "OSK Command Ingest (KIT_CI)"
   
@@ -47,8 +47,8 @@ HORIZONTAL
     END # Matrix
   END # VerticalBox
   
-  LABEL "    "
-  LABEL "    "
+  ##LABEL "    "
+  ##LABEL "    "
       
   VERTICALBOX "OSK Scheduler (KIT_SCH)"
   
@@ -73,8 +73,8 @@ HORIZONTAL
     END # Matrix
   END # VerticalBox
 
-  LABEL "    "
-  LABEL "    "
+  ##LABEL "    "
+  ##LABEL "    "
       
   VERTICALBOX "OSK Telemetry Output (KIT_TO)"
   
@@ -99,8 +99,8 @@ HORIZONTAL
     END # Matrix
   END # Vertical
 
-  LABEL "    "
-  LABEL "    "
+  ##LABEL "    "
+  ##LABEL "    "
 
   VERTICALBOX "Functions"
   
@@ -113,8 +113,8 @@ HORIZONTAL
     END # Matrix
   END # Function VerticalBox
 
-  LABEL "    "
-  LABEL "    "
+  ##LABEL "    "
+  ##LABEL "    "
 
   VERTICALBOX "Learn"
   
