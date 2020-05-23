@@ -29,14 +29,19 @@
 ** Application Macros
 */
 
-#define  OSK_CPP_DEMO_APP_LOCAL_REV 0
+#define  OSK_CPP_DEMO_APP_NAME         "OSK_CPP_DEMO"
+
+#define  OSK_CPP_DEMO_APP_LOCAL_REV    0
 
 #define  OSK_CPP_DEMO_RUNLOOP_DELAY    500  // Delay in milliseconds
 
-#define  OSK_CPP_DEMO_CMD_PIPE_DEPTH    10
-#define  OSK_CPP_DEMO_CMD_PIPE_NAME     "CPP_CMD_PIPE"
+#define  OSK_CPP_DEMO_CMD_PIPE_DEPTH   10
+#define  OSK_CPP_DEMO_CMD_PIPE_NAME    "CPP_CMD_PIPE"
 
-#define EXTBL_JSON_DEF_LOAD_FILE "/cf/osk_cpp_tbl.json"
-#define EXTBL_CFE_DEF_LOAD_FILE  "/cf/osk_cpp_demo.tbl"
+#define  OSK_CPP_DEMO_JSON_TBL_DEF_LOAD_FILE "/cf/osk_cpp_tbl.json"
+
+#define  OSK_CPP_DEMO_CFE_TBL_NAME           "Example"
+#define  OSK_CPP_DEMO_CFE_TBL_FILENAME       "osk_cpp_demo.tbl"
+#define  OSK_CPP_DEMO_CFE_TBL_DEF_LOAD_FILE  "/cf/osk_cpp_demo.tbl"
    
 #endif // _osk_cpp_demo_platform_cfg_ 

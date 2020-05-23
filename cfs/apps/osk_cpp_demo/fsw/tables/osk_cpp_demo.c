@@ -3,14 +3,14 @@
 **
 */
 
+#include "osk_cpp_demo_platform_cfg.h"
 #include "ExTblData.h"
-
 #include "cfe_tbl_filedef.h"
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef =
 {
-    "g_ex_cfe_tbl", "OSK_CPP_DEMO.ExCfeTbl", "Example C++ cFE Table",
-    "ExCfeTbl", sizeof (ExTblParam)
+    "g_ex_cfe_tbl", OSK_CPP_DEMO_APP_NAME "." OSK_CPP_DEMO_CFE_TBL_NAME, "Example C++ cFE Table",
+    OSK_CPP_DEMO_CFE_TBL_FILENAME, sizeof (ExTblParam)
 };
 
 ExTblParam g_ex_cfe_tbl = {{

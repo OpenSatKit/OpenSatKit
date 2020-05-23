@@ -41,9 +41,9 @@ int JsonDom(void);
 */
 ExAppObj::ExAppObj(uint16 event_id_base) : AppObj(event_id_base),
    m_demo_cmd(this, EX_APP_OBJ_DEMO_CMD_DATA_LEN),
-   m_ex_jsmn_tbl(EXTBL_JSON_DEF_LOAD_FILE),
-   m_ex_rapid_tbl(EXTBL_JSON_DEF_LOAD_FILE),
-   m_ex_cfe_tbl("ExCfeTbl",CFE_TBL_OPT_DEFAULT) {
+   m_ex_jsmn_tbl(OSK_CPP_DEMO_JSON_TBL_DEF_LOAD_FILE),
+   m_ex_rapid_tbl(OSK_CPP_DEMO_JSON_TBL_DEF_LOAD_FILE),
+   m_ex_cfe_tbl(OSK_CPP_DEMO_CFE_TBL_NAME,CFE_TBL_OPT_DEFAULT) {
 
    m_exec_cnt = 0;
    
@@ -77,7 +77,7 @@ uint8 ExAppObj::RegisterTbls (oskfw::TblMgr& tbl_mgr) {
    m_ex_rapid_tbl_id = tbl_mgr.RegisterTbl(&m_ex_rapid_tbl);
    if (m_ex_rapid_tbl_id != oskfw::Cfg::TBL_ID_UNDEF) num_tbls_reg++;
    
-   m_ex_cfe_tbl.Register(ValidateExCfeTbl,EXTBL_CFE_DEF_LOAD_FILE);
+   m_ex_cfe_tbl.Register(ValidateExCfeTbl,OSK_CPP_DEMO_CFE_TBL_DEF_LOAD_FILE);
    
    return num_tbls_reg;
  
