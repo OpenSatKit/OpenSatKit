@@ -29,6 +29,8 @@
 ** Framework Demo Application Macros
 */
 
+#define  OSK_C_DEMO_APP_NAME         "OSK_C_DEMO"
+
 #define  OSK_C_DEMO_RUNLOOP_DELAY    500  /* Delay in milliseconds */
 
 #define  OSK_C_DEMO_CMD_PIPE_DEPTH    10
@@ -47,7 +49,8 @@
 #define  OSK_C_DEMO_JSON_TBL_DEF_LOAD_FILE  "/cf/osk_c_demo_tbl.json"
 #define  OSK_C_DEMO_JSON_TBL_DEF_DUMP_FILE  "/cf/osk_c_demo_tbl_d.json"
 
-#define  OSK_C_DEMO_CFE_TBL_NAME            "ExCfeTbl"
+#define  OSK_C_DEMO_CFE_TBL_NAME            "Example"
+#define  OSK_C_DEMO_CFE_TBL_FILENAME        "osk_c_demo.tbl"
 #define  OSK_C_DEMO_CFE_TBL_DEF_LOAD_FILE   "/cf/osk_c_demo.tbl"
 
 

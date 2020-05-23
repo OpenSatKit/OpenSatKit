@@ -23,8 +23,6 @@
 ** Includes
 */
 
-
-#include <string>
 #include "OskCppFwCfg.h"
 #include "osk_cpp_demo_platform_cfg.h"
 

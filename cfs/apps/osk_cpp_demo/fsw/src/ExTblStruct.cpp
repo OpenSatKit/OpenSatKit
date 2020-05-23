@@ -19,7 +19,7 @@
 ** Include Files:
 */
 
-#include <string.h>
+#include <string>
 #include "ExTblStruct.h"
 using std::string;
 

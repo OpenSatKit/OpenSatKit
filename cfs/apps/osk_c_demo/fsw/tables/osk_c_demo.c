@@ -8,8 +8,8 @@
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef =
 {
-    "OskCDemo_ExCfeTbl", "OSK_C_DEMO.ExCfeTbl", "Example cFE Table",
-    OSK_C_DEMO_CFE_TBL_NAME, sizeof (ExTblData_Param)
+    "OskCDemo_ExCfeTbl", OSK_C_DEMO_APP_NAME "." OSK_C_DEMO_CFE_TBL_NAME, "Example cFE Table",
+    OSK_C_DEMO_CFE_TBL_FILENAME, sizeof (ExTblData_Param)
 };
 
 ExTblData_Param OskCDemo_ExCfeTbl = {{
