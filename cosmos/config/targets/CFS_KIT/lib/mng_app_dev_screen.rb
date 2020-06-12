@@ -35,7 +35,7 @@ def mng_app_dev(screen, cmd)
    elsif (cmd == "EDIT_STARTUP")
       Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CMAKE_DIR}/#{Osk::CPU1_STARTUP_FILE}'")
    elsif (cmd == "BUILD_CFS")
-      spawn("xfce4-terminal --default-working-directory=""#{Osk::OSK_CFS_DIR}"" --execute make install""")
+      #spawn("xfce4-terminal --default-working-directory=""#{Osk::OSK_CFS_DIR}"" --execute make install""")
       spawn("xfce4-terminal --default-working-directory=""#{Osk::OSK_CFS_DIR}"" --execute ./cmake.sh""")
    elsif (cmd == "STOP_CFS_SERVER")
    

@@ -40,16 +40,15 @@ def cfe_evs_scr_cmd(screen, cmd)
          bin_filename = FswConfigParam::CFE_EVS_DEFAULT_LOG_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_EVS_LOG
       end
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      Osk::Ops::send_flt_bin_file_cmd("CFE_EVS", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
+      #Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "CFE_TRAINING_SLIDES"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
+      when "EVS_TRAINING_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::EVS_TRAINING_SLIDES_FILE}")
       when "EVS_EXERCISE_SCRIPT"
          launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "EVS")
-      when "CFE_EXERCISE_SLIDES"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
       end
    
    else

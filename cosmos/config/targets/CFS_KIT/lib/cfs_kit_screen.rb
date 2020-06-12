@@ -58,14 +58,20 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       # Kill all instances of the cFS before starting a new instance. 
 
       Osk::System.stop_cfs
+ 
       Osk::System.start_cfs  # Enables telemetry
-
+      
+      wait 3
+      
       Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
-              
+    
+      cmd("KIT_TO ENABLE_TELEMETRY") # Sometimes it doesn't flow
+      
    when "STOP_CFS"
       # Hopefully ES cleans up resources and does a controlled shutdown
       Osk::flight.cfe_es.send_cmd("RESET with RESTART_TYPE 1")
-      #Osk::System.stop_cfs()
+      wait 2
+      Osk::System.stop_cfs() # Just in case orphans exists
    
    when "STOP_42"
       Osk::System.stop_42

@@ -113,6 +113,7 @@ module Osk
    CFE_UG_FILE      = "index.html"
    CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
    CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
+   EVS_TRAINING_SLIDES_FILE = "OSK-T02-1-cFE-EVS.pdf"
    CFE_EXERCISE_SLIDES_FILE = "OSK_Training-cFE_Exercises.pdf"
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"

@@ -56,7 +56,8 @@ void I42_AppMain(void)
    uint32 RunStatus = CFE_ES_APP_ERROR;
 
    Status = CFE_ES_RegisterApp();
-   CFE_EVS_Register(NULL,0,0);
+   CFE_EVS_Register(NULL, 0, CFE_EVS_BINARY_FILTER);
+
 
    /*
    ** Perform application specific initialization
