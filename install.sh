@@ -13,7 +13,7 @@ main()
 announce "INSTALLATION WILL TAKE TIME AND INCLUDES PROMPTS!"
 
 # set default path unless environment var exists
-if [ ! -n "${!OPEN_SAT_KIT_PATH}" ]; then
+if [ ! -n "${OPEN_SAT_KIT_PATH}" ]; then
    OPEN_SAT_KIT_PATH="`pwd`/OpenSatKit-master/"
 fi
 
