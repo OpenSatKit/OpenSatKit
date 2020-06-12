@@ -56,11 +56,13 @@ make distclean
 make prep
 make
 make install
+chmod u=rwx cmake.sh
 cd ..
 
 announce "Building 42"
 cd ./42/
 make
+chmod u=rx 42
 cd ..
 
 # Complete COSMOS installation
