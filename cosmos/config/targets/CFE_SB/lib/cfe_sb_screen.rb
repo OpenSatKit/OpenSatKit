@@ -39,17 +39,21 @@ def cfe_sb_scr_cmd(screen, cmd)
  
    when "FILE"
       # Set default name to first combo option to simplify logic and no error checking
+      cmd_name = "WRITE_MAP_TO_FILE"
       bin_filename = FswConfigParam::CFE_SB_DEFAULT_MAP_FILENAME
       tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_SB_MSG_MAP
       case screen.get_named_widget("file").text
       when "PIPES"
+         cmd_name = "WRITE_PIPE_TO_FILE"
          bin_filename = FswConfigParam::CFE_SB_DEFAULT_PIPE_FILENAME
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_SB_PIPE
       when "ROUTES"
+         cmd_name = "WRITE_ROUTING_TO_FILE"
          bin_filename = FswConfigParam::CFE_SB_DEFAULT_ROUTING_FILENAME
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_SB_ROUTES
       end
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      Osk::Ops::send_flt_bin_file_cmd("CFE_SB", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
+      #Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text

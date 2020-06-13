@@ -34,9 +34,11 @@ def cfe_evs_scr_cmd(screen, cmd)
  
    when "FILE"
       # Set default name to first combo option to simplify logic and no error checking
+      cmd_name = "WRITE_APP_INFO_TO_FILE"
       bin_filename = FswConfigParam::CFE_EVS_DEFAULT_APP_DATA_FILE
       tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_EVS_APP_INFO
       if screen.get_named_widget("file").text == "LOCAL_LOG"
+         cmd_name = "WRITE_LOG_TO_FILE"
          bin_filename = FswConfigParam::CFE_EVS_DEFAULT_LOG_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_EVS_LOG
       end

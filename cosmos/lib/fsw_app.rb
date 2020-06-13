@@ -156,7 +156,7 @@ class FswApp
    end # validate_cmd?()
    
    # cmd_str - Contains the command name followed by optional command parameters 
-   def send_cmd(cmd_str)
+   def send_cmd(cmd_str, override_validate=Osk::OVERRIDE_OFF)
   
       cmd_valid = false
 	  
@@ -167,7 +167,19 @@ class FswApp
       cmd("#{@target} #{cmd_str}")
       
       # The logic below doesn't work for the app reset cmd. For now ignore the check if it's a reset cmd
-      if (@@validate_cmd and !(cmd_str.include? Osk::CMD_STR_RESET))
+      validate_cmd_cnt = @@validate_cmd
+      case override_validate
+      when Osk::OVERRIDE_OFF
+         validate_cmd_cnt = @@validate_cmd
+      when Osk::OVERRIDE_TO_TRUE
+         validate_cmd_cnt = true
+      when Osk::OVERRIDE_TO_FALSE
+         validate_cmd_cnt = false
+      else
+         Osk::Ops::raise_exception "Invalid app command count validate override option #{override_opt}. Must be a vlaue in #{Osk::OVERRIDE_OPT}"
+      end
+      
+      if (validate_cmd_cnt and !(cmd_str.include? Osk::CMD_STR_RESET))
          
          wait("#{@target_hk_str} #{Osk::TLM_STR_CMD_VLD} == #{cmd_valid_cnt}+1", @@validate_timeout)  # Delay until updated cmd valid count or timeout 
 	

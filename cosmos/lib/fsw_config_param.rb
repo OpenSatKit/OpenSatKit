@@ -33,6 +33,11 @@ module FswConfigParam
   #########
   ## cFE ##
   #########
+  
+  CFE_MISSION_MAX_API_LEN = 20
+  
+  CFE_PLATFORM_SB_HIGHEST_VALID_MSGID = 0x1FFF
+  CFE_PLATFORM_SB_MAX_PIPE_DEPTH = 16
 
   CFE_ES_CDS_MAX_NUM_ENTRIES     =  512
   CFE_ES_MAX_APPLICATIONS        =   32
@@ -49,12 +54,13 @@ module FswConfigParam
   CFE_EVS_MAX_EVENT_FILTERS  =    8
   CFE_EVS_MAX_MESSAGE_LENGTH =  122
   CFE_EVS_DEFAULT_APP_DATA_FILE = "cfe_evs_app.dat"
-  CFE_EVS_DEFAULT_LOG_FILE      = "cfe_evs.log"
+  CFE_EVS_DEFAULT_LOG_FILE      = "cfe_evs_log.dat"   # Default is cfe_evs.log, but .dat works better with COSMOS Table Manager
   
   CFE_SB_MAX_PIPES = 64
   CFE_SB_DEFAULT_MAP_FILENAME     = "cfe_sb_msgmap.dat"
   CFE_SB_DEFAULT_PIPE_FILENAME    = "cfe_sb_pipe.dat"
   CFE_SB_DEFAULT_ROUTING_FILENAME = "cfe_sb_route.dat"
+  CFE_SB_MAX_NUMBER_OF_MSG_KEYS   = CFE_PLATFORM_SB_HIGHEST_VALID_MSGID + 1
 
   CFE_TBL_MAX_FULL_NAME_LEN  =   40
   CFE_TBL_MAX_NAME_LENGTH    =   16

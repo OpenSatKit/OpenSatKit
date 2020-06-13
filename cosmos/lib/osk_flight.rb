@@ -162,13 +162,14 @@ module Osk
          
       end # End create_apps()
              
-      # cmd_str - Contains the command name followed by optional command parameters 
-      def send_cmd(target, cmd_str)
+      # cmd_str           - Contains the command name followed by optional command parameters
+      # override_validate - Allows caller to override the global command counter validate check
+      def send_cmd(target, cmd_str, override_validate=Osk::OVERRIDE_OFF)
 
          cmd_valid = false
          
          if @app.has_key?(target)
-            cmd_valid = @app[target].send_cmd(cmd_str)
+            cmd_valid = @app[target].send_cmd(cmd_str, override_validate)
          else
             cfs_kit_def_file = File.join(Osk::COSMOS_CFG_TARGET_DIR, 'CFS_KIT','osk','cfs_kit.json') #~FIXME - This duplicates code in osk_targets
             Osk::Ops::raise_exception "Undefined application #{target}. Verify COSMOS target defined and target defined in #{cfs_kit_def_file}"

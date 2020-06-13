@@ -49,6 +49,12 @@ module Osk
    GET_FILE_TIMEOUT = 15   # Telemetry get counter verification timeout 
    PUT_FILE_TIMEOUT = 15   # Telemetry put counter verification timeout 
 
+   OVERRIDE_OFF      = "OVERRIDE_OFF"
+   OVERRIDE_TO_TRUE  = "OVERRIDE_TO_TRUE"
+   OVERRIDE_TO_FALSE = "OVERRIDE_TO_FALSE"
+   
+   OVERRIDE_OPT = [OVERRIDE_OFF, OVERRIDE_TO_TRUE, OVERRIDE_TO_FALSE]
+   
    ###################
    ## CFDP Settings ##
    ###################
