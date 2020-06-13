@@ -1,0 +1,27 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "CFE_SB"
+  @MAX_NUMBER_OF_MSG_KEYS = "CFE_SB_MAX_NUMBER_OF_MSG_KEYS"
+  
+%>
+TABLE "CFE_SB Msg Map" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Message-to-Route Table Index"
+   <%= Osk::Cfg.file_hdr %>
+
+   # cfe_sb_msg.h:
+   #
+   # typedef struct{
+   #    CFE_SB_MsgId_Atom_t        MsgId;/**< \brief Message Id which has been subscribed to */
+   #    CFE_SB_MsgRouteIdx_Atom_t  Index;/**< \brief Routing table index where pipe destinations are found */
+   # } CFE_SB_MsgMapFileEntry_t;
+
+   <% 
+      max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUMBER_OF_MSG_KEYS)
+      append_items = ""
+      for i in 0..(max_entries-1)
+         append_items << "APPEND_PARAMETER \"REC#{i}_MSG_ID\"           16 UINT 0 MAX_UINT16 0  \" Message Id that has been subscribed to\"" << "\n"
+         append_items << "APPEND_PARAMETER \"REC#{i}_ROUTE_TBL_IDX\"    16 UINT 0 MAX_UINT16 0  \" Routing table index where pipe destinations are found\"" << "\n"
+      end
+   %>
+   <%= append_items %>

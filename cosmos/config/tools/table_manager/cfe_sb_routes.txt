@@ -1,0 +1,44 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR = "CFE_SB"
+  @MAX_PIPES      = "CFE_SB_MAX_PIPES"
+  @MAX_PIPE_DEPTH = "CFE_PLATFORM_SB_MAX_PIPE_DEPTH"
+                     
+%>
+TABLE "CFE_SB Pipe Info" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Pipe Information"
+  <%= Osk::Cfg.file_hdr %>
+
+   
+   # cfe_sb_msg.h:
+   # 
+   # typedef struct{
+   #    CFE_SB_MsgId_t      MsgId;/**< \brief Message Id portion of the route */
+   #    CFE_SB_PipeId_t     PipeId;/**< \brief Pipe Id portion of the route */
+   #    uint8               State;/**< \brief Route Enabled or Disabled */
+   #    uint16              MsgCnt;/**< \brief Number of msgs with this MsgId sent to this PipeId */
+   #    char                AppName[CFE_MISSION_MAX_API_LEN];/**< \brief Pipe Depth Statistics */
+   #    char                PipeName[CFE_MISSION_MAX_API_LEN];/**< \brief Pipe Depth Statistics */
+   # } CFE_SB_RoutingFileEntry_t;
+
+   <% 
+      str_bits    = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "CFE_MISSION_MAX_API_LEN") * 8
+      max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPES) *
+                    Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPE_DEPTH) 
+    
+      append_items = ""
+      for i in 0..(max_entries-1)
+      
+         append_items << "APPEND_PARAMETER \"REC#{i}_MSG_ID\"      16 UINT 0 MAX_UINT16 0  \" Message Id that has been subscribed to\"" << "\n"
+         append_items << "APPEND_PARAMETER \"REC#{i}_PIPE_ID\"      8 UINT 0 MAX_UINT8  0  \" Pipe ID portion of the route\"" << "\n"
+         append_items << "APPEND_PARAMETER \"REC#{i}_STATE\"        8 UINT 0 MAX_UINT8  0  \" Enable/disable state\"" << "\n"
+            append_items << "   STATE DISABLED 0" << "\n"
+            append_items << "   STATE ENABLED  1" << "\n"
+         append_items << "APPEND_PARAMETER \"REC#{i}_MSG_CNT\"     16 UINT 0 MAX_UINT16 0  \" Number of msgs with this MsgId sent to this PipeId\"" << "\n"
+         append_items << "APPEND_PARAMETER \"REC#{i}_APP_NAME\"    #{str_bits.to_s} STRING \"UNDEF\" \"Name of app that owns the pipe\"" << "\n"
+         append_items << "APPEND_PARAMETER \"REC#{i}_PIPE_NAME\"   #{str_bits.to_s} STRING \"UNDEF\" \"Pipe name\"" << "\n"
+      end
+   %>
+   
+   <%= append_items %>

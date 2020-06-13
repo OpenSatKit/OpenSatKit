@@ -208,7 +208,9 @@ module Ops
    def self.send_flt_bin_file_cmd(app_name, cmd_str, tbl_mgr_def_filename, flt_path_filename: Osk::TMP_FLT_BIN_PATH_FILE, 
                                   gnd_rel_path: Osk::REL_SRV_DIR, prompt: true)
       cmd_str = "#{cmd_str} FILENAME #{flt_path_filename}"
-      if (Osk::flight.app[app_name].send_cmd(cmd_str))
+
+      if (Osk::flight.app[app_name].send_cmd(cmd_str, Osk::OVERRIDE_TO_TRUE))  # Force validation because some file writes take a while
+         
          if (prompt)
             get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
          else
@@ -257,7 +259,7 @@ module Ops
    #
    def self.send_flt_txt_file_cmd(app_name, cmd_str, flt_path_filename: Osk::TMP_FLT_TXT_PATH_FILE, gnd_rel_path: Osk::REL_SRV_TBL_DIR)
       cmd_str = "#{cmd_str} FILENAME #{flt_path_filename}"
-      if (Osk::flight.app[app_name].send_cmd(cmd_str))
+      if (Osk::flight.app[app_name].send_cmd(cmd_str, Osk::OVERRIDE_TO_TRUE))  # Force validation because some file writes take a while
          get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
          if (get_file == Osk::MSG_BUTTON_YES)
             filename = File.basename(flt_path_filename)
