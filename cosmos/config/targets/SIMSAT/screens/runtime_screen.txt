@@ -81,7 +81,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
          
       BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_CMD")'
-      NAMED_WIDGET kit_to_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL
+      NAMED_WIDGET kit_to_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL ADD_PKT REMOVE_PKT REMOVE_ALL_PKTS ENABLE_TELEMETRY SET_RUN_LOOP_DELAY
       LABEL "    "
 
       BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_TLM")'

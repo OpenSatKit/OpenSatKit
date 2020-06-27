@@ -31,11 +31,13 @@
 ** Macro Definitions
 */
 
-#define KIT_TO_APP_INIT_EID        (KIT_TO_APP_BASE_EID + 0)
-#define KIT_TO_APP_NOOP_EID        (KIT_TO_APP_BASE_EID + 1)
-#define KIT_TO_APP_EXIT_EID        (KIT_TO_APP_BASE_EID + 2)
-#define KIT_TO_APP_INVALID_MID_EID (KIT_TO_APP_BASE_EID + 3)
-
+#define KIT_TO_APP_INIT_EID               (KIT_TO_APP_BASE_EID + 0)
+#define KIT_TO_APP_NOOP_EID               (KIT_TO_APP_BASE_EID + 1)
+#define KIT_TO_APP_EXIT_EID               (KIT_TO_APP_BASE_EID + 2)
+#define KIT_TO_APP_INVALID_MID_EID        (KIT_TO_APP_BASE_EID + 3)
+#define KIT_TO_SET_RUN_LOOP_DELAY_EID     (KIT_TO_APP_BASE_EID + 4)
+#define KIT_TO_INVALID_RUN_LOOP_DELAY_EID (KIT_TO_APP_BASE_EID + 5)
+#define KIT_TO_DEMO_EID                   (KIT_TO_APP_BASE_EID + 6)
 
 /*
 ** Type Definitions
@@ -43,6 +45,8 @@
 
 typedef struct
 {
+
+   uint16 RunLoopDelay;
 
    CMDMGR_Class CmdMgr;
    TBLMGR_Class TblMgr;
@@ -64,6 +68,9 @@ typedef struct
    uint16   ValidCmdCnt;
    uint16   InvalidCmdCnt;
 
+
+   uint16   RunLoopDelay;
+
    /*
    ** PKTTBL Data
    */
@@ -76,6 +83,8 @@ typedef struct
    ** PKTMGR Data
    */
 
+   uint16   PktsPerSec;
+   uint32   BytesPerSec;
    uint16   TlmSockId;
    char     TlmDestIp[PKTMGR_IP_STR_LEN];
 
@@ -110,6 +119,19 @@ typedef struct
 } OS_PACK KIT_TO_DataTypePkt;
 
 #define KIT_TO_TLM_DATA_TYPE_LEN   sizeof (KIT_TO_DataTypePkt)
+
+/******************************************************************************
+** Command Packets
+*/
+
+typedef struct
+{
+
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint16   RunLoopDelay;
+
+}  KIT_TO_SetRunLoopDelayCmdParam;
+#define KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN  (sizeof(KIT_TO_SetRunLoopDelayCmdParam) - CFE_SB_CMD_HDR_SIZE)
 
 
 /*
@@ -148,6 +170,15 @@ boolean KIT_TO_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 **
 */
 boolean KIT_TO_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+/******************************************************************************
+** Function: KIT_TO_SetRunLoopDelayCmd
+**
+** Notes:
+**   1. Function signature must match the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 #endif /* _kit_to_app_ */

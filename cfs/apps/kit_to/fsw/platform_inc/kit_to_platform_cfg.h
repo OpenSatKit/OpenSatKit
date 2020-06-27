@@ -29,9 +29,13 @@
 ** Telemetry Output KIT_TO Application Macros
 */
 
-#define  KIT_TO_RUNLOOP_DELAY    500  /* Delay in milliseconds */
+#define  KIT_TO_STARTUP_SYNCH_TIMEOUT  10000  /* Timeout in milliseconds */
 
-#define  KIT_TO_TLM_PORT        1235
+#define  KIT_TO_RUN_LOOP_DELAY_MS        500  /* Default delay in milliseconds */
+#define  KIT_TO_MIN_RUN_LOOP_DELAY_MS    200  /* Minimum command value */
+#define  KIT_TO_MAX_RUN_LOOP_DELAY_MS  10000  /* Maximum command value */
+
+#define  KIT_TO_TLM_PORT      1235
 
 #define  KIT_TO_DEF_PKTTBL_FILE_NAME "/cf/kit_to_pkt_tbl.json"
 

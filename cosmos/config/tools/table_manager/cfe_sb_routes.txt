@@ -21,7 +21,7 @@ TABLE "CFE_SB Pipe Info" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Pipe
    #    char                AppName[CFE_MISSION_MAX_API_LEN];/**< \brief Pipe Depth Statistics */
    #    char                PipeName[CFE_MISSION_MAX_API_LEN];/**< \brief Pipe Depth Statistics */
    # } CFE_SB_RoutingFileEntry_t;
-
+   #
    <% 
       str_bits    = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, "CFE_MISSION_MAX_API_LEN") * 8
       max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPES) *
@@ -31,6 +31,7 @@ TABLE "CFE_SB Pipe Info" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Pipe
       for i in 0..(max_entries-1)
       
          append_items << "APPEND_PARAMETER \"REC#{i}_MSG_ID\"      16 UINT 0 MAX_UINT16 0  \" Message Id that has been subscribed to\"" << "\n"
+            append_items << "FORMAT_STRING \"0x%04X\"" << "\n"
          append_items << "APPEND_PARAMETER \"REC#{i}_PIPE_ID\"      8 UINT 0 MAX_UINT8  0  \" Pipe ID portion of the route\"" << "\n"
          append_items << "APPEND_PARAMETER \"REC#{i}_STATE\"        8 UINT 0 MAX_UINT8  0  \" Enable/disable state\"" << "\n"
             append_items << "   STATE DISABLED 0" << "\n"

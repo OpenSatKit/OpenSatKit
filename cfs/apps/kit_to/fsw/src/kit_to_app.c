@@ -63,7 +63,7 @@ void KIT_TO_AppMain(void)
 
    int32  Status    = CFE_SEVERITY_ERROR;
    uint32 RunStatus = CFE_ES_APP_ERROR;
-
+   uint16 NumPktsOutput;
 
    Status = CFE_ES_RegisterApp();
    CFE_EVS_Register(NULL,0,0);
@@ -78,25 +78,29 @@ void KIT_TO_AppMain(void)
    
    }
 
-   /*
-   ** At this point many flight apps use CFE_ES_WaitForStartupSync() to
-   ** synchronize their startup timing with other apps. This is not
-   ** needed.
+   /* 
+   ** Load KIT_TO towards the end in cfe_es_startup.scr (see file comments) to avoid startup pipe
+   ** overflows. The local event log can be used to analyze the events during startup.   
    */
-
-   if (Status == CFE_SUCCESS) RunStatus = CFE_ES_APP_RUN;
-
+   if (Status == CFE_SUCCESS) {
+      
+      CFE_ES_WaitForStartupSync(KIT_TO_STARTUP_SYNCH_TIMEOUT);   
+      RunStatus = CFE_ES_APP_RUN;
+   
+   }
+   
    /*
    ** Main process loop
    */
    
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO: About to enter loop\n");
-   while (CFE_ES_RunLoop(&RunStatus))
-   {
+   while (CFE_ES_RunLoop(&RunStatus)) {
+      
+      OS_TaskDelay(KitTo.RunLoopDelay);
 
-      OS_TaskDelay(KIT_TO_RUNLOOP_DELAY);
-
-      PKTMGR_OutputTelemetry();
+      NumPktsOutput = PKTMGR_OutputTelemetry();
+      
+      CFE_EVS_SendEvent(KIT_TO_DEMO_EID, CFE_EVS_DEBUG, "Output %d telemetry packets", NumPktsOutput);
 
       ProcessCommands();
 
@@ -167,6 +171,45 @@ boolean KIT_TO_SendDataTypeTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 
 } /* End KIT_TO_SendDataTypeTlmCmd() */
 
+
+/******************************************************************************
+** Function: KIT_TO_SetRunLoopDelayCmd
+**
+*/
+boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   const KIT_TO_SetRunLoopDelayCmdParam *CmdParam = (const KIT_TO_SetRunLoopDelayCmdParam *) MsgPtr;
+   KIT_TO_Class *KitToPtr = (KIT_TO_Class *)ObjDataPtr;
+   boolean RetStatus = FALSE;
+   
+   if ((CmdParam->RunLoopDelay >= KIT_TO_MIN_RUN_LOOP_DELAY_MS) &&
+       (CmdParam->RunLoopDelay <= KIT_TO_MAX_RUN_LOOP_DELAY_MS)) {
+   
+      CFE_EVS_SendEvent(KIT_TO_SET_RUN_LOOP_DELAY_EID, CFE_EVS_INFORMATION,
+                        "Run loop delay changed from %d to %d", 
+                        KitToPtr->RunLoopDelay, CmdParam->RunLoopDelay);
+   
+      KitToPtr->RunLoopDelay = CmdParam->RunLoopDelay;
+      
+      PKTMGR_InitStats(KitToPtr->RunLoopDelay,PKTMGR_STATS_RECONFIG_INIT_MS);
+
+      RetStatus = TRUE;
+   
+   }   
+   else {
+      
+      CFE_EVS_SendEvent(KIT_TO_INVALID_RUN_LOOP_DELAY_EID, CFE_EVS_ERROR,
+                        "Invalid commanded run loop delay of %d ms. Valid inclusive range: [%d,%d] ms", 
+                        CmdParam->RunLoopDelay,KIT_TO_MIN_RUN_LOOP_DELAY_MS,KIT_TO_MAX_RUN_LOOP_DELAY_MS);
+      
+   }
+   
+   return RetStatus;
+   
+} /* End KIT_TO_SetRunLoopDelayCmd() */
+
+
 /******************************************************************************
 ** Function: KIT_TO_SendHousekeepingPkt
 **
@@ -181,6 +224,8 @@ void KIT_TO_SendHousekeepingPkt(void)
    KitToHkPkt.ValidCmdCnt   = KitTo.CmdMgr.ValidCmdCnt;
    KitToHkPkt.InvalidCmdCnt = KitTo.CmdMgr.InvalidCmdCnt;
 
+   KitToHkPkt.RunLoopDelay  = KitTo.RunLoopDelay;
+
    /*
    ** TBLMGR Data
    */
@@ -194,6 +239,9 @@ void KIT_TO_SendHousekeepingPkt(void)
    ** - Some of these may be more diagnostic but not enough to warrant a
    **   separate diagnostic. Also easier for the user not to hhave to command it.
    */
+
+   KitToHkPkt.PktsPerSec  = round(KitTo.PktMgr.Stats.AvgPktsPerSec);
+   KitToHkPkt.BytesPerSec = round(KitTo.PktMgr.Stats.AvgBytesPerSec);
 
    KitToHkPkt.TlmSockId = (uint16)KitTo.PktMgr.TlmSockId;
    strncpy(KitToHkPkt.TlmDestIp, KitTo.PktMgr.TlmDestIp, PKTMGR_IP_STR_LEN);
@@ -213,6 +261,8 @@ static int32 InitApp(void)
    int32 Status = CFE_SUCCESS;
 
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Entry\n");
+
+   KitTo.RunLoopDelay = KIT_TO_RUN_LOOP_DELAY_MS;
 
    /*
    ** Initialize 'entity' objects
@@ -241,7 +291,9 @@ static int32 InitApp(void)
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_PKT_CMD_FC,      PKTMGR_OBJ, PKTMGR_RemovePktCmd,       PKKTMGR_REMOVE_PKT_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_ALL_PKTS_CMD_FC, PKTMGR_OBJ, PKTMGR_RemoveAllPktsCmd,   0);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ENABLE_OUTPUT_CMD_FC,   PKTMGR_OBJ, PKTMGR_EnableOutputCmd,    PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC, &KitTo,     KIT_TO_SendDataTypeTlmCmd, 0);
+   
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC,    &KitTo,  KIT_TO_SendDataTypeTlmCmd, 0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SET_RUN_LOOP_DELAY_CMD_FC, &KitTo,  KIT_TO_SetRunLoopDelayCmd, KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN);
 
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Before TBLMGR calls\n");
    TBLMGR_Constructor(TBLMGR_OBJ);
@@ -325,10 +377,12 @@ static void ProcessCommands(void)
       switch (MsgId)
       {
          case KIT_TO_CMD_MID:
+            CFE_EVS_SendEvent(KIT_TO_DEMO_EID, CFE_EVS_DEBUG, "Processing command function code %d", CFE_SB_GetCmdCode(CmdMsgPtr));
             CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
             break;
 
          case KIT_TO_SEND_HK_MID:
+            CFE_EVS_SendEvent(KIT_TO_DEMO_EID, CFE_EVS_DEBUG, "Sending housekeeping packet");
             KIT_TO_SendHousekeepingPkt();
             break;
 

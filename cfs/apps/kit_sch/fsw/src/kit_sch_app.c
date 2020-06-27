@@ -63,17 +63,17 @@ KIT_SCH_HkPkt  KitSchHk;
 void KIT_SCH_AppMain(void)
 {
 	
-    int32  Status    = CFE_SEVERITY_ERROR;
-    uint32 RunStatus = CFE_ES_APP_ERROR;
-    CFE_SB_Msg_t* CmdMsgPtr;
+   int32  Status    = CFE_SEVERITY_ERROR;
+   uint32 RunStatus = CFE_ES_APP_ERROR;
+   CFE_SB_Msg_t* CmdMsgPtr;
 
-    /*
-    ** Register application
-    */
+   /*
+   ** Register application
+   */
     
-    Status = CFE_ES_RegisterApp();
+   Status = CFE_ES_RegisterApp();
 
-    CFE_EVS_Register(NULL,0,CFE_EVS_NO_FILTER);
+   CFE_EVS_Register(NULL,0,CFE_EVS_NO_FILTER);
 
     /*
     ** Perform application specific initialization
@@ -83,11 +83,17 @@ void KIT_SCH_AppMain(void)
         Status = InitApp();
     }
 
-    /*
-    ** At this point many flight apps use CFE_ES_WaitForStartupSync() to
-    ** synchronize their startup timing with other apps. This is not
-    ** needed.
-    */
+   /* 
+   ** Load KIT_SCH towards the end in cfe_es_startup.scr (see file comments) to avoid startup pipe
+   ** overflows. The local event log can be used to analyze the events during startup.   
+   */
+   if (Status == CFE_SUCCESS) {
+      
+      CFE_ES_WaitForStartupSync(KIT_SCH_STARTUP_SYNCH_TIMEOUT);   
+      RunStatus = CFE_ES_APP_RUN;
+   
+   }
+   
     if (Status == CFE_SUCCESS)
     {
 

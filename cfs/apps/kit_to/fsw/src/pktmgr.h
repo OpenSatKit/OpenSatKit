@@ -28,6 +28,7 @@
 
 #define PKTMGR_IP_STR_LEN  16
 
+
 /*
 ** Event Message IDs
 */
@@ -50,26 +51,55 @@
 #define PKTMGR_REMOVE_ALL_PKTS_INFO_EID             (PKTMGR_BASE_EID + 16)
 #define PKTMGR_REMOVE_ALL_PKTS_ERR_EID              (PKTMGR_BASE_EID + 17)
 #define PKTMGR_DESTRUCTOR_INFO_EID                  (PKTMGR_BASE_EID + 18)
+#define PKTMGR_DEBUG_EID                            (PKTMGR_BASE_EID + 19)
 
-#define PKTMGR_TOTAL_EID  19
+#define PKTMGR_TOTAL_EID  20
 
 /*
 ** Type Definitions
 */
 
 
+/******************************************************************************
+** Packet Manager Statistics
+**
+** Stats are computed over an interval of PKTMGR_COMPUTE_STATS_INTERVAL_MS
+*/
+
+typedef struct {
+
+   uint16  InitCycles;         /* 0: Init done, >0: Number of remaining init cycles  */  
+   
+   double  OutputTlmInterval;  /* ms between calls to PKTMGR_OutputTelemetry()    */  
+   double  IntervalMilliSecs;  /* Number of ms in the current computational cycle */
+   uint32  IntervalPkts;
+   uint32  IntervalBytes;
+   
+   double  PrevIntervalAvgPkts;
+   double  PrevIntervalAvgBytes;
+   
+   double  AvgPktsPerSec;
+   double  AvgBytesPerSec;
+   
+   boolean FirstInterval;
+   
+} PKTMGR_Stats;
+
 
 /******************************************************************************
 ** Packet Manager Class
 */
+
 
 typedef struct {
 
    CFE_SB_PipeId_t   TlmPipe;
    int               TlmSockId;
    char              TlmDestIp[PKTMGR_IP_STR_LEN];
+
    boolean           DownlinkOn;
    boolean           SuppressSend;
+   PKTMGR_Stats      Stats;
 
    PKTTBL_Tbl        Tbl;
 
@@ -132,6 +162,16 @@ void PKTMGR_Constructor(PKTMGR_Class *PktMgrPtr, char* PipeName, uint16 PipeDept
 
 
 /******************************************************************************
+** Function:  PKTMGR_InitStats
+**
+** OutputTlmInterval - Number of ms between calls to PKTMGR_OutputTelemetry()
+**                     If zero retain the last interval value
+** InitDelay         - Number of ms to delay starting stats computation
+*/
+void PKTMGR_InitStats(uint16 OutputTlmInterval, uint16 InitDelay);
+
+
+/******************************************************************************
 ** Function: PKTMGR_GetTblPtr
 **
 ** Return a pointer to the packet table.
@@ -163,7 +203,7 @@ void PKTMGR_ResetStatus(void);
 ** SB packets on the telemetry input pipe out the socket.
 **
 */
-void PKTMGR_OutputTelemetry(void);
+uint16 PKTMGR_OutputTelemetry(void);
 
 
 /******************************************************************************

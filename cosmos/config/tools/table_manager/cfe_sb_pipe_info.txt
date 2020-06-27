@@ -9,6 +9,24 @@
 TABLE "CFE_SB Pipe Info" <%= Osk::Cfg.processor_endian %>  ONE_DIMENSIONAL "Pipe Information"
   <%= Osk::Cfg.file_hdr %>
 
+   # cfe_sb_priv.h:
+   #
+   #typedef struct {
+   #   uint8              InUse;
+   #   CFE_SB_PipeId_t    PipeId;
+   #   char               PipeName[OS_MAX_API_NAME];
+   #   char               AppName[OS_MAX_API_NAME];
+   #   uint8              Opts;
+   #   uint8              Spare;
+   #   uint32             AppId;
+   #   uint32             SysQueueId;
+   #   uint32             LastSender;
+   #   uint16             QueueDepth;
+   #   uint16             SendErrors;
+   #   CFE_SB_BufferD_t  *CurrentBuff;
+   #   CFE_SB_BufferD_t  *ToTrashBuff;
+   #} CFE_SB_PipeD_t;
+   #
   <% 
     max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_PIPES)
     append_items = ""
