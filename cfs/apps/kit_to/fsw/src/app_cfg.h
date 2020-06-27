@@ -31,12 +31,17 @@
 ** Telemetry Output Application Macros
 */
 
+/*
+** 1.1 - Refactored for OSK 2.2
+** 1.2 - Add statistics, app delay cmd, debug events for SB training, June 2020
+*/
+
 #define  KIT_TO_MAJOR_VER     1
-#define  KIT_TO_MINOR_VER     1   /* Refactored for OSK 2.2 */
+#define  KIT_TO_MINOR_VER     2
 #define  KIT_TO_LOCAL_REV     0
 
 
-#define  KIT_TO_CMD_PIPE_DEPTH    100
+#define  KIT_TO_CMD_PIPE_DEPTH    20
 #define  KIT_TO_CMD_PIPE_NAME     "KIT_TO_CMD_PIPE"
 
 
@@ -44,15 +49,15 @@
 ** Command Macros
 */
 
-#define KIT_TO_PKT_TBL_LOAD_CMD_FC     (CMDMGR_APP_START_FC + 0)
-#define KIT_TO_PKT_TBL_DUMP_CMD_FC     (CMDMGR_APP_START_FC + 1)
+#define KIT_TO_PKT_TBL_LOAD_CMD_FC       (CMDMGR_APP_START_FC + 0)
+#define KIT_TO_PKT_TBL_DUMP_CMD_FC       (CMDMGR_APP_START_FC + 1)
 
-#define KIT_TO_ADD_PKT_CMD_FC          (CMDMGR_APP_START_FC + 2)
-#define KIT_TO_REMOVE_PKT_CMD_FC       (CMDMGR_APP_START_FC + 3)
-#define KIT_TO_REMOVE_ALL_PKTS_CMD_FC  (CMDMGR_APP_START_FC + 4)
-#define KIT_TO_ENABLE_OUTPUT_CMD_FC    (CMDMGR_APP_START_FC + 5)
-#define KIT_TO_SEND_DATA_TYPES_CMD_FC  (CMDMGR_APP_START_FC + 6)
-
+#define KIT_TO_ADD_PKT_CMD_FC            (CMDMGR_APP_START_FC + 2)
+#define KIT_TO_REMOVE_PKT_CMD_FC         (CMDMGR_APP_START_FC + 3)
+#define KIT_TO_REMOVE_ALL_PKTS_CMD_FC    (CMDMGR_APP_START_FC + 4)
+#define KIT_TO_ENABLE_OUTPUT_CMD_FC      (CMDMGR_APP_START_FC + 5)
+#define KIT_TO_SEND_DATA_TYPES_CMD_FC    (CMDMGR_APP_START_FC + 6)
+#define KIT_TO_SET_RUN_LOOP_DELAY_CMD_FC (CMDMGR_APP_START_FC + 7)
 
 /******************************************************************************
 ** Event Macros
@@ -83,19 +88,31 @@
 */
 
 /*
+** Pipe configurations
+*/
+
+#define PKTMGR_PIPE_DEPTH      100
+#define PKTMGR_PIPE_NAME       "KIT_TO_PKT_PIPE"
+
+/*
+** Statistics
+*/
+
+#define PKTMGR_STATS_STARTUP_INIT_MS   20000  /* ms after app initialized to start stats computations   */
+#define PKTMGR_STATS_RECONFIG_INIT_MS   5000  /* ms after a reconfiguration to start stats computations */
+
+#define PKTMGR_COMPUTE_STATS_INTERVAL_MS KIT_TO_MAX_RUN_LOOP_DELAY_MS /* ms between stats updates       */
+
+/******************************************************************************
+** pkttbl.h Configurations
+*/
+
+/*
 ** Maximum Number of Packet Definitions in Packet Table. Must be greater than zero.
 */
 
 #define PKTTBL_MAX_PKT_CNT     64
 #define PKTTBL_UNUSED_MSG_ID   (CFE_SB_HIGHEST_VALID_MSGID+1)
-
-
-/******************************************************************************
-** pktmgr.h Configurations
-*/
-
-#define PKTMGR_PIPE_DEPTH      132
-#define PKTMGR_PIPE_NAME       "KIT_TO_PKT_PIPE"
 
 
 #endif /* _app_cfg_ */

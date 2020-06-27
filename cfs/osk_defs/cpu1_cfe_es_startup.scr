@@ -2,9 +2,7 @@ CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,         CFS_LIB,        0,       0, 0
 CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,    OSK_C_FW,       0,   16384, 0x0, 0;
 CFE_LIB, /cf/osk_cpp_fw.so,   OSK_CPP_FW_LibInit,  OSK_CPP_FW,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,          EXPAT_LIB,      0,   16384, 0x0, 0;
-CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        30,   16384, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        20,   16384, 0x0, 0;
-CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,     KIT_SCH,       10,   16384, 0x0, 0;
 CFE_APP, /cf/ds.so,           DS_AppMain,          DS,            70,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,          FM,            80,   16384, 0x0, 0;
 CFE_APP, /cf/lc.so,           LC_AppMain,          LC,            80,   16384, 0x0, 0;
@@ -17,6 +15,15 @@ CFE_APP, /cf/tftp.so,         TFTP_AppMain,        TFTP,          60,   16384, 0
 CFE_APP, /cf/f42.so,          F42_AppMain,         F42,           50,   16384, 0x0, 0;
 CFE_APP, /cf/i42.so,          I42_AppMain,         I42,          100,   80192, 0x0, 0;
 CFE_APP, /cf/isim.so,         ISIM_AppMain,        ISIM,          90,   16384, 0x0, 0;
+CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        20,   16384, 0x0, 0;
+CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,     KIT_SCH,       10,   16384, 0x0, 0;
+!
+! KIT_TO loaded 2nd last to avoid event message pipe overflows. The local event log
+! buffer can be used to look at started up messages
+!
+! KIT-SCH loaded last to minimize 'no subscriber' messages and to keep the startup 
+! less chaotic. Having scheduler send messages while some apps are initialzes causes
+! confusion.
 !
 ! I42 & F42 are set low so 42 Simulator-to-FSW closed looped doesn't hog the system. The
 ! current design has a crude throttling and rate limiting mechanism

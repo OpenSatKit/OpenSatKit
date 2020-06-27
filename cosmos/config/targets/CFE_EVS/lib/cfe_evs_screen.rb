@@ -47,6 +47,8 @@ def cfe_evs_scr_cmd(screen, cmd)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
+      when "EVS_TRAINING_VIDEO"
+         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_CFE_EVS}")   
       when "EVS_TRAINING_SLIDES"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::EVS_TRAINING_SLIDES_FILE}")
       when "EVS_EXERCISE_SCRIPT"

@@ -45,6 +45,7 @@ static void  FlushTlmPipe(void);
 static int   StreamIdPktIdx(uint16 StreamId);
 static int32 SubscribeNewPkt(PKTTBL_Pkt* NewPkt);
 static int   UnusedTblPktIdx(void);
+static void  ComputeStats(uint16 PktsSent, uint32 BytesSent);
 
 /******************************************************************************
 ** Function: PKTMGR_Constructor
@@ -61,6 +62,8 @@ void PKTMGR_Constructor(PKTMGR_Class*  PktMgrPtr, char* PipeName, uint16 PipeDep
    PktMgr->SuppressSend = TRUE;
    PktMgr->TlmSockId    = 0;
    strncpy(PktMgr->TlmDestIp, "000.000.000.000", PKTMGR_IP_STR_LEN);
+
+   PKTMGR_InitStats(KIT_TO_RUN_LOOP_DELAY_MS,PKTMGR_STATS_STARTUP_INIT_MS);
 
    CFE_PSP_MemSet((void*)&(PktMgr->Tbl), 0, sizeof(PKTTBL_Tbl));
    for (i=0; i < PKTTBL_MAX_PKT_CNT; i++) {
@@ -95,22 +98,54 @@ const PKTTBL_Tbl* PKTMGR_GetTblPtr()
 void PKTMGR_ResetStatus(void)
 {
 
-   /* Nothing to do */
+   PKTMGR_InitStats(0,PKTMGR_STATS_RECONFIG_INIT_MS);
 
 } /* End PKTMGR_ResetStatus() */
+
+
+/******************************************************************************
+** Function:  PKTMGR_InitStats
+**
+** If OutputTlmInterval==0 then retain current value
+** ComputeStats() logic assumes at least 1 init cycle
+**
+*/
+void PKTMGR_InitStats(uint16 OutputTlmInterval, uint16 InitDelay)
+{
+   
+   if (OutputTlmInterval != 0) PktMgr->Stats.OutputTlmInterval = (double)OutputTlmInterval;
+   
+
+   PktMgr->Stats.InitCycles = (PktMgr->Stats.OutputTlmInterval >= InitDelay) ? 1 : (double)InitDelay/PktMgr->Stats.OutputTlmInterval;
+            
+   PktMgr->Stats.IntervalMilliSecs = 0.0;
+   PktMgr->Stats.IntervalPkts = 0;
+   PktMgr->Stats.IntervalBytes = 0;;
+   
+   PktMgr->Stats.FirstInterval = TRUE;
+   
+   PktMgr->Stats.PrevIntervalAvgPkts  = 0.0;
+   PktMgr->Stats.PrevIntervalAvgBytes = 0.0;
+   
+   PktMgr->Stats.AvgPktsPerSec  = 0.0;
+   PktMgr->Stats.AvgBytesPerSec = 0.0;
+
+} /* End PKTMGR_InitStats() */
 
 
 /******************************************************************************
 ** Function: PKTMGR_OutputTelemetry
 **
 */
-void PKTMGR_OutputTelemetry(void)
+uint16 PKTMGR_OutputTelemetry(void)
 {
 
    static struct sockaddr_in SocketAddr;
    int                       SocketStatus;
    int32                     SbStatus;
-   uint16                    PktLen;
+   uint16                    PktLen;   
+   uint16                    NumPktsOutput  = 0;
+   uint32                    NumBytesOutput = 0;
    CFE_SB_Msg_t              *PktPtr;
 
    CFE_PSP_MemSet((void*)&SocketAddr, 0, sizeof(SocketAddr));
@@ -136,6 +171,9 @@ void PKTMGR_OutputTelemetry(void)
             SocketStatus = sendto(PktMgr->TlmSockId, (char *)PktPtr, PktLen, 0,
                                     (struct sockaddr *) &SocketAddr, sizeof(SocketAddr) );
           
+            ++NumPktsOutput;
+            NumBytesOutput += PktLen;
+          
          } /* End if downlink enabled */
           
          if (SocketStatus < 0) {
@@ -146,10 +184,14 @@ void PKTMGR_OutputTelemetry(void)
             PktMgr->SuppressSend = TRUE;
          }
 
-       } /* End if SB received msg and output enabled */
+      } /* End if SB received msg and output enabled */
 
-    } while(SbStatus == CFE_SUCCESS);
+   } while(SbStatus == CFE_SUCCESS);
 
+   ComputeStats(NumPktsOutput, NumBytesOutput);
+
+   return NumPktsOutput;
+   
 } /* End of PKTMGR_OutputTelemetry() */
 
 
@@ -178,7 +220,7 @@ boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl)
          Status = CFE_SB_SubscribeEx(PktMgr->Tbl.Pkt[i].StreamId,
                                      PktMgr->TlmPipe,PktMgr->Tbl.Pkt[i].Qos,
                                      PktMgr->Tbl.Pkt[i].BufLim);
-
+        
          if(Status != CFE_SUCCESS) {
             
             FailedSubscription++;
@@ -192,8 +234,9 @@ boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl)
 
    if (FailedSubscription == 0) {
       
+     
       CFE_EVS_SendEvent(PKTMGR_LOAD_TBL_INFO_EID, CFE_EVS_INFORMATION,
-                        "Loaded new table with %d packets", PktCnt);
+                        "Successfully loaded new table with %d packets", PktCnt);
    }
    else {
       
@@ -560,3 +603,52 @@ static int UnusedTblPktIdx(void)
 } /* End UnusedTblPktIdx() */
 
 
+/******************************************************************************
+** Function:  PKTMGR_InitStats
+**
+** Called each output telemetry cycle
+*/
+static void ComputeStats(uint16 PktsSent, uint32 BytesSent)
+{
+   
+   
+   if (PktMgr->Stats.InitCycles > 0) {
+   
+      --PktMgr->Stats.InitCycles;
+     
+   }
+   else {
+      
+      PktMgr->Stats.IntervalMilliSecs += PktMgr->Stats.OutputTlmInterval;
+      PktMgr->Stats.IntervalPkts      += PktsSent;
+      PktMgr->Stats.IntervalBytes     += BytesSent;
+      
+      if (PktMgr->Stats.IntervalMilliSecs >= PKTMGR_COMPUTE_STATS_INTERVAL_MS) {
+      
+         double Seconds = PktMgr->Stats.IntervalMilliSecs/1000;
+         
+         PktMgr->Stats.AvgPktsPerSec  = (double)PktMgr->Stats.IntervalPkts/Seconds;
+         PktMgr->Stats.AvgBytesPerSec = (double)PktMgr->Stats.IntervalBytes/Seconds;
+         
+         /* Good enough running average that avoids overflow */
+         if (PktMgr->Stats.FirstInterval) {
+            PktMgr->Stats.FirstInterval = FALSE;
+         }
+         else {
+            PktMgr->Stats.AvgPktsPerSec  = (PktMgr->Stats.AvgPktsPerSec  + PktMgr->Stats.PrevIntervalAvgPkts) / 2.0; 
+            PktMgr->Stats.AvgBytesPerSec = (PktMgr->Stats.AvgBytesPerSec + PktMgr->Stats.PrevIntervalAvgBytes) / 2.0; 
+         }
+         
+         PktMgr->Stats.PrevIntervalAvgPkts  = PktMgr->Stats.AvgPktsPerSec;
+         PktMgr->Stats.PrevIntervalAvgBytes = PktMgr->Stats.AvgBytesPerSec;
+         
+         PktMgr->Stats.IntervalMilliSecs = 0.0;
+         PktMgr->Stats.IntervalPkts      = 0;
+         PktMgr->Stats.IntervalBytes     = 0;
+      
+      } /* End if report cycle */
+      
+   } /* End if not init cycle */
+   
+
+} /* End ComputeStats() */

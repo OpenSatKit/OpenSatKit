@@ -120,6 +120,7 @@ module Osk
    CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
    CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
    EVS_TRAINING_SLIDES_FILE = "OSK-T02-1-cFE-EVS.pdf"
+   SB_TRAINING_SLIDES_FILE  = "OSK-T02-1-cFE-SB.pdf"
    CFE_EXERCISE_SLIDES_FILE = "OSK_Training-cFE_Exercises.pdf"
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"
@@ -277,6 +278,14 @@ module Osk
    TLM_STR_HK_PKT    = "HK_TLM_PKT"
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
+    
+    
+   #####################
+   ## YouTube Channel ## 
+   #####################
    
+   YOUTUBE_TRAINING_CFE_EVS = "https://www.youtube.com/watch?v=-MR67hA1m0E"
+   YOUTUBE_TRAINING_CFE_SB  = "https://youtu.be/QO6C3DUbGF8"
+ 
    
 end # Module Osk

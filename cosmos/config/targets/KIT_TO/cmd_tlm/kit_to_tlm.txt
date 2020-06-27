@@ -12,8 +12,11 @@ TELEMETRY KIT_TO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Telemetry Output H
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
   APPEND_ITEM CMD_VALID_COUNT      16 UINT  "Command Count"
   APPEND_ITEM CMD_ERROR_COUNT      16 UINT  "Error Count"
+  APPEND_ITEM RUN_LOOP_DELAY       16 UINT  "Task delay(ms) used in main loop"
   APPEND_ITEM LAST_TBL_LOAD_STATUS  8 UINT  "0=Undefined, 1=No, 1=Yes"
   APPEND_ITEM SPARE_BYTE            8 UINT  ""
   APPEND_ITEM LAST_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last table load"
+  APPEND_ITEM PKTS_PER_SEC         16 UINT  "Average packets per second"
+  APPEND_ITEM BYTES_PER_SEC        32 UINT  "Average bytes per second"
   APPEND_ITEM SOCKET_ID 16 UINT   "Socket identifier"
   APPEND_ITEM IP_ADDR 128 STRING  "IP Address string"

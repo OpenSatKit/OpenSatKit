@@ -33,7 +33,7 @@ COMMAND KIT_TO ADD_PKT <%= Osk::Cfg.processor_endian %> "Add an individual packe
   APPEND_PARAMETER QOS_PRIORITY    8 UINT MIN_UINT8 MAX_UINT8 0 "Quality of Service: Priority"
   APPEND_PARAMETER BUF_LIM         8 UINT MIN_UINT8 MAX_UINT8 4 "TO input buffer limit"
   
-COMMAND KIT_TO REMOVE_PKT <%= Osk::Cfg.processor_endian %> "Remove all packets"
+COMMAND KIT_TO REMOVE_PKT <%= Osk::Cfg.processor_endian %> "Remove a single packet"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
   APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header"
 
@@ -46,3 +46,7 @@ COMMAND KIT_TO ENABLE_TELEMETRY <%= Osk::Cfg.processor_endian %> "Tell TO to sta
 
 COMMAND KIT_TO SEND_DATA_TYPE <%= Osk::Cfg.processor_endian %> "Send data type"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
+
+COMMAND KIT_TO SET_RUN_LOOP_DELAY <%= Osk::Cfg.processor_endian %> "Set the delay used in the main loop"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 2) %>
+  APPEND_PARAMETER RUN_LOOP_DELAY 16 UINT MIN_UINT16 MAX_UINT16 0 "Task delay(ms) used in main loop"
