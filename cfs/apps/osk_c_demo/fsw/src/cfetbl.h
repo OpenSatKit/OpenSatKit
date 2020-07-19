@@ -37,8 +37,9 @@ typedef struct {
    
    int32             Status;  /* Status of last cFE Table servcie call */
    CFE_TBL_Handle_t  Handle;
+   ExTblData_Param*  DataPtr;
 
-   ExTblData_Param Tbl;
+   ExTblData_Param   Tbl;
 
 } CFETBL_Class;
 

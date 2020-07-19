@@ -253,7 +253,7 @@
          "dec-id": 2183,
          "priority": 0,
          "reliability": 0,
-         "buf-limit": 4
+         "buf-limit": 8
       },
 
       "packet": {
@@ -523,7 +523,7 @@
          "dec-id": 2513,
          "priority": 0,
          "reliability": 0,
-         "buf-limit": 4
+         "buf-limit": 8
       },
 
       "packet": {

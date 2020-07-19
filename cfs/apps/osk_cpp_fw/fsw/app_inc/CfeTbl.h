@@ -46,11 +46,9 @@ public:
    bool Register(CFE_TBL_CallbackFuncPtr_t callback_func, const T* data_buffer);
    bool Register(CFE_TBL_CallbackFuncPtr_t callback_func, char* data_filename);
 
-   void PollCfeTblService();
+   void ManageService();
  
-   T* GetAddress();
-   void ReleaseAddress();
-
+   T*     get_data_ptr()   { return m_data_ptr;       }
    bool   address_in_use() { return m_address_in_use; }
    int32  status()         { return m_status;         }
    
@@ -58,12 +56,16 @@ protected:
 
    std::string  m_name;
    uint16       m_options;
-   
+ 
+   T* m_data_ptr; 
    CFE_TBL_Handle_t           m_handle;
    CFE_TBL_CallbackFuncPtr_t  m_callback_func;
    
    int32  m_status;           // Status of last cFE Tbl service call
    bool   m_address_in_use;
+
+   T* GetAddress();
+   void ReleaseAddress();
 
    // Tables shouldn't need to be copied
    CfeTbl(const CfeTbl &tbl) {}  
@@ -82,21 +84,11 @@ CfeTbl<T>::CfeTbl(const std::string& name, uint16 options) {
    m_name    = name;
    m_options = options;
 
+   m_data_ptr = nullptr;
    m_address_in_use = FALSE;
       
 } // End CfeTbl()
 
-/******************************************************************************
-** Periodic Processing
-**
-*/
-
-template <typename T>
-void CfeTbl<T>::PollCfeTblService() {
-
-   CFE_TBL_Manage(m_handle); 
-
-}
 
 /******************************************************************************
 ** Register/Load Table 
@@ -152,13 +144,24 @@ bool CfeTbl<T>::Register(CFE_TBL_CallbackFuncPtr_t callback_func, char* data_fil
 template<typename T>
 T* CfeTbl<T>::GetAddress() {
    
-   T* data_ptr = nullptr;
+   m_data_ptr = nullptr;
    
-   m_status = CFE_TBL_GetAddress((void **)&data_ptr, m_handle);
+   m_status = CFE_TBL_GetAddress((void **)&m_data_ptr, m_handle);
 
-   m_address_in_use = (m_status == CFE_SUCCESS);
+
+   if (m_status == CFE_TBL_ERR_NEVER_LOADED) {
+      
+      m_data_ptr = nullptr;
+      m_address_in_use = false;
    
-   return data_ptr;
+   }
+   else {
+      
+      m_address_in_use = true;
+   
+   }
+         
+   return m_data_ptr;
    
 } // End GetAddress()
 
@@ -177,6 +180,17 @@ void CfeTbl<T>::ReleaseAddress() {
    
 } // End ReleaseAddress()
 
+
+template<typename T>
+void CfeTbl<T>::ManageService() {
+  
+   ReleaseAddress();
+   
+   CFE_TBL_Manage(m_handle);
+   
+   m_data_ptr = GetAddress();
+
+} // CFETBL_Manage()
 
 } // End namespace oskfw
 

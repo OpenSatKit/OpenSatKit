@@ -184,8 +184,8 @@
                "descr": "",
                "index": 2,
                "enable": "true",
-               "frequency": 4,
-               "offset": 0,
+               "frequency": 5,
+               "offset": 1,
                "msg-id": 20
             }},
 

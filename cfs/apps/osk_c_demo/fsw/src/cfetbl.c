@@ -47,6 +47,7 @@ void CFETBL_Constructor(CFETBL_Class*  CfeTblPtr)
    CfeTbl = CfeTblPtr;
 
    CFE_PSP_MemSet((void*)CfeTbl, 0, sizeof(CFETBL_Class));
+   CfeTbl->DataPtr = (ExTblData_Param *) NULL;
 
    CfeTbl->Status = CFE_TBL_Register(&CfeTbl->Handle, OSK_C_DEMO_CFE_TBL_NAME,
                                     sizeof(ExTblData_Param), CFE_TBL_OPT_DEFAULT, Validate);
@@ -54,15 +55,18 @@ void CFETBL_Constructor(CFETBL_Class*  CfeTblPtr)
    
    CfeTbl->Registered = (CfeTbl->Status == CFE_SUCCESS);
    
+   /* DataPtr will remain NULL if data not loaded. */
    if (CfeTbl->Registered) {
    
       CfeTbl->Status = CFE_TBL_Load(CfeTbl->Handle, CFE_TBL_SRC_FILE, OSK_C_DEMO_CFE_TBL_DEF_LOAD_FILE);
-   
+      if (CfeTbl->Status == CFE_SUCCESS) {
+         CFE_TBL_GetAddress((void **)&(CfeTbl->DataPtr), CfeTbl->Handle);
+      }
    }
    else {
       
       CFE_EVS_SendEvent(999, CFE_EVS_ERROR,
-                        "Error registering table %s, CFE_TBL_Register() status = 0x%08X\n",
+                        "Error registering table %s, CFE_TBL_Register() status = 0x%08X",
                         OSK_C_DEMO_CFE_TBL_NAME, CfeTbl->Status);                        
    }
 
@@ -95,21 +99,41 @@ void CFETBL_GetTblEntry(ExTblData_Entry* TblEntryData, uint8 Index)
 
    ExTblData_Param* TblData = NULL;
    
-   if (CfeTbl->Registered) {
-
-      CfeTbl->Status = CFE_TBL_GetAddress((void **)&TblData, CfeTbl->Handle);
-   
-      if (CfeTbl->Status == CFE_SUCCESS) {
+   if (CfeTbl->DataPtr != NULL) {
       
-         memcpy(TblEntryData,&TblData->Entry[Index],sizeof(ExTblData_Entry));
+      memcpy(TblEntryData,&(CfeTbl->DataPtr)->Entry[Index],sizeof(ExTblData_Entry));
 
-         CfeTbl->Status = CFE_TBL_ReleaseAddress(CfeTbl->Handle);
-      
-      }
+   }
+   else {
+
+      CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION,
+                        "CFETBL_GetTblEntry() called but the table has not been loaded. Last table status = 0x%08X",CfeTbl->Status);                        
 
    }
    
 } // CFETBL_GetTblEntry()
+
+
+/******************************************************************************
+** Function: CFETBL_Manage
+**
+*/
+void CFETBL_Manage(void)
+{
+
+   CfeTbl->Status = CFE_TBL_ReleaseAddress(CfeTbl->Handle);
+   
+   CFE_TBL_Manage(CfeTbl->Handle);
+   
+   CfeTbl->Status = CFE_TBL_GetAddress((void **)&(CfeTbl->DataPtr), CfeTbl->Handle);
+
+   if (CfeTbl->Status == CFE_TBL_ERR_NEVER_LOADED) {
+      
+      CfeTbl->DataPtr = (ExTblData_Param *) NULL;
+   
+   }
+
+} // CFETBL_Manage()
 
 
 /******************************************************************************

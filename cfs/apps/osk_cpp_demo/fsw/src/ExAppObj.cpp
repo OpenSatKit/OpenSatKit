@@ -97,8 +97,7 @@ void ExAppObj::Execute() {
 
 void ExAppObj::Monitor() {
 
-
-   m_ex_cfe_tbl.PollCfeTblService();
+   m_ex_cfe_tbl.ManageService();
 
 } 
 
@@ -139,12 +138,11 @@ boolean ExAppObj::DemoCmd::Process(const CFE_SB_MsgPtr_t msg_ptr) {
       valid_table = TRUE;
       break;
    case 3:
-      ex_cfe_tbl = m_ex_app_obj->m_ex_cfe_tbl.GetAddress();
+      ex_cfe_tbl = m_ex_app_obj->m_ex_cfe_tbl.get_data_ptr();
       if (ex_cfe_tbl != nullptr) {
          tbl_entry = ex_cfe_tbl->entry[entry_indx];
          valid_table = valid_entry = TRUE;
       }
-      m_ex_app_obj->m_ex_cfe_tbl.ReleaseAddress();
       break;
    default:
       CFE_EVS_SendEvent(EID_INVALID_TBL_ID, CFE_EVS_ERROR, "Invalid table identifer %d. Index must be from 1 to 2", table_id);
