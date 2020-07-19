@@ -121,6 +121,7 @@ module Osk
    CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
    EVS_TRAINING_SLIDES_FILE = "OSK-T02-1-cFE-EVS.pdf"
    SB_TRAINING_SLIDES_FILE  = "OSK-T02-1-cFE-SB.pdf"
+   TBL_TRAINING_SLIDES_FILE = "OSK-T02-1-cFE-TBL.pdf"
    CFE_EXERCISE_SLIDES_FILE = "OSK_Training-cFE_Exercises.pdf"
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"
@@ -284,8 +285,9 @@ module Osk
    ## YouTube Channel ## 
    #####################
    
-   YOUTUBE_TRAINING_CFE_EVS = "https://www.youtube.com/watch?v=-MR67hA1m0E"
-   YOUTUBE_TRAINING_CFE_SB  = "https://youtu.be/QO6C3DUbGF8"
+   YOUTUBE_TRAINING_CFE_EVS  = "https://www.youtube.com/watch?v=-MR67hA1m0E"
+   YOUTUBE_TRAINING_CFE_SB   = "https://youtu.be/QO6C3DUbGF8"
+   YOUTUBE_TRAINING_CFE_TBL  = "https://youtu.be/He9WE8rJcCg"
  
    
 end # Module Osk

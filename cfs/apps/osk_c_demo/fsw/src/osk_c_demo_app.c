@@ -166,7 +166,7 @@ void OSK_C_DEMO_SendHousekeepingPkt(void)
 {
 
    const TBLMGR_Tbl* Tbl = TBLMGR_GetLastTblStatus(TBLMGR_OBJ);
-   
+      
    /*
    ** CMDMGR Data
    */
@@ -307,6 +307,7 @@ static void ProcessCommands(void)
             break;
 
          case OSK_C_DEMO_SEND_HK_MID:
+            CFETBL_Manage();
             OSK_C_DEMO_SendHousekeepingPkt();
             break;
 

@@ -13,7 +13,7 @@ CFE_APP, /cf/lc.so,           LC_AppMain,           LC,            80,   16384, 
 CFE_APP, /cf/md.so,           MD_AppMain,           MD,            90,   16384, 0x0, 0;
 CFE_APP, /cf/sc.so,           SC_AppMain,           SC,            80,   16384, 0x0, 0;
 CFE_APP, /cf/cs.so,           CS_AppMain,           CS,            90,   16384, 0x0, 0;
-CFE_APP, /cf/mm.so,           MM_AppMain,           MM,            90,   16384, 0x0, 0;
+CFE_APP, /cf/mm.so,           MM_AppMain,           MM,           100,   16384, 0x0, 0;
 CFE_APP, /cf/hk.so,           HK_AppMain,           HK,            90,   16384, 0x0, 0;
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,         TFTP,          60,   16384, 0x0, 0;
 CFE_APP, /cf/f42.so,          F42_AppMain,      F42,           50,   16384, 0x0, 0;

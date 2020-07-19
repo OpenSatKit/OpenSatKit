@@ -33,9 +33,10 @@ def cfe_tbl_scr_cmd(screen, cmd)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_TBL #{scr_name}'")
  
    when "FILE"
+      cmd_name = "WRITE_REG_TO_FILE"
       bin_filename = FswConfigParam::CFE_TBL_DEFAULT_REG_DUMP_FILE
       tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_TBL_REG
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
 
    when "FUNC_TBL_MGMT"
       display("CFS_KIT TABLE_MGMT_SCREEN",1500,10)
@@ -46,12 +47,12 @@ def cfe_tbl_scr_cmd(screen, cmd)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "CFE_TRAINING_SLIDES"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
+      when "TBL_TRAINING_VIDEO"
+         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_CFE_TBL}")      
+      when "TBL_TRAINING_SLIDES"
+         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::TBL_TRAINING_SLIDES_FILE}")
       when "TBL_EXERCISE_SCRIPT"
          launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TBL")
-      when "CFE_EXERCISE_SLIDES"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
       end
    
    else
