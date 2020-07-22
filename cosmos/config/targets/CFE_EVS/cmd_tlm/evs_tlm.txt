@@ -31,8 +31,14 @@ TELEMETRY CFE_EVS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data
   APPEND_ITEM SPARE1          8 UINT "Padding for 32 bit boundary."
   APPEND_ITEM SPARE2          8 UINT "Padding for 32 bit boundary."
   APPEND_ITEM SPARE3          8 UINT "Padding for 32 bit boundary."
-  APPEND_ARRAY_ITEM APPDATA  16 UINT 1024 "Array of registered application table data."
-  
+<% FswConfigParam::CFE_ES_MAX_APPLICATIONS.times do |n|  %>
+  APPEND_ITEM APPDATA<%=n%>_AppID                  32 UINT "Numerical application identifier."
+  APPEND_ITEM APPDATA<%=n%>_AppMessageSentCounter  16 UINT "Application message sent counter."
+  APPEND_ITEM APPDATA<%=n%>_AppEnableStatus         8 UINT "Application event service enable status."
+  APPEND_ITEM APPDATA<%=n%>_Padding                 8 UINT "Padding for 32 bit boundary."
+<% end %>
+
+
 TELEMETRY CFE_EVS EVENT_MSG_PKT <%= Osk::Cfg.processor_endian %> "Event Message Telemetry Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @EVENT_MSG_MID_STR) %>
   APPEND_ITEM PKT_ID_APP_NAME      160 STRING "Application name"
