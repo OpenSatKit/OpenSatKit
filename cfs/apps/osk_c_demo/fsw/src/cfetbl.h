@@ -35,7 +35,7 @@ typedef struct {
 
    boolean Registered;
    
-   int32             Status;  /* Status of last cFE Table servcie call */
+   int32             Status;  /* Status of last cFE Table service call */
    CFE_TBL_Handle_t  Handle;
    ExTblData_Param*  DataPtr;
 
