@@ -87,7 +87,7 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 SET(TGT1_NAME cpu1) 
 # Matches what is loaded by default startup script except for HC & HSIM which is not loaded but needed to build LC & SC defaults
 # Release: 
-SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw cs ds fm hs kit_ci kit_sch kit_to lc md mm sc hk tftp i42 f42 isim hc hsim osk_c_demo osk_cpp_demo)
+SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw cs ds fm hs kit_ci kit_sch kit_to lc md mm sc hk tftp i42 f42 isim bm hc hsim osk_c_demo osk_cpp_demo)
 # Development:
 #   SET(TGT1_STATIC_APPLIST cfs_lib osk_c_fw osk_c_demo osk_cpp_fw osk_cpp_demo)
 #   SET(TGT1_APPLIST cfs_lib osk_c_fw osk_cpp_fw osk_c_demo osk_cpp_demo)

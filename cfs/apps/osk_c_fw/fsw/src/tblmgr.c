@@ -286,7 +286,7 @@ boolean TBLMGR_DumpTblCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
       TblMgr->Tbl[DumpTblCmd->Id].LastAction       = TBLMGR_ACTION_DUMP;
       TblMgr->Tbl[DumpTblCmd->Id].LastActionStatus = TBLMGR_STATUS_INVALID;
       TblMgr->LastActionTblId = DumpTblCmd->Id;
-      if (AppFw_VerifyDirForWrite(DumpTblCmd->Filename))
+      if (FileUtil_VerifyDirForWrite(DumpTblCmd->Filename))
       {
          Tbl = &TblMgr->Tbl[DumpTblCmd->Id];
          RetStatus = (Tbl->DumpFuncPtr) (Tbl, DumpTblCmd->DumpType, DumpTblCmd->Filename);

@@ -155,7 +155,7 @@ HORIZONTAL
 
          BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TFTP_TLM")'
          NAMED_WIDGET tftp_tlm COMBOBOX HOUSEKEEPING
-         LABEL "    "
+         #LABEL "    "
 
          BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TFTP_DOC")'
          SETTING BACKCOLOR 255 255 255

@@ -1,5 +1,5 @@
 /* 
-** Purpose: App Framework Library utilities
+** Purpose: OSK App C Framework Library file utilities
 **
 ** Notes:
 **   None
@@ -22,9 +22,151 @@
 #include "cfs_utils.h"
 #include "fileutil.h"
 
-/*
-** Exported Functions
+#include <string.h>
+
+/*********************/
+/** Local Functions **/
+/*********************/
+
+/******************************************************************************
+** Function: CheckFileOpenState
+**
+** Callback function for OS_ForEachObject() to check whether a file is open.
+** This function is tightly coupledd with FileUtil_GetFileInfo() so only set
+** File->IsOpen if a file is verified as open otherwise preserve the state.  
+**
 */
+static void CheckFileOpenState(uint32 ObjId, void* CallbackArg)
+{
+   
+   FileUtil_CheckFileState* FileState = (FileUtil_CheckFileState *)CallbackArg;
+   OS_file_prop_t FileProp;
+
+   if(FileState == (FileUtil_CheckFileState *)NULL) {
+      return;
+   }
+   else if (FileState->Name == (char *)NULL) {
+      return;
+   }
+   
+   /*
+   ** Get system info for stream objects and compare names
+   */
+   if(OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
+      
+      if (OS_FDGetInfo(ObjId, &FileProp) == OS_FS_SUCCESS) {
+         
+         if (strcmp(FileState->Name, FileProp.Path) == 0) {
+            
+            FileState->IsOpen = TRUE;
+         }
+      }
+   }
+
+} /* End CheckFileOpenState() */
+
+
+/************************/
+/** Exported Functions **/
+/************************/
+
+/******************************************************************************
+** Function: FileUtil_GetFileInfo
+**
+** Return file state (FileUtil_FileState) and optionally include the file size
+** and time for existing files.
+*/
+FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, boolean IncludeSizeTime)
+{
+   
+   os_fstat_t               FileStatus;
+   FileUtil_FileInfo        FileInfo;
+   FileUtil_CheckFileState  FileState;
+    
+   FileInfo.IncludeSizeTime = IncludeSizeTime;
+   FileInfo.Size  = 0;
+   FileInfo.Time  = 0;
+   FileInfo.State = FILEUTIL_FILE_NAME_INVALID;
+
+   /* TODO - Fix all file utilities to accept a length parameter with a OS_MAX_PATH_LEN check */
+   if (FilenameBufLen != OS_MAX_PATH_LEN) {
+      CFE_EVS_SendEvent(FILE_UTIL_MAX_PATH_LEN_CONFLICT_EID, CFE_EVS_ERROR, 
+         "FileUtil_GetFileInfo() checking a filename buffer len=%d using a utility hard coded with OS_MAX_PATH_LEN=%d",
+         FilenameBufLen, OS_MAX_PATH_LEN);
+   }
+
+   if (FileUtil_VerifyFilenameStr(Filename)) {
+      
+      /* Check to see if Filename is in use */
+      if (OS_stat(Filename, &FileStatus) == OS_SUCCESS) {
+         
+         if (OS_FILESTAT_ISDIR(FileStatus)) {
+            
+            FileInfo.State = FILEUTIL_FILE_IS_DIR;
+         
+         }
+         else {
+            
+            FileState.IsOpen = FALSE;
+            FileState.Name   = Filename;
+
+            OS_ForEachObject(0, CheckFileOpenState, &FileState);
+
+            FileInfo.State = FileState.IsOpen? FILEUTIL_FILE_OPEN : FILEUTIL_FILE_CLOSED;
+
+            if (IncludeSizeTime) {
+               
+               FileInfo.Size  = OS_FILESTAT_SIZE(FileStatus);
+               FileInfo.Time  = OS_FILESTAT_TIME(FileStatus);
+
+            }
+         }
+         
+      } /* End if file exists */
+      else {
+         
+         FileInfo.State = FILEUTIL_FILE_NONEXISTENT;
+
+      } /* End if file doesn't exist */
+      
+      
+   } /* End if valid filename */
+
+   return (FileInfo);
+
+} /* End FM_GetFilenameState */
+
+
+/******************************************************************************
+** Function: FileUtil_FileStateStr
+**
+** Type checking should enforce valid parameter but check just to be safe.
+*/
+const char* FileUtil_FileStateStr(FileUtil_FileState  FileState)
+{
+
+   static char* FileStateStr[] = {
+      "Undefined", 
+      "Invalid Filename",    /* FILEUTIL_FILE_NAME_INVALID */
+      "Nonexistent File",    /* FILEUTIL_FILE_NONEXISTENT  */
+      "File Open",           /* FILEUTIL_FILE_OPEN         */
+      "File Closed",         /* FILEUTIL_FILE_OPEN         */
+      "File is a Directory"  /* FILEUTIL_FILE_IS_DIR       */
+   };
+
+   uint8 i = 0;
+   
+   if ( FileState >= FILEUTIL_FILE_NAME_INVALID &&
+        FileState <= FILEUTIL_FILE_IS_DIR) {
+   
+      i =  FileState;
+   
+   }
+        
+   return FileStateStr[i];
+
+} /* End FileUtil_FileStateStr() */
+
 
 /******************************************************************************
 ** Function: FileUtil_ReadLine
@@ -63,12 +205,12 @@ boolean FileUtil_ReadLine (int FileHandle, char* DestBuf, int MaxChar) {
 
 
 /******************************************************************************
-** Function: AppFw_VerifyFileNameStr
+** Function: FileUtil_VerifyFilenameStr
 **
 ** Notes:
 **  1. Verify file name len, termination, and characters are valid.
 */
-boolean AppFw_VerifyFileNameStr(const char* FileName)
+boolean FileUtil_VerifyFilenameStr(const char* Filename)
 {
 
    int16    Len = 0;
@@ -77,7 +219,7 @@ boolean AppFw_VerifyFileNameStr(const char* FileName)
    /* Search file system name buffer for a string terminator */
    while (Len < OS_MAX_PATH_LEN)
    {
-      if (FileName[Len] == '\0') break;
+      if (Filename[Len] == '\0') break;
       Len++;
    }
 
@@ -93,20 +235,20 @@ boolean AppFw_VerifyFileNameStr(const char* FileName)
    else {
    
       /* Verify characters in string name */
-      if (CFS_IsValidFilename((char *)FileName, Len))   /* Cast away the const. CFS really should change */
+      if (CFS_IsValidFilename((char *)Filename, Len))   /* Cast away the const. CFS really should change */
       {
          RetStatus = TRUE;  
       }
       else
       {
-         CFE_EVS_SendEvent(FILE_UTIL_INVLD_FILENAME_CHR_EID, CFE_EVS_ERROR, "Invalid characters in filename %s",FileName);     
+         CFE_EVS_SendEvent(FILE_UTIL_INVLD_FILENAME_CHR_EID, CFE_EVS_ERROR, "Invalid characters in filename %s",Filename);     
       }
       
    } /* End if valid length */
    
   return RetStatus;
 
-} /* End AppFw_VerifyFileNameStr() */
+} /* End FileUtil_VerifyFilenameStr() */
 
 
 /******************************************************************************
@@ -125,7 +267,7 @@ boolean FileUtil_VerifyFileForRead(const char* Filename)
    int32    FileDescriptor;
    boolean  RetStatus = FALSE;
    
-   if (AppFw_VerifyFileNameStr(Filename))
+   if (FileUtil_VerifyFilenameStr(Filename))
    {
       
       FileDescriptor = OS_open(Filename, OS_READ_ONLY, 0);
@@ -149,17 +291,17 @@ boolean FileUtil_VerifyFileForRead(const char* Filename)
 
 
 /******************************************************************************
-** Function: AppFw_VerifyDirForWrite
+** Function: FileUtil_VerifyDirForWrite
 **
 ** Notes:
 **  1. Verify file name is valid and that the directory exists.
 */
-boolean AppFw_VerifyDirForWrite(const char* FileName)
+boolean FileUtil_VerifyDirForWrite(const char* Filename)
 {
 
    boolean  RetStatus = FALSE;
    
-   if (AppFw_VerifyFileNameStr(FileName))
+   if (FileUtil_VerifyFilenameStr(Filename))
    {
       
       /* TODO - Find last \ and check if directory */
@@ -169,5 +311,5 @@ boolean AppFw_VerifyDirForWrite(const char* FileName)
    
   return RetStatus;
 
-} /* End AppFw_VerifyDirForWrite() */
+} /* End FileUtil_VerifyDirForWrite() */
 

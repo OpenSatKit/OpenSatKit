@@ -1,6 +1,12 @@
 ################################################################################
 # cFS Kit Main Screen ruby scripts
 #
+# Notes:
+#   1. Use consistent colors
+#      White     - Documentation
+#      Green/Red - Start/Stop actions
+#      Grey      - Launch another screen 
+#
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
 #   License (GPL).
@@ -46,7 +52,7 @@ VERTICAL
           BUTTON 'Open Doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_OSK")'
           SETTING BACKCOLOR 255 255 255
           NAMED_WIDGET learn_osk COMBOBOX About SimpleSat_Overview OSK_Quick_Start OSK_Users_Guide OSK_Version
-          SETTING BACKCOLOR 255 255 255
+          #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
         END # Matrix
         SETTING BACKCOLOR 162 181 205
         End # Learn OpenSatKit Box
@@ -55,7 +61,7 @@ VERTICAL
           BUTTON 'Open doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_CFS")'
           SETTING BACKCOLOR 255 255 255
           NAMED_WIDGET learn_cfs COMBOBOX About OSK_Training_Intro cFS_Training_Intro cFE_Service_Training OSK_cFE_Exercises cFE_App_Training OSK_cFE_App_Exercises
-          SETTING BACKCOLOR 255 255 255
+          #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
           END # Matrix
         End # Learn cFS Box
         SETTING BACKCOLOR 162 181 205
@@ -132,6 +138,7 @@ VERTICAL
           LABEL "    "
 
           BUTTON 'OSK Demo app' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_DEMO_APP")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "    "
           LABEL "    "
           LABEL "    "
@@ -142,18 +149,20 @@ VERTICAL
       VERTICALBOX "Manage Apps" 5
         MATRIXBYCOLUMNS 4
           BUTTON 'Add App'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "ADD_APP")'
-          SETTING BACKCOLOR 255 255 255
           BUTTON 'Remove App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "REMOVE_APP")'
+          SETTING BACKCOLOR 150 150 150
           BUTTON 'Create App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "CREATE_APP")'
-          SETTING BACKCOLOR 255 255 255
           LABEL "    "
 
           BUTTON 'Dev ACS App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ADC_APP")'
+          SETTING BACKCOLOR 150 150 150
           BUTTON 'Dev ECI App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ECI_APP")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "    "
           LABEL "    "
 
-          BUTTON 'Manage App Runtime' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "MANAGE_APP_RUNTIME")'
+          BUTTON 'Manage Runtime Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "MANAGE_APP_RUNTIME")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "    "
           LABEL "    "
           LABEL "    "
@@ -161,19 +170,19 @@ VERTICAL
         SETTING BACKCOLOR 162 181 205
       END # BOX
 
-     VERTICALBOX "Debug & Verify Apps" 5
+     VERTICALBOX "Debug and Verify Apps" 5
         MATRIXBYCOLUMNS 3
           BUTTON 'Perf Mon Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_MGMT")'
-          SETTING BACKCOLOR 255 255 255
           BUTTON 'Perf Mon Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_DEMO")'
-          SETTING BACKCOLOR 255 255 255
           LABEL "    "
 
           BUTTON 'Run Unit Tests'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "UNIT_TEST")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "    "
           LABEL "    "
 
           BUTTON 'Run Intgr Tests' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "INTG_TEST")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "    "
           LABEL "    "
         END # Matrix
@@ -207,6 +216,7 @@ VERTICAL
           LABEL "          "
 
           BUTTON 'Run Platform Cert' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "RUN_PLATFORM_CERT")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "          "
           LABEL "          "
           LABEL "          "
@@ -217,7 +227,9 @@ VERTICAL
       VERTICALBOX "Bridges" 5
         MATRIXBYCOLUMNS 4
           BUTTON 'SBN'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "SBN")'
+          SETTING BACKCOLOR 150 150 150
           BUTTON 'ROS2'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "ROS2")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "          "
           LABEL "          "
         END # Matrix
@@ -227,7 +239,9 @@ VERTICAL
      VERTICALBOX "Maintain Kit" 5
         MATRIXBYCOLUMNS 4
           BUTTON 'Update cFE'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "UPDATE_CFE")'
+          SETTING BACKCOLOR 150 150 150
           BUTTON 'Update App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "UPDATE_APP")'
+          SETTING BACKCOLOR 150 150 150
           LABEL "    "
           LABEL "    "
         END # Matrix
