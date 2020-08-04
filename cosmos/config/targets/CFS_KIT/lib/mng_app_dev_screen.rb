@@ -48,7 +48,16 @@ def mng_app_dev(screen, cmd)
       wait 4
       Osk::System.start_cfs
 
-   else
+  elsif (cmd == "TRAINING_VIDEO") 
+
+      case screen.get_named_widget("training_video").text
+      when "CREATE_HELLO_WORLD_APP"
+         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD}")   
+      when "INSPECT_HELLO_WORLD_CODE"
+         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD}")   
+      end
+
+  else
       prompt("Error in screen definition file. Undefined command sent to app_create()")
    end
    

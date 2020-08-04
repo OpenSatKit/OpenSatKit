@@ -49,6 +49,15 @@ HORIZONTAL
       #LABEL "7"
       #BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_launch_app(self, "CFS")'
       #LABEL "Start cFS with new app"
+      LABEL " "
+      LABEL "    "
+      LABEL "    "
+      LABEL " "
+      LABEL "    "
+      LABEL "    "
+      LABEL " "
+      BUTTON 'Run Training Videos' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_dev_screen.rb"; mng_app_dev(self, "TRAINING_VIDEO")'
+      NAMED_WIDGET training_video COMBOBOX CREATE_HELLO_WORLD_APP INSPECT_HELLO_WORLD_CODE 
     END
     SPACER 0 50 FIXED EXPANDING
   End # Vertical

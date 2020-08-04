@@ -64,7 +64,7 @@ void DEMOBJ_Constructor(DEMOBJ_Class*  DemObjPtr)
 
    CFETBL_Constructor(&DemObj->CfeTbl);
     
-} /* End DEMOBJ_Constructor(&DemObj->CfeTbl) */
+} /* End DEMOBJ_Constructor */
 
 
 /******************************************************************************

@@ -289,5 +289,7 @@ module Osk
    YOUTUBE_TRAINING_CFE_SB   = "https://youtu.be/QO6C3DUbGF8"
    YOUTUBE_TRAINING_CFE_TBL  = "https://youtu.be/He9WE8rJcCg"
  
+   YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD   = "https://www.youtube.com/watch?v=LspTUdIKAZY&t=1s"
+   YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD  = "https://www.youtube.com/watch?v=0BSMXeq8B5c&t=4s"
    
 end # Module Osk
