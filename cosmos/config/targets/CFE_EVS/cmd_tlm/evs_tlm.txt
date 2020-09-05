@@ -31,7 +31,7 @@ TELEMETRY CFE_EVS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data
   APPEND_ITEM SPARE1          8 UINT "Padding for 32 bit boundary."
   APPEND_ITEM SPARE2          8 UINT "Padding for 32 bit boundary."
   APPEND_ITEM SPARE3          8 UINT "Padding for 32 bit boundary."
-<% FswConfigParam::CFE_ES_MAX_APPLICATIONS.times do |n|  %>
+<% (FswConfigParam::CFE_ES_MAX_APPLICATIONS-16).times do |n|  %> # TODO - Need to debug why need "-16"
   APPEND_ITEM APPDATA<%=n%>_AppID                  32 UINT "Numerical application identifier."
   APPEND_ITEM APPDATA<%=n%>_AppMessageSentCounter  16 UINT "Application message sent counter."
   APPEND_ITEM APPDATA<%=n%>_AppEnableStatus         8 UINT "Application event service enable status."
