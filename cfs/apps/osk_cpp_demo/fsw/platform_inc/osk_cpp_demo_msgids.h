@@ -20,13 +20,13 @@
 ** Command Message IDs
 */
 
-#define  OSK_CPP_DEMO_CMD_MID         0x1867
-#define  OSK_CPP_DEMO_SEND_HK_MID     0x1885  // Same as KIT_CI to simplify integration
+#define  OSK_CPP_DEMO_CMD_MID         0x1F40
+#define  OSK_CPP_DEMO_SEND_HK_MID     0x1F41
 
 /*
 ** Telemetry Message IDs
 */
 
-#define  OSK_CPP_DEMO_APP_TLM_HK_MID  0x0F05
+#define  OSK_CPP_DEMO_APP_TLM_HK_MID  0x0F40
 
 #endif // _osk_cpp_demo_msgids_ 

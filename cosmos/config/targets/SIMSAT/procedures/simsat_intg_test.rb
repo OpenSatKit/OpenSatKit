@@ -49,48 +49,48 @@ puts 'cFS Starter Kit Integration script initiated'
 
 # cFE Apps
 
-cfe_es  = App.new("CFE_ES","CFE_ES","HK_TLM_PKT","0x1806")
+cfe_es  = App.new("CFE_ES","CFE_ES","HK_TLM_PKT",Fsw::MsgId::CFE_ES_CMD_MID)
 es_test = CfeEsIntgTest.new(cfe_es)
 
-cfe_evs  = App.new("CFE_EVS","CFE_EVS","HK_TLM_PKT","0x1801")
+cfe_evs  = App.new("CFE_EVS","CFE_EVS","HK_TLM_PKT",Fsw::MsgId::CFE_EVS_CMD_MID)
 evs_test = CfeEvsIntgTest.new(cfe_evs)
 
-cfe_sb  = App.new("CFE_SB","CFE_SB","HK_TLM_PKT","0x1803")
+cfe_sb  = App.new("CFE_SB","CFE_SB","HK_TLM_PKT",Fsw::MsgId::CFE_SB_CMD_MID)
 sb_test = CfeSbIntgTest.new(cfe_sb)
 
-cfe_tbl  = App.new("CFE_TBL","CFE_TBL","HK_TLM_PKT","0x1804")
+cfe_tbl  = App.new("CFE_TBL","CFE_TBL","HK_TLM_PKT",Fsw::MsgId::CFE_TBL_CMD_MID)
 tbl_test = CfeTblIntgTest.new(cfe_tbl)
 
-cfe_time  = App.new("CFE_TIME","CFE_TIME","HK_TLM_PKT","0x1805")
+cfe_time  = App.new("CFE_TIME","CFE_TIME","HK_TLM_PKT",Fsw::MsgId::CFE_TIME_CMD_MID)
 time_test = CfeTimeIntgTest.new(cfe_time)
 
 # cFS Apps
 
-cs      = App.new("CS_APP","CS","HK_TLM_PKT","0x189F")
+cs      = App.new("CS_APP","CS","HK_TLM_PKT",Fsw::MsgId::CS_CMD_MID)
 cs_test = CsIntgTest.new(cs)
 
-ds      = App.new("DS_APP","DS","HK_TLM_PKT","0x18BB")
+ds      = App.new("DS_APP","DS","HK_TLM_PKT",Fsw::MsgId::DS_CMD_MID)
 ds_test = DsIntgTest.new(ds)
 
-fm       = App.new("FM_APP","FM","HK_TLM_PKT","0x188C")
+fm       = App.new("FM_APP","FM","HK_TLM_PKT",Fsw::MsgId::FM_CMD_MID)
 fm_test = FmIntgTest.new(fm)
 
 hk      = App.new("HK_APP","HK","HK_TLM_PKT",Fsw::MsgId::HK_CMD_MID)
 hk_test = HkIntgTest.new(hk)
 
-hs      = App.new("HS_APP","HS","HK_TLM_PKT","0x18AE")
+hs      = App.new("HS_APP","HS","HK_TLM_PKT",Fsw::MsgId::HS_CMD_MID)
 hs_test = HsIntgTest.new(hs)
 
-lc      = App.new("LC_APP","LC","HK_TLM_PKT","0x18A4")
+lc      = App.new("LC_APP","LC","HK_TLM_PKT",Fsw::MsgId::LC_CMD_MID)
 lc_test = LcIntgTest.new(lc)
 
-md      = App.new("MD_APP","MD","HK_TLM_PKT","0x1890")
+md      = App.new("MD_APP","MD","HK_TLM_PKT",Fsw::MsgId::MD_CMD_MID)
 md_test = MdIntgTest.new(md)
 
-mm      = App.new("MM_APP","MM","HK_TLM_PKT","0x1888")
+mm      = App.new("MM_APP","MM","HK_TLM_PKT",Fsw::MsgId::MM_CMD_MID)
 mm_test = MmIntgTest.new(mm)
 
-sc      = App.new("SC_APP","SC","HK_TLM_PKT","0x18A9")
+sc      = App.new("SC_APP","SC","HK_TLM_PKT",Fsw::MsgId::SC_CMD_MID)
 sc_test = ScIntgTest.new(sc)
 
 # OSK Kit Apps
@@ -104,13 +104,13 @@ i42_test = I42IntgTest.new(i42)
 isim      = App.new("ISIM_APP","ISIM","HK_TLM_PKT",Fsw::MsgId::ISIM_CMD_MID)
 isim_test = IsimIntgTest.new(isim)
 
-kit_ci      = App.new("KIT_CI_APP","KIT_CI","HK_TLM_PKT","0x1884")
+kit_ci      = App.new("KIT_CI_APP","KIT_CI","HK_TLM_PKT",Fsw::MsgId::KIT_CI_CMD_MID)
 kit_ci_test = KitCiIntgTest.new(kit_ci)
 
-kit_sch      = App.new("KIT_SCH_APP","KIT_SCH","HK_TLM_PKT","0x1895")
+kit_sch      = App.new("KIT_SCH_APP","KIT_SCH","HK_TLM_PKT",Fsw::MsgId::KIT_SCH_CMD_MID)
 kit_sch_test = KitSchIntgTest.new(kit_sch)
 
-kit_to      = App.new("KIT_TO_APP","KIT_TO","HK_TLM_PKT","0x1880")
+kit_to      = App.new("KIT_TO_APP","KIT_TO","HK_TLM_PKT",Fsw::MsgId::KIT_TO_CMD_MID)
 kit_to_test = KitToIntgTest.new(kit_to)
 
 tftp      = App.new("TFTP_APP","TFTP","HK_TLM_PKT",Fsw::MsgId::TFTP_CMD_MID)

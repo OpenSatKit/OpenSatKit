@@ -71,7 +71,8 @@ void NETIF_ClearClient()
 */
 void NETIF_Destructor(void) {
 
-  OS_printf("NETIF_Destructor: Closing Network socket.\n");
+  CFE_EVS_SendEvent(NETIF_CLOSE_SOCKET_EID,CFE_EVS_INFORMATION,
+                    "NETIF_Destructor: Closing Network socket");
 
   close(NetIf->SocketId);
 
@@ -105,19 +106,19 @@ int32 NETIF_RcvFrom(const uint8 NetIFid, void *BufPtr, const uint16 BufSize, boo
        Status = recvfrom(NetIf->SocketId, BufPtr, TFTP_RECV_BUFF_LEN, MSG_DONTWAIT,
                         (struct sockaddr *) &(NetIf->XferSocketAddr), (socklen_t *)&AddrLen);
                         
-       CFE_EVS_SendEvent(NETIF_RECV_DBG_EID,CFE_EVS_DEBUG,"Recvfrom XferSocketAddr on port %d with Status %d, eerno %d",ntohs(NetIf->XferSocketAddr.sin_port),Status,errno);
+       CFE_EVS_SendEvent(NETIF_DEBUG_EID,CFE_EVS_DEBUG,"Recvfrom XferSocketAddr on port %d with Status %d, eerno %d",ntohs(NetIf->XferSocketAddr.sin_port),Status,errno);
      
      }
      if (Status > 0)
      {
         
         Port = ServerListen ? ntohs(NetIf->ServerSocketAddr.sin_port) : ntohs(NetIf->XferSocketAddr.sin_port);
-        CFE_EVS_SendEvent(NETIF_RECV_DBG_EID,CFE_EVS_DEBUG,"NETIF_RcvFrom() on port %d, Status = %d",Port,Status);
+        CFE_EVS_SendEvent(NETIF_DEBUG_EID,CFE_EVS_DEBUG,"NETIF_RcvFrom() on port %d, Status = %d",Port,Status);
         
         if (!NetIf->ClientSocketAddrCreated)
         {
            /* ServerSocketAddr contains client's ephemeral port to perform transfer */
-           CFE_EVS_SendEvent(NETIF_RECV_DBG_EID,CFE_EVS_DEBUG,"Create ClientSocketAddr on port %d",ntohs(NetIf->ServerSocketAddr.sin_port));
+           CFE_EVS_SendEvent(NETIF_DEBUG_EID,CFE_EVS_DEBUG,"Create ClientSocketAddr on port %d",ntohs(NetIf->ServerSocketAddr.sin_port));
            NetIf->ClientSocketAddr = NetIf->ServerSocketAddr;  
            NetIf->ClientSocketAddrCreated = TRUE; 
         }
@@ -132,7 +133,7 @@ int32 NETIF_RcvFrom(const uint8 NetIFid, void *BufPtr, const uint16 BufSize, boo
   } /* End if NetIFid == 0 */
   else
 	   CFE_EVS_SendEvent(NETIF_RECV_ERR_EID,CFE_EVS_ERROR,
-                       "NETIF receive attempted and NET ID %d not implemented\n", NetIFid);
+                       "NETIF receive attempted and NET ID %d not implemented", NetIFid);
       
   return Status;
 
@@ -150,7 +151,7 @@ int32 NETIF_SendTo (const uint8 NetIFid, const uint8 *BufPtr, uint16 len)
    if (NetIf->ClientSocketAddrCreated)
    {
    
-     CFE_EVS_SendEvent(NETIF_SEND_DBG_EID,CFE_EVS_DEBUG,"SendToNetIF on port %d",ntohs(NetIf->ClientSocketAddr.sin_port));
+     CFE_EVS_SendEvent(NETIF_DEBUG_EID,CFE_EVS_DEBUG,"SendToNetIF on port %d",ntohs(NetIf->ClientSocketAddr.sin_port));
 
      Status = sendto(NetIf->SocketId, BufPtr, len, 0, (struct sockaddr *) &(NetIf->ClientSocketAddr), sizeof(NetIf->ClientSocketAddr) );
 
@@ -162,7 +163,7 @@ int32 NETIF_SendTo (const uint8 NetIFid, const uint8 *BufPtr, uint16 len)
      } /* End if sent packet */
      else {
      
-        CFE_EVS_SendEvent(NETIF_SEND_DBG_EID,CFE_EVS_DEBUG, "Sent packet on socket %d, port %d, return status %d, errno %d",
+        CFE_EVS_SendEvent(NETIF_DEBUG_EID,CFE_EVS_DEBUG, "Sent packet on socket %d, port %d, return status %d, errno %d",
                           NetIf->SocketId, ntohs(NetIf->ClientSocketAddr.sin_port), Status, errno);
      }
      
@@ -240,8 +241,6 @@ static boolean InitSocket(const char* DefIpAddrStr, int16 DefServerPort)
 
    boolean RetStatus = FALSE;
    
-   OS_printf("NETIF_Create: About to create socket\n");
-
    strcpy(NetIf->IpAddrStr, DefIpAddrStr);  
 
    if ( (NetIf->SocketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) >= 0) {
@@ -253,7 +252,8 @@ static boolean InitSocket(const char* DefIpAddrStr, int16 DefServerPort)
 
       if ( (bind(NetIf->SocketId, (struct sockaddr *) &(NetIf->ServerSocketAddr), sizeof(NetIf->ServerSocketAddr)) >= 0) ) {
 
-         OS_printf("NETIF_Create: Bound to port %d\n", NetIf->ServerPort);
+         CFE_EVS_SendEvent(NETIF_SOCKET_PORT_BOUND_EID, CFE_EVS_INFORMATION,
+                           "NETIF_Create: Bound to port %d", NetIf->ServerPort);
          
          /* Set the socket to non-blocking. Not available in vxWorks, so conditionally compiled. */
          #ifdef _HAVE_FCNTL_
@@ -267,14 +267,14 @@ static boolean InitSocket(const char* DefIpAddrStr, int16 DefServerPort)
       }/* End if successful bind */
       else {
 
-        CFE_EVS_SendEvent(NETIF_BIND_SOCKET_ERR_EID, CFE_EVS_ERROR, "Socket bind failed. errno = %d\n", errno);
+        CFE_EVS_SendEvent(NETIF_BIND_SOCKET_ERR_EID, CFE_EVS_ERROR, "Socket bind failed. errno = %d", errno);
       }
 
     } /* End if successful socket creation */
     else {
 
          CFE_EVS_SendEvent(NETIF_CREATE_SOCKET_ERR_EID, CFE_EVS_ERROR, 
-	                         "Input socket creation failed. SocketId = %d, errno = %d\n", NetIf->SocketId, errno);
+	                         "Input socket creation failed. SocketId = %d, errno = %d", NetIf->SocketId, errno);
     
     } /* End if error creating socket */
 

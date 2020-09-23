@@ -344,9 +344,19 @@ def simsat_runtime(screen, cmd)
    when "FUNC_ES_APP_MGMT"
       display("CFS_KIT APP_MGMT_SCREEN",1500,10)
    when "DEMO"
-      prompt(Osk::MSG_TBD_FEATURE)
+      Osk::System.check_n_start_cfs
+      # Demo scripts manage screens & PacketViewer
+      case screen.get_named_widget("demo").text
+      when "TO Stats"
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_runtime_to_stats.rb")
+      when "SCH-TO Tables"
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_runtime_tables.rb")
+      end
    when "TUTORIAL"
-      prompt(Osk::MSG_TBD_FEATURE)
+      case screen.get_named_widget("tutorial").text
+      when "TRAINING_SLIDES"
+         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_RUNTIME_FILE}")
+      end
    else
       raise "Error in screen definition file. Undefined runtime environment screen command '#{cmd}' sent to simsat_src_cmd()"
    end

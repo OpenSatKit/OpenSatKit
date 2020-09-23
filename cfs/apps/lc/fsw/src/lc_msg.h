@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: lc_msg.h 1.3 2015/03/04 16:09:57EST sstrege Exp  $
+**   $Id: lc_msg.h 1.3.1.1 2017/08/25 13:05:29EDT sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -22,33 +22,10 @@
 **   declarations (see the main comment block in lc_msgdefs.h for more 
 **   info).
 **
-**   $Log: lc_msg.h  $
-**   Revision 1.3 2015/03/04 16:09:57EST sstrege 
-**   Added copyright information
-**   Revision 1.2 2012/08/01 17:02:52EDT lwalling 
-**   Add age WP results option to AP sample command
-**   Revision 1.1 2012/07/31 13:53:38PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.6 2011/07/04 13:26:54EDT lwalling 
-**   Change cmd counter from 16 to 8 bits, adjust alignment pad fields, sort fields by data type
-**   Revision 1.5 2011/02/07 17:57:48EST lwalling 
-**   Modify sample AP commands to target groups of AP's
-**   Revision 1.4 2010/03/03 15:30:19EST lwalling 
-**   Fixed typo in Doxygen name (changed WPSINUSD to WPSINUSE)
-**   Revision 1.3 2008/12/10 10:17:15EST dahardis 
-**   Fixed HK structure alignment (DCR #4701)
-**   Revision 1.2 2008/12/03 13:59:42EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:34EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_msg_
 #define _lc_msg_
-
-#define _ix86_  /* TODO - Fix endianness definitions */ 
 
 /************************************************************************
 ** Includes
@@ -171,7 +148,9 @@ typedef struct
     uint16         PassiveRTSExecCount;             /**< \lctlmmnemonic \LC_PASSRTSCNT
                                                          \brief Total count of RTS sequences not
                                                                 initiated because the LC state is 
-                                                                set to #LC_STATE_PASSIVE             */
+                                                                set to #LC_STATE_PASSIVE or the state
+                                                                of the actionpoint that failed is set
+                                                                to #LC_APSTATE_PASSIVE               */
 
     uint16         WPsInUse;                        /**< \lctlmmnemonic \LC_WPSINUSE
                                                          \brief How many watchpoints are currently

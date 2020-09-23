@@ -176,13 +176,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          cfs_kit_create_about_screen("Example Script",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
-         cfs_started = false
-         if (not Osk::System.cfs_running?)
-            continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter '#{Osk::PASSWORD}' for the password.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false)            #puts "continue = #{continue}"
-            return unless continue == Osk::MSG_BUTTON_YES
-            Osk::System.start_cfs  # Enables telemetry
-            cfs_started = true 
-         end
+         cfs_started = Osk::System.check_n_start_cfs
          case user_selection
          when "Functional_Test"
             # Test suite file defined in  ~\cosmos\config\tools\test_runner\test_runner.txt
@@ -194,7 +188,7 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          when "Ops_Example"
             # No need to display a screen because a local screen is created by simsat_ops_example
             status_bar("Preparing for ops example. This could take several seconds.")
-            simsat_ops_example_setup(!cfs_started)            
+            simsat_ops_example_setup(!cfs_started) # If cFS wasn't just restarted then force a restart 
             status_bar("Spawning Script Runner to run the ops example script.")
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
          end

@@ -6,7 +6,8 @@
 **  Define @Template@ App  Message IDs
 **
 ** Notes:
-**
+**   1. Default to OSK test IDs. These IDs should be changed if the app
+**      is integrated with the user's system.
 **
 *************************************************************************/
 #ifndef _@template@_app_msgids_h_
@@ -16,17 +17,15 @@
 ** Command Message IDs
 */
 
-#define  @TEMPLATE@_APP_CMD_MID        0x1883
-#define  @TEMPLATE@_APP_SEND_HK_MID    0x1885  /* Same as KIT_CI to simplify integration */
+#define  @TEMPLATE@_CMD_MID        0x1FF0
+#define  @TEMPLATE@_SEND_HK_MID    0x1FF1
+
 
 /*
 ** Telemetry Message IDs
 */
 
-#define  @TEMPLATE@_APP_HK_TLM_MID     0x0883
+#define  @TEMPLATE@_HK_TLM_MID     0x0FF0
 
 #endif /* _@template@_app_msgids_h_ */
 
-/************************/
-/*  End of File Comment */
-/************************/

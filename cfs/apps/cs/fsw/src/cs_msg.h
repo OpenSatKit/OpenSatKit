@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_msg.h 1.6.1.1 2015/03/03 11:58:17EST sstrege Exp  $
+ **   $Id: cs_msg.h 1.6 2017/03/29 15:48:24EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -21,26 +21,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_msg.h  $
- **   Revision 1.6.1.1 2015/03/03 11:58:17EST sstrege 
- **   Added copyright information
- **   Revision 1.6 2011/09/06 14:19:55EDT jmdagost 
- **   Added ChildTaskInUse and OneShotInUse flags to housekeeping tlm.
- **   Revision 1.5 2010/03/09 17:01:10EST jmdagost 
- **   Moved command code definitions to cs_msgdefs.h
- **   Revision 1.4 2009/04/18 11:50:55EDT dkobe 
- **   Corrected typos in doxygen comments
- **   Revision 1.3 2008/07/31 14:05:04EDT njyanchik 
- **   The Startup sync call has been added to the main loop and a platform config parameter has been added to the cs platform config file to regulate the 
- **   timeout for the synchronization.
- **   Revision 1.2 2008/07/23 15:34:43BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:17EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 
 #ifndef _cs_msg_
@@ -91,10 +71,10 @@ typedef struct
                                                                  \brief OS code segment checksum state */
     uint8               CfeCoreCSState;                     /**< \cstlmmnemonic \CS_CFECORESTATE
                                                                  \brief cFE Core code segment checksum stat e*/
-    uint8               ChildTaskInUse;                     /**< \cstlmmnemonic \CS_CHILDTASKINUSE
-                                                                 \brief CS "Child Task In Use" flag */
-    uint8               OneShotTaskInUse;                   /**< \cstlmmnemonic \CS_ONESHOTTASKINUSE
-                                                                 \brief CS "OneShot Task In Use" flag */
+    uint8               RecomputeInProgress;                     /**< \cstlmmnemonic \CS_CHILDTASKINPROGRESS
+                                                                 \brief CS "Recompute In Progress" flag */
+    uint8               OneShotInProgress;                   /**< \cstlmmnemonic \CS_ONESHOTTASKINPROGRESS
+                                                                 \brief CS "OneShot In Progress" flag */
     uint8               Filler8;                            /**< \cstlmmnemonic \CS_FILLER8
                                                                  \brief 8 bit padding */
     
@@ -126,6 +106,8 @@ typedef struct
                                                                  \brief Address used in last one shot checksum command */
     uint32              LastOneShotSize;                    /**< \cstlmmnemonic \CS_LASTONESHOTSIZE
                                                                  \brief Size used in the last one shot checksum command */
+    uint32              LastOneShotMaxBytesPerCycle;        /**< \cstlmmnemonic \CS_LASTONESHOTMAXBYTESPERCYCLE
+                                                                 \brief Max bytes per cycle for last one shot checksum command */
     uint32              LastOneShotChecksum;                /**< \cstlmmnemonic \CS_LASTONESHOTCHECKSUM
                                                                  \brief Checksum of the last one shot checksum command */
     
@@ -167,7 +149,7 @@ typedef struct
 typedef struct
 {
     uint8       CmdHeader[CFE_SB_CMD_HDR_SIZE];
-    uint16      EntryID;                            /**< \brief EntryID to perform a command on */
+    uint32      EntryID;                            /**< \brief EntryID to perform a command on */
 } CS_EntryCmd_t;
 
 /**
@@ -201,6 +183,7 @@ typedef struct
     uint8       CmdHeader[CFE_SB_CMD_HDR_SIZE];
     uint32      Address;                            /**< \brief Address to start checksum */
     uint32      Size;                               /**< \brief Number of bytes to checksum */
+    uint32      MaxBytesPerCycle;                   /**< \brief Max Number of bytes to compute per cycle. Value of Zero to use platform config value */
 }CS_OneShotCmd_t;
     
 #endif /* _cs_msg_ */

@@ -138,7 +138,8 @@ def self.create_json_table_mgmt_scr(app_list)
          app_list.each do |key, app|
 
             if (not app.app_framework.nil?)
-               if (app.app_framework.include? Osk::JSON_APP_TYPE_OSK) 
+               if ( (app.app_framework.include? Osk::JSON_APP_TYPE_OSK) and
+                    (app.tables.length > 0) )
                
                   hk_label_matrix << "       LABEL \"#{space_label}\"\n"
                   hk_label_matrix << "       LABEL \"#{space_label}\"\n"

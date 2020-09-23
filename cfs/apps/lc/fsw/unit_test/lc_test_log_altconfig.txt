@@ -1,0 +1,1399 @@
+##############################################################################
+## $Id: lc_test_log_altconfig.txt 1.5 2017/07/06 12:26:37EDT mdeschu Exp  $
+##
+## Purpose: CFS LC application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+##############################################################################
+
+LC 2.1.0.0 Unit Test Output for default configuration (LC_SAVE_TO_CDS defined):
+
+./lc_testrunner.exe
+
+Running Test: LC_AppMain_Test_RegisterAppError
+CRITICAL EVENT ID=1 Task terminating, err = 0xFFFFFFFF
+SYSTEM LOG: LC task terminating, err = 0xFFFFFFFF
+
+PASS: Task terminating, err = 0xFFFFFFFF
+PASS: LC task terminating, err = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppInit_Test_EVSInitError
+SYSTEM LOG: LC App: Error Registering For Event Services, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_AppInit_Test_SBInitError
+ERROR EVENT ID=3 Error Creating LC Pipe, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppInit_Test_TableInitError
+ERROR EVENT ID=15 Error (RC=0xFFFFFFFF) Loading WDT with '/cf/apps/lc_def_wdt.tbl'
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_EvsInit_Test_Nominal
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvsInit_Test_EVSRegisterError
+SYSTEM LOG: LC App: Error Registering For Event Services, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: LC App: Error Registering For Event Services, RC = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SbInit_Test_Nominal
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SbInit_Test_CreatePipeError
+ERROR EVENT ID=3 Error Creating LC Pipe, RC=0xFFFFFFFF
+PASS: Error Creating LC Pipe, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SbInit_Test_SubscribeHKReqError
+ERROR EVENT ID=4 Error Subscribing to HK Request, MID=0x18A5, RC=0xFFFFFFFF
+PASS: Error Subscribing to HK Request, MID=0x18A5, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SbInit_Test_SubscribeGndCmdError
+ERROR EVENT ID=5 Error Subscribing to GND CMD, MID=0x18A4, RC=0xFFFFFFFF
+PASS: Error Subscribing to GND CMD, MID=0x18A4, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SbInit_Test_SubscribeSampleCmdError
+ERROR EVENT ID=6 Error Subscribing to Sample CMD, MID=0x18A6, RC=0xFFFFFFFF
+PASS: Error Subscribing to Sample CMD, MID=0x18A6, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_TableInit_Test_CreateTaskCDSError
+ERROR EVENT ID=12 Error registering WRT CDS Area, RC=0xFFFFFFFF
+ERROR EVENT ID=15 Error (RC=0xCC000013) Loading WDT with '/cf/apps/lc_def_wdt.tbl'
+PASS: LC_OperData.HaveActiveCDS == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_TableInit_Test_CDSRestored
+INFO EVENT ID=21 Previous state restored from Critical Data Store
+PASS: Result == CFE_SUCCESS
+PASS: Previous state restored from Critical Data Store
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_TableInit_Test_CDSUpdated
+ERROR EVENT ID=12 Error registering WRT CDS Area, RC=0xFFFFFFFF
+INFO EVENT ID=22 Default state loaded and written to CDS, activity mask = 0x00991999
+PASS: Result == CFE_SUCCESS
+PASS: Default state loaded and written to CDS, activity mask = 0x00991999
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_TableInit_Test_CreateResultTablesError
+ERROR EVENT ID=10 Error registering WRT, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_TableInit_Test_LoadDefaultTables
+ERROR EVENT ID=15 Error (RC=0xFFFFFFFF) Loading WDT with '/cf/apps/lc_def_wdt.tbl'
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_TableInit_Test_GetWDTAddressError
+ERROR EVENT ID=19 Error getting WDT address, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Error getting WDT address, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_TableInit_Test_GetADTAddressError
+ERROR EVENT ID=20 Error getting ADT address, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Error getting ADT address, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateResultTables_Test_Nominal
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WRT_TBL_CREATED | LC_ART_TBL_CREATED)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateResultTables_Test_WRTRegisterError
+ERROR EVENT ID=10 Error registering WRT, RC=0xFFFFFFFF
+PASS: Error registering WRT, RC=0xFFFFFFFF
+PASS: LC_OperData.TableResults == 0
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateResultTables_Test_WRTGetAddressError
+ERROR EVENT ID=17 Error getting WRT address, RC=0xFFFFFFFF
+PASS: Error getting WRT address, RC=0xFFFFFFFF
+PASS: LC_OperData.TableResults == 0
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateResultTables_Test_ARTRegisterError
+ERROR EVENT ID=11 Error registering ART, RC=0xFFFFFFFF
+PASS: Error registering ART, RC=0xFFFFFFFF
+PASS: LC_OperData.TableResults == LC_WRT_TBL_CREATED
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateResultTables_Test_ARTGetAddressError
+ERROR EVENT ID=18 Error getting ART address, RC=0xFFFFFFFF
+PASS: Error getting ART address, RC=0xFFFFFFFF
+PASS: LC_OperData.TableResults == LC_WRT_TBL_CREATED
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateDefinitionTables_Test_NominalCDSActive
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WDT_CRITICAL_TBL | LC_ADT_CRITICAL_TBL)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateDefinitionTables_Test_NominalCDSInactive
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WDT_NOT_CRITICAL | LC_ADT_NOT_CRITICAL)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateDefinitionTables_Test_WDTReRegisterThenInfoRecovered
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HaveActiveCDS == FALSE
+PASS: LC_OperData.TableResults == (LC_WDT_CRITICAL_TBL | LC_WDT_TBL_RESTORED | LC_ADT_CRITICAL_TBL | LC_ADT_TBL_RESTORED)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateDefinitionTables_Test_ADTReRegisterThenInfoRecovered
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HaveActiveCDS == FALSE
+PASS: LC_OperData.TableResults == (LC_WDT_CRITICAL_TBL | LC_WDT_TBL_RESTORED | LC_ADT_CRITICAL_TBL | LC_ADT_TBL_RESTORED)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateDefinitionTables_Test_WDTReRegisterError
+ERROR EVENT ID=8 Error re-registering WDT, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: LC_OperData.TableResults == (LC_WDT_CRITICAL_TBL | LC_WDT_TBL_RESTORED | LC_ADT_NOT_CRITICAL)
+PASS: Error re-registering WDT, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateDefinitionTables_Test_WDTCriticalADTNoncritical
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WDT_CRITICAL_TBL | LC_WDT_TBL_RESTORED | LC_ADT_NOT_CRITICAL | LC_WDT_NOT_CRITICAL)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateDefinitionTables_Test_WDTRegisterError
+ERROR EVENT ID=7 Error registering WDT, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Error registering WDT, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateDefinitionTables_Test_ADTRegisterError
+ERROR EVENT ID=9 Error registering ADT, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Error registering ADT, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateTaskCDS_Test_NominalPowerOnReset
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WRT_CDS_CREATED | LC_ART_CDS_CREATED | LC_APP_CDS_CREATED)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateTaskCDS_Test_NominalProcessorReset
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WRT_CDS_CREATED | LC_ART_CDS_CREATED | LC_APP_CDS_CREATED | LC_WRT_CDS_RESTORED | LC_ART_CDS_RESTORED | LC_APP_CDS_RESTORED)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CreateTaskCDS_Test_WRTRegisterCDSError
+ERROR EVENT ID=12 Error registering WRT CDS Area, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: LC_OperData.TableResults == 0
+PASS: Error registering WRT CDS Area, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateTaskCDS_Test_ARTRegisterCDSError
+ERROR EVENT ID=13 Error registering ART CDS Area, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: LC_OperData.TableResults == LC_WRT_CDS_CREATED
+PASS: Error registering ART CDS Area, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateTaskCDS_Test_AppDataRegisterCDSError
+ERROR EVENT ID=14 Error registering application data CDS Area, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: LC_OperData.TableResults == (LC_WRT_CDS_CREATED | LC_ART_CDS_CREATED)
+PASS: Error registering application data CDS Area, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_LoadDefaultTables_Test_NominalActiveCDS
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WDT_DEFAULT_TBL | LC_ADT_DEFAULT_TBL | LC_WRT_DEFAULT_DATA | LC_ART_DEFAULT_DATA | LC_APP_DEFAULT_DATA | LC_CDS_UPDATED)
+PASS: LC_AppData.CurrentLCState == LC_STATE_POWER_ON_RESET
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_LoadDefaultTables_Test_ActiveCDSNotSuccess
+ERROR EVENT ID=46 Unable to update watchpoint results in CDS, RC=0xFFFFFFFF
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WDT_DEFAULT_TBL | LC_ADT_DEFAULT_TBL | LC_WRT_DEFAULT_DATA | LC_ART_DEFAULT_DATA | LC_APP_DEFAULT_DATA
+PASS: LC_AppData.CurrentLCState == LC_STATE_POWER_ON_RESET
+PASS: LC_OperData.HaveActiveCDS == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_LoadDefaultTables_Test_NominalInactiveCDS
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.TableResults == (LC_WDT_DEFAULT_TBL | LC_ADT_DEFAULT_TBL | LC_WRT_DEFAULT_DATA | LC_ART_DEFAULT_DATA | LC_APP_DEFAULT_DATA)
+PASS: LC_AppData.CurrentLCState == LC_STATE_POWER_ON_RESET
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_LoadDefaultTables_Test_LoadWDTError
+ERROR EVENT ID=15 Error (RC=0xFFFFFFFF) Loading WDT with '/cf/apps/lc_def_wdt.tbl'
+PASS: Error (RC=0xFFFFFFFF) Loading WDT with '/cf/apps/lc_def_wdt.tbl'
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_LoadDefaultTables_Test_GetWDTAddressError
+ERROR EVENT ID=19 Error getting WDT address, RC=0xFFFFFFFF
+PASS: Error getting WDT address, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_LoadDefaultTables_Test_LoadADTError
+ERROR EVENT ID=16 Error (RC=0xCC000013) Loading ADT with '/cf/apps/lc_def_adt.tbl'
+PASS: Error (RC=0xCC000013) Loading ADT with '/cf/apps/lc_def_adt.tbl'
+PASS: Result == 0xCC000013
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_LoadDefaultTables_Test_GetADTAddressError
+ERROR EVENT ID=20 Error getting ADT address, RC=0xCC000001
+PASS: Error getting ADT address, RC=0xCC000001
+PASS: Result == 0xCC000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleAPs_Test_SingleActionPointNominal
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SampleAPs_Test_SingleActionPointError
+ERROR EVENT ID=57 Sample AP error, invalid current AP state: AP = 0, State = 255
+PASS: Sample AP error, invalid current AP state: AP = 0, State = 255
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleAPs_Test_MultiActionPointNominal
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SampleSingleAP_Test_StateChangePassToFail
+INFO EVENT ID=58 AP state change from PASS to FAIL: AP = 0
+DEBUG EVENT ID=59 AP failed while LC App passive: AP = 0, FailCount = 1, RTS = 0
+PASS: LC_AppData.APSampleCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].ActionResult == LC_ACTION_FAIL
+PASS: LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].CumulativeFailCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].PassToFailCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent == 1
+PASS: AP state change from PASS to FAIL: AP = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_SampleSingleAP_Test_ActiveRequestRTS
+PKT: 18 A9 C0 00 00 03 00 04 00 00 
+INFO EVENT ID=1 Event Message: AP = 0, FailCount = 6, RTS = 0
+PASS: LC_OperData.ARTPtr[APNumber].CurrentState == LC_APSTATE_PASSIVE
+PASS: LC_OperData.ARTPtr[APNumber].CumulativeRTSExecCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent == 1
+PASS: LC_AppData.RTSExecCount == 1
+PASS: Event Message: AP = 0, FailCount = 6, RTS = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleSingleAP_Test_APFailWhileLCStatePassive
+DEBUG EVENT ID=59 AP failed while LC App passive: AP = 0, FailCount = 6, RTS = 0
+PASS: LC_OperData.ARTPtr[APNumber].CurrentState == LC_APSTATE_PASSIVE
+PASS: LC_AppData.PassiveRTSExecCount == 1
+PASS: AP failed while LC App passive: AP = 0, FailCount = 6, RTS = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleSingleAP_Test_APFailWhilePassive
+INFO EVENT ID=60 AP failed while passive: AP = 0, FailCount = 6, RTS = 0
+PASS: LC_OperData.ARTPtr[APNumber].PassiveAPCount == 5
+PASS: LC_OperData.ARTPtr[APNumber].PassiveAPCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent == 1
+PASS: AP failed while passive: AP = 0, FailCount = 6, RTS = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleSingleAP_Test_StateChangeFailToPass
+INFO EVENT ID=61 AP state change from FAIL to PASS: AP = 0
+PASS: LC_AppData.APSampleCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].ActionResult == LC_ACTION_PASS
+PASS: LC_OperData.ARTPtr[APNumber].FailToPassCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent == 1
+PASS: AP state change from FAIL to PASS: AP = 0
+PASS: LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleSingleAP_Test_ActionStale
+PASS: LC_AppData.APSampleCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].ActionResult == LC_ACTION_STALE
+PASS: LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SampleSingleAP_Test_ActionError
+ERROR EVENT ID=62 AP evaluated to error: AP = 0, Result = 2
+PASS: LC_AppData.APSampleCount == 1
+PASS: LC_OperData.ARTPtr[APNumber].ActionResult == LC_ACTION_ERROR
+PASS: AP evaluated to error: AP = 0, Result = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_EvaluateRPN_Test_AndWatchFalseOp1
+PASS: Result == LC_ACTION_PASS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_AndWatchFalseOp2
+PASS: Result == LC_ACTION_PASS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrWatchTrueOp1
+PASS: Result == LC_ACTION_FAIL
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrWatchTrueOp2
+PASS: Result == LC_ACTION_FAIL
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_AndWatchErrorOp1
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_AndWatchErrorOp2
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrWatchErrorOp1
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrWatchErrorOp2
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_XorWatchErrorOp1
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_XorWatchErrorOp2
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_NotWatchError
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_AndStaleOp1
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_AndStaleOp2
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrStaleOp1
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrStaleOp2
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_XorStaleOp1
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_XorStaleOp2
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_NotStale
+PASS: Result == LC_ACTION_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_AndNominal
+PASS: Result == LC_ACTION_FAIL
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_OrNominal
+PASS: Result == LC_ACTION_PASS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_XorNominal
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_NotNominal
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_EqualIllegalRPN
+ERROR EVENT ID=63 AP has illegal RPN expression: AP = 0, LastOperand = 2, StackPtr = 1
+PASS: AP has illegal RPN expression: AP = 0, LastOperand = 2, StackPtr = 1
+PASS: Result == LC_ACTION_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_EvaluateRPN_Test_WatchpointNumberNominal
+PASS: Result == 77
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_EvaluateRPN_Test_DefaultIllegalRPN
+ERROR EVENT ID=63 AP has illegal RPN expression: AP = 0, LastOperand = 0, StackPtr = 0
+PASS: Result == LC_ACTION_ERROR
+PASS: AP has illegal RPN expression: AP = 0, LastOperand = 0, StackPtr = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_EvaluateRPN_Test_EndOfBufferWhenNotDone
+ERROR EVENT ID=63 AP has illegal RPN expression: AP = 0, LastOperand = 19, StackPtr = 20
+PASS: Result == LC_ACTION_ERROR
+PASS: AP has illegal RPN expression: AP = 0, LastOperand = 19, StackPtr = 20
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ValidateADT_Test_ActionNotUsed
+INFO EVENT ID=66 ADT verify results: good = 0, bad = 0, unused = 176
+PASS: Result == CFE_SUCCESS
+PASS: ADT verify results: good = 0, bad = 0, unused = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ValidateADT_Test_InvalidDefaultState
+ERROR EVENT ID=65 ADT verify err: AP = 0, Err = 1, State = 99, RTS = 88, FailCnt = 77, EvtType = 66
+INFO EVENT ID=66 ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_ADTVAL_ERR_DEFSTATE
+PASS: ADT verify err: AP = 0, Err = 1, State = 99, RTS = 88, FailCnt = 77, EvtType = 66
+PASS: ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateADT_Test_BadRtsID
+ERROR EVENT ID=65 ADT verify err: AP = 0, Err = 2, State = 1, RTS = 65521, FailCnt = 77, EvtType = 66
+INFO EVENT ID=66 ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_ADTVAL_ERR_RTSID
+PASS: ADT verify err: AP = 0, Err = 2, State = 1, RTS = 65521, FailCnt = 77, EvtType = 66
+PASS: ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateADT_Test_BadFailCount
+ERROR EVENT ID=65 ADT verify err: AP = 0, Err = 3, State = 1, RTS = 1, FailCnt = 0, EvtType = 66
+INFO EVENT ID=66 ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_ADTVAL_ERR_FAILCNT
+PASS: ADT verify err: AP = 0, Err = 3, State = 1, RTS = 1, FailCnt = 0, EvtType = 66
+PASS: ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateADT_Test_InvalidEventType
+ERROR EVENT ID=65 ADT verify err: AP = 0, Err = 4, State = 1, RTS = 1, FailCnt = 88, EvtType = 99
+INFO EVENT ID=66 ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_ADTVAL_ERR_EVTTYPE
+PASS: ADT verify err: AP = 0, Err = 4, State = 1, RTS = 1, FailCnt = 88, EvtType = 99
+PASS: ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateADT_Test_ValidateRpnAdtValError
+ERROR EVENT ID=64 ADT verify RPN err: AP = 0, Index = 0, StackDepth = 0
+INFO EVENT ID=66 ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_ADTVAL_ERR_RPN
+PASS: ADT verify RPN err: AP = 0, Index = 0, StackDepth = 0
+PASS: ADT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateADT_Test_ValidateRpnAdtValNoError
+INFO EVENT ID=66 ADT verify results: good = 176, bad = 0, unused = 0
+PASS: Result == LC_ADTVAL_NO_ERR
+PASS: ADT verify results: good = 176, bad = 0, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ValidateRPN_Test_RpnAnd
+PASS: Result == LC_ADTVAL_NO_ERR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ValidateRPN_Test_RpnOr
+PASS: Result == LC_ADTVAL_NO_ERR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ValidateRPN_Test_RpnXor
+PASS: Result == LC_ADTVAL_NO_ERR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ValidateRPN_Test_RpnNot
+PASS: Result == LC_ADTVAL_NO_ERR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ValidateRPN_Test_StackDepthZero
+PASS: Result == LC_ADTVAL_ERR_RPN
+PASS: IndexValue == 0
+PASS: StackDepthValue == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ValidateRPN_Test_InvalidBufferItem
+PASS: Result == LC_ADTVAL_ERR_RPN
+PASS: IndexValue == 0
+PASS: StackDepthValue == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_AppPipe_Test_SampleAPRequest
+ERROR EVENT ID=42 Invalid AP sample msg length: ID = 0x18A6, CC = 0, Len = 1, Expected = 14
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_HousekeepingRequest
+ERROR EVENT ID=41 Invalid HK request msg length: ID = 0x18A5, CC = 0, Len = 1, Expected = 8
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_Noop
+INFO EVENT ID=26 No-op command: Version 2.1.0.0
+PASS: Result == CFE_SUCCESS
+PASS: No-op command: Version 2.1.0.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_Reset
+DEBUG EVENT ID=27 Reset counters command
+PASS: Result == CFE_SUCCESS
+PASS: Reset counters command
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_SetLCState
+ERROR EVENT ID=29 Set LC state error: invalid state = 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_SetAPState
+ERROR EVENT ID=30 Set AP state error: AP = 0, Invalid new state = 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_SetAPPermoff
+ERROR EVENT ID=35 Set AP perm off error, AP NOT Disabled: AP = 0, Current state = 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_ResetAPStats
+INFO EVENT ID=38 Reset AP stats command: AP = 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_ResetWPStats
+INFO EVENT ID=40 Reset WP stats command: WP = 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_InvalidCommandCode
+ERROR EVENT ID=24 Invalid command code: ID = 0x18A4, CC = 99
+PASS: Result == CFE_SUCCESS
+PASS: Invalid command code: ID = 0x18A4, CC = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_AppPipe_Test_MonitorPacket
+INFO EVENT ID=49 Msg with unreferenced message ID rcvd: ID = 0x0063
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SampleAPReq_Test_AllowSampleAllWatchStale
+PASS: LC_OperData.WRTPtr[0].WatchResult == LC_WATCH_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SampleAPReq_Test_StartLessOrEqualToEndAndEndWithinArrayWatchStale
+PASS: LC_OperData.WRTPtr[0].WatchResult == LC_WATCH_STALE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SampleAPReq_Test_ArrayIndexOutOfRange
+ERROR EVENT ID=25 Sample AP error: invalid AP number, start = 2, end = 1
+PASS: Sample AP error: invalid AP number, start = 2, end = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_HousekeepingReq_Test_WatchStale
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_WatchFalse
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_WatchTrue
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_WatchError
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_DefaultWatchResult
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.WPResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_ActionNotUsedStale
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_APStateActiveActionPass
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.ActiveAPs = LC_MAX_ACTIONPOINTS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_APStatePassiveActionFail
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_APStateDisabledActionError
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_APStatePermOffActionError
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_DefaultCurrentStateAndActionResult
+PKT: 00 00 00 00 00 00 00 
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: LC_OperData.HkPacket.APResults[HKIndex] == ExpectedByteData
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_HousekeepingReq_Test_ManageTablesError
+PKT: 00 00 00 00 00 00 00 
+ERROR EVENT ID=19 Error getting WDT address, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_HousekeepingReq_Test_UpdateTaskCDSNotSuccess
+PKT: 00 00 00 00 00 00 00 
+ERROR EVENT ID=46 Unable to update watchpoint results in CDS, RC=0xFFFFFFFF
+PASS: Result == CFE_SUCCESS
+PASS: LC_OperData.HaveActiveCDS == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetCounters_Test
+PASS: LC_AppData.CmdCount == 0
+PASS: LC_AppData.CmdErrCount == 0
+PASS: LC_AppData.APSampleCount == 0
+PASS: LC_AppData.MonitoredMsgCount == 0
+PASS: LC_AppData.RTSExecCount == 0
+PASS: LC_AppData.PassiveRTSExecCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SetLCStateCmd_Test_Active
+INFO EVENT ID=28 Set LC state command: new state = 1
+PASS: LC_AppData.CurrentLCState == LC_STATE_ACTIVE
+PASS: LC_AppData.CmdCount == 1
+PASS: Set LC state command: new state = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetLCStateCmd_Test_Passive
+INFO EVENT ID=28 Set LC state command: new state = 2
+PASS: LC_AppData.CurrentLCState == LC_STATE_PASSIVE
+PASS: LC_AppData.CmdCount == 1
+PASS: Set LC state command: new state = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetLCStateCmd_Test_Disabled
+INFO EVENT ID=28 Set LC state command: new state = 3
+PASS: LC_AppData.CurrentLCState == LC_STATE_DISABLED
+PASS: LC_AppData.CmdCount == 1
+PASS: Set LC state command: new state = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetLCStateCmd_Test_Default
+ERROR EVENT ID=29 Set LC state error: invalid state = 99
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set LC state error: invalid state = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_Default
+ERROR EVENT ID=30 Set AP state error: AP = 1, Invalid new state = 99
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: AP = 1, Invalid new state = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_SetAllActionPointsActive
+INFO EVENT ID=33 Set AP state command: AP = 65535, New state = 1
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_ACTIVE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_ACTIVE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_ACTIVE
+PASS: Set AP state command: AP = 65535, New state = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_SetAllActionPointsPassive
+INFO EVENT ID=33 Set AP state command: AP = 65535, New state = 2
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_PASSIVE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_PASSIVE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_PASSIVE
+PASS: Set AP state command: AP = 65535, New state = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_SetAllActionPointsDisabled
+INFO EVENT ID=33 Set AP state command: AP = 65535, New state = 3
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_DISABLED
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_DISABLED
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == LC_APSTATE_DISABLED
+PASS: Set AP state command: AP = 65535, New state = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_UpdateSingleActionPointActive
+INFO EVENT ID=33 Set AP state command: AP = 175, New state = 1
+PASS: LC_OperData.ARTPtr[CmdPacket.APNumber].CurrentState == LC_APSTATE_ACTIVE
+PASS: Set AP state command: AP = 175, New state = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_UpdateSingleActionPointPassive
+INFO EVENT ID=33 Set AP state command: AP = 175, New state = 2
+PASS: LC_OperData.ARTPtr[CmdPacket.APNumber].CurrentState == LC_APSTATE_PASSIVE
+PASS: Set AP state command: AP = 175, New state = 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_UpdateSingleActionPointDisabled
+INFO EVENT ID=33 Set AP state command: AP = 175, New state = 3
+PASS: LC_OperData.ARTPtr[CmdPacket.APNumber].CurrentState == LC_APSTATE_DISABLED
+PASS: Set AP state command: AP = 175, New state = 3
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_InvalidCurrentAPStateActive
+ERROR EVENT ID=31 Set AP state error: AP = 175, Invalid current AP state = 4
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: AP = 175, Invalid current AP state = 4
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_InvalidCurrentAPStatePassive
+ERROR EVENT ID=31 Set AP state error: AP = 175, Invalid current AP state = 4
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: AP = 175, Invalid current AP state = 4
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_InvalidCurrentAPStateDisabled
+ERROR EVENT ID=31 Set AP state error: AP = 175, Invalid current AP state = 4
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: AP = 175, Invalid current AP state = 4
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_InvalidAPNumberActive
+ERROR EVENT ID=32 Set AP state error: Invalid AP number = 176
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: Invalid AP number = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_InvalidAPNumberPassive
+ERROR EVENT ID=32 Set AP state error: Invalid AP number = 176
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: Invalid AP number = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPStateCmd_Test_InvalidAPNumberDisabled
+ERROR EVENT ID=32 Set AP state error: Invalid AP number = 176
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP state error: Invalid AP number = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPPermOffCmd_Test_InvalidAPNumberMaxActionpoints
+ERROR EVENT ID=34 Set AP perm off error: Invalid AP number = 176
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP perm off error: Invalid AP number = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPPermOffCmd_Test_InvalidAPNumberAllActionpoints
+ERROR EVENT ID=34 Set AP perm off error: Invalid AP number = 65535
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP perm off error: Invalid AP number = 65535
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPPermOffCmd_Test_APNotDisabled
+ERROR EVENT ID=35 Set AP perm off error, AP NOT Disabled: AP = 1, Current state = 99
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Set AP perm off error, AP NOT Disabled: AP = 1, Current state = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SetAPPermOffCmd_Test_Nominal
+INFO EVENT ID=36 Set AP permanently off command: AP = 1
+PASS: LC_OperData.ARTPtr[CmdPacket.APNumber].CurrentState == 4
+PASS: LC_AppData.CmdCount == 1
+PASS: Set AP permanently off command: AP = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetAPStatsCmd_Test_AllActionPoints
+INFO EVENT ID=38 Reset AP stats command: AP = 65535
+PASS: LC_AppData.CmdCount == 1
+PASS: Reset AP stats command: AP = 65535
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetAPStatsCmd_Test_SingleActionPoint
+INFO EVENT ID=38 Reset AP stats command: AP = 175
+PASS: LC_AppData.CmdCount == 1
+PASS: Reset AP stats command: AP = 175
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetAPStatsCmd_Test_InvalidAPNumber
+ERROR EVENT ID=37 Reset AP stats error: invalid AP number = 176
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Reset AP stats error: invalid AP number = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetResultsAP_Test
+PASS: LC_OperData.ARTPtr[TableIndex].ActionResult == LC_ACTION_STALE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == 1
+PASS: LC_OperData.ARTPtr[TableIndex].PassiveAPCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].FailToPassCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].PassToFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeEventMsgsSent == 0
+PASS: LC_OperData.ARTPtr[TableIndex].ActionResult == LC_ACTION_STALE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == 1
+PASS: LC_OperData.ARTPtr[TableIndex].PassiveAPCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].FailToPassCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].PassToFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].ActionResult == LC_ACTION_STALE
+PASS: LC_OperData.ARTPtr[TableIndex].CurrentState == 1
+PASS: LC_OperData.ARTPtr[TableIndex].PassiveAPCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].FailToPassCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].PassToFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeFailCount == 0
+PASS: LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ResetWPStatsCmd_Test_AllWatchPoints
+INFO EVENT ID=40 Reset WP stats command: WP = 65535
+PASS: LC_AppData.CmdCount == 1
+PASS: Reset WP stats command: WP = 65535
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetWPStatsCmd_Test_SingleWatchPoint
+INFO EVENT ID=40 Reset WP stats command: WP = 175
+PASS: LC_AppData.CmdCount == 1
+PASS: Reset WP stats command: WP = 175
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetWPStatsCmd_Test_InvalidWPNumber
+ERROR EVENT ID=39 Reset WP stats error: invalid WP number = 176
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Reset WP stats error: invalid WP number = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ResetResultsWP_Test
+PASS: LC_OperData.WRTPtr[TableIndex].WatchResult == LC_WATCH_STALE
+PASS: LC_OperData.WRTPtr[TableIndex].CountdownToStale == 0
+PASS: LC_OperData.WRTPtr[TableIndex].EvaluationCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].FalseToTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].ConsecutiveTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].CumulativeTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Value == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Seconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Subseconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Value == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Seconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Subseconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].WatchResult == LC_WATCH_STALE
+PASS: LC_OperData.WRTPtr[TableIndex].CountdownToStale == 0
+PASS: LC_OperData.WRTPtr[TableIndex].EvaluationCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].FalseToTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].ConsecutiveTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].CumulativeTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Value == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Seconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Subseconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Value == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Seconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Subseconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].WatchResult == LC_WATCH_STALE
+PASS: LC_OperData.WRTPtr[TableIndex].CountdownToStale == 0
+PASS: LC_OperData.WRTPtr[TableIndex].EvaluationCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].FalseToTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].ConsecutiveTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].CumulativeTrueCount == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Value == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Seconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Subseconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Value == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Seconds == 0
+PASS: LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Subseconds == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_VerifyMsgLength_Test_HKRequestLengthError
+ERROR EVENT ID=41 Invalid HK request msg length: ID = 0x18A5, CC = 0, Len = 1, Expected = 8
+PASS: Result == FALSE
+PASS: Invalid HK request msg length: ID = 0x18A5, CC = 0, Len = 1, Expected = 8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_VerifyMsgLength_Test_APSampleLengthError
+ERROR EVENT ID=42 Invalid AP sample msg length: ID = 0x18A6, CC = 0, Len = 1, Expected = 8
+PASS: Result == FALSE
+PASS: Invalid AP sample msg length: ID = 0x18A6, CC = 0, Len = 1, Expected = 8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_VerifyMsgLength_Test_GenericLengthError
+ERROR EVENT ID=43 Invalid msg length: ID = 0x0001, CC = 0, Len = 1, Expected = 8
+PASS: Result == FALSE
+PASS: Invalid AP sample msg length: ID = 0x0001, CC = 0, Len = 1, Expected = 8
+PASS: LC_AppData.CmdErrCount == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_VerifyMsgLength_Test_Nominal
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ManageTables_Test_InfoUpdated
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ManageTables_Test_WDTGetAddressError
+ERROR EVENT ID=19 Error getting WDT address, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Error getting WDT address, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ManageTables_Test_ADTGetAddressError
+ERROR EVENT ID=20 Error getting ADT address, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Error getting ADT address, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_UpdateTaskCDS_Test_UpdateWatchpointError
+ERROR EVENT ID=46 Unable to update watchpoint results in CDS, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Unable to update watchpoint results in CDS, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_UpdateTaskCDS_Test_UpdateActionpointError
+ERROR EVENT ID=47 Unable to update actionpoint results in CDS, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: Unable to update actionpoint results in CDS, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_UpdateTaskCDS_Test_UpdateAppDataError
+ERROR EVENT ID=48 Unable to update application data in CDS, RC=0xFFFFFFFF
+PASS: Result == -1
+PASS: LC_AppData.CDSSavedOnExit == LC_CDS_SAVED
+PASS: Unable to update application data in CDS, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_UpdateTaskCDS_Test_Nominal
+PASS: Result == CFE_SUCCESS
+PASS: LC_AppData.CDSSavedOnExit == LC_CDS_SAVED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ExecuteRTS_Test
+PKT: 18 A9 C0 00 00 03 00 04 01 00 
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_CustomFunction_Test_WatchIndex0
+ERROR EVENT ID=67 Unexpected LC_CustomFunction call: WP = 0
+PASS: Unexpected LC_CustomFunction call: WP = 0
+PASS: Result == LC_WATCH_FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CustomFunction_Test_WatchIndex1
+ERROR EVENT ID=67 Unexpected LC_CustomFunction call: WP = 1
+PASS: Unexpected LC_CustomFunction call: WP = 1
+PASS: Result == LC_WATCH_FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateHashTable_Test_UnsubscribeError
+ERROR EVENT ID=44 Error unsubscribing watchpoint: MID=0x0001, RC=0xFFFFFFFF
+PASS: Error unsubscribing watchpoint: MID=0x0001, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CreateHashTable_Test_NominalAllSameMID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_AddWatchpoint_Test_HashTableAndWatchPtListNullPointersNominal
+PASS: LC_OperData.HashTable[HashTableIndex] == &LC_OperData.MessageLinks[0]
+PASS: LC_OperData.MessageLinks[0].MessageID == 1
+PASS: LC_OperData.MessageLinks[0].WatchPtList == &LC_OperData.WatchPtLinks[0]
+PASS: Result == &LC_OperData.WatchPtLinks[0]
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_AddWatchpoint_Test_HashTableAndWatchPtListNotNullPointerTwoMsgLinksMIDFound
+PASS: Result == &LC_OperData.WatchPtLinks[0]
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_AddWatchpoint_Test_NullPointersErrorSubscribingWatchpoint
+ERROR EVENT ID=45 Error subscribing watchpoint: MID=0x0001, RC=0xFFFFFFFF
+PASS: Error subscribing watchpoint: MID=0x0001, RC=0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CheckMsgForWPs_Test_Nominal
+ERROR EVENT ID=67 Unexpected LC_CustomFunction call: WP = 0
+PASS: LC_AppData.MonitoredMsgCount == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_CheckMsgForWPs_Test_UnreferencedMessageID
+INFO EVENT ID=49 Msg with unreferenced message ID rcvd: ID = 0x0001
+PASS: Msg with unreferenced message ID rcvd: ID = 0x0001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ProcessWP_Test_CustomFunctionWatchFalse
+ERROR EVENT ID=67 Unexpected LC_CustomFunction call: WP = 0
+PASS: LC_OperData.WRTPtr[WatchIndex].ConsecutiveTrueCount == 0
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_FALSE
+PASS: LC_OperData.WRTPtr[WatchIndex].EvaluationCount == 1
+PASS: Unexpected LC_CustomFunction call: WP = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ProcessWP_Test_OperatorCompareError
+ERROR EVENT ID=51 WP has invalid operator ID: WP = 0, OperID = 99
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_ERROR
+PASS: LC_OperData.WRTPtr[WatchIndex].EvaluationCount == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ProcessWP_Test_OperatorCompareWatchTruePreviousStale
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_TRUE
+PASS: LC_OperData.WRTPtr[WatchIndex].EvaluationCount == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].CumulativeTrueCount == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].ConsecutiveTrueCount == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].FalseToTrueCount == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue.Value == 0
+PASS: LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue.Timestamp.Seconds == 3
+PASS: LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue.Timestamp.Subseconds == 5
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_ProcessWP_Test_OperatorCompareWatchFalsePreviousStale
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_FALSE
+PASS: LC_OperData.WRTPtr[WatchIndex].EvaluationCount == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].ConsecutiveTrueCount == 0
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 1
+PASS: LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse.Value == 0
+PASS: LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse.Timestamp.Seconds == 3
+PASS: LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse.Timestamp.Subseconds == 5
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataByte
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataWordLE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataDWordLE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataUByte
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataUWordLE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataUDWordLE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataFloatLE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_OperatorCompare_Test_DataTypeError
+ERROR EVENT ID=50 WP has undefined data type: WP = 0, DataType = 99
+PASS: Result == LC_WATCH_ERROR
+PASS: WP has undefined data type: WP = 0, DataType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_SignedCompare_Test_LE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SignedCompare_Test_LT
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SignedCompare_Test_EQ
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SignedCompare_Test_NE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SignedCompare_Test_GT
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SignedCompare_Test_GE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_SignedCompare_Test_InvalidOperatorID
+ERROR EVENT ID=51 WP has invalid operator ID: WP = 0, OperID = 99
+PASS: Result == LC_WATCH_ERROR
+PASS: WP has invalid operator ID: WP = 0, OperID = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_UnsignedCompare_Test_LE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_UnsignedCompare_Test_LT
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_UnsignedCompare_Test_EQ
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_UnsignedCompare_Test_NE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_UnsignedCompare_Test_GT
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_UnsignedCompare_Test_GE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_UnsignedCompare_Test_InvalidOperatorID
+ERROR EVENT ID=51 WP has invalid operator ID: WP = 0, OperID = 99
+PASS: Result == LC_WATCH_ERROR
+PASS: WP has invalid operator ID: WP = 0, OperID = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_FloatCompare_Test_LE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_FloatCompare_Test_LT
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_FloatCompare_Test_EQ
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_FloatCompare_Test_NE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_FloatCompare_Test_GT
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_FloatCompare_Test_GE
+PASS: Result == LC_WATCH_TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_FloatCompare_Test_InvalidOperatorID
+ERROR EVENT ID=51 WP has invalid operator ID: WP = 0, OperID = 99
+PASS: Result == LC_WATCH_ERROR
+PASS: WP has invalid operator ID: WP = 0, OperID = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_FloatCompare_Test_NaN
+ERROR EVENT ID=52 WP data value is a float NAN: WP = 0, Value = 0x7F8FFFFF
+PASS: Result == LC_WATCH_ERROR
+PASS: WP data value is a float NAN: WP = 0, Value = 0x7F8FFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_WPOffsetValid_Test_DataUByte
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_WPOffsetValid_Test_UWordLE
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_WPOffsetValid_Test_UDWordLE
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_WPOffsetValid_Test_FloatLE
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_WPOffsetValid_Test_DataTypeError
+ERROR EVENT ID=50 WP has undefined data type: WP = 0, DataType = 99
+PASS: Result == FALSE
+PASS: WP has undefined data type: WP = 0, DataType = 99
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_ERROR
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_WPOffsetValid_Test_OffsetError
+ERROR EVENT ID=53 WP offset error: MID = 1, WP = 0, Offset = 8, DataSize = 1, MsgLen = 8
+PASS: Result == FALSE
+PASS: WP offset error: MID = 1, WP = 0, Offset = 8, DataSize = 1, MsgLen = 8
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_ERROR
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_GetSizedWPData_Test_DataByte
+PASS: Result == TRUE
+PASS: SizedData == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataUByte
+PASS: Result == TRUE
+PASS: SizedData == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataWordBELittleEndian
+PASS: Result == TRUE
+PASS: SizedData == 0x0102
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataWordLELittleEndian
+PASS: Result == TRUE
+PASS: SizedData == 0x0201
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataUWordBELittleEndian
+PASS: Result == TRUE
+PASS: SizedData == 0x0102
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataUWordLELittleEndian
+PASS: Result == TRUE
+PASS: SizedData == 0x0201
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataFloatBELittleEndian
+PASS: Result == TRUE
+PASS: SizedData == 0x01020304
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataFloatLELittleEndian
+PASS: Result == TRUE
+PASS: SizedData == 0x04030201
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_GetSizedWPData_Test_DataTypeError
+ERROR EVENT ID=50 WP has undefined data type: WP = 0, DataType = 99
+PASS: Result == FALSE
+PASS: LC_OperData.WRTPtr[WatchIndex].WatchResult == LC_WATCH_ERROR
+PASS: LC_OperData.WRTPtr[WatchIndex].CountdownToStale == 0
+PASS: WP has undefined data type: WP = 0, DataType = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ValidateWDT_Test_UnusedTableEntry
+INFO EVENT ID=56 WDT verify results: good = 0, bad = 0, unused = 176
+PASS: Result == CFE_SUCCESS
+PASS: WDT verify results: good = 0, bad = 0, unused = 176
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ValidateWDT_Test_InvalidDataType
+ERROR EVENT ID=55 WDT verify err: WP = 0, Err = 1, DType = 99, Oper = 1, MID = 2
+INFO EVENT ID=56 WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_WDTVAL_ERR_DATATYPE
+PASS: WDT verify err: WP = 0, Err = 1, DType = 99, Oper = 1, MID = 2
+PASS: WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateWDT_Test_InvalidOperator
+ERROR EVENT ID=55 WDT verify err: WP = 0, Err = 2, DType = 1, Oper = 99, MID = 2
+INFO EVENT ID=56 WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_WDTVAL_ERR_OPER
+PASS: WDT verify err: WP = 0, Err = 2, DType = 1, Oper = 99, MID = 2
+PASS: WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateWDT_Test_BadMessageID
+ERROR EVENT ID=55 WDT verify err: WP = 0, Err = 3, DType = 1, Oper = 1, MID = 8192
+INFO EVENT ID=56 WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_WDTVAL_ERR_MID
+PASS: WDT verify err: WP = 0, Err = 3, DType = 1, Oper = 1, MID = 8192
+PASS: WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateWDT_Test_NaN
+ERROR EVENT ID=54 WDT verify float err: WP = 0, Err = 4, ComparisonValue = 0x7F8FFFFF
+INFO EVENT ID=56 WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_WDTVAL_ERR_FPNAN
+PASS: WDT verify float err: WP = 0, Err = 4, ComparisonValue = 0x7F8FFFFF
+PASS: WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateWDT_Test_Inf
+ERROR EVENT ID=54 WDT verify float err: WP = 0, Err = 5, ComparisonValue = 0x7F800000
+INFO EVENT ID=56 WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Result == LC_WDTVAL_ERR_FPINF
+PASS: WDT verify float err: WP = 0, Err = 5, ComparisonValue = 0x7F800000
+PASS: WDT verify results: good = 0, bad = 176, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: LC_ValidateWDT_Test_FloatingPointPassed
+INFO EVENT ID=56 WDT verify results: good = 176, bad = 0, unused = 0
+PASS: Result == LC_WDTVAL_NO_ERR
+PASS: WDT verify results: good = 176, bad = 0, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_ValidateWDT_Test_NonFloatingPointPassed
+INFO EVENT ID=56 WDT verify results: good = 176, bad = 0, unused = 0
+PASS: Result == LC_WDTVAL_NO_ERR
+PASS: WDT verify results: good = 176, bad = 0, unused = 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: LC_Uint32IsNAN_Test_True
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_Uint32IsNAN_Test_False
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_Uint32IsInfinite_Test_True
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: LC_Uint32IsInfinite_Test_False
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Tests Executed:    231
+Assert Pass Count: 761
+Assert Fail Count: 0
+
+gcov: '../src/lc_custom.c' 100.00%  11
+gcov: '../src/lc_action.c' 100.00%  199
+gcov: '../src/lc_app.c' 95.02%  241
+gcov: '../src/lc_cmds.c' 100.00%  357
+gcov: '../src/lc_watch.c' 99.71%  341
+

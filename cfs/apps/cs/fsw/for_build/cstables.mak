@@ -1,14 +1,7 @@
 ###############################################################################
 # File: CFS CS Application Table Makefile 
 #
-# $Id: cstables.mak 1.2 2010/07/16 13:22:01EDT jmdagost Exp  $
-#
-# $Log: cstables.mak  $
-# Revision 1.2 2010/07/16 13:22:01EDT jmdagost 
-# Corrected to use internal definition and CFS path.
-# Revision 1.1 2010/03/09 15:31:49EST jmdagost 
-# Initial revision
-# Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/for_build/project.pj
+# $Id: cstables.mak 1.2 2017/02/16 15:33:10EST mdeschu Exp  $
 #
 ###############################################################################
 #

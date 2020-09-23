@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_watch.c 1.5 2015/03/04 16:09:52EST sstrege Exp  $
+**   $Id: lc_watch.c 1.7 2017/05/08 00:19:28EDT mdeschu Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -14,34 +14,6 @@
 ** Purpose: 
 **   Functions used for CFS Limit Checker watchpoint processing
 **
-**   $Log: lc_watch.c  $
-**   Revision 1.5 2015/03/04 16:09:52EST sstrege 
-**   Added copyright information
-**   Revision 1.4 2012/08/22 17:19:06EDT lwalling 
-**   Modified true to false transition monitor to also accept stale to false
-**   Revision 1.3 2012/08/01 12:42:12PDT lwalling 
-**   Add STALE counters to watchpoint definition and result tables
-**   Revision 1.2 2012/08/01 11:19:54PDT lwalling 
-**   Change NOT_MEASURED to STALE
-**   Revision 1.1 2012/07/31 13:53:40PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.7 2011/06/08 16:17:16EDT lwalling 
-**   Added hash table functions, modified LC_CheckMsgForWPs() to use hash table functions
-**   Revision 1.6 2011/01/19 12:43:11EST jmdagost 
-**   Added lc_watch.h to include list.
-**   Revision 1.5 2011/01/19 11:38:40EST jmdagost 
-**   Initialize local variables per IV&V.
-**   Revision 1.4 2009/02/26 11:01:01EST dahardis 
-**   Modified so a watchponit transition from Not Measured to True
-**   will get treated the same as a transition from False to True (DCR #7097)
-**   Revision 1.3 2009/01/15 15:36:17EST dahardis 
-**   Unit test fixes
-**   Revision 1.2 2008/12/03 13:59:46EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:52EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 
@@ -53,382 +25,7 @@
 #include "lc_events.h"
 #include "lc_custom.h"
 #include "lc_perfids.h"
-
-/************************************************************************
-** Local Macro Definitions
-*************************************************************************/
-/**
-** \name LC Byte Order Identifiers */ 
-/** \{ */
-#define LC_BIG_ENDIAN       1
-#define LC_LITTLE_ENDIAN    2
-/** \} */
-
-/*************************************************************************
-** Local Function Prototypes
-*************************************************************************/
-/************************************************************************/
-/** \brief Process a single watchpoint
-**  
-**  \par Description
-**       Support function for watchpoint processing that will
-**       evaluate a single watchpoint
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   WatchIndex  The watchpoint number to evaluate (zero
-**                            based watchpoint definition table index)
-**
-**  \param [in]   MessagePtr  A #CFE_SB_MsgPtr_t pointer that
-**                            references the software bus message that
-**                            contains the watchpoint data
-**
-**  \param [in]   Timestamp   A #CFE_TIME_SysTime_t timestamp to use
-**                            to update the watchpoint results data
-**                            if a state transition is detected
-**
-*************************************************************************/
-void LC_ProcessWP(uint16             WatchIndex, 
-                  CFE_SB_MsgPtr_t    MessagePtr,
-                  CFE_TIME_SysTime_t Timestamp);
-
-/************************************************************************/
-/** \brief Operator comparison
-**  
-**  \par Description
-**       Support function for watchpoint processing that will perform
-**       the watchpoint data comparison based upon the operator and
-**       data type specified in the watchpoint definition table
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in] WatchIndex         The watchpoint number to compare (zero
-**                                 based watchpoint definition table index)
-**
-**  \param [in] ProcessedWPData    The watchpoint data extracted from
-**                                 the message that it was contained
-**                                 in. This is the data after any
-**                                 sizing, bit-masking, and endianess
-**                                 fixing that LC might have done
-**                                 according to the watchpoint definition
-**
-**  \returns
-**  \retcode #LC_WATCH_ERROR  \retdesc \copydoc LC_WATCH_ERROR \endcode
-**  \retstmt Return codes from #LC_SignedCompare    \endcode
-**  \retstmt Return codes from #LC_UnsignedCompare  \endcode
-**  \retstmt Return codes from #LC_FloatCompare     \endcode
-**  \endreturns
-**
-*************************************************************************/
-uint8 LC_OperatorCompare(uint16 WatchIndex,
-                         uint32 ProcessedWPData);
-
-/************************************************************************/
-/** \brief Signed comparison
-**  
-**  \par Description
-**       Support function for watchpoint processing that will perform
-**       a signed watchpoint data comparison based upon the operator
-**       specified in the watchpoint definition table
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in] WatchIndex    The watchpoint number to compare (zero
-**                            based watchpoint definition table index)
-**
-**  \param [in] WPValue       The watchpoint data extracted from
-**                            the message that it was contained
-**                            in. This is the data after any
-**                            sizing, bit-masking, and endianess
-**                            fixing that LC might have done
-**                            according to the watchpoint definition
-**
-**  \param [in] CompareValue  The comparison value specified in the 
-**                            watchpoint definition table (sign
-**                            extended, if needed, in an int32)
-**
-**  \returns
-**  \retcode #LC_WATCH_TRUE  \retdesc \copydoc LC_WATCH_TRUE  \endcode
-**  \retcode #LC_WATCH_FALSE \retdesc \copydoc LC_WATCH_FALSE \endcode
-**  \retcode #LC_WATCH_ERROR \retdesc \copydoc LC_WATCH_ERROR \endcode
-**  \endreturns
-**
-*************************************************************************/
-uint8 LC_SignedCompare(uint16 WatchIndex,
-                       int32  WPValue, 
-                       int32  CompareValue);
-  
-/************************************************************************/
-/** \brief Unsigned comparison
-**  
-**  \par Description
-**       Support function for watchpoint processing that will perform
-**       an unsigned watchpoint data comparison based upon the operator
-**       specified in the watchpoint definition table
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in] WatchIndex    The watchpoint number to compare (zero
-**                            based watchpoint definition table index)
-**
-**  \param [in] WPValue       The watchpoint data extracted from
-**                            the message that it was contained
-**                            in. This is the data after any
-**                            sizing, bit-masking, and endianess
-**                            fixing that LC might have done
-**                            according to the watchpoint definition
-**
-**  \param [in] CompareValue  The comparison value specified in the 
-**                            watchpoint definition table (zero
-**                            extended, if needed, in an uint32)
-**
-**  \returns
-**  \retcode #LC_WATCH_TRUE  \retdesc \copydoc LC_WATCH_TRUE  \endcode
-**  \retcode #LC_WATCH_FALSE \retdesc \copydoc LC_WATCH_FALSE \endcode
-**  \retcode #LC_WATCH_ERROR \retdesc \copydoc LC_WATCH_ERROR \endcode
-**  \endreturns
-**
-*************************************************************************/
-uint8 LC_UnsignedCompare(uint16 WatchIndex,
-                         uint32 WPValue, 
-                         uint32 CompareValue);
-  
-/************************************************************************/
-/** \brief Float comparison
-**  
-**  \par Description
-**       Support function for watchpoint processing that will perform
-**       an floating point watchpoint data comparison based upon the operator
-**       specified in the watchpoint definition table
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in] WatchIndex        The watchpoint number to compare (zero
-**                                based watchpoint definition table index)
-**
-**  \param [in] WPMultiType       The watchpoint data extracted from
-**                                the message that it was contained
-**                                in. Stored in a multi-type union.
-**                                This is the data after any sizing,
-**                                bit-masking, and endianess fixing
-**                                that LC might have done according
-**                                to the watchpoint definition
-**
-**  \param [in] CompareMultiType  The comparison value specified in the 
-**                                watchpoint definition table. Stored
-**                                in a muti-type union so it can easily
-**                                be accessed as a uint32 for validity
-**                                checks
-**
-**  \returns
-**  \retcode #LC_WATCH_TRUE  \retdesc \copydoc LC_WATCH_TRUE  \endcode
-**  \retcode #LC_WATCH_FALSE \retdesc \copydoc LC_WATCH_FALSE \endcode
-**  \retcode #LC_WATCH_ERROR \retdesc \copydoc LC_WATCH_ERROR \endcode
-**  \endreturns
-**
-*************************************************************************/
-uint8 LC_FloatCompare(uint16 WatchIndex,
-                      LC_MultiType_t WPMultiType, 
-                      LC_MultiType_t CompareMultiType);
-
-/************************************************************************/
-/** \brief Watchpoint offset valid
-**  
-**  \par Description
-**       Support function for watchpoint processing that will check if
-**       the watchpoint offset specified in the definition table would
-**       extend past the message that contains the watchpoint data
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   WatchIndex  The watchpoint number to check (zero
-**                            based watchpoint definition table index)
-**
-**  \param [in]   MessagePtr  A #CFE_SB_MsgPtr_t pointer that
-**                            references the software bus message that
-**                            contains the watchpoint data
-**
-**  \returns
-**  \retstmt Returns TRUE if the offset is within the message size \endcode
-**  \retstmt Returns FALSE if the offset extends past message end  \endcode
-**  \endreturns
-**
-*************************************************************************/
-boolean LC_WPOffsetValid(uint16          WatchIndex, 
-                         CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Get sized data
-**  
-**  \par Description
-**       Support function for watchpoint processing that will extract
-**       the watchpoint data from a software bus message based upon the
-**       data type specified in the watchpoint definition table and 
-**       store it in a uint32. If there are any endian differences between
-**       LC and the watchpoint data, this is where it will get fixed up.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]  WatchIndex     The watchpoint number to extract (zero
-**                              based watchpoint definition table index)
-**
-**  \param [in]  WPDataPtr      A pointer to the first byte of the 
-**                              watchpoint data as it exists in the 
-**                              software bus message it was received in
-**
-**  \param [in]  SizedDataPtr   A pointer to where the extracted watchpoint
-*                               data should be stored
-**
-**  \param [out] *SizedDataPtr  Contains the extracted watchpoint data.
-**                              This will be set to zero on error
-**
-**  \returns
-**  \retstmt Returns TRUE if no error           \endcode
-**  \retstmt Returns FALSE if an error occurred \endcode
-**  \endreturns
-**
-*************************************************************************/
-boolean LC_GetSizedWPData(uint16 WatchIndex,
-                          uint8  *WPDataPtr,
-                          uint32 *SizedDataPtr);
-
-/************************************************************************/
-/** \brief Check uint32 for float NAN
-**  
-**  \par Description
-**       Utility function for watchpoint processing that will test if
-**       a uint32 value would result in a NAN (not-a-number) value if
-**       it was interpreted as a float.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]  Data     The uint32 value to check
-**
-**  \returns
-**  \retstmt Returns TRUE if value is a float NAN      \endcode
-**  \retstmt Returns FALSE if value is not a float NAN \endcode
-**  \endreturns
-**
-*************************************************************************/
-boolean LC_Uint32IsNAN(uint32 Data);
-
-/************************************************************************/
-/** \brief Check uint32 for float infinite
-**  
-**  \par Description
-**       Utility function for watchpoint processing that will test if
-**       a uint32 value would result in an infinite value if
-**       it was interpreted as a float.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]  Data     The uint32 value to check
-**
-**  \returns
-**  \retstmt Returns TRUE if value is an inifinite float      \endcode
-**  \retstmt Returns FALSE if value is not an inifinite float \endcode
-**  \endreturns
-**
-*************************************************************************/
-boolean LC_Uint32IsInfinite(uint32 Data);
-
-/************************************************************************/
-/** \brief Convert messageID into hash table index
-**  
-**  \par Description
-**       Utility function for watchpoint processing that converts a
-**       messageID into an index into the watchpoint hash table.
-**       
-**       The following code supports use of the watchpoint hash table:
-**
-**       1) #LC_GetHashTableIndex - convert messageID to hash table index
-**       2) #LC_CreateHashTable   - after load Watchpoint Definition Table
-**       3) #LC_AddWatchpoint     - add one watchpoint to hash table
-**       4) #LC_CheckMsgForWPs    - process all WP's that reference messageID
-**       
-**       The following data structures support the hash table:
-**
-**       1) Hash table (256 entries)
-**       2) Array of links for messageID linked lists (LC_MAX_WATCHPOINTS)
-**       3) Array of links for watchpoint linked lists (LC_MAX_WATCHPOINTS)
-**       
-**       Rather than search the entire Watchpoint Definition Table to find
-**       the watchpoints that reference a particular messageID, LC does
-**       the following:
-**
-**       1) Call hash table function (convert messageID to hash table index)
-**       2) Get messageID linked list from indexed hash table entry
-**       3) Search messageID list (max 8) for matching messageID
-**       4) Get watchpoint linked list from matching messageID link
-**       5) Done - only watchpoints that reference messageID are in list
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]  MessageID   SoftwareBus packet message ID
-**
-**  \returns
-**  \retstmt Returns index into watchpoint hash table  \endcode
-**  \endreturns
-**
-*************************************************************************/
-uint32 LC_GetHashTableIndex(CFE_SB_MsgId_t MessageID);
-
-/************************************************************************/
-/** \brief Add one watchpoint linked list entry during creation of hash table
-**  
-**  \par Description
-**       Utility function that adds another link to the watchpoint linked list
-**       for the specified messageID. The function will also add a messageID
-**       linked list entry to the hash table if this is the first reference
-**       to that messageID. The function will also subscribe to the messageID
-**       if this is the first reference to that messageID. The function will
-**       return a pointer to the watchpoint linked list entry just added.
-**       
-**       The following code supports use of the watchpoint hash table:
-**
-**       1) #LC_GetHashTableIndex - convert messageID to hash table index
-**       2) #LC_CreateHashTable   - after load Watchpoint Definition Table
-**       3) #LC_AddWatchpoint     - add one watchpoint to hash table
-**       4) #LC_CheckMsgForWPs    - process all WP's that reference messageID
-**       
-**       The following data structures support the hash table:
-**
-**       1) Hash table (256 entries)
-**       2) Array of links for messageID linked lists (LC_MAX_WATCHPOINTS)
-**       3) Array of links for watchpoint linked lists (LC_MAX_WATCHPOINTS)
-**       
-**       Rather than search the entire Watchpoint Definition Table to find
-**       the watchpoints that reference a particular messageID, LC does
-**       the following:
-**
-**       1) Call hash table function (convert messageID to hash table index)
-**       2) Get messageID linked list from indexed hash table entry
-**       3) Search messageID list (max 8) for matching messageID
-**       4) Get watchpoint linked list from matching messageID link
-**       5) Done - only watchpoints that reference messageID are in list
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]  MessageID   SoftwareBus packet message ID
-**
-**  \returns
-**  \retstmt Returns pointer to the watchpoint linked list entry just added  \endcode
-**  \endreturns
-**
-*************************************************************************/
-LC_WatchPtList_t  *LC_AddWatchpoint(CFE_SB_MsgId_t MessageID);
-
+#include "cfe_platform_cfg.h"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -487,7 +84,7 @@ void LC_CreateHashTable(void)
         {
             CFE_EVS_SendEvent(LC_UNSUB_WP_ERR_EID, CFE_EVS_ERROR,
                              "Error unsubscribing watchpoint: MID=0x%04X, RC=0x%08X", 
-                              MessageID, Result);
+                              MessageID, (unsigned int)Result);
         }
     }
 
@@ -608,7 +205,7 @@ LC_WatchPtList_t  *LC_AddWatchpoint(CFE_SB_MsgId_t MessageID)
             /* Signal the error, but continue */
             CFE_EVS_SendEvent(LC_SUB_WP_ERR_EID, CFE_EVS_ERROR,
                "Error subscribing watchpoint: MID=0x%04X, RC=0x%08X",
-                MessageID, Result);    
+                MessageID, (unsigned int)Result);    
         }
     }
 
@@ -778,7 +375,7 @@ void LC_ProcessWP(uint16             WatchIndex,
         {
            WPEvalResult = LC_OperatorCompare(WatchIndex, MaskedWPData);
         }
-
+     
         /*
         ** Update the watch result
         */
@@ -800,6 +397,9 @@ void LC_ProcessWP(uint16             WatchIndex,
             if ((PreviousResult == LC_WATCH_FALSE) || 
                 (PreviousResult == LC_WATCH_STALE))
             {
+                LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue.DataType =
+                        LC_OperData.WDTPtr[WatchIndex].DataType;
+                
                 LC_OperData.WRTPtr[WatchIndex].FalseToTrueCount++;
                 
                 LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue
@@ -821,6 +421,9 @@ void LC_ProcessWP(uint16             WatchIndex,
             if ((PreviousResult == LC_WATCH_TRUE) || 
                 (PreviousResult == LC_WATCH_STALE))
             {
+                LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse.DataType =
+                        LC_OperData.WDTPtr[WatchIndex].DataType;
+                
                 LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse
                                               .Value = MaskedWPData;
                 
@@ -857,7 +460,36 @@ uint8 LC_OperatorCompare(uint16 WatchIndex,
     LC_MultiType_t WatchpointValue;
     LC_MultiType_t ComparisonValue;
 
-    WatchpointValue.Unsigned32 = ProcessedWPData;
+	/*
+     * The "ProcessedWPData" has been already normalized to be 
+     * 32 bits wide and in the native CPU byte order.  For actual
+     * comparison, it needs to be truncated back down to the same
+     * size as the reference value.
+     */
+    switch (LC_OperData.WDTPtr[WatchIndex].DataType)
+    {
+        case LC_DATA_UBYTE:
+        case LC_DATA_BYTE:
+           WatchpointValue.Unsigned8 = ProcessedWPData & 0xFF;
+           break;
+
+        case LC_DATA_WORD_BE:
+        case LC_DATA_WORD_LE:
+        case LC_DATA_UWORD_BE:
+        case LC_DATA_UWORD_LE:
+           WatchpointValue.Unsigned16 = ProcessedWPData & 0xFFFF;
+           break;
+
+        case LC_DATA_DWORD_BE:
+        case LC_DATA_DWORD_LE:
+        case LC_DATA_UDWORD_BE:
+        case LC_DATA_UDWORD_LE:
+        case LC_DATA_FLOAT_BE:
+        case LC_DATA_FLOAT_LE:
+        default:
+           WatchpointValue.Unsigned32 = ProcessedWPData;
+           break;
+    }
     ComparisonValue = LC_OperData.WDTPtr[WatchIndex].ComparisonValue;
 
     /*
@@ -872,15 +504,15 @@ uint8 LC_OperatorCompare(uint16 WatchIndex,
         */
         case LC_DATA_BYTE:
             EvalResult = LC_SignedCompare(WatchIndex,
-                                          WatchpointValue.Signed8in32.Signed8,
-                                          ComparisonValue.Signed8in32.Signed8);
+                                          WatchpointValue.Signed8,
+                                          ComparisonValue.Signed8);
             break;
               
         case LC_DATA_WORD_BE:
         case LC_DATA_WORD_LE:
             EvalResult = LC_SignedCompare(WatchIndex,
-                                          WatchpointValue.Signed16in32.Signed16,
-                                          ComparisonValue.Signed16in32.Signed16);
+                                          WatchpointValue.Signed16,
+                                          ComparisonValue.Signed16);
             break;
 
         case LC_DATA_DWORD_BE:
@@ -895,15 +527,15 @@ uint8 LC_OperatorCompare(uint16 WatchIndex,
         */
         case LC_DATA_UBYTE:
             EvalResult = LC_UnsignedCompare(WatchIndex,
-                                            WatchpointValue.Unsigned8in32.Unsigned8,
-                                            ComparisonValue.Unsigned8in32.Unsigned8);
+                                            WatchpointValue.Unsigned8,
+                                            ComparisonValue.Unsigned8);
             break;
 
         case LC_DATA_UWORD_BE:
         case LC_DATA_UWORD_LE:
             EvalResult = LC_UnsignedCompare(WatchIndex,
-                                            WatchpointValue.Unsigned16in32.Unsigned16,
-                                            ComparisonValue.Unsigned16in32.Unsigned16);
+                                            WatchpointValue.Unsigned16,
+                                            ComparisonValue.Unsigned16);
             break;
 
         case LC_DATA_UDWORD_BE:
@@ -935,8 +567,6 @@ uint8 LC_OperatorCompare(uint16 WatchIndex,
             EvalResult = LC_WATCH_ERROR;
             break;
     }
-
-
     
     return (EvalResult);
     
@@ -1138,7 +768,7 @@ uint8 LC_FloatCompare(uint16 WatchIndex,
     {
         CFE_EVS_SendEvent(LC_WP_NAN_ERR_EID, CFE_EVS_ERROR,
                           "WP data value is a float NAN: WP = %d, Value = 0x%08X",
-                          WatchIndex, WPMultiType.Unsigned32);
+                          WatchIndex, (unsigned int)WPMultiType.Unsigned32);
         
         EvalResult = LC_WATCH_ERROR;
     }
@@ -1222,7 +852,7 @@ boolean LC_WPOffsetValid(uint16             WatchIndex,
         
         CFE_EVS_SendEvent(LC_WP_OFFSET_ERR_EID, CFE_EVS_ERROR,
                 "WP offset error: MID = %d, WP = %d, Offset = %d, DataSize = %d, MsgLen = %d",
-                MessageID, WatchIndex, Offset, NumOfDataBytes, MsgLength);
+                MessageID, WatchIndex, (int)Offset, (int)NumOfDataBytes, MsgLength);
         
         LC_OperData.WRTPtr[WatchIndex].WatchResult = LC_WATCH_ERROR;
         LC_OperData.WRTPtr[WatchIndex].CountdownToStale = 0;
@@ -1234,6 +864,21 @@ boolean LC_WPOffsetValid(uint16             WatchIndex,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
+/* Copy a single watchpoint datum and simultaneously byteswap it   */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+void LC_CopyBytesWithSwap(LC_MultiType_t *DestBuffer, const uint8 *SrcPtr,
+                           const LC_MultiType_t SwapMap, uint32 NumBytes)
+{
+   while (NumBytes > 0)
+   {
+      --NumBytes;
+      DestBuffer->RawByte[NumBytes] = SrcPtr[SwapMap.RawByte[NumBytes] & 0x3];
+   }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
 /* Get sized watchpoint data                                       */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
@@ -1242,29 +887,11 @@ boolean LC_GetSizedWPData(uint16 WatchIndex,
                           uint32 *SizedDataPtr)
 {
     boolean Success    = TRUE;
-    uint32  uint32Data = 0;
-    uint16  uint16Data = 0;
+    LC_MultiType_t ConvBuffer;
+    LC_MultiType_t TempBuffer;
 
-    int32   int32Data  = 0;
-    int16   int16Data  = 0;
-    int8    int8Data   = 0;
-
-    uint8   *uint8Ptr;
-    uint8   *RawBytePtr = WPDataPtr;
-    
-    /*
-    ** Use these OSAL compiler flags to figure out what
-    ** the target's byte order is that LC was compiled for.
-    ** We define these this way so if neither (or both) are
-    ** defined, we'll get a build error
-    */
-#ifdef _STRUCT_HIGH_BIT_FIRST_
-    int32 OurByteOrder = LC_BIG_ENDIAN;
-#endif    
-
-#ifdef _STRUCT_LOW_BIT_FIRST_
-    int32 OurByteOrder = LC_LITTLE_ENDIAN;
-#endif
+    ConvBuffer.Unsigned32 = 0;
+    TempBuffer.Unsigned32 = 0;
 
     /* 
     ** Get the watchpoint data value (which may be on a misaligned
@@ -1274,116 +901,53 @@ boolean LC_GetSizedWPData(uint16 WatchIndex,
     switch (LC_OperData.WDTPtr[WatchIndex].DataType)
         {
         case LC_DATA_BYTE:
-            int8Data   =   (int8) RawBytePtr[0];
-            int32Data  =  (int32) int8Data;
-            uint32Data = (uint32) int32Data;
-            break;
+           TempBuffer.Unsigned8  = *WPDataPtr;
+           ConvBuffer.Signed32 = TempBuffer.Signed8;  /* Extend signed 8 bit value to 32 bits */
+           break;
               
         case LC_DATA_UBYTE:
-            uint32Data = (uint32) RawBytePtr[0];
-            break;
+           ConvBuffer.Unsigned32 = *WPDataPtr;        /* Extend unsigned 8 bit value to 32 bits */
+           break;
 
         case LC_DATA_WORD_BE:
-            uint8Ptr    = (uint8 *) &int16Data;
-            if (OurByteOrder == LC_BIG_ENDIAN)
-            {
-                uint8Ptr[0] = RawBytePtr[0];
-                uint8Ptr[1] = RawBytePtr[1];
-            }
-            else
-            {
-                uint8Ptr[0] = RawBytePtr[1];
-                uint8Ptr[1] = RawBytePtr[0];
-            }
-            int32Data   =  (int32) int16Data;
-            uint32Data  = (uint32) int32Data;
-            break;
+           ConvBuffer.Unsigned16 = 0x0001;
+           LC_CopyBytesWithSwap(&TempBuffer,WPDataPtr,ConvBuffer,sizeof(int16));
+           ConvBuffer.Signed32 = TempBuffer.Signed16; /* Extend signed 16 bit value to 32 bits */
+           break;
 
         case LC_DATA_WORD_LE:
-            uint8Ptr    = (uint8 *) &int16Data;
-            if (OurByteOrder == LC_LITTLE_ENDIAN)
-            {
-                uint8Ptr[0] = RawBytePtr[0];
-                uint8Ptr[1] = RawBytePtr[1];
-            }
-            else
-            {
-                uint8Ptr[0] = RawBytePtr[1];
-                uint8Ptr[1] = RawBytePtr[0];
-            }
-            int32Data   =  (int32) int16Data;
-            uint32Data  = (uint32) int32Data;
-            break;
+           ConvBuffer.Unsigned16 = 0x0100;
+           LC_CopyBytesWithSwap(&TempBuffer,WPDataPtr,ConvBuffer,sizeof(int16));
+           ConvBuffer.Signed32 = TempBuffer.Signed16; /* Extend signed 16 bit value to 32 bits */
+           break;
 
         case LC_DATA_UWORD_BE:
-            uint8Ptr    = (uint8 *) &uint16Data;
-            if (OurByteOrder == LC_BIG_ENDIAN)
-            {
-                uint8Ptr[0] = RawBytePtr[0];
-                uint8Ptr[1] = RawBytePtr[1];
-            }
-            else
-            {
-                uint8Ptr[0] = RawBytePtr[1];
-                uint8Ptr[1] = RawBytePtr[0];
-            }
-            uint32Data  = (uint32) uint16Data;
-            break;
+           ConvBuffer.Unsigned16 = 0x0001;
+           LC_CopyBytesWithSwap(&TempBuffer,WPDataPtr,ConvBuffer,sizeof(uint16));
+           ConvBuffer.Unsigned32 = TempBuffer.Unsigned16;   /* Extend unsigned 16 bit value to 32 bits */
+           break;
             
         case LC_DATA_UWORD_LE:
-            uint8Ptr    = (uint8 *) &uint16Data;
-            if (OurByteOrder == LC_LITTLE_ENDIAN)
-            {
-                uint8Ptr[0] = RawBytePtr[0];
-                uint8Ptr[1] = RawBytePtr[1];
-            }
-            else
-            {
-                uint8Ptr[0] = RawBytePtr[1];
-                uint8Ptr[1] = RawBytePtr[0];
-            }
-            uint32Data  = (uint32) uint16Data;
-            break;
+           ConvBuffer.Unsigned16 = 0x0100;
+           LC_CopyBytesWithSwap(&TempBuffer,WPDataPtr,ConvBuffer,sizeof(uint16));
+           ConvBuffer.Unsigned32 = TempBuffer.Unsigned16;   /* Extend unsigned 16 bit value to 32 bits */
+           break;
 
         case LC_DATA_DWORD_BE:
         case LC_DATA_UDWORD_BE:
         case LC_DATA_FLOAT_BE:
-            uint8Ptr    = (uint8 *) &uint32Data;
-            if (OurByteOrder == LC_BIG_ENDIAN)
-            {
-                uint8Ptr[0] = RawBytePtr[0];
-                uint8Ptr[1] = RawBytePtr[1];
-                uint8Ptr[2] = RawBytePtr[2];
-                uint8Ptr[3] = RawBytePtr[3];
-            }
-            else
-            {
-                uint8Ptr[0] = RawBytePtr[3];
-                uint8Ptr[1] = RawBytePtr[2];
-                uint8Ptr[2] = RawBytePtr[1];
-                uint8Ptr[3] = RawBytePtr[0];
-            }
-            break;
+           ConvBuffer.Unsigned32 = 0x00010203;
+           LC_CopyBytesWithSwap(&TempBuffer,WPDataPtr,ConvBuffer,sizeof(uint32));
+           ConvBuffer.Unsigned32 = TempBuffer.Unsigned32;   /* Straight copy - no extension (signed or unsigned) */
+           break;
                 
         case LC_DATA_DWORD_LE:
         case LC_DATA_UDWORD_LE:
         case LC_DATA_FLOAT_LE:
-            uint8Ptr    = (uint8 *) &uint32Data;
-            if (OurByteOrder == LC_LITTLE_ENDIAN)
-            {
-                uint8Ptr[0] = RawBytePtr[0];
-                uint8Ptr[1] = RawBytePtr[1];
-                uint8Ptr[2] = RawBytePtr[2];
-                uint8Ptr[3] = RawBytePtr[3];
-            }
-            else
-            {
-                uint8Ptr[0] = RawBytePtr[3];
-                uint8Ptr[1] = RawBytePtr[2];
-                uint8Ptr[2] = RawBytePtr[1];
-                uint8Ptr[3] = RawBytePtr[0];
-            }
-            break;
+           ConvBuffer.Unsigned32 = 0x03020100;
+           LC_CopyBytesWithSwap(&TempBuffer,WPDataPtr,ConvBuffer,sizeof(uint32));
+           ConvBuffer.Unsigned32 = TempBuffer.Unsigned32;   /* Straight copy - no extension (signed or unsigned) */
+           break;
             
         default:
             /*
@@ -1405,7 +969,7 @@ boolean LC_GetSizedWPData(uint16 WatchIndex,
     /*
     ** Set result value
     */
-    *SizedDataPtr = uint32Data;
+    *SizedDataPtr = ConvBuffer.Unsigned32;
     
     /*
     ** Return success flag
@@ -1541,13 +1105,13 @@ int32 LC_ValidateWDT(void *TableData)
             {
                 CFE_EVS_SendEvent(LC_WDTVAL_FPERR_EID, CFE_EVS_ERROR,
                         "WDT verify float err: WP = %d, Err = %d, ComparisonValue = 0x%08X",
-                        TableIndex, EntryResult, CompareValue);
+                        (int)TableIndex, (int)EntryResult, (unsigned int)CompareValue);
             }
             else
             {
                 CFE_EVS_SendEvent(LC_WDTVAL_ERR_EID, CFE_EVS_ERROR,
                         "WDT verify err: WP = %d, Err = %d, DType = %d, Oper = %d, MID = %d",
-                        TableIndex, EntryResult, DataType, OperatorID, MessageID);
+                        (int)TableIndex, (int)EntryResult, DataType, OperatorID, MessageID);
             }
             
             TableResult = EntryResult;
@@ -1560,7 +1124,7 @@ int32 LC_ValidateWDT(void *TableData)
     */
     CFE_EVS_SendEvent(LC_WDTVAL_INF_EID, CFE_EVS_INFORMATION,
                      "WDT verify results: good = %d, bad = %d, unused = %d",
-                      GoodCount, BadCount, UnusedCount);
+                      (int)GoodCount, (int)BadCount, (int)UnusedCount);
 
     return(TableResult);
     

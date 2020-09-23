@@ -21,15 +21,15 @@
 ** Command Message IDs
 */
 
-#define  OSK_C_DEMO_CMD_MID        0x1866
-#define  OSK_C_DEMO_SEND_HK_MID    0x1885  /* Same as KIT_CI to simplify integration */
+#define  OSK_C_DEMO_CMD_MID        0x1F30
+#define  OSK_C_DEMO_SEND_HK_MID    0x1F31
 
 
 /*
 ** Telemetry Message IDs
 */
 
-#define  OSK_C_DEMO_TLM_HK_MID     0x0F03  /* Housekeeping */
-#define  OSK_C_DEMO_TLM_FR_MID     0x0F04  /* FaultRep     */
+#define  OSK_C_DEMO_TLM_HK_MID     0x0F30  /* Housekeeping */
+#define  OSK_C_DEMO_TLM_FR_MID     0x0F31  /* FaultRep     */
 
 #endif /* _osk_c_demo_msgids_ */

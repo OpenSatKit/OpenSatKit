@@ -57,7 +57,7 @@ def simsat_ops_example_setup(start_cfs)
    if start_cfs
    
       # Simplest way to get into a known configuration is to restart the flight software   
-      message_box("The flight software will be restarted to establish a known configration. Enter '#{Osk::PASSWORD}' when prompted for the password.",false)
+      message_box("The flight software will be restarted to establish a known configuration. Enter '#{Osk::PASSWORD}' when prompted for the password.",false)
    
       Osk::System.stop_cfs
       Osk::System.start_cfs  # Enables telemetry
@@ -143,10 +143,6 @@ def simsat_ops_example_teardown
    wait 1
    Osk::flight.send_cmd("DS","SEND_FILE_INFO")
 
-   Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 6, CONFIG 0") # Disable HK Combo Pkt #1 
-   wait 1
-   Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 7, CONFIG 0") # Disable HK Combo Pkt #2
-
    Osk::flight.send_cmd("SC","DISABLE_RTS with RTS_ID 6") # Disable ISIM power off RTS
    wait("SC HK_TLM_PKT RTS_6_DIS == 'TRUE'", 10)
 
@@ -157,6 +153,9 @@ def simsat_ops_example_teardown
    wait("LC HK_TLM_PKT AP_2_STATE == 'DISABLED'", 10)
 
    simsat_isim_pwr_off
+  
+   # Restore default OSK scheduler table
+   Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{$SIMSAT_SCH_TBL_FLT_FILENAME}")  
 
 end # simsat_ops_example_teardown()
 

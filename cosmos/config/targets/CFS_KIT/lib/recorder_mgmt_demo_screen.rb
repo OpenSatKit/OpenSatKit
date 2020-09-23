@@ -202,7 +202,7 @@ def recorder_mgmt_demo(screen, button)
                   wait 4
                   Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                   wait 1
-                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
                   $rmd_demo += 1
                when 1      
                   # Wait 4 allows the user to see the noop event messages. A 20s loop may seem like a long time
@@ -216,7 +216,7 @@ def recorder_mgmt_demo(screen, button)
                      }       
                   } # End thread
                   wait 2                  
-                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
                else
                   $rmd_demo = 1
             end # Case $rmd_demo
@@ -231,14 +231,14 @@ def recorder_mgmt_demo(screen, button)
                   wait 2
                   Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                   wait 2
-                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
                   $rmd_demo += 1
                when 1 
                   Osk::flight.send_cmd("DS","CLOSE_ALL")
                   wait 2
                   Osk::flight.send_cmd("DS","SEND_FILE_INFO")
                   wait 1
-                  Osk::flight.send_cmd("FM","GET_OPEN_FILES")
+                  Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
                   $rmd_demo += 1
                when 2 
                   Osk::Ops::get_flt_bin_file(RMD_EVS_PATH_FILE, Osk::REL_SRV_DIR, RMD_EVS_FILE, Osk::TBL_MGR_DEF_DS_EVENT_LOG,25)

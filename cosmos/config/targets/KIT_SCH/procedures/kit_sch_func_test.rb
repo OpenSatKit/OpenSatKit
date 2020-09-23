@@ -16,7 +16,7 @@ require 'app_func_test'
 class KitSchFuncTest < Cosmos::Test
  
    include AppFuncTest
-   
+    
    def initialize
       super()
       app_func_test_init("KIT_SCH", Fsw::MsgId::KIT_SCH_CMD_MID)
@@ -34,7 +34,20 @@ class KitSchFuncTest < Cosmos::Test
       wait(2)
    end
 
-   def helper_method
+   def test_sch_tbl_entry_cmds
+      # CFG_SCH_TBL_ENTRY
+      # LOAD_SCH_TBL_ENTRY
+      # SEND_SCH_TBL_ENTRY
+      Osk::flight.send_cmd("KIT_SCH","#{Osk::CMD_STR_RESET}")
+   end
+   
+   def test_msg_tbl_entry_cmds
+      # LOAD_MSG_TBL_ENTRY
+      # SEND_MSG_TBL_ENTRY
+      Osk::flight.send_cmd("KIT_SCH","#{Osk::CMD_STR_RESET}")
    end
 
+   def helper_method
+   end
+   
 end # Class KitSchFuncTest

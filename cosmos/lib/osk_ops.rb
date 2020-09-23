@@ -371,7 +371,7 @@ module Ops
       SCREEN AUTO AUTO 0.5
       GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
      
-      TITLE #{cmd_name}
+      TITLE #{target_name}-#{cmd_name}
          SETTING BACKCOLOR 162 181 205
          SETTING TEXTCOLOR black
 
@@ -637,7 +637,7 @@ module Ops
    def self.dump_json_tbl(app_name, tbl_id)
 
       app, tbl_filename = get_app(app_name, tbl_id)
-      tbl_path_filename = "#{Osk::FLT_SRV_DIR}/#{tbl_filename}"
+      tbl_path_filename = "#{Osk::FLT_SRV_DIR}/#{tbl_filename}"      
 
       tbl_path_filename = ask_string("Enter full flight /path/filename of file to receive the table.", create_dmp_filename(tbl_path_filename))
       Osk::Ops::send_flt_txt_file_cmd(app_name, "#{Osk::CMD_STR_DUMP_TBL} with ID #{tbl_id}, ", flt_path_filename: tbl_path_filename) 

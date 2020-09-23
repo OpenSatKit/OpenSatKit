@@ -58,7 +58,6 @@ void TFTP_AppMain(void)
 
    int32  Status    = CFE_SEVERITY_ERROR;
    uint32 RunStatus = CFE_ES_APP_ERROR;
-   uint16 HkRunLoopCtr = 0;
 
    Status = CFE_ES_RegisterApp();
    CFE_EVS_Register(NULL,0,0);
@@ -66,9 +65,9 @@ void TFTP_AppMain(void)
    /*
    ** Perform application specific initialization
    */
-   if (Status == CFE_SUCCESS)
-   {
-       Status = InitApp();
+   if (Status == CFE_SUCCESS) {
+      
+      Status = InitApp();
    }
 
    /*
@@ -83,21 +82,13 @@ void TFTP_AppMain(void)
    /*
    ** Main process loop
    */
-    while (CFE_ES_RunLoop(&RunStatus))
-   {
+   while (CFE_ES_RunLoop(&RunStatus)) {
 
       OS_TaskDelay(TFTP_APP_RUNLOOP_DELAY);
 
       TFTP_Read(TFTP_APP_RUNLOOP_PKTS);
       ProcessCommands();
       
-      if (++HkRunLoopCtr >= TFTP_APP_HK_RUNLOOP_PERIOD)
-      {
-         TFTP_APP_SendHousekeepingPkt();
-         HkRunLoopCtr = 0;
-      }
-       
-
    } /* End CFE_ES_RunLoop */
 
 

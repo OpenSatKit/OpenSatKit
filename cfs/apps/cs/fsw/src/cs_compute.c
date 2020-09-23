@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_compute.c 1.13.1.1 2015/03/03 11:57:24EST sstrege Exp  $
+ **   $Id: cs_compute.c 1.7 2017/03/30 16:05:39EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -13,37 +13,6 @@
  **
  ** Purpose: 
  **   The CFS Checksum (CS) Application's computing checksum functions
- **
- **   $Log: cs_compute.c  $
- **   Revision 1.13.1.1 2015/03/03 11:57:24EST sstrege 
- **   Added copyright information
- **   Revision 1.13 2015/02/25 12:20:02EST lwalling 
- **   Verify no table update during xsum of last table segment
- **   Revision 1.12 2015/02/19 16:39:44EST lwalling 
- **   Moved code block to restore previous state below block that sets vars for newly computed xsum.
- **   Revision 1.11 2015/01/26 15:06:45EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.10 2011/09/06 14:48:56EDT jmdagost 
- **   Corrected table release and app ID event messages text.
- **   Revision 1.9 2011/06/15 16:19:17EDT jmdagost 
- **   Initialized all local variables except local structures and some strings.
- **   Revision 1.8 2010/07/19 13:27:11EDT jmdagost 
- **   Corrected CFE_ES_GetAppInfo result processing, initialized results flags, and added comments.
- **   Revision 1.7 2010/04/06 14:43:17EDT jmdagost 
- **   Added code to update definition tables when recomputing baselines.  Also corrected some spelling in comments.
- **   Revision 1.6 2010/03/09 15:11:13EST jmdagost 
- **   Initialized "NewChecksumValue" local declarations to avoid uninitialized usage.
- **   Revision 1.5 2008/08/28 09:04:53EDT njyanchik 
- **   Updated the code to check for the  CFE_TBL_ERR_NEVER_LOADED returned from CFE_TBL_GetAddress
- **   Revision 1.4 2008/08/20 16:39:24BST njyanchik 
- **   Remove  Tables Resulkt table info after an Unregister
- **   Revision 1.3 2008/08/20 14:01:22BST njyanchik 
- **   Update CS with removing bad table handle
- **   Revision 1.2 2008/07/23 15:34:32BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:11EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
  ** 
  *************************************************************************/
 
@@ -355,7 +324,7 @@ int32 CS_ComputeTables (CS_Res_Tables_Table_Entry_t    * ResultsEntry,
                               CFE_EVS_ERROR,
                               "CS Tables: Could not release addresss for table %s, returned: 0x%08X",
                               ResultsEntry -> Name,
-                              Result);
+                              (unsigned int)Result);
         }
         
     }/* end if tabled was success or updated */
@@ -366,9 +335,9 @@ int32 CS_ComputeTables (CS_Res_Tables_Table_Entry_t    * ResultsEntry,
                           CFE_EVS_ERROR,
                           "CS Tables: Problem Getting table %s info Share: 0x%08X, GetInfo: 0x%08X, GetAddress: 0x%08X",
                           ResultsEntry -> Name,
-                          ResultShare,
-                          ResultGetInfo,
-                          ResultGetAddress);
+                          (unsigned int)ResultShare,
+                          (unsigned int)ResultGetInfo,
+                          (unsigned int)ResultGetAddress);
         
         Status = CS_ERR_NOT_FOUND;
     }
@@ -506,9 +475,9 @@ int32 CS_ComputeApp (CS_Res_App_Table_Entry_t       * ResultsEntry,
                           CFE_EVS_ERROR,
                           "CS Apps: Problems getting app %s info, GetAppID: 0x%08X, GetAppInfo: 0x%08X, AddressValid: %d",
                           ResultsEntry -> Name,
-                          ResultGetAppID,
-                          ResultGetAppInfo,
-                          ResultAddressValid);
+                          (unsigned int)ResultGetAppID,
+                          (unsigned int)ResultGetAppInfo,
+                          (unsigned int)ResultAddressValid);
         
         Status = CS_ERR_NOT_FOUND;
     }
@@ -648,7 +617,7 @@ void CS_RecomputeEepromMemoryChildTask(void)
         CFE_EVS_SendEvent (CS_RECOMPUTE_FINISH_EEPROM_MEMORY_INF_EID,
                            CFE_EVS_INFORMATION,
                            "%s entry %d recompute finished. New baseline is 0X%08X", 
-                           TableType, EntryID, NewChecksumValue);
+                           TableType, EntryID, (unsigned int)NewChecksumValue);
     }/* end if child task register */
     else
     {
@@ -656,7 +625,7 @@ void CS_RecomputeEepromMemoryChildTask(void)
         OS_printf("Recompute for Eeprom or Memory Child Task Registration failed!\n");
     }
     
-    CS_AppData.ChildTaskInUse = FALSE;
+    CS_AppData.RecomputeInProgress = FALSE;
     CFE_ES_ExitChildTask();
     
     return;
@@ -773,7 +742,7 @@ void CS_RecomputeAppChildTask(void)
                                CFE_EVS_INFORMATION,
                                "App %s recompute finished. New baseline is 0x%08X", 
                                ResultsEntry -> Name,
-                               NewChecksumValue);
+                               (unsigned int)NewChecksumValue);
         }
     }/*end if register child task*/
     else
@@ -782,7 +751,7 @@ void CS_RecomputeAppChildTask(void)
         OS_printf("Recompute for App Child Task Registration failed!\n");
     }
     
-    CS_AppData.ChildTaskInUse = FALSE;
+    CS_AppData.RecomputeInProgress = FALSE;
     CFE_ES_ExitChildTask();
     
     return;
@@ -890,7 +859,7 @@ void CS_RecomputeTablesChildTask(void)
                                CFE_EVS_INFORMATION,
                                "Table %s recompute finished. New baseline is 0x%08X", 
                                ResultsEntry -> Name,
-                               NewChecksumValue);
+                               (unsigned int)NewChecksumValue);
         }
         
         /* restore the entry's state */
@@ -911,7 +880,7 @@ void CS_RecomputeTablesChildTask(void)
         OS_printf("Recompute Tables Child Task Registration failed!\n");
     }
     
-    CS_AppData.ChildTaskInUse = FALSE;
+    CS_AppData.RecomputeInProgress = FALSE;
     CFE_ES_ExitChildTask();
     
     return;
@@ -929,6 +898,7 @@ void CS_OneShotChildTask(void)
     uint32          NumBytesRemainingCycles = 0;
     uint32          NumBytesThisCycle       = 0;
     uint32          FirstAddrThisCycle      = 0;
+    uint32          MaxBytesPerCycle        = 0;
     
     
     Status = CFE_ES_RegisterChildTask();
@@ -939,11 +909,12 @@ void CS_OneShotChildTask(void)
         NewChecksumValue        = 0;
         NumBytesRemainingCycles = CS_AppData.LastOneShotSize;
         FirstAddrThisCycle      = CS_AppData.LastOneShotAddress;
+        MaxBytesPerCycle        = CS_AppData.LastOneShotMaxBytesPerCycle;
         
         while (NumBytesRemainingCycles > 0)
         {
-            NumBytesThisCycle  = ( (CS_AppData.MaxBytesPerCycle < NumBytesRemainingCycles)
-                                  ? CS_AppData.MaxBytesPerCycle
+            NumBytesThisCycle  = ( (MaxBytesPerCycle < NumBytesRemainingCycles)
+                                  ? MaxBytesPerCycle
                                   : NumBytesRemainingCycles);
             
             NewChecksumValue = CFE_ES_CalculateCRC((void *) ((uint8*)FirstAddrThisCycle), 
@@ -967,9 +938,9 @@ void CS_OneShotChildTask(void)
         CFE_EVS_SendEvent (CS_ONESHOT_FINISHED_INF_EID,
                            CFE_EVS_INFORMATION,
                            "OneShot checksum on Address: 0x%08X, size %d completed. Checksum =  0x%08X", 
-                           CS_AppData.LastOneShotAddress,
-                           CS_AppData.LastOneShotSize,
-                           CS_AppData.LastOneShotChecksum);
+                           (unsigned int)(CS_AppData.LastOneShotAddress),
+                           (unsigned int)(CS_AppData.LastOneShotSize),
+                           (unsigned int)(CS_AppData.LastOneShotChecksum));
     }/*end if register child task*/
     else
     {
@@ -977,8 +948,7 @@ void CS_OneShotChildTask(void)
         OS_printf("OneShot Child Task Registration failed!\n");
     }
     
-    CS_AppData.ChildTaskInUse   = FALSE;
-    CS_AppData.OneShotTaskInUse = FALSE;
+    CS_AppData.OneShotInProgress = FALSE;
     CS_AppData.ChildTaskID      = 0;
     
     CFE_ES_ExitChildTask();

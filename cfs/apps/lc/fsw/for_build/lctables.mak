@@ -2,9 +2,12 @@
 #
 # File: CFS Application Table Makefile 
 #
-# $Id: lctables.mak 1.1 2012/07/31 16:53:33EDT nschweis Exp  $
+# $Id: lctables.mak 1.1 2015/07/26 15:40:59EDT rperera Exp  $
 #
 # $Log: lctables.mak  $
+# Revision 1.1 2015/07/26 15:40:59EDT rperera 
+# Initial revision
+# Member added to project /CFS-APPs-PROJECT/lcx/fsw/for_build/project.pj
 # Revision 1.1 2012/07/31 16:53:33EDT nschweis 
 # Initial revision
 # Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/for_build/project.pj

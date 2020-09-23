@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: lc_cmds.c 1.6 2015/03/04 16:09:55EST sstrege Exp  $
+**   $Id: lc_cmds.c 1.6 2017/05/07 23:59:05EDT mdeschu Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -14,53 +14,6 @@
 ** Purpose: 
 **   CFS Limit Checker (LC) command handling routines
 **
-**   $Log: lc_cmds.c  $
-**   Revision 1.6 2015/03/04 16:09:55EST sstrege 
-**   Added copyright information
-**   Revision 1.5 2012/08/22 17:17:02EDT lwalling 
-**   Modified true to false transition monitor to also accept stale to false
-**   Revision 1.4 2012/08/01 14:03:03PDT lwalling 
-**   Add age WP results option to AP sample command
-**   Revision 1.3 2012/08/01 12:40:48PDT lwalling 
-**   Add STALE counters to watchpoint definition and result tables
-**   Revision 1.2 2012/08/01 11:20:12PDT lwalling 
-**   Change NOT_MEASURED to STALE
-**   Revision 1.1 2012/07/31 13:53:37PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.15 2011/06/08 16:11:29EDT lwalling 
-**   Changed call from LC_SubscribeWP() to LC_CreateHashTable(), removed function LC_SubscribeWP()
-**   Revision 1.14 2011/03/02 10:53:35EST lwalling 
-**   Explicitly state return value when known to be CFE_SUCCESS
-**   Revision 1.13 2011/03/01 15:42:08EST lwalling 
-**   Fix typo in manage function, move LC_SubscribeWP() and LC_UpdateTaskCDS() to lc_cmds.c
-**   Revision 1.12 2011/03/01 09:37:34EST lwalling 
-**   Modified table management logic and updates to CDS
-**   Revision 1.11 2011/02/14 16:53:21EST lwalling 
-**   Created LC_ResetResultsAP() and LC_ResetResultsWP(), modified reset stats cmd handlers to call them
-**   Revision 1.10 2011/02/07 17:58:12EST lwalling 
-**   Modify sample AP commands to target groups of AP's
-**   Revision 1.9 2011/01/19 11:32:07EST jmdagost 
-**   Moved mission revision number from lc_version.h to lc_platform_cfg.h.
-**   Revision 1.8 2010/03/01 11:12:10EST lwalling 
-**   Set data saved state flag whenever critical data is stored
-**   Revision 1.7 2010/02/23 12:12:01EST lwalling 
-**   Add PassiveAPCount to list of AP results cleared by command
-**   Revision 1.6 2010/01/04 14:10:03EST lwalling 
-**   Update CDS when report housekeeping
-**   Revision 1.5 2009/01/15 15:36:14EST dahardis 
-**   Unit test fixes
-**   Revision 1.4 2009/01/09 11:34:53EST dahardis 
-**   Fixed call to CFE_TBL_GetAddress for the Actionpoint Definition Table that was 
-**   passing in the wrong table handle, causing the Actionpoint Results Table to be
-**   initialized incorrectly.
-**   Revision 1.3 2008/12/10 09:38:36EST dahardis 
-**   Fixed calls to CFE_TBL_GetAddress (DCR #4699)
-**   Revision 1.2 2008/12/03 13:59:34EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:03EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 
@@ -76,202 +29,6 @@
 #include "lc_watch.h"
 #include "lc_platform_cfg.h"
 
-/************************************************************************
-** Local function prototypes
-*************************************************************************/
-/************************************************************************/
-/** \brief Sample actionpoints request
-**  
-**  \par Description
-**       Processes an on-board sample actionpoints request message.
-**
-**  \par Assumptions, External Events, and Notes:
-**       This message does not affect the command execution counter
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-*************************************************************************/
-void LC_SampleAPReq(CFE_SB_MsgPtr_t MessagePtr);
-   
-/************************************************************************/
-/** \brief Housekeeping request
-**  
-**  \par Description
-**       Processes an on-board housekeeping request message.
-**
-**  \par Assumptions, External Events, and Notes:
-**       This message does not affect the command execution counter
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \returns
-**  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
-**  \retstmt Return codes from #LC_AcquirePointers     \endcode
-**  \endreturns
-**
-*************************************************************************/
-int32 LC_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Noop command
-**  
-**  \par Description
-**       Processes a noop ground command.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_NOOP_CC
-**
-*************************************************************************/
-void LC_NoopCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Reset counters command
-**  
-**  \par Description
-**       Processes a reset counters ground command which will reset
-**       the following LC application counters to zero:
-**         - Command counter
-**         - Command error counter
-**         - Actionpoint sample counter
-**         - Monitored message counter 
-**         - RTS execution counter
-**         - Passive RTS execution counter
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_RESET_CC
-**
-*************************************************************************/
-void LC_ResetCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Set LC state command
-**  
-**  \par Description
-**       Processes a set LC application state ground command.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_SET_LC_STATE_CC
-**
-*************************************************************************/
-void LC_SetLCStateCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Set AP state command
-**  
-**  \par Description
-**       Processes a set actionpoint state ground command.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_SET_AP_STATE_CC
-**
-*************************************************************************/
-void LC_SetAPStateCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Set AP permanently off command
-**  
-**  \par Description
-**       Processes a set actionpoint permanently off ground command.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_SET_AP_PERMOFF_CC
-**
-*************************************************************************/
-void LC_SetAPPermOffCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Reset AP statistics command
-**  
-**  \par Description
-**       Processes a reset actionpoint statistics ground command.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_RESET_AP_STATS_CC
-**
-*************************************************************************/
-void LC_ResetAPStatsCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Reset WP statistics command
-**  
-**  \par Description
-**       Processes a reset watchpoint statistics ground command.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-**                             references the software bus message 
-**
-**  \sa #LC_RESET_WP_STATS_CC
-**
-*************************************************************************/
-void LC_ResetWPStatsCmd(CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Verify message length
-**  
-**  \par Description
-**       Checks if the actual length of a software bus message matches 
-**       the expected length and sends an error event if a mismatch
-**       occures
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   msg              A #CFE_SB_MsgPtr_t pointer that
-**                                 references the software bus message 
-**
-**  \param [in]   ExpectedLength   The expected length of the message
-**                                 based upon the command code
-**
-**  \returns
-**  \retstmt Returns TRUE if the length is as expected      \endcode
-**  \retstmt Returns FALSE if the length is not as expected \endcode
-**  \endreturns
-**
-**  \sa #LC_LEN_ERR_EID
-**
-*************************************************************************/
-boolean LC_VerifyMsgLength(CFE_SB_MsgPtr_t msg, 
-                           uint16          ExpectedLength);
-
-int32 LC_ManageTables(void);
-
-
- 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* Process a command pipe message                                  */
@@ -713,16 +470,11 @@ int32 LC_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
         
         } /* end action results for loop */
         
-	LC_OperData.SampleAP.StartIndex = LC_ALL_ACTIONPOINTS;
-	LC_OperData.SampleAP.EndIndex = LC_ALL_ACTIONPOINTS;
-	LC_OperData.SampleAP.UpdateAge = FALSE;
-	
         /*
         ** Timestamp and send housekeeping packet
         */
         CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &LC_OperData.HkPacket);
         CFE_SB_SendMsg((CFE_SB_Msg_t *) &LC_OperData.HkPacket);
-        CFE_SB_SendMsg((CFE_SB_Msg_t *) &LC_OperData.SampleAP);
         
     } /* end LC_VerifyMsgLength if */
     
@@ -1154,6 +906,7 @@ void LC_ResetResultsAP(uint32 StartIndex, uint32 EndIndex, boolean ResetStatsCmd
         LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount    = 0;
         LC_OperData.ARTPtr[TableIndex].CumulativeFailCount     = 0;
         LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount  = 0;
+        LC_OperData.ARTPtr[TableIndex].CumulativeEventMsgsSent = 0;
     }
 
     return;
@@ -1350,7 +1103,7 @@ int32 LC_ManageTables(void)
     else if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(LC_WDT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
-                          "Error getting WDT address, RC=0x%08X", Result);
+                          "Error getting WDT address, RC=0x%08X", (unsigned int)Result);
         return(Result);
     }
 
@@ -1366,7 +1119,7 @@ int32 LC_ManageTables(void)
     else if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(LC_ADT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
-                          "Error getting ADT address, RC=0x%08X", Result);
+                          "Error getting ADT address, RC=0x%08X", (unsigned int)Result);
         return(Result);
     }
 
@@ -1393,7 +1146,7 @@ int32 LC_UpdateTaskCDS(void)
     if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(LC_WRT_NO_SAVE_ERR_EID, CFE_EVS_ERROR, 
-                          "Unable to update watchpoint results in CDS, RC=0x%08X", Result);
+                          "Unable to update watchpoint results in CDS, RC=0x%08X", (unsigned int)Result);
         return(Result);
     }
 
@@ -1405,7 +1158,7 @@ int32 LC_UpdateTaskCDS(void)
     if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(LC_ART_NO_SAVE_ERR_EID, CFE_EVS_ERROR, 
-                          "Unable to update actionpoint results in CDS, RC=0x%08X", Result);
+                          "Unable to update actionpoint results in CDS, RC=0x%08X", (unsigned int)Result);
         return(Result);
     }
 
@@ -1422,7 +1175,7 @@ int32 LC_UpdateTaskCDS(void)
     if (Result != CFE_SUCCESS)
     {
         CFE_EVS_SendEvent(LC_APP_NO_SAVE_START_ERR_EID, CFE_EVS_ERROR, 
-                          "Unable to update application data in CDS, RC=0x%08X", Result);
+                          "Unable to update application data in CDS, RC=0x%08X", (unsigned int)Result);
         return(Result);
     }
 

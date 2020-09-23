@@ -84,7 +84,7 @@ def create_app_execute(screen)
           if app_template.include_cosmos
              app_template.update_cosmos_cmd_tlm_server
           end
-          prompt "Sucessfully created #{app_name} in\n   cFS directory #{cfs_target_dir.text}\n   COSMOS directory #{cosmos_target_dir.text}"
+          prompt "Successfully created <b>#{app_name}</b> in<br>cFS directory:<br>#{cfs_target_dir.text}<br>COSMOS directory:<br>#{cosmos_target_dir.text}<br><br>Proceed with step 2..."
       else
           prompt "Error creating #{app_name}"
       end

@@ -1,0 +1,8 @@
+{
+   "name": "File Manager (FileMgr) initialization file",
+   "description": "Define runtime configurations",
+   "config": {
+      "CMD_PIPE_DEPTH": 10,
+      "CMD_PIPE_NAME":  "FILEMGR_CMD_PIPE"
+   }
+}

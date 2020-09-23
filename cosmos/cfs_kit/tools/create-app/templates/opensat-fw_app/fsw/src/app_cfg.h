@@ -25,11 +25,12 @@
 
 #include "cfe.h"
 #include "@template@_platform_cfg.h"
-#include "osk_app_fw.h"
+#include "osk_c_fw.h"
 
 /******************************************************************************
 ** @Template@ Application Macros
 */
+
 
 #define  @TEMPLATE@_MAJOR_VERSION      0
 #define  @TEMPLATE@_MINOR_VERSION      9
@@ -54,9 +55,9 @@
 ** exceeded so it is the developer's responsibility to verify the ranges. 
 */
 
-#define @TEMPLATE@_BASE_EID (APP_FW_APP_BASE_EID +  0)
-#define EXTBL_BASE_EID      (APP_FW_APP_BASE_EID + 10)
-#define EXOBJ_BASE_EID      (APP_FW_APP_BASE_EID + 20)
+#define @TEMPLATE@_BASE_EID (OSK_C_FW_APP_BASE_EID +  0)
+#define EXTBL_BASE_EID      (OSK_C_FW_APP_BASE_EID + 10)
+#define EXOBJ_BASE_EID      (OSK_C_FW_APP_BASE_EID + 20)
 
 
 /******************************************************************************

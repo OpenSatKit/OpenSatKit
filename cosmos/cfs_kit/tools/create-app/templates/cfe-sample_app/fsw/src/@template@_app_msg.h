@@ -40,7 +40,7 @@ typedef struct
 
 }   OS_PACK @template@_hk_tlm_t  ;
 
-#define @TEMPLATE@_APP_HK_TLM_LNGTH   sizeof ( @template@_hk_tlm_t )
+#define @TEMPLATE@_HK_TLM_LNGTH   sizeof ( @template@_hk_tlm_t )
 
 #endif /* _@template@_app_msg_h_ */
 

@@ -35,7 +35,7 @@ VERTICALBOX "Instrument Sim (ISIM)"
 
   MATRIXBYCOLUMNS 6 1
 
-    BUTTON 'Doc' 'spawn("evince #{Osk::target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)}")'
+    BUTTON 'Doc' 'spawn("evince #{Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)}")'
     SETTING BACKCOLOR 255 255 255
     LABEL "   "
     LABEL "Instr State"

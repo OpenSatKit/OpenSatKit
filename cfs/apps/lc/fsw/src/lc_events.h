@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: lc_events.h 1.2 2015/03/04 16:09:56EST sstrege Exp  $
+**   $Id: lc_events.h 1.3 2017/01/22 17:24:47EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -16,38 +16,6 @@
 **
 ** Notes:
 **
-**   $Log: lc_events.h  $
-**   Revision 1.2 2015/03/04 16:09:56EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:38EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.11 2011/03/10 14:13:18EST lwalling 
-**   Cleanup use of debug events during task startup
-**   Revision 1.10 2011/03/01 09:36:38EST lwalling 
-**   Modified startup logic re use of CDS and critical tables, remove unused event IDs
-**   Revision 1.9 2011/02/07 17:57:58EST lwalling 
-**   Modify sample AP commands to target groups of AP's
-**   Revision 1.8 2010/03/03 15:17:17EST lwalling 
-**   Removed pound symbols from some Doxygen names
-**   Revision 1.7 2010/02/25 11:45:22EST lwalling 
-**   Defined LC_BASE_AP_EID for use in actionpoint definition table
-**   Revision 1.6 2009/12/28 14:51:15EST lwalling 
-**   Change limited events from debug to info
-**   Revision 1.5 2009/02/23 11:17:10EST dahardis 
-**   Added two event messages and modified two others for
-**   consistency when addressing DCR 7084
-**   Revision 1.4 2009/01/29 15:39:21EST dahardis 
-**   Changed an event message from INFO to DEBUG as documented
-**   in DCR #6811
-**   Revision 1.3 2008/12/10 15:34:47EST dahardis 
-**   Added an event message needed for 
-**   DCR 4680
-**   Revision 1.2 2008/12/03 13:59:47EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:27EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_events_

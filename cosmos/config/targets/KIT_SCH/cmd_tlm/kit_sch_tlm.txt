@@ -1,9 +1,11 @@
 <% 
   require 'osk_config' 
 
-  @APP_PREFIX_STR = "KIT_SCH"
-  @HK_TLM_MID_STR = "KIT_SCH_HK_TLM_MID"
-  
+  @APP_PREFIX_STR   = "KIT_SCH"
+  @HK_TLM_MID_STR   = "KIT_SCH_HK_TLM_MID"
+  @DIAG_TLM_MID_STR = "KIT_SCH_DIAG_TLM_MID"
+  @TBL_ENTRY_TLM_MID_STR = "KIT_SCH_TBL_ENTRY_TLM_MID"
+
 %>  
 
 TELEMETRY KIT_SCH HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Scheduler Housekeeping Packet"
@@ -29,4 +31,47 @@ TELEMETRY KIT_SCH HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Scheduler Houseke
   APPEND_ITEM LAST_SYNC_MET_SLOT       16 UINT "Slot number where Time Sync last occurred."
   APPEND_ITEM IGNORE_MAJOR_FRAME        8 UINT "Major Frame too noisy to trust."
   APPEND_ITEM UNEXPECTED_MAJOR_FRAME    8 UINT ""
+
+TELEMETRY KIT_SCH DIAG_TLM_PKT <%= Osk::Cfg.processor_endian %> "Diagnostic Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIAG_TLM_MID_STR) %>
+  APPEND_ITEM LAST_PROCESS_CNT   32 UINT "TODO"
+  APPEND_ITEM TIMER_ID           32 UINT "TODO"
+  APPEND_ITEM TIME_SEMAPHORE     32 UINT "TODO"
+  APPEND_ITEM CLOCK_ACCURACY     32 UINT "TODO
+  APPEND_ITEM WORST_CASE_SLOTS_PER_MINOR_FRAME 32 UINT "TODO"
+  APPEND_ITEM IGNORE_MAJOR_FRAME  8 UINT "TODO"
+  APPEND_ITEM SYNCH_TO_MET        8 UINT "TODO"
+  APPEND_ITEM MAJOR_FRAME_SOURCE  8 UINT "TODO"
+  APPEND_ITEM SPARE               8 UINT "TODO"
+<% FswConfigParam::KIT_SCH_SCHTBL_ACTIVITIES_PER_SLOT.times do |n|  %>
+  APPEND_ITEM ACTIVITY_<%=n%>_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_<%=n%>_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_<%=n%>_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_<%=n%>_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+<% end %>
+  
+  
+TELEMETRY KIT_SCH TBL_ENTRY_TLM_PKT <%= Osk::Cfg.processor_endian %> "Table Entry Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @TBL_ENTRY_TLM_MID_STR) %>
+  APPEND_ITEM SCHTBL_SLOT               8 UINT "Scheduler table 1 second time slice"
+  APPEND_ITEM SCHTBL_ACTIVITY           8 UINT "Activity number within the slot"
+  APPEND_ITEM SCHTBL_ENTRY_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM SCHTBL_ENTRY_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM SCHTBL_ENTRY_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM SCHTBL_ENTRY_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM MSG_STREAM_ID            16 UINT "CCSDS Stream ID"
+     FORMAT_STRING  "0x%04X"
+  APPEND_ITEM MSG_SEQ_CNT              16 UINT "0x3FFF: Seq Cnt, 0xC000: Segmentation Flags: 3 = Complete packet"
+     FORMAT_STRING  "0x%04X"
+  APPEND_ITEM MSG_LENGTH               16 UINT "Index into the message definition table"
+
+<% (FswConfigParam::KIT_SCH_MSGTBL_MAX_MSG_WORDS-3).times do |n|  %>
+  APPEND_ITEM MSG_DATA_WORD_<%=n%>     16 UINT ""
+     FORMAT_STRING  "0x%04X"
+<% end %>
 

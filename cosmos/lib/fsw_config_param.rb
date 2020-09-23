@@ -5,7 +5,7 @@
 #   1. All configuration parameters are contained in this file.
 #   2. The names are identical to the FSW #define
 #   3. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
-#   4. TODO - Not all defintiions are config params. See MD and OSK_APP_FW
+#   4. TODO - Not all defintions are config params. See MD
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -24,10 +24,10 @@ module FswConfigParam
   ##########
 
   OS_MAX_API_NAME  = 20
+  OS_MAX_FILE_NAME = 24  # OSK custom default
   OS_MAX_PATH_LEN  = 64
   OS_MAX_SYM_LEN   = 64
   OS_MAX_TASKS     = 64
-
   OS_MAX_NUM_OPEN_FILES = 50
 
   #########
@@ -119,6 +119,31 @@ module FswConfigParam
   HK_COPY_TBL_NAME       = "CopyTable"
   HK_COPY_TABLE_FILENAME = "hk_cpy_tbl.tbl"
   
+  #########################
+  ## App - Kit Scheduler ##
+  #########################
+
+  KIT_SCH_MSGTBL_ID = 0
+  KIT_SCH_SCHTBL_ID = 1
+  
+  KIT_SCH_SCHTBL_SLOTS               =  5
+  KIT_SCH_SCHTBL_ACTIVITIES_PER_SLOT = 10
+  KIT_SCH_MSGTBL_MAX_MSG_WORDS       =  8
+  
+  KIT_SCH_DEF_MSGTBL_FILENAME  = "osk_sch_msg_tbl.json"
+  KIT_SCH_DEF_SCHTBL_FILENAME  = "osk_sch_sch_tbl.json"
+
+  ################################
+  ## App - Kit Telemetry Output ##
+  ################################
+    
+  KIT_TO_PKTTBL_ID = 0
+  KIT_TO_DEF_PKTTBL_FILENAME = "osk_to_pkt_tbl.json"
+    
+  KIT_TO_PKTMGR_STATS_STARTUP_INIT_MS     = 20000
+  KIT_TO_PKTMGR_STATS_RECONFIG_INIT_MS    =  5000
+  KIT_TO_PKTMGR_COMPUTE_STATS_INTERVAL_MS = 10000
+  
   ##########################
   ## App - Limit Checker  ##
   ##########################
@@ -152,14 +177,7 @@ module FswConfigParam
   MM_OFFSET_W2 = 264
   MM_OFFSET_W3 = 268
 
-  ########################
-  ## App - OSK_APP_FSW  ##
-  ########################
-
-  # Table load command 
-  OSK_TBL_REPLACE    = 0 
-  OSK_TBL_UPDATE_REC = 1
-
+  
   ##########################
   ## App - Stored Command ##
   ##########################

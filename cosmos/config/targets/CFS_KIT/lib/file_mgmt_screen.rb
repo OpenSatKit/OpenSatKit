@@ -94,7 +94,7 @@ def file_mgmt_send_cmd(screen, cmd)
    elsif (cmd == "LIST_OPEN_FILES")
       Cosmos.run_process("ruby tools/PacketViewer -p \"FM OPEN_FILES_PKT\"")
       wait (2)
-      Osk::flight.send_cmd("FM","GET_OPEN_FILES")  
+      Osk::flight.send_cmd("FM","SEND_OPEN_FILES")  
    else
       raise "Error in screen definition file. Undefined command '#{cmd}' sent to file_mgmt_send_cmd()"
    end

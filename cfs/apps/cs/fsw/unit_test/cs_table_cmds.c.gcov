@@ -1,424 +1,355 @@
-        -:    0:Source:/home/aschoening/pwned/apps/cs/fsw/src/cs_table_cmds.c
-        -:    0:Graph:cs_table_cmds.gcno
-        -:    0:Data:cs_table_cmds.gcda
-        -:    0:Runs:1
-        -:    0:Programs:7
+        -:    0:Source:../src/cs_table_cmds.c
+        -:    0:Programs:9
         -:    1:/************************************************************************
         -:    2: ** File:
-        -:    3: **   $Id: cs_table_cmds.c.gcov 1.6 2012/09/14 17:20:42EDT aschoeni Exp  $
+        -:    3: **   $Id: cs_table_cmds.c.gcov 1.5 2017/03/29 19:31:17EDT mdeschu Exp  $
         -:    4: **
-        -:    5: ** Purpose: 
-        -:    6: **   The CFS Checksum (CS) Application's commands for checking Tables
-        -:    7: **
-        -:    8: **   $Log: cs_table_cmds.c.gcov  $
-        -:    8: **   Revision 1.6 2012/09/14 17:20:42EDT aschoeni 
-        -:    8: **   Updated for fix to disable error in def table command
-        -:    9: **   Revision 1.6 2011/09/06 14:51:48EDT jmdagost 
-        -:   10: **   Corrected recompute event message text.
-        -:   11: **   Revision 1.5 2010/03/29 16:57:08EDT jmdagost 
-        -:   12: **   Modified enable/disable commands to update the definitions table as well as the results table.
-        -:   13: **   Revision 1.4 2008/08/01 09:24:46EDT njyanchik 
-        -:   14: **   Switch Tables_Disabled event ID wiuth Tables_Enabled EID
-        -:   15: **   Revision 1.3 2008/07/28 16:56:08BST njyanchik 
-        -:   16: **   Fixed app/table naming issues in event messages
-        -:   17: **   Revision 1.2 2008/07/23 15:34:39BST njyanchik 
-        -:   18: **   Check in of CS Unit test
-        -:   19: **   Revision 1.1 2008/06/13 09:04:18EDT njyanchik 
-        -:   20: **   Initial revision
-        -:   21: **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
-        -:   22: ** 
-        -:   23: *************************************************************************/
-        -:   24:
-        -:   25:/*************************************************************************
-        -:   26: **
-        -:   27: ** Include section
-        -:   28: **
-        -:   29: **************************************************************************/
-        -:   30:#include "cfe.h"
-        -:   31:#include "cs_app.h"
-        -:   32:#include "cs_events.h"
-        -:   33:#include "cs_utils.h"
-        -:   34:#include "cs_compute.h"
-        -:   35:#include "cs_table_cmds.h"
-        -:   36:/**************************************************************************
-        -:   37: **
-        -:   38: ** Functions
-        -:   39: **
-        -:   40: **************************************************************************/
-        -:   41:
-        -:   42:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   43:/*                                                                 */
-        -:   44:/* CS Disable background checking of Tables command                */
-        -:   45:/*                                                                 */
-        -:   46:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   47:void CS_DisableTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function CS_DisableTablesCmd called 1 returned 100% blocks executed 100%
-        1:   48:{
-        -:   49:    /* command verification variables */
-        1:   50:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
-        -:   51:    
-        -:   52:    /* Verify command packet length */
-        1:   53:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:   54:    {
-        1:   55:        CS_AppData.TablesCSState = CS_STATE_DISABLED;
-        1:   56:        CS_ZeroTablesTempValues();
-call    0 returned 100%
-        -:   57:        
-        1:   58:        CFE_EVS_SendEvent (CS_DISABLE_TABLES_INF_EID,
-call    0 returned 100%
-        -:   59:                           CFE_EVS_INFORMATION,
-        -:   60:                           "Checksumming of Tables is Disabled");
-        1:   61:        CS_AppData.CmdCounter++;
-        -:   62:    }
-        -:   63:    return;
-        -:   64:} /* End of CS_DisableTablesCmd () */
-        -:   65:
-        -:   66:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:    5: **   Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6: **   Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **   All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **   This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **   used, distributed and modified only pursuant to the terms of that 
+        -:   12: **   agreement.
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   The CFS Checksum (CS) Application's commands for checking Tables
+        -:   16: **
+        -:   17: *************************************************************************/
+        -:   18:
+        -:   19:/*************************************************************************
+        -:   20: **
+        -:   21: ** Include section
+        -:   22: **
+        -:   23: **************************************************************************/
+        -:   24:#include "cfe.h"
+        -:   25:#include "cs_app.h"
+        -:   26:#include "cs_events.h"
+        -:   27:#include "cs_utils.h"
+        -:   28:#include "cs_compute.h"
+        -:   29:#include "cs_table_cmds.h"
+        -:   30:/**************************************************************************
+        -:   31: **
+        -:   32: ** Functions
+        -:   33: **
+        -:   34: **************************************************************************/
+        -:   35:
+        -:   36:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   37:/*                                                                 */
+        -:   38:/* CS Disable background checking of Tables command                */
+        -:   39:/*                                                                 */
+        -:   40:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:   41:void CS_DisableTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:   42:{
+        -:   43:    /* command verification variables */
+        2:   44:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:   45:    
+        -:   46:    /* Verify command packet length */
+        2:   47:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:   48:    {
+        2:   49:        CS_AppData.TablesCSState = CS_STATE_DISABLED;
+        2:   50:        CS_ZeroTablesTempValues();
+        -:   51:        
+        -:   52:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        2:   53:        CS_UpdateCDS();
+        -:   54:#endif
+        -:   55:        
+        2:   56:        CFE_EVS_SendEvent (CS_DISABLE_TABLES_INF_EID,
+        -:   57:                           CFE_EVS_INFORMATION,
+        -:   58:                           "Checksumming of Tables is Disabled");
+        2:   59:        CS_AppData.CmdCounter++;
+        -:   60:    }
+        2:   61:    return;
+        -:   62:} /* End of CS_DisableTablesCmd () */
+        -:   63:
+        -:   64:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   65:/*                                                                 */
+        -:   66:/* CS Enable background checking of Tables command                 */
         -:   67:/*                                                                 */
-        -:   68:/* CS Enable background checking of Tables command                 */
-        -:   69:/*                                                                 */
-        -:   70:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   71:void CS_EnableTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function CS_EnableTablesCmd called 4 returned 100% blocks executed 100%
-        4:   72:{
-        -:   73:    /* command verification variables */
-        4:   74:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
-        -:   75:    
-        -:   76:    /* Verify command packet length */
-        4:   77:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:   78:    {
-        4:   79:        CS_AppData.TablesCSState = CS_STATE_ENABLED;
-        -:   80:        
-        4:   81:        CFE_EVS_SendEvent (CS_ENABLE_TABLES_INF_EID,
-call    0 returned 100%
-        -:   82:                           CFE_EVS_INFORMATION,
-        -:   83:                           "Checksumming of Tables is Enabled");
-        4:   84:        CS_AppData.CmdCounter++;
-        -:   85:    }
-        -:   86:    return;
-        -:   87:} /* End of CS_EnableTablesCmd () */
-        -:   88:
-        -:   89:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   90:/*                                                                 */
-        -:   91:/* CS Report the baseline checksum of an entry in the Tables table */
+        -:   68:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:   69:void CS_EnableTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:   70:{
+        -:   71:    /* command verification variables */
+        2:   72:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:   73:    
+        -:   74:    /* Verify command packet length */
+        2:   75:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:   76:    {
+        2:   77:        CS_AppData.TablesCSState = CS_STATE_ENABLED;
+        -:   78:        
+        -:   79:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        2:   80:        CS_UpdateCDS();
+        -:   81:#endif
+        -:   82:        
+        2:   83:        CFE_EVS_SendEvent (CS_ENABLE_TABLES_INF_EID,
+        -:   84:                           CFE_EVS_INFORMATION,
+        -:   85:                           "Checksumming of Tables is Enabled");
+        2:   86:        CS_AppData.CmdCounter++;
+        -:   87:    }
+        2:   88:    return;
+        -:   89:} /* End of CS_EnableTablesCmd () */
+        -:   90:
+        -:   91:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:   92:/*                                                                 */
-        -:   93:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   94:void CS_ReportBaselineTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function CS_ReportBaselineTablesCmd called 3 returned 100% blocks executed 100%
-        3:   95:{
-        -:   96:    /* command verification variables */
-        3:   97:    uint16                                  ExpectedLength = sizeof(CS_TableNameCmd_t);
-        -:   98:    
-        -:   99:    CS_TableNameCmd_t                     * CmdPtr;
-        -:  100:    CS_Res_Tables_Table_Entry_t           * ResultsEntry; 
-        -:  101:    uint32                                  Baseline;
-        -:  102:    
-        -:  103:    /* Verify command packet length */
-        3:  104:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:  105:    {
-        3:  106:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
-        -:  107:        
-        3:  108:        CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN - 1] = '\0';
-        3:  109:        if ( CS_GetTableResTblEntryByName(&ResultsEntry, CmdPtr -> Name))
-call    0 returned 100%
-branch  1 taken 67% (fallthrough)
-branch  2 taken 33%
-        -:  110:        {
-        2:  111:            if (ResultsEntry -> ComputedYet == TRUE)
-branch  0 taken 50% (fallthrough)
-branch  1 taken 50%
-        -:  112:            {
-        1:  113:                Baseline = ResultsEntry -> ComparisonValue;
-        1:  114:                CFE_EVS_SendEvent (CS_BASELINE_TABLES_INF_EID,
-call    0 returned 100%
-        -:  115:                                   CFE_EVS_INFORMATION,
-        -:  116:                                   "Report baseline of table %s is 0x%08X", 
-        -:  117:                                   CmdPtr -> Name,
-        -:  118:                                   Baseline);
-        -:  119:            }
-        -:  120:            else
-        -:  121:            {
-        1:  122:                CFE_EVS_SendEvent (CS_NO_BASELINE_TABLES_INF_EID,
-call    0 returned 100%
-        -:  123:                                   CFE_EVS_INFORMATION,
-        -:  124:                                   "Report baseline of table %s has not been computed yet", 
-        -:  125:                                   CmdPtr -> Name);   
-        -:  126:            }
-        2:  127:            CS_AppData.CmdCounter++;
-        -:  128:        }
-        -:  129:        else
-        -:  130:        {
-        1:  131:            CFE_EVS_SendEvent (CS_BASELINE_INVALID_NAME_TABLES_ERR_EID,
-call    0 returned 100%
-        -:  132:                               CFE_EVS_ERROR,
-        -:  133:                               "Tables report baseline failed, table %s not found",
-        -:  134:                               CmdPtr -> Name);
-        1:  135:            CS_AppData.CmdErrCounter++;
-        -:  136:        }
-        -:  137:    }
-        -:  138:    return;
-        -:  139:} /* End of CS_ReportBaselineTablesCmd () */
-        -:  140:
-        -:  141:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  142:/*                                                                 */
-        -:  143:/* CS Recompute the baseline of an entry in the Tables table cmd   */
+        -:   93:/* CS Report the baseline checksum of an entry in the Tables table */
+        -:   94:/*                                                                 */
+        -:   95:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:   96:void CS_ReportBaselineTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:   97:{
+        -:   98:    /* command verification variables */
+        4:   99:    uint16                                  ExpectedLength = sizeof(CS_TableNameCmd_t);
+        -:  100:    
+        -:  101:    CS_TableNameCmd_t                     * CmdPtr;
+        -:  102:    CS_Res_Tables_Table_Entry_t           * ResultsEntry; 
+        -:  103:    uint32                                  Baseline;
+        -:  104:    
+        -:  105:    /* Verify command packet length */
+        4:  106:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  107:    {
+        3:  108:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
+        -:  109:        
+        3:  110:        CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN - 1] = '\0';
+        3:  111:        if ( CS_GetTableResTblEntryByName(&ResultsEntry, CmdPtr -> Name))
+        -:  112:        {
+        2:  113:            if (ResultsEntry -> ComputedYet == TRUE)
+        -:  114:            {
+        1:  115:                Baseline = ResultsEntry -> ComparisonValue;
+        1:  116:                CFE_EVS_SendEvent (CS_BASELINE_TABLES_INF_EID,
+        -:  117:                                   CFE_EVS_INFORMATION,
+        -:  118:                                   "Report baseline of table %s is 0x%08X", 
+        -:  119:                                   CmdPtr -> Name,
+        -:  120:                                   (unsigned int)Baseline);
+        -:  121:            }
+        -:  122:            else
+        -:  123:            {
+        1:  124:                CFE_EVS_SendEvent (CS_NO_BASELINE_TABLES_INF_EID,
+        -:  125:                                   CFE_EVS_INFORMATION,
+        -:  126:                                   "Report baseline of table %s has not been computed yet", 
+        -:  127:                                   CmdPtr -> Name);   
+        -:  128:            }
+        2:  129:            CS_AppData.CmdCounter++;
+        -:  130:        }
+        -:  131:        else
+        -:  132:        {
+        1:  133:            CFE_EVS_SendEvent (CS_BASELINE_INVALID_NAME_TABLES_ERR_EID,
+        -:  134:                               CFE_EVS_ERROR,
+        -:  135:                               "Tables report baseline failed, table %s not found",
+        -:  136:                               CmdPtr -> Name);
+        1:  137:            CS_AppData.CmdErrCounter++;
+        -:  138:        }
+        -:  139:    }
+        4:  140:    return;
+        -:  141:} /* End of CS_ReportBaselineTablesCmd () */
+        -:  142:
+        -:  143:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  144:/*                                                                 */
-        -:  145:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  146:void CS_RecomputeBaselineTablesCmd (CFE_SB_MsgPtr_t MessagePtr)
-function CS_RecomputeBaselineTablesCmd called 5 returned 100% blocks executed 100%
-        5:  147:{
-        -:  148:    /* command verification variables */
-        5:  149:    uint16                                  ExpectedLength = sizeof(CS_TableNameCmd_t);
-        -:  150:    
-        -:  151:    uint32                                  ChildTaskID;
-        -:  152:    int32                                   Status;
-        -:  153:    CS_TableNameCmd_t                     * CmdPtr;
-        -:  154:    CS_Res_Tables_Table_Entry_t           * ResultsEntry;
-        -:  155:    
-        -:  156:    /* Verify command packet length */
+        -:  145:/* CS Recompute the baseline of an entry in the Tables table cmd   */
+        -:  146:/*                                                                 */
+        -:  147:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  148:void CS_RecomputeBaselineTablesCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  149:{
+        -:  150:    /* command verification variables */
+        5:  151:    uint16                                  ExpectedLength = sizeof(CS_TableNameCmd_t);
+        -:  152:    
+        -:  153:    uint32                                  ChildTaskID;
+        -:  154:    int32                                   Status;
+        -:  155:    CS_TableNameCmd_t                     * CmdPtr;
+        -:  156:    CS_Res_Tables_Table_Entry_t           * ResultsEntry;
         -:  157:    
-        5:  158:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:  159:    {
-        5:  160:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
-        -:  161:        
-        5:  162:        if (CS_AppData.ChildTaskInUse == FALSE)
-branch  0 taken 60% (fallthrough)
-branch  1 taken 40%
-        -:  163:        {            
-        -:  164:            /* make sure the entry is a valid number and is defined in the table */
-        -:  165:            
-        3:  166:            CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN - 1] = '\0';
+        -:  158:    /* Verify command packet length */
+        -:  159:    
+        5:  160:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  161:    {
+        4:  162:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
+        -:  163:        
+        7:  164:        if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
+        -:  165:        {            
+        -:  166:            /* make sure the entry is a valid number and is defined in the table */
         -:  167:            
-        3:  168:            if (CS_GetTableResTblEntryByName(&ResultsEntry, CmdPtr -> Name))
-call    0 returned 100%
-branch  1 taken 67% (fallthrough)
-branch  2 taken 33%
-        -:  169:            {
-        -:  170:                /* There is no child task running right now, we can use it*/
-        2:  171:                CS_AppData.ChildTaskInUse                = TRUE;
-        2:  172:                CS_AppData.OneShotTaskInUse              = FALSE;
-        -:  173:                
-        -:  174:                /* fill in child task variables */
-        2:  175:                CS_AppData.ChildTaskTable                = CS_TABLES_TABLE;
-        -:  176:                
+        3:  168:            CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN - 1] = '\0';
+        -:  169:            
+        3:  170:            if (CS_GetTableResTblEntryByName(&ResultsEntry, CmdPtr -> Name))
+        -:  171:            {
+        -:  172:                /* There is no child task running right now, we can use it*/
+        2:  173:                CS_AppData.RecomputeInProgress           = TRUE;
+        -:  174:                
+        -:  175:                /* fill in child task variables */
+        2:  176:                CS_AppData.ChildTaskTable                = CS_TABLES_TABLE;
         -:  177:                
         -:  178:                
-        2:  179:                CS_AppData.RecomputeTablesEntryPtr = ResultsEntry;
-        -:  180:                
-        2:  181:                Status= CFE_ES_CreateChildTask(&ChildTaskID,
-call    0 returned 100%
-        -:  182:                                               CS_RECOMP_TABLES_TASK_NAME,
-        -:  183:                                               CS_RecomputeTablesChildTask,
-        -:  184:                                               NULL,
-        -:  185:                                               CFE_ES_DEFAULT_STACK_SIZE,
-        -:  186:                                               CS_CHILD_TASK_PRIORITY,
-        -:  187:                                               0);
-        2:  188:                if (Status ==CFE_SUCCESS)
-branch  0 taken 50% (fallthrough)
-branch  1 taken 50%
-        -:  189:                {
-        1:  190:                    CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_STARTED_DBG_EID,
-call    0 returned 100%
-        -:  191:                                       CFE_EVS_DEBUG,
-        -:  192:                                       "Recompute baseline of table %s started", 
-        -:  193:                                       CmdPtr -> Name);
-        1:  194:                    CS_AppData.CmdCounter++;
-        -:  195:                }
-        -:  196:                else/* child task creation failed */
-        -:  197:                {
-        1:  198:                    CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_CREATE_CHDTASK_ERR_EID,
-call    0 returned 100%
-        -:  199:                                       CFE_EVS_ERROR,
-        -:  200:                                       "Recompute baseline of table %s failed, CFE_ES_CreateChildTask returned: 0x%08X",
-        -:  201:                                       CmdPtr -> Name,
-        -:  202:                                       Status);
-        1:  203:                    CS_AppData.CmdErrCounter++;
-        1:  204:                    CS_AppData.ChildTaskInUse = FALSE;
-        -:  205:                }
-        -:  206:            }
-        -:  207:            else
-        -:  208:            {
-        1:  209:                CFE_EVS_SendEvent (CS_RECOMPUTE_UNKNOWN_NAME_TABLES_ERR_EID,
-call    0 returned 100%
-        -:  210:                                   CFE_EVS_ERROR,
-        -:  211:                                   "Tables recompute baseline failed, table %s not found",
-        -:  212:                                   CmdPtr -> Name);
-        1:  213:                CS_AppData.CmdErrCounter++;
-        -:  214:            }
-        -:  215:        }
-        -:  216:        else
-        -:  217:        {
-        -:  218:            /*send event that we can't start another task right now */
-        2:  219:            CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_CHDTASK_ERR_EID,
-call    0 returned 100%
-        -:  220:                               CFE_EVS_ERROR,
-        -:  221:                                "Tables recompute baseline for table %s failed: a child task is in use",
-        -:  222:                               CmdPtr -> Name);
-        2:  223:            CS_AppData.CmdErrCounter++;
-        -:  224:        }
-        -:  225:    }
-        -:  226:    return;
-        -:  227:}/* end CS_RecomputeBaselineTablesCmd */
-        -:  228:
-        -:  229:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  230:/*                                                                 */
-        -:  231:/* CS Disable a specific entry in the Tables table command         */
-        -:  232:/*                                                                 */
-        -:  233:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  234:void CS_DisableNameTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function CS_DisableNameTablesCmd called 4 returned 100% blocks executed 100%
-        4:  235:{
-        -:  236:    /* command verification variables */
-        4:  237:    uint16                                  ExpectedLength = sizeof(CS_TableNameCmd_t);
-        -:  238:    CS_TableNameCmd_t                     * CmdPtr;
-        -:  239:    
-        -:  240:    CS_Res_Tables_Table_Entry_t           * ResultsEntry;
-        -:  241:    CS_Def_Tables_Table_Entry_t           * DefinitionEntry;
-        -:  242:    
-        -:  243:    /* Verify command packet length */
-        4:  244:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength)  )
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:  245:    {
-        4:  246:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
-        -:  247:        
-        4:  248:        CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN - 1] = '\0';
-        -:  249:        
-        4:  250:        if ( CS_GetTableResTblEntryByName( &ResultsEntry, CmdPtr -> Name))
-call    0 returned 100%
-branch  1 taken 75% (fallthrough)
-branch  2 taken 25%
-        -:  251:        {
-        -:  252:            
-        3:  253:            ResultsEntry -> State = CS_STATE_DISABLED;
-        3:  254:            ResultsEntry -> TempChecksumValue = 0;
-        3:  255:            ResultsEntry -> ByteOffset = 0;
-        -:  256:            
-        3:  257:            CFE_EVS_SendEvent (CS_DISABLE_TABLES_NAME_INF_EID,
-call    0 returned 100%
-        -:  258:                               CFE_EVS_INFORMATION,
-        -:  259:                               "Checksumming of table %s is Disabled", 
-        -:  260:                               CmdPtr -> Name);
-        -:  261:             
-        3:  262:            if ( CS_GetTableDefTblEntryByName( &DefinitionEntry, CmdPtr -> Name))
-call    0 returned 100%
-branch  1 taken 67% (fallthrough)
-branch  2 taken 33%
-        -:  263:            {
-        2:  264:                DefinitionEntry -> State = CS_STATE_DISABLED;
-        2:  265:                CFE_TBL_Modified(CS_AppData.DefTablesTableHandle);
-call    0 returned 100%
-        -:  266:            }
-        -:  267:            else 
-        -:  268:            {
-        1:  269:                CFE_EVS_SendEvent (CS_DISABLE_TABLE_DEF_NOT_FOUND_DBG_EID,
-call    0 returned 100%
-        -:  270:                                   CFE_EVS_DEBUG,
-        -:  271:                                   "CS unable to update tables definition table for entry %s", 
-        -:  272:                                   CmdPtr -> Name);
-        -:  273:            }
-        -:  274:
-        -:  275:            
-        3:  276:            CS_AppData.CmdCounter++;
-        -:  277:        }
-        -:  278:        else
-        -:  279:        {
-        1:  280:            CFE_EVS_SendEvent (CS_DISABLE_TABLES_UNKNOWN_NAME_ERR_EID,
-call    0 returned 100%
-        -:  281:                               CFE_EVS_ERROR,
-        -:  282:                               "Tables disable table command failed, table %s not found",
-        -:  283:                               CmdPtr -> Name);
-        1:  284:            CS_AppData.CmdErrCounter++;
-        -:  285:        }
-        -:  286:    }
-        -:  287:    return;
-        -:  288:} /* End of CS_DisableNameTablesCmd () */
-        -:  289:
-        -:  290:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  291:/*                                                                 */
-        -:  292:/* CS Enable a specific entry in the Tables table command          */
+        -:  179:                
+        2:  180:                CS_AppData.RecomputeTablesEntryPtr = ResultsEntry;
+        -:  181:                
+        2:  182:                Status= CFE_ES_CreateChildTask(&ChildTaskID,
+        -:  183:                                               CS_RECOMP_TABLES_TASK_NAME,
+        -:  184:                                               CS_RecomputeTablesChildTask,
+        -:  185:                                               NULL,
+        -:  186:                                               CFE_ES_DEFAULT_STACK_SIZE,
+        -:  187:                                               CS_CHILD_TASK_PRIORITY,
+        -:  188:                                               0);
+        2:  189:                if (Status ==CFE_SUCCESS)
+        -:  190:                {
+        1:  191:                    CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_STARTED_DBG_EID,
+        -:  192:                                       CFE_EVS_DEBUG,
+        -:  193:                                       "Recompute baseline of table %s started", 
+        -:  194:                                       CmdPtr -> Name);
+        1:  195:                    CS_AppData.CmdCounter++;
+        -:  196:                }
+        -:  197:                else/* child task creation failed */
+        -:  198:                {
+        1:  199:                    CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_CREATE_CHDTASK_ERR_EID,
+        -:  200:                                       CFE_EVS_ERROR,
+        -:  201:                                       "Recompute baseline of table %s failed, CFE_ES_CreateChildTask returned: 0x%08X",
+        -:  202:                                       CmdPtr -> Name,
+        -:  203:                                       (unsigned int)Status);
+        1:  204:                    CS_AppData.CmdErrCounter++;
+        1:  205:                    CS_AppData.RecomputeInProgress = FALSE;
+        -:  206:                }
+        -:  207:            }
+        -:  208:            else
+        -:  209:            {
+        1:  210:                CFE_EVS_SendEvent (CS_RECOMPUTE_UNKNOWN_NAME_TABLES_ERR_EID,
+        -:  211:                                   CFE_EVS_ERROR,
+        -:  212:                                   "Tables recompute baseline failed, table %s not found",
+        -:  213:                                   CmdPtr -> Name);
+        1:  214:                CS_AppData.CmdErrCounter++;
+        -:  215:            }
+        -:  216:        }
+        -:  217:        else
+        -:  218:        {
+        -:  219:            /*send event that we can't start another task right now */
+        1:  220:            CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_CHDTASK_ERR_EID,
+        -:  221:                               CFE_EVS_ERROR,
+        -:  222:                                "Tables recompute baseline for table %s failed: child task in use",
+        -:  223:                               CmdPtr -> Name);
+        1:  224:            CS_AppData.CmdErrCounter++;
+        -:  225:        }
+        -:  226:    }
+        5:  227:    return;
+        -:  228:}/* end CS_RecomputeBaselineTablesCmd */
+        -:  229:
+        -:  230:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  231:/*                                                                 */
+        -:  232:/* CS Disable a specific entry in the Tables table command         */
+        -:  233:/*                                                                 */
+        -:  234:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  235:void CS_DisableNameTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  236:{
+        -:  237:    /* command verification variables */
+        4:  238:    uint16                                  ExpectedLength = sizeof(CS_TableNameCmd_t);
+        -:  239:    CS_TableNameCmd_t                     * CmdPtr;
+        -:  240:    
+        -:  241:    CS_Res_Tables_Table_Entry_t           * ResultsEntry;
+        -:  242:    CS_Def_Tables_Table_Entry_t           * DefinitionEntry;
+        -:  243:    
+        -:  244:    /* Verify command packet length */
+        4:  245:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength)  )
+        -:  246:    {
+        3:  247:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
+        -:  248:        
+        3:  249:        CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN - 1] = '\0';
+        -:  250:        
+        3:  251:        if ( CS_GetTableResTblEntryByName( &ResultsEntry, CmdPtr -> Name))
+        -:  252:        {
+        -:  253:            
+        2:  254:            ResultsEntry -> State = CS_STATE_DISABLED;
+        2:  255:            ResultsEntry -> TempChecksumValue = 0;
+        2:  256:            ResultsEntry -> ByteOffset = 0;
+        -:  257:            
+        2:  258:            CFE_EVS_SendEvent (CS_DISABLE_TABLES_NAME_INF_EID,
+        -:  259:                               CFE_EVS_INFORMATION,
+        -:  260:                               "Checksumming of table %s is Disabled", 
+        -:  261:                               CmdPtr -> Name);
+        -:  262:             
+        2:  263:            if ( CS_GetTableDefTblEntryByName( &DefinitionEntry, CmdPtr -> Name))
+        -:  264:            {
+        1:  265:                DefinitionEntry -> State = CS_STATE_DISABLED;
+        1:  266:                CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);                
+        1:  267:                CFE_TBL_Modified(CS_AppData.DefTablesTableHandle);
+        -:  268:            }
+        -:  269:            else 
+        -:  270:            {
+        1:  271:                CFE_EVS_SendEvent (CS_DISABLE_TABLE_DEF_NOT_FOUND_DBG_EID,
+        -:  272:                                   CFE_EVS_DEBUG,
+        -:  273:                                   "CS unable to update tables definition table for entry %s", 
+        -:  274:                                   CmdPtr -> Name);
+        -:  275:            }
+        -:  276:
+        -:  277:            
+        2:  278:            CS_AppData.CmdCounter++;
+        -:  279:        }
+        -:  280:        else
+        -:  281:        {
+        1:  282:            CFE_EVS_SendEvent (CS_DISABLE_TABLES_UNKNOWN_NAME_ERR_EID,
+        -:  283:                               CFE_EVS_ERROR,
+        -:  284:                               "Tables disable table command failed, table %s not found",
+        -:  285:                               CmdPtr -> Name);
+        1:  286:            CS_AppData.CmdErrCounter++;
+        -:  287:        }
+        -:  288:    }
+        4:  289:    return;
+        -:  290:} /* End of CS_DisableNameTablesCmd () */
+        -:  291:
+        -:  292:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  293:/*                                                                 */
-        -:  294:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  295:void CS_EnableNameTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
-function CS_EnableNameTablesCmd called 4 returned 100% blocks executed 100%
-        4:  296:{
-        -:  297:    /* command verification variables */
-        4:  298:    uint16                                 ExpectedLength = sizeof(CS_TableNameCmd_t);
-        -:  299:    CS_TableNameCmd_t                    * CmdPtr;
-        -:  300:    
-        -:  301:    CS_Res_Tables_Table_Entry_t          * ResultsEntry; 
-        -:  302:    CS_Def_Tables_Table_Entry_t           * DefinitionEntry;
-        -:  303:
-        -:  304:    /* Verify command packet length */
-        4:  305:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:  306:    {
-        4:  307:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
-        -:  308:        
-        4:  309:        CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN -1 ] = '\0';
-        -:  310:     
-        4:  311:        if ( CS_GetTableResTblEntryByName(&ResultsEntry,CmdPtr -> Name))
-call    0 returned 100%
-branch  1 taken 75% (fallthrough)
-branch  2 taken 25%
-        -:  312:        {
-        3:  313:            ResultsEntry -> State = CS_STATE_ENABLED;
-        -:  314:            
-        3:  315:            CFE_EVS_SendEvent (CS_ENABLE_TABLES_NAME_INF_EID,
-call    0 returned 100%
-        -:  316:                               CFE_EVS_INFORMATION,
-        -:  317:                               "Checksumming of table %s is Enabled", 
-        -:  318:                                CmdPtr -> Name);
-        -:  319:            
-        3:  320:            if ( CS_GetTableDefTblEntryByName( &DefinitionEntry, CmdPtr -> Name))
-call    0 returned 100%
-branch  1 taken 67% (fallthrough)
-branch  2 taken 33%
-        -:  321:            {
-        2:  322:                DefinitionEntry -> State = CS_STATE_ENABLED;
-        2:  323:                CFE_TBL_Modified(CS_AppData.DefTablesTableHandle);
-call    0 returned 100%
-        -:  324:            }
-        -:  325:            else 
-        -:  326:            {
-        1:  327:                CFE_EVS_SendEvent (CS_ENABLE_TABLE_DEF_NOT_FOUND_DBG_EID,
-call    0 returned 100%
-        -:  328:                                   CFE_EVS_DEBUG,
-        -:  329:                                   "CS unable to update tables definition table for entry %s", 
-        -:  330:                                   CmdPtr -> Name);
-        -:  331:            }
-        -:  332:            
-        3:  333:            CS_AppData.CmdCounter++;
-        -:  334:        }
-        -:  335:        else
-        -:  336:        {
-        1:  337:            CFE_EVS_SendEvent (CS_ENABLE_TABLES_UNKNOWN_NAME_ERR_EID,
-call    0 returned 100%
-        -:  338:                               CFE_EVS_ERROR,
-        -:  339:                               "Tables enable table command failed, table %s not found",
-        -:  340:                               CmdPtr -> Name);
-        1:  341:            CS_AppData.CmdErrCounter++;
-        -:  342:        }
-        -:  343:    }
-        -:  344:    return;
-        -:  345:} /* End of CS_EnableNameTablesCmd () */
-        -:  346:
-        -:  347:/************************/
-        -:  348:/*  End of File Comment */
-        -:  349:/************************/
-        -:  350:
+        -:  294:/* CS Enable a specific entry in the Tables table command          */
+        -:  295:/*                                                                 */
+        -:  296:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  297:void CS_EnableNameTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  298:{
+        -:  299:    /* command verification variables */
+        4:  300:    uint16                                 ExpectedLength = sizeof(CS_TableNameCmd_t);
+        -:  301:    CS_TableNameCmd_t                    * CmdPtr;
+        -:  302:    
+        -:  303:    CS_Res_Tables_Table_Entry_t          * ResultsEntry; 
+        -:  304:    CS_Def_Tables_Table_Entry_t           * DefinitionEntry;
+        -:  305:
+        -:  306:    /* Verify command packet length */
+        4:  307:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  308:    {
+        3:  309:        CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
+        -:  310:        
+        3:  311:        CmdPtr -> Name[CFE_TBL_MAX_FULL_NAME_LEN -1 ] = '\0';
+        -:  312:     
+        3:  313:        if ( CS_GetTableResTblEntryByName(&ResultsEntry,CmdPtr -> Name))
+        -:  314:        {
+        2:  315:            ResultsEntry -> State = CS_STATE_ENABLED;
+        -:  316:            
+        2:  317:            CFE_EVS_SendEvent (CS_ENABLE_TABLES_NAME_INF_EID,
+        -:  318:                               CFE_EVS_INFORMATION,
+        -:  319:                               "Checksumming of table %s is Enabled", 
+        -:  320:                                CmdPtr -> Name);
+        -:  321:            
+        2:  322:            if ( CS_GetTableDefTblEntryByName( &DefinitionEntry, CmdPtr -> Name))
+        -:  323:            {
+        1:  324:                DefinitionEntry -> State = CS_STATE_ENABLED;
+        1:  325:                CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);                
+        1:  326:                CFE_TBL_Modified(CS_AppData.DefTablesTableHandle);
+        -:  327:            }
+        -:  328:            else 
+        -:  329:            {
+        1:  330:                CFE_EVS_SendEvent (CS_ENABLE_TABLE_DEF_NOT_FOUND_DBG_EID,
+        -:  331:                                   CFE_EVS_DEBUG,
+        -:  332:                                   "CS unable to update tables definition table for entry %s", 
+        -:  333:                                   CmdPtr -> Name);
+        -:  334:            }
+        -:  335:            
+        2:  336:            CS_AppData.CmdCounter++;
+        -:  337:        }
+        -:  338:        else
+        -:  339:        {
+        1:  340:            CFE_EVS_SendEvent (CS_ENABLE_TABLES_UNKNOWN_NAME_ERR_EID,
+        -:  341:                               CFE_EVS_ERROR,
+        -:  342:                               "Tables enable table command failed, table %s not found",
+        -:  343:                               CmdPtr -> Name);
+        1:  344:            CS_AppData.CmdErrCounter++;
+        -:  345:        }
+        -:  346:    }
+        4:  347:    return;
+        -:  348:} /* End of CS_EnableNameTablesCmd () */
+        -:  349:
+        -:  350:/************************/
+        -:  351:/*  End of File Comment */
+        -:  352:/************************/
+        -:  353:

@@ -1,0 +1,121 @@
+{
+   "name": "Test Scheduler Activity Table",
+   "description": ["Default to 1Hz HK requests for small set of apps",
+                   "Changes to this file must be coordinated test procedures"],
+  
+   "slot-array": [
+      
+      {"slot": {
+      
+         "index": 0, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "cFE ES Housekeeping",
+               "descr":   "",
+               "index":   0,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 0
+            }},
+
+            {"activity": {
+               "name":    "cFE EVS Housekeeping",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 1
+            }}
+         ]
+      }},   
+
+   
+      {"slot": {
+      
+         "index": 1, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "cFE SB Housekeeping",
+               "descr":   "",
+               "index":   0,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 2
+            }},
+            
+            {"activity": {
+               "name":    "cFE TBL Housekeeping",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 3
+            }}
+
+         ]
+      }},   
+
+      {"slot": {
+   
+         "index": 2, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "Time Housekeeping",
+               "descr":   "",
+               "index":   0,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 4
+            }},
+                        
+            {"activity": {
+               "name":    "KIT_CI Housekeeping",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 36
+            }}
+            
+         ]
+      }},   
+   
+      {"slot": {
+      
+         "index": 3, 
+         "activity-array" : [
+
+            {"activity": {
+               "name":    "KIT_SCH Housekeeping",
+               "descr":   "",
+               "index":   0,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 37
+            }},
+
+            {"activity": {
+               "name":    "KIT_TO Housekeeping",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 38
+            }}
+
+         ]
+      }}
+   ]
+}
+

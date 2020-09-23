@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_compute.h 1.3.1.1 2015/03/03 11:57:20EST sstrege Exp  $
+ **   $Id: cs_compute.h 1.3 2017/02/16 15:33:09EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -20,19 +20,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_compute.h  $
- **   Revision 1.3.1.1 2015/03/03 11:57:20EST sstrege 
- **   Added copyright information
- **   Revision 1.3 2008/07/28 14:05:32EDT njyanchik 
- **   Fix some errors with the version number update
- **   Revision 1.2 2008/07/23 15:34:43BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:12EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 #ifndef _cs_compute_
 #define _cs_compute_

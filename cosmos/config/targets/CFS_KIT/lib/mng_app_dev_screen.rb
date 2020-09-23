@@ -146,9 +146,9 @@ def build_create_app_screen
    LABEL \"  \"
    NAMED_WIDGET Line1  LABEL \"  1. Select a template from the drop down menu. Click <Template Info> to get a description of the template.\"  
    SETTING TEXTCOLOR 0 0 153
-   NAMED_WIDGET Line2  LABEL \"  2. Modify the cFS and COSMOS target directories below if necessary\"
+   NAMED_WIDGET Line2  LABEL \"  2. Modify the cFS and COSMOS target directories below. Not necessary with default OSK configuration.\"
    SETTING TEXTCOLOR 0 0 153
-   NAMED_WIDGET Line3  LABEL \"  3. Click <Create App> to generate the code\"
+   NAMED_WIDGET Line3  LABEL \"  3. Click <Create App> to generate the code.\"
    SETTING TEXTCOLOR 0 0 153
    LABEL \"  \"
   

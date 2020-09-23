@@ -1,0 +1,447 @@
+
+{
+"name": "Kit Scheduler (KIT_SCH) Scheduler Activity Table",
+"description": "KIT_SCH table dumped at 1980-013-07:54:48.20213",
+"slot-array": [
+   {"slot": {
+      "index": 0,
+      "activity-array" : [
+         {"activity": {
+         "index": 0,
+         "enabled": "false",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 0
+      }},
+         {"activity": {
+         "index": 1,
+         "enabled": "true",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 22
+      }},
+         {"activity": {
+         "index": 2,
+         "enabled": "true",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 19
+      }},
+         {"activity": {
+         "index": 3,
+         "enabled": "true",
+         "period": 2,
+         "offset": 0,
+         "msg-idx": 11
+      }},
+         {"activity": {
+         "index": 4,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 5,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 6,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 7,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 8,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 44
+      }},
+         {"activity": {
+         "index": 9,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 34
+      }},
+         {"activity": {
+         "index": 10,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 0
+      }},
+         {"activity": {
+         "index": 11,
+         "enabled": "true",
+         "period": 4,
+         "offset": 1,
+         "msg-idx": 1
+      }},
+         {"activity": {
+         "index": 12,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 2
+      }},
+         {"activity": {
+         "index": 13,
+         "enabled": "true",
+         "period": 4,
+         "offset": 3,
+         "msg-idx": 3
+      }},
+         {"activity": {
+         "index": 14,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 4
+      }}
+      ]
+   }},
+   {"slot": {
+      "index": 1,
+      "activity-array" : [
+         {"activity": {
+         "index": 0,
+         "enabled": "false",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 17
+      }},
+         {"activity": {
+         "index": 1,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 24
+      }},
+         {"activity": {
+         "index": 2,
+         "enabled": "false",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 25
+      }},
+         {"activity": {
+         "index": 3,
+         "enabled": "true",
+         "period": 10,
+         "offset": 0,
+         "msg-idx": 33
+      }},
+         {"activity": {
+         "index": 4,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 5,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 6,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 7,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 8,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 45
+      }},
+         {"activity": {
+         "index": 9,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 30
+      }},
+         {"activity": {
+         "index": 10,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 36
+      }},
+         {"activity": {
+         "index": 11,
+         "enabled": "true",
+         "period": 4,
+         "offset": 1,
+         "msg-idx": 37
+      }},
+         {"activity": {
+         "index": 12,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 38
+      }},
+         {"activity": {
+         "index": 13,
+         "enabled": "true",
+         "period": 4,
+         "offset": 3,
+         "msg-idx": 21
+      }},
+         {"activity": {
+         "index": 14,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 10
+      }}
+      ]
+   }},
+   {"slot": {
+      "index": 2,
+      "activity-array" : [
+         {"activity": {
+         "index": 0,
+         "enabled": "false",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 0
+      }},
+         {"activity": {
+         "index": 1,
+         "enabled": "true",
+         "period": 2,
+         "offset": 1,
+         "msg-idx": 15
+      }},
+         {"activity": {
+         "index": 2,
+         "enabled": "true",
+         "period": 2,
+         "offset": 0,
+         "msg-idx": 27
+      }},
+         {"activity": {
+         "index": 3,
+         "enabled": "true",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 43
+      }},
+         {"activity": {
+         "index": 4,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 5,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 6,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 7,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 8,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 32
+      }},
+         {"activity": {
+         "index": 9,
+         "enabled": "true",
+         "period": 4,
+         "offset": 1,
+         "msg-idx": 20
+      }},
+         {"activity": {
+         "index": 10,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 13
+      }},
+         {"activity": {
+         "index": 11,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 23
+      }},
+         {"activity": {
+         "index": 12,
+         "enabled": "true",
+         "period": 3,
+         "offset": 2,
+         "msg-idx": 26
+      }},
+         {"activity": {
+         "index": 13,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 39
+      }},
+         {"activity": {
+         "index": 14,
+         "enabled": "true",
+         "period": 4,
+         "offset": 2,
+         "msg-idx": 16
+      }}
+      ]
+   }},
+   {"slot": {
+      "index": 3,
+      "activity-array" : [
+         {"activity": {
+         "index": 0,
+         "enabled": "true",
+         "period": 1,
+         "offset": 0,
+         "msg-idx": 35
+      }},
+         {"activity": {
+         "index": 1,
+         "enabled": "true",
+         "period": 2,
+         "offset": 0,
+         "msg-idx": 31
+      }},
+         {"activity": {
+         "index": 2,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 3,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 4,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 5,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 6,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 7,
+         "enabled": "false",
+         "period": 0,
+         "offset": 0,
+         "msg-idx": 200
+      }},
+         {"activity": {
+         "index": 8,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 100
+      }},
+         {"activity": {
+         "index": 9,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 40
+      }},
+         {"activity": {
+         "index": 10,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 41
+      }},
+         {"activity": {
+         "index": 11,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 42
+      }},
+         {"activity": {
+         "index": 12,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 12
+      }},
+         {"activity": {
+         "index": 13,
+         "enabled": "true",
+         "period": 4,
+         "offset": 0,
+         "msg-idx": 18
+      }},
+         {"activity": {
+         "index": 14,
+         "enabled": "true",
+         "period": 4,
+         "offset": 1,
+         "msg-idx": 14
+      }}
+      ]
+   }}
+   ]
+}

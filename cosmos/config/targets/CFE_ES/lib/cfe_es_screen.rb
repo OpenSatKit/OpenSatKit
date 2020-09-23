@@ -64,11 +64,14 @@ def cfe_es_scr_cmd(screen, cmd)
       display("CFS_KIT PERF_MON_SCREEN",1500,10)
 
    when "DEMO"
+      Osk::System.check_n_start_cfs
       case screen.get_named_widget("demo").text
       when "APP_MGMT"
          display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
       when "PERF_MON"
          display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
+      when "PERF_MON_SCRIPT"
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_perf_mon.rb")
       end
 
    when "TUTORIAL"

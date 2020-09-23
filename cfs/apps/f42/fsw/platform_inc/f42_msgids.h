@@ -30,8 +30,8 @@
 #define  F42_HK_TLM_MID    (0x09D0)
 #define  F42_CONTROL_MID   (0x09D1)
 
-#define  F42_SENSOR_MID    (0x09E0)
-#define  F42_ACTUATOR_MID  (0x09E1)
+#define  F42_SENSOR_MID    (0x09D2)
+#define  F42_ACTUATOR_MID  (0x09D3)
 
 
 #endif /*_f42_msgids_*/

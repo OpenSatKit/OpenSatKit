@@ -1,1509 +1,1144 @@
-        -:    0:Source:/home/aschoening/pwned/apps/cs/fsw/src/cs_table_processing.c
-        -:    0:Graph:cs_table_processing.gcno
-        -:    0:Data:cs_table_processing.gcda
-        -:    0:Runs:1
-        -:    0:Programs:8
+        -:    0:Source:../src/cs_table_processing.c
+        -:    0:Programs:9
         -:    1:/************************************************************************
         -:    2: ** File:
-        -:    3: **   $Id: cs_table_processing.c.gcov 1.7 2012/09/14 17:20:44EDT aschoeni Exp  $
+        -:    3: **   $Id: cs_table_processing.c.gcov 1.3 2017/03/17 19:34:38EDT mdeschu Exp  $
         -:    4: **
-        -:    5: ** Purpose: 
-        -:    6: **   The CFS Checksum (CS) Application's table updating functions 
-        -:    7: **
-        -:    8: **   $Log: cs_table_processing.c.gcov  $
-        -:    8: **   Revision 1.7 2012/09/14 17:20:44EDT aschoeni 
-        -:    8: **   Updated for fix to disable error in def table command
-        -:    9: **   Revision 1.12 2012/06/20 15:31:13EDT lwalling 
-        -:   10: **   Fix potential buffer overflow (18507:1)
-        -:   11: **   Revision 1.11 2011/09/06 11:39:20PDT jmdagost 
-        -:   12: **   Changed local data structures to pointers and updated code accordingly.
-        -:   13: **   Revision 1.10 2011/06/15 16:19:15EDT jmdagost 
-        -:   14: **   Initialized all local variables except local structures and some strings.
-        -:   15: **   Revision 1.9 2011/06/15 13:17:52EDT jmdagost 
-        -:   16: **   Added a line to reset NumChars for each table-entry loop iteration.
-        -:   17: **   Revision 1.8 2010/05/28 11:14:34EDT jmdagost 
-        -:   18: **   Included cs_tbldefs.h to eliminate potential compiler warnings.
-        -:   19: **   Revision 1.7 2010/04/13 17:59:15EDT jmdagost 
-        -:   20: **   Updated table validation.  Check for zero-length apps/tables names if enabled/disabled, check for duplicate name entries for apps/tables, report validation status for memory/eeprom/apps/tables.
-        -:   21: **   Revision 1.6 2010/03/09 17:00:05EST jmdagost 
-        -:   22: **   Corrected file read validation in table initialization.
-        -:   23: **   Revision 1.5 2009/06/18 10:11:53EDT rmcgraw 
-        -:   24: **   DCR8291:1 Changed #defines from OS_MEM_ to CFE_PSP_MEM_
-        -:   25: **   Revision 1.4 2009/06/11 11:20:15EDT rmcgraw 
-        -:   26: **   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-        -:   27: **   Revision 1.3 2008/10/17 08:37:01EDT njyanchik 
-        -:   28: **   Ipdated variables displayed in event messages
-        -:   29: **   Revision 1.2 2008/07/23 15:34:41BST njyanchik 
-        -:   30: **   Check in of CS Unit test
-        -:   31: **   Revision 1.1 2008/06/13 09:04:21EDT njyanchik 
-        -:   32: **   Initial revision
-        -:   33: **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
-        -:   34: ** 
-        -:   35: *************************************************************************/
+        -:    5: **   Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6: **   Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **   All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **   This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **   used, distributed and modified only pursuant to the terms of that 
+        -:   12: **   agreement.
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   The CFS Checksum (CS) Application's table updating functions 
+        -:   16: **
+        -:   17: *************************************************************************/
+        -:   18:
+        -:   19:/*************************************************************************
+        -:   20: **
+        -:   21: ** Include section
+        -:   22: **
+        -:   23: **************************************************************************/
+        -:   24:#include "cfe.h"
+        -:   25:#include "cs_app.h"
+        -:   26:#include "cs_events.h"
+        -:   27:#include "cs_tbldefs.h"
+        -:   28:#include "cs_utils.h"
+        -:   29:#include <string.h>
+        -:   30:
+        -:   31:/*************************************************************************
+        -:   32: **
+        -:   33: ** Local function prototypes
+        -:   34: **
+        -:   35: **************************************************************************/
         -:   36:
-        -:   37:/*************************************************************************
-        -:   38: **
-        -:   39: ** Include section
-        -:   40: **
-        -:   41: **************************************************************************/
-        -:   42:#include "cfe.h"
-        -:   43:#include "cs_app.h"
-        -:   44:#include "cs_events.h"
-        -:   45:#include "cs_tbldefs.h"
-        -:   46:#include <string.h>
-        -:   47:
-        -:   48:/*************************************************************************
-        -:   49: **
-        -:   50: ** Local function prototypes
-        -:   51: **
-        -:   52: **************************************************************************/
-        -:   53:
-        -:   54:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   55:/*                                                                 */
-        -:   56:/* CS Validation Callback function for Eeprom Table                */
-        -:   57:/*                                                                 */
-        -:   58:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   59:int32 CS_ValidateEepromChecksumDefinitionTable (void * TblPtr)
-function CS_ValidateEepromChecksumDefinitionTable called 16 returned 100% blocks executed 100%
-       16:   60:{
-       16:   61:    int32                                       Result       = CFE_SUCCESS;
-       16:   62:    int32                                       Status       = OS_ERROR;
-       16:   63:    CS_Def_EepromMemory_Table_Entry_t         * StartOfTable = NULL;
-       16:   64:    CS_Def_EepromMemory_Table_Entry_t         * OuterEntry   = NULL;
-       16:   65:    int32                                       OuterLoop    = 0;
-       16:   66:    uint32                                      StateField   = 0;
-       16:   67:    uint32                                      Address      = 0;
-       16:   68:    uint32                                      Size         = 0;
-       16:   69:    int32                                       GoodCount    = 0;
-       16:   70:    int32                                       BadCount     = 0;
-       16:   71:    int32                                       EmptyCount   = 0;
-        -:   72:    
-       16:   73:    StartOfTable = (CS_Def_EepromMemory_Table_Entry_t *) TblPtr;
-        -:   74:    
-      272:   75:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; OuterLoop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:   76:    {
-      256:   77:        OuterEntry = & StartOfTable [OuterLoop];
-        -:   78:        
-      256:   79:        StateField = OuterEntry->State;
-      256:   80:        Address    = OuterEntry->StartAddress;
-      256:   81:        Size       = OuterEntry->NumBytesToChecksum;
-        -:   82:        
-      511:   83:        if ((StateField == CS_STATE_EMPTY) ||
-branch  0 taken 74% (fallthrough)
-branch  1 taken 26%
-branch  2 taken 4% (fallthrough)
-branch  3 taken 96%
-branch  4 taken 86% (fallthrough)
-branch  5 taken 14%
-        -:   84:            (StateField == CS_STATE_ENABLED) ||
-        -:   85:            (StateField ==  CS_STATE_DISABLED))
-        -:   86:        {
-        -:   87:            /* If the StateField is within this range, it's check if it's not empty. */
-      444:   88:            if (StateField == CS_STATE_DISABLED || StateField == CS_STATE_ENABLED)
-branch  0 taken 98% (fallthrough)
-branch  1 taken 2%
-branch  2 taken 73% (fallthrough)
-branch  3 taken 27%
-        -:   89:            {
-      189:   90:                Status = CFE_PSP_MemValidateRange(Address,Size,CFE_PSP_MEM_EEPROM);
-call    0 returned 100%
-      189:   91:                if (Status != OS_SUCCESS)
-branch  0 taken 7% (fallthrough)
-branch  1 taken 93%
-        -:   92:                {
-       13:   93:                    BadCount++;
-       13:   94:                    if (Result != CS_TABLE_ERROR)
-branch  0 taken 8% (fallthrough)
-branch  1 taken 92%
-        -:   95:                    {
-        1:   96:                        CFE_EVS_SendEvent (CS_VAL_EEPROM_RANGE_ERR_EID,
-call    0 returned 100%
-        -:   97:                                           CFE_EVS_ERROR,
-        -:   98:                                           "Eeprom Table Validate: Illegal checksum range found in Entry ID %d, CFE_PSP_MemValidateRange returned: 0x%08X",
-        -:   99:                                           OuterLoop,
-        -:  100:                                           Status);
-        1:  101:                        Result = CS_TABLE_ERROR;
-        -:  102:                    }
-        -:  103:                }
-        -:  104:                else 
-        -:  105:                {
-        -:  106:                    /* Valid range for non-empty entry */
-      176:  107:                    GoodCount++;
-        -:  108:                }
-        -:  109:            }
-        -:  110:            else
-        -:  111:            {
-        -:  112:                /* Entry is marked as empty */
-       66:  113:                EmptyCount++;    
-        -:  114:            }
-        -:  115:        }
-        -:  116:        else
-        -:  117:        {
-        -:  118:            /* Invalid state definition */
-        1:  119:            BadCount++;
-        1:  120:            if (Result != CS_TABLE_ERROR)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  121:            {
-        1:  122:                CFE_EVS_SendEvent (CS_VAL_EEPROM_STATE_ERR_EID,
-call    0 returned 100%
-        -:  123:                                   CFE_EVS_ERROR,
-        -:  124:                                   "Eeprom Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
-        -:  125:                                   StateField,
-        -:  126:                                   OuterLoop);
-        1:  127:                Result = CS_TABLE_ERROR;            
-        -:  128:            }
-        -:  129:        }
-        -:  130:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; OuterLoop++) */
-        -:  131:    
-       16:  132:    CFE_EVS_SendEvent(CS_VAL_EEPROM_INF_EID,
-call    0 returned 100%
-        -:  133:                      CFE_EVS_INFORMATION,
-        -:  134:                      "CS Eeprom Table verification results: good = %d, bad = %d, unused = %d",
-        -:  135:                      GoodCount,
-        -:  136:                      BadCount,
-        -:  137:                      EmptyCount);
-        -:  138:
-       16:  139:    return (Result);
-        -:  140:}   /* CS_ValidateEEPROMCheckSumDefinitionTable */
-        -:  141:
-        -:  142:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  143:/*                                                                 */
-        -:  144:/* CS Validation Callback function for Memory Table                */
-        -:  145:/*                                                                 */
-        -:  146:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  147:int32 CS_ValidateMemoryChecksumDefinitionTable (void * TblPtr)
-function CS_ValidateMemoryChecksumDefinitionTable called 15 returned 100% blocks executed 100%
-       15:  148:{
-       15:  149:    int32                                       Result       = CFE_SUCCESS;
-       15:  150:    int32                                       Status       = OS_ERROR;
-       15:  151:    CS_Def_EepromMemory_Table_Entry_t         * StartOfTable = NULL;
-       15:  152:    CS_Def_EepromMemory_Table_Entry_t         * OuterEntry   = NULL;
-       15:  153:    int32                                       OuterLoop    = 0;
-       15:  154:    uint32                                      StateField   = 0;
-       15:  155:    uint32                                      Address      = 0;
-       15:  156:    uint32                                      Size         = 0;
-       15:  157:    int32                                       GoodCount    = 0;
-       15:  158:    int32                                       BadCount     = 0;
-       15:  159:    int32                                       EmptyCount   = 0;
-        -:  160:    
-       15:  161:    StartOfTable = (CS_Def_EepromMemory_Table_Entry_t *) TblPtr;
-        -:  162:    
-       15:  163:    Result = CFE_SUCCESS;
-        -:  164:    
-      255:  165:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; OuterLoop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:  166:    {
-      240:  167:        OuterEntry = & StartOfTable [OuterLoop];
-        -:  168:        
-      240:  169:        StateField = OuterEntry -> State;
-      240:  170:        Address    = OuterEntry -> StartAddress;
-      240:  171:        Size       = OuterEntry -> NumBytesToChecksum;
-        -:  172:        
-      479:  173:        if ((StateField == CS_STATE_EMPTY)  ||
-branch  0 taken 73% (fallthrough)
-branch  1 taken 28%
-branch  2 taken 7% (fallthrough)
-branch  3 taken 93%
-branch  4 taken 92% (fallthrough)
-branch  5 taken 8%
-        -:  174:            (StateField == CS_STATE_ENABLED) ||
-        -:  175:            (StateField ==  CS_STATE_DISABLED))
-        -:  176:        {
-        -:  177:            /* If the StateField is within this range, check if it's not empty. */
-      412:  178:            if (StateField == CS_STATE_DISABLED || StateField == CS_STATE_ENABLED)
-branch  0 taken 95% (fallthrough)
-branch  1 taken 5%
-branch  2 taken 71% (fallthrough)
-branch  3 taken 29%
-        -:  179:            {
-      173:  180:                Status = CFE_PSP_MemValidateRange(Address,Size,CFE_PSP_MEM_ANY);
-call    0 returned 100%
-      173:  181:                if (Status != OS_SUCCESS)
-branch  0 taken 8% (fallthrough)
-branch  1 taken 92%
-        -:  182:                {
-       13:  183:                    BadCount++;
-       13:  184:                    if (Result != CS_TABLE_ERROR)
-branch  0 taken 8% (fallthrough)
-branch  1 taken 92%
-        -:  185:                    {
-        1:  186:                        CFE_EVS_SendEvent (CS_VAL_MEMORY_RANGE_ERR_EID,
-call    0 returned 100%
-        -:  187:                                           CFE_EVS_ERROR,
-        -:  188:                                           "Memory Table Validate: Illegal checksum range found in Entry ID %d, CFE_PSP_MemValidateRange returned: 0x%08X",
-        -:  189:                                           OuterLoop,
-        -:  190:                                           Status);
-        1:  191:                        Result = CS_TABLE_ERROR;
-        -:  192:                    }
-        -:  193:                }
-        -:  194:                else 
-        -:  195:                {
-        -:  196:                    /* Valid range for non-empty entry */
-      160:  197:                    GoodCount++;
-        -:  198:                }
-        -:  199:            }
-        -:  200:            else
-        -:  201:            {
-        -:  202:                /* Entry is marked as empty */
-       66:  203:                EmptyCount++;    
-        -:  204:            }
-        -:  205:        }
-        -:  206:        else
-        -:  207:        {
-        -:  208:            /* Invalid state definition */
-        1:  209:            BadCount++;
-        1:  210:            if (Result != CS_TABLE_ERROR)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  211:            {
-        1:  212:                CFE_EVS_SendEvent (CS_VAL_MEMORY_STATE_ERR_EID, CFE_EVS_ERROR,
-call    0 returned 100%
-        -:  213:                                   "Memory Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
-        -:  214:                                   StateField, OuterLoop);
-        -:  215:            
-        1:  216:                Result = CS_TABLE_ERROR;
-        -:  217:            }
-        -:  218:        }
-        -:  219:                
-        -:  220:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; OuterLoop++) */
-        -:  221:    
-       15:  222:    CFE_EVS_SendEvent(CS_VAL_MEMORY_INF_EID,
-call    0 returned 100%
-        -:  223:                      CFE_EVS_INFORMATION,
-        -:  224:                      "CS Memory Table verification results: good = %d, bad = %d, unused = %d",
-        -:  225:                      GoodCount,
-        -:  226:                      BadCount,
-        -:  227:                      EmptyCount);
-        -:  228:        
-       15:  229:    return (Result);
-        -:  230:}   /* CS_ValidateMemoryCheckSumDefinitionTable */
-        -:  231:
-        -:  232:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  233:/*                                                                 */
-        -:  234:/* CS Validation Callback function for Tables Table                */
-        -:  235:/*                                                                 */
-        -:  236:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  237:int32 CS_ValidateTablesChecksumDefinitionTable (void * TblPtr)
-function CS_ValidateTablesChecksumDefinitionTable called 14 returned 100% blocks executed 100%
-       14:  238:{
-       14:  239:    int32                                       Result         = CFE_SUCCESS;
-       14:  240:    CS_Def_Tables_Table_Entry_t               * StartOfTable   = NULL;
-       14:  241:    CS_Def_Tables_Table_Entry_t               * OuterEntry     = NULL;
-       14:  242:    int32                                       OuterLoop      = 0;
-       14:  243:    int32                                       InnerLoop      = 0;
-       14:  244:    uint32                                      StateField     = 0;
-       14:  245:    int32                                       GoodCount      = 0;
-       14:  246:    int32                                       BadCount       = 0;
-       14:  247:    int32                                       EmptyCount     = 0;
-       14:  248:    boolean                                     DuplicateFound = FALSE;
-        -:  249:    
-       14:  250:    StartOfTable = (CS_Def_Tables_Table_Entry_t *) TblPtr;
-        -:  251:    
-      350:  252:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; OuterLoop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  253:    {
-      336:  254:        OuterEntry = & StartOfTable [OuterLoop];
-        -:  255:        
-      336:  256:        StateField = OuterEntry -> State;
-        -:  257:        
-        -:  258:        /* Check for non-zero length for table name */
-      336:  259:        if (strlen(OuterEntry->Name) != 0)
-branch  0 taken 52% (fallthrough)
-branch  1 taken 48%
-        -:  260:        {
-        -:  261:            /* Verify valid state definition */
-      347:  262:            if (((StateField == CS_STATE_EMPTY) || 
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-branch  2 taken 6% (fallthrough)
-branch  3 taken 94%
-branch  4 taken 90% (fallthrough)
-branch  5 taken 10%
-        -:  263:                (StateField == CS_STATE_ENABLED) ||
-        -:  264:                (StateField ==  CS_STATE_DISABLED) ))
-        -:  265:            {
-      173:  266:                DuplicateFound = FALSE;
-        -:  267:                
-        -:  268:                /* Verify the name field is not duplicated */
-     2402:  269:                for (InnerLoop = OuterLoop+1; InnerLoop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; InnerLoop++)
-branch  0 taken 93%
-branch  1 taken 7% (fallthrough)
-        -:  270:                {
-     2229:  271:                    if (strncmp(OuterEntry->Name, (&StartOfTable[InnerLoop])->Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0)
-call    0 returned 100%
-branch  1 taken 1% (fallthrough)
-branch  2 taken 99%
-        -:  272:                    {
-        6:  273:                        if (DuplicateFound != TRUE)
-branch  0 taken 83% (fallthrough)
-branch  1 taken 17%
-        -:  274:                        {
-        5:  275:                            DuplicateFound = TRUE;
-        5:  276:                            BadCount++;
-        -:  277:                        }
-        -:  278:                        
-        6:  279:                        if (Result != CS_TABLE_ERROR)
-branch  0 taken 17% (fallthrough)
-branch  1 taken 83%
-        -:  280:                        {
-        -:  281:                            /* Duplicate name entry found */
-        1:  282:                            CFE_EVS_SendEvent (CS_VAL_TABLES_DEF_TBL_DUPL_ERR_EID,
-call    0 returned 100%
-        -:  283:                                               CFE_EVS_ERROR,
-        -:  284:                                               "CS Tables Table Validate: Duplicate Name (%s) found at entries %d and %d",
-        -:  285:                                               OuterEntry -> Name,
-        -:  286:                                               InnerLoop,
-        -:  287:                                               OuterLoop);
-        -:  288:                        
-        1:  289:                            Result = CS_TABLE_ERROR;
-        -:  290:                        }
-        -:  291:                    }
-        -:  292:                }
-        -:  293:                
-        -:  294:                /* Increment success/empty counter if name wasn't duplicated */
-      173:  295:                if (DuplicateFound != TRUE)
-branch  0 taken 97% (fallthrough)
-branch  1 taken 3%
-        -:  296:                {
-      168:  297:                    if (StateField != CS_STATE_EMPTY)
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-        -:  298:                    {
-      167:  299:                        GoodCount++;
-        -:  300:                    }
-        -:  301:                    else
-        -:  302:                    {
-        1:  303:                        EmptyCount++;
-        -:  304:                    }
-        -:  305:                }
-        -:  306:            }
-        -:  307:            else
-        -:  308:            {
-        1:  309:                if (Result != CS_TABLE_ERROR)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  310:                {
-        1:  311:                    CFE_EVS_SendEvent (CS_VAL_TABLES_STATE_ERR_EID,
-call    0 returned 100%
-        -:  312:                                       CFE_EVS_ERROR,
-        -:  313:                                       "CS Tables Table Validate: Illegal State Field (0x%04X) found with name %s",
-        -:  314:                                       StateField, 
-        -:  315:                                       OuterEntry -> Name);
-        -:  316:            
-        1:  317:                    Result = CS_TABLE_ERROR;
-        1:  318:                    BadCount++;
-        -:  319:                }
-        -:  320:            }
-        -:  321:        }
-        -:  322:        else 
-        -:  323:        {
-        -:  324:            /* Only entries marked as Empty can have zero-length names */
-      162:  325:            if (StateField != CS_STATE_EMPTY)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  326:            {
-        -:  327:                /* Bad state for empty name */
-        1:  328:                if (Result != CS_TABLE_ERROR)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  329:                {
-        1:  330:                    CFE_EVS_SendEvent (CS_VAL_TABLES_DEF_TBL_ZERO_NAME_ERR_EID,
-call    0 returned 100%
-        -:  331:                                       CFE_EVS_ERROR,
-        -:  332:                                       "CS Tables Table Validate: Illegal State (0x%04X) with empty name at entry %d",
-        -:  333:                                       StateField,
-        -:  334:                                       OuterLoop);
-        -:  335:                    
-        1:  336:                    Result = CS_TABLE_ERROR;
-        1:  337:                    BadCount++;
-        -:  338:                }
-        -:  339:            }
-        -:  340:            else
-        -:  341:            {
-      161:  342:                EmptyCount++;
-        -:  343:            }
-        -:  344:        }
-        -:  345:
-        -:  346:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; OuterLoop++) */
-        -:  347:    
-       14:  348:    CFE_EVS_SendEvent(CS_VAL_TABLES_INF_EID,
-call    0 returned 100%
-        -:  349:                      CFE_EVS_INFORMATION,
-        -:  350:                      "CS Tables Table verification results: good = %d, bad = %d, unused = %d",
-        -:  351:                      GoodCount,
-        -:  352:                      BadCount,
-        -:  353:                      EmptyCount);
-        -:  354:        
-       14:  355:    return (Result);
-        -:  356:}   /* CS_ValidateTablesCheckSumDefinitionTable */
-        -:  357:
-        -:  358:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  359:/*                                                                 */
-        -:  360:/* CS Validation Callback function for App Table                   */
-        -:  361:/*                                                                 */
-        -:  362:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  363:int32 CS_ValidateAppChecksumDefinitionTable (void * TblPtr)
-function CS_ValidateAppChecksumDefinitionTable called 16 returned 100% blocks executed 100%
-       16:  364:{
-       16:  365:    int32                                       Result         = CFE_SUCCESS;
-       16:  366:    CS_Def_App_Table_Entry_t                  * StartOfTable   = NULL;
-       16:  367:    CS_Def_App_Table_Entry_t                  * OuterEntry     = NULL;
-       16:  368:    int32                                       OuterLoop      = 0;
-       16:  369:    int32                                       InnerLoop      = 0;
-       16:  370:    uint32                                      StateField     = 0;
-       16:  371:    int32                                       GoodCount      = 0;
-       16:  372:    int32                                       BadCount       = 0;
-       16:  373:    int32                                       EmptyCount     = 0;
-       16:  374:    boolean                                     DuplicateFound = FALSE;
-        -:  375:    
-       16:  376:    StartOfTable = (CS_Def_App_Table_Entry_t *) TblPtr;
-        -:  377:    
-      400:  378:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_APP_TABLE_ENTRIES; OuterLoop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  379:    {
-      384:  380:        OuterEntry = & StartOfTable [OuterLoop];
-        -:  381:        
-      384:  382:        StateField = OuterEntry -> State;
-        -:  383:
-        -:  384:        /* Check for non-zero length for table name */
-      384:  385:        if (strlen(OuterEntry->Name) != 0)
-branch  0 taken 51% (fallthrough)
-branch  1 taken 49%
-        -:  386:        {
-        -:  387:            /* Verify valid state definition */
-      389:  388:            if (((StateField == CS_STATE_EMPTY) || 
-branch  0 taken 98% (fallthrough)
-branch  1 taken 2%
-branch  2 taken 9% (fallthrough)
-branch  3 taken 91%
-branch  4 taken 94% (fallthrough)
-branch  5 taken 6%
-        -:  389:                 (StateField == CS_STATE_ENABLED) ||
-        -:  390:                 (StateField ==  CS_STATE_DISABLED) ))
-        -:  391:            {
-      194:  392:                DuplicateFound = FALSE;
-        -:  393:                
-        -:  394:                /* Verify the name field is not duplicated */
-     2699:  395:                for (InnerLoop = OuterLoop+1; InnerLoop < CS_MAX_NUM_APP_TABLE_ENTRIES; InnerLoop++)
-branch  0 taken 93%
-branch  1 taken 7% (fallthrough)
-        -:  396:                {
-     2505:  397:                    if (strncmp(OuterEntry->Name, (&StartOfTable[InnerLoop])->Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0)
-call    0 returned 100%
-branch  1 taken 1% (fallthrough)
-branch  2 taken 99%
-        -:  398:                    {
-        5:  399:                        if (DuplicateFound != TRUE)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  400:                        {
-        5:  401:                            DuplicateFound = TRUE;
-        5:  402:                            BadCount++;
-        -:  403:                        }
-        -:  404:                        
-        5:  405:                        if (Result != CS_TABLE_ERROR)
-branch  0 taken 20% (fallthrough)
-branch  1 taken 80%
-        -:  406:                        {
-        -:  407:                            /* Duplicate name entry found */
-        1:  408:                            CFE_EVS_SendEvent (CS_VAL_APP_DEF_TBL_DUPL_ERR_EID,
-call    0 returned 100%
-        -:  409:                                               CFE_EVS_ERROR,
-        -:  410:                                               "CS Apps Table Validate: Duplicate Name (%s) found at entries %d and %d",
-        -:  411:                                               OuterEntry -> Name,
-        -:  412:                                               InnerLoop,
-        -:  413:                                               OuterLoop);
-        -:  414:                            
-        1:  415:                            Result = CS_TABLE_ERROR;
-        -:  416:                        }
-        -:  417:                    }
-        -:  418:                }
-        -:  419:                
-        -:  420:                /* Increment success/empty counter if name wasn't duplicated */
-      194:  421:                if (DuplicateFound != TRUE)
-branch  0 taken 97% (fallthrough)
-branch  1 taken 3%
-        -:  422:                {
-      189:  423:                    if (StateField != CS_STATE_EMPTY)
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-        -:  424:                    {
-      187:  425:                        GoodCount++;
-        -:  426:                    }
-        -:  427:                    else
-        -:  428:                    {
-        2:  429:                        EmptyCount++;
-        -:  430:                    }
-        -:  431:                }
-        -:  432:            }
-        -:  433:            else
-        -:  434:            {
-        1:  435:                if (Result != CS_TABLE_ERROR)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  436:                {
-        1:  437:                    CFE_EVS_SendEvent (CS_VAL_APP_STATE_ERR_EID,
-call    0 returned 100%
-        -:  438:                                       CFE_EVS_ERROR,
-        -:  439:                                       "CS Apps Table Validate: Illegal State Field (0x%04X) found with name %s",
-        -:  440:                                       StateField, 
-        -:  441:                                       OuterEntry -> Name);
-        -:  442:                    
-        1:  443:                    Result = CS_TABLE_ERROR;
-        1:  444:                    BadCount++;
-        -:  445:                }
-        -:  446:            }
-        -:  447:        }
-        -:  448:        else 
-        -:  449:        {
-        -:  450:            /* Only entries marked as Empty can have zero-length names */
-      189:  451:            if (StateField != CS_STATE_EMPTY)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  452:            {
-        -:  453:                /* Bad state for empty name */
-        1:  454:                if (Result != CS_TABLE_ERROR)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  455:                {
-        1:  456:                    CFE_EVS_SendEvent (CS_VAL_APP_DEF_TBL_ZERO_NAME_ERR_EID,
-call    0 returned 100%
-        -:  457:                                       CFE_EVS_ERROR,
-        -:  458:                                       "CS Apps Table Validate: Illegal State (0x%04X) with empty name at entry %d",
-        -:  459:                                       StateField,
-        -:  460:                                       OuterLoop);
-        -:  461:                    
-        1:  462:                    Result = CS_TABLE_ERROR;
-        1:  463:                    BadCount++;
-        -:  464:                }
-        -:  465:            }
-        -:  466:            else
-        -:  467:            {
-      188:  468:                EmptyCount++;
-        -:  469:            }
-        -:  470:        }
-        -:  471:        
-        -:  472:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_APPS_TABLE_ENTRIES; OuterLoop++) */
-        -:  473:    
-       16:  474:    CFE_EVS_SendEvent(CS_VAL_APP_INF_EID,
-call    0 returned 100%
-        -:  475:                      CFE_EVS_INFORMATION,
-        -:  476:                      "CS Apps Table verification results: good = %d, bad = %d, unused = %d",
-        -:  477:                      GoodCount,
-        -:  478:                      BadCount,
-        -:  479:                      EmptyCount);
-        -:  480:    
-       16:  481:    return (Result);
-        -:  482:}   /* CS_ValidateAppCheckSumDefinitionTable */
-        -:  483:
-        -:  484:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  485:/*                                                                 */
-        -:  486:/* CS  processing new definition tables for Eeprom or Memory       */
-        -:  487:/*                                                                 */
-        -:  488:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  489:void CS_ProcessNewEepromMemoryDefinitionTable (CS_Def_EepromMemory_Table_Entry_t   * DefinitionTblPtr, 
-        -:  490:                                               CS_Res_EepromMemory_Table_Entry_t      * ResultsTblPtr,
-        -:  491:                                                uint16 NumEntries, 
-        -:  492:                                                uint16 Table)
-function CS_ProcessNewEepromMemoryDefinitionTable called 27 returned 100% blocks executed 100%
-       27:  493:{
-       27:  494:    CS_Def_EepromMemory_Table_Entry_t         * StartOfDefTable     = NULL;
-       27:  495:    CS_Def_EepromMemory_Table_Entry_t         * DefEntry            = NULL;
-       27:  496:    CS_Res_EepromMemory_Table_Entry_t         * StartOfResultsTable = NULL;
-       27:  497:    CS_Res_EepromMemory_Table_Entry_t         * ResultsEntry        = NULL;
-       27:  498:    uint16                                      Loop                = 0;
-       27:  499:    uint16                                      NumRegionsInTable   = 0;
-       27:  500:    uint16                                      PreviousState       = CS_STATE_EMPTY;
-        -:  501:    char                                        TableType[CS_TABLETYPE_NAME_SIZE];
+        -:   37:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   38:/*                                                                 */
+        -:   39:/* CS Validation Callback function for Eeprom Table                */
+        -:   40:/*                                                                 */
+        -:   41:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:   42:int32 CS_ValidateEepromChecksumDefinitionTable (void * TblPtr)
+        -:   43:{
+        4:   44:    int32                                       Result       = CFE_SUCCESS;
+        4:   45:    int32                                       Status       = OS_ERROR;
+        4:   46:    CS_Def_EepromMemory_Table_Entry_t         * StartOfTable = NULL;
+        4:   47:    CS_Def_EepromMemory_Table_Entry_t         * OuterEntry   = NULL;
+        4:   48:    int32                                       OuterLoop    = 0;
+        4:   49:    uint32                                      StateField   = 0;
+        4:   50:    uint32                                      Address      = 0;
+        4:   51:    uint32                                      Size         = 0;
+        4:   52:    int32                                       GoodCount    = 0;
+        4:   53:    int32                                       BadCount     = 0;
+        4:   54:    int32                                       EmptyCount   = 0;
+        -:   55:    
+        4:   56:    StartOfTable = (CS_Def_EepromMemory_Table_Entry_t *) TblPtr;
+        -:   57:    
+       68:   58:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; OuterLoop++)
+        -:   59:    {
+       64:   60:        OuterEntry = & StartOfTable [OuterLoop];
+        -:   61:        
+       64:   62:        StateField = OuterEntry->State;
+       64:   63:        Address    = OuterEntry->StartAddress;
+       64:   64:        Size       = OuterEntry->NumBytesToChecksum;
+        -:   65:        
+      127:   66:        if ((StateField == CS_STATE_EMPTY) ||
+        -:   67:            (StateField == CS_STATE_ENABLED) ||
+        -:   68:            (StateField ==  CS_STATE_DISABLED))
+        -:   69:        {
+        -:   70:            /* If the StateField is within this range, it's check if it's not empty. */
+       66:   71:            if (StateField == CS_STATE_DISABLED || StateField == CS_STATE_ENABLED)
+        -:   72:            {
+        3:   73:                Status = CFE_PSP_MemValidateRange(Address,Size,CFE_PSP_MEM_EEPROM);
+        3:   74:                if (Status != OS_SUCCESS)
+        -:   75:                {
+        2:   76:                    BadCount++;
+        2:   77:                    if (Result != CS_TABLE_ERROR)
+        -:   78:                    {
+        2:   79:                        CFE_EVS_SendEvent (CS_VAL_EEPROM_RANGE_ERR_EID,
+        -:   80:                                           CFE_EVS_ERROR,
+        -:   81:                                           "Eeprom Table Validate: Illegal checksum range found in Entry ID %d, CFE_PSP_MemValidateRange returned: 0x%08X",
+        -:   82:                                           (int)OuterLoop,
+        -:   83:                                           (unsigned int)Status);
+        2:   84:                        Result = CS_TABLE_ERROR;
+        -:   85:                    }
+        -:   86:                }
+        -:   87:                else 
+        -:   88:                {
+        -:   89:                    /* Valid range for non-empty entry */
+        1:   90:                    GoodCount++;
+        -:   91:                }
+        -:   92:            }
+        -:   93:            else
+        -:   94:            {
+        -:   95:                /* Entry is marked as empty */
+       60:   96:                EmptyCount++;    
+        -:   97:            }
+        -:   98:        }
+        -:   99:        else
+        -:  100:        {
+        -:  101:            /* Invalid state definition */
+        1:  102:            BadCount++;
+        1:  103:            if (Result != CS_TABLE_ERROR)
+        -:  104:            {
+        1:  105:                CFE_EVS_SendEvent (CS_VAL_EEPROM_STATE_ERR_EID,
+        -:  106:                                   CFE_EVS_ERROR,
+        -:  107:                                   "Eeprom Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
+        1:  108:                                   (unsigned short)StateField,
+        -:  109:                                   (int)OuterLoop);
+        1:  110:                Result = CS_TABLE_ERROR;            
+        -:  111:            }
+        -:  112:        }
+        -:  113:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; OuterLoop++) */
+        -:  114:    
+        4:  115:    CFE_EVS_SendEvent(CS_VAL_EEPROM_INF_EID,
+        -:  116:                      CFE_EVS_INFORMATION,
+        -:  117:                      "CS Eeprom Table verification results: good = %d, bad = %d, unused = %d",
+        -:  118:                      (int)GoodCount,
+        -:  119:                      (int)BadCount,
+        -:  120:                      (int)EmptyCount);
+        -:  121:
+        4:  122:    return (Result);
+        -:  123:}   /* CS_ValidateEEPROMCheckSumDefinitionTable */
+        -:  124:
+        -:  125:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  126:/*                                                                 */
+        -:  127:/* CS Validation Callback function for Memory Table                */
+        -:  128:/*                                                                 */
+        -:  129:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  130:int32 CS_ValidateMemoryChecksumDefinitionTable (void * TblPtr)
+        -:  131:{
+        4:  132:    int32                                       Result       = CFE_SUCCESS;
+        4:  133:    int32                                       Status       = OS_ERROR;
+        4:  134:    CS_Def_EepromMemory_Table_Entry_t         * StartOfTable = NULL;
+        4:  135:    CS_Def_EepromMemory_Table_Entry_t         * OuterEntry   = NULL;
+        4:  136:    int32                                       OuterLoop    = 0;
+        4:  137:    uint32                                      StateField   = 0;
+        4:  138:    uint32                                      Address      = 0;
+        4:  139:    uint32                                      Size         = 0;
+        4:  140:    int32                                       GoodCount    = 0;
+        4:  141:    int32                                       BadCount     = 0;
+        4:  142:    int32                                       EmptyCount   = 0;
+        -:  143:    
+        4:  144:    StartOfTable = (CS_Def_EepromMemory_Table_Entry_t *) TblPtr;
+        -:  145:    
+        4:  146:    Result = CFE_SUCCESS;
+        -:  147:    
+       68:  148:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; OuterLoop++)
+        -:  149:    {
+       64:  150:        OuterEntry = & StartOfTable [OuterLoop];
+        -:  151:        
+       64:  152:        StateField = OuterEntry -> State;
+       64:  153:        Address    = OuterEntry -> StartAddress;
+       64:  154:        Size       = OuterEntry -> NumBytesToChecksum;
+        -:  155:        
+      127:  156:        if ((StateField == CS_STATE_EMPTY)  ||
+        -:  157:            (StateField == CS_STATE_ENABLED) ||
+        -:  158:            (StateField ==  CS_STATE_DISABLED))
+        -:  159:        {
+        -:  160:            /* If the StateField is within this range, check if it's not empty. */
+       66:  161:            if (StateField == CS_STATE_DISABLED || StateField == CS_STATE_ENABLED)
+        -:  162:            {
+        3:  163:                Status = CFE_PSP_MemValidateRange(Address,Size,CFE_PSP_MEM_ANY);
+        3:  164:                if (Status != OS_SUCCESS)
+        -:  165:                {
+        2:  166:                    BadCount++;
+        2:  167:                    if (Result != CS_TABLE_ERROR)
+        -:  168:                    {
+        2:  169:                        CFE_EVS_SendEvent (CS_VAL_MEMORY_RANGE_ERR_EID,
+        -:  170:                                           CFE_EVS_ERROR,
+        -:  171:                                           "Memory Table Validate: Illegal checksum range found in Entry ID %d, CFE_PSP_MemValidateRange returned: 0x%08X",
+        -:  172:                                           (int)OuterLoop,
+        -:  173:                                           (unsigned int)Status);
+        2:  174:                        Result = CS_TABLE_ERROR;
+        -:  175:                    }
+        -:  176:                }
+        -:  177:                else 
+        -:  178:                {
+        -:  179:                    /* Valid range for non-empty entry */
+        1:  180:                    GoodCount++;
+        -:  181:                }
+        -:  182:            }
+        -:  183:            else
+        -:  184:            {
+        -:  185:                /* Entry is marked as empty */
+       60:  186:                EmptyCount++;    
+        -:  187:            }
+        -:  188:        }
+        -:  189:        else
+        -:  190:        {
+        -:  191:            /* Invalid state definition */
+        1:  192:            BadCount++;
+        1:  193:            if (Result != CS_TABLE_ERROR)
+        -:  194:            {
+        1:  195:                CFE_EVS_SendEvent (CS_VAL_MEMORY_STATE_ERR_EID, CFE_EVS_ERROR,
+        -:  196:                                   "Memory Table Validate: Illegal State Field (0x%04X) found in Entry ID %d",
+        1:  197:                                   (unsigned short)StateField, (int)OuterLoop);
+        -:  198:            
+        1:  199:                Result = CS_TABLE_ERROR;
+        -:  200:            }
+        -:  201:        }
+        -:  202:                
+        -:  203:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; OuterLoop++) */
+        -:  204:    
+        4:  205:    CFE_EVS_SendEvent(CS_VAL_MEMORY_INF_EID,
+        -:  206:                      CFE_EVS_INFORMATION,
+        -:  207:                      "CS Memory Table verification results: good = %d, bad = %d, unused = %d",
+        -:  208:                      (int)GoodCount,
+        -:  209:                      (int)BadCount,
+        -:  210:                      (int)EmptyCount);
+        -:  211:        
+        4:  212:    return (Result);
+        -:  213:}   /* CS_ValidateMemoryCheckSumDefinitionTable */
+        -:  214:
+        -:  215:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  216:/*                                                                 */
+        -:  217:/* CS Validation Callback function for Tables Table                */
+        -:  218:/*                                                                 */
+        -:  219:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  220:int32 CS_ValidateTablesChecksumDefinitionTable (void * TblPtr)
+        -:  221:{
+        6:  222:    int32                                       Result         = CFE_SUCCESS;
+        6:  223:    CS_Def_Tables_Table_Entry_t               * StartOfTable   = NULL;
+        6:  224:    CS_Def_Tables_Table_Entry_t               * OuterEntry     = NULL;
+        6:  225:    int32                                       OuterLoop      = 0;
+        6:  226:    int32                                       InnerLoop      = 0;
+        6:  227:    uint32                                      StateField     = 0;
+        6:  228:    int32                                       GoodCount      = 0;
+        6:  229:    int32                                       BadCount       = 0;
+        6:  230:    int32                                       EmptyCount     = 0;
+        6:  231:    boolean                                     DuplicateFound = FALSE;
+        -:  232:    
+        6:  233:    StartOfTable = (CS_Def_Tables_Table_Entry_t *) TblPtr;
+        -:  234:    
+      150:  235:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; OuterLoop++)
+        -:  236:    {
+      144:  237:        OuterEntry = & StartOfTable [OuterLoop];
+        -:  238:        
+      144:  239:        StateField = OuterEntry -> State;
+        -:  240:        
+        -:  241:        /* Check for non-zero length for table name */
+      144:  242:        if (strlen(OuterEntry->Name) != 0)
+        -:  243:        {
+        -:  244:            /* Verify valid state definition */
+       15:  245:            if (((StateField == CS_STATE_EMPTY) || 
+        -:  246:                (StateField == CS_STATE_ENABLED) ||
+        -:  247:                (StateField ==  CS_STATE_DISABLED) ))
+        -:  248:            {
+        7:  249:                DuplicateFound = FALSE;
+        -:  250:                
+        -:  251:                /* Verify the name field is not duplicated */
+      165:  252:                for (InnerLoop = OuterLoop+1; InnerLoop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; InnerLoop++)
+        -:  253:                {
+      158:  254:                    if (strncmp(OuterEntry->Name, (&StartOfTable[InnerLoop])->Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0)
+        -:  255:                    {
+        3:  256:                        if (DuplicateFound != TRUE)
+        -:  257:                        {
+        3:  258:                            DuplicateFound = TRUE;
+        3:  259:                            BadCount++;
+        -:  260:                        }
+        -:  261:                        
+        3:  262:                        if (Result != CS_TABLE_ERROR)
+        -:  263:                        {
+        -:  264:                            /* Duplicate name entry found */
+        3:  265:                            CFE_EVS_SendEvent (CS_VAL_TABLES_DEF_TBL_DUPL_ERR_EID,
+        -:  266:                                               CFE_EVS_ERROR,
+        -:  267:                                               "CS Tables Table Validate: Duplicate Name (%s) found at entries %d and %d",
+        -:  268:                                               OuterEntry -> Name,
+        -:  269:                                               (int)InnerLoop,
+        -:  270:                                               (int)OuterLoop);
+        -:  271:                        
+        3:  272:                            Result = CS_TABLE_ERROR;
+        -:  273:                        }
+        -:  274:                    }
+        -:  275:                }
+        -:  276:                
+        -:  277:                /* Increment success/empty counter if name wasn't duplicated */
+        7:  278:                if (DuplicateFound != TRUE)
+        -:  279:                {
+        4:  280:                    if (StateField != CS_STATE_EMPTY)
+        -:  281:                    {
+        3:  282:                        GoodCount++;
+        -:  283:                    }
+        -:  284:                    else
+        -:  285:                    {
+        1:  286:                        EmptyCount++;
+        -:  287:                    }
+        -:  288:                }
+        -:  289:            }
+        -:  290:            else
+        -:  291:            {
+        1:  292:                if (Result != CS_TABLE_ERROR)
+        -:  293:                {
+        2:  294:                    CFE_EVS_SendEvent (CS_VAL_TABLES_STATE_ERR_EID,
+        -:  295:                                       CFE_EVS_ERROR,
+        -:  296:                                       "CS Tables Table Validate: Illegal State Field (0x%04X) found with name %s",
+        1:  297:                                       (unsigned short)StateField, 
+        -:  298:                                       OuterEntry -> Name);
+        -:  299:            
+        1:  300:                    Result = CS_TABLE_ERROR;
+        1:  301:                    BadCount++;
+        -:  302:                }
+        -:  303:            }
+        -:  304:        }
+        -:  305:        else 
+        -:  306:        {
+        -:  307:            /* Only entries marked as Empty can have zero-length names */
+      136:  308:            if (StateField != CS_STATE_EMPTY)
+        -:  309:            {
+        -:  310:                /* Bad state for empty name */
+        1:  311:                if (Result != CS_TABLE_ERROR)
+        -:  312:                {
+        1:  313:                    CFE_EVS_SendEvent (CS_VAL_TABLES_DEF_TBL_ZERO_NAME_ERR_EID,
+        -:  314:                                       CFE_EVS_ERROR,
+        -:  315:                                       "CS Tables Table Validate: Illegal State (0x%04X) with empty name at entry %d",
+        1:  316:                                       (unsigned short)StateField,
+        -:  317:                                       (int)OuterLoop);
+        -:  318:                    
+        1:  319:                    Result = CS_TABLE_ERROR;
+        1:  320:                    BadCount++;
+        -:  321:                }
+        -:  322:            }
+        -:  323:            else
+        -:  324:            {
+      135:  325:                EmptyCount++;
+        -:  326:            }
+        -:  327:        }
+        -:  328:
+        -:  329:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; OuterLoop++) */
+        -:  330:    
+        6:  331:    CFE_EVS_SendEvent(CS_VAL_TABLES_INF_EID,
+        -:  332:                      CFE_EVS_INFORMATION,
+        -:  333:                      "CS Tables Table verification results: good = %d, bad = %d, unused = %d",
+        -:  334:                      (int)GoodCount,
+        -:  335:                      (int)BadCount,
+        -:  336:                      (int)EmptyCount);
+        -:  337:        
+        6:  338:    return (Result);
+        -:  339:}   /* CS_ValidateTablesCheckSumDefinitionTable */
+        -:  340:
+        -:  341:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  342:/*                                                                 */
+        -:  343:/* CS Validation Callback function for App Table                   */
+        -:  344:/*                                                                 */
+        -:  345:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  346:int32 CS_ValidateAppChecksumDefinitionTable (void * TblPtr)
+        -:  347:{
+        6:  348:    int32                                       Result         = CFE_SUCCESS;
+        6:  349:    CS_Def_App_Table_Entry_t                  * StartOfTable   = NULL;
+        6:  350:    CS_Def_App_Table_Entry_t                  * OuterEntry     = NULL;
+        6:  351:    int32                                       OuterLoop      = 0;
+        6:  352:    int32                                       InnerLoop      = 0;
+        6:  353:    uint32                                      StateField     = 0;
+        6:  354:    int32                                       GoodCount      = 0;
+        6:  355:    int32                                       BadCount       = 0;
+        6:  356:    int32                                       EmptyCount     = 0;
+        6:  357:    boolean                                     DuplicateFound = FALSE;
+        -:  358:    
+        6:  359:    StartOfTable = (CS_Def_App_Table_Entry_t *) TblPtr;
+        -:  360:    
+      150:  361:    for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_APP_TABLE_ENTRIES; OuterLoop++)
+        -:  362:    {
+      144:  363:        OuterEntry = & StartOfTable [OuterLoop];
+        -:  364:        
+      144:  365:        StateField = OuterEntry -> State;
+        -:  366:
+        -:  367:        /* Check for non-zero length for table name */
+      144:  368:        if (strlen(OuterEntry->Name) != 0)
+        -:  369:        {
+        -:  370:            /* Verify valid state definition */
+       15:  371:            if (((StateField == CS_STATE_EMPTY) || 
+        -:  372:                 (StateField == CS_STATE_ENABLED) ||
+        -:  373:                 (StateField ==  CS_STATE_DISABLED) ))
+        -:  374:            {
+        7:  375:                DuplicateFound = FALSE;
+        -:  376:                
+        -:  377:                /* Verify the name field is not duplicated */
+      165:  378:                for (InnerLoop = OuterLoop+1; InnerLoop < CS_MAX_NUM_APP_TABLE_ENTRIES; InnerLoop++)
+        -:  379:                {
+      158:  380:                    if (strncmp(OuterEntry->Name, (&StartOfTable[InnerLoop])->Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0)
+        -:  381:                    {
+        3:  382:                        if (DuplicateFound != TRUE)
+        -:  383:                        {
+        3:  384:                            DuplicateFound = TRUE;
+        3:  385:                            BadCount++;
+        -:  386:                        }
+        -:  387:                        
+        3:  388:                        if (Result != CS_TABLE_ERROR)
+        -:  389:                        {
+        -:  390:                            /* Duplicate name entry found */
+        3:  391:                            CFE_EVS_SendEvent (CS_VAL_APP_DEF_TBL_DUPL_ERR_EID,
+        -:  392:                                               CFE_EVS_ERROR,
+        -:  393:                                               "CS Apps Table Validate: Duplicate Name (%s) found at entries %d and %d",
+        -:  394:                                               OuterEntry -> Name,
+        -:  395:                                               (int)InnerLoop,
+        -:  396:                                               (int)OuterLoop);
+        -:  397:                            
+        3:  398:                            Result = CS_TABLE_ERROR;
+        -:  399:                        }
+        -:  400:                    }
+        -:  401:                }
+        -:  402:                
+        -:  403:                /* Increment success/empty counter if name wasn't duplicated */
+        7:  404:                if (DuplicateFound != TRUE)
+        -:  405:                {
+        4:  406:                    if (StateField != CS_STATE_EMPTY)
+        -:  407:                    {
+        3:  408:                        GoodCount++;
+        -:  409:                    }
+        -:  410:                    else
+        -:  411:                    {
+        1:  412:                        EmptyCount++;
+        -:  413:                    }
+        -:  414:                }
+        -:  415:            }
+        -:  416:            else
+        -:  417:            {
+        1:  418:                if (Result != CS_TABLE_ERROR)
+        -:  419:                {
+        2:  420:                    CFE_EVS_SendEvent (CS_VAL_APP_STATE_ERR_EID,
+        -:  421:                                       CFE_EVS_ERROR,
+        -:  422:                                       "CS Apps Table Validate: Illegal State Field (0x%04X) found with name %s",
+        1:  423:                                       (unsigned short)StateField, 
+        -:  424:                                       OuterEntry -> Name);
+        -:  425:                    
+        1:  426:                    Result = CS_TABLE_ERROR;
+        1:  427:                    BadCount++;
+        -:  428:                }
+        -:  429:            }
+        -:  430:        }
+        -:  431:        else 
+        -:  432:        {
+        -:  433:            /* Only entries marked as Empty can have zero-length names */
+      136:  434:            if (StateField != CS_STATE_EMPTY)
+        -:  435:            {
+        -:  436:                /* Bad state for empty name */
+        1:  437:                if (Result != CS_TABLE_ERROR)
+        -:  438:                {
+        1:  439:                    CFE_EVS_SendEvent (CS_VAL_APP_DEF_TBL_ZERO_NAME_ERR_EID,
+        -:  440:                                       CFE_EVS_ERROR,
+        -:  441:                                       "CS Apps Table Validate: Illegal State (0x%04X) with empty name at entry %d",
+        1:  442:                                       (unsigned short)StateField,
+        -:  443:                                       (int)OuterLoop);
+        -:  444:                    
+        1:  445:                    Result = CS_TABLE_ERROR;
+        1:  446:                    BadCount++;
+        -:  447:                }
+        -:  448:            }
+        -:  449:            else
+        -:  450:            {
+      135:  451:                EmptyCount++;
+        -:  452:            }
+        -:  453:        }
+        -:  454:        
+        -:  455:    }   /* for (OuterLoop = 0; OuterLoop < CS_MAX_NUM_APPS_TABLE_ENTRIES; OuterLoop++) */
+        -:  456:    
+        6:  457:    CFE_EVS_SendEvent(CS_VAL_APP_INF_EID,
+        -:  458:                      CFE_EVS_INFORMATION,
+        -:  459:                      "CS Apps Table verification results: good = %d, bad = %d, unused = %d",
+        -:  460:                      (int)GoodCount,
+        -:  461:                      (int)BadCount,
+        -:  462:                      (int)EmptyCount);
+        -:  463:    
+        6:  464:    return (Result);
+        -:  465:}   /* CS_ValidateAppCheckSumDefinitionTable */
+        -:  466:
+        -:  467:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  468:/*                                                                 */
+        -:  469:/* CS  processing new definition tables for Eeprom or Memory       */
+        -:  470:/*                                                                 */
+        -:  471:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        7:  472:void CS_ProcessNewEepromMemoryDefinitionTable (CS_Def_EepromMemory_Table_Entry_t   * DefinitionTblPtr, 
+        -:  473:                                               CS_Res_EepromMemory_Table_Entry_t      * ResultsTblPtr,
+        -:  474:                                                uint16 NumEntries, 
+        -:  475:                                                uint16 Table)
+        -:  476:{
+        7:  477:    CS_Def_EepromMemory_Table_Entry_t         * StartOfDefTable     = NULL;
+        7:  478:    CS_Def_EepromMemory_Table_Entry_t         * DefEntry            = NULL;
+        7:  479:    CS_Res_EepromMemory_Table_Entry_t         * StartOfResultsTable = NULL;
+        7:  480:    CS_Res_EepromMemory_Table_Entry_t         * ResultsEntry        = NULL;
+        7:  481:    uint16                                      Loop                = 0;
+        7:  482:    uint16                                      NumRegionsInTable   = 0;
+        7:  483:    uint16                                      PreviousState       = CS_STATE_EMPTY;
+        -:  484:    char                                        TableType[CS_TABLETYPE_NAME_SIZE];
+        -:  485:    
+        7:  486:    CFE_PSP_MemCpy(&StartOfResultsTable, ResultsTblPtr,    sizeof(StartOfResultsTable));
+        7:  487:    CFE_PSP_MemCpy(&StartOfDefTable,     DefinitionTblPtr, sizeof(StartOfDefTable));   
+        -:  488:
+        7:  489:    strncpy(&TableType[0], "Undef Tbl", CS_TABLETYPE_NAME_SIZE);  /* Init the table type string */
+        -:  490:        
+        -:  491:    /* We don't want to be doing chekcksums while changing the table out */
+        7:  492:    if( Table == CS_EEPROM_TABLE)
+        -:  493:    {
+        4:  494:        PreviousState = CS_AppData.EepromCSState;
+        4:  495:        CS_AppData.EepromCSState = CS_STATE_DISABLED;
+        -:  496:    }
+        7:  497:    if( Table == CS_MEMORY_TABLE)
+        -:  498:    {
+        3:  499:        PreviousState = CS_AppData.MemoryCSState;
+        3:  500:        CS_AppData.MemoryCSState = CS_STATE_DISABLED;
+        -:  501:    }
         -:  502:    
-       27:  503:    CFE_PSP_MemCpy(&StartOfResultsTable, ResultsTblPtr,    sizeof(StartOfResultsTable));
-call    0 returned 100%
-       27:  504:    CFE_PSP_MemCpy(&StartOfDefTable,     DefinitionTblPtr, sizeof(StartOfDefTable));   
-call    0 returned 100%
-        -:  505:
-       27:  506:    strncpy(&TableType[0], "Undef Tbl", CS_TABLETYPE_NAME_SIZE);  /* Init the table type string */
-call    0 returned 100%
+       59:  503:    for (Loop = 0; Loop < NumEntries; Loop++)
+        -:  504:    {
+       52:  505:        DefEntry = & (StartOfDefTable [Loop]);
+       52:  506:        ResultsEntry =  &(StartOfResultsTable [Loop]);
         -:  507:        
-        -:  508:    /* We don't want to be doing chekcksums while changing the table out */
-       27:  509:    if( Table == CS_EEPROM_TABLE)
-branch  0 taken 52% (fallthrough)
-branch  1 taken 48%
-        -:  510:    {
-       14:  511:        PreviousState = CS_AppData.EepromCSState;
-       14:  512:        CS_AppData.EepromCSState = CS_STATE_DISABLED;
-        -:  513:    }
-       27:  514:    if( Table == CS_MEMORY_TABLE)
-branch  0 taken 48% (fallthrough)
-branch  1 taken 52%
-        -:  515:    {
-       13:  516:        PreviousState = CS_AppData.MemoryCSState;
-       13:  517:        CS_AppData.MemoryCSState = CS_STATE_DISABLED;
-        -:  518:    }
-        -:  519:    
-      459:  520:    for (Loop = 0; Loop < NumEntries; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:  521:    {
-      432:  522:        DefEntry = & (StartOfDefTable [Loop]);
-      432:  523:        ResultsEntry =  &(StartOfResultsTable [Loop]);
-        -:  524:        
-      432:  525:        if (DefEntry -> State != CS_STATE_EMPTY )
-branch  0 taken 70% (fallthrough)
-branch  1 taken 30%
-        -:  526:        {
-        -:  527:            /* This is just a real simple test, because all of the exception handling
-        -:  528:             has already been done by the Validation routine above */
-      304:  529:            NumRegionsInTable++;
-        -:  530:                        
-      304:  531:            ResultsEntry -> State              = DefEntry -> State;
-      304:  532:            ResultsEntry -> ComputedYet        = FALSE;
-      304:  533:            ResultsEntry -> NumBytesToChecksum = DefEntry -> NumBytesToChecksum;
-      304:  534:            ResultsEntry -> ComparisonValue    = 0;
-      304:  535:            ResultsEntry -> ByteOffset         = 0;
-      304:  536:            ResultsEntry -> TempChecksumValue  = 0;
-      304:  537:            ResultsEntry -> StartAddress       = DefEntry -> StartAddress;
-        -:  538:        }
-        -:  539:        else
-        -:  540:        {
-      128:  541:            ResultsEntry -> State              = CS_STATE_EMPTY;
-      128:  542:            ResultsEntry -> ComputedYet        = FALSE;
-      128:  543:            ResultsEntry -> NumBytesToChecksum = 0;
-      128:  544:            ResultsEntry -> ComparisonValue    = 0;
-      128:  545:            ResultsEntry -> ByteOffset         = 0;
-      128:  546:            ResultsEntry -> TempChecksumValue  = 0;
-      128:  547:            ResultsEntry -> StartAddress       = 0; 
-        -:  548:        }
-        -:  549:    }
-        -:  550:    
-        -:  551:    /* Reset the table back to the original checksumming state */
-       27:  552:    if( Table == CS_EEPROM_TABLE)
-branch  0 taken 52% (fallthrough)
-branch  1 taken 48%
-        -:  553:    {
-       14:  554:        CS_AppData.EepromCSState = PreviousState;
-        -:  555:    }
-        -:  556:
-       27:  557:    if( Table == CS_MEMORY_TABLE)
-branch  0 taken 48% (fallthrough)
-branch  1 taken 52%
-        -:  558:    {
-       13:  559:        CS_AppData.MemoryCSState = PreviousState;
-        -:  560:    }
-        -:  561:    
-       27:  562:    if (NumRegionsInTable == 0)
-branch  0 taken 22% (fallthrough)
-branch  1 taken 78%
-        -:  563:    {
-        6:  564:        if( Table == CS_EEPROM_TABLE)
-branch  0 taken 50% (fallthrough)
-branch  1 taken 50%
-        -:  565:        {
-        3:  566:            strncpy(&TableType[0], "Eeprom", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -:  567:        }
-        6:  568:        if( Table == CS_MEMORY_TABLE)
-branch  0 taken 50% (fallthrough)
-branch  1 taken 50%
-        -:  569:        {
-        3:  570:            strncpy(&TableType[0], "Memory", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -:  571:        }
-        -:  572:            
-        6:  573:        CFE_EVS_SendEvent (CS_PROCESS_EEPROM_MEMORY_NO_ENTRIES_INF_EID,
-call    0 returned 100%
-        -:  574:                           CFE_EVS_INFORMATION,
-        -:  575:                           "CS %s Table: No valid entries in the table",
-        -:  576:                           TableType);
-        -:  577:    }
-        -:  578:    return;
-        -:  579:}   /* end of CS_ProcessNewEepromMemoryDefinitionTable () */
-        -:  580:
-        -:  581:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  582:/*                                                                 */
-        -:  583:/* CS processing new definition tables for Tables                  */
-        -:  584:/*                                                                 */
-        -:  585:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  586:void CS_ProcessNewTablesDefinitionTable    (CS_Def_Tables_Table_Entry_t      * DefinitionTblPtr, 
-        -:  587:                                            CS_Res_Tables_Table_Entry_t      * ResultsTblPtr)
-function CS_ProcessNewTablesDefinitionTable called 11 returned 100% blocks executed 95%
-       11:  588:{
-       11:  589:    CS_Def_Tables_Table_Entry_t               * StartOfDefTable     = NULL;
-       11:  590:    CS_Def_Tables_Table_Entry_t               * DefEntry            = NULL;
-       11:  591:    CS_Res_Tables_Table_Entry_t               * StartOfResultsTable = NULL;
-       11:  592:    CS_Res_Tables_Table_Entry_t               * ResultsEntry        = NULL;
-       11:  593:    uint16                                      Loop                = 0;
-       11:  594:    uint16                                      NumRegionsInTable   = 0;
-       11:  595:    uint16                                      PreviousState       = CS_STATE_EMPTY;
-       11:  596:    uint32                                      AppID               = 0;
-       11:  597:    CFE_TBL_Handle_t                            TableHandle         = CFE_TBL_BAD_TABLE_HANDLE;
-       11:  598:    boolean                                     Owned               = FALSE;
-       11:  599:    uint16                                      DefNameIndex        = 0;
-       11:  600:    uint16                                      AppNameIndex        = 0;
-       11:  601:    uint16                                      TableNameIndex      = 0;
-        -:  602:    char                                        AppName [OS_MAX_API_NAME];
-        -:  603:    char                                        TableAppName [OS_MAX_API_NAME];
-        -:  604:    char                                        TableTableName [CFE_TBL_MAX_NAME_LENGTH];
-        -:  605:    
-       11:  606:    CFE_PSP_MemCpy(&StartOfResultsTable, ResultsTblPtr,    sizeof(StartOfResultsTable));
-call    0 returned 100%
-       11:  607:    CFE_PSP_MemCpy(&StartOfDefTable,     DefinitionTblPtr, sizeof(StartOfDefTable));  
-call    0 returned 100%
-        -:  608:    
-       11:  609:    CFE_ES_GetAppID(&AppID);
-call    0 returned 100%
-       11:  610:    CFE_ES_GetAppName( AppName, AppID, OS_MAX_API_NAME);
-call    0 returned 100%
-        -:  611:    
-        -:  612:    /* We don't want to be doing chekcksums while changing the table out */
-       11:  613:    PreviousState = CS_AppData.TablesCSState;
-       11:  614:    CS_AppData.TablesCSState = CS_STATE_DISABLED;
-        -:  615:
-      275:  616:    for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  617:    {
-      264:  618:        DefEntry = & (StartOfDefTable [Loop]);
-        -:  619:        
-      264:  620:        ResultsEntry = & (StartOfResultsTable [Loop]);
-        -:  621:        
-      264:  622:        if (DefEntry -> State != CS_STATE_EMPTY)
-branch  0 taken 56% (fallthrough)
-branch  1 taken 44%
-        -:  623:        {
-        -:  624:            /* initialize buffer index values */
-      149:  625:            DefNameIndex = 0;
-      149:  626:            AppNameIndex = 0;
-      149:  627:            TableNameIndex = 0;
-        -:  628:
-        -:  629:            /* extract application name from CS definition table entry */
-      596:  630:            while ((AppNameIndex < OS_MAX_API_NAME) &&
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-branch  2 taken 100% (fallthrough)
-branch  3 taken 0%
-branch  4 taken 67%
-branch  5 taken 33% (fallthrough)
-        -:  631:                   (DefEntry->Name[DefNameIndex] != '\0') && (DefEntry->Name[DefNameIndex] != '.'))
-        -:  632:            {
-      298:  633:                TableAppName[AppNameIndex++] = DefEntry->Name[DefNameIndex++];
-        -:  634:            }
+       52:  508:        if (DefEntry -> State != CS_STATE_EMPTY )
+        -:  509:        {
+        -:  510:            /* This is just a real simple test, because all of the exception handling
+        -:  511:             has already been done by the Validation routine above */
+        2:  512:            NumRegionsInTable++;
+        -:  513:                        
+        2:  514:            ResultsEntry -> State              = DefEntry -> State;
+        2:  515:            ResultsEntry -> ComputedYet        = FALSE;
+        2:  516:            ResultsEntry -> NumBytesToChecksum = DefEntry -> NumBytesToChecksum;
+        2:  517:            ResultsEntry -> ComparisonValue    = 0;
+        2:  518:            ResultsEntry -> ByteOffset         = 0;
+        2:  519:            ResultsEntry -> TempChecksumValue  = 0;
+        2:  520:            ResultsEntry -> StartAddress       = DefEntry -> StartAddress;
+        -:  521:        }
+        -:  522:        else
+        -:  523:        {
+       50:  524:            ResultsEntry -> State              = CS_STATE_EMPTY;
+       50:  525:            ResultsEntry -> ComputedYet        = FALSE;
+       50:  526:            ResultsEntry -> NumBytesToChecksum = 0;
+       50:  527:            ResultsEntry -> ComparisonValue    = 0;
+       50:  528:            ResultsEntry -> ByteOffset         = 0;
+       50:  529:            ResultsEntry -> TempChecksumValue  = 0;
+       50:  530:            ResultsEntry -> StartAddress       = 0; 
+        -:  531:        }
+        -:  532:    }
+        -:  533:    
+        -:  534:    /* Reset the table back to the original checksumming state */
+        7:  535:    if( Table == CS_EEPROM_TABLE)
+        -:  536:    {
+        4:  537:        CS_AppData.EepromCSState = PreviousState;
+        4:  538:        CS_ResetTablesTblResultEntry(CS_AppData.EepResTablesTblPtr);
+        -:  539:    }
+        -:  540:
+        7:  541:    if( Table == CS_MEMORY_TABLE)
+        -:  542:    {
+        3:  543:        CS_AppData.MemoryCSState = PreviousState;
+        3:  544:        CS_ResetTablesTblResultEntry(CS_AppData.MemResTablesTblPtr);
+        -:  545:    }
+        -:  546:    
+        7:  547:    if (NumRegionsInTable == 0)
+        -:  548:    {
+        5:  549:        if( Table == CS_EEPROM_TABLE)
+        -:  550:        {
+        3:  551:            strncpy(&TableType[0], "Eeprom", CS_TABLETYPE_NAME_SIZE);
+        -:  552:        }
+        5:  553:        if( Table == CS_MEMORY_TABLE)
+        -:  554:        {
+        2:  555:            strncpy(&TableType[0], "Memory", CS_TABLETYPE_NAME_SIZE);
+        -:  556:        }
+        -:  557:            
+        5:  558:        CFE_EVS_SendEvent (CS_PROCESS_EEPROM_MEMORY_NO_ENTRIES_INF_EID,
+        -:  559:                           CFE_EVS_INFORMATION,
+        -:  560:                           "CS %s Table: No valid entries in the table",
+        -:  561:                           TableType);
+        -:  562:    }
+        7:  563:    return;
+        -:  564:}   /* end of CS_ProcessNewEepromMemoryDefinitionTable () */
+        -:  565:
+        -:  566:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  567:/*                                                                 */
+        -:  568:/* CS processing new definition tables for Tables                  */
+        -:  569:/*                                                                 */
+        -:  570:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       13:  571:void CS_ProcessNewTablesDefinitionTable    (CS_Def_Tables_Table_Entry_t      * DefinitionTblPtr, 
+        -:  572:                                            CS_Res_Tables_Table_Entry_t      * ResultsTblPtr)
+        -:  573:{
+       13:  574:    CS_Def_Tables_Table_Entry_t               * StartOfDefTable     = NULL;
+       13:  575:    CS_Def_Tables_Table_Entry_t               * DefEntry            = NULL;
+       13:  576:    CS_Res_Tables_Table_Entry_t               * StartOfResultsTable = NULL;
+       13:  577:    CS_Res_Tables_Table_Entry_t               * ResultsEntry        = NULL;
+       13:  578:    uint16                                      Loop                = 0;
+       13:  579:    uint16                                      NumRegionsInTable   = 0;
+       13:  580:    uint16                                      PreviousState       = CS_STATE_EMPTY;
+       13:  581:    uint32                                      AppID               = 0;
+       13:  582:    CFE_TBL_Handle_t                            TableHandle         = CFE_TBL_BAD_TABLE_HANDLE;
+       13:  583:    boolean                                     Owned               = FALSE;
+       13:  584:    uint16                                      DefNameIndex        = 0;
+       13:  585:    uint16                                      AppNameIndex        = 0;
+       13:  586:    uint16                                      TableNameIndex      = 0;
+        -:  587:    char                                        AppName [OS_MAX_API_NAME];
+        -:  588:    char                                        TableAppName [OS_MAX_API_NAME];
+        -:  589:    char                                        TableTableName [CFE_TBL_MAX_NAME_LENGTH];
+        -:  590:    
+       13:  591:    CFE_PSP_MemCpy(&StartOfResultsTable, ResultsTblPtr,    sizeof(StartOfResultsTable));
+       13:  592:    CFE_PSP_MemCpy(&StartOfDefTable,     DefinitionTblPtr, sizeof(StartOfDefTable));  
+        -:  593:    
+       13:  594:    CFE_ES_GetAppID(&AppID);
+       13:  595:    CFE_ES_GetAppName( AppName, AppID, OS_MAX_API_NAME);
+        -:  596:    
+        -:  597:    /* We don't want to be doing chekcksums while changing the table out */
+       13:  598:    PreviousState = CS_AppData.TablesCSState;
+       13:  599:    CS_AppData.TablesCSState = CS_STATE_DISABLED;
+        -:  600:
+        -:  601:    /* Assume none of the CS tables are listed in the new Tables table */
+       13:  602:    CS_AppData.EepResTablesTblPtr = NULL;
+       13:  603:    CS_AppData.MemResTablesTblPtr = NULL;
+       13:  604:    CS_AppData.AppResTablesTblPtr = NULL;
+       13:  605:    CS_AppData.TblResTablesTblPtr = NULL;
+        -:  606:
+      325:  607:    for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
+        -:  608:    {
+      312:  609:        DefEntry = & (StartOfDefTable [Loop]);
+        -:  610:        
+      312:  611:        ResultsEntry = & (StartOfResultsTable [Loop]);
+        -:  612:        
+      312:  613:        if (DefEntry -> State != CS_STATE_EMPTY)
+        -:  614:        {
+        -:  615:            /* initialize buffer index values */
+       10:  616:            DefNameIndex = 0;
+       10:  617:            AppNameIndex = 0;
+       10:  618:            TableNameIndex = 0;
+        -:  619:
+        -:  620:            /* extract application name from CS definition table entry */
+      152:  621:            while ((AppNameIndex < OS_MAX_API_NAME) &&
+       94:  622:                   (DefEntry->Name[DefNameIndex] != '\0') && (DefEntry->Name[DefNameIndex] != '.'))
+        -:  623:            {
+       38:  624:                TableAppName[AppNameIndex++] = DefEntry->Name[DefNameIndex++];
+        -:  625:            }
+        -:  626:
+        -:  627:            /* limit application name length to add string terminator */
+       10:  628:            if (AppNameIndex == OS_MAX_API_NAME)
+        -:  629:            {
+        1:  630:                AppNameIndex = OS_MAX_API_NAME - 1;
+        -:  631:            }
+        -:  632:
+        -:  633:            /* add string terminator to application name */
+       10:  634:            TableAppName[AppNameIndex] = '\0';
         -:  635:
-        -:  636:            /* limit application name length to add string terminator */
-      149:  637:            if (AppNameIndex == OS_MAX_API_NAME)
-branch  0 taken 0% (fallthrough)
-branch  1 taken 100%
-        -:  638:            {
-    #####:  639:                AppNameIndex = OS_MAX_API_NAME - 1;
-        -:  640:            }
-        -:  641:
-        -:  642:            /* add string terminator to application name */
-      149:  643:            TableAppName[AppNameIndex] = '\0';
-        -:  644:
-        -:  645:            /* move entry index to the dot, string terminator, or end of table entry */
-      298:  646:            while ((DefNameIndex < CFE_TBL_MAX_FULL_NAME_LEN) &&
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-branch  2 taken 100% (fallthrough)
-branch  3 taken 0%
-branch  4 taken 0%
-branch  5 taken 100% (fallthrough)
-        -:  647:                   (DefEntry->Name[DefNameIndex] != '\0') &&
-        -:  648:                   (DefEntry->Name[DefNameIndex] != '.'))
-        -:  649:            {
-    #####:  650:                DefNameIndex++;
-        -:  651:            }
-        -:  652:
-        -:  653:            /* move entry index forward past the dot */
-      149:  654:            if ((DefNameIndex < CFE_TBL_MAX_FULL_NAME_LEN) &&
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-branch  2 taken 100% (fallthrough)
-branch  3 taken 0%
-        -:  655:                (DefEntry->Name[DefNameIndex] == '.'))
-        -:  656:            {
-      149:  657:                DefNameIndex++;
-        -:  658:            }
-        -:  659:
-        -:  660:            /* extract table name from CS definition table entry */
-     1422:  661:            while ((DefNameIndex < CFE_TBL_MAX_FULL_NAME_LEN) &&
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-branch  2 taken 100% (fallthrough)
-branch  3 taken 0%
-branch  4 taken 88%
-branch  5 taken 12% (fallthrough)
-        -:  662:                   (TableNameIndex < CFE_TBL_MAX_NAME_LENGTH) &&
-        -:  663:                   (DefEntry->Name[DefNameIndex] != '\0'))
-        -:  664:            {
-     1124:  665:                TableTableName[TableNameIndex++] = DefEntry->Name[DefNameIndex++];
-        -:  666:            }
-        -:  667:
-        -:  668:            /* limit table name length to add string terminator */
-      149:  669:            if (TableNameIndex == CFE_TBL_MAX_NAME_LENGTH)
-branch  0 taken 0% (fallthrough)
-branch  1 taken 100%
-        -:  670:            {
-    #####:  671:                TableNameIndex = CFE_TBL_MAX_NAME_LENGTH - 1;
-        -:  672:            }
+        -:  636:            /* move entry index to the dot, string terminator, or end of table entry */
+       43:  637:            while ((DefNameIndex < CFE_TBL_MAX_FULL_NAME_LEN) &&
+       11:  638:                   (DefEntry->Name[DefNameIndex] != '\0') &&
+       11:  639:                   (DefEntry->Name[DefNameIndex] != '.'))
+        -:  640:            {
+        1:  641:                DefNameIndex++;
+        -:  642:            }
+        -:  643:
+        -:  644:            /* move entry index forward past the dot */
+       20:  645:            if ((DefNameIndex < CFE_TBL_MAX_FULL_NAME_LEN) &&
+       10:  646:                (DefEntry->Name[DefNameIndex] == '.'))
+        -:  647:            {
+       10:  648:                DefNameIndex++;
+        -:  649:            }
+        -:  650:
+        -:  651:            /* extract table name from CS definition table entry */
+      265:  652:            while ((DefNameIndex < CFE_TBL_MAX_FULL_NAME_LEN) &&
+        -:  653:                   (TableNameIndex < CFE_TBL_MAX_NAME_LENGTH) &&
+      127:  654:                   (DefEntry->Name[DefNameIndex] != '\0'))
+        -:  655:            {
+      118:  656:                TableTableName[TableNameIndex++] = DefEntry->Name[DefNameIndex++];
+        -:  657:            }
+        -:  658:
+        -:  659:            /* limit table name length to add string terminator */
+       10:  660:            if (TableNameIndex == CFE_TBL_MAX_NAME_LENGTH)
+        -:  661:            {
+        1:  662:                TableNameIndex = CFE_TBL_MAX_NAME_LENGTH - 1;
+        -:  663:            }
+        -:  664:
+        -:  665:            /* add string terminator to table name */
+       10:  666:            TableTableName[TableNameIndex] = '\0';
+        -:  667:          
+        -:  668:            
+        -:  669:            
+        -:  670:            
+        -:  671:            
+        -:  672:            
         -:  673:
-        -:  674:            /* add string terminator to table name */
-      149:  675:            TableTableName[TableNameIndex] = '\0';
-        -:  676:          
-        -:  677:            
-        -:  678:            
-        -:  679:            
-        -:  680:            
-        -:  681:            
-        -:  682:
-      149:  683:            TableHandle = CFE_TBL_BAD_TABLE_HANDLE;
-      149:  684:            Owned = FALSE;
-        -:  685:            
-        -:  686:            /* if the table's owner's name is CS */
-      149:  687:            if( strncmp (TableAppName, AppName, OS_MAX_API_NAME) == 0)
-call    0 returned 100%
-branch  1 taken 30% (fallthrough)
-branch  2 taken 70%
-        -:  688:            {
-       44:  689:                if (strncmp (TableTableName, CS_DEF_EEPROM_TABLE_NAME, CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 16% (fallthrough)
-branch  2 taken 84%
-        -:  690:                {
-        7:  691:                    TableHandle = CS_AppData.DefEepromTableHandle;
-        7:  692:                    Owned = TRUE;
-        -:  693:                }
-       44:  694:                if (strncmp (TableTableName, CS_DEF_MEMORY_TABLE_NAME, CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 18% (fallthrough)
-branch  2 taken 82%
-        -:  695:                {
-        8:  696:                    TableHandle = CS_AppData.DefMemoryTableHandle;
-        8:  697:                    Owned = TRUE;
-        -:  698:                }
-       44:  699:                if (strncmp (TableTableName, CS_DEF_TABLES_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 18% (fallthrough)
-branch  2 taken 82%
-        -:  700:                {
-        8:  701:                    TableHandle = CS_AppData.DefTablesTableHandle;
-        8:  702:                    Owned = TRUE;
+       10:  674:            TableHandle = CFE_TBL_BAD_TABLE_HANDLE;
+       10:  675:            Owned = FALSE;
+        -:  676:            
+        -:  677:            /* if the table's owner's name is CS */
+       10:  678:            if( strncmp (TableAppName, AppName, OS_MAX_API_NAME) == 0)
+        -:  679:            {
+        9:  680:                if (strncmp (TableTableName, CS_DEF_EEPROM_TABLE_NAME, CFE_TBL_MAX_NAME_LENGTH) == 0)
+        -:  681:                {
+        1:  682:                    TableHandle = CS_AppData.DefEepromTableHandle;
+        1:  683:                    CS_AppData.EepResTablesTblPtr = ResultsEntry;
+        1:  684:                    Owned = TRUE;
+        -:  685:                }
+        9:  686:                if (strncmp (TableTableName, CS_DEF_MEMORY_TABLE_NAME, CFE_TBL_MAX_NAME_LENGTH) == 0)
+        -:  687:                {
+        1:  688:                    TableHandle = CS_AppData.DefMemoryTableHandle;
+        1:  689:                    CS_AppData.MemResTablesTblPtr = ResultsEntry;
+        1:  690:                    Owned = TRUE;
+        -:  691:                }
+        9:  692:                if (strncmp (TableTableName, CS_DEF_TABLES_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
+        -:  693:                {
+        1:  694:                    TableHandle = CS_AppData.DefTablesTableHandle;
+        1:  695:                    CS_AppData.TblResTablesTblPtr = ResultsEntry;
+        1:  696:                    Owned = TRUE;
+        -:  697:                }
+        9:  698:                if (strncmp (TableTableName,CS_DEF_APP_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
+        -:  699:                {
+        1:  700:                    TableHandle = CS_AppData.DefAppTableHandle;
+        1:  701:                    CS_AppData.AppResTablesTblPtr = ResultsEntry;
+        1:  702:                    Owned = TRUE;
         -:  703:                }
-       44:  704:                if (strncmp (TableTableName,CS_DEF_APP_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 18% (fallthrough)
-branch  2 taken 82%
+        9:  704:                if (strncmp (TableTableName,CS_RESULTS_EEPROM_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
         -:  705:                {
-        8:  706:                    TableHandle = CS_AppData.DefAppTableHandle;
-        8:  707:                    Owned = TRUE;
+        1:  706:                    TableHandle = CS_AppData.ResEepromTableHandle;
+        1:  707:                    Owned = TRUE;
         -:  708:                }
-       44:  709:                if (strncmp (TableTableName,CS_RESULTS_EEPROM_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 7% (fallthrough)
-branch  2 taken 93%
+        9:  709:                if (strncmp (TableTableName,CS_RESULTS_MEMORY_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
         -:  710:                {
-        3:  711:                    TableHandle = CS_AppData.ResEepromTableHandle;
-        3:  712:                    Owned = TRUE;
+        1:  711:                    TableHandle = CS_AppData.ResMemoryTableHandle;
+        1:  712:                    Owned = TRUE;
         -:  713:                }
-       44:  714:                if (strncmp (TableTableName,CS_RESULTS_MEMORY_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 7% (fallthrough)
-branch  2 taken 93%
+        9:  714:                if (strncmp (TableTableName,CS_RESULTS_TABLES_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
         -:  715:                {
-        3:  716:                    TableHandle = CS_AppData.ResMemoryTableHandle;
-        3:  717:                    Owned = TRUE;
+        1:  716:                    TableHandle = CS_AppData.ResTablesTableHandle;
+        1:  717:                    Owned = TRUE;
         -:  718:                }
-       44:  719:                if (strncmp (TableTableName,CS_RESULTS_TABLES_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 7% (fallthrough)
-branch  2 taken 93%
+        9:  719:                if (strncmp (TableTableName,CS_RESULTS_APP_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
         -:  720:                {
-        3:  721:                    TableHandle = CS_AppData.ResTablesTableHandle;
-        3:  722:                    Owned = TRUE;
+        1:  721:                    TableHandle = CS_AppData.ResAppTableHandle;
+        1:  722:                    Owned = TRUE;
         -:  723:                }
-       44:  724:                if (strncmp (TableTableName,CS_RESULTS_APP_TABLE_NAME ,CFE_TBL_MAX_NAME_LENGTH) == 0)
-call    0 returned 100%
-branch  1 taken 7% (fallthrough)
-branch  2 taken 93%
-        -:  725:                {
-        3:  726:                    TableHandle = CS_AppData.ResAppTableHandle;
-        3:  727:                    Owned = TRUE;
-        -:  728:                }
-        -:  729:                
-        -:  730:            }
-        -:  731:            
-        -:  732:            /* This is just a real simple test, because all of the exception handling
-        -:  733:             has already been done by the Validation routine above */
-      149:  734:            NumRegionsInTable++;
-        -:  735:            
-      149:  736:            ResultsEntry -> State              = DefEntry -> State;
-      149:  737:            ResultsEntry -> ComputedYet        = FALSE;
-      149:  738:            ResultsEntry -> NumBytesToChecksum = 0;                              /* this is unknown at this time */
-      149:  739:            ResultsEntry -> ComparisonValue    = 0;
-      149:  740:            ResultsEntry -> ByteOffset         = 0;
-      149:  741:            ResultsEntry -> TempChecksumValue  = 0;
-      149:  742:            ResultsEntry -> StartAddress       = 0;                              /* this is unknown at this time */
-      149:  743:            ResultsEntry -> TblHandle          = TableHandle;
-      149:  744:            ResultsEntry -> IsCSOwner          = Owned;
-      149:  745:            strncpy(ResultsEntry -> Name, DefEntry -> Name, CFE_TBL_MAX_FULL_NAME_LEN);
-call    0 returned 100%
-        -:  746:        }
-        -:  747:        else
-        -:  748:        {
-      115:  749:            ResultsEntry -> State              = CS_STATE_EMPTY;
-      115:  750:            ResultsEntry -> ComputedYet        = FALSE;
-      115:  751:            ResultsEntry -> NumBytesToChecksum = 0;
-      115:  752:            ResultsEntry -> ComparisonValue    = 0;
-      115:  753:            ResultsEntry -> ByteOffset         = 0;
-      115:  754:            ResultsEntry -> TempChecksumValue  = 0;
-      115:  755:            ResultsEntry -> StartAddress       = 0; 
-      115:  756:            ResultsEntry -> TblHandle          = CFE_TBL_BAD_TABLE_HANDLE; 
-      115:  757:            ResultsEntry -> IsCSOwner          = FALSE;
-      115:  758:            ResultsEntry -> Name[0]            = '\0';
-        -:  759:        }
-        -:  760:    }
-        -:  761:    
-        -:  762:    /* Reset the table back to the original checksumming state */
-        -:  763:
-       11:  764:    CS_AppData.TablesCSState = PreviousState;
-        -:  765:
-       11:  766:    if (NumRegionsInTable == 0)
-branch  0 taken 27% (fallthrough)
-branch  1 taken 73%
-        -:  767:    {
-        3:  768:        CFE_EVS_SendEvent (CS_PROCESS_TABLES_NO_ENTRIES_INF_EID,
-call    0 returned 100%
-        -:  769:                           CFE_EVS_INFORMATION,
-        -:  770:                           "CS Tables Table: No valid entries in the table");
-        -:  771:    }
-        -:  772:    return;
-        -:  773:}   /* end of CS_ProcessNewTablesDefinitionTable () */
-        -:  774:
-        -:  775:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  776:/*                                                                 */
-        -:  777:/* CS processing new definition tables for Apps                    */
-        -:  778:/*                                                                 */
-        -:  779:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  780:void CS_ProcessNewAppDefinitionTable    (CS_Def_App_Table_Entry_t      * DefinitionTblPtr, 
-        -:  781:                                         CS_Res_App_Table_Entry_t      * ResultsTblPtr)
-function CS_ProcessNewAppDefinitionTable called 13 returned 100% blocks executed 100%
-       13:  782:{
-       13:  783:    CS_Def_App_Table_Entry_t                  * StartOfDefTable     = NULL;
-       13:  784:    CS_Def_App_Table_Entry_t                  * DefEntry            = NULL;
-       13:  785:    CS_Res_App_Table_Entry_t                  * StartOfResultsTable = NULL;
-       13:  786:    CS_Res_App_Table_Entry_t                  * ResultsEntry        = NULL;
-       13:  787:    uint16                                      Loop                = 0;
-       13:  788:    uint16                                      NumRegionsInTable   = 0;
-       13:  789:    uint16                                      PreviousState       = CS_STATE_EMPTY;
-        -:  790:    
-       13:  791:    CFE_PSP_MemCpy(&StartOfResultsTable, ResultsTblPtr,    sizeof(StartOfResultsTable));
-call    0 returned 100%
-       13:  792:    CFE_PSP_MemCpy(&StartOfDefTable,     DefinitionTblPtr, sizeof(StartOfDefTable));  
-call    0 returned 100%
+        -:  724:                
+        -:  725:            }
+        -:  726:            
+        -:  727:            /* This is just a real simple test, because all of the exception handling
+        -:  728:             has already been done by the Validation routine above */
+       10:  729:            NumRegionsInTable++;
+        -:  730:            
+       10:  731:            ResultsEntry -> State              = DefEntry -> State;
+       10:  732:            ResultsEntry -> ComputedYet        = FALSE;
+       10:  733:            ResultsEntry -> NumBytesToChecksum = 0;                              /* this is unknown at this time */
+       10:  734:            ResultsEntry -> ComparisonValue    = 0;
+       10:  735:            ResultsEntry -> ByteOffset         = 0;
+       10:  736:            ResultsEntry -> TempChecksumValue  = 0;
+       10:  737:            ResultsEntry -> StartAddress       = 0;                              /* this is unknown at this time */
+       10:  738:            ResultsEntry -> TblHandle          = TableHandle;
+       10:  739:            ResultsEntry -> IsCSOwner          = Owned;
+       10:  740:            strncpy(ResultsEntry -> Name, DefEntry -> Name, CFE_TBL_MAX_FULL_NAME_LEN);
+        -:  741:        }
+        -:  742:        else
+        -:  743:        {
+      302:  744:            ResultsEntry -> State              = CS_STATE_EMPTY;
+      302:  745:            ResultsEntry -> ComputedYet        = FALSE;
+      302:  746:            ResultsEntry -> NumBytesToChecksum = 0;
+      302:  747:            ResultsEntry -> ComparisonValue    = 0;
+      302:  748:            ResultsEntry -> ByteOffset         = 0;
+      302:  749:            ResultsEntry -> TempChecksumValue  = 0;
+      302:  750:            ResultsEntry -> StartAddress       = 0; 
+      302:  751:            ResultsEntry -> TblHandle          = CFE_TBL_BAD_TABLE_HANDLE; 
+      302:  752:            ResultsEntry -> IsCSOwner          = FALSE;
+      302:  753:            ResultsEntry -> Name[0]            = '\0';
+        -:  754:        }
+        -:  755:    }
+        -:  756:    
+        -:  757:    /* Reset the table back to the original checksumming state */
+        -:  758:
+       13:  759:    CS_AppData.TablesCSState = PreviousState;
+        -:  760:
+       13:  761:    if (NumRegionsInTable == 0)
+        -:  762:    {
+        3:  763:        CFE_EVS_SendEvent (CS_PROCESS_TABLES_NO_ENTRIES_INF_EID,
+        -:  764:                           CFE_EVS_INFORMATION,
+        -:  765:                           "CS Tables Table: No valid entries in the table");
+        -:  766:    }
+       13:  767:    return;
+        -:  768:}   /* end of CS_ProcessNewTablesDefinitionTable () */
+        -:  769:
+        -:  770:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  771:/*                                                                 */
+        -:  772:/* CS processing new definition tables for Apps                    */
+        -:  773:/*                                                                 */
+        -:  774:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  775:void CS_ProcessNewAppDefinitionTable    (CS_Def_App_Table_Entry_t      * DefinitionTblPtr, 
+        -:  776:                                         CS_Res_App_Table_Entry_t      * ResultsTblPtr)
+        -:  777:{
+        4:  778:    CS_Def_App_Table_Entry_t                  * StartOfDefTable     = NULL;
+        4:  779:    CS_Def_App_Table_Entry_t                  * DefEntry            = NULL;
+        4:  780:    CS_Res_App_Table_Entry_t                  * StartOfResultsTable = NULL;
+        4:  781:    CS_Res_App_Table_Entry_t                  * ResultsEntry        = NULL;
+        4:  782:    uint16                                      Loop                = 0;
+        4:  783:    uint16                                      NumRegionsInTable   = 0;
+        4:  784:    uint16                                      PreviousState       = CS_STATE_EMPTY;
+        -:  785:    
+        4:  786:    CFE_PSP_MemCpy(&StartOfResultsTable, ResultsTblPtr,    sizeof(StartOfResultsTable));
+        4:  787:    CFE_PSP_MemCpy(&StartOfDefTable,     DefinitionTblPtr, sizeof(StartOfDefTable));  
+        -:  788:    
+        -:  789:    /* We don't want to be doing chekcksums while changing the table out */
+        -:  790:
+        4:  791:    PreviousState = CS_AppData.AppCSState;
+        4:  792:    CS_AppData.AppCSState = CS_STATE_DISABLED;
         -:  793:    
-        -:  794:    /* We don't want to be doing chekcksums while changing the table out */
-        -:  795:
-       13:  796:    PreviousState = CS_AppData.AppCSState;
-       13:  797:    CS_AppData.AppCSState = CS_STATE_DISABLED;
-        -:  798:    
-      325:  799:    for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  800:    {
-      312:  801:        DefEntry = & (StartOfDefTable [Loop]);
-        -:  802:        
-      312:  803:        ResultsEntry = & (StartOfResultsTable [Loop]);
-        -:  804:        
-      312:  805:        if (DefEntry -> State != CS_STATE_EMPTY)
-branch  0 taken 56% (fallthrough)
-branch  1 taken 44%
-        -:  806:        {
-        -:  807:            /* This is just a real simple test, because all of the exception handling
-        -:  808:             has already been done by the Validation routine above */
-      175:  809:            NumRegionsInTable++;
-        -:  810:            
-      175:  811:            ResultsEntry -> State              = DefEntry -> State;
-      175:  812:            ResultsEntry -> ComputedYet        = FALSE;
-      175:  813:            ResultsEntry -> NumBytesToChecksum = 0;       /* this is unknown at this time */
-      175:  814:            ResultsEntry -> ComparisonValue    = 0;
-      175:  815:            ResultsEntry -> ByteOffset         = 0;
-      175:  816:            ResultsEntry -> TempChecksumValue  = 0;
-      175:  817:            ResultsEntry -> StartAddress       = 0;       /* this is unknown at this time */
-      175:  818:            strncpy(ResultsEntry -> Name, DefEntry -> Name, OS_MAX_API_NAME);
-call    0 returned 100%
-        -:  819:        }
-        -:  820:        else
-        -:  821:        {
-        -:  822:            
-      137:  823:            ResultsEntry -> State              = CS_STATE_EMPTY;
-      137:  824:            ResultsEntry -> ComputedYet        = FALSE;
-      137:  825:            ResultsEntry -> NumBytesToChecksum = 0;
-      137:  826:            ResultsEntry -> ComparisonValue    = 0;
-      137:  827:            ResultsEntry -> ByteOffset         = 0;
-      137:  828:            ResultsEntry -> TempChecksumValue  = 0;
-      137:  829:            ResultsEntry -> StartAddress       = 0; 
-        -:  830:   
-      137:  831:            ResultsEntry -> Name[0]           = '\0';
-        -:  832:        }
-        -:  833:    }
+      100:  794:    for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
+        -:  795:    {
+       96:  796:        DefEntry = & (StartOfDefTable [Loop]);
+        -:  797:        
+       96:  798:        ResultsEntry = & (StartOfResultsTable [Loop]);
+        -:  799:        
+       96:  800:        if (DefEntry -> State != CS_STATE_EMPTY)
+        -:  801:        {
+        -:  802:            /* This is just a real simple test, because all of the exception handling
+        -:  803:             has already been done by the Validation routine above */
+        1:  804:            NumRegionsInTable++;
+        -:  805:            
+        1:  806:            ResultsEntry -> State              = DefEntry -> State;
+        1:  807:            ResultsEntry -> ComputedYet        = FALSE;
+        1:  808:            ResultsEntry -> NumBytesToChecksum = 0;       /* this is unknown at this time */
+        1:  809:            ResultsEntry -> ComparisonValue    = 0;
+        1:  810:            ResultsEntry -> ByteOffset         = 0;
+        1:  811:            ResultsEntry -> TempChecksumValue  = 0;
+        1:  812:            ResultsEntry -> StartAddress       = 0;       /* this is unknown at this time */
+        1:  813:            strncpy(ResultsEntry -> Name, DefEntry -> Name, OS_MAX_API_NAME);
+        -:  814:        }
+        -:  815:        else
+        -:  816:        {
+        -:  817:            
+       95:  818:            ResultsEntry -> State              = CS_STATE_EMPTY;
+       95:  819:            ResultsEntry -> ComputedYet        = FALSE;
+       95:  820:            ResultsEntry -> NumBytesToChecksum = 0;
+       95:  821:            ResultsEntry -> ComparisonValue    = 0;
+       95:  822:            ResultsEntry -> ByteOffset         = 0;
+       95:  823:            ResultsEntry -> TempChecksumValue  = 0;
+       95:  824:            ResultsEntry -> StartAddress       = 0; 
+        -:  825:   
+       95:  826:            ResultsEntry -> Name[0]           = '\0';
+        -:  827:        }
+        -:  828:    }
+        -:  829:    
+        -:  830:    /* Reset the table back to the original checksumming state */
+        -:  831:    
+        4:  832:    CS_AppData.AppCSState = PreviousState;
+        4:  833:    CS_ResetTablesTblResultEntry(CS_AppData.AppResTablesTblPtr);
         -:  834:    
-        -:  835:    /* Reset the table back to the original checksumming state */
-        -:  836:    
-       13:  837:    CS_AppData.AppCSState = PreviousState;
-        -:  838:    
-       13:  839:    if (NumRegionsInTable == 0)
-branch  0 taken 15% (fallthrough)
-branch  1 taken 85%
-        -:  840:    {
-        2:  841:        CFE_EVS_SendEvent (CS_PROCESS_APP_NO_ENTRIES_INF_EID,
-call    0 returned 100%
-        -:  842:                           CFE_EVS_INFORMATION,
-        -:  843:                           "CS Apps Table: No valid entries in the table");
-        -:  844:    }
-        -:  845:    return;
-        -:  846:}   /* end of CS_ProcessNewAppsDefinitionTable () */
-        -:  847:
+        4:  835:    if (NumRegionsInTable == 0)
+        -:  836:    {
+        3:  837:        CFE_EVS_SendEvent (CS_PROCESS_APP_NO_ENTRIES_INF_EID,
+        -:  838:                           CFE_EVS_INFORMATION,
+        -:  839:                           "CS Apps Table: No valid entries in the table");
+        -:  840:    }
+        4:  841:    return;
+        -:  842:}   /* end of CS_ProcessNewAppsDefinitionTable () */
+        -:  843:
+        -:  844:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  845:/*                                                                 */
+        -:  846:/* CS  function for initializing new tables                        */
+        -:  847:/*                                                                 */
         -:  848:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  849:/*                                                                 */
-        -:  850:/* CS  function for initializing new tables                        */
-        -:  851:/*                                                                 */
-        -:  852:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  853:int32 CS_TableInit (CFE_TBL_Handle_t          * DefinitionTableHandle,
-        -:  854:                    CFE_TBL_Handle_t          * ResultsTableHandle,
-        -:  855:                    void                      * DefinitionTblPtr,
-        -:  856:                    void                      * ResultsTblPtr,
-        -:  857:                    uint16                      Table, 
-        -:  858:                    char                      * DefinitionTableName,
-        -:  859:                    char                      * ResultsTableName,
-        -:  860:                    uint16                      NumEntries,
-        -:  861:                    char*                       DefinitionTableFileName,
-        -:  862:                    void                      * DefaultDefTableAddress,
-        -:  863:                    uint16                      SizeofDefinitionTableEntry,
-        -:  864:                    uint16                      SizeofResultsTableEntry,
-        -:  865:                    CFE_TBL_CallbackFuncPtr_t   CallBackFunction)
-function CS_TableInit called 26 returned 100% blocks executed 100%
-       26:  866:{
-       26:  867:    int32       Result           = CFE_SUCCESS;
-       26:  868:    int32       ResultFromLoad   = OS_FS_ERROR;
-       26:  869:    int32       SizeOfTable      = 0;
-       26:  870:    boolean     LoadedFromMemory = FALSE;
-       26:  871:    boolean     ValidFile        = FALSE;
-       26:  872:    int32       Fd               = -1;
-        -:  873:    char        TableType[CS_TABLETYPE_NAME_SIZE];
+       54:  849:int32 CS_TableInit (CFE_TBL_Handle_t          * DefinitionTableHandle,
+        -:  850:                    CFE_TBL_Handle_t          * ResultsTableHandle,
+        -:  851:                    void                      * DefinitionTblPtr,
+        -:  852:                    void                      * ResultsTblPtr,
+        -:  853:                    uint16                      Table, 
+        -:  854:                    char                      * DefinitionTableName,
+        -:  855:                    char                      * ResultsTableName,
+        -:  856:                    uint16                      NumEntries,
+        -:  857:                    char*                       DefinitionTableFileName,
+        -:  858:                    void                      * DefaultDefTableAddress,
+        -:  859:                    uint16                      SizeofDefinitionTableEntry,
+        -:  860:                    uint16                      SizeofResultsTableEntry,
+        -:  861:                    CFE_TBL_CallbackFuncPtr_t   CallBackFunction)
+        -:  862:{
+       54:  863:    int32       Result           = CFE_SUCCESS;
+       54:  864:    int32       ResultFromLoad   = OS_FS_ERROR;
+       54:  865:    int32       SizeOfTable      = 0;
+       54:  866:    boolean     LoadedFromMemory = FALSE;
+       54:  867:    boolean     ValidFile        = FALSE;
+       54:  868:    int32       Fd               = -1;
+        -:  869:    char        TableType[CS_TABLETYPE_NAME_SIZE];
+        -:  870:    
+       54:  871:    strncpy(TableType, "Undef Tbl", CS_TABLETYPE_NAME_SIZE);   /* Init table type */
+        -:  872:
+       54:  873:    SizeOfTable = NumEntries * SizeofResultsTableEntry;
         -:  874:    
-       26:  875:    strncpy(TableType, "Undef Tbl", CS_TABLETYPE_NAME_SIZE);   /* Init table type */
-call    0 returned 100%
-        -:  876:
-       26:  877:    SizeOfTable = NumEntries * SizeofResultsTableEntry;
-        -:  878:    
-        -:  879:    
-       26:  880:    Result = CFE_TBL_Register (ResultsTableHandle,
-call    0 returned 100%
-        -:  881:                               ResultsTableName,
-        -:  882:                               SizeOfTable,
-        -:  883:                               CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY,
-        -:  884:                               NULL);
-        -:  885:    
-        -:  886:    
-       26:  887:    if (Result == CFE_SUCCESS)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  888:    {
-       26:  889:        Result = CFE_TBL_GetAddress ( ResultsTblPtr,
-call    0 returned 100%
-        -:  890:                                     * ResultsTableHandle);
-        -:  891:    }
-        -:  892:    
-       26:  893:    if (Result == CFE_SUCCESS)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  894:    {
-       26:  895:        SizeOfTable = NumEntries * SizeofDefinitionTableEntry;
-        -:  896:        
-       26:  897:        Result = CFE_TBL_Register (DefinitionTableHandle,
-call    0 returned 100%
-        -:  898:                                   DefinitionTableName,
-        -:  899:                                   SizeOfTable,
-        -:  900:                                   CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_LOAD_DUMP,
-        -:  901:                                   CallBackFunction);
-        -:  902:
-        -:  903:        
-        -:  904:        
-        -:  905:    }
-        -:  906:    
-       26:  907:    Fd = OS_open(DefinitionTableFileName, OS_READ_ONLY, 0);
-call    0 returned 100%
-        -:  908:    
-       26:  909:    if (Fd >= 0)
-branch  0 taken 73% (fallthrough)
-branch  1 taken 27%
-        -:  910:    {
-       19:  911:        ValidFile = TRUE;
-       19:  912:        OS_close (Fd);
-call    0 returned 100%
-        -:  913:    }
-        -:  914:    
-       26:  915:    if ((Result == CFE_SUCCESS) && (ValidFile == TRUE))
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-branch  2 taken 73% (fallthrough)
-branch  3 taken 27%
-        -:  916:    {
-       19:  917:       Result = CFE_TBL_Load (* DefinitionTableHandle, 
-call    0 returned 100%
-        -:  918:                               CFE_TBL_SRC_FILE,
-        -:  919:                               DefinitionTableFileName);
-       19:  920:        ResultFromLoad = Result;
-        -:  921:    }
-        -:  922:    
-        -:  923:    /* if the load from the file fails, load from 
-        -:  924:     the default tables in CS */
-       26:  925:    if( ResultFromLoad != CFE_SUCCESS)
-branch  0 taken 42% (fallthrough)
-branch  1 taken 58%
-        -:  926:    {
-        -:  927:
-       11:  928:        Result = CFE_TBL_Load( * DefinitionTableHandle, 
-call    0 returned 100%
-        -:  929:                                CFE_TBL_SRC_ADDRESS,
-        -:  930:                                DefaultDefTableAddress);
-       11:  931:        LoadedFromMemory = TRUE;
-        -:  932:    }
-        -:  933:    
-       26:  934:    if (Result == CFE_SUCCESS)
-branch  0 taken 85% (fallthrough)
-branch  1 taken 15%
-        -:  935:    {
-       22:  936:        Result = CFE_TBL_GetAddress ( DefinitionTblPtr,
-call    0 returned 100%
-        -:  937:                                      * DefinitionTableHandle);
-        -:  938:        
-       22:  939:        if ((Result == CFE_TBL_INFO_UPDATED) )
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  940:        {
-       22:  941:            if (Table == CS_APP_TABLE)
-branch  0 taken 23% (fallthrough)
-branch  1 taken 77%
-        -:  942:            {
-        -:  943:                
-        5:  944:                CS_ProcessNewAppDefinitionTable ((CS_Def_App_Table_Entry_t *) DefinitionTblPtr, 
-call    0 returned 100%
-        -:  945:                                                 (CS_Res_App_Table_Entry_t *) ResultsTblPtr);
-        -:  946:            }
-        -:  947:            else
-        -:  948:            {
-       17:  949:                if (Table == CS_TABLES_TABLE)
-branch  0 taken 24% (fallthrough)
-branch  1 taken 76%
-        -:  950:                {
-        4:  951:                    CS_ProcessNewTablesDefinitionTable ((CS_Def_Tables_Table_Entry_t *) DefinitionTblPtr, 
-call    0 returned 100%
-        -:  952:                                                        (CS_Res_Tables_Table_Entry_t *) ResultsTblPtr);
-        -:  953:                }
-        -:  954:                else
-        -:  955:                {
-       13:  956:                    CS_ProcessNewEepromMemoryDefinitionTable ((CS_Def_EepromMemory_Table_Entry_t *) DefinitionTblPtr, 
-call    0 returned 100%
-        -:  957:                                                              (CS_Res_EepromMemory_Table_Entry_t *) ResultsTblPtr,
-        -:  958:                                                              NumEntries,
-        -:  959:                                                              Table);
-        -:  960:                }
-        -:  961:                
-        -:  962:            }
-        -:  963:            
-        -:  964:        }/* end if (Result == CFE_TBL_INFO_UPDATED) || (Result == CFE_SUCCESS) */
-        -:  965:    }
-        -:  966:    
-       26:  967:    if (Result >= CFE_SUCCESS)
-branch  0 taken 85% (fallthrough)
-branch  1 taken 15%
+        -:  875:    
+       54:  876:    Result = CFE_TBL_Register (ResultsTableHandle,
+        -:  877:                               ResultsTableName,
+        -:  878:                               SizeOfTable,
+        -:  879:                               CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY,
+        -:  880:                               NULL);
+        -:  881:    
+        -:  882:    
+       54:  883:    if (Result == CFE_SUCCESS)
+        -:  884:    {
+       50:  885:        Result = CFE_TBL_GetAddress ( ResultsTblPtr,
+       50:  886:                                     * ResultsTableHandle);
+        -:  887:    }
+        -:  888:    
+       54:  889:    if (Result == CFE_SUCCESS)
+        -:  890:    {
+       48:  891:        SizeOfTable = NumEntries * SizeofDefinitionTableEntry;
+        -:  892:        
+       48:  893:        Result = CFE_TBL_Register (DefinitionTableHandle,
+        -:  894:                                   DefinitionTableName,
+        -:  895:                                   SizeOfTable,
+        -:  896:                                   CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_LOAD_DUMP,
+        -:  897:                                   CallBackFunction);
+        -:  898:
+        -:  899:        
+        -:  900:        
+        -:  901:    }
+        -:  902:    
+       54:  903:    Fd = OS_open(DefinitionTableFileName, OS_READ_ONLY, 0);
+        -:  904:    
+       54:  905:    if (Fd >= 0)
+        -:  906:    {
+       54:  907:        ValidFile = TRUE;
+       54:  908:        OS_close (Fd);
+        -:  909:    }
+        -:  910:    
+       54:  911:    if ((Result == CFE_SUCCESS) && (ValidFile == TRUE))
+        -:  912:    {
+       47:  913:       Result = CFE_TBL_Load (* DefinitionTableHandle, 
+        -:  914:                               CFE_TBL_SRC_FILE,
+        -:  915:                               DefinitionTableFileName);
+       47:  916:        ResultFromLoad = Result;
+        -:  917:    }
+        -:  918:    
+        -:  919:    /* if the load from the file fails, load from 
+        -:  920:     the default tables in CS */
+       54:  921:    if( ResultFromLoad != CFE_SUCCESS)
+        -:  922:    {
+        -:  923:
+       12:  924:        Result = CFE_TBL_Load( * DefinitionTableHandle, 
+        -:  925:                                CFE_TBL_SRC_ADDRESS,
+        -:  926:                                DefaultDefTableAddress);
+       12:  927:        LoadedFromMemory = TRUE;
+        -:  928:    }
+        -:  929:    
+       54:  930:    if (Result == CFE_SUCCESS)
+        -:  931:    {
+       49:  932:        Result = CFE_TBL_GetAddress ( DefinitionTblPtr,
+       49:  933:                                      * DefinitionTableHandle);
+        -:  934:        
+       49:  935:        if ((Result == CFE_TBL_INFO_UPDATED) )
+        -:  936:        {
+        4:  937:            if (Table == CS_APP_TABLE)
+        -:  938:            {
+        -:  939:                
+        1:  940:                CS_ProcessNewAppDefinitionTable ((CS_Def_App_Table_Entry_t *) DefinitionTblPtr, 
+        -:  941:                                                 (CS_Res_App_Table_Entry_t *) ResultsTblPtr);
+        -:  942:            }
+        -:  943:            else
+        -:  944:            {
+        3:  945:                if (Table == CS_TABLES_TABLE)
+        -:  946:                {
+        1:  947:                    CS_ProcessNewTablesDefinitionTable ((CS_Def_Tables_Table_Entry_t *) DefinitionTblPtr, 
+        -:  948:                                                        (CS_Res_Tables_Table_Entry_t *) ResultsTblPtr);
+        -:  949:                }
+        -:  950:                else
+        -:  951:                {
+        2:  952:                    CS_ProcessNewEepromMemoryDefinitionTable ((CS_Def_EepromMemory_Table_Entry_t *) DefinitionTblPtr, 
+        -:  953:                                                              (CS_Res_EepromMemory_Table_Entry_t *) ResultsTblPtr,
+        -:  954:                                                              NumEntries,
+        -:  955:                                                              Table);
+        -:  956:                }
+        -:  957:                
+        -:  958:            }
+        -:  959:            
+        -:  960:        }/* end if (Result == CFE_TBL_INFO_UPDATED) || (Result == CFE_SUCCESS) */
+        -:  961:    }
+        -:  962:    
+       54:  963:    if (Result >= CFE_SUCCESS)
+        -:  964:    {
+       45:  965:        Result = CFE_SUCCESS;
+        -:  966:    }
+        -:  967:    else
         -:  968:    {
-       22:  969:        Result = CFE_SUCCESS;
-        -:  970:    }
-        -:  971:    else
-        -:  972:    {
-        4:  973:        if( Table == CS_EEPROM_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
+        9:  969:        if( Table == CS_EEPROM_TABLE)
+        -:  970:        {
+        3:  971:            strncpy(TableType, "Eeprom", CS_TABLETYPE_NAME_SIZE);
+        -:  972:        }
+        9:  973:        if( Table == CS_MEMORY_TABLE)
         -:  974:        {
-        1:  975:            strncpy(TableType, "Eeprom", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
+        2:  975:            strncpy(TableType, "Memory", CS_TABLETYPE_NAME_SIZE);
         -:  976:        }
-        4:  977:        if( Table == CS_MEMORY_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
+        9:  977:        if( Table == CS_TABLES_TABLE)
         -:  978:        {
-        1:  979:            strncpy(TableType, "Memory", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
+        2:  979:            strncpy(TableType, "Tables", CS_TABLETYPE_NAME_SIZE);
         -:  980:        }
-        4:  981:        if( Table == CS_TABLES_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
+        9:  981:        if( Table == CS_APP_TABLE)
         -:  982:        {
-        1:  983:            strncpy(TableType, "Tables", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
+        2:  983:            strncpy(TableType, "Apps", CS_TABLETYPE_NAME_SIZE);
         -:  984:        }
-        4:  985:        if( Table == CS_APP_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -:  986:        {
-        1:  987:            strncpy(TableType, "Apps", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -:  988:        }
-        -:  989:        
-        4:  990:        CFE_EVS_SendEvent (CS_TBL_INIT_ERR_EID,
-call    0 returned 100%
-        -:  991:                           CFE_EVS_ERROR,
-        -:  992:                           "CS received error 0x%08X initializing Definition table for %s", 
-        -:  993:                           Result,
-        -:  994:                           TableType);
-        -:  995:    }
-        -:  996:    
-        -:  997:    /* if all went well, set the table to enabled */
-       26:  998:    if (Result == CFE_SUCCESS)
-branch  0 taken 85% (fallthrough)
-branch  1 taken 15%
-        -:  999:    {
-       22: 1000:        if( Table == CS_EEPROM_TABLE && LoadedFromMemory == FALSE)
-branch  0 taken 32% (fallthrough)
-branch  1 taken 68%
-branch  2 taken 71% (fallthrough)
-branch  3 taken 29%
-        -: 1001:        {
-        5: 1002:            CS_AppData.EepromCSState = CS_STATE_ENABLED;
-        -: 1003:        }
-       22: 1004:        if( Table == CS_EEPROM_TABLE && LoadedFromMemory == TRUE)
-branch  0 taken 32% (fallthrough)
-branch  1 taken 68%
-branch  2 taken 29% (fallthrough)
-branch  3 taken 71%
-        -: 1005:        {
-        2: 1006:            CS_AppData.EepromCSState = CS_STATE_DISABLED;
-        -: 1007:        }
-        -: 1008:        
-       22: 1009:        if( Table == CS_MEMORY_TABLE && LoadedFromMemory == FALSE)
-branch  0 taken 27% (fallthrough)
-branch  1 taken 73%
-branch  2 taken 67% (fallthrough)
-branch  3 taken 33%
-        -: 1010:        {
-        4: 1011:            CS_AppData.MemoryCSState = CS_STATE_ENABLED;
-        -: 1012:        }
-       22: 1013:        if( Table == CS_MEMORY_TABLE && LoadedFromMemory == TRUE)
-branch  0 taken 27% (fallthrough)
-branch  1 taken 73%
-branch  2 taken 33% (fallthrough)
-branch  3 taken 67%
-        -: 1014:        {
-        2: 1015:            CS_AppData.MemoryCSState = CS_STATE_DISABLED;
-        -: 1016:        }
-        -: 1017:        
-       22: 1018:        if( Table == CS_APP_TABLE && LoadedFromMemory == FALSE)
-branch  0 taken 23% (fallthrough)
-branch  1 taken 77%
-branch  2 taken 80% (fallthrough)
-branch  3 taken 20%
-        -: 1019:        {
-        4: 1020:            CS_AppData.AppCSState = CS_STATE_ENABLED;
-        -: 1021:        }
-       22: 1022:        if( Table == CS_APP_TABLE && LoadedFromMemory == TRUE)
-branch  0 taken 23% (fallthrough)
-branch  1 taken 77%
-branch  2 taken 20% (fallthrough)
-branch  3 taken 80%
-        -: 1023:        {
-        1: 1024:            CS_AppData.AppCSState = CS_STATE_DISABLED;
-        -: 1025:        }
-        -: 1026:        
-       22: 1027:        if( Table == CS_TABLES_TABLE && LoadedFromMemory == FALSE)
-branch  0 taken 18% (fallthrough)
-branch  1 taken 82%
-branch  2 taken 50% (fallthrough)
-branch  3 taken 50%
-        -: 1028:        {
-        2: 1029:            CS_AppData.TablesCSState = CS_STATE_ENABLED;
-        -: 1030:        }
-       22: 1031:        if( Table == CS_TABLES_TABLE && LoadedFromMemory == TRUE)
-branch  0 taken 18% (fallthrough)
-branch  1 taken 82%
-branch  2 taken 50% (fallthrough)
-branch  3 taken 50%
-        -: 1032:        {
-        2: 1033:            CS_AppData.TablesCSState = CS_STATE_DISABLED;
-        -: 1034:        }
-        -: 1035:    }
-       26: 1036:    return (Result);
-        -: 1037:    
-        -: 1038:}   /* end of CS_CheckSum_Definition_Table_Init () */
-        -: 1039:
-        -: 1040:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -: 1041:/*                                                                 */
-        -: 1042:/* CS Handles table updates                                        */
-        -: 1043:/*                                                                 */
-        -: 1044:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -: 1045:int32 CS_HandleTableUpdate (void           * DefinitionTblPtr,
-        -: 1046:                            void           * ResultsTblPtr,
-        -: 1047:                            CFE_TBL_Handle_t DefinitionTableHandle,
-        -: 1048:                            CFE_TBL_Handle_t ResultsTableHandle,
-        -: 1049:                            uint16           Table,
-        -: 1050:                            uint16           NumEntries)
-function CS_HandleTableUpdate called 88 returned 100% blocks executed 100%
-       88: 1051:{
-       88: 1052:    int32           ReleaseResult1 = CFE_SUCCESS;
-       88: 1053:    int32           ManageResult1  = CFE_SUCCESS;
-       88: 1054:    int32           GetResult1     = CFE_SUCCESS;
-       88: 1055:    int32           ReleaseResult2 = CFE_SUCCESS;
-       88: 1056:    int32           ManageResult2  = CFE_SUCCESS;
-       88: 1057:    int32           GetResult2     = CFE_SUCCESS;
-       88: 1058:    int32           Result         = CFE_SUCCESS;
-       88: 1059:    int32           Loop           = 0;
-        -: 1060:    char            TableType[CS_TABLETYPE_NAME_SIZE];
-        -: 1061:
-       88: 1062:    strncpy(TableType, "Undef Tbl", CS_TABLETYPE_NAME_SIZE);  /* Init table type */
-call    0 returned 100%
+        -:  985:        
+        9:  986:        CFE_EVS_SendEvent (CS_TBL_INIT_ERR_EID,
+        -:  987:                           CFE_EVS_ERROR,
+        -:  988:                           "CS received error 0x%08X initializing Definition table for %s", 
+        -:  989:                           (unsigned int)Result,
+        -:  990:                           TableType);
+        -:  991:    }
+        -:  992:    
+        -:  993:    /* If we loaded from file successfully then the states we wish to use have already been set
+        -:  994:     * If we loaded from memory then disable the table  */
+       54:  995:    if (LoadedFromMemory == TRUE && Result == CFE_SUCCESS)
+        -:  996:    {
+        7:  997:        switch (Table)
+        -:  998:        {
+        -:  999:            case CS_EEPROM_TABLE:
+        4: 1000:                CS_AppData.EepromCSState = CS_STATE_DISABLED;
+        4: 1001:                break;
+        -: 1002:            case CS_MEMORY_TABLE:
+        1: 1003:                CS_AppData.MemoryCSState = CS_STATE_DISABLED;
+        1: 1004:                break;
+        -: 1005:            case CS_APP_TABLE:
+        1: 1006:                CS_AppData.AppCSState    = CS_STATE_DISABLED;
+        1: 1007:                break;
+        -: 1008:            case CS_TABLES_TABLE:
+        1: 1009:                CS_AppData.TablesCSState = CS_STATE_DISABLED;
+        -: 1010:                break;
+        -: 1011:            default:
+        -: 1012:                break;
+        -: 1013:        }
+        -: 1014:    }
+       54: 1015:    return (Result);
+        -: 1016:    
+        -: 1017:}   /* end of CS_CheckSum_Definition_Table_Init () */
+        -: 1018:
+        -: 1019:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1020:/*                                                                 */
+        -: 1021:/* CS Handles table updates                                        */
+        -: 1022:/*                                                                 */
+        -: 1023:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       16: 1024:int32 CS_HandleTableUpdate (void           * DefinitionTblPtr,
+        -: 1025:                            void           * ResultsTblPtr,
+        -: 1026:                            CFE_TBL_Handle_t DefinitionTableHandle,
+        -: 1027:                            CFE_TBL_Handle_t ResultsTableHandle,
+        -: 1028:                            uint16           Table,
+        -: 1029:                            uint16           NumEntries)
+        -: 1030:{
+       16: 1031:    int32           ReleaseResult1 = CFE_SUCCESS;
+       16: 1032:    int32           ManageResult1  = CFE_SUCCESS;
+       16: 1033:    int32           GetResult1     = CFE_SUCCESS;
+       16: 1034:    int32           ReleaseResult2 = CFE_SUCCESS;
+       16: 1035:    int32           ManageResult2  = CFE_SUCCESS;
+       16: 1036:    int32           GetResult2     = CFE_SUCCESS;
+       16: 1037:    int32           Result         = CFE_SUCCESS;
+       16: 1038:    int32           Loop           = 0;
+        -: 1039:    char            TableType[CS_TABLETYPE_NAME_SIZE];
+        -: 1040:
+       16: 1041:    strncpy(TableType, "Undef Tbl", CS_TABLETYPE_NAME_SIZE);  /* Init table type */
+        -: 1042:    
+        -: 1043:    /* Below, there are several values that are returned and assigned, but never evaluated. */
+        -: 1044:    /* This is done so intentionally, as it helps us with Source-Level debugging this functions. */
+        -: 1045:    
+        -: 1046:    /* Release the Table Address.  */ 
+       16: 1047:    ReleaseResult1 = CFE_TBL_ReleaseAddress (ResultsTableHandle);
+       16: 1048:    ReleaseResult2 = CFE_TBL_ReleaseAddress (DefinitionTableHandle);
+        -: 1049:    
+       16: 1050:    ManageResult1 = CFE_TBL_Manage (ResultsTableHandle);
+       16: 1051:    ManageResult2 = CFE_TBL_Manage (DefinitionTableHandle);
+        -: 1052:    
+       16: 1053:    GetResult1 = CFE_TBL_GetAddress ( ResultsTblPtr,
+        -: 1054:                                     ResultsTableHandle);
+       16: 1055:    Result = GetResult1;
+        -: 1056:    
+       16: 1057:    if (Result == CFE_SUCCESS)
+        -: 1058:    {
+       11: 1059:        GetResult2 = CFE_TBL_GetAddress ( DefinitionTblPtr,
+        -: 1060:                                          DefinitionTableHandle);
+       11: 1061:        Result = GetResult2;
+        -: 1062:    }
         -: 1063:    
-        -: 1064:    /* Below, there are several values that are returned and assigned, but never evaluated. */
-        -: 1065:    /* This is done so intentionally, as it helps us with Source-Level debugging this functions. */
-        -: 1066:    
-        -: 1067:    /* Release the Table Address.  */ 
-       88: 1068:    ReleaseResult1 = CFE_TBL_ReleaseAddress (ResultsTableHandle);
-call    0 returned 100%
-       88: 1069:    ReleaseResult2 = CFE_TBL_ReleaseAddress (DefinitionTableHandle);
-call    0 returned 100%
-        -: 1070:    
-       88: 1071:    ManageResult1 = CFE_TBL_Manage (ResultsTableHandle);
-call    0 returned 100%
-       88: 1072:    ManageResult2 = CFE_TBL_Manage (DefinitionTableHandle);
-call    0 returned 100%
-        -: 1073:    
-       88: 1074:    GetResult1 = CFE_TBL_GetAddress ( ResultsTblPtr,
-call    0 returned 100%
-        -: 1075:                                     ResultsTableHandle);
-       88: 1076:    Result = GetResult1;
-        -: 1077:    
-       88: 1078:    if (Result == CFE_SUCCESS)
-branch  0 taken 95% (fallthrough)
-branch  1 taken 5%
-        -: 1079:    {
-       84: 1080:        GetResult2 = CFE_TBL_GetAddress ( DefinitionTblPtr,
-call    0 returned 100%
-        -: 1081:                                          DefinitionTableHandle);
-       84: 1082:        Result = GetResult2;
-        -: 1083:    }
-        -: 1084:    
-       88: 1085:    if ( (Result == CFE_TBL_INFO_UPDATED))
-branch  0 taken 33% (fallthrough)
-branch  1 taken 67%
-        -: 1086:    {
-       29: 1087:        if ( Table == CS_TABLES_TABLE)
-branch  0 taken 24% (fallthrough)
-branch  1 taken 76%
-        -: 1088:        {
-        -: 1089:            /* before we update the results table, we need to release all of the 
-        -: 1090:             table handles that are in the results table */
-      175: 1091:            for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -: 1092:            {
-      168: 1093:                if (CS_AppData.ResTablesTblPtr[Loop].TblHandle != CFE_TBL_BAD_TABLE_HANDLE)
-branch  0 taken 56% (fallthrough)
-branch  1 taken 44%
-        -: 1094:                {
-        -: 1095:                    
-       94: 1096:                    if (CS_AppData.ResTablesTblPtr[Loop].IsCSOwner == FALSE)
-branch  0 taken 71% (fallthrough)
-branch  1 taken 29%
-        -: 1097:                    {
-        -: 1098:                    
-       67: 1099:                        CFE_TBL_Unregister(CS_AppData.ResTablesTblPtr[Loop].TblHandle);
-call    0 returned 100%
-        -: 1100:                    }
-        -: 1101:                }
-        -: 1102:            }
-        -: 1103:            
-        7: 1104:            CS_ProcessNewTablesDefinitionTable ((CS_Def_Tables_Table_Entry_t *) DefinitionTblPtr, 
-call    0 returned 100%
-        -: 1105:                                                (CS_Res_Tables_Table_Entry_t *) ResultsTblPtr);
-        -: 1106:        }
-        -: 1107:        else
+       16: 1064:    if ( (Result == CFE_TBL_INFO_UPDATED))
+        -: 1065:    {
+        3: 1066:        if ( Table == CS_TABLES_TABLE)
+        -: 1067:        {
+        -: 1068:            /* before we update the results table, we need to release all of the 
+        -: 1069:             table handles that are in the results table */
+       25: 1070:            for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
+        -: 1071:            {
+       24: 1072:                if (CS_AppData.ResTablesTblPtr[Loop].TblHandle != CFE_TBL_BAD_TABLE_HANDLE)
+        -: 1073:                {
+        -: 1074:                    
+       24: 1075:                    if (CS_AppData.ResTablesTblPtr[Loop].IsCSOwner == FALSE)
+        -: 1076:                    {
+        -: 1077:                    
+       24: 1078:                        CFE_TBL_Unregister(CS_AppData.ResTablesTblPtr[Loop].TblHandle);
+        -: 1079:                    }
+        -: 1080:                }
+        -: 1081:            }
+        -: 1082:            
+        1: 1083:            CS_ProcessNewTablesDefinitionTable ((CS_Def_Tables_Table_Entry_t *) DefinitionTblPtr, 
+        -: 1084:                                                (CS_Res_Tables_Table_Entry_t *) ResultsTblPtr);
+        -: 1085:        }
+        -: 1086:        else
+        -: 1087:        {
+        -: 1088:            
+        2: 1089:            if (Table == CS_APP_TABLE)
+        -: 1090:            {
+        1: 1091:                CS_ProcessNewAppDefinitionTable ((CS_Def_App_Table_Entry_t *) DefinitionTblPtr, 
+        -: 1092:                                                 (CS_Res_App_Table_Entry_t *) ResultsTblPtr);
+        -: 1093:            }
+        -: 1094:            else
+        -: 1095:            {
+        1: 1096:                CS_ProcessNewEepromMemoryDefinitionTable ((CS_Def_EepromMemory_Table_Entry_t *) DefinitionTblPtr, 
+        -: 1097:                                                          (CS_Res_EepromMemory_Table_Entry_t *) ResultsTblPtr,
+        -: 1098:                                                          NumEntries,
+        -: 1099:                                                          Table);
+        -: 1100:            }
+        -: 1101:        }
+        -: 1102:        
+        3: 1103:        Result = CFE_SUCCESS;
+        -: 1104:    }
+        -: 1105:    else
+        -: 1106:    {
+       13: 1107:        if (Result < CFE_SUCCESS)
         -: 1108:        {
-        -: 1109:            
-       22: 1110:            if (Table == CS_APP_TABLE)
-branch  0 taken 36% (fallthrough)
-branch  1 taken 64%
-        -: 1111:            {
-        8: 1112:                CS_ProcessNewAppDefinitionTable ((CS_Def_App_Table_Entry_t *) DefinitionTblPtr, 
-call    0 returned 100%
-        -: 1113:                                                 (CS_Res_App_Table_Entry_t *) ResultsTblPtr);
-        -: 1114:            }
-        -: 1115:            else
-        -: 1116:            {
-       14: 1117:                CS_ProcessNewEepromMemoryDefinitionTable ((CS_Def_EepromMemory_Table_Entry_t *) DefinitionTblPtr, 
-call    0 returned 100%
-        -: 1118:                                                          (CS_Res_EepromMemory_Table_Entry_t *) ResultsTblPtr,
-        -: 1119:                                                          NumEntries,
-        -: 1120:                                                          Table);
-        -: 1121:            }
-        -: 1122:        }
-        -: 1123:        
-       29: 1124:        Result = CFE_SUCCESS;
-        -: 1125:    }
-        -: 1126:    else
-        -: 1127:    {
-       59: 1128:        if (Result < CFE_SUCCESS)
-branch  0 taken 7% (fallthrough)
-branch  1 taken 93%
-        -: 1129:        {
-        4: 1130:            if( Table == CS_EEPROM_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -: 1131:            {
-        1: 1132:                strncpy(TableType, "Eeprom", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -: 1133:            }
-        4: 1134:            if( Table == CS_MEMORY_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -: 1135:            {
-        1: 1136:                strncpy(TableType, "Memory", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -: 1137:            }
-        4: 1138:            if( Table == CS_TABLES_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -: 1139:            {
-        1: 1140:                strncpy(TableType, "Table", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -: 1141:            }
-        4: 1142:            if( Table == CS_APP_TABLE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -: 1143:            {
-        1: 1144:                strncpy(TableType, "App", CS_TABLETYPE_NAME_SIZE);
-call    0 returned 100%
-        -: 1145:            }
-        -: 1146:            
-        -: 1147:            /* There was a problem somewhere, generate an event */
-        4: 1148:            CFE_EVS_SendEvent (CS_TBL_UPDATE_ERR_EID,
-call    0 returned 100%
-        -: 1149:                               CFE_EVS_ERROR,
-        -: 1150:                               "CS had problems updating table. Release:0x%08X Manage:0x%08X Get:0x%08X for table %s",
-        -: 1151:                               ReleaseResult2,
-        -: 1152:                               ManageResult2,
-        -: 1153:                               GetResult2,
-        -: 1154:                               TableType);
-        -: 1155:        }
-        -: 1156:    }
-       88: 1157:    return (Result);
-        -: 1158:}   /* end CS_HandleTableUpdate */
-        -: 1159:
-        -: 1160:
-        -: 1161:/************************/
-        -: 1162:/*  End of File Comment */
-        -: 1163:/************************/
+       10: 1109:            if( Table == CS_EEPROM_TABLE)
+        -: 1110:            {
+        4: 1111:                strncpy(TableType, "Eeprom", CS_TABLETYPE_NAME_SIZE);
+        -: 1112:            }
+       10: 1113:            if( Table == CS_MEMORY_TABLE)
+        -: 1114:            {
+        2: 1115:                strncpy(TableType, "Memory", CS_TABLETYPE_NAME_SIZE);
+        -: 1116:            }
+       10: 1117:            if( Table == CS_TABLES_TABLE)
+        -: 1118:            {
+        2: 1119:                strncpy(TableType, "Table", CS_TABLETYPE_NAME_SIZE);
+        -: 1120:            }
+       10: 1121:            if( Table == CS_APP_TABLE)
+        -: 1122:            {
+        2: 1123:                strncpy(TableType, "App", CS_TABLETYPE_NAME_SIZE);
+        -: 1124:            }
+        -: 1125:            
+        -: 1126:            /* There was a problem somewhere, generate an event */
+       10: 1127:            CFE_EVS_SendEvent (CS_TBL_UPDATE_ERR_EID,
+        -: 1128:                               CFE_EVS_ERROR,
+        -: 1129:                               "CS had problems updating table. Release:0x%08X Manage:0x%08X Get:0x%08X for table %s",
+        -: 1130:                               (unsigned int)ReleaseResult2,
+        -: 1131:                               (unsigned int)ManageResult2,
+        -: 1132:                               (unsigned int)GetResult2,
+        -: 1133:                               TableType);
+        -: 1134:        }
+        -: 1135:    }
+       16: 1136:    return (Result);
+        -: 1137:}   /* end CS_HandleTableUpdate */
+        -: 1138:
+        -: 1139:
+        -: 1140:/************************/
+        -: 1141:/*  End of File Comment */
+        -: 1142:/************************/

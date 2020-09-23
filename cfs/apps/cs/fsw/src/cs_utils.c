@@ -1,44 +1,19 @@
 /************************************************************************
  ** File:
- **   $Id: cs_utils.c 1.9.1.1 2015/03/03 11:58:10EST sstrege Exp  $
+ **   $Id: cs_utils.c 1.4 2017/02/16 15:33:14EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
  **   This software was created at NASA's Goddard Space Flight Center.
  **   This software is governed by the NASA Open Source Agreement and may be 
  **   used, distributed and modified only pursuant to the terms of that 
- **   agreement. 
+ **   agreement.
  **
  ** Purpose: 
  **   The CFS Checksum (CS) Application's utility functions
  **
- **   $Log: cs_utils.c  $
- **   Revision 1.9.1.1 2015/03/03 11:58:10EST sstrege 
- **   Added copyright information
- **   Revision 1.9 2015/01/26 15:06:49EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.8 2012/06/06 14:43:33EDT lwalling 
- **   Initialize variable DoneWithEntry
- **   Revision 1.7 2011/09/06 11:52:34PDT jmdagost 
- **   Corrected app-not-found and table-not-found compute event IDs.
- **   Revision 1.6 2010/05/28 11:15:03EDT jmdagost 
- **   Included cs_utils.h to eliminate potential compiler warnings.
- **   Revision 1.5 2010/04/14 15:42:24EDT jmdagost 
- **   Replaced CS_APP_TABLE with (CS_NUM_TABLES - 1) in CS_GoToNextTable().
- **   Revision 1.4 2010/04/08 16:35:47EDT jmdagost 
- **   Added conditional wrappers around background calculations for OS and cFE Core to check
- **   the State value that has been set by the recompute command.
- **   Revision 1.3 2010/03/29 16:55:57EDT jmdagost 
- **   Replaced CS_GetTableEntryByName() and CS_GetAppEntryByName() with CS_GetTableResTblEntryByName() and CS_GetAppResTblEntryByName().
- **   Added CS_GetTableDefTblByName() and CS_GetAppDefTblEntryByName().
- **   Revision 1.2 2008/07/23 10:34:44EDT njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:24EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 
 /**************************************************************************
@@ -556,8 +531,8 @@ boolean CS_BackgroundCfeCore(void)
                 CFE_EVS_SendEvent (CS_CFECORE_MISCOMPARE_ERR_EID,
                                    CFE_EVS_ERROR,
                                    "Checksum Failure: cFE Core, Expected: 0x%08X, Calculated: 0x%08X",                                   
-                                   ResultsEntry -> ComparisonValue,
-                                   ComputedCSValue);
+                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+                                   (unsigned int)ComputedCSValue);
             }
         
             if (DoneWithEntry == TRUE)
@@ -624,8 +599,8 @@ boolean CS_BackgroundOS(void)
                 CFE_EVS_SendEvent (CS_OS_MISCOMPARE_ERR_EID,
                                    CFE_EVS_ERROR,
                                    "Checksum Failure: OS code segment, Expected: 0x%08X, Calculated: 0x%08X",                                   
-                                   ResultsEntry -> ComparisonValue,
-                                   ComputedCSValue);
+                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+                                   (unsigned int)ComputedCSValue);
             }
         
             if (DoneWithEntry == TRUE)
@@ -698,8 +673,8 @@ boolean CS_BackgroundEeprom(void)
                                    CFE_EVS_ERROR,
                                    "Checksum Failure: Entry %d in Eeprom Table, Expected: 0x%08X, Calculated: 0x%08X",                                   
                                    CurrEntry,
-                                   ResultsEntry -> ComparisonValue,
-                                   ComputedCSValue);
+                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+                                   (unsigned int)ComputedCSValue);
             }
             
             if (DoneWithEntry == TRUE)
@@ -795,8 +770,8 @@ boolean CS_BackgroundMemory(void)
                                    CFE_EVS_ERROR,
                                    "Checksum Failure: Entry %d in Memory Table, Expected: 0x%08X, Calculated: 0x%08X",                                   
                                    CurrEntry,
-                                   ResultsEntry -> ComparisonValue,
-                                   ComputedCSValue);
+                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+                                   (unsigned int)ComputedCSValue);
                  
                 CS_AppData.CurrentEntryInTable ++;
             }
@@ -868,8 +843,8 @@ boolean CS_BackgroundTables(void)
                                    CFE_EVS_ERROR,
                                    "Checksum Failure: Table %s, Expected: 0x%08X, Calculated: 0x%08X",                                   
                                    TablesResultsEntry -> Name,
-                                   TablesResultsEntry -> ComparisonValue,
-                                   ComputedCSValue);
+                                   (unsigned int)(TablesResultsEntry -> ComparisonValue),
+                                   (unsigned int)ComputedCSValue);
             }
             
             if(Status == CS_ERR_NOT_FOUND)
@@ -947,8 +922,8 @@ boolean CS_BackgroundApp(void)
                 CFE_EVS_SendEvent (CS_APP_MISCOMPARE_ERR_EID, CFE_EVS_ERROR,
                                    "Checksum Failure: Application %s, Expected: 0x%08X, Calculated: 0x%08X",                                   
                                    AppResultsEntry -> Name,
-                                   AppResultsEntry -> ComparisonValue,
-                                   ComputedCSValue);
+                                   (unsigned int)(AppResultsEntry -> ComparisonValue),
+                                   (unsigned int)ComputedCSValue);
             }
             
             if(Status == CS_ERR_NOT_FOUND)

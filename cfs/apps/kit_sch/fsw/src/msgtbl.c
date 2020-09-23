@@ -21,8 +21,8 @@
 #include <string.h>
 #include "msgtbl.h"
 
-/* Convenience macro */
-#define  JSON_OBJ  &(MsgTbl->Json)
+
+#define JSON  &(MsgTbl->Json)  /* Convenience macro */
 
 /*
 ** Type Definitions
@@ -76,16 +76,14 @@ void MSGTBL_Constructor(MSGTBL_Class*       ObjPtr,
    MsgTbl->LoadTblFunc      = LoadTblFunc;
    MsgTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
 
-   JSON_Constructor(JSON_OBJ, MsgTbl->JsonFileBuf, MsgTbl->JsonFileTokens);
+   JSON_Constructor(JSON, MsgTbl->JsonFileBuf, MsgTbl->JsonFileTokens);
    
    JSON_ObjConstructor(&(MsgTbl->JsonObj[MSGTBL_OBJ_MSG]),
                        MSGTBL_OBJ_MSG_NAME,
                        MsgCallback,
                        (void *)&(MsgTbl->Tbl.Entry));
    
-   JSON_RegContainerCallback(JSON_OBJ,
-	                          MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Name,
-	                          MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Callback);
+   JSON_RegContainerCallback(JSON, &(MsgTbl->JsonObj[MSGTBL_OBJ_MSG]));
 
 } /* End MSGTBL_Constructor() */
 
@@ -130,13 +128,13 @@ boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    MSGTBL_ResetStatus();  
    CFE_PSP_MemSet(&(MsgTbl->Tbl), 0, sizeof(MsgTbl->Tbl));
 
-   if (JSON_OpenFile(JSON_OBJ, Filename)) {
+   if (JSON_OpenFile(JSON, Filename)) {
   
       CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"MSGTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
       //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
       //DEBUG JSON_PrintTokens(&Json,50);
     
-      JSON_ProcessTokens(JSON_OBJ);
+      JSON_ProcessTokens(JSON);
 
       /* 
       ** Only process command if no attribute errors. No need to send an event
@@ -228,12 +226,10 @@ boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 ** Notes:
 **  1. Function signature must match TBLMGR_DumpTblFuncPtr.
 **  2. Can assume valid table file name because this is a callback from 
-**     the app framework table manager that has verified the file.
-**  3. DumpType is unused.
-**  4. File is formatted so it can be used as a load file. It does not follow
-**     the cFE table file format. 
-**  5. Creates a new dump file, overwriting anything that may have existed
-**     previously
+**     the app framework table manager that has verified the file. If the
+**     filename exists it will be overwritten.
+**  3. File is formatted so it can be used as a load file. 
+**  4. DumpType is unused.
 */
 
 boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
@@ -244,7 +240,7 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
    char     DumpRecord[256];
    const    MSGTBL_Tbl *MsgTblPtr;
    char     SysTimeStr[256];
-   uint8    DataBytes;
+   uint16   DataWords;
    
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
@@ -281,9 +277,10 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       for (i=0; i < MSGTBL_MAX_ENTRIES; i++) {
+         
          /* 
-         ** JSMN accepted the message keyword in an array withot be in a new 
-         ** object but ruby JSON parser doesn't. I think JSMN is wrong
+         ** JSMN accepted the message keyword in an array without being in a
+         ** new object but ruby JSON parser doesn't. I think JSMN is wrong
          */
          if (i > 0) { 
             sprintf(DumpRecord,",\n");
@@ -295,19 +292,23 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
          
          sprintf(DumpRecord,"      \"id\": %d,\n      \"stream-id\": %d,\n      \"seq-seg\": %d,\n      \"length\": %d",
                  i,
-                 MsgTblPtr->Entry[i].Buffer[0],
-                 MsgTblPtr->Entry[i].Buffer[1],
-                 MsgTblPtr->Entry[i].Buffer[2]);
+                 CFE_MAKE_BIG16(MsgTblPtr->Entry[i].Buffer[0]),
+                 CFE_MAKE_BIG16(MsgTblPtr->Entry[i].Buffer[1]),
+                 CFE_MAKE_BIG16(MsgTblPtr->Entry[i].Buffer[2]));
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
          
-         DataBytes = ((MsgTblPtr->Entry[i].Buffer[2] & 0xFF00) >> 8);
-         //TODO DataBytes = (MsgTblPtr->Entry[i].Buffer[2] & 0x00FF);  
+         /*
+         ** DataWords is everything past the primary header so they include
+         ** the secondary header and don't distinguish between cmd or tlm
+         ** packets. 
+         */
+         DataWords = (CFE_SB_GetTotalMsgLength((const CFE_SB_Msg_t *)MsgTblPtr->Entry[i].Buffer) - PKTUTIL_PRI_HDR_BYTES)/2;
 
-         if (DataBytes > (uint8)(MSGTBL_MAX_MSG_BYTES-6)) {
+         if (DataWords > (uint8)(MSGTBL_MAX_MSG_WORDS)) {
             
             CFE_EVS_SendEvent(MSGTBL_DUMP_MSG_ERR_EID, CFE_EVS_ERROR,
-                              "Error creating dump file message entry %d. Data byte length %d is greater than max data buffer %d",
-                              i, DataBytes, (MSGTBL_MAX_MSG_BYTES-6));         
+                              "Error creating dump file message entry %d. Message word length %d is greater than max data buffer %d",
+                              i, DataWords, PKTUTIL_PRI_HDR_WORDS);         
          }
          else {
 
@@ -315,29 +316,29 @@ boolean MSGTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
             ** Omit "data-words" property if no data
             ** - Properly terminate 'length' line 
             */
-            if (DataBytes > 0) {
+            if (DataWords > 0) {
          
                sprintf(DumpRecord,",\n      \"data-words\": \"");         
                OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
                   
-               for (d=0; d < DataBytes; d++) {
+               for (d=0; d < DataWords; d++) {
                   
-                  if (d == (DataBytes-1)) {
-                     sprintf(DumpRecord,"%d\"\n   }}",MsgTblPtr->Entry[i].Buffer[3+d]);
+                  if (d == (DataWords-1)) {
+                     sprintf(DumpRecord,"%d\"\n   }}",MsgTblPtr->Entry[i].Buffer[PKTUTIL_PRI_HDR_WORDS+d]);
                   }
                   else {
-                     sprintf(DumpRecord,"%d,",MsgTblPtr->Entry[i].Buffer[3+d]);
+                     sprintf(DumpRecord,"%d,",MsgTblPtr->Entry[i].Buffer[PKTUTIL_PRI_HDR_WORDS+d]);
                   }
                   OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-               } /* End DataByte loop */
+               } /* End DataWord loop */
                            
-            } /* End if non-zero data bytes */
+            } /* End if non-zero data words */
             else {
                sprintf(DumpRecord,"\n   }}");         
                OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
             }
-         } /* End if DataBytes within range */
+         } /* End if DataWords within range */
 
       } /* End message loop */
 
@@ -408,7 +409,7 @@ static boolean MsgCallback (int TokenIdx)
    int    JsonIntData, Id, i;
    char   DataStr[(MSGTBL_MAX_MSG_WORDS-3)*10];  /* 6 digits per word plus any extra commas and spaces */
    char  *DataStrPtr;
-   boolean RetStatus = FALSE, DataBytes = FALSE;      
+   boolean RetStatus = FALSE, DataWords = FALSE;      
    MSGTBL_Entry MsgEntry;
 
    CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"\nMSGTBL.MsgCallback: ObjLoadCnt %d, ObjErrCnt %d, AttrErrCnt %d, TokenIdx %d\n",
@@ -427,12 +428,12 @@ static boolean MsgCallback (int TokenIdx)
    **   "length": 1792,
    **   "data-words": "0,1,2,3,4,5"
    */
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "id",         &JsonIntData)) { AttributeCnt++; Id = JsonIntData; }
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "stream-id",  &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[0] = (uint16) JsonIntData; }
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "seq-seg",    &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[1] = (uint16) JsonIntData; }
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "length",     &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[2] = (uint16) JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "id",         &JsonIntData)) { AttributeCnt++; Id = JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "stream-id",  &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[0] = CFE_MAKE_BIG16((uint16)JsonIntData); }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "seq-seg",    &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[1] = CFE_MAKE_BIG16((uint16)JsonIntData); }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "length",     &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[2] = CFE_MAKE_BIG16((uint16)JsonIntData); }
    
-   if (JSON_GetValStr(JSON_OBJ, TokenIdx, "data-words", DataStr)) {
+   if (JSON_GetValStr(JSON, TokenIdx, "data-words", DataStr)) {
       
       AttributeCnt++; 
       i = 3;
@@ -450,15 +451,15 @@ static boolean MsgCallback (int TokenIdx)
          }
       }
       
-      DataBytes = TRUE;
+      DataWords = TRUE;
       
    } /* End if DataStr */
    
    MsgTbl->ObjLoadCnt++;
    
    /* data-words is optional */
-   if ( (DataBytes  && AttributeCnt == 5) ||
-        (!DataBytes && AttributeCnt == 4) ) {
+   if ( (DataWords  && AttributeCnt == 5) ||
+        (!DataWords && AttributeCnt == 4) ) {
    
       if (Id < MSGTBL_MAX_ENTRIES) {
          

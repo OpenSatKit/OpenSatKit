@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: cs_app.c 1.15.1.1 2015/03/03 11:58:25EST sstrege Exp  $
+**   $Id: cs_app.c 1.17 2017/03/29 17:29:00EDT mdeschu Exp  $
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
+**   Copyright (c) 2007-2014 United States Government as represented by the 
 **   Administrator of the National Aeronautics and Space Administration. 
 **   All Other Rights Reserved.  
 **
@@ -14,43 +14,6 @@
 ** Purpose: 
 **   CFS Checksum (CS) Applications provides the service of background
 **   checksumming user defined objects in the CFS
-**
-**
-**   $Log: cs_app.c  $
-**   Revision 1.15.1.1 2015/03/03 11:58:25EST sstrege 
-**   Added copyright information
-**   Revision 1.15 2012/09/14 15:02:43EDT aschoeni 
-**   Fixed incrementing of error counts for internal commands
-**   Revision 1.14 2011/09/06 14:19:56EDT jmdagost 
-**   Added ChildTaskInUse and OneShotInUse flags to housekeeping tlm.
-**   Revision 1.13 2011/06/15 16:36:43EDT jmdagost 
-**   Moved mission revision number from version header to platform config, so included platform config here.
-**   Revision 1.12 2010/08/12 14:28:18EDT jmdagost 
-**   Swapped App table registration and Tables table registration so that Tables table is last one registered.
-**   Revision 1.11 2010/04/14 15:43:39EDT jmdagost 
-**   Modified processing in CS_BackgroundCheckCmd() to protect against changes in table order.
-**   Revision 1.10 2010/03/09 15:04:26EST jmdagost 
-**   Removed unused LimitCmd and LimitHK terms.
-**   Revision 1.9 2009/06/10 13:55:43EDT rmcgraw 
-**   DCR8291:1 Replaced os_bsp with cfe_psp and OS_Mem with CFE_PSP_Mem
-**   Revision 1.8 2008/10/17 08:38:57EDT njyanchik 
-**   Added variables to even messages
-**   Revision 1.7 2008/08/28 10:24:05EDT njyanchik 
-**   removing a typo
-**   Revision 1.6 2008/08/28 09:06:04EDT njyanchik 
-**   Added a break statement after we process the app checksumming code.
-**   Revision 1.5 2008/07/31 19:03:48BST njyanchik 
-**   The Startup sync call has been added to the main loop and a platform config parameter has been added to the cs platform config file to regulate the 
-**   timeout for the synchronization.
-**   Revision 1.4 2008/07/28 19:05:34BST njyanchik 
-**   Fix some errors with the version number update
-**   Revision 1.3 2008/07/23 16:03:47BST njyanchik 
-**   Update CS with versioning information
-**   Revision 1.2 2008/07/23 15:34:33BST njyanchik 
-**   Check in of CS Unit test
-**   Revision 1.1 2008/06/13 09:04:06EDT njyanchik 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
 ** 
 *************************************************************************/
 #include <string.h>
@@ -72,6 +35,7 @@
 **
 **************************************************************************/
 #define CS_PIPE_NAME                    "CS_CMD_PIPE"
+#define CS_NUM_DATA_STORE_STATES        6 /* 4 tables + OS CS + cFE core number of checksum states for CDS */
 
 /*************************************************************************
 **
@@ -137,60 +101,21 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr);
  *************************************************************************/
 void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr);
 
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
 /************************************************************************/
-/** \brief Process noop command
+/** \brief Restore tables states from CDS if enabled
  **  
  **  \par Description
- **       Processes a noop ground command.
+ **       Restore CS state of tables from CDS
  **
  **  \par Assumptions, External Events, and Notes:
  **       None
  **       
- **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
- **                             references the software bus message 
- **
- **  \sa #CS_NOOP_CC
- **
- *************************************************************************/
-void CS_NoopCmd (CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief Process reset counters command
- **  
- **  \par Description
- **       Processes a reset counters ground command which will reset
- **       the checksum commmand error and command execution counters
- **       to zero. It also resets all checksum error counters and
- **       the passes completed counter.
- **
- **  \par Assumptions, External Events, and Notes:
- **       None
- **       
- **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
- **                             references the software bus message 
- **
- **  \sa #CS_RESET_CC
- **
- *************************************************************************/
-void CS_ResetCmd (CFE_SB_MsgPtr_t MessagePtr);
-
-/************************************************************************/
-/** \brief process a background checking cycle
- **  
- **  \par Description
- **       Processes a background checking cycle when the scheduler 
- **       tell CS.
- **
- **  \par Assumptions, External Events, and Notes:
- **       None
- **       
- **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
- **                             references the software bus message 
  **
  **
  *************************************************************************/
-void CS_BackgroundCheckCmd (CFE_SB_MsgPtr_t MessagePtr);
-
+int32 CS_CreateRestoreStatesFromCDS(void);
+#endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -254,24 +179,34 @@ void CS_AppMain (void)
     }/* end run loop */
     
     /* Check for "fatal" process error */
-    if (Result != CFE_SUCCESS || CS_AppData.RunStatus != CFE_ES_APP_RUN )
+    if (CS_AppData.RunStatus == CFE_ES_APP_ERROR || CS_AppData.RunStatus == CFE_ES_SYS_EXCEPTION )
     {
-        /* Send an event describing the reason for the termination */
+        /* Send an error event with run status and result */
         CFE_EVS_SendEvent(CS_EXIT_ERR_EID, 
                           CFE_EVS_ERROR,
-                          "App terminating, err = 0x%08X", 
-                          Result);
-        
-        /* In case cFE Event Services is not working */
-        CFE_ES_WriteToSysLog("CS App terminating, err = 0x%08X\n", 
-                             Result);
+                          "App terminating, RunStatus:0x%08X, RC:0x%08X", 
+                          (unsigned int)CS_AppData.RunStatus,
+                          (unsigned int)Result);
+    }
+    else
+    {
+        /* Send an informational event describing the reason for the termination */
+        CFE_EVS_SendEvent(CS_EXIT_INF_EID, 
+                          CFE_EVS_INFORMATION,
+                          "App terminating, RunStatus:0x%08X", 
+                          (unsigned int)CS_AppData.RunStatus);
     }
     
+    /* In case cFE Event Services is not working */
+    CFE_ES_WriteToSysLog("CS App terminating, RunStatus:0x%08X, RC:0x%08X\n",
+                         (unsigned int)CS_AppData.RunStatus,
+                         (unsigned int)Result);
+        
     /* Performance Log (stop time counter) */
     CFE_ES_PerfLogExit(CS_APPMAIN_PERF_ID);
     
     
-     /* Let cFE kill the task (and any child tasks) */
+     /* Let cFE kill the task (and child task) */
     CFE_ES_ExitApp(CS_AppData.RunStatus);
     
 } /* End of CS_AppMain () */
@@ -293,7 +228,12 @@ int32 CS_AppInit (void)
     
     /* Register for event services */
     Result = CFE_EVS_Register(NULL, 0, 0);
-    
+
+    if (Result != CFE_SUCCESS) {
+        CFE_ES_WriteToSysLog("CS App: Error Registering For Event Services, RC = 0x%08X\n", (unsigned int)Result);
+        return Result;
+    }
+        
     /* Zero out all data in CS_AppData, including the housekeeping data*/
     CFE_PSP_MemSet (& CS_AppData, 0, (unsigned) sizeof (CS_AppData) );
     
@@ -310,7 +250,7 @@ int32 CS_AppInit (void)
                     sizeof (CS_HkPacket_t),
                     TRUE);
     
-    
+
     /* Create Software Bus message pipe */
     
     Result = CFE_SB_CreatePipe (& CS_AppData.CmdPipe,
@@ -320,7 +260,7 @@ int32 CS_AppInit (void)
     {
         CFE_EVS_SendEvent (CS_INIT_SB_CREATE_ERR_EID,
                            CFE_EVS_ERROR,
-                           "Software Bus Create Pipe for command returned: 0x%08X",Result);
+                           "Software Bus Create Pipe for command returned: 0x%08X",(unsigned int)Result);
         return Result;
     }
     
@@ -333,7 +273,7 @@ int32 CS_AppInit (void)
     {
         CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_HK_ERR_EID,
                            CFE_EVS_ERROR,
-                           "Software Bus subscribe to housekeeping returned: 0x%08X",Result);
+                           "Software Bus subscribe to housekeeping returned: 0x%08X",(unsigned int)Result);
         return Result;
     }
     
@@ -347,7 +287,7 @@ int32 CS_AppInit (void)
     {
         CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_BACK_ERR_EID,
                            CFE_EVS_ERROR,
-                           "Software Bus subscribe to background cycle returned: 0x%08X",Result);
+                           "Software Bus subscribe to background cycle returned: 0x%08X",(unsigned int)Result);
         return Result;
     }
     
@@ -360,13 +300,24 @@ int32 CS_AppInit (void)
     {
         CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_CMD_ERR_EID,
                            CFE_EVS_ERROR,
-                           "Software Bus subscribe to command returned: 0x%08X",Result);
+                           "Software Bus subscribe to command returned: 0x%08X",(unsigned int)Result);
         return Result;
     }
     
     /* Set up default tables in memory */
     CS_InitializeDefaultTables();
+
+    CS_AppData.EepromCSState = CS_EEPROM_TBL_POWERON_STATE;
+    CS_AppData.MemoryCSState = CS_MEMORY_TBL_POWERON_STATE;
+    CS_AppData.AppCSState    = CS_APPS_TBL_POWERON_STATE;
+    CS_AppData.TablesCSState = CS_TABLES_TBL_POWERON_STATE;
     
+    CS_AppData.OSCSState      = CS_OSCS_CHECKSUM_STATE;
+    CS_AppData.CfeCoreCSState = CS_CFECORE_CHECKSUM_STATE;
+   
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+    Result = CS_CreateRestoreStatesFromCDS();
+#endif
     
     
     ResultInit = CS_TableInit(& CS_AppData.DefEepromTableHandle,
@@ -389,7 +340,7 @@ int32 CS_AppInit (void)
         CFE_EVS_SendEvent (CS_INIT_EEPROM_ERR_EID,
                            CFE_EVS_ERROR,
                            "Table initialization failed for Eeprom: 0x%08X",
-                           ResultInit);
+                           (unsigned int)ResultInit);
         return (ResultInit);
     }
     
@@ -414,7 +365,7 @@ int32 CS_AppInit (void)
         CFE_EVS_SendEvent (CS_INIT_MEMORY_ERR_EID,
                            CFE_EVS_ERROR,
                            "Table initialization failed for Memory: 0x%08X",
-                           ResultInit);
+                           (unsigned int)ResultInit);
         return (ResultInit);
     }
     
@@ -438,7 +389,7 @@ int32 CS_AppInit (void)
         CFE_EVS_SendEvent (CS_INIT_APP_ERR_EID,
                            CFE_EVS_ERROR,
                            "Table initialization failed for Apps: 0x%08X",
-                           ResultInit);
+                           (unsigned int)ResultInit);
         return (ResultInit);
     }
 
@@ -462,7 +413,7 @@ int32 CS_AppInit (void)
         CFE_EVS_SendEvent (CS_INIT_TABLES_ERR_EID,
                            CFE_EVS_ERROR,
                            "Table initialization failed for Tables: 0x%08X",
-                           ResultInit);
+                           (unsigned int)ResultInit);
         return (ResultInit);
     }
     
@@ -517,14 +468,11 @@ int32 CS_AppInit (void)
     
     /* Initial settings for the CS Application */
     /* the rest of the tables are initialized in CS_TableInit */
-    
     CS_AppData.ChecksumState  = CS_STATE_ENABLED;
-    CS_AppData.OSCSState      = CS_STATE_ENABLED;
-    CS_AppData.CfeCoreCSState = CS_STATE_ENABLED;
     
     
-    CS_AppData.ChildTaskInUse    = FALSE;
-    CS_AppData.OneShotTaskInUse  = FALSE;
+    CS_AppData.RecomputeInProgress    = FALSE;
+    CS_AppData.OneShotInProgress  = FALSE;
     
     
     CS_AppData.MaxBytesPerCycle = CS_DEFAULT_BYTES_PER_CYCLE;
@@ -563,8 +511,8 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
             
             /* update each table if there is no recompute happening on that table */
             
-            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
+            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+                  ( CS_AppData.OneShotInProgress == FALSE) && 
                   (CS_AppData.ChildTaskTable == CS_EEPROM_TABLE)))
             {
                 Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefEepromTblPtr,
@@ -580,12 +528,12 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
                     Result = CFE_EVS_SendEvent (CS_UPDATE_EEPROM_ERR_EID,
                                                 CFE_EVS_ERROR,
                                                 "Table update failed for Eeprom: 0x%08X, checksumming Eeprom is disabled",
-                                                Result);
+                                                (unsigned int)Result);
                 }
             }
             
-            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
+            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+                  ( CS_AppData.OneShotInProgress == FALSE) && 
                   (CS_AppData.ChildTaskTable == CS_MEMORY_TABLE)))
             {
                 Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefMemoryTblPtr,
@@ -600,12 +548,12 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
                     Result = CFE_EVS_SendEvent (CS_UPDATE_MEMORY_ERR_EID,
                                                 CFE_EVS_ERROR,
                                                 "Table update failed for Memory: 0x%08X, checksumming Memory is disabled",
-                                                Result);
+                                                (unsigned int)Result);
                 }
             }
             
-            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
+            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+                  ( CS_AppData.OneShotInProgress == FALSE) && 
                   (CS_AppData.ChildTaskTable == CS_APP_TABLE)))
             {
                 Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefAppTblPtr,
@@ -620,14 +568,14 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
                     Result = CFE_EVS_SendEvent (CS_UPDATE_APP_ERR_EID,
                                                 CFE_EVS_ERROR,
                                                 "Table update failed for Apps: 0x%08X, checksumming Apps is disabled",
-                                                Result);
+                                                (unsigned int)Result);
                 }
                 
                 
             }
             
-            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
+            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+                  ( CS_AppData.OneShotInProgress == FALSE) && 
                   (CS_AppData.ChildTaskTable == CS_TABLES_TABLE)))
             {
                 Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefTablesTblPtr,
@@ -643,7 +591,7 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
                     Result = CFE_EVS_SendEvent (CS_UPDATE_TABLES_ERR_EID,
                                                 CFE_EVS_ERROR,
                                                 "Table update failed for Tables: 0x%08X, checksumming Tables is disabled",
-                                                Result);
+                                                (unsigned int)Result);
                 }
                 
             }
@@ -858,7 +806,7 @@ int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
 void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
 {
     /* command verification variables */
-    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);;
+    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
     CFE_SB_MsgId_t MessageID;
     uint16  CommandCode;
     uint16  ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
@@ -888,8 +836,8 @@ void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
         CS_AppData.HkPacket.TablesCSState       = CS_AppData.TablesCSState;
         CS_AppData.HkPacket.OSCSState           = CS_AppData.OSCSState;
         CS_AppData.HkPacket.CfeCoreCSState      = CS_AppData.CfeCoreCSState;
-        CS_AppData.HkPacket.ChildTaskInUse      = (uint8)CS_AppData.ChildTaskInUse;
-        CS_AppData.HkPacket.OneShotTaskInUse    = (uint8)CS_AppData.OneShotTaskInUse;
+        CS_AppData.HkPacket.RecomputeInProgress = (uint8)CS_AppData.RecomputeInProgress;
+        CS_AppData.HkPacket.OneShotInProgress   = (uint8)CS_AppData.OneShotInProgress;
         CS_AppData.HkPacket.EepromCSErrCounter  = CS_AppData.EepromCSErrCounter;
         CS_AppData.HkPacket.MemoryCSErrCounter  = CS_AppData.MemoryCSErrCounter;
         CS_AppData.HkPacket.AppCSErrCounter     = CS_AppData.AppCSErrCounter;
@@ -903,6 +851,7 @@ void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
         CS_AppData.HkPacket.CfeCoreBaseline     = CS_AppData.CfeCoreBaseline;
         CS_AppData.HkPacket.LastOneShotAddress  = CS_AppData.LastOneShotAddress;
         CS_AppData.HkPacket.LastOneShotSize     = CS_AppData.LastOneShotSize;
+        CS_AppData.HkPacket.LastOneShotMaxBytesPerCycle = CS_AppData.LastOneShotMaxBytesPerCycle;
         CS_AppData.HkPacket.LastOneShotChecksum = CS_AppData.LastOneShotChecksum;
         CS_AppData.HkPacket.PassCounter         = CS_AppData.PassCounter;
 
@@ -913,163 +862,138 @@ void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
 
     return;
 } /* End of CS_HousekeepingCmd () */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* CS no operation command                                         */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_NoopCmd (CFE_SB_MsgPtr_t MessagePtr)
-{
-    /* command verification variables */
-    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
 
-    /* Verify command packet length */
-    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* CS_CreateCDS() - create CS storage area in CDS                  */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+int32 CS_CreateRestoreStatesFromCDS(void)
+{
+    /* Store task ena/dis state of tables in CDS */
+    uint8 DataStoreBuffer[CS_NUM_DATA_STORE_STATES];
+    int32 Result;
+
+    /*
+    ** Request for CDS area from cFE Executive Services...
+    */
+    Result = CFE_ES_RegisterCDS(&CS_AppData.DataStoreHandle,
+                                 sizeof(DataStoreBuffer), CS_CDS_NAME);
+
+    if (Result == CFE_SUCCESS)
     {
-        CS_AppData.CmdCounter++;
+        /*
+        ** New CDS area - write to Critical Data Store...
+        */
+        DataStoreBuffer[0] = CS_AppData.EepromCSState;
+        DataStoreBuffer[1] = CS_AppData.MemoryCSState;
+        DataStoreBuffer[2] = CS_AppData.AppCSState;
+        DataStoreBuffer[3] = CS_AppData.TablesCSState;
         
-        CFE_EVS_SendEvent (CS_NOOP_INF_EID, CFE_EVS_INFORMATION,
-                           "No-op command. Version %d.%d.%d.%d",
-                           CS_MAJOR_VERSION,
-                           CS_MINOR_VERSION,
-                           CS_REVISION,
-                           CS_MISSION_REV);
+        DataStoreBuffer[4] = CS_AppData.OSCSState;
+        DataStoreBuffer[5] = CS_AppData.CfeCoreCSState;
+
+        Result = CFE_ES_CopyToCDS(CS_AppData.DataStoreHandle,  DataStoreBuffer);
     }
-    return;
-} /* End of CS_NoopCmd () */
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* CS Reset Application counters command                           */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_ResetCmd (CFE_SB_MsgPtr_t MessagePtr)
-{
-    /* command verification variables */
-    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
-
-    /* Verify command packet length */
-    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+    else if (Result == CFE_ES_CDS_ALREADY_EXISTS)
     {
-        CS_AppData.CmdCounter          = 0;
-        CS_AppData.CmdErrCounter       = 0;
-        
-        CS_AppData.EepromCSErrCounter  = 0;
-        CS_AppData.MemoryCSErrCounter  = 0;
-        CS_AppData.TablesCSErrCounter  = 0;
-        CS_AppData.AppCSErrCounter     = 0;
-        CS_AppData.CfeCoreCSErrCounter = 0;
-        CS_AppData.OSCSErrCounter      = 0;
-        CS_AppData.PassCounter         = 0;        
-        
-        CFE_EVS_SendEvent (CS_RESET_DBG_EID, CFE_EVS_DEBUG,
-                           "Reset Counters command recieved");
-    }
-    return;
-} /* End of CS_ResetCmd () */
+        /*
+        ** Pre-existing CDS area - read from Critical Data Store...
+        */
+        Result = CFE_ES_RestoreFromCDS(DataStoreBuffer, CS_AppData.DataStoreHandle);
 
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* CS's background checksumming command                            */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void CS_BackgroundCheckCmd (CFE_SB_MsgPtr_t MessagePtr)
-{
-    /* command verification variables */
-    uint16                                  ExpectedLength = sizeof(CS_NoArgsCmd_t);
-    boolean                                 DoneWithCycle = FALSE;
-    boolean                                 EndOfList = FALSE;
-    CFE_SB_MsgId_t MessageID;
-    uint16  CommandCode;
-    uint16  ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
-    
-    /* Verify the command packet length */
-    if (ExpectedLength != ActualLength)
-    {
-        CommandCode = CFE_SB_GetCmdCode(MessagePtr);
-        MessageID= CFE_SB_GetMsgId(MessagePtr);
-        
-        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
-                          CFE_EVS_ERROR,
-                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
-                          MessageID,
-                          CommandCode,
-                          ActualLength,
-                          ExpectedLength);
-    }    
-    else
-    {
-        if (CS_AppData.ChecksumState == CS_STATE_ENABLED)
+        if (Result == CFE_SUCCESS)
         {
-            DoneWithCycle = FALSE;
-            EndOfList = FALSE;
+            CS_AppData.EepromCSState = DataStoreBuffer[0];
+            CS_AppData.MemoryCSState = DataStoreBuffer[1];
+            CS_AppData.AppCSState    = DataStoreBuffer[2];
+            CS_AppData.TablesCSState = DataStoreBuffer[3];
             
-            /* We check for end-of-list because we don't necessarily know the
-               order in which the table entries are defined, and we don't
-               want to keep looping through the list */
-            
-            while ((DoneWithCycle != TRUE) && (EndOfList != TRUE))
-            {
-                /* We need to check the current table value here because
-                   it is updated (and possibly reset to zero) inside each
-                   function called */
-                if (CS_AppData.CurrentCSTable >= (CS_NUM_TABLES - 1))
-                {
-                    EndOfList = TRUE;
-                }
-                
-                /* Call the appropriate background function based on the current table
-                   value.  The value is updated inside each function */
-                switch (CS_AppData.CurrentCSTable)
-                {
-                    case (CS_CFECORE):
-                        DoneWithCycle = CS_BackgroundCfeCore();
-                        break;
-                        
-                    case(CS_OSCORE):
-                        
-                        DoneWithCycle = CS_BackgroundOS();
-                        break;
-                        
-                    case (CS_EEPROM_TABLE):
-                        DoneWithCycle = CS_BackgroundEeprom();
-                        break;
-                        
-                    case (CS_MEMORY_TABLE):
-                        DoneWithCycle = CS_BackgroundMemory();
-                        break;
-                        
-                    case (CS_TABLES_TABLE):
-                        DoneWithCycle = CS_BackgroundTables();
-                        break;
-                        
-                    case (CS_APP_TABLE):
-                        
-                        DoneWithCycle = CS_BackgroundApp();
-                        break;
-                        
-                        /* default case in case CS_AppData.CurrentCSTable is some random bad value */
-                    default:
-                        
-                        /* We are at the end of the line */
-                        CS_AppData.CurrentCSTable = 0;
-                        CS_AppData.CurrentEntryInTable = 0;
-                        CS_AppData.PassCounter++;
-                        DoneWithCycle = TRUE;
-                        break;
-                        
-                        
-                }/* end switch */
-            } /* end while */
-        }
-        else
-        {
-            /* CS is disabled, Application-wide */
+            CS_AppData.OSCSState     = DataStoreBuffer[4];
+            CS_AppData.CfeCoreCSState = DataStoreBuffer[5];
         }
     }
+
+    if (Result != CFE_SUCCESS)
+    {
+        /*
+        ** CDS is broken - prevent further errors...
+        */
+        CS_AppData.DataStoreHandle = 0;
+
+        /* Use states from platform configuration */
+        CS_AppData.EepromCSState = CS_EEPROM_TBL_POWERON_STATE;
+        CS_AppData.MemoryCSState = CS_MEMORY_TBL_POWERON_STATE;
+        CS_AppData.AppCSState    = CS_APPS_TBL_POWERON_STATE;
+        CS_AppData.TablesCSState = CS_TABLES_TBL_POWERON_STATE;
+        
+        CS_AppData.OSCSState      = CS_OSCS_CHECKSUM_STATE;
+        CS_AppData.CfeCoreCSState = CS_CFECORE_CHECKSUM_STATE;
+        
+        CFE_EVS_SendEvent(CS_INIT_CDS_ERR_EID, CFE_EVS_ERROR,
+                         "Critical Data Store access error = 0x%08X", (unsigned int)Result);
+        /*
+        ** CDS errors are not fatal - CS can still run...
+        */
+        Result = CFE_SUCCESS;
+    }
+
+    return(Result);
+
+} /* End of CS_CreateCDS() */
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                 */
+/* CS_UpdateCDS() - update DS storage area in CDS                  */
+/*                                                                 */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CS_UpdateCDS(void)
+{
+    /* Store table ena/dis state in CDS */
+    uint8 DataStoreBuffer[CS_NUM_DATA_STORE_STATES];
+    int32 Result;
+
+    /*
+    ** Handle is non-zero when CDS is active...
+    */
+    if (CS_AppData.DataStoreHandle != 0)
+    {
+        /*
+        ** Copy ena/dis states of tables to the data array...
+        */
+        DataStoreBuffer[0] = CS_AppData.EepromCSState;
+        DataStoreBuffer[1] = CS_AppData.MemoryCSState;
+        DataStoreBuffer[2] = CS_AppData.AppCSState;
+        DataStoreBuffer[3] = CS_AppData.TablesCSState;
+        
+        DataStoreBuffer[4] = CS_AppData.OSCSState;
+        DataStoreBuffer[5] = CS_AppData.CfeCoreCSState;
+
+        /*
+        ** Update CS portion of Critical Data Store...
+        */
+        Result = CFE_ES_CopyToCDS(CS_AppData.DataStoreHandle, DataStoreBuffer);
+
+        if (Result != CFE_SUCCESS)
+        {
+            CFE_EVS_SendEvent(CS_INIT_CDS_ERR_EID, CFE_EVS_ERROR,
+                             "Critical Data Store access error = 0x%08X", (unsigned int)Result);
+            /*
+            ** CDS is broken - prevent further errors...
+            */
+            CS_AppData.DataStoreHandle = 0;
+        }
+    }
+
     return;
-} /* End of CS_BackgroundCheckCmd () */
+
+} /* End of CS_UpdateCDS() */
+#endif /* #if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE) */
 
 /************************/
 /*  End of File Comment */

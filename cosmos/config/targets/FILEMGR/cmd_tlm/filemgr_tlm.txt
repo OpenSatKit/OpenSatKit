@@ -1,0 +1,109 @@
+<% 
+  require 'fsw_config_param'
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR         = "FM"
+  @HK_TLM_MID_STR         = "FM_HK_TLM_MID"
+  @FILE_INFO_TLM_MID_STR  = "FM_FILE_INFO_TLM_MID"
+  @DIR_LIST_TLM_MID_STR   = "FM_DIR_LIST_TLM_MID"
+  @OPEN_FILES_TLM_MID_STR = "FM_OPEN_FILES_TLM_MID"
+  @FREE_SPACE_TLM_MID_STR = "FM_FREE_SPACE_TLM_MID"  
+  
+  
+  # Configuration parameter assumptions
+  #   OS_MAX_PATH_LEN = 64
+  #   OS_MAX_API_NAME = 20
+  
+%>
+
+
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
+  APPEND_ITEM SPARE              8 UINT "Placeholder for unused command warning counter"
+  APPEND_ITEM NUM_OPEN_FILES     8 UINT "Number of open files in the system"
+  APPEND_ITEM CHILD_CMD_CTR      8 UINT "Child task command counter"
+  APPEND_ITEM CHILD_CMD_ERR_CTR  8 UINT "Child task command error counter"
+  APPEND_ITEM CHILD_CMD_WARN_CTR 8 UINT "Child task command warning counter"
+  APPEND_ITEM CHILD_QUEUE_CNT    8 UINT "Number of pending commands in queue"
+  APPEND_ITEM CHILD_CURR_CC      8 UINT "Command code currently executing"
+  APPEND_ITEM CHILD_PREV_CC      8 UINT "Command code previously executed"
+
+
+
+TELEMETRY FM FILE_INFO_PKT <%= Osk::Cfg.processor_endian %> "Get File Info telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @FILE_INFO_TLM_MID_STR) %>
+  APPEND_ITEM OPEN_STATUS    8 UINT "Status indicating whether the file is open or closed"
+    STATE FALSE   0
+    STATE TRUE    1
+  APPEND_ITEM COMPUTE_CRC    8 UINT "Boolean flag indictaing whether to compute a CRC"
+    STATE FALSE   0
+    STATE TRUE    1
+  APPEND_ARRAY_ITEM SPARE    8 UINT 16 "Structure padding"
+  APPEND_ITEM CRC           32 UINT "CRC value if computed"
+  APPEND_ITEM SIZE          32 UINT "Size in bytes"
+  APPEND_ITEM LAST_MOD_TIME 32 UINT "Last Modification Time of File"
+  APPEND_ITEM MODE          32 UINT "Permissions"
+  APPEND_ITEM NAME         512 STRING "Name of File"
+
+
+TELEMETRY FM DIR_LIST_PKT <%= Osk::Cfg.processor_endian %> "Get Directory Listing telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @DIR_LIST_TLM_MID_STR) %>
+  APPEND_ITEM DIRNAME 512 STRING "Directory Name"
+  APPEND_ITEM TOTALFILES 32 UINT "Number of files in the directory"
+     # These are defined for SimSat ops example. A more sophisticated approach would
+     # be required for multiple limit sets if directory sizes are important
+     LIMITS DEFAULT 3 DISABLED 0 0 40 50
+  APPEND_ITEM PACKETFILES 32 UINT "Number of files in this packet"
+  APPEND_ITEM FIRSTFILE 32 UINT "Index into directory files of first packet file"
+
+  # fm_msg.h: FM_DirListEntry_t
+  <% 
+    max_entries = FswConfigParam::FM_DIR_LIST_PKT_ENTRIES
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_ITEM FILE#{i}_NAME     512 STRING \"File Name\""        << "\n"
+      append_items << "APPEND_ITEM FILE#{i}_SIZE      32 UINT   \"Size in bytes\""    << "\n"
+      append_items << "APPEND_ITEM FILE#{i}_MOD_TIME  32 UINT   \"Time of last mod\"" << "\n"
+      append_items << "APPEND_ITEM FILE#{i}_MODE      32 UINT   \"Permissions\""      << "\n"
+    end
+  %>
+  <%= append_items %>
+
+
+
+TELEMETRY FM OPEN_FILES_PKT <%= Osk::Cfg.processor_endian %> "Get Open Files telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @OPEN_FILES_TLM_MID_STR) %>
+  APPEND_ITEM NUM_OPEN_FILES 32 UINT   "Number of files opened via cFE"
+
+  # fm_msg.h: FM_OpenFilesEntry_t
+  <% 
+    max_entries = FswConfigParam::OS_MAX_NUM_OPEN_FILES
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_ITEM FILE#{i}_NAME     512 STRING \"File Name\""                   << "\n"
+      append_items << "APPEND_ITEM FILE#{i}_APP      160 STRING \"App that opened the file\""    << "\n"
+    end
+  %>
+  <%= append_items %>
+
+
+
+TELEMETRY FM FREE_SPACE_PKT <%= Osk::Cfg.processor_endian %> "Get Free Space telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @FREE_SPACE_TLM_MID_STR) %>
+
+  # fm_msg.h: FM_FreeSpacePktEntry_t
+  <% 
+    max_entries = FswConfigParam::FM_TABLE_ENTRY_COUNT
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_ITEM FREE_SPACE#{i}_SIZE_LO32  32 UINT    \"Low 32-bits of 64 bit integer\""   << "\n"
+      append_items << "APPEND_ITEM FREE_SPACE#{i}_SIZE_HI32  32 UINT    \"High 32-bits of 64 bit integer\""  << "\n"
+      append_items << "APPEND_ITEM FREE_SPACE#{i}_NAME      512 STRING  \"File System Name\""                << "\n"
+    end
+  %>
+  <%= append_items %>
+
+

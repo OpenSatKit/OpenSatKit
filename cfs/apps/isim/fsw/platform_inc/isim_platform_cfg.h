@@ -29,8 +29,6 @@
 ** Application Macros
 */
 
-#define  ISIM_RUNLOOP_DELAY    500  /* Delay in milliseconds */
-
 #define  ISIM_CMD_PIPE_DEPTH    10
 #define  ISIM_CMD_PIPE_NAME     "ISIM_CMD_PIPE"
 

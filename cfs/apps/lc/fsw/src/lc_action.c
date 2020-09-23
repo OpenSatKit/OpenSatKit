@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_action.c 1.3.1.2 2015/03/04 16:15:46EST sstrege Exp  $
+**   $Id: lc_action.c 1.8 2017/07/06 12:00:28EDT mdeschu Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -14,42 +14,6 @@
 ** Purpose: 
 **   Functions used for CFS Limit Checker actionpoint processing
 **
-**   $Log: lc_action.c  $
-**   Revision 1.3.1.2 2015/03/04 16:15:46EST sstrege 
-**   Added copyright information
-**   Revision 1.3.1.1 2012/10/01 18:40:07EDT lwalling 
-**   Apply 1.4 changes to branch
-**   Revision 1.4 2012/10/01 13:20:48PDT lwalling 
-**   Removed unused variable Operand from function LC_EvaluateRPN()
-**   Revision 1.3 2012/08/01 11:41:07PDT lwalling 
-**   Cleanup actionpoint operators use of STALE
-**   Revision 1.2 2012/08/01 11:20:22PDT lwalling 
-**   Change NOT_MEASURED to STALE
-**   Revision 1.1 2012/07/31 13:53:36PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.10 2012/06/26 17:59:09EDT lwalling 
-**   Fix ap logic for OR and AND operators when wp result = LC_WATCH_NOT_MEASURED
-**   Revision 1.9 2011/02/07 14:58:33PST lwalling 
-**   Modify sample AP commands to target groups of AP's
-**   Revision 1.8 2011/01/19 12:45:39EST jmdagost 
-**   Moved two message parameters to the message IDs file for scheduler table access.
-**   Revision 1.7 2011/01/19 11:35:21EST jmdagost 
-**   Initialize local variables RPNIndex and RPNStackDepth.
-**   Revision 1.6 2010/04/12 14:29:31EDT lwalling 
-**   Changed bitwise RPN comparisons to logical comparisons
-**   Revision 1.5 2010/02/19 17:43:54EST lwalling 
-**   Change state events limits to individual limits for Passive AP, FailToPass and PassToFail
-**   Revision 1.4 2009/12/28 14:47:21EST lwalling 
-**   Add event limits, change limited events from debug to info
-**   Revision 1.3 2009/01/29 15:39:03EST dahardis 
-**   Changed an event message from INFO to DEBUG as documented
-**   in DCR #6811
-**   Revision 1.2 2008/12/03 13:59:46EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:18:36EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 
@@ -63,88 +27,6 @@
 #include "lc_custom.h"
 
 #include <string.h>
-
-/*************************************************************************
-** Local Function Prototypes
-*************************************************************************/
-/************************************************************************/
-/** \brief Sample single actionpoint
-**  
-**  \par Description
-**       Support function for actionpoint processing that will sample
-**       a single actionpoint and handle the result as needed
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   APNumber     The actionpoint number to sample (zero
-**                             based actionpoint definition table index)
-**
-*************************************************************************/
-void LC_SampleSingleAP(uint16 APNumber);
-
-/************************************************************************/
-/** \brief Evaluate RPN
-**  
-**  \par Description
-**       Support function for actionpoint processing that evaluates
-**       the reverse polish notation (RPN) equation for the specified
-**       actionpoint and returns the result
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   APNumber     The actionpoint number to evaluate (zero
-**                             based actionpoint definition table index)
-**
-**  \returns
-**  \retcode #LC_ACTION_PASS         \retdesc \copydoc LC_ACTION_PASS   \endcode
-**  \retcode #LC_ACTION_FAIL         \retdesc \copydoc LC_ACTION_FAIL   \endcode
-**  \retcode #LC_ACTION_STALE        \retdesc \copydoc LC_ACTION_STALE  \endcode
-**  \retcode #LC_ACTION_ERROR        \retdesc \copydoc LC_ACTION_ERROR  \endcode
-**  \endreturns
-**
-*************************************************************************/
-uint8 LC_EvaluateRPN(uint16 APNumber);
- 
-/************************************************************************/
-/** \brief Validate RPN expression
-**  
-**  \par Description
-**       Support function for actionpoint definition table validation
-**       that checks a reverse polish notation (RPN) equation for
-**       possible errors.
-**
-**  \par Assumptions, External Events, and Notes:
-**       None
-**       
-**  \param [in]   RPNPtr            Pointer to the RPN equation
-**
-**  \param [in]   IndexValue        A pointer where to store the equation
-**                                  index value if an error is detected
-**
-**  \param [in]   StackDepthValue   A pointer where to store the equation
-**                                  stack depth value if an error is detected
-**
-**  \param [out]  *IndexValue       Equation index value where error was
-**                                  found. Not modified if return code is
-**                                  #LC_ADTVAL_NO_ERR
-**
-**  \param [out]  *StackDepthValue  Equation stack depth value where error
-**                                  found. Not modified if return code is
-**                                  #LC_ADTVAL_NO_ERR
-**
-**  \returns
-**  \retcode #LC_ADTVAL_NO_ERR   \retdesc \copydoc LC_ADTVAL_NO_ERR  \endcode
-**  \retcode #LC_ADTVAL_ERR_RPN  \retdesc \copydoc LC_ADTVAL_ERR_RPN \endcode
-**  \endreturns
-**
-**  \sa #LC_ValidateADT
-**
-*************************************************************************/
-int32 LC_ValidateRPN(uint16 *RPNPtr, 
-                      int32  *IndexValue, 
-                      int32  *StackDepthValue);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
@@ -256,6 +138,7 @@ void LC_SampleSingleAP(uint16 APNumber)
                     CFE_EVS_SendEvent(LC_AP_PASSTOFAIL_INF_EID, CFE_EVS_INFORMATION,
                                      "AP state change from PASS to FAIL: AP = %d", 
                                       APNumber);
+                    LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent++;
                     }
                 }
 
@@ -310,6 +193,8 @@ void LC_SampleSingleAP(uint16 APNumber)
                             EventText, APNumber,
                             LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount,
                             LC_OperData.ADTPtr[APNumber].RTSId);
+                        
+                        LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent++;
                         }
                     else
                         {
@@ -323,7 +208,7 @@ void LC_SampleSingleAP(uint16 APNumber)
                         CFE_EVS_SendEvent(LC_PASSIVE_FAIL_DBG_EID, CFE_EVS_DEBUG,
                             "AP failed while LC App passive: AP = %d, FailCount = %d, RTS = %d",
                             APNumber,
-                            LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount,
+                            (int)LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount,
                             LC_OperData.ADTPtr[APNumber].RTSId);
                         }
                     }
@@ -333,18 +218,20 @@ void LC_SampleSingleAP(uint16 APNumber)
                     ** The actionpoint failed while the actionpoint state is passive
                     */
                     LC_OperData.ARTPtr[APNumber].PassiveAPCount++;
+                    LC_AppData.PassiveRTSExecCount++;
 
                     /*
                     **  Send only a limited number of AP is Passive events
                     */
-                if (LC_OperData.ARTPtr[APNumber].PassiveAPCount <=
+                    if (LC_OperData.ARTPtr[APNumber].PassiveAPCount <=
                     LC_OperData.ADTPtr[APNumber].MaxPassiveEvents)
-                    {
+                        {
                         CFE_EVS_SendEvent(LC_AP_PASSIVE_FAIL_INF_EID, CFE_EVS_INFORMATION,
                             "AP failed while passive: AP = %d, FailCount = %d, RTS = %d",
                             APNumber,
-                            LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount,
+                            (int)LC_OperData.ARTPtr[APNumber].ConsecutiveFailCount,
                             LC_OperData.ADTPtr[APNumber].RTSId);
+                        LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent++;
                         }
                     }
 
@@ -373,6 +260,7 @@ void LC_SampleSingleAP(uint16 APNumber)
                     CFE_EVS_SendEvent(LC_AP_FAILTOPASS_INF_EID, CFE_EVS_INFORMATION,
                                      "AP state change from FAIL to PASS: AP = %d", 
                                       APNumber);
+                    LC_OperData.ARTPtr[APNumber].CumulativeEventMsgsSent++;
                     }
             }
             /*
@@ -598,7 +486,7 @@ uint8 LC_EvaluateRPN(uint16 APNumber)
     {
         CFE_EVS_SendEvent(LC_INVALID_RPN_ERR_EID, CFE_EVS_ERROR,
                "AP has illegal RPN expression: AP = %d, LastOperand = %d, StackPtr = %d",
-               APNumber, (RPNEquationPtr - 1), StackPtr);
+               APNumber, (int)(RPNEquationPtr - 1), (int)StackPtr);
                  
         EvalResult = LC_ACTION_ERROR;
     }
@@ -732,13 +620,13 @@ int32 LC_ValidateADT(void *TableData)
             {
                 CFE_EVS_SendEvent(LC_ADTVAL_RPNERR_EID, CFE_EVS_ERROR,
                         "ADT verify RPN err: AP = %d, Index = %d, StackDepth = %d",
-                        TableIndex, RPNIndex, RPNStackDepth);
+                        (int)TableIndex, (int)RPNIndex, (int)RPNStackDepth);
             }
             else
             {
                 CFE_EVS_SendEvent(LC_ADTVAL_ERR_EID, CFE_EVS_ERROR,
                         "ADT verify err: AP = %d, Err = %d, State = %d, RTS = %d, FailCnt = %d, EvtType = %d",
-                        TableIndex, EntryResult, DefaultState, RTSId, MaxFailsBeforeRTS, EventType );
+                        (int)TableIndex, (int)EntryResult, DefaultState, RTSId, MaxFailsBeforeRTS, EventType );
             }
             
             TableResult = EntryResult;
@@ -751,7 +639,7 @@ int32 LC_ValidateADT(void *TableData)
     */
     CFE_EVS_SendEvent(LC_ADTVAL_INF_EID, CFE_EVS_INFORMATION,
                      "ADT verify results: good = %d, bad = %d, unused = %d",
-                      GoodCount, BadCount, UnusedCount);
+                      (int)GoodCount, (int)BadCount, (int)UnusedCount);
 
     return(TableResult);
     

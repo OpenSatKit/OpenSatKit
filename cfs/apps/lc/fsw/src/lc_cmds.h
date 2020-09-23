@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_cmds.h 1.2 2015/03/04 16:09:54EST sstrege Exp  $
+**   $Id: lc_cmds.h 1.4 2017/01/22 17:24:53EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -17,23 +17,6 @@
 **
 ** Notes:
 **
-**   $Log: lc_cmds.h  $
-**   Revision 1.2 2015/03/04 16:09:54EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:37EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.5 2011/06/08 16:00:21EDT lwalling 
-**   Remove prototype for LC_SubscribeWP()
-**   Revision 1.4 2011/03/01 15:40:49EST lwalling 
-**   Move prototypes for LC_SubscribeWP() and LC_UpdateTaskCDS() to lc_cmds.h
-**   Revision 1.3 2011/03/01 09:37:46EST lwalling 
-**   Modified table management logic and updates to CDS
-**   Revision 1.2 2011/02/14 16:50:55EST lwalling 
-**   Added prototypes for LC_ResetResultsAP() and LC_ResetResultsWP()
-**   Revision 1.1 2008/10/29 14:19:06EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 **************************************************************************/
 #ifndef _lc_cmds_
@@ -139,6 +122,197 @@ void LC_ResetResultsWP(uint32 StartIndex, uint32 EndIndex, boolean ResetCmd);
 **
 *************************************************************************/
 int32 LC_UpdateTaskCDS(void);
+
+/************************************************************************/
+/** \brief Sample actionpoints request
+**  
+**  \par Description
+**       Processes an on-board sample actionpoints request message.
+**
+**  \par Assumptions, External Events, and Notes:
+**       This message does not affect the command execution counter
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+*************************************************************************/
+void LC_SampleAPReq(CFE_SB_MsgPtr_t MessagePtr);
+   
+/************************************************************************/
+/** \brief Housekeeping request
+**  
+**  \par Description
+**       Processes an on-board housekeeping request message.
+**
+**  \par Assumptions, External Events, and Notes:
+**       This message does not affect the command execution counter
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \returns
+**  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
+**  \retstmt Return codes from #LC_AcquirePointers     \endcode
+**  \endreturns
+**
+*************************************************************************/
+int32 LC_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Noop command
+**  
+**  \par Description
+**       Processes a noop ground command.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_NOOP_CC
+**
+*************************************************************************/
+void LC_NoopCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Reset counters command
+**  
+**  \par Description
+**       Processes a reset counters ground command which will reset
+**       the following LC application counters to zero:
+**         - Command counter
+**         - Command error counter
+**         - Actionpoint sample counter
+**         - Monitored message counter 
+**         - RTS execution counter
+**         - Passive RTS execution counter
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_RESET_CC
+**
+*************************************************************************/
+void LC_ResetCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Set LC state command
+**  
+**  \par Description
+**       Processes a set LC application state ground command.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_SET_LC_STATE_CC
+**
+*************************************************************************/
+void LC_SetLCStateCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Set AP state command
+**  
+**  \par Description
+**       Processes a set actionpoint state ground command.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_SET_AP_STATE_CC
+**
+*************************************************************************/
+void LC_SetAPStateCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Set AP permanently off command
+**  
+**  \par Description
+**       Processes a set actionpoint permanently off ground command.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_SET_AP_PERMOFF_CC
+**
+*************************************************************************/
+void LC_SetAPPermOffCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Reset AP statistics command
+**  
+**  \par Description
+**       Processes a reset actionpoint statistics ground command.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_RESET_AP_STATS_CC
+**
+*************************************************************************/
+void LC_ResetAPStatsCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Reset WP statistics command
+**  
+**  \par Description
+**       Processes a reset watchpoint statistics ground command.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+**                             references the software bus message 
+**
+**  \sa #LC_RESET_WP_STATS_CC
+**
+*************************************************************************/
+void LC_ResetWPStatsCmd(CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Verify message length
+**  
+**  \par Description
+**       Checks if the actual length of a software bus message matches 
+**       the expected length and sends an error event if a mismatch
+**       occures
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   msg              A #CFE_SB_MsgPtr_t pointer that
+**                                 references the software bus message 
+**
+**  \param [in]   ExpectedLength   The expected length of the message
+**                                 based upon the command code
+**
+**  \returns
+**  \retstmt Returns TRUE if the length is as expected      \endcode
+**  \retstmt Returns FALSE if the length is not as expected \endcode
+**  \endreturns
+**
+**  \sa #LC_LEN_ERR_EID
+**
+*************************************************************************/
+boolean LC_VerifyMsgLength(CFE_SB_MsgPtr_t msg, 
+                           uint16          ExpectedLength);
+
+int32 LC_ManageTables(void);
 
 #endif /* _lc_cmds_ */
 

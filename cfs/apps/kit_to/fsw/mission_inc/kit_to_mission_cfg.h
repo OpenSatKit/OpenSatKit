@@ -1,5 +1,6 @@
 /*
-** Purpose: Define configurations for the OpenSat Kit Telemetry Output application
+** Purpose: Define configurations for the OpenSatKit Telemetry Output
+**          application
 **
 ** Notes:
 **   None

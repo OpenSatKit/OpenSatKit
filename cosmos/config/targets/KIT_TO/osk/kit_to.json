@@ -18,7 +18,7 @@
          { 
                 "name": "Packet Table",
                   "id": 0,
-            "filename": "kit_to_pkt_tbl.json"
+            "filename": "osk_to_pkt_tbl.json"
          }
       ],
       "cmd-mid": "KIT_TO_CMD_MID"

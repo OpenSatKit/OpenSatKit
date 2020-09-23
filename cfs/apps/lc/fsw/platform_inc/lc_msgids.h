@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_msgids.h 1.2 2015/03/04 16:09:56EST sstrege Exp  $
+**   $Id: lc_msgids.h 1.3 2017/01/22 17:24:20EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -16,17 +16,6 @@
 **
 ** Notes:
 **
-**   $Log: lc_msgids.h  $
-**   Revision 1.2 2015/03/04 16:09:56EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:35EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/platform_inc/project.pj
-**   Revision 1.2 2011/01/19 12:45:40EST jmdagost 
-**   Moved two message parameters to the message IDs file for scheduler table access.
-**   Revision 1.1 2008/10/29 14:18:12EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/platform_inc/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_msgids_

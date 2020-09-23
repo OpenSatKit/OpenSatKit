@@ -34,17 +34,19 @@
 
 static int32 InitApp(void);
 static void ProcessCommands(void);
+static void SendHousekeepingPkt(KIT_CI_HkPkt *HkPkt);
 
-/*
-** Global Data
-*/
+
+/*****************/
+/** Global Data **/
+/*****************/
 
 KIT_CI_Class  KitCi;
 
-KIT_CI_HkPkt  KitCiHkPkt;
+/* Convenience macros */
+#define  CMDMGR_OBJ  (&(KitCi.CmdMgr))
+#define  UPLINK_OBJ  (&(KitCi.Uplink))
 
-#define  CMDMGR_OBJ  (&(KitCi.CmdMgr))  /* Convenience macro */
-#define  UPLINK_OBJ  (&(KitCi.Uplink))  /* Convenience macro */
 
 /******************************************************************************
 ** Function: KIT_CI_AppMain
@@ -63,9 +65,9 @@ void KIT_CI_AppMain(void)
    /*
    ** Perform application specific initialization
    */
-   if (Status == CFE_SUCCESS)
-   {
-       Status = InitApp();
+   if (Status == CFE_SUCCESS) {
+      
+      Status = InitApp();
    }
 
    /*
@@ -79,9 +81,7 @@ void KIT_CI_AppMain(void)
    /*
    ** Main process loop
    */
-   while (CFE_ES_RunLoop(&RunStatus))
-   {
-
+   while (CFE_ES_RunLoop(&RunStatus)) {
 
       OS_TaskDelay(KIT_CI_RUNLOOP_DELAY);
 
@@ -138,38 +138,38 @@ boolean KIT_CI_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 
 /******************************************************************************
-** Function: KIT_CI_SendHousekeepingPkt
+** Function: SendHousekeepingPkt
 **
 */
-void KIT_CI_SendHousekeepingPkt(void)
+static void SendHousekeepingPkt(KIT_CI_HkPkt *HkPkt)
 {
 
    /*
    ** Application Data
    */
 
-   KitCiHkPkt.ValidCmdCnt   = KitCi.CmdMgr.ValidCmdCnt;
-   KitCiHkPkt.InvalidCmdCnt = KitCi.CmdMgr.InvalidCmdCnt;
+   HkPkt->ValidCmdCnt   = KitCi.CmdMgr.ValidCmdCnt;
+   HkPkt->InvalidCmdCnt = KitCi.CmdMgr.InvalidCmdCnt;
 
    /*
    ** Uplink Data
    */
 
-   KitCiHkPkt.SocketConnected      = KitCi.Uplink.Connected;
-   KitCiHkPkt.MsgTunnelEnabled     = KitCi.Uplink.MsgTunnel.Enabled;
-   KitCiHkPkt.SocketId             = KitCi.Uplink.SocketId;
-   KitCiHkPkt.RecvMsgCnt           = KitCi.Uplink.RecvMsgCnt;
-   KitCiHkPkt.RecvMsgErrCnt        = KitCi.Uplink.RecvMsgErrCnt;
+   HkPkt->SocketConnected      = KitCi.Uplink.Connected;
+   HkPkt->MsgTunnelEnabled     = KitCi.Uplink.MsgTunnel.Enabled;
+   HkPkt->SocketId             = KitCi.Uplink.SocketId;
+   HkPkt->RecvMsgCnt           = KitCi.Uplink.RecvMsgCnt;
+   HkPkt->RecvMsgErrCnt        = KitCi.Uplink.RecvMsgErrCnt;
 
-   KitCiHkPkt.MappingsPerformed    = KitCi.Uplink.MsgTunnel.MappingsPerformed;
-   KitCiHkPkt.LastMapping.Index    = KitCi.Uplink.MsgTunnel.LastMapping.Index;
-   KitCiHkPkt.LastMapping.OrgMsgId = KitCi.Uplink.MsgTunnel.LastMapping.OrgMsgId;
-   KitCiHkPkt.LastMapping.NewMsgId = KitCi.Uplink.MsgTunnel.LastMapping.NewMsgId;
+   HkPkt->MappingsPerformed    = KitCi.Uplink.MsgTunnel.MappingsPerformed;
+   HkPkt->LastMapping.Index    = KitCi.Uplink.MsgTunnel.LastMapping.Index;
+   HkPkt->LastMapping.OrgMsgId = KitCi.Uplink.MsgTunnel.LastMapping.OrgMsgId;
+   HkPkt->LastMapping.NewMsgId = KitCi.Uplink.MsgTunnel.LastMapping.NewMsgId;
 
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &KitCiHkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &KitCiHkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) HkPkt);
 
-} /* End KIT_CI_SendHousekeepingPkt() */
+} /* End SendHousekeepingPkt() */
 
 
 /******************************************************************************
@@ -178,37 +178,38 @@ void KIT_CI_SendHousekeepingPkt(void)
 */
 static int32 InitApp(void)
 {
-    int32 Status = CFE_SUCCESS;
+   
+   int32 Status = CFE_SUCCESS;
 
-    /*
-    ** Initialize 'entity' objects
-    */
+   /*
+   ** Initialize 'entity' objects
+   */
 
-    UPLINK_Constructor(&KitCi.Uplink,KIT_CI_PORT);
+   UPLINK_Constructor(&KitCi.Uplink,KIT_CI_PORT);
 
-    /*
-    ** Initialize application managers
-    */
+   /*
+   ** Initialize application managers
+   */
 
-    CFE_SB_CreatePipe(&KitCi.CmdPipe, CMDMGR_PIPE_DEPTH, CMDMGR_PIPE_NAME);
-    CFE_SB_Subscribe(KIT_CI_CMD_MID, KitCi.CmdPipe);
-    CFE_SB_Subscribe(KIT_CI_SEND_HK_MID, KitCi.CmdPipe);
+   CFE_SB_CreatePipe(&KitCi.CmdPipe, CMDMGR_PIPE_DEPTH, CMDMGR_PIPE_NAME);
+   CFE_SB_Subscribe(KIT_CI_CMD_MID, KitCi.CmdPipe);
+   CFE_SB_Subscribe(KIT_CI_SEND_HK_MID, KitCi.CmdPipe);
 
-    CMDMGR_Constructor(CMDMGR_OBJ);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,              NULL,       KIT_CI_NoOpCmd,            0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,             NULL,       KIT_CI_ResetAppCmd,        0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_CI_CONFIG_MSG_TUNNEL_CMD_FC, UPLINK_OBJ, UPLINK_ConfigMsgTunnelCmd, UPLINK_CONFIG_MSG_TUNNEL_CMD_DATA_LEN);
+   CMDMGR_Constructor(CMDMGR_OBJ);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,              NULL,       KIT_CI_NoOpCmd,            0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,             NULL,       KIT_CI_ResetAppCmd,        0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_CI_CONFIG_MSG_TUNNEL_CMD_FC, UPLINK_OBJ, UPLINK_ConfigMsgTunnelCmd, UPLINK_CONFIG_MSG_TUNNEL_CMD_DATA_LEN);
 
-    CFE_SB_InitMsg(&KitCiHkPkt, KIT_CI_HK_TLM_MID, KIT_CI_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&KitCi.HkPkt, KIT_CI_HK_TLM_MID, KIT_CI_TLM_HK_LEN, TRUE);
 
-    /*
-    ** Application startup event message
-    */
-    Status = CFE_EVS_SendEvent(KIT_CI_APP_INIT_EID, CFE_EVS_INFORMATION,
-                               "KIT_CI Initialized. Version %d.%d.%d",
-                               KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_LOCAL_REV);
+   /*
+   ** Application startup event message
+   */
+   Status = CFE_EVS_SendEvent(KIT_CI_APP_INIT_EID, CFE_EVS_INFORMATION,
+                              "KIT_CI Initialized. Version %d.%d.%d",
+                              KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_LOCAL_REV);
 
-    return(Status);
+   return(Status);
 
 } /* End of InitApp() */
 
@@ -226,19 +227,18 @@ static void ProcessCommands(void)
 
    Status = CFE_SB_RcvMsg(&CmdMsgPtr, KitCi.CmdPipe, CFE_SB_POLL);
 
-   if (Status == CFE_SUCCESS)
-   {
+   if (Status == CFE_SUCCESS) {
 
       MsgId = CFE_SB_GetMsgId(CmdMsgPtr);
 
-      switch (MsgId)
-      {
+      switch (MsgId) {
+         
          case KIT_CI_CMD_MID:
             CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
             break;
 
          case KIT_CI_SEND_HK_MID:
-            KIT_CI_SendHousekeepingPkt();
+            SendHousekeepingPkt(&(KitCi.HkPkt));
             break;
 
          default:

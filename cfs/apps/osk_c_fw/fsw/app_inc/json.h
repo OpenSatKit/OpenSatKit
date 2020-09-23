@@ -35,9 +35,9 @@
 #include "osk_c_fw_cfg.h"
 
 
-#define JSON_MAX_FILE_TOKENS       2048
+#define JSON_MAX_FILE_TOKENS       4096
 #define JSON_MAX_FILE_LINE_CHAR     512
-#define JSON_MAX_FILE_CHAR        32768
+#define JSON_MAX_FILE_CHAR        49152      /* 32768 - kit_sch message table broke this limit */
 #define JSON_MAX_CONTAINER_TOKENS   256
 #define JSON_MAX_STR_LEN             32
 #define JSON_MAX_OBJ_NAME_CHAR       32
@@ -205,7 +205,7 @@ void JSON_ProcessTokens(JSON_Class* Json);
 ** Notes:
 **    
 */
-boolean JSON_TokenStrEq(char *js, jsmntok_t *t, char *s);
+boolean JSON_TokenStrEq(char *js, jsmntok_t *t, const char *s);
 
 
 /******************************************************************************
@@ -232,7 +232,7 @@ void JSON_PrintTokens(JSON_Class* Json, int TokenCnt);
 ** Notes:
 **    
 */
-void JSON_RegContainerCallback(JSON_Class* Json, char* Name, JSON_ContainerFuncPtr FuncPtr);
+void JSON_RegContainerCallback(JSON_Class* Json, const JSON_Obj* JsonObj);
 
 
 /******************************************************************************
@@ -250,7 +250,7 @@ int JSON_GetContainerSize(JSON_Class* Json, int ContainTokenIdx);
 ** Notes:
 **    
 */
-boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, char* Key, boolean* BoolVal);
+boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, const char* Key, boolean* BoolVal);
 
 
 /******************************************************************************
@@ -259,7 +259,7 @@ boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, char* Key, boolea
 ** Notes:
 **    
 */
-boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, char* Key, int* IntVal);
+boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, const char* Key, int* IntVal);
 
 
 /******************************************************************************
@@ -268,7 +268,7 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, char* Key, in
 ** Notes:
 **    
 */
-boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* StrVal);
+boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, const char* Key, char* StrVal);
 
 
 /******************************************************************************
@@ -277,7 +277,7 @@ boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* S
 ** Notes:
 **    
 */
-boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, double* DoubleVal);
+boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, const char* Key, double* DoubleVal);
 
 
 /******************************************************************************

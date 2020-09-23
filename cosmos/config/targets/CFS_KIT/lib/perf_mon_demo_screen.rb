@@ -283,7 +283,7 @@ def perf_mon_demo(screen, button)
                if (Osk::Ops.get_flt_file(PMD_FLT_DAT_FILE,PMD_GND_DAT_FILE))
                   perf_mon_launch_app(screen, "PERF_MONITOR_TOOL")
                else
-                  raise "FM Demo - File transfer from flight to ground failed" 
+                  raise "Performance Monitor Demo - File transfer from flight to ground failed" 
                end    
                $pmd_demo += 1
             end

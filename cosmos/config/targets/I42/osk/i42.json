@@ -14,13 +14,7 @@
       "load_addr": 0,
       "exception-action": 0,
       "app-framework": "osk",
-      "tables": [
-         { 
-                "name": "Control Table",
-                  "id": 0,
-            "filename": "f42_ctrl_tbl.json"
-         }
-      ],
+      "tables": [],
       "cmd-mid": "I42_CMD_MID"
    }
    

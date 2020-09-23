@@ -1,1182 +1,988 @@
-        -:    0:Source:/home/aschoening/pwned/apps/cs/fsw/src/cs_utils.c
-        -:    0:Graph:cs_utils.gcno
-        -:    0:Data:cs_utils.gcda
-        -:    0:Runs:1
+        -:    0:Source:../src/cs_utils.c
         -:    0:Programs:9
         -:    1:/************************************************************************
         -:    2: ** File:
-        -:    3: **   $Id: cs_utils.c.gcov 1.7 2012/09/14 17:20:45EDT aschoeni Exp  $
+        -:    3: **   $Id: cs_utils.c.gcov 1.3 2017/03/17 19:34:39EDT mdeschu Exp  $
         -:    4: **
-        -:    5: ** Purpose: 
-        -:    6: **   The CFS Checksum (CS) Application's utility functions
-        -:    7: **
-        -:    8: **   $Log: cs_utils.c.gcov  $
-        -:    8: **   Revision 1.7 2012/09/14 17:20:45EDT aschoeni 
-        -:    8: **   Updated for fix to disable error in def table command
-        -:    9: **   Revision 1.8 2012/06/06 14:43:33EDT lwalling 
-        -:   10: **   Initialize variable DoneWithEntry
-        -:   11: **   Revision 1.7 2011/09/06 11:52:34PDT jmdagost 
-        -:   12: **   Corrected app-not-found and table-not-found compute event IDs.
-        -:   13: **   Revision 1.6 2010/05/28 11:15:03EDT jmdagost 
-        -:   14: **   Included cs_utils.h to eliminate potential compiler warnings.
-        -:   15: **   Revision 1.5 2010/04/14 15:42:24EDT jmdagost 
-        -:   16: **   Replaced CS_APP_TABLE with (CS_NUM_TABLES - 1) in CS_GoToNextTable().
-        -:   17: **   Revision 1.4 2010/04/08 16:35:47EDT jmdagost 
-        -:   18: **   Added conditional wrappers around background calculations for OS and cFE Core to check
-        -:   19: **   the State value that has been set by the recompute command.
-        -:   20: **   Revision 1.3 2010/03/29 16:55:57EDT jmdagost 
-        -:   21: **   Replaced CS_GetTableEntryByName() and CS_GetAppEntryByName() with CS_GetTableResTblEntryByName() and CS_GetAppResTblEntryByName().
-        -:   22: **   Added CS_GetTableDefTblByName() and CS_GetAppDefTblEntryByName().
-        -:   23: **   Revision 1.2 2008/07/23 10:34:44EDT njyanchik 
-        -:   24: **   Check in of CS Unit test
-        -:   25: **   Revision 1.1 2008/06/13 09:04:24EDT njyanchik 
-        -:   26: **   Initial revision
-        -:   27: **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
-        -:   28: ** 
-        -:   29: *************************************************************************/
+        -:    5: **   Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6: **   Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **   All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **   This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **   used, distributed and modified only pursuant to the terms of that 
+        -:   12: **   agreement.
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   The CFS Checksum (CS) Application's utility functions
+        -:   16: **
+        -:   17: *************************************************************************/
+        -:   18:
+        -:   19:/**************************************************************************
+        -:   20: **
+        -:   21: ** Include section
+        -:   22: **
+        -:   23: **************************************************************************/
+        -:   24:#include "cfe.h"
+        -:   25:#include "cs_app.h"
+        -:   26:#include "cs_events.h"
+        -:   27:#include "cs_compute.h"
+        -:   28:#include "cs_utils.h"
+        -:   29:#include <string.h>
         -:   30:
         -:   31:/**************************************************************************
         -:   32: **
-        -:   33: ** Include section
+        -:   33: ** Functions
         -:   34: **
         -:   35: **************************************************************************/
-        -:   36:#include "cfe.h"
-        -:   37:#include "cs_app.h"
-        -:   38:#include "cs_events.h"
-        -:   39:#include "cs_compute.h"
-        -:   40:#include "cs_utils.h"
-        -:   41:#include <string.h>
-        -:   42:
-        -:   43:/**************************************************************************
-        -:   44: **
-        -:   45: ** Functions
-        -:   46: **
-        -:   47: **************************************************************************/
-        -:   48:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   49:/*                                                                 */
-        -:   50:/* CS Zero out the temp chcksum values of Eeprom                   */
-        -:   51:/*                                                                 */
-        -:   52:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   53:void CS_ZeroEepromTempValues(void)
-function CS_ZeroEepromTempValues called 2 returned 100% blocks executed 100%
-        2:   54:{
-        -:   55:    uint16                                  Loop;
-        -:   56:    
-       34:   57:    for ( Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:   58:    {
-       32:   59:        CS_AppData.ResEepromTblPtr[Loop].TempChecksumValue = 0;
-       32:   60:        CS_AppData.ResEepromTblPtr[Loop].ByteOffset = 0;
-        -:   61:    }
-        -:   62:    return;
-        -:   63:}
-        -:   64:
-        -:   65:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   66:/*                                                                 */
-        -:   67:/* CS Zero out the temp chcksum values of Memory                   */
-        -:   68:/*                                                                 */
-        -:   69:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   70:void CS_ZeroMemoryTempValues(void)
-function CS_ZeroMemoryTempValues called 2 returned 100% blocks executed 100%
-        2:   71:{
-        -:   72:    uint16                                  Loop;
-        -:   73:    
-       34:   74:    for ( Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:   75:    {
-       32:   76:        CS_AppData.ResMemoryTblPtr[Loop].TempChecksumValue = 0;
-       32:   77:        CS_AppData.ResMemoryTblPtr[Loop].ByteOffset = 0;
-        -:   78:    }
+        -:   36:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   37:/*                                                                 */
+        -:   38:/* CS Zero out the temp chcksum values of Eeprom                   */
+        -:   39:/*                                                                 */
+        -:   40:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:   41:void CS_ZeroEepromTempValues(void)
+        -:   42:{
+        -:   43:    uint16                                  Loop;
+        -:   44:    
+       85:   45:    for ( Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
+        -:   46:    {
+       80:   47:        CS_AppData.ResEepromTblPtr[Loop].TempChecksumValue = 0;
+       80:   48:        CS_AppData.ResEepromTblPtr[Loop].ByteOffset = 0;
+        -:   49:    }
+        5:   50:    return;
+        -:   51:}
+        -:   52:
+        -:   53:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   54:/*                                                                 */
+        -:   55:/* CS Zero out the temp chcksum values of Memory                   */
+        -:   56:/*                                                                 */
+        -:   57:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:   58:void CS_ZeroMemoryTempValues(void)
+        -:   59:{
+        -:   60:    uint16                                  Loop;
+        -:   61:    
+       85:   62:    for ( Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop++)
+        -:   63:    {
+       80:   64:        CS_AppData.ResMemoryTblPtr[Loop].TempChecksumValue = 0;
+       80:   65:        CS_AppData.ResMemoryTblPtr[Loop].ByteOffset = 0;
+        -:   66:    }
+        -:   67:    
+        5:   68:    return;
+        -:   69:}
+        -:   70:
+        -:   71:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   72:/*                                                                 */
+        -:   73:/* CS Zero out the temp chcksum values of Tables                   */
+        -:   74:/*                                                                 */
+        -:   75:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:   76:void CS_ZeroTablesTempValues(void)
+        -:   77:{
+        -:   78:    uint16                                  Loop;
         -:   79:    
-        -:   80:    return;
-        -:   81:}
-        -:   82:
-        -:   83:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   84:/*                                                                 */
-        -:   85:/* CS Zero out the temp chcksum values of Tables                   */
-        -:   86:/*                                                                 */
-        -:   87:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:   88:void CS_ZeroTablesTempValues(void)
-function CS_ZeroTablesTempValues called 2 returned 100% blocks executed 100%
-        2:   89:{
-        -:   90:    uint16                                  Loop;
-        -:   91:    
-       50:   92:    for ( Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:   93:    {
-       48:   94:        CS_AppData.ResTablesTblPtr[Loop].TempChecksumValue = 0;
-       48:   95:        CS_AppData.ResTablesTblPtr[Loop].ByteOffset = 0;
-        -:   96:    }
+      125:   80:    for ( Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
+        -:   81:    {
+      120:   82:        CS_AppData.ResTablesTblPtr[Loop].TempChecksumValue = 0;
+      120:   83:        CS_AppData.ResTablesTblPtr[Loop].ByteOffset = 0;
+        -:   84:    }
+        -:   85:    
+        5:   86:    return;
+        -:   87:}
+        -:   88:
+        -:   89:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   90:/*                                                                 */
+        -:   91:/* CS Zero out the temp chcksum values of Applications             */
+        -:   92:/*                                                                 */
+        -:   93:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:   94:void CS_ZeroAppTempValues(void)
+        -:   95:{
+        -:   96:    uint16                                  Loop;
         -:   97:    
-        -:   98:    return;
-        -:   99:}
-        -:  100:
-        -:  101:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  102:/*                                                                 */
-        -:  103:/* CS Zero out the temp chcksum values of Applications             */
-        -:  104:/*                                                                 */
-        -:  105:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  106:void CS_ZeroAppTempValues(void)
-function CS_ZeroAppTempValues called 2 returned 100% blocks executed 100%
-        2:  107:{
-        -:  108:    uint16                                  Loop;
-        -:  109:    
-       50:  110:    for ( Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop ++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  111:    {
-       48:  112:        CS_AppData.ResAppTblPtr[Loop].TempChecksumValue = 0;
-       48:  113:        CS_AppData.ResAppTblPtr[Loop].ByteOffset = 0;
-        -:  114:    }
+      125:   98:    for ( Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop ++)
+        -:   99:    {
+      120:  100:        CS_AppData.ResAppTblPtr[Loop].TempChecksumValue = 0;
+      120:  101:        CS_AppData.ResAppTblPtr[Loop].ByteOffset = 0;
+        -:  102:    }
+        -:  103:    
+        5:  104:    return;
+        -:  105:}
+        -:  106:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  107:/*                                                                 */
+        -:  108:/* CS Zero out the temp chcksum values ofthe cFE core              */
+        -:  109:/*                                                                 */
+        -:  110:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  111:void CS_ZeroCfeCoreTempValues(void)
+        -:  112:{    
+        5:  113:    CS_AppData.CfeCoreCodeSeg.TempChecksumValue = 0;
+        5:  114:    CS_AppData.CfeCoreCodeSeg.ByteOffset = 0;    
         -:  115:    
-        -:  116:    return;
+        5:  116:    return;
         -:  117:}
-        -:  118:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  119:/*                                                                 */
-        -:  120:/* CS Zero out the temp chcksum values ofthe cFE core              */
-        -:  121:/*                                                                 */
-        -:  122:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  123:void CS_ZeroCfeCoreTempValues(void)
-function CS_ZeroCfeCoreTempValues called 3 returned 100% blocks executed 100%
-        3:  124:{    
-        3:  125:    CS_AppData.CfeCoreCodeSeg.TempChecksumValue = 0;
-        3:  126:    CS_AppData.CfeCoreCodeSeg.ByteOffset = 0;    
-        -:  127:    
-        -:  128:    return;
-        -:  129:}
-        -:  130:
+        -:  118:
+        -:  119:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  120:/*                                                                 */
+        -:  121:/* CS Zero out the temp chcksum values of the OS code segment      */
+        -:  122:/*                                                                 */
+        -:  123:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  124:void CS_ZeroOSTempValues(void)
+        -:  125:{    
+        5:  126:    CS_AppData.OSCodeSeg.TempChecksumValue = 0;
+        5:  127:    CS_AppData.OSCodeSeg.ByteOffset = 0;    
+        -:  128:    
+        5:  129:    return;
+        -:  130:}
         -:  131:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         -:  132:/*                                                                 */
-        -:  133:/* CS Zero out the temp chcksum values of the OS code segment      */
+        -:  133:/* CS Nullifies the entries in the Results table for All           */
         -:  134:/*                                                                 */
         -:  135:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  136:void CS_ZeroOSTempValues(void)
-function CS_ZeroOSTempValues called 3 returned 100% blocks executed 100%
-        3:  137:{    
-        3:  138:    CS_AppData.OSCodeSeg.TempChecksumValue = 0;
-        3:  139:    CS_AppData.OSCodeSeg.ByteOffset = 0;    
-        -:  140:    
-        -:  141:    return;
-        -:  142:}
-        -:  143:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  144:/*                                                                 */
-        -:  145:/* CS Nullifies the entries in the Results table for All           */
-        -:  146:/*                                                                 */
-        -:  147:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  148:void CS_InitializeDefaultTables(void)
-function CS_InitializeDefaultTables called 8 returned 100% blocks executed 100%
-        8:  149:{
-        -:  150:    uint16                                  Loop;
-        -:  151:
-      136:  152:    for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:  153:    {                
-      128:  154:        CS_AppData.DefaultEepromDefTable[Loop].State              = CS_STATE_EMPTY;
-      128:  155:        CS_AppData.DefaultEepromDefTable[Loop].NumBytesToChecksum = 0;
-      128:  156:        CS_AppData.DefaultEepromDefTable[Loop].StartAddress       =0;
-        -:  157:     
-        -:  158:    }
-        -:  159:           
-      136:  160:    for (Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:  161:    {                
-      128:  162:        CS_AppData.DefaultMemoryDefTable[Loop].State              = CS_STATE_EMPTY;
-      128:  163:        CS_AppData.DefaultMemoryDefTable[Loop].NumBytesToChecksum = 0;
-      128:  164:        CS_AppData.DefaultMemoryDefTable[Loop].StartAddress       = 0;
-        -:  165:    }
-        -:  166:    
-      200:  167:    for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  168:    {                
-      192:  169:        CS_AppData.DefaultAppDefTable[Loop].State              = CS_STATE_EMPTY;
-      192:  170:        CS_AppData.DefaultAppDefTable[Loop].Name[0]            = '\0';        
-        -:  171:    }
-        -:  172:
-        -:  173:
-      200:  174:    for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
-branch  0 taken 96%
-branch  1 taken 4% (fallthrough)
-        -:  175:    {                
-      192:  176:        CS_AppData.DefaultTablesDefTable[Loop].State              = CS_STATE_EMPTY;
-      192:  177:        CS_AppData.DefaultTablesDefTable[Loop].Name[0]            = '\0';
-        -:  178:    }
-        -:  179:    
-        -:  180:    return;
-        -:  181:}/* end CS_InitializeDefaultTables */
-        -:  182:
-        -:  183:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  184:/*                                                                 */
-        -:  185:/* CS Set the global variables to the start of the next table      */
-        -:  186:/*                                                                 */
-        -:  187:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  188:void CS_GoToNextTable(void)
-function CS_GoToNextTable called 1806 returned 100% blocks executed 100%
-     1806:  189:{    
-     1806:  190:    if ( CS_AppData.CurrentCSTable < (CS_NUM_TABLES - 1))
-branch  0 taken 83% (fallthrough)
-branch  1 taken 17%
-        -:  191:    {
-     1505:  192:        CS_AppData.CurrentCSTable++;
-        -:  193:    }
-        -:  194:    else
-        -:  195:    {
-      301:  196:        CS_AppData.CurrentCSTable = 0;
-        -:  197:        /* we are back to the beginning of the tables to checksum
-        -:  198:         we need to update the pass counter */
-      301:  199:        CS_AppData.PassCounter++;
-        -:  200:    }
-        -:  201:    
-     1806:  202:    CS_AppData.CurrentEntryInTable = 0;
-        -:  203:    return;
-        -:  204:}
-        -:  205:
-        -:  206:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  207:/*                                                                 */
-        -:  208:/* CS Get the Results Table Entry info of a table by its name      */
-        -:  209:/*                                                                 */
-        -:  210:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  211:boolean CS_GetTableResTblEntryByName(CS_Res_Tables_Table_Entry_t ** EntryPtr,
-        -:  212:                                     char* Name)
-function CS_GetTableResTblEntryByName called 14 returned 100% blocks executed 100%
-       14:  213:{
-       14:  214:    CS_Res_Tables_Table_Entry_t           * StartOfResultsTable = NULL;
-       14:  215:    CS_Res_Tables_Table_Entry_t           * ResultsEntry        = NULL; 
-        -:  216:    int32                                   Loop;
-        -:  217:    uint16                                  MaxEntries;
-       14:  218:    boolean                                 Status              = FALSE;
-        -:  219:    
-        -:  220:    
-       14:  221:    StartOfResultsTable = CS_AppData.ResTablesTblPtr;
-       14:  222:    MaxEntries = CS_MAX_NUM_TABLES_TABLE_ENTRIES;
-        -:  223:    
-      134:  224:    for (Loop = 0; Loop < MaxEntries; Loop++)
-branch  0 taken 97%
-branch  1 taken 3% (fallthrough)
-        -:  225:    {
-      130:  226:        ResultsEntry = & StartOfResultsTable[Loop];
-        -:  227:        
-      130:  228:        if (strncmp(ResultsEntry -> Name, Name,CFE_TBL_MAX_FULL_NAME_LEN) == 0  &&
-call    0 returned 100%
-branch  1 taken 8% (fallthrough)
-branch  2 taken 92%
-branch  3 taken 100% (fallthrough)
-branch  4 taken 0%
-        -:  229:            ResultsEntry -> State != CS_STATE_EMPTY)
-        -:  230:        {
-       10:  231:            Status      = TRUE;
-       10:  232:            *EntryPtr   =  ResultsEntry;
-       10:  233:            break;
-        -:  234:        }
-        -:  235:    }   
-       14:  236:    return Status;
-        -:  237:}/* end CS_GetTableResTblEntryByName */
-        -:  238:
-        -:  239:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  240:/*                                                                 */
-        -:  241:/* CS Get the Defintion Table Entry info of a table by its name      */
-        -:  242:/*                                                                 */
-        -:  243:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  244:boolean CS_GetTableDefTblEntryByName(CS_Def_Tables_Table_Entry_t ** EntryPtr,
-        -:  245:                                     char* Name)
-function CS_GetTableDefTblEntryByName called 6 returned 100% blocks executed 100%
-        6:  246:{
-        6:  247:    CS_Def_Tables_Table_Entry_t           * StartOfDefinitionTable = NULL;
-        6:  248:    CS_Def_Tables_Table_Entry_t           * DefinitionEntry           = NULL; 
-        -:  249:    int32                                   Loop;
-        -:  250:    uint16                                  MaxEntries;
-        6:  251:    boolean                                 Status                 = FALSE;
-        -:  252:    
-        -:  253:    
-        6:  254:    StartOfDefinitionTable = CS_AppData.DefTablesTblPtr;
-        6:  255:    MaxEntries = CS_MAX_NUM_TABLES_TABLE_ENTRIES;
-        -:  256:    
-       66:  257:    for (Loop = 0; Loop < MaxEntries; Loop++)
-branch  0 taken 97%
-branch  1 taken 3% (fallthrough)
-        -:  258:    {
-       64:  259:        DefinitionEntry = & StartOfDefinitionTable[Loop];
-        -:  260:        
-       64:  261:        if (strncmp(DefinitionEntry -> Name, Name,CFE_TBL_MAX_FULL_NAME_LEN) == 0  &&
-call    0 returned 100%
-branch  1 taken 6% (fallthrough)
-branch  2 taken 94%
-branch  3 taken 100% (fallthrough)
-branch  4 taken 0%
-        -:  262:            DefinitionEntry -> State != CS_STATE_EMPTY)
-        -:  263:        {
-        4:  264:            Status      = TRUE;
-        4:  265:            *EntryPtr   =  DefinitionEntry;
-        4:  266:            break;
-        -:  267:        }
-        -:  268:    }   
-        6:  269:    return Status;
-        -:  270:}/* end CS_GetTableDefTblEntryByName */
-        -:  271:
-        -:  272:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  273:/*                                                                 */
-        -:  274:/* CS Get the Results Entry info of an app by its name             */
-        -:  275:/*                                                                 */
-        -:  276:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  277:boolean CS_GetAppResTblEntryByName(CS_Res_App_Table_Entry_t ** EntryPtr,
-        -:  278:                                   char                    * Name)
-function CS_GetAppResTblEntryByName called 14 returned 100% blocks executed 100%
-       14:  279:{
-       14:  280:    CS_Res_App_Table_Entry_t              * StartOfResultsTable = NULL;
-       14:  281:    CS_Res_App_Table_Entry_t              * ResultsEntry        = NULL; 
-        -:  282:    int32                                   Loop;
-        -:  283:    uint16                                  MaxEntries;
-       14:  284:    boolean                                 Status              = FALSE;
-        -:  285:    
-       14:  286:    StartOfResultsTable = CS_AppData.ResAppTblPtr;
-       14:  287:    MaxEntries = CS_MAX_NUM_APP_TABLE_ENTRIES;
-        -:  288:    
-      184:  289:    for (Loop = 0; Loop < MaxEntries; Loop++)
-branch  0 taken 97%
-branch  1 taken 3% (fallthrough)
-        -:  290:    {
-      178:  291:        ResultsEntry = & StartOfResultsTable[Loop];
-        -:  292:        
-      178:  293:        if (strncmp(ResultsEntry -> Name, Name, OS_MAX_API_NAME) == 0  &&
-call    0 returned 100%
-branch  1 taken 4% (fallthrough)
-branch  2 taken 96%
-branch  3 taken 100% (fallthrough)
-branch  4 taken 0%
-        -:  294:            ResultsEntry -> State != CS_STATE_EMPTY)
-        -:  295:        {
-        8:  296:            Status      = TRUE;
-        8:  297:            *EntryPtr   =  ResultsEntry;
-        8:  298:            break;
-        -:  299:        }
-        -:  300:    }   
-       14:  301:    return Status;
-        -:  302:}/* end CS_GetAppResTblEntryByName */
-        -:  303:
-        -:  304:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  305:/*                                                                 */
-        -:  306:/* CS Get the Definition Entry info of an app by its name          */
-        -:  307:/*                                                                 */
-        -:  308:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  309:boolean CS_GetAppDefTblEntryByName(CS_Def_App_Table_Entry_t ** EntryPtr,
-        -:  310:                                   char                    * Name)
-function CS_GetAppDefTblEntryByName called 4 returned 100% blocks executed 100%
-        4:  311:{
-        4:  312:    CS_Def_App_Table_Entry_t              * StartOfDefinitionTable = NULL;
-        4:  313:    CS_Def_App_Table_Entry_t              * DefinitionEntry        = NULL; 
-        -:  314:    int32                                   Loop;
-        -:  315:    uint16                                  MaxEntries;
-        4:  316:    boolean                                 Status                 = FALSE;
-        -:  317:    
-        4:  318:    StartOfDefinitionTable = CS_AppData.DefAppTblPtr;
-        4:  319:    MaxEntries = CS_MAX_NUM_APP_TABLE_ENTRIES;
-        -:  320:    
-       60:  321:    for (Loop = 0; Loop < MaxEntries; Loop++)
-branch  0 taken 97%
-branch  1 taken 3% (fallthrough)
-        -:  322:    {
-       58:  323:        DefinitionEntry = & StartOfDefinitionTable[Loop];
-        -:  324:        
-       58:  325:        if (strncmp(DefinitionEntry -> Name, Name, OS_MAX_API_NAME) == 0  &&
-call    0 returned 100%
-branch  1 taken 3% (fallthrough)
-branch  2 taken 97%
-branch  3 taken 100% (fallthrough)
-branch  4 taken 0%
-        -:  326:            DefinitionEntry -> State != CS_STATE_EMPTY)
-        -:  327:        {
-        2:  328:            Status      = TRUE;
-        2:  329:            *EntryPtr   = DefinitionEntry;
-        2:  330:            break;
-        -:  331:        }
-        -:  332:    }   
-        4:  333:    return Status;
-        -:  334:}/* end CS_GetAppDefTblEntryByName */
-        -:  335:
-        -:  336:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  337:/*                                                                 */
-        -:  338:/* CS Get the next CS-enabled entry of this table                  */
-        -:  339:/*                                                                 */
-        -:  340:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  341:boolean CS_FindEnabledEepromEntry(uint16* EnabledEntry)
-function CS_FindEnabledEepromEntry called 719 returned 100% blocks executed 100%
-      719:  342:{
-      719:  343:    CS_Res_EepromMemory_Table_Entry_t       * StartOfResultsTable   = NULL;
-      719:  344:    CS_Res_EepromMemory_Table_Entry_t       * ResultsEntry          = NULL;
-      719:  345:    boolean                                   EnabledEntries        = TRUE;
-        -:  346:    
-        -:  347:    
-      719:  348:    StartOfResultsTable = CS_AppData.ResEepromTblPtr;    
-        -:  349:
-      719:  350:    ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  351:    
-     1983:  352:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
-branch  0 taken 45%
-branch  1 taken 55% (fallthrough)
-        -:  353:    {
-      567:  354:        CS_AppData.CurrentEntryInTable++;
-        -:  355:        
-      567:  356:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_EEPROM_TABLE_ENTRIES)
-branch  0 taken 4% (fallthrough)
-branch  1 taken 96%
-        -:  357:        {
-        -:  358:            /* we reached the end no more enabled entries */
-       22:  359:            EnabledEntries = FALSE;
-       22:  360:            break;
-        -:  361:        }
-        -:  362:        
-      545:  363:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  364:    }/* end while */
-        -:  365:    
-      719:  366:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
-        -:  367:    
-      719:  368:    return EnabledEntries;
-        -:  369:} /* end CS FindEnabledEepromEntry */
-        -:  370:
-        -:  371:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  372:/*                                                                 */
-        -:  373:/* CS Get the next CS-enabled entry of this table                  */
-        -:  374:/*                                                                 */
-        -:  375:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  376:boolean CS_FindEnabledMemoryEntry(uint16* EnabledEntry)
-function CS_FindEnabledMemoryEntry called 663 returned 100% blocks executed 100%
-      663:  377:{
-      663:  378:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable     = NULL;
-      663:  379:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry            = NULL;
-      663:  380:    boolean                                 EnabledEntries          = TRUE;
-        -:  381:    
-        -:  382:    
-      663:  383:    StartOfResultsTable = CS_AppData.ResMemoryTblPtr;    
-      663:  384:    ResultsEntry        = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  385:    
-     1924:  386:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
-branch  0 taken 49%
-branch  1 taken 51% (fallthrough)
-        -:  387:    {
-      620:  388:        CS_AppData.CurrentEntryInTable++;
-        -:  389:        
-      620:  390:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
-branch  0 taken 4% (fallthrough)
-branch  1 taken 96%
-        -:  391:        {
-        -:  392:            /* we reached the end no more enabled entries */
-       22:  393:            EnabledEntries = FALSE;
-       22:  394:            break;
-        -:  395:        }
-        -:  396:        
-      598:  397:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  398:    }/* end while */
-        -:  399:    
-      663:  400:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
-        -:  401:    
-      663:  402:    return EnabledEntries;
-        -:  403:} /* end CS FindEnabledMemoryEntry */
-        -:  404:
-        -:  405:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  406:/*                                                                 */
-        -:  407:/* CS Get the next CS-enabled entry of this table                  */
-        -:  408:/*                                                                 */
-        -:  409:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  410:boolean CS_FindEnabledTablesEntry(uint16* EnabledEntry)
-function CS_FindEnabledTablesEntry called 864 returned 100% blocks executed 100%
-      864:  411:{
-      864:  412:    CS_Res_Tables_Table_Entry_t       * StartOfResultsTable     = NULL;
-      864:  413:    CS_Res_Tables_Table_Entry_t       * ResultsEntry            = NULL;
-      864:  414:    boolean                             EnabledEntries          = TRUE;
-        -:  415:    
-      864:  416:    StartOfResultsTable = CS_AppData.ResTablesTblPtr;    
-      864:  417:    ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  418:
-     2740:  419:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
-branch  0 taken 57%
-branch  1 taken 43% (fallthrough)
-        -:  420:    {
-     1061:  421:        CS_AppData.CurrentEntryInTable++;
-        -:  422:        
-     1061:  423:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_TABLES_TABLE_ENTRIES)
-branch  0 taken 5% (fallthrough)
-branch  1 taken 95%
-        -:  424:        {
-        -:  425:            /* we reached the end no more enabled entries */
-       49:  426:            EnabledEntries = FALSE;
-        -:  427:
-       49:  428:            break;
-        -:  429:        }
-        -:  430:        
-     1012:  431:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  432:        
-        -:  433:    }/* end while */
-        -:  434:    
-      864:  435:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
-        -:  436:    
-      864:  437:    return EnabledEntries;
-        -:  438:} /* end CS FindEnabledTablesEntry */
-        -:  439:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  440:/*                                                                 */
-        -:  441:/* CS Get the next CS-enabled entry of this table                  */
-        -:  442:/*                                                                 */
-        -:  443:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  444:boolean CS_FindEnabledAppEntry(uint16* EnabledEntry)
-function CS_FindEnabledAppEntry called 1239 returned 100% blocks executed 100%
-     1239:  445:{
-     1239:  446:    CS_Res_App_Table_Entry_t          * StartOfResultsTable     = NULL;
-     1239:  447:    CS_Res_App_Table_Entry_t          * ResultsEntry            = NULL;
-     1239:  448:    boolean                             EnabledEntries          = TRUE;
-        -:  449:    
-     1239:  450:    StartOfResultsTable = CS_AppData.ResAppTblPtr;    
-     1239:  451:    ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  452:    
-        -:  453:
-     3668:  454:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
-branch  0 taken 52%
-branch  1 taken 48% (fallthrough)
-        -:  455:    {
-     1265:  456:        CS_AppData.CurrentEntryInTable++;
-        -:  457:        
-     1265:  458:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_APP_TABLE_ENTRIES)
-branch  0 taken 6% (fallthrough)
-branch  1 taken 94%
-        -:  459:        {
-        -:  460:            /* we reached the end no more enabled entries */
-       75:  461:            EnabledEntries = FALSE;
-       75:  462:            break;
-        -:  463:        }
-        -:  464:        
-     1190:  465:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
-        -:  466:        
-        -:  467:    }/* end while */
-        -:  468:    
-     1239:  469:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
-        -:  470:    
-        -:  471:    
-     1239:  472:    return EnabledEntries;
-        -:  473:} /* end CS FindEnabledAppEntry */
-        -:  474:
-        -:  475:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  476:/*                                                                 */
-        -:  477:/* CS Verify the length of the command                             */
-        -:  478:/*                                                                 */
-        -:  479:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  480:boolean CS_VerifyCmdLength(CFE_SB_MsgPtr_t msg, 
-        -:  481:                           uint16          ExpectedLength)
-function CS_VerifyCmdLength called 128 returned 100% blocks executed 100%
-      128:  482:{
-        -:  483:    CFE_SB_MsgId_t MessageID;
-        -:  484:    uint16  CommandCode;
-      128:  485:    boolean Result = TRUE;
-      128:  486:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(msg);
-call    0 returned 100%
-        -:  487:    
-        -:  488:    /* Verify the command packet length */
-      128:  489:    if (ExpectedLength != ActualLength)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  490:    {
-        1:  491:        CommandCode = CFE_SB_GetCmdCode(msg);
-call    0 returned 100%
-        1:  492:        MessageID= CFE_SB_GetMsgId(msg);
-call    0 returned 100%
-        -:  493:        
-        1:  494:        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
-call    0 returned 100%
-        -:  495:                          CFE_EVS_ERROR,
-        -:  496:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
-        -:  497:                          MessageID,
-        -:  498:                          CommandCode,
-        -:  499:                          ActualLength,
-        -:  500:                          ExpectedLength);
-        1:  501:        Result = FALSE;
-        1:  502:        CS_AppData.CmdErrCounter++;
-        -:  503:    }    
-      128:  504:    return(Result);
-        -:  505:} /* End of CS_VerifyCmdLength */
-        -:  506:
-        -:  507:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  508:/*                                                                 */
-        -:  509:/* Background check cFE core                                       */
-        -:  510:/*                                                                 */
-        -:  511:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  512:boolean CS_BackgroundCfeCore(void)
-function CS_BackgroundCfeCore called 597 returned 100% blocks executed 100%
-      597:  513:{
-        -:  514:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
-      597:  515:    boolean                                 DoneWithCycle       = FALSE;
-      597:  516:    boolean                                 DoneWithEntry       = FALSE;
-      597:  517:    uint32                                  ComputedCSValue     = 0;
-        -:  518:    int32                                   Status;
-        -:  519:    
-      597:  520:    if( CS_AppData.CfeCoreCSState == CS_STATE_ENABLED)
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-        -:  521:    {
-      594:  522:        ResultsEntry = & CS_AppData.CfeCoreCodeSeg;
-        -:  523:        
-        -:  524:        /* Check if the code segment state is enabled (could be disabled for
-        -:  525:           a ground-commanded recompute) */
-      594:  526:        if (ResultsEntry->State == CS_STATE_ENABLED)
-branch  0 taken 66% (fallthrough)
-branch  1 taken 34%
-        -:  527:        {
-        -:  528:        
-        -:  529:            /* If we complete an entry's checksum, this function will update it for us */
-      394:  530:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
-call    0 returned 100%
-        -:  531:        
-        -:  532:            /* We need to avoid the case of finishing a table, moving on to the next one
-        -:  533:             and computing an entry in that table, since it could put us above the 
-        -:  534:             maximum bytes per cycle */
-      394:  535:            DoneWithCycle = TRUE;
-        -:  536:        
-      394:  537:            if(Status == CS_ERROR)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  538:            {
-        -:  539:                /* we had a miscompare */
-        -:  540:            
-        2:  541:                CS_AppData.CfeCoreCSErrCounter++;                
-        -:  542:            
-        2:  543:                CFE_EVS_SendEvent (CS_CFECORE_MISCOMPARE_ERR_EID,
-call    0 returned 100%
-        -:  544:                                   CFE_EVS_ERROR,
-        -:  545:                                   "Checksum Failure: cFE Core, Expected: 0x%08X, Calculated: 0x%08X",                                   
-        -:  546:                                   ResultsEntry -> ComparisonValue,
-        -:  547:                                   ComputedCSValue);
-        -:  548:            }
-        -:  549:        
-      394:  550:            if (DoneWithEntry == TRUE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -:  551:            {
-       98:  552:                CS_AppData.CurrentEntryInTable ++;
-        -:  553:            }
-        -:  554:        
-        -:  555:            /* only one entry to do */
-      394:  556:            if ( CS_AppData.CurrentEntryInTable > 0)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -:  557:            {
-        -:  558:                /* We are done with this table */
-       98:  559:                CS_AppData.CfeCoreBaseline = ResultsEntry -> ComparisonValue;
-       98:  560:                CS_GoToNextTable();
-call    0 returned 100%
-        -:  561:            }
-        -:  562:        }
-        -:  563:        else 
-        -:  564:        {
-        -:  565:            /* Currently disabled, so skip it */
-      200:  566:            CS_GoToNextTable();
-call    0 returned 100%
-        -:  567:        }
-        -:  568:    }
-        -:  569:    else /* Table is disabled, skip it */
-        -:  570:    {
-        3:  571:        CS_GoToNextTable();
-call    0 returned 100%
-        -:  572:    }
-        -:  573:    
-      597:  574:    return DoneWithCycle;
-        -:  575:}/* end CS_BackgroundCfeCore */    
-        -:  576:
-        -:  577:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  578:/*                                                                 */
-        -:  579:/* Background check OS                                             */
-        -:  580:/*                                                                 */
-        -:  581:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  582:boolean CS_BackgroundOS(void)
-function CS_BackgroundOS called 595 returned 100% blocks executed 100%
-      595:  583:{
-        -:  584:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
-      595:  585:    boolean                                 DoneWithCycle       = FALSE;
-      595:  586:    boolean                                 DoneWithEntry       = FALSE;
-      595:  587:    uint32                                  ComputedCSValue     = 0;
-        -:  588:    int32                                   Status;
-        -:  589:    
-      595:  590:    if( CS_AppData.OSCSState == CS_STATE_ENABLED)
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-        -:  591:    {
-      592:  592:        ResultsEntry = & CS_AppData.OSCodeSeg;
+       12:  136:void CS_InitializeDefaultTables(void)
+        -:  137:{
+        -:  138:    uint16                                  Loop;
+        -:  139:
+      204:  140:    for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
+        -:  141:    {                
+      192:  142:        CS_AppData.DefaultEepromDefTable[Loop].State              = CS_STATE_EMPTY;
+      192:  143:        CS_AppData.DefaultEepromDefTable[Loop].NumBytesToChecksum = 0;
+      192:  144:        CS_AppData.DefaultEepromDefTable[Loop].StartAddress       =0;
+        -:  145:     
+        -:  146:    }
+        -:  147:           
+      204:  148:    for (Loop = 0; Loop < CS_MAX_NUM_MEMORY_TABLE_ENTRIES; Loop++)
+        -:  149:    {                
+      192:  150:        CS_AppData.DefaultMemoryDefTable[Loop].State              = CS_STATE_EMPTY;
+      192:  151:        CS_AppData.DefaultMemoryDefTable[Loop].NumBytesToChecksum = 0;
+      192:  152:        CS_AppData.DefaultMemoryDefTable[Loop].StartAddress       = 0;
+        -:  153:    }
+        -:  154:    
+      300:  155:    for (Loop = 0; Loop < CS_MAX_NUM_APP_TABLE_ENTRIES; Loop++)
+        -:  156:    {                
+      288:  157:        CS_AppData.DefaultAppDefTable[Loop].State              = CS_STATE_EMPTY;
+      288:  158:        CS_AppData.DefaultAppDefTable[Loop].Name[0]            = '\0';        
+        -:  159:    }
+        -:  160:
+        -:  161:
+      300:  162:    for (Loop = 0; Loop < CS_MAX_NUM_TABLES_TABLE_ENTRIES; Loop++)
+        -:  163:    {                
+      288:  164:        CS_AppData.DefaultTablesDefTable[Loop].State              = CS_STATE_EMPTY;
+      288:  165:        CS_AppData.DefaultTablesDefTable[Loop].Name[0]            = '\0';
+        -:  166:    }
+        -:  167:    
+       12:  168:    return;
+        -:  169:}/* end CS_InitializeDefaultTables */
+        -:  170:
+        -:  171:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  172:/*                                                                 */
+        -:  173:/* CS Set the global variables to the start of the next table      */
+        -:  174:/*                                                                 */
+        -:  175:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       38:  176:void CS_GoToNextTable(void)
+        -:  177:{    
+       38:  178:    if ( CS_AppData.CurrentCSTable < (CS_NUM_TABLES - 1))
+        -:  179:    {
+       33:  180:        CS_AppData.CurrentCSTable++;
+        -:  181:    }
+        -:  182:    else
+        -:  183:    {
+        5:  184:        CS_AppData.CurrentCSTable = 0;
+        -:  185:        /* we are back to the beginning of the tables to checksum
+        -:  186:         we need to update the pass counter */
+        5:  187:        CS_AppData.PassCounter++;
+        -:  188:    }
+        -:  189:    
+       38:  190:    CS_AppData.CurrentEntryInTable = 0;
+       38:  191:    return;
+        -:  192:}
+        -:  193:
+        -:  194:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  195:/*                                                                 */
+        -:  196:/* CS Get the Results Table Entry info of a table by its name      */
+        -:  197:/*                                                                 */
+        -:  198:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       13:  199:boolean CS_GetTableResTblEntryByName(CS_Res_Tables_Table_Entry_t ** EntryPtr,
+        -:  200:                                     char* Name)
+        -:  201:{
+       13:  202:    CS_Res_Tables_Table_Entry_t           * StartOfResultsTable = NULL;
+       13:  203:    CS_Res_Tables_Table_Entry_t           * ResultsEntry        = NULL; 
+        -:  204:    int32                                   Loop;
+        -:  205:    uint16                                  MaxEntries;
+       13:  206:    boolean                                 Status              = FALSE;
+        -:  207:    
+        -:  208:    
+       13:  209:    StartOfResultsTable = CS_AppData.ResTablesTblPtr;
+       13:  210:    MaxEntries = CS_MAX_NUM_TABLES_TABLE_ENTRIES;
+        -:  211:    
+      109:  212:    for (Loop = 0; Loop < MaxEntries; Loop++)
+        -:  213:    {
+      105:  214:        ResultsEntry = & StartOfResultsTable[Loop];
+        -:  215:        
+      114:  216:        if (strncmp(ResultsEntry -> Name, Name,CFE_TBL_MAX_FULL_NAME_LEN) == 0  &&
+        9:  217:            ResultsEntry -> State != CS_STATE_EMPTY)
+        -:  218:        {
+        9:  219:            Status      = TRUE;
+        9:  220:            *EntryPtr   =  ResultsEntry;
+        9:  221:            break;
+        -:  222:        }
+        -:  223:    }   
+       13:  224:    return Status;
+        -:  225:}/* end CS_GetTableResTblEntryByName */
+        -:  226:
+        -:  227:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  228:/*                                                                 */
+        -:  229:/* CS Get the Defintion Table Entry info of a table by its name      */
+        -:  230:/*                                                                 */
+        -:  231:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  232:boolean CS_GetTableDefTblEntryByName(CS_Def_Tables_Table_Entry_t ** EntryPtr,
+        -:  233:                                     char* Name)
+        -:  234:{
+        5:  235:    CS_Def_Tables_Table_Entry_t           * StartOfDefinitionTable = NULL;
+        5:  236:    CS_Def_Tables_Table_Entry_t           * DefinitionEntry           = NULL; 
+        -:  237:    int32                                   Loop;
+        -:  238:    uint16                                  MaxEntries;
+        5:  239:    boolean                                 Status                 = FALSE;
+        -:  240:    
+        -:  241:    
+        5:  242:    StartOfDefinitionTable = CS_AppData.DefTablesTblPtr;
+        5:  243:    MaxEntries = CS_MAX_NUM_TABLES_TABLE_ENTRIES;
+        -:  244:    
+       53:  245:    for (Loop = 0; Loop < MaxEntries; Loop++)
+        -:  246:    {
+       51:  247:        DefinitionEntry = & StartOfDefinitionTable[Loop];
+        -:  248:        
+       54:  249:        if (strncmp(DefinitionEntry -> Name, Name,CFE_TBL_MAX_FULL_NAME_LEN) == 0  &&
+        3:  250:            DefinitionEntry -> State != CS_STATE_EMPTY)
+        -:  251:        {
+        3:  252:            Status      = TRUE;
+        3:  253:            *EntryPtr   =  DefinitionEntry;
+        3:  254:            break;
+        -:  255:        }
+        -:  256:    }   
+        5:  257:    return Status;
+        -:  258:}/* end CS_GetTableDefTblEntryByName */
+        -:  259:
+        -:  260:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  261:/*                                                                 */
+        -:  262:/* CS Get the Results Entry info of an app by its name             */
+        -:  263:/*                                                                 */
+        -:  264:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       14:  265:boolean CS_GetAppResTblEntryByName(CS_Res_App_Table_Entry_t ** EntryPtr,
+        -:  266:                                   char                    * Name)
+        -:  267:{
+       14:  268:    CS_Res_App_Table_Entry_t              * StartOfResultsTable = NULL;
+       14:  269:    CS_Res_App_Table_Entry_t              * ResultsEntry        = NULL; 
+        -:  270:    int32                                   Loop;
+        -:  271:    uint16                                  MaxEntries;
+       14:  272:    boolean                                 Status              = FALSE;
+        -:  273:    
+       14:  274:    StartOfResultsTable = CS_AppData.ResAppTblPtr;
+       14:  275:    MaxEntries = CS_MAX_NUM_APP_TABLE_ENTRIES;
+        -:  276:    
+      110:  277:    for (Loop = 0; Loop < MaxEntries; Loop++)
+        -:  278:    {
+      106:  279:        ResultsEntry = & StartOfResultsTable[Loop];
+        -:  280:        
+      118:  281:        if (strncmp(ResultsEntry -> Name, Name, OS_MAX_API_NAME) == 0  &&
+       12:  282:            ResultsEntry -> State != CS_STATE_EMPTY)
+        -:  283:        {
+       10:  284:            Status      = TRUE;
+       10:  285:            *EntryPtr   =  ResultsEntry;
+       10:  286:            break;
+        -:  287:        }
+        -:  288:    }   
+       14:  289:    return Status;
+        -:  290:}/* end CS_GetAppResTblEntryByName */
+        -:  291:
+        -:  292:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  293:/*                                                                 */
+        -:  294:/* CS Get the Definition Entry info of an app by its name          */
+        -:  295:/*                                                                 */
+        -:  296:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  297:boolean CS_GetAppDefTblEntryByName(CS_Def_App_Table_Entry_t ** EntryPtr,
+        -:  298:                                   char                    * Name)
+        -:  299:{
+        4:  300:    CS_Def_App_Table_Entry_t              * StartOfDefinitionTable = NULL;
+        4:  301:    CS_Def_App_Table_Entry_t              * DefinitionEntry        = NULL; 
+        -:  302:    int32                                   Loop;
+        -:  303:    uint16                                  MaxEntries;
+        4:  304:    boolean                                 Status                 = FALSE;
+        -:  305:    
+        4:  306:    StartOfDefinitionTable = CS_AppData.DefAppTblPtr;
+        4:  307:    MaxEntries = CS_MAX_NUM_APP_TABLE_ENTRIES;
+        -:  308:    
+       52:  309:    for (Loop = 0; Loop < MaxEntries; Loop++)
+        -:  310:    {
+       50:  311:        DefinitionEntry = & StartOfDefinitionTable[Loop];
+        -:  312:        
+       54:  313:        if (strncmp(DefinitionEntry -> Name, Name, OS_MAX_API_NAME) == 0  &&
+        4:  314:            DefinitionEntry -> State != CS_STATE_EMPTY)
+        -:  315:        {
+        2:  316:            Status      = TRUE;
+        2:  317:            *EntryPtr   = DefinitionEntry;
+        2:  318:            break;
+        -:  319:        }
+        -:  320:    }   
+        4:  321:    return Status;
+        -:  322:}/* end CS_GetAppDefTblEntryByName */
+        -:  323:
+        -:  324:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  325:/*                                                                 */
+        -:  326:/* CS Get the next CS-enabled entry of this table                  */
+        -:  327:/*                                                                 */
+        -:  328:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  329:boolean CS_FindEnabledEepromEntry(uint16* EnabledEntry)
+        -:  330:{
+        5:  331:    CS_Res_EepromMemory_Table_Entry_t       * StartOfResultsTable   = NULL;
+        5:  332:    CS_Res_EepromMemory_Table_Entry_t       * ResultsEntry          = NULL;
+        5:  333:    boolean                                   EnabledEntries        = TRUE;
+        -:  334:    
+        -:  335:    
+        5:  336:    StartOfResultsTable = CS_AppData.ResEepromTblPtr;    
+        -:  337:
+        5:  338:    ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  339:    
+       55:  340:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
+        -:  341:    {
+       48:  342:        CS_AppData.CurrentEntryInTable++;
+        -:  343:        
+       48:  344:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_EEPROM_TABLE_ENTRIES)
+        -:  345:        {
+        -:  346:            /* we reached the end no more enabled entries */
+        3:  347:            EnabledEntries = FALSE;
+        3:  348:            break;
+        -:  349:        }
+        -:  350:        
+       45:  351:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  352:    }/* end while */
+        -:  353:    
+        5:  354:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
+        -:  355:    
+        5:  356:    return EnabledEntries;
+        -:  357:} /* end CS FindEnabledEepromEntry */
+        -:  358:
+        -:  359:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  360:/*                                                                 */
+        -:  361:/* CS Get the next CS-enabled entry of this table                  */
+        -:  362:/*                                                                 */
+        -:  363:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  364:boolean CS_FindEnabledMemoryEntry(uint16* EnabledEntry)
+        -:  365:{
+        5:  366:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable     = NULL;
+        5:  367:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry            = NULL;
+        5:  368:    boolean                                 EnabledEntries          = TRUE;
+        -:  369:    
+        -:  370:    
+        5:  371:    StartOfResultsTable = CS_AppData.ResMemoryTblPtr;    
+        5:  372:    ResultsEntry        = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  373:    
+       55:  374:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
+        -:  375:    {
+       48:  376:        CS_AppData.CurrentEntryInTable++;
+        -:  377:        
+       48:  378:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
+        -:  379:        {
+        -:  380:            /* we reached the end no more enabled entries */
+        3:  381:            EnabledEntries = FALSE;
+        3:  382:            break;
+        -:  383:        }
+        -:  384:        
+       45:  385:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  386:    }/* end while */
+        -:  387:    
+        5:  388:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
+        -:  389:    
+        5:  390:    return EnabledEntries;
+        -:  391:} /* end CS FindEnabledMemoryEntry */
+        -:  392:
+        -:  393:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  394:/*                                                                 */
+        -:  395:/* CS Get the next CS-enabled entry of this table                  */
+        -:  396:/*                                                                 */
+        -:  397:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  398:boolean CS_FindEnabledTablesEntry(uint16* EnabledEntry)
+        -:  399:{
+        6:  400:    CS_Res_Tables_Table_Entry_t       * StartOfResultsTable     = NULL;
+        6:  401:    CS_Res_Tables_Table_Entry_t       * ResultsEntry            = NULL;
+        6:  402:    boolean                             EnabledEntries          = TRUE;
+        -:  403:    
+        6:  404:    StartOfResultsTable = CS_AppData.ResTablesTblPtr;    
+        6:  405:    ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  406:
+       81:  407:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
+        -:  408:    {
+       72:  409:        CS_AppData.CurrentEntryInTable++;
+        -:  410:        
+       72:  411:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_TABLES_TABLE_ENTRIES)
+        -:  412:        {
+        -:  413:            /* we reached the end no more enabled entries */
+        3:  414:            EnabledEntries = FALSE;
+        -:  415:
+        3:  416:            break;
+        -:  417:        }
+        -:  418:        
+       69:  419:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  420:        
+        -:  421:    }/* end while */
+        -:  422:    
+        6:  423:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
+        -:  424:    
+        6:  425:    return EnabledEntries;
+        -:  426:} /* end CS FindEnabledTablesEntry */
+        -:  427:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  428:/*                                                                 */
+        -:  429:/* CS Get the next CS-enabled entry of this table                  */
+        -:  430:/*                                                                 */
+        -:  431:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  432:boolean CS_FindEnabledAppEntry(uint16* EnabledEntry)
+        -:  433:{
+        6:  434:    CS_Res_App_Table_Entry_t          * StartOfResultsTable     = NULL;
+        6:  435:    CS_Res_App_Table_Entry_t          * ResultsEntry            = NULL;
+        6:  436:    boolean                             EnabledEntries          = TRUE;
+        -:  437:    
+        6:  438:    StartOfResultsTable = CS_AppData.ResAppTblPtr;    
+        6:  439:    ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  440:    
+        -:  441:
+       81:  442:    while ( ResultsEntry -> State != CS_STATE_ENABLED)
+        -:  443:    {
+       72:  444:        CS_AppData.CurrentEntryInTable++;
+        -:  445:        
+       72:  446:        if (CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_APP_TABLE_ENTRIES)
+        -:  447:        {
+        -:  448:            /* we reached the end no more enabled entries */
+        3:  449:            EnabledEntries = FALSE;
+        3:  450:            break;
+        -:  451:        }
+        -:  452:        
+       69:  453:        ResultsEntry = & StartOfResultsTable[ CS_AppData.CurrentEntryInTable];
+        -:  454:        
+        -:  455:    }/* end while */
+        -:  456:    
+        6:  457:    *EnabledEntry = CS_AppData.CurrentEntryInTable;
+        -:  458:    
+        -:  459:    
+        6:  460:    return EnabledEntries;
+        -:  461:} /* end CS FindEnabledAppEntry */
+        -:  462:
+        -:  463:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  464:/*                                                                 */
+        -:  465:/* CS Verify the length of the command                             */
+        -:  466:/*                                                                 */
+        -:  467:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+      140:  468:boolean CS_VerifyCmdLength(CFE_SB_MsgPtr_t msg, 
+        -:  469:                           uint16          ExpectedLength)
+        -:  470:{
+        -:  471:    CFE_SB_MsgId_t MessageID;
+        -:  472:    uint16  CommandCode;
+      140:  473:    boolean Result = TRUE;
+      140:  474:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(msg);
+        -:  475:    
+        -:  476:    /* Verify the command packet length */
+      140:  477:    if (ExpectedLength != ActualLength)
+        -:  478:    {
+       20:  479:        CommandCode = CFE_SB_GetCmdCode(msg);
+       20:  480:        MessageID= CFE_SB_GetMsgId(msg);
+        -:  481:        
+       20:  482:        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
+        -:  483:                          CFE_EVS_ERROR,
+        -:  484:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -:  485:                          MessageID,
+        -:  486:                          CommandCode,
+        -:  487:                          ActualLength,
+        -:  488:                          ExpectedLength);
+       20:  489:        Result = FALSE;
+       20:  490:        CS_AppData.CmdErrCounter++;
+        -:  491:    }    
+      140:  492:    return(Result);
+        -:  493:} /* End of CS_VerifyCmdLength */
+        -:  494:
+        -:  495:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  496:/*                                                                 */
+        -:  497:/* Background check cFE core                                       */
+        -:  498:/*                                                                 */
+        -:  499:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  500:boolean CS_BackgroundCfeCore(void)
+        -:  501:{
+        -:  502:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
+        5:  503:    boolean                                 DoneWithCycle       = FALSE;
+        5:  504:    boolean                                 DoneWithEntry       = FALSE;
+        5:  505:    uint32                                  ComputedCSValue     = 0;
+        -:  506:    int32                                   Status;
+        -:  507:    
+        5:  508:    if( CS_AppData.CfeCoreCSState == CS_STATE_ENABLED)
+        -:  509:    {
+        4:  510:        ResultsEntry = & CS_AppData.CfeCoreCodeSeg;
+        -:  511:        
+        -:  512:        /* Check if the code segment state is enabled (could be disabled for
+        -:  513:           a ground-commanded recompute) */
+        4:  514:        if (ResultsEntry->State == CS_STATE_ENABLED)
+        -:  515:        {
+        -:  516:        
+        -:  517:            /* If we complete an entry's checksum, this function will update it for us */
+        3:  518:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        -:  519:        
+        -:  520:            /* We need to avoid the case of finishing a table, moving on to the next one
+        -:  521:             and computing an entry in that table, since it could put us above the 
+        -:  522:             maximum bytes per cycle */
+        3:  523:            DoneWithCycle = TRUE;
+        -:  524:        
+        3:  525:            if(Status == CS_ERROR)
+        -:  526:            {
+        -:  527:                /* we had a miscompare */
+        -:  528:            
+        1:  529:                CS_AppData.CfeCoreCSErrCounter++;                
+        -:  530:            
+        2:  531:                CFE_EVS_SendEvent (CS_CFECORE_MISCOMPARE_ERR_EID,
+        -:  532:                                   CFE_EVS_ERROR,
+        -:  533:                                   "Checksum Failure: cFE Core, Expected: 0x%08X, Calculated: 0x%08X",                                   
+        1:  534:                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+        -:  535:                                   (unsigned int)ComputedCSValue);
+        -:  536:            }
+        -:  537:        
+        3:  538:            if (DoneWithEntry == TRUE)
+        -:  539:            {
+        3:  540:                CS_AppData.CurrentEntryInTable ++;
+        -:  541:            }
+        -:  542:        
+        -:  543:            /* only one entry to do */
+        3:  544:            if ( CS_AppData.CurrentEntryInTable > 0)
+        -:  545:            {
+        -:  546:                /* We are done with this table */
+        3:  547:                CS_AppData.CfeCoreBaseline = ResultsEntry -> ComparisonValue;
+        3:  548:                CS_GoToNextTable();
+        -:  549:            }
+        -:  550:        }
+        -:  551:        else 
+        -:  552:        {
+        -:  553:            /* Currently disabled, so skip it */
+        1:  554:            CS_GoToNextTable();
+        -:  555:        }
+        -:  556:    }
+        -:  557:    else /* Table is disabled, skip it */
+        -:  558:    {
+        1:  559:        CS_GoToNextTable();
+        -:  560:    }
+        -:  561:    
+        5:  562:    return DoneWithCycle;
+        -:  563:}/* end CS_BackgroundCfeCore */    
+        -:  564:
+        -:  565:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  566:/*                                                                 */
+        -:  567:/* Background check OS                                             */
+        -:  568:/*                                                                 */
+        -:  569:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  570:boolean CS_BackgroundOS(void)
+        -:  571:{
+        -:  572:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
+        5:  573:    boolean                                 DoneWithCycle       = FALSE;
+        5:  574:    boolean                                 DoneWithEntry       = FALSE;
+        5:  575:    uint32                                  ComputedCSValue     = 0;
+        -:  576:    int32                                   Status;
+        -:  577:    
+        5:  578:    if( CS_AppData.OSCSState == CS_STATE_ENABLED)
+        -:  579:    {
+        4:  580:        ResultsEntry = & CS_AppData.OSCodeSeg;
+        -:  581:        
+        -:  582:        /* Check if the code segment state is enabled (could be disabled for
+        -:  583:         a ground-commanded recompute) */
+        4:  584:        if (ResultsEntry->State == CS_STATE_ENABLED)
+        -:  585:        {
+        -:  586:            /* If we complete an entry's checksum, this function will update it for us */
+        3:  587:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        -:  588:        
+        -:  589:            /* We need to avoid the case of finishing a table, moving on to the next one
+        -:  590:             and computing an entry in that table, since it could put us above the 
+        -:  591:             maximum bytes per cycle */
+        3:  592:            DoneWithCycle = TRUE;
         -:  593:        
-        -:  594:        /* Check if the code segment state is enabled (could be disabled for
-        -:  595:         a ground-commanded recompute) */
-      592:  596:        if (ResultsEntry->State == CS_STATE_ENABLED)
-branch  0 taken 66% (fallthrough)
-branch  1 taken 34%
-        -:  597:        {
-        -:  598:            /* If we complete an entry's checksum, this function will update it for us */
-      392:  599:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
-call    0 returned 100%
-        -:  600:        
-        -:  601:            /* We need to avoid the case of finishing a table, moving on to the next one
-        -:  602:             and computing an entry in that table, since it could put us above the 
-        -:  603:             maximum bytes per cycle */
-      392:  604:            DoneWithCycle = TRUE;
+        3:  594:            if(Status == CS_ERROR)
+        -:  595:            {
+        -:  596:                /* we had a miscompare */
+        1:  597:                CS_AppData.OSCSErrCounter++;                
+        -:  598:            
+        2:  599:                CFE_EVS_SendEvent (CS_OS_MISCOMPARE_ERR_EID,
+        -:  600:                                   CFE_EVS_ERROR,
+        -:  601:                                   "Checksum Failure: OS code segment, Expected: 0x%08X, Calculated: 0x%08X",                                   
+        1:  602:                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+        -:  603:                                   (unsigned int)ComputedCSValue);
+        -:  604:            }
         -:  605:        
-      392:  606:            if(Status == CS_ERROR)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
+        3:  606:            if (DoneWithEntry == TRUE)
         -:  607:            {
-        -:  608:                /* we had a miscompare */
-        2:  609:                CS_AppData.OSCSErrCounter++;                
-        -:  610:            
-        2:  611:                CFE_EVS_SendEvent (CS_OS_MISCOMPARE_ERR_EID,
-call    0 returned 100%
-        -:  612:                                   CFE_EVS_ERROR,
-        -:  613:                                   "Checksum Failure: OS code segment, Expected: 0x%08X, Calculated: 0x%08X",                                   
-        -:  614:                                   ResultsEntry -> ComparisonValue,
-        -:  615:                                   ComputedCSValue);
-        -:  616:            }
-        -:  617:        
-      392:  618:            if (DoneWithEntry == TRUE)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -:  619:            {
-       98:  620:                CS_AppData.CurrentEntryInTable ++;
-        -:  621:            }
-        -:  622:        
-        -:  623:            /* only one entry to do */
-      392:  624:            if ( CS_AppData.CurrentEntryInTable > 0)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -:  625:            {
-        -:  626:                /* We are done with this table */
-       98:  627:                CS_AppData.OSBaseline = ResultsEntry -> ComparisonValue;
-       98:  628:                CS_GoToNextTable();
-call    0 returned 100%
-        -:  629:            }
-        -:  630:        }
-        -:  631:        else 
-        -:  632:        {
-        -:  633:            /* Currently disabled, so skip it */
-      200:  634:            CS_GoToNextTable();
-call    0 returned 100%
-        -:  635:        }
-        -:  636:    }
-        -:  637:    else /* Table is disabled, skip it */
-        -:  638:    {
-        3:  639:        CS_GoToNextTable();
-call    0 returned 100%
-        -:  640:    }
-      595:  641:    return DoneWithCycle;
-        -:  642:    
-        -:  643:}/* end CS_BackgroundOS */    
-        -:  644:
-        -:  645:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  646:/*                                                                 */
-        -:  647:/* Background check Eeprom                                         */
-        -:  648:/*                                                                 */
-        -:  649:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  650:boolean CS_BackgroundEeprom(void)
-function CS_BackgroundEeprom called 941 returned 100% blocks executed 100%
-      941:  651:{
-        -:  652:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable;
-        -:  653:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
-      941:  654:    boolean                                 DoneWithCycle           = FALSE;
-      941:  655:    boolean                                 DoneWithEntry           = FALSE;
-      941:  656:    uint32                                  ComputedCSValue         = 0;
-        -:  657:    int32                                   Loop;
-        -:  658:    uint32                                  EntireEepromCS;
-        -:  659:    uint16                                  CurrEntry;
-        -:  660:    int32                                   Status;
-        -:  661:    
-      941:  662:    if (CS_AppData.EepromCSState == CS_STATE_ENABLED)
-branch  0 taken 76% (fallthrough)
-branch  1 taken 24%
-        -:  663:    {                   
-      719:  664:        if(CS_FindEnabledEepromEntry( &CurrEntry) == TRUE)
-call    0 returned 100%
-branch  1 taken 97% (fallthrough)
-branch  2 taken 3%
-        -:  665:        {
-        -:  666:            /* we found an enabled entry to checksum */
-      697:  667:            StartOfResultsTable = CS_AppData.ResEepromTblPtr;   
-      697:  668:            ResultsEntry = & StartOfResultsTable[ CurrEntry];
-        -:  669:            
-        -:  670:            /* If we complete an entry's checksum, this function will update it for us */
-      697:  671:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
-call    0 returned 100%
-        -:  672:            
-        -:  673:            /* We need to avoid the case of finishing a table, moving on to the next one
-        -:  674:             and computing an entry in that table, since it could put us above the 
-        -:  675:             maximum bytes per cycle */
-      697:  676:            DoneWithCycle = TRUE;
-        -:  677:            
-      697:  678:            if(Status == CS_ERROR)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  679:            {
-        -:  680:                /* we had a miscompare */
-        -:  681:                
-        2:  682:                CS_AppData.EepromCSErrCounter++;                
-        -:  683:                
-        2:  684:                CFE_EVS_SendEvent (CS_EEPROM_MISCOMPARE_ERR_EID,
-call    0 returned 100%
-        -:  685:                                   CFE_EVS_ERROR,
-        -:  686:                                   "Checksum Failure: Entry %d in Eeprom Table, Expected: 0x%08X, Calculated: 0x%08X",                                   
-        -:  687:                                   CurrEntry,
-        -:  688:                                   ResultsEntry -> ComparisonValue,
-        -:  689:                                   ComputedCSValue);
-        -:  690:            }
-        -:  691:            
-      697:  692:            if (DoneWithEntry == TRUE)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  693:            {
-      697:  694:                CS_AppData.CurrentEntryInTable ++;
-        -:  695:            }
-        -:  696:                        
-      697:  697:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_EEPROM_TABLE_ENTRIES)
-branch  0 taken 8% (fallthrough)
-branch  1 taken 92%
-        -:  698:            {   
-        -:  699:                /* Since we are done CS'ing the entire Eeprom table, update the baseline 
-        -:  700:                 number for telemetry */
-       57:  701:                EntireEepromCS = 0;
-      969:  702:                for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:  703:                {
-      912:  704:                    EntireEepromCS += CS_AppData.ResEepromTblPtr[Loop].ComparisonValue;
-        -:  705:                }
-        -:  706:                
-       57:  707:                CS_AppData.EepromBaseline = EntireEepromCS;
-        -:  708:                
-        -:  709:                /* We are done with this table */
-       57:  710:                CS_GoToNextTable();
-call    0 returned 100%
-        -:  711:            }
-        -:  712:        }
-        -:  713:        else
-        -:  714:        {
-        -:  715:            /* If we don't have a full table, the above set of code won't get
-        -:  716:             executed, so we do it if there aren't any more full entries left */
-       22:  717:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_EEPROM_TABLE_ENTRIES)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  718:            {   
-        -:  719:                /* Since we are done CS'ing the entire Eeprom table, update the baseline 
-        -:  720:                 number for telemetry */
-       22:  721:                EntireEepromCS = 0;
-      374:  722:                for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
-branch  0 taken 94%
-branch  1 taken 6% (fallthrough)
-        -:  723:                {
-      352:  724:                    EntireEepromCS += CS_AppData.ResEepromTblPtr[Loop].ComparisonValue;
-        -:  725:                }                
-       22:  726:                CS_AppData.EepromBaseline = EntireEepromCS;
-        -:  727:            }
-        -:  728:            
-        -:  729:            /* There are no enabled entries in this table */
-       22:  730:            CS_GoToNextTable();
-call    0 returned 100%
-        -:  731:        }
-        -:  732:    }
-        -:  733:    else /* Table is disabled, skip it */
-        -:  734:    {
-      222:  735:        CS_GoToNextTable();
-call    0 returned 100%
-        -:  736:    }
-        -:  737:    
-      941:  738:    return DoneWithCycle;
-        -:  739:    
-        -:  740:}/* end CS_BackgroundEeprom */  
-        -:  741:
-        -:  742:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  743:/*                                                                 */
-        -:  744:/* Background check Memory                                         */
-        -:  745:/*                                                                 */
-        -:  746:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  747:boolean CS_BackgroundMemory(void)
-function CS_BackgroundMemory called 885 returned 100% blocks executed 100%
-      885:  748:{
-        -:  749:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable;
-        -:  750:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
-      885:  751:    boolean                                 DoneWithCycle           = FALSE;
-      885:  752:    boolean                                 DoneWithEntry           = FALSE;
-      885:  753:    uint32                                  ComputedCSValue         = 0;
-        -:  754:    uint16                                  CurrEntry;
-        -:  755:    int32                                   Status;
-        -:  756:    
-      885:  757:    if (CS_AppData.MemoryCSState == CS_STATE_ENABLED)
-branch  0 taken 75% (fallthrough)
-branch  1 taken 25%
-        -:  758:    {                   
-        -:  759:        /* If we complete an entry's checksum, this function will update it for us */
-        -:  760:        
-      663:  761:        if (CS_FindEnabledMemoryEntry( &CurrEntry) == TRUE)
-call    0 returned 100%
-branch  1 taken 97% (fallthrough)
-branch  2 taken 3%
-        -:  762:        {
-        -:  763:            /* we found an enabled entry to checksum */
-      641:  764:            StartOfResultsTable = CS_AppData.ResMemoryTblPtr;   
-      641:  765:            ResultsEntry = & StartOfResultsTable[ CurrEntry];
-        -:  766:            
-        -:  767:            /* If we complete an entry's checksum, this function will update it for us */
-      641:  768:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
-call    0 returned 100%
-        -:  769:            
-        -:  770:            /* We need to avoid the case of finishing a table, moving on to the next one
-        -:  771:             and computing an entry in that table, since it could put us above the 
-        -:  772:             maximum bytes per cycle */
-      641:  773:            DoneWithCycle = TRUE;
-        -:  774:            
-      641:  775:            if(Status == CS_ERROR)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  776:            {
-        -:  777:                /* we had a miscompare */
-        -:  778:                
-        3:  779:                CS_AppData.MemoryCSErrCounter++;                
-        -:  780:                
-        3:  781:                CFE_EVS_SendEvent (CS_MEMORY_MISCOMPARE_ERR_EID,
-call    0 returned 100%
-        -:  782:                                   CFE_EVS_ERROR,
-        -:  783:                                   "Checksum Failure: Entry %d in Memory Table, Expected: 0x%08X, Calculated: 0x%08X",                                   
-        -:  784:                                   CurrEntry,
-        -:  785:                                   ResultsEntry -> ComparisonValue,
-        -:  786:                                   ComputedCSValue);
-        -:  787:                 
-        3:  788:                CS_AppData.CurrentEntryInTable ++;
-        -:  789:            }
-        -:  790:            
-      641:  791:            if (DoneWithEntry == TRUE)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  792:            {
-      641:  793:                CS_AppData.CurrentEntryInTable ++;
-        -:  794:            }
-        -:  795:            
-      641:  796:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
-branch  0 taken 9% (fallthrough)
-branch  1 taken 91%
-        -:  797:            {
-        -:  798:                /* We are done with this table */
-       57:  799:                CS_GoToNextTable();
-call    0 returned 100%
-        -:  800:            }
-        -:  801:        }
-        -:  802:        else /* since there aren't any enabled entries in this table, go to the next one */
-        -:  803:        {
-       22:  804:            CS_GoToNextTable();
-call    0 returned 100%
-        -:  805:        }
-        -:  806:    }
-        -:  807:    else /* Table is disabled, skip it */
-        -:  808:    {
-      222:  809:        CS_GoToNextTable();
-call    0 returned 100%
-        -:  810:    }
-        -:  811:        
-      885:  812:    return DoneWithCycle;
-        -:  813:    
-        -:  814:}/* end CS_BackgroundMemory */  
-        -:  815:
-        -:  816:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  817:/*                                                                 */
-        -:  818:/* Background check Tables                                         */
-        -:  819:/*                                                                 */
-        -:  820:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  821:boolean CS_BackgroundTables(void)
-function CS_BackgroundTables called 1087 returned 100% blocks executed 100%
-     1087:  822:{
-        -:  823:    CS_Res_Tables_Table_Entry_t           * StartOfTablesResultsTable;
-        -:  824:    CS_Res_Tables_Table_Entry_t           * TablesResultsEntry;
-     1087:  825:    boolean                                 DoneWithCycle           = FALSE;
-     1087:  826:    boolean                                 DoneWithEntry           = FALSE;
-     1087:  827:    uint32                                  ComputedCSValue         = 0;
-        -:  828:    uint16                                  CurrEntry;
-        -:  829:    int32                                   Status;
-        -:  830:    
-     1087:  831:    if (CS_AppData.TablesCSState == CS_STATE_ENABLED)
-branch  0 taken 79% (fallthrough)
-branch  1 taken 21%
-        -:  832:    {                                        
-        -:  833:        /* If we complete an entry's checksum, this function will update it for us */
-        -:  834:        
-      864:  835:        if (CS_FindEnabledTablesEntry( &CurrEntry) == TRUE)
-call    0 returned 100%
-branch  1 taken 94% (fallthrough)
-branch  2 taken 6%
-        -:  836:        {
-        -:  837:            /* we found an enabled entry to checksum */
-        -:  838:            
-      815:  839:            StartOfTablesResultsTable = CS_AppData.ResTablesTblPtr;   
-      815:  840:            TablesResultsEntry = & StartOfTablesResultsTable[ CurrEntry];
-        -:  841:            
-      815:  842:            Status = CS_ComputeTables (TablesResultsEntry, &ComputedCSValue, &DoneWithEntry);
-call    0 returned 100%
-        -:  843:            
-        -:  844:            /* We need to avoid the case of finishing a table, moving on to the next one
-        -:  845:             and computing an entry in that table, since  it could put us above the 
-        -:  846:             maximum bytes per cycle */
-      815:  847:            DoneWithCycle = TRUE;
-        -:  848:            
-      815:  849:            if(Status == CS_ERROR)
-branch  0 taken 3% (fallthrough)
-branch  1 taken 97%
-        -:  850:            {
-        -:  851:                /* we had a miscompare */
-       24:  852:                CS_AppData.TablesCSErrCounter++;                
-        -:  853:                
-       24:  854:                CFE_EVS_SendEvent (CS_TABLES_MISCOMPARE_ERR_EID,
-call    0 returned 100%
-        -:  855:                                   CFE_EVS_ERROR,
-        -:  856:                                   "Checksum Failure: Table %s, Expected: 0x%08X, Calculated: 0x%08X",                                   
-        -:  857:                                   TablesResultsEntry -> Name,
-        -:  858:                                   TablesResultsEntry -> ComparisonValue,
-        -:  859:                                   ComputedCSValue);
-        -:  860:            }
-        -:  861:            
-      815:  862:            if(Status == CS_ERR_NOT_FOUND)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  863:            {
-        8:  864:                CFE_EVS_SendEvent (CS_COMPUTE_TABLES_NOT_FOUND_ERR_EID,
-call    0 returned 100%
-        -:  865:                                   CFE_EVS_ERROR,
-        -:  866:                                   "Tables table computing: Table %s could not be found, skipping", 
-        -:  867:                                   TablesResultsEntry -> Name);
-        -:  868:                
-        8:  869:                CS_AppData.CurrentEntryInTable ++;
-        -:  870:            }
-        -:  871:            
-      815:  872:            if (DoneWithEntry == TRUE)
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-        -:  873:            {
-      807:  874:                CS_AppData.CurrentEntryInTable ++;
-        -:  875:            }
-        -:  876:            
-      815:  877:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_TABLES_TABLE_ENTRIES)
-branch  0 taken 4% (fallthrough)
-branch  1 taken 96%
-        -:  878:            {
-        -:  879:                /* We are done with this table */
-       29:  880:                CS_GoToNextTable();
-call    0 returned 100%
-        -:  881:            }
-        -:  882:        }
-        -:  883:        else /* since there aren't any enabled entries in this table, go to the next one */
-        -:  884:        {
-       49:  885:            CS_GoToNextTable();
-call    0 returned 100%
-        -:  886:        }
-        -:  887:    }
-        -:  888:    else /* Table is disabled, skip it */
-        -:  889:    {
-      223:  890:        CS_GoToNextTable();
-call    0 returned 100%
-        -:  891:    }
-        -:  892:    
-     1087:  893:    return DoneWithCycle;
-        -:  894:    
-        -:  895:}/* end CS_BackgroundTables */
-        -:  896:
-        -:  897:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  898:/*                                                                 */
-        -:  899:/* Background check App                                            */
-        -:  900:/*                                                                 */
-        -:  901:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  902:boolean CS_BackgroundApp(void)
-function CS_BackgroundApp called 1462 returned 100% blocks executed 100%
-     1462:  903:{
-        -:  904:    CS_Res_App_Table_Entry_t              * StartOfAppResultsTable;
-        -:  905:    CS_Res_App_Table_Entry_t              * AppResultsEntry;   
-     1462:  906:    boolean                                 DoneWithCycle           = FALSE;
-     1462:  907:    boolean                                 DoneWithEntry           = FALSE;
-     1462:  908:    uint32                                  ComputedCSValue         = 0;
-        -:  909:    uint16                                  CurrEntry;
-        -:  910:    int32                                   Status;
-        -:  911:
-     1462:  912:    if (CS_AppData.AppCSState == CS_STATE_ENABLED)
-branch  0 taken 85% (fallthrough)
-branch  1 taken 15%
-        -:  913:    {                    
-     1239:  914:        if (CS_FindEnabledAppEntry( &CurrEntry) == TRUE)
-call    0 returned 100%
-branch  1 taken 94% (fallthrough)
-branch  2 taken 6%
-        -:  915:        {
-        -:  916:            /* we found an enabled entry to checksum */
-        -:  917:            
-     1164:  918:            StartOfAppResultsTable = CS_AppData.ResAppTblPtr;   
-     1164:  919:            AppResultsEntry = & StartOfAppResultsTable[  CurrEntry];
-        -:  920:            
-        -:  921:            /* If we complete an entry's checksum, this function will update it for us */
-     1164:  922:            Status = CS_ComputeApp (AppResultsEntry, &ComputedCSValue, &DoneWithEntry);
-call    0 returned 100%
-        -:  923:            
-        -:  924:            /* We need to avoid the case of finishing a table, moving on to the next one
-        -:  925:             and computing an entry in that table, since it could put us above the 
-        -:  926:             maximum bytes per cycle */
-     1164:  927:            DoneWithCycle = TRUE;
+        3:  608:                CS_AppData.CurrentEntryInTable ++;
+        -:  609:            }
+        -:  610:        
+        -:  611:            /* only one entry to do */
+        3:  612:            if ( CS_AppData.CurrentEntryInTable > 0)
+        -:  613:            {
+        -:  614:                /* We are done with this table */
+        3:  615:                CS_AppData.OSBaseline = ResultsEntry -> ComparisonValue;
+        3:  616:                CS_GoToNextTable();
+        -:  617:            }
+        -:  618:        }
+        -:  619:        else 
+        -:  620:        {
+        -:  621:            /* Currently disabled, so skip it */
+        1:  622:            CS_GoToNextTable();
+        -:  623:        }
+        -:  624:    }
+        -:  625:    else /* Table is disabled, skip it */
+        -:  626:    {
+        1:  627:        CS_GoToNextTable();
+        -:  628:    }
+        5:  629:    return DoneWithCycle;
+        -:  630:    
+        -:  631:}/* end CS_BackgroundOS */    
+        -:  632:
+        -:  633:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  634:/*                                                                 */
+        -:  635:/* Background check Eeprom                                         */
+        -:  636:/*                                                                 */
+        -:  637:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  638:boolean CS_BackgroundEeprom(void)
+        -:  639:{
+        -:  640:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable;
+        -:  641:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
+        5:  642:    boolean                                 DoneWithCycle           = FALSE;
+        5:  643:    boolean                                 DoneWithEntry           = FALSE;
+        5:  644:    uint32                                  ComputedCSValue         = 0;
+        -:  645:    int32                                   Loop;
+        -:  646:    uint32                                  EntireEepromCS;
+        -:  647:    uint16                                  CurrEntry;
+        -:  648:    int32                                   Status;
+        -:  649:    
+        5:  650:    if (CS_AppData.EepromCSState == CS_STATE_ENABLED)
+        -:  651:    {                   
+        4:  652:        if(CS_FindEnabledEepromEntry( &CurrEntry) == TRUE)
+        -:  653:        {
+        -:  654:            /* we found an enabled entry to checksum */
+        2:  655:            StartOfResultsTable = CS_AppData.ResEepromTblPtr;   
+        2:  656:            ResultsEntry = & StartOfResultsTable[ CurrEntry];
+        -:  657:            
+        -:  658:            /* If we complete an entry's checksum, this function will update it for us */
+        2:  659:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        -:  660:            
+        -:  661:            /* We need to avoid the case of finishing a table, moving on to the next one
+        -:  662:             and computing an entry in that table, since it could put us above the 
+        -:  663:             maximum bytes per cycle */
+        2:  664:            DoneWithCycle = TRUE;
+        -:  665:            
+        2:  666:            if(Status == CS_ERROR)
+        -:  667:            {
+        -:  668:                /* we had a miscompare */
+        -:  669:                
+        1:  670:                CS_AppData.EepromCSErrCounter++;                
+        -:  671:                
+        2:  672:                CFE_EVS_SendEvent (CS_EEPROM_MISCOMPARE_ERR_EID,
+        -:  673:                                   CFE_EVS_ERROR,
+        -:  674:                                   "Checksum Failure: Entry %d in Eeprom Table, Expected: 0x%08X, Calculated: 0x%08X",                                   
+        -:  675:                                   CurrEntry,
+        1:  676:                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+        -:  677:                                   (unsigned int)ComputedCSValue);
+        -:  678:            }
+        -:  679:            
+        2:  680:            if (DoneWithEntry == TRUE)
+        -:  681:            {
+        2:  682:                CS_AppData.CurrentEntryInTable ++;
+        -:  683:            }
+        -:  684:                        
+        2:  685:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_EEPROM_TABLE_ENTRIES)
+        -:  686:            {   
+        -:  687:                /* Since we are done CS'ing the entire Eeprom table, update the baseline 
+        -:  688:                 number for telemetry */
+        2:  689:                EntireEepromCS = 0;
+       34:  690:                for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
+        -:  691:                {
+       32:  692:                    EntireEepromCS += CS_AppData.ResEepromTblPtr[Loop].ComparisonValue;
+        -:  693:                }
+        -:  694:                
+        2:  695:                CS_AppData.EepromBaseline = EntireEepromCS;
+        -:  696:                
+        -:  697:                /* We are done with this table */
+        2:  698:                CS_GoToNextTable();
+        -:  699:            }
+        -:  700:        }
+        -:  701:        else
+        -:  702:        {
+        -:  703:            /* If we don't have a full table, the above set of code won't get
+        -:  704:             executed, so we do it if there aren't any more full entries left */
+        2:  705:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_EEPROM_TABLE_ENTRIES)
+        -:  706:            {   
+        -:  707:                /* Since we are done CS'ing the entire Eeprom table, update the baseline 
+        -:  708:                 number for telemetry */
+        2:  709:                EntireEepromCS = 0;
+       34:  710:                for (Loop = 0; Loop < CS_MAX_NUM_EEPROM_TABLE_ENTRIES; Loop++)
+        -:  711:                {
+       32:  712:                    EntireEepromCS += CS_AppData.ResEepromTblPtr[Loop].ComparisonValue;
+        -:  713:                }                
+        2:  714:                CS_AppData.EepromBaseline = EntireEepromCS;
+        -:  715:            }
+        -:  716:            
+        -:  717:            /* There are no enabled entries in this table */
+        2:  718:            CS_GoToNextTable();
+        -:  719:        }
+        -:  720:    }
+        -:  721:    else /* Table is disabled, skip it */
+        -:  722:    {
+        1:  723:        CS_GoToNextTable();
+        -:  724:    }
+        -:  725:    
+        5:  726:    return DoneWithCycle;
+        -:  727:    
+        -:  728:}/* end CS_BackgroundEeprom */  
+        -:  729:
+        -:  730:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  731:/*                                                                 */
+        -:  732:/* Background check Memory                                         */
+        -:  733:/*                                                                 */
+        -:  734:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  735:boolean CS_BackgroundMemory(void)
+        -:  736:{
+        -:  737:    CS_Res_EepromMemory_Table_Entry_t     * StartOfResultsTable;
+        -:  738:    CS_Res_EepromMemory_Table_Entry_t     * ResultsEntry;
+        6:  739:    boolean                                 DoneWithCycle           = FALSE;
+        6:  740:    boolean                                 DoneWithEntry           = FALSE;
+        6:  741:    uint32                                  ComputedCSValue         = 0;
+        -:  742:    uint16                                  CurrEntry;
+        -:  743:    int32                                   Status;
+        -:  744:    
+        6:  745:    if (CS_AppData.MemoryCSState == CS_STATE_ENABLED)
+        -:  746:    {                   
+        -:  747:        /* If we complete an entry's checksum, this function will update it for us */
+        -:  748:        
+        4:  749:        if (CS_FindEnabledMemoryEntry( &CurrEntry) == TRUE)
+        -:  750:        {
+        -:  751:            /* we found an enabled entry to checksum */
+        2:  752:            StartOfResultsTable = CS_AppData.ResMemoryTblPtr;   
+        2:  753:            ResultsEntry = & StartOfResultsTable[ CurrEntry];
+        -:  754:            
+        -:  755:            /* If we complete an entry's checksum, this function will update it for us */
+        2:  756:            Status = CS_ComputeEepromMemory (ResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        -:  757:            
+        -:  758:            /* We need to avoid the case of finishing a table, moving on to the next one
+        -:  759:             and computing an entry in that table, since it could put us above the 
+        -:  760:             maximum bytes per cycle */
+        2:  761:            DoneWithCycle = TRUE;
+        -:  762:            
+        2:  763:            if(Status == CS_ERROR)
+        -:  764:            {
+        -:  765:                /* we had a miscompare */
+        -:  766:                
+        1:  767:                CS_AppData.MemoryCSErrCounter++;                
+        -:  768:                
+        2:  769:                CFE_EVS_SendEvent (CS_MEMORY_MISCOMPARE_ERR_EID,
+        -:  770:                                   CFE_EVS_ERROR,
+        -:  771:                                   "Checksum Failure: Entry %d in Memory Table, Expected: 0x%08X, Calculated: 0x%08X",                                   
+        -:  772:                                   CurrEntry,
+        1:  773:                                   (unsigned int)(ResultsEntry -> ComparisonValue),
+        -:  774:                                   (unsigned int)ComputedCSValue);
+        -:  775:                 
+        1:  776:                CS_AppData.CurrentEntryInTable ++;
+        -:  777:            }
+        -:  778:            
+        2:  779:            if (DoneWithEntry == TRUE)
+        -:  780:            {
+        2:  781:                CS_AppData.CurrentEntryInTable ++;
+        -:  782:            }
+        -:  783:            
+        2:  784:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_MEMORY_TABLE_ENTRIES)
+        -:  785:            {
+        -:  786:                /* We are done with this table */
+        2:  787:                CS_GoToNextTable();
+        -:  788:            }
+        -:  789:        }
+        -:  790:        else /* since there aren't any enabled entries in this table, go to the next one */
+        -:  791:        {
+        2:  792:            CS_GoToNextTable();
+        -:  793:        }
+        -:  794:    }
+        -:  795:    else /* Table is disabled, skip it */
+        -:  796:    {
+        2:  797:        CS_GoToNextTable();
+        -:  798:    }
+        -:  799:        
+        6:  800:    return DoneWithCycle;
+        -:  801:    
+        -:  802:}/* end CS_BackgroundMemory */  
+        -:  803:
+        -:  804:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  805:/*                                                                 */
+        -:  806:/* Background check Tables                                         */
+        -:  807:/*                                                                 */
+        -:  808:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        8:  809:boolean CS_BackgroundTables(void)
+        -:  810:{
+        -:  811:    CS_Res_Tables_Table_Entry_t           * StartOfTablesResultsTable;
+        -:  812:    CS_Res_Tables_Table_Entry_t           * TablesResultsEntry;
+        8:  813:    boolean                                 DoneWithCycle           = FALSE;
+        8:  814:    boolean                                 DoneWithEntry           = FALSE;
+        8:  815:    uint32                                  ComputedCSValue         = 0;
+        -:  816:    uint16                                  CurrEntry;
+        -:  817:    int32                                   Status;
+        -:  818:    
+        8:  819:    if (CS_AppData.TablesCSState == CS_STATE_ENABLED)
+        -:  820:    {                                        
+        -:  821:        /* If we complete an entry's checksum, this function will update it for us */
+        -:  822:        
+        5:  823:        if (CS_FindEnabledTablesEntry( &CurrEntry) == TRUE)
+        -:  824:        {
+        -:  825:            /* we found an enabled entry to checksum */
+        -:  826:            
+        3:  827:            StartOfTablesResultsTable = CS_AppData.ResTablesTblPtr;   
+        3:  828:            TablesResultsEntry = & StartOfTablesResultsTable[ CurrEntry];
+        -:  829:            
+        3:  830:            Status = CS_ComputeTables (TablesResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        -:  831:            
+        -:  832:            /* We need to avoid the case of finishing a table, moving on to the next one
+        -:  833:             and computing an entry in that table, since  it could put us above the 
+        -:  834:             maximum bytes per cycle */
+        3:  835:            DoneWithCycle = TRUE;
+        -:  836:            
+        3:  837:            if(Status == CS_ERROR)
+        -:  838:            {
+        -:  839:                /* we had a miscompare */
+        1:  840:                CS_AppData.TablesCSErrCounter++;                
+        -:  841:                
+        2:  842:                CFE_EVS_SendEvent (CS_TABLES_MISCOMPARE_ERR_EID,
+        -:  843:                                   CFE_EVS_ERROR,
+        -:  844:                                   "Checksum Failure: Table %s, Expected: 0x%08X, Calculated: 0x%08X",                                   
+        -:  845:                                   TablesResultsEntry -> Name,
+        1:  846:                                   (unsigned int)(TablesResultsEntry -> ComparisonValue),
+        -:  847:                                   (unsigned int)ComputedCSValue);
+        -:  848:            }
+        -:  849:            
+        3:  850:            if(Status == CS_ERR_NOT_FOUND)
+        -:  851:            {
+        1:  852:                CFE_EVS_SendEvent (CS_COMPUTE_TABLES_NOT_FOUND_ERR_EID,
+        -:  853:                                   CFE_EVS_ERROR,
+        -:  854:                                   "Tables table computing: Table %s could not be found, skipping", 
+        -:  855:                                   TablesResultsEntry -> Name);
+        -:  856:                
+        1:  857:                CS_AppData.CurrentEntryInTable ++;
+        -:  858:            }
+        -:  859:            
+        3:  860:            if (DoneWithEntry == TRUE)
+        -:  861:            {
+        2:  862:                CS_AppData.CurrentEntryInTable ++;
+        -:  863:            }
+        -:  864:            
+        3:  865:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_TABLES_TABLE_ENTRIES)
+        -:  866:            {
+        -:  867:                /* We are done with this table */
+        2:  868:                CS_GoToNextTable();
+        -:  869:            }
+        -:  870:        }
+        -:  871:        else /* since there aren't any enabled entries in this table, go to the next one */
+        -:  872:        {
+        2:  873:            CS_GoToNextTable();
+        -:  874:        }
+        -:  875:    }
+        -:  876:    else /* Table is disabled, skip it */
+        -:  877:    {
+        3:  878:        CS_GoToNextTable();
+        -:  879:    }
+        -:  880:    
+        8:  881:    return DoneWithCycle;
+        -:  882:    
+        -:  883:}/* end CS_BackgroundTables */
+        -:  884:
+        -:  885:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  886:/*                                                                 */
+        -:  887:/* Background check App                                            */
+        -:  888:/*                                                                 */
+        -:  889:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        9:  890:boolean CS_BackgroundApp(void)
+        -:  891:{
+        -:  892:    CS_Res_App_Table_Entry_t              * StartOfAppResultsTable;
+        -:  893:    CS_Res_App_Table_Entry_t              * AppResultsEntry;   
+        9:  894:    boolean                                 DoneWithCycle           = FALSE;
+        9:  895:    boolean                                 DoneWithEntry           = FALSE;
+        9:  896:    uint32                                  ComputedCSValue         = 0;
+        -:  897:    uint16                                  CurrEntry;
+        -:  898:    int32                                   Status;
+        -:  899:
+        9:  900:    if (CS_AppData.AppCSState == CS_STATE_ENABLED)
+        -:  901:    {                    
+        5:  902:        if (CS_FindEnabledAppEntry( &CurrEntry) == TRUE)
+        -:  903:        {
+        -:  904:            /* we found an enabled entry to checksum */
+        -:  905:            
+        3:  906:            StartOfAppResultsTable = CS_AppData.ResAppTblPtr;   
+        3:  907:            AppResultsEntry = & StartOfAppResultsTable[  CurrEntry];
+        -:  908:            
+        -:  909:            /* If we complete an entry's checksum, this function will update it for us */
+        3:  910:            Status = CS_ComputeApp (AppResultsEntry, &ComputedCSValue, &DoneWithEntry);
+        -:  911:            
+        -:  912:            /* We need to avoid the case of finishing a table, moving on to the next one
+        -:  913:             and computing an entry in that table, since it could put us above the 
+        -:  914:             maximum bytes per cycle */
+        3:  915:            DoneWithCycle = TRUE;
+        -:  916:            
+        3:  917:            if(Status == CS_ERROR)
+        -:  918:            {
+        -:  919:                /* we had a miscompare */
+        1:  920:                CS_AppData.AppCSErrCounter++;                
+        -:  921:                
+        2:  922:                CFE_EVS_SendEvent (CS_APP_MISCOMPARE_ERR_EID, CFE_EVS_ERROR,
+        -:  923:                                   "Checksum Failure: Application %s, Expected: 0x%08X, Calculated: 0x%08X",                                   
+        -:  924:                                   AppResultsEntry -> Name,
+        1:  925:                                   (unsigned int)(AppResultsEntry -> ComparisonValue),
+        -:  926:                                   (unsigned int)ComputedCSValue);
+        -:  927:            }
         -:  928:            
-     1164:  929:            if(Status == CS_ERROR)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
+        3:  929:            if(Status == CS_ERR_NOT_FOUND)
         -:  930:            {
-        -:  931:                /* we had a miscompare */
-        3:  932:                CS_AppData.AppCSErrCounter++;                
-        -:  933:                
-        3:  934:                CFE_EVS_SendEvent (CS_APP_MISCOMPARE_ERR_EID, CFE_EVS_ERROR,
-call    0 returned 100%
-        -:  935:                                   "Checksum Failure: Application %s, Expected: 0x%08X, Calculated: 0x%08X",                                   
-        -:  936:                                   AppResultsEntry -> Name,
-        -:  937:                                   AppResultsEntry -> ComparisonValue,
-        -:  938:                                   ComputedCSValue);
-        -:  939:            }
-        -:  940:            
-     1164:  941:            if(Status == CS_ERR_NOT_FOUND)
-branch  0 taken 4% (fallthrough)
-branch  1 taken 96%
-        -:  942:            {
-       50:  943:                CFE_EVS_SendEvent (CS_COMPUTE_APP_NOT_FOUND_ERR_EID,
-call    0 returned 100%
-        -:  944:                                   CFE_EVS_ERROR,
-        -:  945:                                   "App table computing: App %s could not be found, skipping", 
-        -:  946:                                   AppResultsEntry -> Name);
-        -:  947:                
-       50:  948:                CS_AppData.CurrentEntryInTable ++;
-        -:  949:
-        -:  950:            }
-        -:  951:            
-     1164:  952:            if (DoneWithEntry == TRUE)
-branch  0 taken 48% (fallthrough)
-branch  1 taken 52%
-        -:  953:            {
-      557:  954:                CS_AppData.CurrentEntryInTable ++;
-        -:  955:            }
-        -:  956:            
-     1164:  957:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_APP_TABLE_ENTRIES)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  958:            {
-        -:  959:                /* We are done with this table */
-        3:  960:                CS_GoToNextTable();
-call    0 returned 100%
-        -:  961:            }
-        -:  962:        }
-        -:  963:        else /* since there aren't any enabled entries in this table, go to the next one */
-        -:  964:        {
-       75:  965:            CS_GoToNextTable();
-call    0 returned 100%
-        -:  966:        }
-        -:  967:    }
-        -:  968:    else /* Table is disabled, skip it */
-        -:  969:    {
-      223:  970:        CS_GoToNextTable();
-call    0 returned 100%
-        -:  971:    }    
-     1462:  972:    return DoneWithCycle;
-        -:  973:    
-        -:  974:}/* end CS_BackgroundApp */
-        -:  975:
-        -:  976:/************************/
-        -:  977:/*  End of File Comment */
-        -:  978:/************************/
+        1:  931:                CFE_EVS_SendEvent (CS_COMPUTE_APP_NOT_FOUND_ERR_EID,
+        -:  932:                                   CFE_EVS_ERROR,
+        -:  933:                                   "App table computing: App %s could not be found, skipping", 
+        -:  934:                                   AppResultsEntry -> Name);
+        -:  935:                
+        1:  936:                CS_AppData.CurrentEntryInTable ++;
+        -:  937:
+        -:  938:            }
+        -:  939:            
+        3:  940:            if (DoneWithEntry == TRUE)
+        -:  941:            {
+        1:  942:                CS_AppData.CurrentEntryInTable ++;
+        -:  943:            }
+        -:  944:            
+        3:  945:            if ( CS_AppData.CurrentEntryInTable >= CS_MAX_NUM_APP_TABLE_ENTRIES)
+        -:  946:            {
+        -:  947:                /* We are done with this table */
+        2:  948:                CS_GoToNextTable();
+        -:  949:            }
+        -:  950:        }
+        -:  951:        else /* since there aren't any enabled entries in this table, go to the next one */
+        -:  952:        {
+        2:  953:            CS_GoToNextTable();
+        -:  954:        }
+        -:  955:    }
+        -:  956:    else /* Table is disabled, skip it */
+        -:  957:    {
+        4:  958:        CS_GoToNextTable();
+        -:  959:    }    
+        9:  960:    return DoneWithCycle;
+        -:  961:    
+        -:  962:}/* end CS_BackgroundApp */
+        -:  963:
+        -:  964:
+        -:  965:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  966:/*                                                                 */
+        -:  967:/* Reset Tables result table entry after a CS table gets modified  */
+        -:  968:/*                                                                 */
+        -:  969:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       32:  970:void CS_ResetTablesTblResultEntry(CS_Res_Tables_Table_Entry_t *TablesTblResultEntry)
+        -:  971:{
+        -:  972:    /* Ptr will be NULL if this CS table is not listed in the CS Tables table */
+       32:  973:    if (TablesTblResultEntry != (CS_Res_Tables_Table_Entry_t *) NULL)
+        -:  974:    {
+        1:  975:        TablesTblResultEntry -> ByteOffset = 0;
+        1:  976:        TablesTblResultEntry -> TempChecksumValue = 0;
+        1:  977:        TablesTblResultEntry -> ComputedYet = FALSE;
+        -:  978:    }
+        -:  979:
+       32:  980:    return;
+        -:  981:
+        -:  982:}/* end CS_ResetTablesTblResultEntry */
+        -:  983:
+        -:  984:/************************/
+        -:  985:/*  End of File Comment */
+        -:  986:/************************/

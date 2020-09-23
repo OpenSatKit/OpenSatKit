@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: lc_msgdefs.h 1.3 2015/03/04 16:09:57EST sstrege Exp  $
+**   $Id: lc_msgdefs.h 1.3 2017/01/22 17:24:29EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -23,21 +23,6 @@
 **   TYPEDEFS OR STRUCTURE DEFINITIONS IN THIS FILE! 
 **   ADD THEM TO lc_msg.h IF NEEDED! 
 **
-**   $Log: lc_msgdefs.h  $
-**   Revision 1.3 2015/03/04 16:09:57EST sstrege 
-**   Added copyright information
-**   Revision 1.2 2012/08/01 14:19:40EDT lwalling 
-**   Change NOT_MEASURED to STALE
-**   Revision 1.1 2012/07/31 13:53:39PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.3 2011/01/19 12:45:40EST jmdagost 
-**   Moved two message parameters to the message IDs file for scheduler table access.
-**   Revision 1.2 2008/12/10 10:17:17EST dahardis 
-**   Fixed HK structure alignment (DCR #4701)
-**   Revision 1.1 2008/10/29 14:19:37EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_msgdefs_

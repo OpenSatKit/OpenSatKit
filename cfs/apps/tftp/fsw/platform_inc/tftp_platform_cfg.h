@@ -31,8 +31,6 @@
 
 #define  TFTP_APP_RUNLOOP_DELAY       500  /* Delay in milliseconds for main loop        */
 #define  TFTP_APP_RUNLOOP_PKTS          8  /* Max number of packets to read per run loop */
-#define  TFTP_APP_HK_TLM_PERIOD      4000  /* Time between HK pkts in milliseconds       */
-#define  TFTP_APP_HK_RUNLOOP_PERIOD (TFTP_APP_HK_TLM_PERIOD/TFTP_APP_RUNLOOP_DELAY)
  
 
 /******************************************************************************

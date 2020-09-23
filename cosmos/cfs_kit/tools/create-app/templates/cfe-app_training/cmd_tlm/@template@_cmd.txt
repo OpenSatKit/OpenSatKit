@@ -2,7 +2,7 @@
   require 'osk_config' 
 
   @APP_PREFIX_STR = "@TEMPLATE@"
-  @CMD_MID_STR    = "OSK_GENAPP_CMD_MID"  # Replace with your app's MID defined in fsw_msg_id.rb
+  @CMD_MID_STR    = "OSK_TEST_CMD_MID"  # Replace with your app's MID defined in fsw_msg_id.rb
   
 %>  
 

@@ -17,36 +17,60 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_
 COMMAND KIT_TO LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load Packet Table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 1 0 "Table ID: 0=Packet"
-  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
-  APPEND_PARAMETER FILENAME 512 STRING "/cf/kit_to_pkt_tbl.json" "Full path and file name of table to be loaded"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 0 "0=Replace Table, 1=Update Records"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_to_pkt_tbl.json" "Full path and file name of table to be loaded"
 
 COMMAND KIT_TO DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump Packet Table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 1 0 "0=Packet Table"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
-  APPEND_PARAMETER FILENAME 512 STRING "/cf/kit_to_pkt_tbl~.json" "Full path and file name to receive table dump"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_to_pkt_tbl~.json" "Full path and file name to receive table dump"
   
 COMMAND KIT_TO ADD_PKT <%= Osk::Cfg.processor_endian %> "Add an individual packet to packet table"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 5) %>
-  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 13) %>
+  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header(Stream ID)"
   APPEND_PARAMETER QOS_RELIABILITY 8 UINT MIN_UINT8 MAX_UINT8 0 "Quality of Service: Reliability"
   APPEND_PARAMETER QOS_PRIORITY    8 UINT MIN_UINT8 MAX_UINT8 0 "Quality of Service: Priority"
   APPEND_PARAMETER BUF_LIM         8 UINT MIN_UINT8 MAX_UINT8 4 "TO input buffer limit"
-  
-COMMAND KIT_TO REMOVE_PKT <%= Osk::Cfg.processor_endian %> "Remove a single packet"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
-  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header"
+  APPEND_PARAMETER FILTER_TYPE    16 UINT MIN_UINT16 MAX_UINT16 1 "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
+  APPEND_PARAMETER FILTER_PARAM_N 16 UINT MIN_UINT16 MAX_UINT16 0 "N = Filter will pass this many packets"
+  APPEND_PARAMETER FILTER_PARAM_X 16 UINT MIN_UINT16 MAX_UINT16 0 "X = out of every group of this many packets"
+  APPEND_PARAMETER FILTER_PARAM_O 16 UINT MIN_UINT16 MAX_UINT16 0 "O = starting at this offset within the group"
+
+COMMAND KIT_TO ENABLE_TELEMETRY <%= Osk::Cfg.processor_endian %> "Tell TO to start sending telemetry"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 16) %>
+  APPEND_PARAMETER IP_ADDR 128 STRING "127.0.0.1" "IP Address"
 
 COMMAND KIT_TO REMOVE_ALL_PKTS <%= Osk::Cfg.processor_endian %> "Remove all packets"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
 
-COMMAND KIT_TO ENABLE_TELEMETRY <%= Osk::Cfg.processor_endian %> "Tell TO to start sending telemetry"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 16) %>
-  APPEND_PARAMETER IP_ADDR 128 STRING "127.0.0.1" "IP Address"
+COMMAND KIT_TO REMOVE_PKT <%= Osk::Cfg.processor_endian %> "Remove a single packet"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 2) %>
+  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header (Stream ID)"
 
-COMMAND KIT_TO SEND_DATA_TYPE <%= Osk::Cfg.processor_endian %> "Send data type"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
+COMMAND KIT_TO SEND_PKT_TLM <%= Osk::Cfg.processor_endian %> "Send the packet table entry for MSG_ID"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 2) %>
+  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header (Stream ID)"
+
+COMMAND KIT_TO UPDATE_FILTER <%= Osk::Cfg.processor_endian %> "Update the packet filter algorithm for an active packet table entry"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 10) %>
+  APPEND_PARAMETER MSG_ID         16 UINT MIN_UINT16 MAX_UINT16 0 "First word of CCSDS primary header (Stream ID)"
+  APPEND_PARAMETER FILTER_TYPE    16 UINT MIN_UINT16 MAX_UINT16 2 "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
+  APPEND_PARAMETER FILTER_PARAM_N 16 UINT MIN_UINT16 MAX_UINT16 1 "N = Filter will pass this many packets"
+  APPEND_PARAMETER FILTER_PARAM_X 16 UINT MIN_UINT16 MAX_UINT16 1 "X = out of every group of this many packets"
+  APPEND_PARAMETER FILTER_PARAM_O 16 UINT MIN_UINT16 MAX_UINT16 0 "O = starting at this offset within the group"
+
+COMMAND KIT_TO SEND_DATA_TYPE <%= Osk::Cfg.processor_endian %> "Send data type packet"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
 
 COMMAND KIT_TO SET_RUN_LOOP_DELAY <%= Osk::Cfg.processor_endian %> "Set the delay used in the main loop"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 2) %>
-  APPEND_PARAMETER RUN_LOOP_DELAY 16 UINT MIN_UINT16 MAX_UINT16 0 "Task delay(ms) used in main loop"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 2) %>
+  APPEND_PARAMETER RUN_LOOP_DELAY 16 UINT MIN_UINT16 MAX_UINT16 500 "Task delay(ms) used in main loop"
+
+
+COMMAND KIT_TO TEST_FILTER <%= Osk::Cfg.processor_endian %> "Test the packet filter algorithm"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 8) %>
+  APPEND_PARAMETER FILTER_TYPE    16 UINT MIN_UINT16 MAX_UINT16 1 "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
+  APPEND_PARAMETER FILTER_PARAM_N 16 UINT MIN_UINT16 MAX_UINT16 0 "N = Filter will pass this many packets"
+  APPEND_PARAMETER FILTER_PARAM_X 16 UINT MIN_UINT16 MAX_UINT16 0 "X = out of every group of this many packets"
+  APPEND_PARAMETER FILTER_PARAM_O 16 UINT MIN_UINT16 MAX_UINT16 0 "O = starting at this offset within the group"

@@ -35,12 +35,14 @@
 ** Event Message IDs
 */
 
-#define NETIF_BIND_SOCKET_ERR_EID    ( NETIF_BASE_EID +  0)
-#define NETIF_CREATE_SOCKET_ERR_EID  ( NETIF_BASE_EID +  1)
-#define NETIF_RECV_DBG_EID           ( NETIF_BASE_EID +  2)
-#define NETIF_RECV_ERR_EID           ( NETIF_BASE_EID +  3)
-#define NETIF_SEND_DBG_EID           ( NETIF_BASE_EID +  4)
+#define NETIF_SOCKET_PORT_BOUND_EID  ( NETIF_BASE_EID +  0)
+#define NETIF_BIND_SOCKET_ERR_EID    ( NETIF_BASE_EID +  1)
+#define NETIF_CREATE_SOCKET_ERR_EID  ( NETIF_BASE_EID +  2)
+#define NETIF_CLOSE_SOCKET_EID       ( NETIF_BASE_EID +  3)
+#define NETIF_RECV_ERR_EID           ( NETIF_BASE_EID +  4)
 #define NETIF_SEND_ERR_EID           ( NETIF_BASE_EID +  5)
+#define NETIF_DEBUG_EID              ( NETIF_BASE_EID +  6)
+
 
 /*
 ** Type Definitions

@@ -13,10 +13,15 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_e
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset Counters and application to a default state"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
   
+COMMAND I42 CONFIG_EXECUTE <%= Osk::Cfg.processor_endian %> "Configure the execution cycles and delay"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 4) %>
+  APPEND_PARAMETER CYCLES      16 UINT MIN_UINT16 MAX_UINT16  5 "Number of sim cycles per scheduler execute message"
+  APPEND_PARAMETER CYCLE_DELAY 16 UINT MIN_UINT16 MAX_UINT16 20 "Delay(ms) between each sim cycle"
+
 COMMAND I42 CONNECT_42 <%= Osk::Cfg.processor_endian %> "Create a socket connection to the 42 simulator"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 18) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 18) %>
   APPEND_PARAMETER IP_ADDR 128 STRING "127.0.0.1" "IP Address"
   APPEND_PARAMETER PORT 16 UINT MIN_UINT16 MAX_UINT16 4242 "Port number"
 
 COMMAND I42 DISCONNECT_42 <%= Osk::Cfg.processor_endian %> "Disconnect from the 42 simulator"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 0) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 0) %>

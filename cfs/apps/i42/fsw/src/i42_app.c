@@ -30,8 +30,9 @@ static int32 InitApp(void);
 static void ProcessCommands(void);
 static void AppTermCallback(void);
 
-static boolean ProcessSensorData(void);
-static boolean ProcessActuatorData(void);
+static void    SendHousekeepingPkt(void);
+static boolean TransferSensorData(void);
+static boolean TransferActuatorData(void);
 static boolean SendActuatorPkt(const char* Buf, uint16 Len);
 
 /*
@@ -39,7 +40,6 @@ static boolean SendActuatorPkt(const char* Buf, uint16 Len);
 */
 
 I42_Class   I42;
-I42_HkPkt   I42HkPkt;
 
 /* Convenience macros */
 #define  CMDMGR_OBJ (&(I42.CmdMgr))    
@@ -62,8 +62,8 @@ void I42_AppMain(void)
    /*
    ** Perform application specific initialization
    */
-   if (Status == CFE_SUCCESS)
-   {
+   if (Status == CFE_SUCCESS) {
+      
        Status = InitApp();
    }
 
@@ -78,13 +78,9 @@ void I42_AppMain(void)
 
    /*
    ** Main process loop
-   ** - Sensor data and command pipe are polled
-   ** - See ProcessActuatorData() for control loop time management 
    */
    while (CFE_ES_RunLoop(&RunStatus)) {
 
-      ProcessSensorData();
-      ProcessActuatorData();
       ProcessCommands();
       
    } /* End CFE_ES_RunLoop */
@@ -94,7 +90,7 @@ void I42_AppMain(void)
 
    CFE_ES_WriteToSysLog("I42 App terminating, err = 0x%08X\n", Status);
 
-   CFE_EVS_SendEvent(I42_EXIT_ERR_EID, CFE_EVS_CRITICAL, "I42 App terminating, err = 0x%08X", Status);
+   CFE_EVS_SendEvent(I42_EXIT_EID, CFE_EVS_CRITICAL, "I42 App terminating, err = 0x%08X", Status);
 
    CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
 
@@ -109,7 +105,7 @@ void I42_AppMain(void)
 boolean I42_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (I42_NOOP_INFO_EID, CFE_EVS_INFORMATION,
+   CFE_EVS_SendEvent (I42_NOOP_EID, CFE_EVS_INFORMATION,
                       "No operation command received for I42 App version %d.%d.%d",
                       I42_MAJOR_VER, I42_MINOR_VER, I42_LOCAL_REV);
 
@@ -137,33 +133,81 @@ boolean I42_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 
 /******************************************************************************
-** Function: I42_SendHousekeepingPkt
+** Function: I42_ConfigExecuteCmd
 **
 */
-void I42_SendHousekeepingPkt(void)
+
+boolean I42_ConfigExecuteCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   const I42_ConfigExecute* ExecuteCmd = (const I42_ConfigExecute *) MsgPtr;
+   boolean RetStatus = FALSE;
+   uint16  SavedExecuteCycles     = I42.ExecuteCycles;
+   uint16  SavedExecuteCycleDelay = I42.ExecuteCycleDelay;
+  
+   if ((ExecuteCmd->Cycles >= I42_EXECUTE_CYCLE_MIN) &&
+       (ExecuteCmd->Cycles <= I42_EXECUTE_CYCLE_MAX)) {
+      
+      if ((ExecuteCmd->CycleDelay >= I42_EXECUTE_CYCLE_DELAY_MIN) &&
+          (ExecuteCmd->CycleDelay <= I42_EXECUTE_CYCLE_DELAY_MAX)) {
+      
+         I42.ExecuteCycles     = ExecuteCmd->Cycles;
+         I42.ExecuteCycleDelay = ExecuteCmd->CycleDelay;
+
+         RetStatus = TRUE;
+         CFE_EVS_SendEvent(I42_EXECUTE_CMD_EID, CFE_EVS_INFORMATION,
+                           "Execution cycle changed from %d to %d and cycle delay changed from %d to %d",
+                           SavedExecuteCycles, I42.ExecuteCycles, SavedExecuteCycleDelay, I42.ExecuteCycleDelay);
+      
+      } /* End if valid delay */
+      else {
+      
+         CFE_EVS_SendEvent(I42_EXECUTE_CMD_ERR_EID, CFE_EVS_ERROR,
+                           "Configure execute command rejected. Invalid cycle delay %d, must be in range %d..%d",
+                           ExecuteCmd->CycleDelay, I42_EXECUTE_CYCLE_DELAY_MIN, I42_EXECUTE_CYCLE_DELAY_MAX);
+      }
+
+   }  /* End if valid cycles */
+   else {
+   
+      CFE_EVS_SendEvent(I42_EXECUTE_CMD_ERR_EID, CFE_EVS_ERROR,
+                        "Configure execute command rejected. Invalid cycles %d, must be in range %d..%d",
+                        ExecuteCmd->Cycles, I42_EXECUTE_CYCLE_MIN, I42_EXECUTE_CYCLE_MAX);
+   }
+   
+   return RetStatus;
+
+} /* End I42_ConfigExecuteCmd() */
+
+
+/******************************************************************************
+** Function: SendHousekeepingPkt
+**
+*/
+static void SendHousekeepingPkt(void)
 {
 
    /*
    ** I42 Application Data
    */
 
-   I42HkPkt.ValidCmdCnt   = I42.CmdMgr.ValidCmdCnt;
-   I42HkPkt.InvalidCmdCnt = I42.CmdMgr.InvalidCmdCnt;
+   I42.HkPkt.ValidCmdCnt   = I42.CmdMgr.ValidCmdCnt;
+   I42.HkPkt.InvalidCmdCnt = I42.CmdMgr.InvalidCmdCnt;
 
    /*
    ** NETIF Data
    */
 
-   I42HkPkt.SensorPktCnt   = I42.SensorPktCnt;
-   I42HkPkt.ActuatorPktCnt = I42.ActuatorPktCnt;
+   I42.HkPkt.SensorPktCnt   = I42.SensorPktCnt;
+   I42.HkPkt.ActuatorPktCnt = I42.ActuatorPktCnt;
 
-   I42HkPkt.ConnectCycleCnt = I42.ConnectCycleCnt;
-   I42HkPkt.Connected       = I42.NetIf.Connected;
+   I42.HkPkt.ConnectCycleCnt = I42.ConnectCycleCnt;
+   I42.HkPkt.Connected       = I42.NetIf.Connected;
 
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &I42HkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &I42HkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &I42.HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &I42.HkPkt);
 
-} /* End I42_SendHousekeepingPkt() */
+} /* End SendHousekeepingPkt() */
 
 
 /******************************************************************************
@@ -176,6 +220,9 @@ static int32 InitApp(void)
    int32 Status = CFE_SUCCESS;
 
    CFE_PSP_MemSet((void*)&I42, 0, sizeof(I42_Class));
+
+   I42.ExecuteCycles     = I42_EXECUTE_CYCLE_DEF;
+   I42.ExecuteCycleDelay = I42_EXECUTE_CYCLE_DELAY_DEF;
 
    I42.NoSensorDisconnectLim     = I42_NO_SENSOR_DISCONNECT_LIM;
    I42.NoSensorResendActuatorLim = I42_NO_SENSOR_RESEND_ACTUATOR_LIM;
@@ -192,11 +239,14 @@ static int32 InitApp(void)
 
    CFE_SB_CreatePipe(&I42.CmdPipe, I42_CMD_PIPE_DEPTH, I42_CMD_PIPE_NAME);
    CFE_SB_Subscribe(I42_CMD_MID, I42.CmdPipe);
+   CFE_SB_Subscribe(I42_EXECUTE_MID, I42.CmdPipe);
    CFE_SB_Subscribe(I42_SEND_HK_MID, I42.CmdPipe);
 
    CMDMGR_Constructor(CMDMGR_OBJ);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, I42_NoOpCmd,     0);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, I42_ResetAppCmd, 0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,        NULL, I42_NoOpCmd,          0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,       NULL, I42_ResetAppCmd,      0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, I42_CONFIG_EXECUTE_CMD_FC, NULL, I42_ConfigExecuteCmd, I42_CONFIG_EXECUTE_CMD_DATA_LEN);
+   
    CMDMGR_RegisterFunc(CMDMGR_OBJ, I42_NETIF_CONNECT_42_CMD_FC,    NETIF_OBJ, NETIF42_Connect42Cmd,    NETIF_CONNECT_42_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, I42_NETIF_DISCONNECT_42_CMD_FC, NETIF_OBJ, NETIF42_Disconnect42Cmd, NETIF_DISCONNECT_42_CMD_DATA_LEN);
 
@@ -204,7 +254,7 @@ static int32 InitApp(void)
    CFE_SB_Subscribe(F42_ACTUATOR_MID, I42.ActuatorPipe);
 
    CFE_SB_InitMsg(&I42.SensorPkt, F42_SENSOR_MID, F42_ADP_SENSOR_PKT_LEN, TRUE);
-   CFE_SB_InitMsg(&I42HkPkt, I42_HK_TLM_MID, I42_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&I42.HkPkt, I42_HK_TLM_MID, I42_TLM_HK_LEN, TRUE);
 
        
    OS_TaskInstallDeleteHandler((void *)(&AppTermCallback)); /* Call when application terminates */
@@ -212,7 +262,7 @@ static int32 InitApp(void)
    /*
    ** Application startup event message
    */
-   Status = CFE_EVS_SendEvent(I42_INIT_APP_INFO_EID, CFE_EVS_INFORMATION,
+   Status = CFE_EVS_SendEvent(I42_INIT_APP_EID, CFE_EVS_INFORMATION,
                               "I42 App Initialized. Version %d.%d.%d",
                               I42_MAJOR_VER, I42_MINOR_VER, I42_LOCAL_REV);
 
@@ -231,27 +281,35 @@ static void ProcessCommands(void)
    int32           Status;
    CFE_SB_Msg_t*   CmdMsgPtr;
    CFE_SB_MsgId_t  MsgId;
-
-   Status = CFE_SB_RcvMsg(&CmdMsgPtr, I42.CmdPipe, CFE_SB_POLL);
+   uint16          Cycles;
+   
+   Status = CFE_SB_RcvMsg(&CmdMsgPtr, I42.CmdPipe, CFE_SB_PEND_FOREVER);
    //Status = CFE_SB_RcvMsg(&CmdMsgPtr, I42.CmdPipe, 2000);
-
-   if (Status == CFE_SUCCESS)
-   {
+   
+   if (Status == CFE_SUCCESS) {
 
       MsgId = CFE_SB_GetMsgId(CmdMsgPtr);
 
-      switch (MsgId)
-      {
+      switch (MsgId) {
+         
          case I42_CMD_MID:
             CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
             break;
 
+         case I42_EXECUTE_MID:
+            for (Cycles=0; Cycles < I42.ExecuteCycles; Cycles++){
+               I42.SensorPktSent = TransferSensorData();
+               TransferActuatorData();
+               OS_TaskDelay(I42.ExecuteCycleDelay);
+            }
+            break;
+
          case I42_SEND_HK_MID:
-            I42_SendHousekeepingPkt();
+            SendHousekeepingPkt();
             break;
 
          default:
-            CFE_EVS_SendEvent(I42_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(I42_INVALID_MID_EID, CFE_EVS_ERROR,
                               "Received invalid command packet,MID = 0x%4X",MsgId);
 
             break;
@@ -263,17 +321,16 @@ static void ProcessCommands(void)
 } /* End ProcessCommands() */
 
 
-
 /******************************************************************************
-** Function:  ProcessSensorData
+** Function:  TransferSensorData
 **
 ** Automatically disconnect if nothing read from socket. 
 */
-static boolean ProcessSensorData(void) 
+static boolean TransferSensorData(void) 
 {
 
    int32 Status;
-   boolean ProcessedPkt = FALSE;
+   boolean PktSent = FALSE;
   
    CFE_EVS_SendEvent(I42_DEBUG_EID, CFE_EVS_DEBUG, "I42::ProcessSensorData(): Connected=%d, ConnectCycleCnt=%d, SensorPktSent=%d, NoSensorCnt=%d\n",
                      I42.NetIf.Connected,I42.ConnectCycleCnt,I42.SensorPktSent,I42.NoSensorDisconnectCnt);
@@ -307,9 +364,8 @@ static boolean ProcessSensorData(void)
             CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &(I42.SensorPkt));
             Status = CFE_SB_SendMsg((CFE_SB_Msg_t *) &(I42.SensorPkt));
    
-            I42.SensorPktSent = TRUE;
-            I42.SensorPktCnt++;
-            ProcessedPkt = TRUE;
+            ++I42.SensorPktCnt;
+            PktSent = TRUE;
          
          } /* End sscanf() */
 
@@ -327,7 +383,7 @@ static boolean ProcessSensorData(void)
 		 
          if ( (I42.NoSensorDisconnectCnt >= I42.NoSensorResendActuatorLim) && !I42.ActuatorResend ) {
             
-            CFE_EVS_SendEvent(I42_RESEND_ACTUATOR_PKT_INFO_EID, CFE_EVS_INFORMATION,
+            CFE_EVS_SendEvent(I42_RESEND_ACTUATOR_PKT_EID, CFE_EVS_INFORMATION,
                               "Resending actuator packet after %d cycles of no sensor data packets", I42.NoSensorDisconnectCnt);
 		    
             SendActuatorPkt(I42.OutBuf, strlen(I42.OutBuf));
@@ -338,7 +394,7 @@ static boolean ProcessSensorData(void)
 		 		 	  
          if (I42.NoSensorDisconnectCnt >= I42.NoSensorDisconnectLim) {
 			 
-            CFE_EVS_SendEvent(I42_IDLE_SOCKET_CLOSE_INFO_EID, CFE_EVS_INFORMATION,
+            CFE_EVS_SendEvent(I42_IDLE_SOCKET_CLOSE_EID, CFE_EVS_INFORMATION,
                               "Closing 42 socket. No data received for %d attempts.", I42.NoSensorDisconnectCnt);
             
             AppTermCallback();
@@ -354,17 +410,17 @@ static boolean ProcessSensorData(void)
    
    }
 
-   return ProcessedPkt;
+   return PktSent;
    
-} /* NETIF_ProcessSensorData() */
+} /* I42_TransferSensorData() */
             
             
 /******************************************************************************
-** Function: ProcessActuatorData
+** Function: TransferActuatorData
 **
 ** 
 */
-static boolean ProcessActuatorData(void)
+static boolean TransferActuatorData(void)
 {
 
    int32                 Status;
@@ -384,7 +440,6 @@ static boolean ProcessActuatorData(void)
    ** The short timeout makes the system very responsive during startup, shutdown, and in error situations.
    **
    ** A third timeout value is used when a 42 sim is not in progress.
-   */
    if (I42.SensorPktSent) {
       //Status = CFE_SB_RcvMsg(&MsgPtr, I42.ActuatorPipe, CFE_SB_POLL);
       Status = CFE_SB_RcvMsg(&MsgPtr, I42.ActuatorPipe, I42_ACTUATOR_TIMEOUT);
@@ -398,11 +453,12 @@ static boolean ProcessActuatorData(void)
          Status = CFE_SB_RcvMsg(&MsgPtr, I42.ActuatorPipe, 1000);
       }
    }
+   */
+   
+   Status = CFE_SB_RcvMsg(&MsgPtr, I42.ActuatorPipe, CFE_SB_POLL);
    
    CFE_EVS_SendEvent(I42_DEBUG_EID, CFE_EVS_DEBUG, "I42::ProcessActuatorData(): SensorPktSent = %d, SB Recv status = 0x%08X\n",I42.SensorPktSent, Status);
    if (Status == CFE_SUCCESS) {
-
-      OS_TaskDelay(20);  //TODO - Need to create a better throttle design after integrate latest 42
 
       I42.SensorPktSent = FALSE;
 
@@ -429,7 +485,7 @@ static boolean ProcessActuatorData(void)
       } /* end if F42_ACTUATOR_MID */
       else {
       
-         CFE_EVS_SendEvent(I42_INVALID_MID_ERR_EID, CFE_EVS_ERROR,
+         CFE_EVS_SendEvent(I42_INVALID_MID_EID, CFE_EVS_ERROR,
                            "Received invalid actuator data packet,MID = 0x%4X",MsgId);
       
       } /* End if !I42_ACTUATOR_MID */
@@ -438,7 +494,7 @@ static boolean ProcessActuatorData(void)
 
    return PktSent;
    
-} /* End ProcessActuatorData() */
+} /* End TransferActuatorData() */
 
 
 /******************************************************************************

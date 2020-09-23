@@ -1,5 +1,6 @@
 <% 
   require 'osk_config' 
+  require 'fsw_const' 
 
   @APP_PREFIX_STR       = "CFE_ES"
   @HK_TLM_MID_STR       = "CFE_ES_HK_TLM_MID"
@@ -41,7 +42,13 @@ TELEMETRY CFE_ES HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data 
   APPEND_ITEM MAX_PROC_RESETS    32 UINT "Max processor resets before a power on is done."
   APPEND_ITEM BOOT_SOURCE        32 UINT "Boot source ( as provided from BSP )."
   APPEND_ITEM PERF_STATE         32 UINT "Current state of Performance Analyzer."
+    STATE Idle      <%= Fsw::Const.get_val("CFE_ES_PERF_IDLE") %>
+    STATE Waiting   <%= Fsw::Const.get_val("CFE_ES_PERF_WAITING_FOR_TRIGGER") %>
+    STATE Triggered <%= Fsw::Const.get_val("CFE_ES_PERF_TRIGGERED") %>
   APPEND_ITEM PERF_MODE          32 UINT "Current mode of Performance Analyzer."
+    STATE Start  <%= Fsw::Const.get_val("CFE_ES_PERF_TRIGGER_START") %>
+    STATE Center <%= Fsw::Const.get_val("CFE_ES_PERF_TRIGGER_CENTER") %>
+    STATE End    <%= Fsw::Const.get_val("CFE_ES_PERF_TRIGGER_END") %>  
   APPEND_ITEM PERF_TRIG_COUNT    32 UINT "Number of Times Perfomance Analyzer has Triggered."
   APPEND_ITEM PERF_FILTER_MASK0  32 UINT "Current Setting of Performance Analyzer Filter Masks."
   APPEND_ITEM PERF_FILTER_MASK1  32 UINT "Current Setting of Performance Analyzer Filter Masks."

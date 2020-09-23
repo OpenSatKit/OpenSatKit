@@ -38,32 +38,64 @@ TELEMETRY SC HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet St
   APPEND_ITEM NEXT_RTS_TIME      32 UINT "Next RTS cmd Absolute Time"
   APPEND_ITEM NEXT_ATS_TIME      32 UINT "Next ATS Command Time (seconds)"
   # Byte 72
+  # Cmd & Tlm Server will output the following warning that can be ignored:
+  #   WARN: Bit definition overlap at bit offset 576 for packet SC HK_TLM_PKT items RTS_8_EXE and RTS_W1_EXE_STATUS
   APPEND_ITEM RTS_W1_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
      ITEM RTS_8_EXE 576 1 UINT
+       STATE IDLE 0
+       STATE EXEC 1
      ITEM RTS_7_EXE 577 1 UINT
+       STATE IDLE 0
+       STATE EXEC 1
      ITEM RTS_6_EXE 578 1 UINT
        STATE IDLE 0
        STATE EXEC 1
      ITEM RTS_5_EXE 579 1 UINT
+       STATE IDLE 0
+       STATE EXEC 1
      ITEM RTS_4_EXE 580 1 UINT
+       STATE IDLE 0
+       STATE EXEC 1
      ITEM RTS_3_EXE 581 1 UINT
+       STATE IDLE 0
+       STATE EXEC 1
      ITEM RTS_2_EXE 582 1 UINT
+       STATE IDLE 0
+       STATE EXEC 1
      ITEM RTS_1_EXE 583 1 UINT
-  APPEND_ITEM RTS_W2_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
-  APPEND_ITEM RTS_W3_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
-  APPEND_ITEM RTS_W4_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
+       STATE IDLE 0
+       STATE EXEC 1
+  #APPEND_ITEM RTS_W2_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
+  #APPEND_ITEM RTS_W3_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
+  #APPEND_ITEM RTS_W4_EXE_STATUS  16 UINT "RTS executing status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is IDLE, then the corresponding bit is zero. If an RTS is EXECUTING, then the corresponding bit is one"
   # Byte 80
+  # Cmd & Tlm Server will output the following warning that can be ignored:
+  #   WARN: Bit definition overlap at bit offset 640 for packet SC HK_TLM_PKT items RTS_8_DIS and RTS_W1_DIS_STATUS
   APPEND_ITEM RTS_W1_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
-     ITEM RTS_8_DIS 640 1 UINT
-     ITEM RTS_7_DIS 641 1 UINT
-     ITEM RTS_6_DIS 642 1 UINT
+     ITEM RTS_8_DIS 592 1 UINT
        STATE FALSE 0
        STATE TRUE  1
-     ITEM RTS_5_DIS 643 1 UINT
-     ITEM RTS_4_DIS 644 1 UINT
-     ITEM RTS_3_DIS 645 1 UINT
-     ITEM RTS_2_DIS 646 1 UINT
-     ITEM RTS_1_DIS 647 1 UINT
-  APPEND_ITEM RTS_W2_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
-  APPEND_ITEM RTS_W3_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
-  APPEND_ITEM RTS_W4_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
+     ITEM RTS_7_DIS 593 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+     ITEM RTS_6_DIS 594 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+     ITEM RTS_5_DIS 595 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+     ITEM RTS_4_DIS 596 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+     ITEM RTS_3_DIS 597 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+     ITEM RTS_2_DIS 598 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+     ITEM RTS_1_DIS 599 1 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+  #APPEND_ITEM RTS_W2_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
+  #APPEND_ITEM RTS_W3_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
+  #APPEND_ITEM RTS_W4_DIS_STATUS  16 UINT "RTS disabled status bit map where each uint16 represents 16 RTS numbers. Note: array index numbers and bit numbers use base zero indexing, but RTS numbers use base one indexing. Thus, the LSB (bit zero) of uint16 array index zero represents RTS number 1, and bit one of uint16 array index zero represents RTS number 2, etc. If an RTS is ENABLED, then the corresponding bit is zero. If an RTS is DISABLED, then the corresponding bit is one"
