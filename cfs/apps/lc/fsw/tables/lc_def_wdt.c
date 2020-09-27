@@ -147,7 +147,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned8in32.Unsigned8 = 1,
+        .ComparisonValue.Unsigned8  = 1,
     },
 
     /* #1 (Prop Heater Enabled) */
@@ -159,7 +159,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-	.ComparisonValue.Unsigned8in32.Unsigned8 = 1,
+	     .ComparisonValue.Unsigned8  = 1,
     },
 
     /* #2 (Battery Heater 1 < 15.0) */
@@ -183,7 +183,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 55.0,
+        .ComparisonValue.Float32    = 55.0,
     },
 
     /* #4 (Battery Heater 2 < 15.0) */
@@ -195,7 +195,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 15.0,
+        .ComparisonValue.Float32    = 15.0,
     },
 
     /* #5 (Battery Heater 2 > 55.0) */
@@ -207,7 +207,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 55.0,
+        .ComparisonValue.Float32    = 55.0,
     },
 
     /* #6 (Battery Heater 3 < 15.0) */
@@ -219,7 +219,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 15.0,
+        .ComparisonValue.Float32    = 15.0,
     },
 
     /* #7 (Battery Heater 3 > 55.0) */
@@ -231,7 +231,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 55.0,
+        .ComparisonValue.Float32    = 55.0,
     },
 
     /* #8 (Prop Heater 1 < 0.0) */
@@ -243,7 +243,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 0.0,
+        .ComparisonValue.Float32    = 0.0,
     },
 
     /* #9 (Prop Heater 1 > 40.0) */
@@ -255,7 +255,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 40.0,
+        .ComparisonValue.Float32    = 40.0,
     },
 
     /* #10 (Prop Heater 2 < 0.0) */
@@ -267,7 +267,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 0.0,
+        .ComparisonValue.Float32    = 0.0,
     },
 
     /* #11 (Prop Heater 2 > 40.0) */
@@ -279,7 +279,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 2,
-        .ComparisonValue.Float32 = 40.0,
+        .ComparisonValue.Float32    = 40.0,
     },
 
     /* #12 (ISIM Fault) */
@@ -291,7 +291,7 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] =
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned8in32.Unsigned8 = 1
+        .ComparisonValue.Unsigned8  = 1
     },
 
     /* #13 (unused) */

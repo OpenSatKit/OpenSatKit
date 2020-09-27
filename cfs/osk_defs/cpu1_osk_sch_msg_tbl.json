@@ -129,12 +129,12 @@
 
       {"message": {
          "name":  "LC_SAMPLE_AP_MID",
-         "descr": "0x18A6(6310), 0xC000(49152), 0x0005, Start Index, End Index, Update WP age(True/False)",
+         "descr": "0x18A6(6310), 0xC000(49152), 0x0005, [fc|cs, Start Index, End Index, Update WP age(True/False)]",
          "id": 17,
          "stream-id": 6310,
          "seq-seg": 49152,
          "length": 7
-         "data-words": "0,65536,0"
+         "data-words": "0,0,10,0"
       }},
 
       {"message": {

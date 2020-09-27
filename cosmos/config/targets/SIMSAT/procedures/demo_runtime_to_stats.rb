@@ -72,6 +72,7 @@ RAD_4S_PKT_TBL_GND_FILENAME = Osk::cfg_target_dir_file("KIT_TO","tables",RAD_4S_
 RAD_1S_PKT_TBL_FLT_FILENAME = File.join(Osk::FLT_SRV_DIR,RAD_1S_PKT_TBL_FILENAME)
 RAD_4S_PKT_TBL_FLT_FILENAME = File.join(Osk::FLT_SRV_DIR,RAD_4S_PKT_TBL_FILENAME)
 
+spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'KIT_TO HK_TLM_PKT'")
 
 # 
 # Demo Steps
@@ -203,3 +204,4 @@ wait 1
 Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{File.join(Osk::FLT_SRV_DIR,FswConfigParam::KIT_SCH_DEF_SCHTBL_FILENAME)}")  
 wait 1
 Osk::flight.send_cmd("KIT_TO","LOAD_TBL with ID #{FswConfigParam::KIT_TO_PKTTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{File.join(Osk::FLT_SRV_DIR,FswConfigParam::KIT_TO_DEF_PKTTBL_FILENAME)}")  
+

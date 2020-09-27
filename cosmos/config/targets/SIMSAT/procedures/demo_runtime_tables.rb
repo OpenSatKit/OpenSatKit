@@ -47,7 +47,7 @@ wait # Review Limit Checker configuration
 # 
 # Demo steps:
 # 1. Send Message Table telemetry for index 17
-#    - FSW looks up first schceduler table entry using that message ID and includes that in telemetry
+#    - FSW looks up first scheduler table entry using that message ID and includes that in telemetry
 #    - Scheduler table entry is false so LC Action Points are not being sampled
 #
 Osk::flight.send_cmd("KIT_SCH","SEND_MSG_TBL_ENTRY with MSG_TBL_IDX 17")  
@@ -61,10 +61,12 @@ Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE #{Fsw::Const::LC_STATE_P
 wait 
 #
 # 3. Enable LC's sample action point scheduler table entry 
-#    - LC Sample AP increments by 4 
+#    - LC Sample AP increments by 4 (Assumes default LC AP table only has one AP enabled)
 #
 Osk::flight.send_cmd("KIT_SCH","CFG_SCH_TBL_ENTRY with SLOT 1, ACTIVITY 0, ENABLED 1")  
-wait 
+wait 1
+Osk::flight.send_cmd("KIT_SCH","SEND_MSG_TBL_ENTRY with MSG_TBL_IDX 17")  
+wait
 #
 # 4. Change LC's HK request in scheduler entry [2,14] to 1 second
 #    - LC Sample AP increments by 1 because HK packet request is being sent at 1Hz

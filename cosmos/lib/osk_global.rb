@@ -81,6 +81,10 @@ module Osk
 
    MSG_TBD_FEATURE = "Feature coming soon..."
 
+   TXT_TRAINING_VIDEO  = "Training Video"
+   TXT_TRAINING_SLIDES = "Training Slides"
+   
+   
    ################
    ## File Names ##
    ################
@@ -301,5 +305,7 @@ module Osk
  
    YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD   = "https://www.youtube.com/watch?v=LspTUdIKAZY&t=1s"
    YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD  = "https://www.youtube.com/watch?v=0BSMXeq8B5c&t=4s"
+
+   YOUTUBE_TRAINING_COMMUNITY_APPS_RUNTIME   = "https://youtu.be/7upUnU63YFc"
    
 end # Module Osk

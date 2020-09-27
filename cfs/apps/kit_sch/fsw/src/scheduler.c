@@ -378,7 +378,7 @@ boolean SCHEDULER_SendMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
    uint16 *DataBuf;
    uint16  SchIndex;
    boolean SchEntryFound;
-
+   
    MsgIndex = SendMsgEntryCmd->Index;
    if (MsgIndex < MSGTBL_MAX_ENTRIES) {
  
@@ -390,7 +390,7 @@ boolean SCHEDULER_SendMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 
       if (CCSDS_RD_TYPE(SpacePkt->Hdr) == CCSDS_CMD) {
       
-         CCSDS_CommandPacket_t *CmdPkt = (CCSDS_CommandPacket_t *) &(Scheduler->MsgTbl.Entry[MsgIndex].Buffer[sizeof(SpacePkt->Hdr)]);
+         CCSDS_CommandPacket_t *CmdPkt = (CCSDS_CommandPacket_t *) Scheduler->MsgTbl.Entry[MsgIndex].Buffer;
          
          uint16 FuncCode = CCSDS_RD_FC(CmdPkt->Sec);
          uint16 Checksum = CCSDS_RD_CHECKSUM(CmdPkt->Sec);
@@ -398,12 +398,13 @@ boolean SCHEDULER_SendMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
          CFE_EVS_SendEvent(SCHEDULER_CMD_SUCCESS_EID, CFE_EVS_INFORMATION, 
                            "Msg[%d]=Command(StreamId,SeqFlg,SeqCnt,Len,FuncCode,Checksum)=>(0x%04X,%d,%d,%d,%d,0x%02X)",
                            MsgIndex,StreamId,SeqCount,SeqFlags,Length,FuncCode,Checksum);
+            
          DataBuf = &(Scheduler->MsgTbl.Entry[MsgIndex].Buffer[sizeof(CCSDS_CommandPacket_t)/2]);
 
       } /* End if cmd */
       else {
 
-         CCSDS_TelemetryPacket_t *TlmPkt = (CCSDS_TelemetryPacket_t *) &(Scheduler->MsgTbl.Entry[MsgIndex].Buffer[sizeof(SpacePkt->Hdr)]);
+         CCSDS_TelemetryPacket_t *TlmPkt = (CCSDS_TelemetryPacket_t *) Scheduler->MsgTbl.Entry[MsgIndex].Buffer;
          
          uint32 Seconds = CCSDS_RD_SEC_HDR_SEC(TlmPkt->Sec);
          uint32 Subsecs = CCSDS_RD_SEC_HDR_SUBSEC(TlmPkt->Sec);
@@ -411,7 +412,7 @@ boolean SCHEDULER_SendMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
          CFE_EVS_SendEvent(SCHEDULER_CMD_SUCCESS_EID, CFE_EVS_INFORMATION, 
                            "Msg[%d]=Telemetry(StreamId,SeqFlg,SeqCnt,Len,Seconds,Subsecs)=>(0x%04X,%d,%d,%d,%d,%d)",
                            MsgIndex,StreamId,SeqCount,SeqFlags,Length,Seconds,Subsecs);
-      
+           
          DataBuf = &(Scheduler->MsgTbl.Entry[MsgIndex].Buffer[sizeof(CCSDS_TelemetryPacket_t)/2]);
       
       }  /* End if tlm */
@@ -1254,6 +1255,8 @@ static boolean SendTblEntryTlm(uint16 SchTblIndex, uint16 MsgTblIndex, boolean U
 {
    uint8 i;
    int32 CfeStatus;
+   uint16 MsgDataIndex;
+   CCSDS_SpacePacket_t *SpacePkt = (CCSDS_SpacePacket_t *) Scheduler->MsgTbl.Entry[MsgTblIndex].Buffer;
    
    SCHEDULER_TblEntryPkt *TlmPkt = &(Scheduler->TblEntryPkt);
    
@@ -1285,13 +1288,17 @@ static boolean SendTblEntryTlm(uint16 SchTblIndex, uint16 MsgTblIndex, boolean U
    }
    else {
 
+      /* In rare case it's a telemetry packet the time field will be zeroed out */
+      
       for (i=0; i < PKTUTIL_PRI_HDR_WORDS; i++) {
          TlmPkt->MsgTblEntry.Buffer[i] = CFE_MAKE_BIG16(Scheduler->MsgTbl.Entry[MsgTblIndex].Buffer[i]);
       }
      
-      CFE_PSP_MemCpy(&(TlmPkt->MsgTblEntry.Buffer[PKTUTIL_PRI_HDR_WORDS]),
-                     &(Scheduler->MsgTbl.Entry[MsgTblIndex].Buffer[PKTUTIL_PRI_HDR_WORDS]),
-                    (MSGTBL_MAX_MSG_WORDS-PKTUTIL_PRI_HDR_WORDS)*2);
+      MsgDataIndex = (CCSDS_RD_TYPE(SpacePkt->Hdr) == CCSDS_CMD) ? sizeof(CCSDS_CommandPacket_t)/2 : sizeof(CCSDS_TelemetryPacket_t)/2;
+OS_printf("MsgDataIndex = %d\n",MsgDataIndex);
+      CFE_PSP_MemCpy(&(TlmPkt->MsgTblEntry.Buffer[MsgDataIndex]),
+                     &(Scheduler->MsgTbl.Entry[MsgTblIndex].Buffer[MsgDataIndex]),
+                    (MSGTBL_MAX_MSG_WORDS-MsgDataIndex)*2);
 
    }
  
@@ -1301,3 +1308,4 @@ static boolean SendTblEntryTlm(uint16 SchTblIndex, uint16 MsgTblIndex, boolean U
    return (CfeStatus == CFE_SUCCESS);
 
 } /* End SendTblEntryTlm() */
+

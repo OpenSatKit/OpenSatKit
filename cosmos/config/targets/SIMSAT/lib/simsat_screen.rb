@@ -354,7 +354,9 @@ def simsat_runtime(screen, cmd)
       end
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "TRAINING_SLIDES"
+      when "#{Osk::TXT_TRAINING_VIDEO}"
+         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_COMMUNITY_APPS_RUNTIME}")      
+      when "#{Osk::TXT_TRAINING_SLIDES}"
          spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_RUNTIME_FILE}")
       end
    else

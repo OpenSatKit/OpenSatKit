@@ -427,6 +427,9 @@ static boolean MsgCallback (int TokenIdx)
    **   "seq-seg": 192,
    **   "length": 1792,
    **   "data-words": "0,1,2,3,4,5"
+   **
+   ** The data words contain the secondary header if it is present. No integrity checks are made on 
+   ** the packet.
    */
    if (JSON_GetValShortInt(JSON, TokenIdx, "id",         &JsonIntData)) { AttributeCnt++; Id = JsonIntData; }
    if (JSON_GetValShortInt(JSON, TokenIdx, "stream-id",  &JsonIntData)) { AttributeCnt++; MsgEntry.Buffer[0] = CFE_MAKE_BIG16((uint16)JsonIntData); }
