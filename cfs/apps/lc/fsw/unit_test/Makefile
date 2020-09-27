@@ -1,186 +1,169 @@
 ##############################################################################
 ## File:
-##   $Id: Makefile 1.1.1.1 2012/10/01 18:44:15EDT lwalling Exp  $
+##   $Id: makefile 1.2 2017/01/22 17:24:50EST sstrege Exp  $
+##
+##  Copyright (c) 2007-2014 United States Government as represented by the 
+##  Administrator of the National Aeronautics and Space Administration. 
+##  All Other Rights Reserved. 
+##
+##   This software was created at NASA's Goddard Space Flight Center.
+##   This software is governed by the NASA Open Source Agreement and may be 
+##   used, distributed and modified only pursuant to the terms of that 
+##   agreement.
 ##
 ## Purpose:
-##   Makefile for building the CFS Limit Checker (LC) UTF unit tests
-##
-##   $Log: Makefile  $
-##   Revision 1.1.1.1 2012/10/01 18:44:15EDT lwalling 
-##   Apply revision 1.3 changes to branch
-##   Revision 1.3 2012/10/01 13:32:39PDT lwalling 
-##   Remove LC/LCX folder name dependencies from Makefile
-##   Revision 1.2 2012/10/01 07:58:29PDT lwalling 
-##   Changed makefile folder references from LC to LCX
-##   Revision 1.1 2012/07/31 13:53:42PDT nschweis 
-##   Initial revision
-##   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/unit_test/project.pj
-##   Revision 1.4 2012/05/24 11:33:50EDT jmdagost 
-##   Updated makefile to reference environment variables.
-##   Revision 1.3 2012/01/04 16:03:58EST jmdagost 
-##   Added gcov rule to LC unit test makefile.
-##   Revision 1.2 2009/12/28 14:19:06EST lwalling 
-##   Update unit tests per latest version of CFE tools
-##   Revision 1.1 2009/01/15 15:23:36EST dahardis 
-##   Initial revision
-##   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/unit_test/project.pj
+##   Makefile for building the CFS File Manager (LC) UT Assert unit tests
 ##
 ##############################################################################
+## GNU Makefile for building UT unit tests
+
 #
-# Compiler/linker definitions
+# Supported MAKEFILE targets:
+#   clean - deletes object files, executables, output files, and gcov files
+#   all   - makes lc_testrunner.exe
+#   run   - runs lc_testrunner.exe
+#   gcov  - prints a GCOV coverage report (make all, make run, make gcov)
 #
-COMPILER=gcc
-LINKER=gcc
+# GCOV is disabled by default.  If you are using the source level debugger you will want to 
+# disable GCOV.  To enable GCOV you can override the ENABLE_GCOV variable on the command line 
+# by setting it to TRUE.  For example "make ENABLE_GCOV=TRUE".
 #
-# Compiler/linker options
+
 #
-DEFAULT_COPT= -m32 -fPIC -Wall -Wstrict-prototypes -Wunreachable-code -ansi -g 
-COPT= -D_ix86_ -DSOFTWARE_LITTLE_BIT_ORDER -D_EL
-LOPT= -m32
-#
-# Options for gcov
-#
-GCOV_COPT= -fprofile-arcs -ftest-coverage
-GCOV_LOPT= -pg -fprofile-arcs -ftest-coverage
-#
-###########################################################################
-#
-# Search path definitions
-#
-#
-###########################################################################
-#
-# Source file path definitions
+# VPATH specifies the search paths for source files outside of the current directory.  Note that
+# all object files will be created in the current directory even if the source file is not in the 
+# current directory.
 #
 VPATH := .
-VPATH += ..
+VPATH += $(UT_ASSERT_SRC)/src
+VPATH += $(CFS_MISSION)/apps/cfs_lib/fsw/src
 VPATH += ../src
-VPATH += ../tables
-VPATH += $(CFS_APP_SRC)/cfs_lib/fsw/src
-VPATH += $(UTF_SRC)/src
-VPATH += $(CFE_CORE_SRC)/sb
-VPATH += $(CFE_CORE_SRC)/time
-VPATH += $(CFE_CORE_SRC)/es
-VPATH += $(CFE_CORE_SRC)/evs
-VPATH += $(CFE_CORE_SRC)/fs
-VPATH += $(CFE_CORE_SRC)/tbl
-VPATH += $(OSAL_SRC)/posix
-VPATH += $(OSAL_SRC)/../bsp/pc-linux/src
-VPATH += $(CFE_PSP_SRC)/pc-linux/src
+VPATH += ../for_build
+
+LC_PATH=../../
+
 #
-###########################################################################
-#
-# Header file path definitions
+# INCLUDES specifies the search paths for include files outside of the current directory.  
+# Note that the -I is required. 
 #
 INCLUDES := -I.
-INCLUDES += -I..
-INCLUDES += -I../src
-INCLUDES += -I../platform_inc
-INCLUDES += -I../mission_inc
-INCLUDES += -I$(OSAL_SRC)/../../build/inc
-INCLUDES += -I$(OSAL_SRC)/inc
-INCLUDES += -I$(CFE_PSP_SRC)/inc
-INCLUDES += -I$(CFE_PSP_SRC)/pc-linux/inc
-INCLUDES += -I$(UTF_SRC)/inc
-INCLUDES += -I$(CFS_APP_SRC)/cfs_lib/fsw/public_inc
-INCLUDES += -I$(CFE_CORE_SRC)/../../mission_inc
-INCLUDES += -I$(CFE_CORE_SRC)/../../platform_inc/cpu1
-INCLUDES += -I$(CFE_CORE_SRC)/inc
-INCLUDES += -I$(CFE_CORE_SRC)/time
-INCLUDES += -I$(CFE_CORE_SRC)/sb
-INCLUDES += -I$(CFE_CORE_SRC)/es
-INCLUDES += -I$(CFE_CORE_SRC)/evs
-INCLUDES += -I$(CFE_CORE_SRC)/fs
-INCLUDES += -I$(CFE_CORE_SRC)/tbl
+INCLUDES += -I$(UT_ASSERT_SRC)/inc
+INCLUDES += -I$(CFS_MISSION)/build/pc-linux/inc
+INCLUDES += -I$(APP_DIR)/cfs_lib/fsw/public_inc
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/os/inc
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/inc
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/time
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/sb
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/es
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/evs
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/fs
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/tbl
+INCLUDES += -I$(CFE_DIR)/fsw/mission_inc
+INCLUDES += -I$(CFE_DIR)/fsw/platform_inc/cpu1
+INCLUDES += -I$(OSAL_DIR)/src/os/inc
+INCLUDES += -I$(OSAL_DIR)/build/inc
+INCLUDES += -I$(PSP_DIR)/fsw/inc
+INCLUDES += -I$(PSP_DIR)/fsw/pc-linux/inc
+INCLUDES += -I$(PSP_DIR)/fsw/pc-linux/inc
+INCLUDES += -I$(LC_PATH)/fsw/src
+INCLUDES += -I$(LC_PATH)/fsw/mission_inc
+INCLUDES += -I$(LC_PATH)/fsw/platform_inc
+
 #
-###########################################################################
+# FLIGHT_OBJS specifies flight software object files.
 #
-# UTF object files
+FLIGHT_OBJS := lc_app.o lc_action.o lc_cmds.o lc_custom.o lc_watch.o
+
 #
-UTF_OBJS := utf_cfe_es_api.o
-UTF_OBJS += utf_cfe_es_cds.o
-UTF_OBJS += utf_cfe_esmempool.o
-UTF_OBJS += utf_cfe_evs.o
-UTF_OBJS += utf_cfe_psp_eeprom.o
-UTF_OBJS += utf_cfe_psp_memory.o
-UTF_OBJS += utf_cfe_psp_memrange.o
-UTF_OBJS += utf_cfe_psp_memutils.o
-UTF_OBJS += utf_cfe_psp_port.o
-UTF_OBJS += utf_cfe_psp_ram.o
-UTF_OBJS += utf_cfe_psp_support.o
-UTF_OBJS += utf_cfe_sb.o
-UTF_OBJS += utf_cfe_sb_api.o
-UTF_OBJS += utf_cfe_tbl_api.o
-UTF_OBJS += utf_cfe_tbl_internal.o
-UTF_OBJS += utf_cfe_time_api.o
-UTF_OBJS += utf_cfe_time_utils.o
-UTF_OBJS += utf_osapi.o
-UTF_OBJS += utf_osfileapi.o
-UTF_OBJS += utf_osfilesys.o
-UTF_OBJS += utf_osloader.o
-UTF_OBJS += utf_ostimer.o
-UTF_OBJS += utf_cfe_time_utils.o
-UTF_OBJS += utf_sim.o
+# UT_OBJS specifies unit test object files.
 #
-###########################################################################
+UT_OBJS := ut_osapi_stubs.o
+UT_OBJS += ut_osfileapi_stubs.o
+UT_OBJS += ut_cfe_sb_stubs.o
+UT_OBJS += ut_cfe_es_stubs.o
+UT_OBJS += ut_cfe_evs_stubs.o
+UT_OBJS += ut_cfe_time_stubs.o
+UT_OBJS += ut_cfe_fs_stubs.o
+UT_OBJS += ut_cfe_psp_memutils_stubs.o
+UT_OBJS += ut_cfe_psp_eeprom_stubs.o
+UT_OBJS += ut_cfe_psp_ram_stubs.o
+UT_OBJS += ut_cfe_psp_memrange_stubs.o
+UT_OBJS += ut_cfe_psp_watchdog_stubs.o
+UT_OBJS += ut_cfe_psp_timer_stubs.o
+UT_OBJS += ut_cfe_tbl_stubs.o
+UT_OBJS += ut_cfe_sb_hooks.o
+UT_OBJS += ut_cfe_es_hooks.o
+UT_OBJS += ut_cfe_evs_hooks.o
+UT_OBJS += ut_cfe_tbl_hooks.o
+UT_OBJS += ut_cfe_time_hooks.o
+UT_OBJS += utassert.o
+UT_OBJS += utlist.o
+UT_OBJS += uttest.o
+UT_OBJS += uttools.o
+UT_OBJS += lc_app_test.o
+UT_OBJS += lc_action_test.o
+UT_OBJS += lc_cmds_test.o
+UT_OBJS += lc_custom_test.o
+UT_OBJS += lc_watch_test.o
+UT_OBJS += lc_testrunner.o
+UT_OBJS += lc_test_utils.o
+UT_OBJS += cfs_utils.o
+
 #
-# cFE object files
+# UT_TEST_RUNNER specifies the name of the test runner.
 #
-CFE_OBJS := ccsds.o
-CFE_OBJS += cfe_sb_util.o
-CFE_OBJS += cfe_es_cds_mempool.o
-CFE_OBJS += cfe_fs_api.o
+UT_TEST_RUNNER = lc_testrunner.exe
+
+###############################################################################
+
+COMPILER=gcc
+LINKER=gcc
+
 #
-###########################################################################
+# Compiler and Linker Options
 #
-# PSP object files
-#
-PSP_OBJS := cfe_psp_timer.o
-#
-###########################################################################
-#
-# CFSLIB object files
-#
-CFSLIB_OBJS :=
-#
-###########################################################################
-#
-# LC object files
-#
-LC_OBJS := lc_app.o
-LC_OBJS += lc_cmds.o
-LC_OBJS += lc_action.o
-LC_OBJS += lc_watch.o
-LC_OBJS += lc_custom.o
-LC_OBJS += lc_def_adt.o
-LC_OBJS += lc_def_wdt.o
-#
-###########################################################################
-#
-# Rules to make the specified targets
-#
-%.o: %.c
-	$(COMPILER) -c $(COPT) $(DEFAULT_COPT) $(GCOV_COPT) $(INCLUDES) $<
-#
+GCOV_COPT = -fprofile-arcs -ftest-coverage -pg -p
+GCOV_LOPT = -pg -p -fprofile-arcs -ftest-coverage -lgcov -lm
+
+#WARNINGS = -Wall -W -ansi -Werror -Wstrict-prototypes -Wundef
+WARNINGS = -Wall -Wstrict-prototypes -Wundef
+DEBUGGER = -g
+
+COPT = $(WARNINGS) $(DEBUGGER) $(GCOV_COPT) -DSOFTWARE_LITTLE_BIT_ORDER -D_EL -D_ix86_ -DUT_VERBOSE -DOSAPI_NO_SPECIAL_ATTRIBS
+
+LOPT = $(GCOV_LOPT)
+
+###############################################################################
+## Rule to make the specified TARGET
+##
 %.exe: %.o
-	$(LINKER) $(LOPT) $(GCOV_LOPT) $^ -o $*.exe 
-#
-all: lc_utest.exe 
-#
-lc_utest.exe: lc_utest.o lc_utest_adt.o lc_utest_wdt.o \
-$(UTF_OBJS) $(CFE_OBJS) $(PSP_OBJS) $(CFSLIB_OBJS) $(LC_OBJS)
-#
-clean:
-	rm -f *.o *.exe *.da *.out *.bbg *.bb *.gcda *.gcno *.gcov
-#
+	$(LINKER) $(LOPT) $^ -o $*.exe
+
+###############################################################################
+##  "C" COMPILER RULE
+##
+%.o: %.c
+	$(COMPILER) -c $(COPT) $(INCLUDES) $<
+
+##############################################################################
+##
+
+all:$(UT_TEST_RUNNER)
+
+$(UT_TEST_RUNNER): $(UT_OBJS) $(FLIGHT_OBJS)
+
+clean ::
+	rm -f *.o *.exe *.gcda *.gcno *.gcov gmon.out
+
+run ::
+	./$(UT_TEST_RUNNER)
+
 gcov ::
 	@echo
-	@gcov $(LC_OBJS:.o=.gcda) | sed 'N;s/\n/ /' | \
-         sed -n '/File/p' | sed -e '/\.h/d'  | \
-         sed 's/ Lines executed:/ /; s/File/gcov:/; s/of// '
+	@gcov $(FLIGHT_OBJS:.o=.gcda) | sed 'N;s/\n/ /' | \
+		sed -n '/File/p' | sed '/ads/d' | sed -e '/\.h/d'  | \
+		sed 's/ Lines executed:/ /; s/File/gcov:/; s/of// '
 	@rm -f *.gcda *.gcno
 	@echo
-#
-###########################################################################
-#
+
 # end of file

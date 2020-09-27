@@ -1,40 +1,19 @@
 /************************************************************************
  ** File:
- **   $Id: cs_table_cmds.c 1.8.1.1 2015/03/03 11:57:59EST sstrege Exp  $
+ **   $Id: cs_table_cmds.c 1.8 2017/03/29 17:29:01EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
  **   This software was created at NASA's Goddard Space Flight Center.
  **   This software is governed by the NASA Open Source Agreement and may be 
  **   used, distributed and modified only pursuant to the terms of that 
- **   agreement. 
+ **   agreement.
  **
  ** Purpose: 
  **   The CFS Checksum (CS) Application's commands for checking Tables
  **
- **   $Log: cs_table_cmds.c  $
- **   Revision 1.8.1.1 2015/03/03 11:57:59EST sstrege 
- **   Added copyright information
- **   Revision 1.8 2015/01/26 15:06:47EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.7 2012/09/14 17:20:40EDT aschoeni 
- **   Updated for fix to disable error in def table command
- **   Revision 1.6 2011/09/06 14:51:48EDT jmdagost 
- **   Corrected recompute event message text.
- **   Revision 1.5 2010/03/29 16:57:08EDT jmdagost 
- **   Modified enable/disable commands to update the definitions table as well as the results table.
- **   Revision 1.4 2008/08/01 09:24:46EDT njyanchik 
- **   Switch Tables_Disabled event ID wiuth Tables_Enabled EID
- **   Revision 1.3 2008/07/28 16:56:08BST njyanchik 
- **   Fixed app/table naming issues in event messages
- **   Revision 1.2 2008/07/23 15:34:39BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:18EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 
 /*************************************************************************
@@ -70,6 +49,10 @@ void CS_DisableTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
         CS_AppData.TablesCSState = CS_STATE_DISABLED;
         CS_ZeroTablesTempValues();
         
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        CS_UpdateCDS();
+#endif
+        
         CFE_EVS_SendEvent (CS_DISABLE_TABLES_INF_EID,
                            CFE_EVS_INFORMATION,
                            "Checksumming of Tables is Disabled");
@@ -92,6 +75,10 @@ void CS_EnableTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
     if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
     {
         CS_AppData.TablesCSState = CS_STATE_ENABLED;
+        
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        CS_UpdateCDS();
+#endif
         
         CFE_EVS_SendEvent (CS_ENABLE_TABLES_INF_EID,
                            CFE_EVS_INFORMATION,
@@ -130,7 +117,7 @@ void CS_ReportBaselineTablesCmd(CFE_SB_MsgPtr_t MessagePtr)
                                    CFE_EVS_INFORMATION,
                                    "Report baseline of table %s is 0x%08X", 
                                    CmdPtr -> Name,
-                                   Baseline);
+                                   (unsigned int)Baseline);
             }
             else
             {
@@ -174,7 +161,7 @@ void CS_RecomputeBaselineTablesCmd (CFE_SB_MsgPtr_t MessagePtr)
     {
         CmdPtr = (CS_TableNameCmd_t *) MessagePtr;
         
-        if (CS_AppData.ChildTaskInUse == FALSE)
+        if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
         {            
             /* make sure the entry is a valid number and is defined in the table */
             
@@ -183,8 +170,7 @@ void CS_RecomputeBaselineTablesCmd (CFE_SB_MsgPtr_t MessagePtr)
             if (CS_GetTableResTblEntryByName(&ResultsEntry, CmdPtr -> Name))
             {
                 /* There is no child task running right now, we can use it*/
-                CS_AppData.ChildTaskInUse                = TRUE;
-                CS_AppData.OneShotTaskInUse              = FALSE;
+                CS_AppData.RecomputeInProgress           = TRUE;
                 
                 /* fill in child task variables */
                 CS_AppData.ChildTaskTable                = CS_TABLES_TABLE;
@@ -214,9 +200,9 @@ void CS_RecomputeBaselineTablesCmd (CFE_SB_MsgPtr_t MessagePtr)
                                        CFE_EVS_ERROR,
                                        "Recompute baseline of table %s failed, CFE_ES_CreateChildTask returned: 0x%08X",
                                        CmdPtr -> Name,
-                                       Status);
+                                       (unsigned int)Status);
                     CS_AppData.CmdErrCounter++;
-                    CS_AppData.ChildTaskInUse = FALSE;
+                    CS_AppData.RecomputeInProgress = FALSE;
                 }
             }
             else
@@ -233,7 +219,7 @@ void CS_RecomputeBaselineTablesCmd (CFE_SB_MsgPtr_t MessagePtr)
             /*send event that we can't start another task right now */
             CFE_EVS_SendEvent (CS_RECOMPUTE_TABLES_CHDTASK_ERR_EID,
                                CFE_EVS_ERROR,
-                                "Tables recompute baseline for table %s failed: a child task is in use",
+                                "Tables recompute baseline for table %s failed: child task in use",
                                CmdPtr -> Name);
             CS_AppData.CmdErrCounter++;
         }

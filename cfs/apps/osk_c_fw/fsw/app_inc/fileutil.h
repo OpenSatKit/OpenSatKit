@@ -28,23 +28,30 @@
 /** Macro Definitions **/
 /***********************/
 
-#define FILE_UTIL_THIS_DIRECTORY  "."
-#define FILE_UTIL_DIRECTORY       ".."
+#define FILEUTIL_DIR_SEP_CHAR '/'
+#define FILEUTIL_DIR_SEP_STR  "/"
+
+#define FILEUTIL_THIS_DIR     "."
+#define FILEUTIL_PARENT_DIR   ".."
 
 /*
 ** Event Message IDs
 */
 
-#define FILE_UTIL_INVLD_FILENAME_LEN_EID     (OSK_C_FW_UTILS_BASE_EID + 0)
-#define FILE_UTIL_INVLD_FILENAME_STR_EID     (OSK_C_FW_UTILS_BASE_EID + 1)
-#define FILE_UTIL_INVLD_FILENAME_CHR_EID     (OSK_C_FW_UTILS_BASE_EID + 2)
-#define FILE_UTIL_FILE_READ_OPEN_ERR_EID     (OSK_C_FW_UTILS_BASE_EID + 3)
-#define FILE_UTIL_MAX_PATH_LEN_CONFLICT_EID  (OSK_C_FW_UTILS_BASE_EID + 4)
+#define FILEUTIL_INVLD_FILENAME_LEN_EID     (OSK_C_FW_UTILS_BASE_EID + 0)
+#define FILEUTIL_INVLD_FILENAME_STR_EID     (OSK_C_FW_UTILS_BASE_EID + 1)
+#define FILEUTIL_INVLD_FILENAME_CHR_EID     (OSK_C_FW_UTILS_BASE_EID + 2)
+#define FILEUTIL_FILE_READ_OPEN_ERR_EID     (OSK_C_FW_UTILS_BASE_EID + 3)
+#define FILEUTIL_MAX_PATH_LEN_CONFLICT_EID  (OSK_C_FW_UTILS_BASE_EID + 4)
 
 /**********************/
 /** Type Definitions **/
 /**********************/
 
+/*
+** If the state is (FILEUTIL_FILE_OPEN or FILEUTIL_FILE_CLOSED) then the
+** file exists and is not a directory
+*/
 typedef enum {
    
    FILEUTIL_FILE_NAME_INVALID = 1,
@@ -55,6 +62,7 @@ typedef enum {
 
 } FileUtil_FileState;
 
+#define FILEUTIL_FILE_EXISTS(state) ((state==FILEUTIL_FILE_OPEN) || (state==FILEUTIL_FILE_CLOSED))
 
 typedef struct {
 
@@ -74,17 +82,59 @@ typedef struct {
 } FileUtil_CheckFileState;
 
 
+typedef struct {
+
+   char    Filename[OS_MAX_PATH_LEN];
+   char    AppName[OS_MAX_API_NAME];
+
+} FileUtil_OpenFileEntry;
+
+
+typedef struct {
+
+   uint16   OpenCount;
+   FileUtil_OpenFileEntry Entry[OS_MAX_NUM_OPEN_FILES];
+
+} FileUtil_OpenFileList;
+
+
 /************************/
 /** Exported Functions **/
 /************************/
 
+
+/******************************************************************************
+** Function: FileUtil_AppendPathSep
+**
+** Append a path separator to a directory path. 
+** 
+** Returns FALSE if invalid string length or appending the separator would
+** exceed the BufferLen.
+**
+*/
+boolean FileUtil_AppendPathSep(char *DirName, uint16 BufferLen);
+
+
 /******************************************************************************
 ** Function: FileUtil_GetFileInfo
 **
-** Return file state (FileUtil_FileState) and optionally include the file size
+** First verifies the filename string itself nad determines the file state and
+** returns file state (FileUtil_FileState) and optionally includes the file size
 ** and time for existing files.
 */
 FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, boolean IncludeSizeTime);
+
+
+/******************************************************************************
+** Function: FileUtil_GetOpenFileList
+**
+** Loads the caller suppliedd OpenFileList data structure with the number of
+** open files and details about each. 
+**
+** Returns teh number of open files as a convenience even though it's contained
+** in the OpenFileList data struture.
+*/
+uint16 FileUtil_LoadOpenFileList(FileUtil_OpenFileList *OpenFileList);
 
 
 /******************************************************************************

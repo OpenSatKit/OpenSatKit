@@ -52,13 +52,13 @@ void NETIF42_Close(void) {
       close(NetIf->SocketFd);
       NetIf->Connected = FALSE;
 
-      CFE_EVS_SendEvent(NETIF_SOCKET_CLOSE_INFO_EID, CFE_EVS_INFORMATION,
+      CFE_EVS_SendEvent(NETIF_SOCKET_CLOSE_EID, CFE_EVS_INFORMATION,
                         "Successfully closed socket");
 
   
    } /* End if connected */
    else {
-      CFE_EVS_SendEvent(NETIF_SOCKET_CLOSE_INFO_EID, CFE_EVS_INFORMATION,
+      CFE_EVS_SendEvent(NETIF_SOCKET_CLOSE_EID, CFE_EVS_INFORMATION,
                         "Attempt to close socket without a connection");
    }
 
@@ -107,7 +107,7 @@ boolean NETIF42_Connect42Cmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    NetIf->Connected = InitSocket(NetIf->IpAddrStr, NetIf->Port, FALSE);
 
    if (NetIf->Connected) {
-      CFE_EVS_SendEvent(NETIF_CONNECT_TO_42_INFO_EID, CFE_EVS_INFORMATION,
+      CFE_EVS_SendEvent(NETIF_CONNECT_TO_42_EID, CFE_EVS_INFORMATION,
                         "Connected to 42 simulator on %s port %d", NetIf->IpAddrStr,NetIf->Port);
    }
    
@@ -253,7 +253,7 @@ static boolean InitSocket(const char *HostName, uint16 Port, boolean AllowBlocki
       NetIf->StreamId = fdopen(SocketFd,"r+");
       if (NetIf->StreamId != NULL) {
          NetIf->Connected = TRUE;
-         CFE_EVS_SendEvent(NETIF_CONNECT_INFO_EID,CFE_EVS_INFORMATION,
+         CFE_EVS_SendEvent(NETIF_CONNECT_EID,CFE_EVS_INFORMATION,
                           "Successfully connected to 42 server %s on Port %d\n",HostName, Port);
       }
       else {

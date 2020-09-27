@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: cs_verify.h 1.4.1.1 2015/03/03 11:58:53EST sstrege Exp  $
+**   $Id: cs_verify.h 1.4 2017/02/16 15:33:22EST mdeschu Exp  $
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
+**   Copyright (c) 2007-2014 United States Government as represented by the 
 **   Administrator of the National Aeronautics and Space Administration. 
 **   All Other Rights Reserved.  
 **
@@ -21,21 +21,6 @@
 **   CFS CS Heritage Analysis Document
 **   CFS CS CDR Package
 **
-** Notes:
-**
-**   $Log: cs_verify.h  $
-**   Revision 1.4.1.1 2015/03/03 11:58:53EST sstrege 
-**   Added copyright information
-**   Revision 1.4 2011/09/19 17:33:45EDT jmdagost 
-**   Removed verification of the default CRC algorithm.
-**   Revision 1.3 2010/03/09 15:05:13EST jmdagost 
-**   Added requested verification checks.
-**   Revision 1.2 2008/07/23 10:34:38EDT njyanchik 
-**   Check in of CS Unit test
-**   Revision 1.1 2008/06/13 09:04:26EDT njyanchik 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
-** 
 *************************************************************************/
 #ifndef _cs_verify_
 #define _cs_verify_
@@ -57,13 +42,16 @@
     #error CS_MAX_NUM_MEMORY_TABLE_ENTRIES cannot be greater than 65535!
 #endif
 
-#if CS_MAX_NUM_APP_TABLE_ENTRIES > CFE_ES_MAX_APPLICATIONS
-    #error CS_MAX_NUM_APP_TABLE_ENTRIES cannot be greater than CFE_ES_MAX_APPLICATIONS!
-#endif
-
-#if CS_MAX_NUM_TABLES_TABLE_ENTRIES > CFE_TBL_MAX_NUM_TABLES
-    #error CS_MAX_NUM_TABLES_TABLE_ENTRIES cannot be greater than CFE_TBL_MAX_NUM_TABLES!
-#endif
+/*
+ * JPH 2015-06-29 - Removed checks of:
+ *  CS_MAX_NUM_APP_TABLE_ENTRIES > CFE_ES_MAX_APPLICATIONS
+ *  CS_MAX_NUM_TABLES_TABLE_ENTRIES > CFE_TBL_MAX_NUM_TABLES
+ *
+ * These are not valid checks anymore, as the CS app does not have knowledge
+ * of either CFE_ES_MAX_APPLICATIONS nor CFE_TBL_MAX_NUM_TABLES.  Also, if
+ * these actually violate the rule, this will either show up as an obvious
+ * run-time error OR it will still work perfectly fine.
+ */
 
 #if (CS_MAX_NUM_EEPROM_TABLE_ENTRIES < 1)
     #error CS_MAX_NUM_EEPROM_TABLE_ENTRIES must be at least 1!

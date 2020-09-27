@@ -108,7 +108,7 @@ class FswApp
                @tables << Table.new(tbl["name"],tbl["id"],tbl["filename"])
             end
             #puts "Tables length = " + tables.length.to_s + "\n"
-            @cmd_mid = Fsw::MsgId.get_msg_val(app["cmd-mid"])
+            @cmd_mid = Fsw::MsgId.get_val(app["cmd-mid"])
          
          end # If JSON
       rescue Exception => e

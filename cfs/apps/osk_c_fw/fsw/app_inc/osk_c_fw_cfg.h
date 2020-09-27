@@ -31,7 +31,7 @@
 ** Command Manager (CMDMGR)
 */
 
-#define CMDMGR_CMD_FUNC_TOTAL  10
+#define CMDMGR_CMD_FUNC_TOTAL  32
 
 /* Standard function definitions */
 

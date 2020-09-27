@@ -29,6 +29,12 @@ require 'osk_flight'
 
 def json_table_mgmt(screen, cmd)
 
+   #
+   # Menu text format: 'App-ID-Table Name'
+   #   'App'         = COSMOS target name for the application
+   #   'ID'          = Numeric app-specific table identifier starts at 0
+   #   'Table Name'  = Table name and can have spaces
+   #
    app_menu = screen.get_named_widget("app").text
    app_token = app_menu.split('-')
    

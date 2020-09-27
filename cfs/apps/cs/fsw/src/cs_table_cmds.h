@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_table_cmds.h 1.3.1.1 2015/03/03 11:57:49EST sstrege Exp  $
+ **   $Id: cs_table_cmds.h 1.3 2017/02/16 15:33:12EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -20,19 +20,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_table_cmds.h  $
- **   Revision 1.3.1.1 2015/03/03 11:57:49EST sstrege 
- **   Added copyright information
- **   Revision 1.3 2010/03/29 16:50:21EDT jmdagost 
- **   Updated comments for enable/disable command descriptions.
- **   Revision 1.2 2008/07/23 10:34:38EDT njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:20EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 #ifndef _cs_table_cmds_
 #define _cs_table_cmds_

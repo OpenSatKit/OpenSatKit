@@ -81,6 +81,10 @@ module Osk
 
    MSG_TBD_FEATURE = "Feature coming soon..."
 
+   TXT_TRAINING_VIDEO  = "Training Video"
+   TXT_TRAINING_SLIDES = "Training Slides"
+   
+   
    ################
    ## File Names ##
    ################
@@ -97,6 +101,8 @@ module Osk
    TRAIN_CFS_INTRO_FILE    = "cFS_Training_01-Intro.pdf"
    TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
    TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
+
+   TRAIN_OSK_APPS_RUNTIME_FILE = "OSK-Apps-RunTime.pdf"
 
    ABOUT_SCR_FILE   = "about_scr.txt"
    ADD_APP_SCR_FILE = "add_app_scr.txt"
@@ -131,6 +137,9 @@ module Osk
    CPU1_MSG_ID_FILE  = "cpu1_msgids.h"
    CPU1_OS_CFG_FILE  = "cpu1_osconfig.h"
    CPU1_STARTUP_FILE = "cpu1_cfe_es_startup.scr"
+   CPU1_MSG_TBL_FILE = "cpu1_osk_sch_msg_tbl.json"
+   CPU1_SCH_TBL_FILE = "cpu1_osk_sch_sch_tbl.json"
+   CPU1_PKT_TBL_FILE = "cpu1_osk_to_pkt_tbl.json"
    
    JSON_TBL_MGMT_SCR_FILE = "json_table_mgmt_scr.txt"
    
@@ -234,10 +243,11 @@ module Osk
    CFE_DOCS_DIR   = "#{Cosmos::USERPATH}/cfs_kit/docs"
    CFE_UG_DIR     = "#{CFE_DOCS_DIR}/cfe_users_guide"
 
-   REL_TUTORIAL_DIR  = "cfs_kit/tutorials"
-   TUTORIAL_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tutorials"
-   CFE_TRAINING_DIR  = "#{Osk::TUTORIAL_DIR}/cfe/training"
-
+   REL_TUTORIAL_DIR   = "cfs_kit/tutorials"
+   TUTORIAL_DIR       = "#{Cosmos::USERPATH}/cfs_kit/tutorials"
+   CFE_TRAINING_DIR   = "#{Osk::TUTORIAL_DIR}/cfe/training"
+   OSK_APPS_TRAIN_DIR = "#{Osk::TUTORIAL_DIR}/op_apps"
+   
    TOOLS_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tools"
    PERF_MON_DIR   = "#{TOOLS_DIR}/perf-monitor"
    CREATE_APP_DIR = "#{TOOLS_DIR}/create-app"
@@ -248,6 +258,9 @@ module Osk
    TMP_FLT_BIN_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_BIN_FILE}"
    TMP_GND_BIN_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_BIN_FILE}"
     
+   TMP_FLT_TBL_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_TBL_FILE}"
+   TMP_GND_TBL_PATH_FILE = "#{GND_SRV_TBL_DIR}/#{TMP_TBL_FILE}"
+
    TMP_FLT_TXT_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_TXT_FILE}"
    TMP_GND_TXT_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_TXT_FILE}"
     
@@ -274,6 +287,7 @@ module Osk
    CMD_STR_LOAD_TBL  = "LOAD_TBL"
    CMD_STR_DUMP_TBL  = "DUMP_TBL"
    CMD_DEF_FILENAME  = TMP_BIN_FILE
+   CMD_DEF_TBL_NAME  = TMP_TBL_FILE
    CMD_DEF_DIR_NAME  = FLT_SRV_DIR
   
    TLM_STR_HK_PKT    = "HK_TLM_PKT"
@@ -291,5 +305,7 @@ module Osk
  
    YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD   = "https://www.youtube.com/watch?v=LspTUdIKAZY&t=1s"
    YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD  = "https://www.youtube.com/watch?v=0BSMXeq8B5c&t=4s"
+
+   YOUTUBE_TRAINING_COMMUNITY_APPS_RUNTIME   = "https://youtu.be/7upUnU63YFc"
    
 end # Module Osk

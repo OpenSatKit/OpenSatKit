@@ -21,13 +21,13 @@
 ** Command Message IDs
 */
 
-#define  KIT_CI_CMD_MID      (0x1884)
-#define  KIT_CI_SEND_HK_MID  (0x1885)
+#define  KIT_CI_CMD_MID      (0x1F00)
+#define  KIT_CI_SEND_HK_MID  (0x1F01)
 
 /*
 ** Command Message IDs
 */
 
-#define  KIT_CI_HK_TLM_MID   (0x0884)
+#define  KIT_CI_HK_TLM_MID   (0x0F00)
 
 #endif /* _kit_ci_msgids_ */

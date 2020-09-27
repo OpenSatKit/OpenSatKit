@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_action.h 1.2 2015/03/04 16:09:56EST sstrege Exp  $
+**   $Id: lc_action.h 1.4 2017/01/22 17:24:52EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -17,23 +17,10 @@
 **
 ** Notes:
 **
-**   $Log: lc_action.h  $
-**   Revision 1.2 2015/03/04 16:09:56EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:36EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.2 2011/02/07 17:58:22EST lwalling 
-**   Modify sample AP commands to target groups of AP's
-**   Revision 1.1 2008/10/29 14:18:48EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 **************************************************************************/
 #ifndef _lc_action_
 #define _lc_action_
-
-#define _ix86_  /* TODO - Fix endianness definitions */ 
 
 /*************************************************************************
 ** Includes
@@ -108,6 +95,85 @@ void LC_SampleAPs(uint16 StartIndex, uint16 EndIndex);
 **
 *************************************************************************/
 int32 LC_ValidateADT(void *TableData);
+
+/************************************************************************/
+/** \brief Sample single actionpoint
+**  
+**  \par Description
+**       Support function for actionpoint processing that will sample
+**       a single actionpoint and handle the result as needed
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   APNumber     The actionpoint number to sample (zero
+**                             based actionpoint definition table index)
+**
+*************************************************************************/
+void LC_SampleSingleAP(uint16 APNumber);
+
+/************************************************************************/
+/** \brief Evaluate RPN
+**  
+**  \par Description
+**       Support function for actionpoint processing that evaluates
+**       the reverse polish notation (RPN) equation for the specified
+**       actionpoint and returns the result
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   APNumber     The actionpoint number to evaluate (zero
+**                             based actionpoint definition table index)
+**
+**  \returns
+**  \retcode #LC_ACTION_PASS         \retdesc \copydoc LC_ACTION_PASS   \endcode
+**  \retcode #LC_ACTION_FAIL         \retdesc \copydoc LC_ACTION_FAIL   \endcode
+**  \retcode #LC_ACTION_STALE        \retdesc \copydoc LC_ACTION_STALE  \endcode
+**  \retcode #LC_ACTION_ERROR        \retdesc \copydoc LC_ACTION_ERROR  \endcode
+**  \endreturns
+**
+*************************************************************************/
+uint8 LC_EvaluateRPN(uint16 APNumber);
+ 
+/************************************************************************/
+/** \brief Validate RPN expression
+**  
+**  \par Description
+**       Support function for actionpoint definition table validation
+**       that checks a reverse polish notation (RPN) equation for
+**       possible errors.
+**
+**  \par Assumptions, External Events, and Notes:
+**       None
+**       
+**  \param [in]   RPNPtr            Pointer to the RPN equation
+**
+**  \param [in]   IndexValue        A pointer where to store the equation
+**                                  index value if an error is detected
+**
+**  \param [in]   StackDepthValue   A pointer where to store the equation
+**                                  stack depth value if an error is detected
+**
+**  \param [out]  *IndexValue       Equation index value where error was
+**                                  found. Not modified if return code is
+**                                  #LC_ADTVAL_NO_ERR
+**
+**  \param [out]  *StackDepthValue  Equation stack depth value where error
+**                                  found. Not modified if return code is
+**                                  #LC_ADTVAL_NO_ERR
+**
+**  \returns
+**  \retcode #LC_ADTVAL_NO_ERR   \retdesc \copydoc LC_ADTVAL_NO_ERR  \endcode
+**  \retcode #LC_ADTVAL_ERR_RPN  \retdesc \copydoc LC_ADTVAL_ERR_RPN \endcode
+**  \endreturns
+**
+**  \sa #LC_ValidateADT
+**
+*************************************************************************/
+int32 LC_ValidateRPN(uint16 *RPNPtr, 
+                      int32  *IndexValue, 
+                      int32  *StackDepthValue);
  
 #endif /* _lc_action_ */
 

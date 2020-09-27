@@ -224,7 +224,7 @@ static int32 InitApp(void)
     TBLMGR_Constructor(TBLMGR_OBJ);
     TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, EXTBL_LoadCmd, EXTBL_DumpCmd, @TEMPLATE@_EXTBL_DEF_LOAD_FILE);
                          
-    CFE_SB_InitMsg(&@Template@HkPkt, @TEMPLATE@_TLM_HK_MID, @TEMPLATE@_TLM_HK_LEN, TRUE);
+    CFE_SB_InitMsg(&@Template@HkPkt, @TEMPLATE@_HK_TLM_MID, @TEMPLATE@_TLM_HK_LEN, TRUE);
 
                         
     /*

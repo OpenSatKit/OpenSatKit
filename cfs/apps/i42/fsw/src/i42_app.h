@@ -30,52 +30,42 @@
 ** Macro Definitions
 */
 
-#define I42_INIT_APP_INFO_EID            (I42_BASE_EID + 0)
-#define I42_NOOP_INFO_EID                (I42_BASE_EID + 1)
-#define I42_EXIT_ERR_EID                 (I42_BASE_EID + 2)
-#define I42_INVALID_MID_ERR_EID          (I42_BASE_EID + 3)
-#define I42_IDLE_SOCKET_CLOSE_INFO_EID   (I42_BASE_EID + 4)
-#define I42_RESEND_ACTUATOR_PKT_INFO_EID (I42_BASE_EID + 5)
-#define I42_DEBUG_EID                    (I42_BASE_EID + 6)
+#define I42_INIT_APP_EID            (I42_BASE_EID + 0)
+#define I42_NOOP_EID                (I42_BASE_EID + 1)
+#define I42_EXIT_EID                (I42_BASE_EID + 2)
+#define I42_INVALID_MID_EID         (I42_BASE_EID + 3)
+#define I42_IDLE_SOCKET_CLOSE_EID   (I42_BASE_EID + 4)
+#define I42_RESEND_ACTUATOR_PKT_EID (I42_BASE_EID + 5)
+#define I42_EXECUTE_CMD_EID         (I42_BASE_EID + 6)
+#define I42_EXECUTE_CMD_ERR_EID     (I42_BASE_EID + 7)
+#define I42_DEBUG_EID               (I42_BASE_EID + 8)
 
-#define I42_TOTAL_EID  7
+
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 
-/*
-** Type Definitions
+/******************************************************************************
+** Command Packets
 */
 
-typedef struct
-{
+typedef struct {
 
-   CMDMGR_Class     CmdMgr;
-   NETIF_Class      NetIf;
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
 
-   CFE_SB_PipeId_t  CmdPipe;
-   CFE_SB_PipeId_t  ActuatorPipe;
-
-   uint32  ConnectCycleCnt;
-   uint16  NoSensorDisconnectCnt;
-   uint16  NoSensorDisconnectLim;
-   uint16  NoSensorResendActuatorLim;
+   uint16  Cycles;         /* Number of execution cycles for each schheduuler wakeup */
+   uint16  CycleDelay;     /* Delay(ms) between execution cycles                     */ 
    
-   boolean SensorPktSent;
-   uint32  SensorPktCnt;
+}  OS_PACK I42_ConfigExecute;
+#define I42_CONFIG_EXECUTE_CMD_DATA_LEN  (sizeof(I42_ConfigExecute) - CFE_SB_CMD_HDR_SIZE)
 
-   boolean ActuatorPktSent;
-   boolean ActuatorResend;
-   uint32  ActuatorPktCnt;
 
-   F42_ADP_SensorPkt    SensorPkt;
-   F42_ADP_ActuatorPkt  ActuatorPkt;
+/******************************************************************************
+** Telemetry Packets
+*/
 
-   char  InBuf[I42_SOCKET_BUF_LEN];
-   char  OutBuf[I42_SOCKET_BUF_LEN];
-
-} I42_Class;
-
-typedef struct
-{
+typedef struct {
 
    uint8    Header[CFE_SB_TLM_HDR_SIZE];
 
@@ -98,6 +88,57 @@ typedef struct
    
 } OS_PACK I42_HkPkt;
 #define I42_TLM_HK_LEN sizeof (I42_HkPkt)
+
+
+/******************************************************************************
+** I42_Class
+*/
+
+typedef struct {
+
+   /* 
+   ** App Framework
+   */   
+   CFE_SB_PipeId_t  CmdPipe;
+   CFE_SB_PipeId_t  ActuatorPipe;
+   CMDMGR_Class     CmdMgr;
+
+   /* 
+   ** I42 App 
+   */   
+   uint32  ConnectCycleCnt;
+   uint16  NoSensorDisconnectCnt;
+   uint16  NoSensorDisconnectLim;
+   uint16  NoSensorResendActuatorLim;
+   
+   uint16  ExecuteCycles;
+   uint16  ExecuteCycleDelay;
+   
+   boolean SensorPktSent;
+   uint32  SensorPktCnt;
+
+   boolean ActuatorPktSent;
+   boolean ActuatorResend;
+   uint32  ActuatorPktCnt;
+
+   F42_ADP_SensorPkt    SensorPkt;
+   F42_ADP_ActuatorPkt  ActuatorPkt;
+
+   char  InBuf[I42_SOCKET_BUF_LEN];
+   char  OutBuf[I42_SOCKET_BUF_LEN];
+
+   /*
+   ** Telemetry Packets
+   */
+   I42_HkPkt  HkPkt;
+   
+   /*
+   ** App Objects
+   */ 
+   NETIF_Class  NetIf;
+
+} I42_Class;
+
 
 /*
 ** Exported Data
@@ -132,9 +173,10 @@ boolean I42_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: I42_SendHousekeepingPkt
+** Function: I42_ConfigExecuteStepCmd
 **
 */
-void I42_SendHousekeepingPkt(void);
+boolean I42_ConfigExecuteStepCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
 
 #endif /* _i42_app_ */

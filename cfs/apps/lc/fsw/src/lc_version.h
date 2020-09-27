@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: lc_version.h 1.1.1.6 2015/03/04 16:54:18EST sstrege Exp  $
+**   $Id: lc_version.h 1.3.1.3 2017/08/29 16:50:51EDT sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -17,27 +17,6 @@
 **
 ** Notes:
 **
-**   $Log: lc_version.h  $
-**   Revision 1.1.1.6 2015/03/04 16:54:18EST sstrege 
-**   Changing the version number to 2.0.0 for documentation update release
-**   Revision 1.1.1.5 2015/03/04 16:15:46EST sstrege 
-**   Added copyright information
-**   Revision 1.1.1.4 2012/10/12 17:39:33EDT sstrege 
-**   Changing the version number for the branch tip to 9.9.9.
-**   Revision 1.1.1.3 2012/10/12 17:35:50EDT sstrege 
-**   Changing the version number for the release to 2.0.0.
-**   Revision 1.1.1.2 2012/09/20 15:38:15EDT nschweis 
-**   Changing the version number for the branch tip to 9.9.9.
-**   Revision 1.1.1.1 2012/09/20 15:33:05EDT nschweis 
-**   Changing the version number for the variant to 2.0.0.
-**   Revision 1.1 2012/07/31 16:53:40EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.2 2011/01/19 11:32:08EST jmdagost 
-**   Moved mission revision number from lc_version.h to lc_platform_cfg.h.
-**   Revision 1.1 2008/10/29 14:19:48EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_version_
@@ -50,7 +29,7 @@
 ** \name LC Version Identifiers */ 
 /** \{ */
 #define LC_MAJOR_VERSION          2
-#define LC_MINOR_VERSION          0
+#define LC_MINOR_VERSION          1
 #define LC_REVISION               0
 /** \} */
 

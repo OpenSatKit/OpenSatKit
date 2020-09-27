@@ -27,7 +27,7 @@
 */
 
 static int32 InitApp(void);
-static void ProcessCommands(void);
+static void ProcessCommandPipe(void);
 
 /*
 ** Global Data
@@ -64,8 +64,8 @@ void ISIM_AppMain(void)
    /*
    ** Perform application specific initialization
    */
-   if (Status == CFE_SUCCESS)
-   {
+   if (Status == CFE_SUCCESS) {
+      
        Status = InitApp();
    }
 
@@ -80,21 +80,16 @@ void ISIM_AppMain(void)
    /*
    ** Main process loop
    */
-   while (CFE_ES_RunLoop(&RunStatus))
-   {
+   while (CFE_ES_RunLoop(&RunStatus)) {
 
       /*
-      ** This is just a an example loop. There are many ways to control the
-      ** main loop execution flow.
+      ** ProcessCommands() pends indefinitely. The scheduler sends
+      ** a message to execute a simulation step.
       */
 	  
 	   CFE_ES_PerfLogExit(ISIM_MAIN_PERF_ID);
-      OS_TaskDelay(ISIM_RUNLOOP_DELAY);
+      ProcessCommandPipe();
       CFE_ES_PerfLogEntry(ISIM_MAIN_PERF_ID);
-
-      ISIM_Execute();
-
-      ProcessCommands();
 
    } /* End CFE_ES_RunLoop */
 
@@ -213,6 +208,7 @@ static int32 InitApp(void)
 
     CFE_SB_CreatePipe(&IsimApp.CmdPipe, ISIM_CMD_PIPE_DEPTH, ISIM_CMD_PIPE_NAME);
     CFE_SB_Subscribe(ISIM_CMD_MID, IsimApp.CmdPipe);
+    CFE_SB_Subscribe(ISIM_EXECUTE_MID, IsimApp.CmdPipe);
     CFE_SB_Subscribe(ISIM_SEND_HK_MID, IsimApp.CmdPipe);
 
     /*
@@ -251,29 +247,30 @@ static int32 InitApp(void)
 
 
 /******************************************************************************
-** Function: ProcessCommands
+** Function: ProcessCommandPipe
 **
 */
-static void ProcessCommands(void)
+static void ProcessCommandPipe(void)
 {
 
    int32           Status;
    CFE_SB_Msg_t*   CmdMsgPtr;
    CFE_SB_MsgId_t  MsgId;
 
-   Status = CFE_SB_RcvMsg(&CmdMsgPtr, IsimApp.CmdPipe, CFE_SB_POLL);
+   Status = CFE_SB_RcvMsg(&CmdMsgPtr, IsimApp.CmdPipe, CFE_SB_PEND_FOREVER);
 
-   if (Status == CFE_SUCCESS)
-   {
-
-      //OS_printf("0x%4X 0x%4X 0x%4X 0x%4X\n", ((uint16*)CmdMsgPtr)[0],((uint16*)CmdMsgPtr)[1],((uint16*)CmdMsgPtr)[2],((uint16*)CmdMsgPtr)[3]);
+   if (Status == CFE_SUCCESS) {
       
       MsgId = CFE_SB_GetMsgId(CmdMsgPtr);
 
-      switch (MsgId)
-      {
+      switch (MsgId) {
+         
          case ISIM_CMD_MID:
             CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
+            break;
+
+         case ISIM_EXECUTE_MID:
+            ISIM_Execute();
             break;
 
          case ISIM_SEND_HK_MID:
@@ -290,5 +287,5 @@ static void ProcessCommands(void)
 
    } /* End if SB received a packet */
 
-} /* End ProcessCommands() */
+} /* End ProcessCommandPipe() */
 

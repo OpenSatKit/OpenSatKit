@@ -1,5 +1,5 @@
 /*
-** Purpose: Define the OpenSat Kit Telemetry Output application. This app
+** Purpose: Define the OpenSatKit Telemetry Output application. This app
 **          receives telemetry packets from the software bus and uses its
 **          packet table to determine whether packets should be sent over
 **          a UDP socket.
@@ -27,8 +27,13 @@
 #include "pkttbl.h"
 #include "pktmgr.h"
 
+
+/***********************/
+/** Macro Definitions **/
+/***********************/
+
 /*
-** Macro Definitions
+** Events
 */
 
 #define KIT_TO_APP_INIT_EID               (KIT_TO_APP_BASE_EID + 0)
@@ -38,27 +43,41 @@
 #define KIT_TO_SET_RUN_LOOP_DELAY_EID     (KIT_TO_APP_BASE_EID + 4)
 #define KIT_TO_INVALID_RUN_LOOP_DELAY_EID (KIT_TO_APP_BASE_EID + 5)
 #define KIT_TO_DEMO_EID                   (KIT_TO_APP_BASE_EID + 6)
+#define KIT_TO_TEST_FILTER_EID            (KIT_TO_APP_BASE_EID + 7)
 
-/*
-** Type Definitions
+
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+
+/******************************************************************************
+** Command Packets
 */
 
-typedef struct
-{
+typedef struct {
 
-   uint16 RunLoopDelay;
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint16   RunLoopDelay;
 
-   CMDMGR_Class CmdMgr;
-   TBLMGR_Class TblMgr;
-   PKTTBL_Class PktTbl;
-   PKTMGR_Class PktMgr;
+}  KIT_TO_SetRunLoopDelayCmdParam;
+#define KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN  (sizeof(KIT_TO_SetRunLoopDelayCmdParam) - CFE_SB_CMD_HDR_SIZE)
 
-   CFE_SB_PipeId_t CmdPipe;
 
-} KIT_TO_Class;
+typedef struct {
 
-typedef struct
-{
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint16               FilterType;
+   PktUtil_FilterParam  FilterParam;
+
+}  KIT_TO_TestFilterCmdParam;
+#define KIT_TO_TEST_FILTER_CMD_DATA_LEN  (sizeof(KIT_TO_TestFilterCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+/******************************************************************************
+** Telemetry Packets
+*/
+typedef struct {
 
    uint8    Header[CFE_SB_TLM_HDR_SIZE];
 
@@ -76,25 +95,26 @@ typedef struct
    */
 
    uint8    PktTblLastLoadStatus;
-   boolean  SpareAlignByte;
+   uint8    PktTblSpareAlignByte;
    uint16   PktTblAttrErrCnt;
 
    /*
    ** PKTMGR Data
    */
 
+   uint8    StatsValid;
+   uint8    PktMgrSpareAlignByte;
    uint16   PktsPerSec;
    uint32   BytesPerSec;
    uint16   TlmSockId;
    char     TlmDestIp[PKTMGR_IP_STR_LEN];
 
 } OS_PACK KIT_TO_HkPkt;
-
 #define KIT_TO_TLM_HK_LEN sizeof (KIT_TO_HkPkt)
 
 
-typedef struct
-{
+
+typedef struct {
 
    uint8              TlmHeader[CFE_SB_TLM_HDR_SIZE];
    uint16             synch;
@@ -117,33 +137,53 @@ typedef struct
    char               str[10];
 
 } OS_PACK KIT_TO_DataTypePkt;
-
 #define KIT_TO_TLM_DATA_TYPE_LEN   sizeof (KIT_TO_DataTypePkt)
 
+
 /******************************************************************************
-** Command Packets
+** KIT_TO_Class
 */
+typedef struct {
 
-typedef struct
-{
+   /* 
+   ** App Framework
+   */   
+   CFE_SB_PipeId_t CmdPipe;
+   CMDMGR_Class CmdMgr;
+   TBLMGR_Class TblMgr;
 
-   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   uint16   RunLoopDelay;
+   /* 
+   ** KIT_TO App 
+   */   
+   uint16 RunLoopDelay;
 
-}  KIT_TO_SetRunLoopDelayCmdParam;
-#define KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN  (sizeof(KIT_TO_SetRunLoopDelayCmdParam) - CFE_SB_CMD_HDR_SIZE)
+   /*
+   ** Telemetry Packets
+   */
+   KIT_TO_HkPkt        HkPkt;
+   KIT_TO_DataTypePkt  DataTypePkt;
+   
+   
+   /*
+   ** App Objects
+   */ 
+   PKTTBL_Class PktTbl;
+   PKTMGR_Class PktMgr;
+
+} KIT_TO_Class;
 
 
-/*
-** Exported Data
-*/
+/*******************/
+/** Exported Data **/
+/*******************/
 
 extern KIT_TO_Class  KitTo;
 
 
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
+
 
 /******************************************************************************
 ** Function: KIT_TO_AppMain
@@ -180,5 +220,11 @@ boolean KIT_TO_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 */
 boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
+
+/******************************************************************************
+** Function: KIT_TO_TestFilterCmd
+**
+*/
+boolean KIT_TO_TestFilterCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 #endif /* _kit_to_app_ */

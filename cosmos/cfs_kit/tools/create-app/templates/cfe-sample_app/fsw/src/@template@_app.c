@@ -93,14 +93,14 @@ void @TEMPLATE@_AppInit(void)
     **  messages
     */
     CFE_SB_CreatePipe(&@TEMPLATE@_CommandPipe, @TEMPLATE@_PIPE_DEPTH,"@TEMPLATE@_CMD_PIPE");
-    CFE_SB_Subscribe(@TEMPLATE@_APP_CMD_MID, @TEMPLATE@_CommandPipe);
-    CFE_SB_Subscribe(@TEMPLATE@_APP_SEND_HK_MID, @TEMPLATE@_CommandPipe);
+    CFE_SB_Subscribe(@TEMPLATE@_CMD_MID, @TEMPLATE@_CommandPipe);
+    CFE_SB_Subscribe(@TEMPLATE@_SEND_HK_MID, @TEMPLATE@_CommandPipe);
 
     @TEMPLATE@_ResetCounters();
 
     CFE_SB_InitMsg(&@TEMPLATE@_HkTelemetryPkt,
-                   @TEMPLATE@_APP_HK_TLM_MID,
-                   @TEMPLATE@_APP_HK_TLM_LNGTH, TRUE);
+                   @TEMPLATE@_HK_TLM_MID,
+                   @TEMPLATE@_HK_TLM_LNGTH, TRUE);
 
     CFE_EVS_SendEvent (@TEMPLATE@_STARTUP_INF_EID, CFE_EVS_INFORMATION,
                "@TEMPLATE@ App Initialized. Version %d.%d.%d.%d",
@@ -127,11 +127,11 @@ void @TEMPLATE@_ProcessCommandPacket(void)
 
     switch (MsgId)
     {
-        case @TEMPLATE@_APP_CMD_MID:
+        case @TEMPLATE@_CMD_MID:
             @TEMPLATE@_ProcessGroundCommand();
             break;
 
-        case @TEMPLATE@_APP_SEND_HK_MID:
+        case @TEMPLATE@_SEND_HK_MID:
             @TEMPLATE@_ReportHousekeeping();
             break;
 

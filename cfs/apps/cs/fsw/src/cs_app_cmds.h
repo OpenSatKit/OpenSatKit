@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_app_cmds.h 1.3.1.1 2015/03/03 11:58:46EST sstrege Exp  $
+ **   $Id: cs_app_cmds.h 1.3 2017/02/16 15:33:17EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -19,20 +19,6 @@
  **   CFS Development Standards Document
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
- **
- ** Notes:
- **
- **   $Log: cs_app_cmds.h  $
- **   Revision 1.3.1.1 2015/03/03 11:58:46EST sstrege 
- **   Added copyright information
- **   Revision 1.3 2010/03/29 16:50:57EDT jmdagost 
- **   Updated comments for enable/disable command descriptions.
- **   Revision 1.2 2009/04/18 12:05:07EDT dkobe 
- **   Corrected doxygen comment typos
- **   Revision 1.1 2008/07/23 10:27:04EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- **
  ** 
  *************************************************************************/
 #ifndef _cs_app_cmds_

@@ -50,46 +50,44 @@ boolean UPLINK_ConfigMsgTunnelCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
    boolean RetStatus = TRUE;
    int     Index     = ConfigMsgTunnel->Index;
 
-   if (Index < UPLINK_MSG_TUNNEL_CNT)
-   {
+   if (Index < UPLINK_MSG_TUNNEL_CNT) {
 
-       if (ConfigMsgTunnel->Enabled == TRUE)
-       {
+      if (ConfigMsgTunnel->Enabled == TRUE) {
 
-          Uplink->MsgTunnel.Map[Index].Enabled = TRUE;
-          Uplink->MsgTunnel.Map[Index].OrgMsgId = ConfigMsgTunnel->OrgMsgId;
-          Uplink->MsgTunnel.Map[Index].NewMsgId = ConfigMsgTunnel->NewMsgId;
-          Uplink->MsgTunnel.Enabled = TRUE;
+         Uplink->MsgTunnel.Map[Index].Enabled = TRUE;
+         Uplink->MsgTunnel.Map[Index].OrgMsgId = ConfigMsgTunnel->OrgMsgId;
+         Uplink->MsgTunnel.Map[Index].NewMsgId = ConfigMsgTunnel->NewMsgId;
+         Uplink->MsgTunnel.Enabled = TRUE;
 
-          CFE_EVS_SendEvent(UPLINK_CONFIG_MSG_TUNNEL_ENA_INFO_EID, CFE_EVS_INFORMATION,
-                            "Enabled message tunnel map at index %d. Message 0x%04X mapped to 0x%04X",
-                            Index, Uplink->MsgTunnel.Map[Index].OrgMsgId, Uplink->MsgTunnel.Map[Index].NewMsgId);
+         CFE_EVS_SendEvent(UPLINK_CONFIG_MSG_TUNNEL_ENA_INFO_EID, CFE_EVS_INFORMATION,
+                           "Enabled message tunnel map at index %d. Message 0x%04X mapped to 0x%04X",
+                           Index, Uplink->MsgTunnel.Map[Index].OrgMsgId, Uplink->MsgTunnel.Map[Index].NewMsgId);
 
-       } /* End if enabling */
-       else
-       {
+      } /* End if enabling */
+      else {
 
-           Uplink->MsgTunnel.Map[Index].Enabled = FALSE;
-           CFE_EVS_SendEvent(UPLINK_CONFIG_MSG_TUNNEL_DIS_INFO_EID, CFE_EVS_INFORMATION,
-                             "Disabled message tunnel map at index %d. Message 0x%04X was mapped to 0x%04X",
-                             Index, Uplink->MsgTunnel.Map[Index].OrgMsgId, Uplink->MsgTunnel.Map[Index].NewMsgId);
-           Uplink->MsgTunnel.Map[Index].OrgMsgId = UPLINK_UNUSED_MSG_ID;
-           Uplink->MsgTunnel.Map[Index].NewMsgId = UPLINK_UNUSED_MSG_ID;
+         Uplink->MsgTunnel.Map[Index].Enabled = FALSE;
+         CFE_EVS_SendEvent(UPLINK_CONFIG_MSG_TUNNEL_DIS_INFO_EID, CFE_EVS_INFORMATION,
+                           "Disabled message tunnel map at index %d. Message 0x%04X was mapped to 0x%04X",
+                           Index, Uplink->MsgTunnel.Map[Index].OrgMsgId, Uplink->MsgTunnel.Map[Index].NewMsgId);
+         Uplink->MsgTunnel.Map[Index].OrgMsgId = UPLINK_UNUSED_MSG_ID;
+         Uplink->MsgTunnel.Map[Index].NewMsgId = UPLINK_UNUSED_MSG_ID;
 
-           /* Set global flag to true if any mappings are enabled */
-           for (Index=0; Index < UPLINK_MSG_TUNNEL_CNT; Index++)
-        	   Uplink->MsgTunnel.Enabled |= (Uplink->MsgTunnel.Map[Index].Enabled == TRUE);
+         /* Set global flag to true if any mappings are enabled */
+         for (Index=0; Index < UPLINK_MSG_TUNNEL_CNT; Index++)
+      	   Uplink->MsgTunnel.Enabled |= (Uplink->MsgTunnel.Map[Index].Enabled == TRUE);
 
 
-       } /* End if disabling */
+      } /* End if disabling */
 
    } /* End if valid index */
-   else
-   {
-	   RetStatus = FALSE;
-       CFE_EVS_SendEvent(UPLINK_CONFIG_MSG_TUNNEL_INDEX_ERR_EID, CFE_EVS_ERROR,
-                         "Configure message tunnel index %d exceeds maximum index of %d",
-                         Index, (UPLINK_MSG_TUNNEL_CNT-1));
+   else {
+	   
+      RetStatus = FALSE;
+       
+      CFE_EVS_SendEvent(UPLINK_CONFIG_MSG_TUNNEL_INDEX_ERR_EID, CFE_EVS_ERROR,
+                        "Configure message tunnel index %d exceeds maximum index of %d",
+                        Index, (UPLINK_MSG_TUNNEL_CNT-1));
 
    } /* End if invalid index */
 
@@ -114,8 +112,8 @@ void UPLINK_Constructor(UPLINK_Class*  UplinkPtr, uint16 Port)
    Uplink->RecvMsgPtr = (CFE_SB_MsgPtr_t) &(Uplink->RecvBuff[0]);
 
    Uplink->MsgTunnel.Enabled = FALSE;
-   for (i=0; i < UPLINK_MSG_TUNNEL_CNT; i++)
-   {
+   for (i=0; i < UPLINK_MSG_TUNNEL_CNT; i++) {
+      
       Uplink->MsgTunnel.Map[i].Enabled  = FALSE;
       Uplink->MsgTunnel.Map[i].OrgMsgId = UPLINK_UNUSED_MSG_ID;
       Uplink->MsgTunnel.Map[i].NewMsgId = UPLINK_UNUSED_MSG_ID;
@@ -127,32 +125,32 @@ void UPLINK_Constructor(UPLINK_Class*  UplinkPtr, uint16 Port)
 
    CFE_PSP_MemSet(&(Uplink->SocketAddress), 0, sizeof(Uplink->SocketAddress));
 
-   if ( (Uplink->SocketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) >= 0)
-   {
+   if ( (Uplink->SocketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) >= 0) {
 
       Uplink->SocketAddress.sin_family      = AF_INET;
       Uplink->SocketAddress.sin_addr.s_addr = htonl(INADDR_ANY);
       Uplink->SocketAddress.sin_port        = htons(Port);
 
-      if ( (bind(Uplink->SocketId, (struct sockaddr *) &(Uplink->SocketAddress), sizeof(Uplink->SocketAddress)) >= 0) )
-      {
+      if ( (bind(Uplink->SocketId, (struct sockaddr *) &(Uplink->SocketAddress), sizeof(Uplink->SocketAddress)) >= 0) ) {
 
-    	  Uplink->Connected = TRUE;
-          /* Set the socket to non-blocking. Not available in vxWorks, so conditionally compiled. */
-          #ifdef _HAVE_FCNTL_
-             fcntl(Uplink->SocketId, F_SETFL, O_NONBLOCK);
-          #endif
+    	   Uplink->Connected = TRUE;
+         /* Set the socket to non-blocking. Not available in vxWorks, so conditionally compiled. */
+         #ifdef _HAVE_FCNTL_
+            fcntl(Uplink->SocketId, F_SETFL, O_NONBLOCK);
+         #endif
 
       }/* End if successful bind */
-      else
-      {
-          CFE_EVS_SendEvent(UPLINK_SOCKET_BIND_ERR_EID,CFE_EVS_ERROR,"Socket bind failed. Status = %d", errno);
+      else {
+         
+         CFE_EVS_SendEvent(UPLINK_SOCKET_BIND_ERR_EID,CFE_EVS_ERROR,
+                           "Socket bind failed. Status = %d", errno);
       }
 
    } /* End if successful socket creation */
-   else
-   {
-       CFE_EVS_SendEvent(UPLINK_SOCKET_CREATE_ERR_EID, CFE_EVS_ERROR, "Socket creation failed. Status = %d", errno);
+   else {
+      
+      CFE_EVS_SendEvent(UPLINK_SOCKET_CREATE_ERR_EID, CFE_EVS_ERROR, "Socket creation failed. Status = %d", errno);
+   
    }
 
 
@@ -168,48 +166,47 @@ void UPLINK_Constructor(UPLINK_Class*  UplinkPtr, uint16 Port)
 int UPLINK_Read(uint16 MaxMsgRead)
 {
 
-	 unsigned int AddrLen = sizeof(Uplink->SocketAddress);
-    int i = 0;
-    int Status;
+	unsigned int AddrLen = sizeof(Uplink->SocketAddress);
+   int i = 0;
+   int Status;
 
-    if (Uplink->Connected == FALSE) return i;
+   if (Uplink->Connected == FALSE) return i;
 
-    CFE_PSP_MemSet(&(Uplink->SocketAddress), 0, sizeof(Uplink->SocketAddress));
+   CFE_PSP_MemSet(&(Uplink->SocketAddress), 0, sizeof(Uplink->SocketAddress));
 
-    for (i = 0; i < MaxMsgRead; i++)
-    {
+   for (i = 0; i < MaxMsgRead; i++) {
 
-        Status = recvfrom(Uplink->SocketId, (char *)&(Uplink->RecvBuff[i]), sizeof(Uplink->RecvBuff), MSG_DONTWAIT,
-                         (struct sockaddr *) &(Uplink->SocketAddress), &AddrLen);
+      Status = recvfrom(Uplink->SocketId, (char *)&(Uplink->RecvBuff[i]), sizeof(Uplink->RecvBuff), MSG_DONTWAIT,
+                       (struct sockaddr *) &(Uplink->SocketAddress), &AddrLen);
 
-        if ( (Status < 0) && (errno == EWOULDBLOCK) )
-            break; /* no (more) messages */
-        else
-        {
-            if (Status <= UPLINK_RECV_BUFF_LEN)
-            {
-            	 CFE_EVS_SendEvent(UPLINK_DEBUG_EID, CFE_EVS_DEBUG, "UPLINK_Read: Read %d bytes from socket\n",Status);
-                Uplink->RecvMsgCnt++;
-                if (Uplink->MsgTunnel.Enabled)
-                {
-                	ProcessMsgTunnelMap();
+      if ( (Status < 0) && (errno == EWOULDBLOCK) )
+         break; /* no (more) messages */
+      else {
+            
+         if (Status <= UPLINK_RECV_BUFF_LEN) {
 
-                } /* End if map enabled */
-                CFE_SB_SendMsg((CFE_SB_MsgPtr_t) &(Uplink->RecvBuff[i]));
-            }
-            else
-            {
-                Uplink->RecvMsgErrCnt++;
-                CFE_EVS_SendEvent(UPLINK_RECV_LEN_ERR_EID,CFE_EVS_ERROR,
-                		          "Command dropped (too long). Header: 0x%02x%2x 0x%02x%2x 0x%02x%2x 0x%02x%2x",
-                		          Uplink->RecvBuff[0], Uplink->RecvBuff[1], Uplink->RecvBuff[2], Uplink->RecvBuff[3],
-                               Uplink->RecvBuff[4], Uplink->RecvBuff[5], Uplink->RecvBuff[6], Uplink->RecvBuff[7]);
-            }
-        }
+            CFE_EVS_SendEvent(UPLINK_DEBUG_EID, CFE_EVS_DEBUG,
+                              "UPLINK_Read: Read %d bytes from socket\n",Status);
+            Uplink->RecvMsgCnt++;
+            if (Uplink->MsgTunnel.Enabled) {
+               
+               ProcessMsgTunnelMap();
 
-    } /* End receive loop */
+            } /* End if map enabled */
+            CFE_SB_SendMsg((CFE_SB_MsgPtr_t) &(Uplink->RecvBuff[i]));
+         }
+         else {
+            
+            Uplink->RecvMsgErrCnt++;
+            CFE_EVS_SendEvent(UPLINK_RECV_LEN_ERR_EID,CFE_EVS_ERROR,
+                              "Command dropped (too long). Header: 0x%02x%2x 0x%02x%2x 0x%02x%2x 0x%02x%2x",
+                		         Uplink->RecvBuff[0], Uplink->RecvBuff[1], Uplink->RecvBuff[2], Uplink->RecvBuff[3],
+                              Uplink->RecvBuff[4], Uplink->RecvBuff[5], Uplink->RecvBuff[6], Uplink->RecvBuff[7]);
+         }
+      } /* End if received a message */
+   } /* End receive loop */
 
-    return i;
+   return i;
 
 } /* End UPLINK_Read() */
 
@@ -221,12 +218,12 @@ int UPLINK_Read(uint16 MaxMsgRead)
 void UPLINK_ResetStatus()
 {
 
-    Uplink->RecvMsgCnt = 0;
-    Uplink->RecvMsgErrCnt = 0;
-    Uplink->MsgTunnel.MappingsPerformed = 0;
-    Uplink->MsgTunnel.LastMapping.Index = UPLINK_MSG_TUNNEL_CNT;
-    Uplink->MsgTunnel.LastMapping.OrgMsgId = UPLINK_UNUSED_MSG_ID;
-    Uplink->MsgTunnel.LastMapping.NewMsgId = UPLINK_UNUSED_MSG_ID;
+   Uplink->RecvMsgCnt = 0;
+   Uplink->RecvMsgErrCnt = 0;
+   Uplink->MsgTunnel.MappingsPerformed = 0;
+   Uplink->MsgTunnel.LastMapping.Index = UPLINK_MSG_TUNNEL_CNT;
+   Uplink->MsgTunnel.LastMapping.OrgMsgId = UPLINK_UNUSED_MSG_ID;
+   Uplink->MsgTunnel.LastMapping.NewMsgId = UPLINK_UNUSED_MSG_ID;
 
 } /* End UPLINK_ResetStatus() */
 
@@ -261,23 +258,20 @@ static void ProcessMsgTunnelMap(void)
    int    i;
    CFE_SB_MsgId_t OrgMsgId = CFE_SB_GetMsgId(Uplink->RecvMsgPtr);
 
-   for (i=0; i < UPLINK_MSG_TUNNEL_CNT; i++)
-   {
+   for (i=0; i < UPLINK_MSG_TUNNEL_CNT; i++) {
 
-      if (Uplink->MsgTunnel.Map[i].Enabled)
-      {
+      if (Uplink->MsgTunnel.Map[i].Enabled) {
 
-    	 if (OrgMsgId == Uplink->MsgTunnel.Map[i].OrgMsgId)
-         {
+    	   if (OrgMsgId == Uplink->MsgTunnel.Map[i].OrgMsgId) {
+          
             CFE_SB_SetMsgId(Uplink->RecvMsgPtr,Uplink->MsgTunnel.Map[i].NewMsgId);
-    	    CFE_SB_GenerateChecksum(Uplink->RecvMsgPtr);
-    	    Uplink->MsgTunnel.MappingsPerformed++;
-    	    Uplink->MsgTunnel.LastMapping.Index = i;
-    	    Uplink->MsgTunnel.LastMapping.OrgMsgId = OrgMsgId;
-    	    Uplink->MsgTunnel.LastMapping.NewMsgId = Uplink->MsgTunnel.Map[i].NewMsgId;
-    	    break;
+            CFE_SB_GenerateChecksum(Uplink->RecvMsgPtr);
+            Uplink->MsgTunnel.MappingsPerformed++;
+            Uplink->MsgTunnel.LastMapping.Index = i;
+            Uplink->MsgTunnel.LastMapping.OrgMsgId = OrgMsgId;
+            Uplink->MsgTunnel.LastMapping.NewMsgId = Uplink->MsgTunnel.Map[i].NewMsgId;
+            break;
          }
-
       } /* End if tunnel enabled */
 
    } /* End map loop */

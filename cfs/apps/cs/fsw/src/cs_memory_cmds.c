@@ -1,37 +1,18 @@
 /************************************************************************
  ** File:
- **   $Id: cs_memory_cmds.c 1.7.1.1 2015/03/03 11:58:21EST sstrege Exp  $
+ **   $Id: cs_memory_cmds.c 1.8 2017/03/29 17:29:03EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
  **   This software was created at NASA's Goddard Space Flight Center.
  **   This software is governed by the NASA Open Source Agreement and may be 
  **   used, distributed and modified only pursuant to the terms of that 
- **   agreement. 
+ **   agreement.
  **
  ** Purpose: 
  **   The CFS Checksum (CS) Application's commands for checking Memory
- **
- **   $Log: cs_memory_cmds.c  $
- **   Revision 1.7.1.1 2015/03/03 11:58:21EST sstrege 
- **   Added copyright information
- **   Revision 1.7 2015/01/26 15:06:48EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.6 2011/09/06 14:39:20EDT jmdagost 
- **   Changed local data structures to pointers and updated code accordingly.
- **   Revision 1.5 2011/06/15 16:19:16EDT jmdagost 
- **   Initialized all local variables except local structures and some strings.
- **   Revision 1.4 2010/03/29 16:57:18EDT jmdagost 
- **   Modified enable/disable commands to update the definitions table as well as the results table.
- **   Revision 1.3 2010/03/09 14:58:42EST jmdagost 
- **   Corrected event messages (Max ID parameter).
- **   Revision 1.2 2008/10/17 08:39:52EDT njyanchik 
- **   Updated Event messages
- **   Revision 1.1 2008/07/23 15:27:04BST njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
  **
  *************************************************************************/
 
@@ -70,6 +51,10 @@ void CS_DisableMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
         CS_AppData.MemoryCSState = CS_STATE_DISABLED;
         CS_ZeroMemoryTempValues();
         
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        CS_UpdateCDS();
+#endif
+        
         CFE_EVS_SendEvent (CS_DISABLE_MEMORY_INF_EID,
                            CFE_EVS_INFORMATION,
                            "Checksumming of Memory is Disabled");
@@ -93,6 +78,11 @@ void CS_EnableMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
     if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
     {
         CS_AppData.MemoryCSState = CS_STATE_ENABLED;
+        
+        
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        CS_UpdateCDS();
+#endif
         
         CFE_EVS_SendEvent (CS_ENABLE_MEMORY_INF_EID,
                            CFE_EVS_INFORMATION,
@@ -137,7 +127,7 @@ void CS_ReportBaselineEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
                                    CFE_EVS_INFORMATION,
                                    "Report baseline of Memory Entry %d is 0x%08X", 
                                    EntryID,
-                                   Baseline);
+                                   (unsigned int)Baseline);
             }
             else
             {
@@ -192,7 +182,8 @@ void CS_RecomputeBaselineMemoryCmd (CFE_SB_MsgPtr_t MessagePtr)
         CmdPtr = (CS_EntryCmd_t *) MessagePtr;
         EntryID = CmdPtr -> EntryID;
         
-        if (CS_AppData.ChildTaskInUse == FALSE)
+        
+        if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
         {
 
             
@@ -202,8 +193,7 @@ void CS_RecomputeBaselineMemoryCmd (CFE_SB_MsgPtr_t MessagePtr)
             {
 
                 /* There is no child task running right now, we can use it*/
-                CS_AppData.ChildTaskInUse                = TRUE;
-                CS_AppData.OneShotTaskInUse              = FALSE;
+                CS_AppData.RecomputeInProgress           = TRUE;
                 
                 /* fill in child task variables */
                 CS_AppData.ChildTaskTable                = CS_MEMORY_TABLE;
@@ -233,9 +223,9 @@ void CS_RecomputeBaselineMemoryCmd (CFE_SB_MsgPtr_t MessagePtr)
                                        CFE_EVS_ERROR,
                                        "Recompute baseline of Memory Entry ID %d failed, ES_CreateChildTask returned:  0x%08X",
                                        EntryID,
-                                       Status);
+                                       (unsigned int)Status);
                     CS_AppData.CmdErrCounter++;
-                    CS_AppData.ChildTaskInUse = FALSE;
+                    CS_AppData.RecomputeInProgress = FALSE;
                 }
             }
             else
@@ -264,7 +254,7 @@ void CS_RecomputeBaselineMemoryCmd (CFE_SB_MsgPtr_t MessagePtr)
             /*send event that we can't start another task right now */
             CFE_EVS_SendEvent (CS_RECOMPUTE_MEMORY_CHDTASK_ERR_EID,
                                CFE_EVS_ERROR,
-                               "Recompute baseline of Memory Entry ID %d failed: a child task is in use",
+                               "Recompute baseline of Memory Entry ID %d failed: child task in use",
                                EntryID);
             CS_AppData.CmdErrCounter++;
         }
@@ -453,7 +443,7 @@ void CS_GetEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
                 CFE_EVS_SendEvent (CS_GET_ENTRY_ID_MEMORY_INF_EID,
                                    CFE_EVS_INFORMATION,
                                    "Memory Found Address 0x%08X in Entry ID %d", 
-                                   CmdPtr -> Address,
+                                   (unsigned int)(CmdPtr -> Address),
                                    Loop);
                 EntryFound = TRUE;
             }
@@ -464,7 +454,7 @@ void CS_GetEntryIDMemoryCmd(CFE_SB_MsgPtr_t MessagePtr)
             CFE_EVS_SendEvent (CS_GET_ENTRY_ID_MEMORY_NOT_FOUND_INF_EID,
                                CFE_EVS_INFORMATION,
                                "Address 0x%08X was not found in Memory table",
-                               CmdPtr -> Address);
+                               (unsigned int)(CmdPtr -> Address));
         }
         CS_AppData.CmdCounter++;
     }

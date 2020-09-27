@@ -30,8 +30,8 @@ require 'osk_flight'
 MSG_TBL_ID = 0
 SCH_TBL_ID = 1
 
-MSG_TBL_DMP_FILE = "kit_sch_msg_tb~.json"
-SCH_TBL_DMP_FILE = "kit_sch_sch_tb~.json"
+MSG_TBL_DMP_FILE = "osk_sch_msg_tbl~.json"
+SCH_TBL_DMP_FILE = "osk_sch_sch_tbl~.json"
 
 FLT_MSG_TBL_DMP_FILE = "#{Osk::FLT_SRV_DIR}/#{MSG_TBL_DMP_FILE}"
 GND_MSG_TBL_DMP_FILE = "#{Osk::GND_SRV_TBL_DIR}/#{MSG_TBL_DMP_FILE}"
@@ -50,22 +50,31 @@ def mng_app_runtime(screen, cmd)
 
    if (cmd == "DISPLAY_MSG")
       create_kit_sch_msg_file
-   elsif (cmd == "LOAD_MSG_ENTRY")
-      Osk::Ops::send_flt_cmd("KIT_SCH", "LOAD_MSG_ENTRY")
+   elsif (cmd == "LOAD_MSG_TBL_ENTRY")
+      Osk::Ops::send_flt_cmd("KIT_SCH", "LOAD_MSG_TBL_ENTRY")
+   elsif (cmd == "SEND_MSG_TBL_ENTRY")
+      Osk::Ops::send_flt_cmd("KIT_SCH", "SEND_MSG_TBL_ENTRY")
    elsif (cmd == "DISPLAY_SCH")
       create_kit_sch_sum_file
-   elsif (cmd == "CFG_SCH_ENTRY")
-      Osk::Ops::send_flt_cmd("KIT_SCH", "CFG_SCH_ENTRY")
-   elsif (cmd == "LOAD_SCH_ENTRY")
-      #TODO
-      Osk::Ops::send_flt_cmd("KIT_SCH", "LOAD_SCH_ENTRY")
+   elsif (cmd == "CFG_SCH_TBL_ENTRY")
+      Osk::Ops::send_flt_cmd("KIT_SCH", "CFG_SCH_TBL_ENTRY")
+   elsif (cmd == "LOAD_SCH_TBL_ENTRY")
+      Osk::Ops::send_flt_cmd("KIT_SCH", "LOAD_SCH_TBL_ENTRY")
+   elsif (cmd == "SEND_SCH_TBL_ENTRY")
+      Osk::Ops::send_flt_cmd("KIT_SCH", "SEND_SCH_TBL_ENTRY")
    elsif (cmd == "TO_ADD_PKT")
       Osk::Ops::send_flt_cmd("KIT_TO", "ADD_PKT")
    elsif (cmd == "TO_REMOVE_PKT")
       Osk::Ops::send_flt_cmd("KIT_TO", "REMOVE_PKT")
+   elsif (cmd == "TO_SEND_PKT_TLM")
+      Osk::Ops::send_flt_cmd("KIT_TO", "SEND_PKT_TLM")
+   elsif (cmd == "TO_UPDATE_FILTER")
+      Osk::Ops::send_flt_cmd("KIT_TO", "UPDATE_FILTER")
    elsif (cmd == "MANAGE_JSON_TBL")
       tbl_scr_name = File.basename(Osk::JSON_TBL_MGMT_SCR_FILE, '.txt').upcase
       display("CFS_KIT #{tbl_scr_name}",50,50)
+   elsif (cmd == "KIT_SCH_TBL_ENTRY_TLM")
+      Cosmos.run_process("ruby tools/PacketViewer -p \"KIT_SCH TBL_ENTRY_TLM_PKT\"")
    elsif (cmd == "CONFIG_EDITOR")
       spawn("ruby #{Osk::COSMOS_CFG_EDITOR}")
    else
@@ -92,6 +101,8 @@ def create_kit_sch_sum_file()
       FswApp.validate_cmd(saved_validate_state)
       return
    end
+   
+   wait 2
    
    if (Osk::system.file_transfer.get(FLT_MSG_TBL_DMP_FILE,GND_MSG_TBL_DMP_FILE))
       tbl_file = File.read(GND_MSG_TBL_DMP_FILE)
@@ -155,8 +166,8 @@ def create_kit_sch_sum_file()
             msg_id = activity["activity"]["msg-id"]
             f.write(" %2d  "      % slot["slot"]["index"])
             f.write("  %2d    "   % activity["activity"]["index"])
-            f.write("  %-5s  "    % activity["activity"]["enable"])
-            f.write("   %2d     " % activity["activity"]["frequency"])
+            f.write("  %-5s  "    % activity["activity"]["enabled"])
+            f.write("   %2d     " % activity["activity"]["period"])
             f.write("  %2d   "    % activity["activity"]["offset"])
             f.write("   %3d     " % msg_id)
             if msg_array[msg_id].nil?
@@ -192,6 +203,8 @@ def create_kit_sch_msg_file()
       FswApp.validate_cmd(saved_validate_state)
       return
    end
+   
+   wait 2
    
    if (Osk::system.file_transfer.get(FLT_MSG_TBL_DMP_FILE,GND_MSG_TBL_DMP_FILE))
       tbl_file = File.read(GND_MSG_TBL_DMP_FILE)

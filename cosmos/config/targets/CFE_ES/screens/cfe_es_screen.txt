@@ -50,7 +50,7 @@ VERTICALBOX "Learn"
   MATRIXBYCOLUMNS 3 5
 
     BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "DEMO")'
-    NAMED_WIDGET demo COMBOBOX APP_MGMT PERF_MON
+    NAMED_WIDGET demo COMBOBOX APP_MGMT PERF_MON PERF_MON_SCRIPT
     LABEL "    "
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TUTORIAL")'

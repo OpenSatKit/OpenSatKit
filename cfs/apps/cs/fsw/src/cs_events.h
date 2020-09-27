@@ -1,8 +1,8 @@
  /************************************************************************
  ** File:
- **   $Id: cs_events.h 1.12.1.1 2015/03/03 11:58:56EST sstrege Exp  $
+ **   $Id: cs_events.h 1.7 2017/03/29 17:29:03EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -19,37 +19,6 @@
  **   CFS Development Standards Document
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
- **
- ** Notes:
- **
- **   $Log: cs_events.h  $
- **   Revision 1.12.1.1 2015/03/03 11:58:56EST sstrege 
- **   Added copyright information
- **   Revision 1.12 2015/02/25 16:38:27EST lwalling 
- **   Document issue when recomputing the checksum for the CS Tables Definition Table when one entry is for the Definition table itself
- **   Revision 1.11 2011/09/06 14:51:21EDT jmdagost 
- **   Corrected app-not-found and table-not-found event IDs, and updated many doxygen comments.
- **   Revision 1.10 2010/07/19 13:28:36EDT jmdagost 
- **   Corrected doxygen formatting of field descriptions for various event messages.
- **   Revision 1.9 2010/04/14 16:12:50EDT jmdagost 
- **   Updated doxygen descriptions for 12 messages to include possibility that unfound table/app entry might be marked as CS_STATE_EMPTY.
- **   Revision 1.8 2010/04/13 17:57:35EDT jmdagost 
- **   Added event messages for table validation, including duplicate names for apps or tables, enabled/disabled entries with zero-length names, and summary messages for validation.
- **   Revision 1.7 2010/03/29 16:47:35EDT jmdagost 
- **   Added debug-level messages for "entry missing from definitions table" events.
- **   Revision 1.6 2009/06/11 11:20:15EDT rmcgraw 
- **   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
- **   Revision 1.5 2008/10/17 08:39:59EDT njyanchik 
- **   Updated Event messages
- **   Revision 1.4 2008/07/28 16:56:08BST njyanchik 
- **   Fixed app/table naming issues in event messages
- **   Revision 1.3 2008/07/23 16:03:48BST njyanchik 
- **   Update CS with versioning information
- **   Revision 1.2 2008/07/23 15:34:35BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:15EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
  ** 
  *************************************************************************/
 
@@ -261,8 +230,8 @@
  */
 #define CS_RECOMPUTE_CFECORE_CREATE_CHDTASK_ERR_EID         15  
 
- /** \brief <tt> 'Recompute cFE core failed: a child task is in use' </tt>
- **  \event <tt> 'Recompute cFE core failed: a child task is in use' </tt>
+ /** \brief <tt> 'Recompute cFE core failed: child task in use' </tt>
+ **  \event <tt> 'Recompute cFE core failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -305,8 +274,8 @@
  */
 #define CS_RECOMPUTE_OS_CREATE_CHDTASK_ERR_EID              18
 
- /** \brief <tt> 'Recompute OS code segment failed: a child task is in use' </tt>
- **  \event <tt> 'Recompute OS code segment failed: a child task is in use' </tt>
+ /** \brief <tt> 'Recompute OS code segment failed: child task in use' </tt>
+ **  \event <tt> 'Recompute OS code segment failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -350,8 +319,8 @@
  */
 #define CS_ONESHOT_CREATE_CHDTASK_ERR_EID                   21
 
- /** \brief <tt> 'OneShot checksum failed: a child task is in use' </tt>
- **  \event <tt> 'OneShot checksum failed: a child task is in use' </tt>
+ /** \brief <tt> 'OneShot checksum failed: child task in use' </tt>
+ **  \event <tt> 'OneShot checksum failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -543,8 +512,8 @@
  */
 #define CS_CC1_ERR_EID                                      34
 
- /** \brief <tt> 'App terminating, err = 0x\%08X' </tt>
- **  \event <tt> 'App terminating, err = 0x\%08X' </tt>
+ /** \brief <tt> 'App terminating, RunStatus:0x\%08X, RC:0x\%08X' </tt>
+ **  \event <tt> 'App terminating, RunStatus:0x\%08X, RC:0x\%08X' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -553,8 +522,10 @@
  **  This event message is issued when CS has a critical error in its
  **  main loop
  **
- **  The \c err field specifies the error code that caused CS to 
- **  stop execution.
+ **  The \c RunStatus field specifies the reason for CS to 
+ **  stop execution. The \c RC field is the return code from
+ **  Application initialization, read Software Message Bus error
+ **  or an unrecoverable error from the command processing
  */
 #define CS_EXIT_ERR_EID                                     35
 
@@ -706,8 +677,8 @@
  */
 #define CS_RECOMPUTE_INVALID_ENTRY_EEPROM_ERR_EID           44
 
- /** \brief <tt> 'Recompute baseline of Eeprom Entry ID \%d failed: a child task is in use' </tt>
- **  \event <tt> 'Recompute baseline of Eeprom Entry ID \%d failed: a child task is in use' </tt>
+ /** \brief <tt> 'Recompute baseline of Eeprom Entry ID \%d failed: child task in use' </tt>
+ **  \event <tt> 'Recompute baseline of Eeprom Entry ID \%d failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -953,8 +924,8 @@
  */
 #define CS_RECOMPUTE_INVALID_ENTRY_MEMORY_ERR_EID           59
 
- /** \brief <tt> 'Recompute baseline of Memory Entry ID \%d failed: a child task is in use' </tt>
- **  \event <tt> 'Recompute baseline of Memory Entry ID \%d failed: a child task is in use' </tt>
+ /** \brief <tt> 'Recompute baseline of Memory Entry ID \%d failed: child task in use' </tt>
+ **  \event <tt> 'Recompute baseline of Memory Entry ID \%d failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -1199,8 +1170,8 @@
  */
 #define CS_RECOMPUTE_UNKNOWN_NAME_TABLES_ERR_EID            74
 
- /** \brief <tt> 'Tables recompute baseline for table \%s failed: a child task is in use' </tt>
- **  \event <tt> 'Tables recompute baseline for table \%s failed: a child task is in use' </tt>
+ /** \brief <tt> 'Tables recompute baseline for table \%s failed: child task in use' </tt>
+ **  \event <tt> 'Tables recompute baseline for table \%s failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -1403,8 +1374,8 @@
  */
 #define CS_RECOMPUTE_UNKNOWN_NAME_APP_ERR_EID               87
 
- /** \brief <tt> 'App recompute baseline for app \%s failed: a child task is in use' </tt>
- **  \event <tt> 'App recompute baseline for app \%s failed: a child task is in use' </tt>
+ /** \brief <tt> 'App recompute baseline for app \%s failed: child task in use' </tt>
+ **  \event <tt> 'App recompute baseline for app \%s failed: child task in use' </tt>
  **  
  **  \par Type: ERROR
  **
@@ -1996,8 +1967,8 @@
  **  \par Cause:
  **
  **  This event message is issued when the table could not be initialized at startup.
- **.
- **  The \c Result field specifies the return code of CS_TableInit
+ **
+ **  The \c Result field specifies the return code of CS_TableInit.
  */
 #define CS_UPDATE_APP_ERR_EID                                 126
 
@@ -2177,7 +2148,7 @@
  **  \par Cause:
  **
  **  This event message when CS completes validation of the tables definition table.  This message
- **  reports the number of successful (#CS_STATE_ENABLE or #CS_STATE_DISABLE) entries, the number of 
+ **  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of 
  **  bad entries (due to invalid state definitions or duplicate names), and the number of entries 
  **  marked as #CS_STATE_EMPTY.
  **
@@ -2220,7 +2191,7 @@
  **  \par Cause:
  **
  **  This event message when CS completes validation of the Apps definition table.  This message
- **  reports the number of successful (#CS_STATE_ENABLE or #CS_STATE_DISABLE) entries, the number of 
+ **  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of 
  **  bad entries (due to invalid state definitions or duplicate names), and the number of entries 
  **  marked as #CS_STATE_EMPTY.
  **
@@ -2235,7 +2206,7 @@
  **  \par Cause:
  **
  **  This event message when CS completes validation of the Memory definition table.  This message
- **  reports the number of successful (#CS_STATE_ENABLE or #CS_STATE_DISABLE) entries, the number of 
+ **  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of 
  **  bad entries (due to invalid state definitions or bad range), and the number of entries 
  **  marked as #CS_STATE_EMPTY.
  **
@@ -2250,12 +2221,45 @@
  **  \par Cause:
  **
  **  This event message when CS completes validation of the Eeprom definition table.  This message
- **  reports the number of successful (#CS_STATE_ENABLE or #CS_STATE_DISABLE) entries, the number of 
+ **  reports the number of successful (#CS_STATE_ENABLED or #CS_STATE_DISABLED) entries, the number of 
  **  bad entries (due to invalid state definitions or bad range), and the number of entries 
  **  marked as #CS_STATE_EMPTY.
  **
  */
 #define CS_VAL_EEPROM_INF_EID                                         144
+
+/**
+**  \brief <tt> 'Critical Data Store Access Error' </tt>
+**
+**  \event <tt> 'Critical Data Store access error = 0x\%08X' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  The CS application optionally stores the table states
+**  in the Critical Data Store (CDS).  This ensures that CS
+**  will not overwrite old data storage files following a processor reset.
+**  This event indicates an error at startup as CS is initializing access
+**  to the Critical Data Store.  Subsequent CDS errors are ignored by CS.
+*/
+#define CS_INIT_CDS_ERR_EID 145
+
+
+ /** \brief <tt> 'App terminating, RunStatus:0x\%08X' </tt>
+ **  \event <tt> 'App terminating, RunStatus:0x\%08X' </tt>
+ **  
+ **  \par Type: INFORMATION
+ **
+ **  \par Cause:
+ **
+ **  This event message is issued when CS has exited without error 
+ **  or exception from its main loop
+ **
+ **  The \c RunStatus field specifies the reason for CS to 
+ **  stop execution.
+ */
+#define CS_EXIT_INF_EID                                     146
 
 #endif /* _cs_events_ */
 

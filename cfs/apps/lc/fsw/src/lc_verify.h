@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_verify.h 1.2 2015/03/04 16:09:51EST sstrege Exp  $
+**   $Id: lc_verify.h 1.4 2017/03/07 17:35:09EST mdeschu Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -17,19 +17,6 @@
 **
 ** Notes:
 **
-**   $Log: lc_verify.h  $
-**   Revision 1.2 2015/03/04 16:09:51EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:39EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.3 2010/01/07 13:53:47EST lwalling 
-**   Update LC configuration header files and configuration verification header file
-**   Revision 1.2 2008/12/03 13:59:31EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:45EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_verify_
@@ -94,6 +81,8 @@
     #error LC_MAX_WATCHPOINTS must not be less than 1
   #elif LC_MAX_WATCHPOINTS > 65520
     #error LC_MAX_WATCHPOINTS must not exceed 65520 (OxFFF0)
+  #elif LC_MAX_WATCHPOINTS % 4 != 0
+    #error LC_MAX_WATCHPOINTS must be a multiple of 4
   #endif 
 
   /*
@@ -105,6 +94,8 @@
     #error LC_MAX_ACTIONPOINTS must not be less than 1
   #elif LC_MAX_ACTIONPOINTS > 65535
     #error LC_MAX_ACTIONPOINTS must not exceed 65535
+  #elif LC_MAX_ACTIONPOINTS % 2 != 0
+    #error LC_MAX_ACTIONPOINTS must be a multiple of 2
   #endif 
 
   /*

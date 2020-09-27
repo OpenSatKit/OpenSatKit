@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_cmds.h 1.3.1.1 2015/03/03 11:57:57EST sstrege Exp  $
+ **   $Id: cs_cmds.h 1.4 2017/03/15 16:54:58EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -19,19 +19,6 @@
  **   CFS Development Standards Document
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
- **
- ** Notes:
- **
- **   $Log: cs_cmds.h  $
- **   Revision 1.3.1.1 2015/03/03 11:57:57EST sstrege 
- **   Added copyright information
- **   Revision 1.3 2008/07/28 14:05:33EDT njyanchik 
- **   Fix some errors with the version number update
- **   Revision 1.2 2008/07/23 15:34:39BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:11EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
  ** 
  *************************************************************************/
 #ifndef _cs_cmds_
@@ -43,6 +30,61 @@
  **
  **************************************************************************/
 #include "cfe.h"
+
+
+/************************************************************************/
+/** \brief Process noop command
+ **  
+ **  \par Description
+ **       Processes a noop ground command.
+ **
+ **  \par Assumptions, External Events, and Notes:
+ **       None
+ **       
+ **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+ **                             references the software bus message 
+ **
+ **  \sa #CS_NOOP_CC
+ **
+ *************************************************************************/
+void CS_NoopCmd (CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief Process reset counters command
+ **  
+ **  \par Description
+ **       Processes a reset counters ground command which will reset
+ **       the checksum commmand error and command execution counters
+ **       to zero. It also resets all checksum error counters and
+ **       the passes completed counter.
+ **
+ **  \par Assumptions, External Events, and Notes:
+ **       None
+ **       
+ **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+ **                             references the software bus message 
+ **
+ **  \sa #CS_RESET_CC
+ **
+ *************************************************************************/
+void CS_ResetCmd (CFE_SB_MsgPtr_t MessagePtr);
+
+/************************************************************************/
+/** \brief process a background checking cycle
+ **  
+ **  \par Description
+ **       Processes a background checking cycle when the scheduler 
+ **       tell CS.
+ **
+ **  \par Assumptions, External Events, and Notes:
+ **       None
+ **       
+ **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+ **                             references the software bus message 
+ **
+ **
+ *************************************************************************/
+void CS_BackgroundCheckCmd (CFE_SB_MsgPtr_t MessagePtr);
 
 /************************************************************************/
 /** \brief Process a disable overall background checking command

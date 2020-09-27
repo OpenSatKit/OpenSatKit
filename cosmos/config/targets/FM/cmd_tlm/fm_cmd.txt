@@ -59,7 +59,7 @@ COMMAND FM SEND_FILE_INFO <%= Osk::Cfg.processor_endian %> "Create a file inform
   APPEND_PARAMETER FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Filename"
   APPEND_PARAMETER CRC       32 UINT MIN_UINT32 MAX_UINT32 2         "CRC method"
 
-COMMAND FM GET_OPEN_FILES <%= Osk::Cfg.processor_endian %> "Creates an 'open files' telemetry packet. The open files packet includes the number of open files and for each open file, the name of the file and the name of the application that has the file opened."
+COMMAND FM SEND_OPEN_FILES <%= Osk::Cfg.processor_endian %> "Creates an 'open files' telemetry packet. The open files packet includes the number of open files and for each open file, the name of the file and the name of the application that has the file opened."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 0) %>
 
 COMMAND FM CREATE_DIR <%= Osk::Cfg.processor_endian %> "Create the source directory. Source must be a valid directory name that does not exist"

@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_utils.h 1.5.1.1 2015/03/03 11:58:01EST sstrege Exp  $
+ **   $Id: cs_utils.h 1.3 2017/02/16 15:33:14EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -20,24 +20,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_utils.h  $
- **   Revision 1.5.1.1 2015/03/03 11:58:01EST sstrege 
- **   Added copyright information
- **   Revision 1.5 2015/01/26 15:06:48EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.4 2010/03/29 16:55:22EDT jmdagost 
- **   Replaced CS_GetTableEntryByName() and CS_GetAppEntryByName() with CS_GetTableResTblEntryByName() and CS_GetAppResTblEntryByName().
- **   Added CS_GetTableDefTblByName() and CS_GetAppDefTblEntryByName().
- **   Revision 1.3 2009/04/18 12:05:06EDT dkobe 
- **   Corrected doxygen comment typos
- **   Revision 1.2 2008/07/23 10:34:41EDT njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:25EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 #ifndef _cs_utils_
 #define _cs_utils_

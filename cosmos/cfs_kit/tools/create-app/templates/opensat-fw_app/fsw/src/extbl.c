@@ -21,6 +21,7 @@
 #include <string.h>
 #include "extbl.h"
 
+#define  JSON  &(ExTbl->Json)  /* Convenience macro */
 
 /*
 ** Type Definitions
@@ -66,6 +67,9 @@ void EXTBL_Constructor(EXTBL_Class* ObjPtr,
    ExTbl->GetTblPtrFunc    = GetTblPtrFunc;
    ExTbl->LoadTblFunc      = LoadTblFunc;
    ExTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
+
+   JSON_ObjConstructor(&(ExTbl->JsonObj), "entry", EntryCallBack, NULL);
+   JSON_RegContainerCallback(JSON, &(ExTbl->JsonObj));
 
 } /* End EXTBL_Constructor() */
 
@@ -113,18 +117,14 @@ boolean EXTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    CFE_PSP_MemSet(&(ExTbl->Tbl), 0, sizeof(EXTBL_Struct));  /* Wouldn't do in flight but helps debug prototype */
    
    EXTBL_ResetStatus();  /* Reset status helps isolate errors if they occur */
-
-   JSON_Constructor(&(ExTbl->Json), ExTbl->JsonFileBuf, ExTbl->JsonFileTokens);
    
-   if (JSON_OpenFile(&(ExTbl->Json), Filename)) {
+   if (JSON_OpenFile(JSON, Filename)) {
   
       CFE_EVS_SendEvent(EXTBL_LOAD_CMD_DBG_EID,CFE_EVS_DEBUG,"EXTBL: Successfully prepared file %s\n", Filename);
   
       ExTbl->DataArrayEntryIdx = 0;
 
-      JSON_RegContainerCallback(&(ExTbl->Json),"entry",EntryCallBack);
-
-      JSON_ProcessTokens(&(ExTbl->Json));
+      JSON_ProcessTokens(JSON);
 
       if (ExTbl->DataArrayEntryIdx > 0) {
 
@@ -205,11 +205,22 @@ boolean EXTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
       sprintf(DumpRecord,"\"data-array\": [\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+  
+      /* 
+      ** Can't end last record with a comma so start of for loop finishes 
+      ** previous record's line with ",\n" so write first line before the
+      ** loop starts.      
+      */
+      sprintf(DumpRecord,"{\"entry\": {\n  \"index\": %4d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}}",
+              0, ExTblPtr->Entry[0].Data1, ExTblPtr->Entry[0].Data2, ExTblPtr->Entry[0].Data3);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
-      for (i=0; i < EXTBL_MAX_ENTRY_ID; i++)
-      {
+      for (i=1; i < EXTBL_MAX_ENTRY_ID; i++) {
       
-         sprintf(DumpRecord,"\"entry\": {\n  \"index\": %03d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d, \n},\n",
+         sprintf(DumpRecord,",\n");
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+         sprintf(DumpRecord,"{\"entry\": {\n  \"index\": %4d,\n  \"data1\": %4d,\n  \"data2\": %4d,\n  \"data3\": %4d\n}}",
                  i, ExTblPtr->Entry[i].Data1, ExTblPtr->Entry[i].Data2, ExTblPtr->Entry[i].Data3);
          OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
@@ -254,10 +265,10 @@ boolean EntryCallBack (int TokenIdx)
    CFE_EVS_SendEvent(EXTBL_LOAD_CMD_DBG_EID,CFE_EVS_DEBUG,
       "EntryCallBack() for DataArrayEntryIdx %d and token index %d\n",ExTbl->DataArrayEntryIdx, TokenIdx);
       
-   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "index", &Index)) EntryCnt++;
-   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "data1", &Data1)) EntryCnt++;
-   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "data2", &Data2)) EntryCnt++;
-   if (JSON_GetValShortInt(&(ExTbl->Json), TokenIdx, "data3", &Data3)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "index", &Index)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "data1", &Data1)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "data2", &Data2)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "data3", &Data3)) EntryCnt++;
    
    if (EntryCnt == 4)
    {

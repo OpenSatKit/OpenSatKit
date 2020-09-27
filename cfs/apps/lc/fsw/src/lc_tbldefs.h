@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_tbldefs.h 1.3 2015/03/04 16:09:55EST sstrege Exp  $
+**   $Id: lc_tbldefs.h 1.3 2017/01/22 17:24:57EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -23,26 +23,6 @@
 **   TYPEDEFS OR STRUCTURE DEFINITIONS IN THIS FILE! 
 **   ADD THEM TO lc_tbl.h IF NEEDED! 
 **
-**   $Log: lc_tbldefs.h  $
-**   Revision 1.3 2015/03/04 16:09:55EST sstrege 
-**   Added copyright information
-**   Revision 1.2 2012/08/01 14:19:28EDT lwalling 
-**   Change NOT_MEASURED to STALE
-**   Revision 1.1 2012/07/31 13:53:39PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.5 2010/03/08 10:36:31EST lwalling 
-**   Move saved, not saved state definitions to common header file
-**   Revision 1.4 2009/01/15 15:36:19EST dahardis 
-**   Unit test fixes
-**   Revision 1.3 2008/12/10 10:59:29EST dahardis 
-**   Moved data type declarations to new file lc_tbl.h
-**   so this file can be included in ASIST RDL files.
-**   Revision 1.2 2008/12/03 13:59:42EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:41EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_tbldefs_

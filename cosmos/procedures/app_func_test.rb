@@ -12,6 +12,9 @@
 #
 ###############################################################################
 
+require 'osk_global'
+require 'fsw_const'
+require 'fsw_config_param'
 
 module AppFuncTest
 
@@ -19,6 +22,7 @@ module AppFuncTest
    
    def app_func_test_init (target_str,msg_id)
       @app = FswApp.new(target_str, target_str, Osk::TLM_STR_HK_PKT, msg_id)
+      return @app
    end
 
    def test_noop_cmd

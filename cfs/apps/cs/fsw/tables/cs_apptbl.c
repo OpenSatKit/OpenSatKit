@@ -1,8 +1,8 @@
 /************************************************************************
 ** File:
-**   $Id: cs_apptbl.c 1.3.1.1 2015/03/03 11:57:47EST sstrege Exp  $
+**   $Id: cs_apptbl.c 1.3 2017/02/24 10:13:36EST mdeschu Exp  $
 **
-**   Copyright © 2007-2014 United States Government as represented by the 
+**   Copyright (c) 2007-2014 United States Government as represented by the 
 **   Administrator of the National Aeronautics and Space Administration. 
 **   All Other Rights Reserved.  
 **
@@ -13,19 +13,6 @@
 **
 ** Purpose: 
 **  The CFS Checksum (CS) Application Default Apps Table Definition
-**
-** Notes:
-**
-** $Log: cs_apptbl.c  $
-** Revision 1.3.1.1 2015/03/03 11:57:47EST sstrege 
-** Added copyright information
-** Revision 1.3 2012/09/14 14:54:10EDT aschoeni 
-** Now uses macro for header
-** Revision 1.2 2010/07/16 13:22:33EDT jmdagost 
-** Corrected app name from "CS_APP" to "CS".
-** Revision 1.1 2010/03/09 15:30:19EST jmdagost 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/tables/project.pj
 **
 *************************************************************************/
 

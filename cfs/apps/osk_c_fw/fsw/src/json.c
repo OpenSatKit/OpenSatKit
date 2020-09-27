@@ -287,22 +287,21 @@ void JSON_PrintTokens(JSON_Class* Json, int TokenCnt)
 ** Notes:
 **    
 */
-void JSON_RegContainerCallback(JSON_Class* Json, char* Name, JSON_ContainerFuncPtr FuncPtr) 
+void JSON_RegContainerCallback(JSON_Class* Json, const JSON_Obj* JsonObj)
 {
 
-   if (DBG_JSON) OS_printf("JSON_RegContainerCallback() - %s\n",Name);
-   CFE_EVS_SendEvent(JSON_DBG_REG_CALLBACK_EID,CFE_EVS_DEBUG,"JSON: RegContainerCallback() %s at index %d", Name, Json->CallBackIdx);
+   if (DBG_JSON) OS_printf("JSON_RegContainerCallback() - %s\n",JsonObj->Name);
+   CFE_EVS_SendEvent(JSON_DBG_REG_CALLBACK_EID,CFE_EVS_DEBUG,"JSON: RegContainerCallback() %s at index %d", JsonObj->Name, Json->CallBackIdx);
    if (Json->CallBackIdx < JSON_MAX_CONTAINER_TOKENS) {
-      strncpy(Json->ContainerCallBack[Json->CallBackIdx].Name, Name, JSON_MAX_STR_LEN);
-      Json->ContainerCallBack[Json->CallBackIdx].FuncPtr = FuncPtr;
+      strncpy(Json->ContainerCallBack[Json->CallBackIdx].Name, JsonObj->Name, JSON_MAX_STR_LEN);
+      Json->ContainerCallBack[Json->CallBackIdx].FuncPtr = JsonObj->Callback;
       Json->CallBackIdx++;
    }
    else {
-	  CFE_EVS_SendEvent(JSON_REG_CALLBACK_ERR_EID,CFE_EVS_ERROR,"JSON: Attempt to register callback %s at index %d exceeds limit %d", Name, Json->CallBackIdx, JSON_MAX_CONTAINER_TOKENS);
+	  CFE_EVS_SendEvent(JSON_REG_CALLBACK_ERR_EID,CFE_EVS_ERROR,"JSON: Attempt to register callback %s at index %d exceeds limit %d", JsonObj->Name, Json->CallBackIdx, JSON_MAX_CONTAINER_TOKENS);
    }
    
 } /* End JSON_RegContainerCallback() */
-
 
 
 /******************************************************************************
@@ -371,7 +370,7 @@ int JSON_GetContainerSize(JSON_Class* Json, int ContainTokenIdx) {
 **   2. JSON defines true/false as lower case
 ** 
 */
-boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, char* Key, boolean* BoolVal) {
+boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, const char* Key, boolean* BoolVal) {
 
    int    i;
    char*  TokenStr;
@@ -424,7 +423,7 @@ boolean JSON_GetValBool(JSON_Class* Json, int ContainTokenIdx, char* Key, boolea
 **   
 ** 
 */
-boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, char* Key, int* IntVal) {
+boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, const char* Key, int* IntVal) {
 
    int    i;
    char   *TokenStr, *ErrCheck;
@@ -480,7 +479,7 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, char* Key, in
 **   
 ** 
 */
-boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* StrVal) {
+boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, const char* Key, char* StrVal) {
    
    int i;
    jsmntok_t* ContainToken;
@@ -519,7 +518,7 @@ boolean JSON_GetValStr(JSON_Class* Json, int ContainTokenIdx, char* Key, char* S
 **   
 ** 
 */
-boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, double* DoubleVal)
+boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, const char* Key, double* DoubleVal)
 {
 
    int    i;
@@ -566,12 +565,12 @@ boolean JSON_GetValDouble(JSON_Class* Json, int ContainTokenIdx, char* Key, doub
 ** Notes:
 **
 */
-boolean JSON_TokenStrEq(char *js, jsmntok_t *t, char *s) {
+boolean JSON_TokenStrEq(char *js, jsmntok_t *t, const char *s) {
 
    return (strncmp(js + t->start, s, t->end - t->start) == 0
            && strlen(s) == (size_t) (t->end - t->start));
 
-} /* End JSON_TokenStrEqual() */
+} /* End JSON_TokenStrEq() */
 
 
 

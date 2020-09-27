@@ -28,10 +28,13 @@
 #include "schtbl.h"
 
 
-/*
-**  Macro Definitions
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
+/*
+** Semaphore & Timer
+*/
 #define SCHEDULER_TIMER_NAME   "SCH_MINOR_TIMER"   /* Must be shorter than OS_MAX_API_NAME */
 #define SCHEDULER_SEM_NAME     "SCH_TIME_SEM"      /* Must be shorter than OS_MAX_API_NAME */
 #define SCHEDULER_SEM_VALUE    0
@@ -101,25 +104,145 @@
 
 #define SCHEDULER_PACKET_SEND_ERR_EID                (SCHEDULER_BASE_EID + 8)
 
-#define SCHEDULER_CFG_SCH_CMD_ACTIVITY_ERR_EID       (SCHEDULER_BASE_EID + 9)
-#define SCHEDULER_CFG_SCH_CMD_SLOT_ERR_EID           (SCHEDULER_BASE_EID + 10)
-
-#define SCHEDULER_LOAD_SCH_CMD_ACTIVITY_ERR_EID      (SCHEDULER_BASE_EID + 11)
-#define SCHEDULER_LOAD_SCH_CMD_SLOT_ERR_EID          (SCHEDULER_BASE_EID + 12)
-
-#define SCHEDULER_LOAD_MSG_CMD_INDEX_ERR_EID         (SCHEDULER_BASE_EID + 13)
+#define SCHEDULER_CMD_SUCCESS_EID                    (SCHEDULER_BASE_EID + 9)
+#define SCHEDULER_CONFIG_SCH_TBL_BOOL_ERR_EID        (SCHEDULER_BASE_EID + 10)
+#define SCHEDULER_LOAD_MSG_CMD_INDEX_ERR_EID         (SCHEDULER_BASE_EID + 11)
+#define SCHEDULER_SEND_MSG_EVENT_CMD_INDEX_ERR_EID   (SCHEDULER_BASE_EID + 12)
+#define SCHEDULER_SEND_DIAG_TLM_ERR_EID              (SCHEDULER_BASE_EID + 13)
 
 #define SCHEDULER_DEBUG_EID                          (SCHEDULER_BASE_EID + 14)
 
+#define SCHEDULER_UNDEF_SCHTBL_ENTRY_VAL 255
+#define SCHEDULER_UNDEF_MSGTBL_ENTRY_VAL   0
+
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+/******************************************************************************
+** Command Packets
+*/
+
+typedef struct
+{
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header */
+   uint16   Slot;
+   uint16   Activity;
+   boolean  Enabled;   /* 0=FALSE(Disabled), 1=TRUE(Enabled) */
+
+} OS_PACK SCHEDULER_ConfigSchEntryCmdMsg;
+#define SCHEDULER_CFG_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_ConfigSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct
+{
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];  /* cFE Software Bus Command Message Header */
+   uint16  Slot;
+   uint16  Activity;
+   uint16  Enabled;    /* 0=FALSE(Disabled), 1=TRUE(Enabled) */
+   uint16  Period;
+   uint16  Offset;
+   uint16  MsgTblIndex;
+
+} OS_PACK SCHEDULER_LoadSchEntryCmdMsg;
+#define SCHEDULER_LOAD_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_LoadSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+   
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header */
+   uint16   Slot;
+   uint16   Activity;
+
+} OS_PACK SCHEDULER_SendSchEntryCmdMsg;
+#define SCHEDULER_SEND_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_SendSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+   
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];  /* cFE Software Bus Command Message Header */
+   uint16          Index;
+   CFE_SB_MsgId_t  MsgId;
+
+} OS_PACK SCHEDULER_LoadMsgEntryCmdMsg;
+#define SCHEDULER_LOAD_MSG_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_LoadMsgEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+   
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header */
+   uint16   Index;
+
+} OS_PACK SCHEDULER_SendMsgEntryCmdMsg;
+#define SCHEDULER_SEND_MSG_ENTRY_CMD_DATA_LEN (sizeof(SCHEDULER_SendMsgEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+
+typedef struct {
+   
+   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header */
+   uint16   Slot;
+
+} OS_PACK SCHEDULER_SendDiagTlmCmdMsg;
+#define SCHEDULER_SEND_DIAG_TLM_CMD_DATA_LEN  (sizeof(SCHEDULER_SendDiagTlmCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+/******************************************************************************
+** Telemetry Packets
+*/
 
 /*
-** Type Definitions
+** See SCHEDULER_SendSchEntryCmd() and SCHEDULER_SendMsgEntryCmd() prologues
+** for how this packet is created for each command.
+*/
+typedef struct {
+
+   uint8    Header[CFE_SB_TLM_HDR_SIZE];
+   
+   uint8  Slot;
+   uint8  Activity;
+   
+   SCHTBL_Entry   SchTblEntry;
+   MSGTBL_Entry   MsgTblEntry;
+
+} OS_PACK SCHEDULER_TblEntryPkt;
+#define SCHEDULER_TBL_ENTRY_TLM_LEN sizeof (SCHEDULER_TblEntryPkt)
+
+
+typedef struct {
+
+   uint8    Header[CFE_SB_TLM_HDR_SIZE];
+
+   /*
+   ** Scheduler processing data not in HK
+   */
+   
+   uint32  LastProcessCount;
+   uint32  TimerId;
+   uint32  TimeSemaphore;
+   uint32  ClockAccuracy;
+   uint32  WorstCaseSlotsPerMinorFrame;
+   uint8   IgnoreMajorFrame;
+   uint8   SyncToMET;
+   uint8   MajorFrameSource;
+   uint8   Spare;
+   
+   /*
+   ** Send all the activities for the command-specified slot
+   */
+   
+   SCHTBL_Entry SchTblSlot[SCHTBL_ACTIVITIES_PER_SLOT];
+
+} OS_PACK SCHEDULER_DiagPkt;
+#define SCHEDULER_DIAG_TLM_LEN sizeof (SCHEDULER_DiagPkt)
+
+
+/******************************************************************************
+** Scheduler Class
 */
 
 typedef struct {
 
-   MSGTBL_Tbl MsgTbl;
-   SCHTBL_Tbl SchTbl;
 
    uint32  SlotsProcessedCount;           /* Total number of Schedule Slots (Minor Frames) Processed */
    uint16  SkippedSlotsCount;             /* Number of times that slot (minor frame) were skipped. NOT the number of slots that were skipped  */
@@ -154,43 +277,19 @@ typedef struct {
    uint32  ClockAccuracy;                 /* Accuracy of Minor Frame Timer */
    uint32  WorstCaseSlotsPerMinorFrame;   /* When syncing to MET, worst case # of slots that may need */
 
+   /*
+   ** Telemetry Packets
+   */
+   SCHEDULER_TblEntryPkt TblEntryPkt;
+   SCHEDULER_DiagPkt     DiagPkt;
+
+   /*
+   ** Contained Objects
+   */ 
+   MSGTBL_Tbl MsgTbl;
+   SCHTBL_Tbl SchTbl;
+   
 } SCHEDULER_Class;
-
-/*
-** Command Packets
-*/
-
-typedef struct
-{
-   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header     */
-   uint16   Slot;
-   uint16   Activity;
-   boolean  ConfigFlag;   /* 0=Disable, 1=Enable */
-
-} OS_PACK SCHEDULER_ConfigSchEntryCmdMsg;
-#define SCHEDULER_CFG_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_ConfigSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
-
-typedef struct
-{
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header     */
-   uint16  Slot;
-   uint16  Activity;
-   uint16  ConfigFlag;   /* 0=Disable, 1=Enable */
-   uint16  Frequency;
-   uint16  Offset;
-   uint16  MsgTblEntryId;
-
-} OS_PACK SCHEDULER_LoadSchEntryCmdMsg;
-#define SCHEDULER_LOAD_SCH_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_LoadSchEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
-
-typedef struct
-{
-   uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE]; /* cFE Software Bus Command Message Header     */
-   uint16          Index;
-   CFE_SB_MsgId_t  MsgId;
-
-} OS_PACK SCHEDULER_LoadMsgEntryCmdMsg;
-#define SCHEDULER_LOAD_MSG_ENTRY_CMD_DATA_LEN  (sizeof(SCHEDULER_LoadMsgEntryCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /*
@@ -249,7 +348,7 @@ int32 SCHEDULER_StartTimers(void);
 const MSGTBL_Tbl* SCHEDULER_GetMsgTblPtr();
 
 
-/******************************************************************************
+/**************************************************************************** **
 ** Function: SCHEDULER_LoadMsgTbl
 **
 ** Load the MsgTbl working buffer.
@@ -272,7 +371,7 @@ boolean SCHEDULER_LoadMsgTbl(MSGTBL_Tbl* NewTbl);
 **   2. Function signature must match MSGTBL_LoadTblEntry
 **
 */
-boolean SCHEDULER_LoadMsgTblEntry(uint16 EntryId, MSGTBL_Entry* NewEntry);
+boolean SCHEDULER_LoadMsgTblEntry(uint16 Index, MSGTBL_Entry* NewEntry);
 
 
 /*******************************************************************
@@ -330,6 +429,21 @@ boolean SCHEDULER_LoadSchEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 
 
 /******************************************************************************
+** Function: SCHEDULER_SendSchEntryCmd
+**
+** Sends an informational event message containing the scheduler table entry 
+** for the command-specified (slot,activity). It also sends a telemetry packet
+** containing the same scheduler table entry and the contents of the message 
+** table entry indexed by the scheduler table entry.
+**
+** Notes:
+**   1. Function signature must match the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCHEDULER_SendSchEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
 ** Function: SCHEDULER_LoadMsgEntryCmd
 **
 ** Notes:
@@ -337,6 +451,31 @@ boolean SCHEDULER_LoadSchEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 **
 */
 boolean SCHEDULER_LoadMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: SCHEDULER_SendMsgEntryCmd
+**
+** Sends an informational event message containing the message table entry 
+** for the command-specified index. It also sends a telemetry packet
+** containing the same message table entry and the first scheduler table entry
+** found that references the message table entry.
+**
+** Notes:
+**   1. Function signature must match the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCHEDULER_SendMsgEntryCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: SCHEDULER_SendDiagTlmCmd
+**
+** Notes:
+**   1. Function signature must match the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCHEDULER_SendDiagTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 #endif /* _scheduler_ */

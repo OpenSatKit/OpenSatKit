@@ -1,0 +1,18 @@
+
+{
+"name": "F42 Control Table",
+"description": "Example 42 FSW application attitude control parameters.",
+"moment-of-inertia": {
+   "x": 2759.831299,
+   "y": 2117.500000,
+   "z": 3835.272461
+},
+"pd-gain-param": {
+   "w": 0.628000,
+   "z": 0.700000
+},
+"whl-tgt-mom-lim": {
+   "lower": -0.900000,
+   "upper": 0.900000
+}
+}

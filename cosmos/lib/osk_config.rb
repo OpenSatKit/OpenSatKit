@@ -35,17 +35,17 @@ module Cfg
 
   # @return CCSDS command header string for COSMOS command definition file
   def self.cmd_hdr(app_prefix, msg_id, func_code, data_len)
-    return Ccsds.renderCmdHdr(Fsw::MsgId.get_msg_val(msg_id), func_code, data_len)
+    return Ccsds.renderCmdHdr(Fsw::MsgId.get_val(msg_id), func_code, data_len)
   end
     
   # @return CCSDS telemetry header string for COSMOS command definition file
   def self.tlm_hdr(app_prefix, msg_id)
-    return Ccsds.renderTlmHdr(Fsw::MsgId.get_msg_val(msg_id))
+    return Ccsds.renderTlmHdr(Fsw::MsgId.get_val(msg_id))
   end
 
   # @return CCSDS CFDP PDU header string for COSMOS command definition file
   def self.cfdp_pdu_cmd_hdr(app_prefix, msg_id)
-    return Ccsds.renderCfdpPduCmdHdr(Fsw::MsgId.get_msg_val(msg_id))
+    return Ccsds.renderCfdpPduCmdHdr(Fsw::MsgId.get_val(msg_id))
   end
 
   # @return file header string for COSMOS table definition file used to represent a binary cFE file

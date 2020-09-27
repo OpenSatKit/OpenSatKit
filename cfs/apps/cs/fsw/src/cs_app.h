@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_app.h 1.6.1.1 2015/03/03 11:58:19EST sstrege Exp  $
+ **   $Id: cs_app.h 1.7 2017/03/29 16:10:34EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -20,25 +20,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_app.h  $
- **   Revision 1.6.1.1 2015/03/03 11:58:19EST sstrege 
- **   Added copyright information
- **   Revision 1.6 2015/01/26 15:06:49EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.5 2010/03/09 15:04:38EST jmdagost 
- **   Removed unused LimitCmd and LimitHK terms.
- **   Revision 1.4 2008/07/28 14:05:31EDT njyanchik 
- **   Fix some errors with the version number update
- **   Revision 1.3 2008/07/23 16:03:47BST njyanchik 
- **   Update CS with versioning information
- **   Revision 1.2 2008/07/23 15:34:31BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:07EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 
 #ifndef _cs_app_
@@ -129,8 +110,8 @@ typedef struct
     
     uint16                                      ChildTaskTable;                     /**< \brief Table for the child task to process*/
     uint16                                      ChildTaskEntryID;                   /**< \brief Entry in table for child task to process */
-    boolean                                     ChildTaskInUse;                     /**< \brief Flag for a child task in use*/
-    boolean                                     OneShotTaskInUse;                   /**< \brief Flag for a one shot calculation in progress*/
+    boolean                                     RecomputeInProgress;                /**< \brief Flag for a recompute in progress */
+    boolean                                     OneShotInProgress;                  /**< \brief Flag for a one shot calculation in progress*/
     uint32                                      ChildTaskID;                        /**< \brief Task ID for the child task*/
 
     uint32                                      MaxBytesPerCycle;                   /**< \brief Max number of bytes to process in a cycle*/
@@ -188,6 +169,10 @@ typedef struct
     CS_Res_Tables_Table_Entry_t               * AppResTablesTblPtr;        /**< \brief Pointer to CS Tables table results entry for the CS apps table */
     CS_Res_Tables_Table_Entry_t               * TblResTablesTblPtr;        /**< \brief Pointer to CS Tables table results entry for the CS Tables table */
     
+    
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+    uint32                                     DataStoreHandle;            /**< \brief Handle to critical data store created by CS */
+#endif
     /* Variables that will go in the housekeeping packet */
         
     uint8               CmdCounter;                         /**< \brief CS Application Command Counter */
@@ -198,7 +183,7 @@ typedef struct
     uint8               AppCSState;                         /**< \brief CS App table checksum state */
     uint8               TablesCSState;                      /**< \brief CS Tables table checksum stat e*/
     uint8               OSCSState;                          /**< \brief OS code segment checksum state */
-    uint8               CfeCoreCSState;                     /**< \brief cFE Core code segment checksum stat e*/
+    uint8               CfeCoreCSState;                     /**< \brief cFE Core code segment checksum state*/
     
     uint16              EepromCSErrCounter;                 /**< \brief Eeprom miscompare counte r*/
     uint16              MemoryCSErrCounter;                 /**< \brief Memory miscompare counter */
@@ -215,6 +200,7 @@ typedef struct
     
     uint32              LastOneShotAddress;                 /**< \brief Address used in last one shot checksum command */
     uint32              LastOneShotSize;                    /**< \brief Size used in the last one shot checksum command */
+    uint32              LastOneShotMaxBytesPerCycle;        /**< \brief Maximum bytes to process each cycle during last one shot checksum command */
     uint32              LastOneShotChecksum;                /**< \brief Checksum of the last one shot checksum command */
     
     uint32              PassCounter;                        /**< \brief Number of times CS has passed through all of its tables */
@@ -248,6 +234,21 @@ extern CS_AppData_t             CS_AppData;
  **       
  *************************************************************************/
 void CS_AppMain(void);
+
+
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+/************************************************************************/
+/** \brief CFS Checksum (CS) Critical Data Store Update
+ **  
+ **  \par Description
+ **       Checksum application entry point and main process loop.
+ **
+ **  \par Assumptions, External Events, and Notes:
+ **       None
+ **       
+ *************************************************************************/
+void CS_UpdateCDS(void);
+#endif /* #if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE) */
 
 #endif /* _cs_app_ */
 

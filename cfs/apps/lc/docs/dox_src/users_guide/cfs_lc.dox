@@ -23,6 +23,11 @@
 
   \verbatim  
   $Log: cfs_lc.dox  $
+  Revision 1.1.2.1 2017/08/07 14:38:03EDT sstrege 
+  
+  Revision 1.1 2015/07/26 15:40:18EDT rperera 
+  Initial revision
+  Member added to project /CFS-APPs-PROJECT/lcx/docs/dox_src/users_guide/project.pj
   Revision 1.1 2012/07/31 16:53:28EDT nschweis 
   Initial revision
   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/docs/dox_src/users_guide/project.pj
@@ -50,7 +55,7 @@
   with the CFS Limit Checker (LC) application software.  The document is intended primarily 
   for users of the software (operations personal, test engineers, and maintenance personnel).  
   The last section of the document, the deployment guide section, is intended for mission 
-  developers when deploying and configuring the FM application software for a mission 
+  developers when deploying and configuring the LC application software for a mission 
   flight software build environment. 
 
   <H2> Applicable Documents </H2>
@@ -64,6 +69,8 @@
       <TD WIDTH="40%"> CFS Limit Checker Heritage Analysis Document </TD>
   <TR><TD WIDTH="20%"> TBD       </TD> 
       <TD WIDTH="40%"> CFS Limit Checker Design Document </TD>
+  <TR><TD WIDTH="20%"> 582-2012-004       </TD>
+      <TD WIDTH="40%"> CFS Limit Checker Application User's Guide </TD>
   </TABLE>
 
 

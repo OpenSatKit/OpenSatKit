@@ -25,6 +25,7 @@
 #include <string.h>
 #include "jsontbl.h"
 
+#define  JSON  &(JsonTbl->Json)  /* Convenience macro */
 
 /*
 ** Type Definitions
@@ -70,6 +71,11 @@ void JSONTBL_Constructor(JSONTBL_Class* ObjPtr,
    JsonTbl->GetTblPtrFunc    = GetTblPtrFunc;
    JsonTbl->LoadTblFunc      = LoadTblFunc;
    JsonTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
+
+   JSON_Constructor(JSON, JsonTbl->JsonFileBuf, JsonTbl->JsonFileTokens);
+
+   JSON_ObjConstructor(&(JsonTbl->JsonObj), "entry", EntryCallBack, NULL);
+   JSON_RegContainerCallback(JSON, &(JsonTbl->JsonObj));
 
 } /* End JSONTBL_Constructor() */
 
@@ -117,10 +123,8 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    CFE_PSP_MemSet(&(JsonTbl->Tbl), 0, sizeof(ExTblData_Param));  /* Wouldn't do in flight but helps debug prototype */
    
    JSONTBL_ResetStatus();  /* Reset status helps isolate errors if they occur */
-
-   JSON_Constructor(&(JsonTbl->Json), JsonTbl->JsonFileBuf, JsonTbl->JsonFileTokens);
    
-   if (JSON_OpenFile(&(JsonTbl->Json), Filename)) {
+   if (JSON_OpenFile(JSON, Filename)) {
   
       CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "JSONTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
       //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
@@ -128,9 +132,7 @@ boolean JSONTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
   
       JsonTbl->DataArrayEntryIdx = 0;
 
-      JSON_RegContainerCallback(&(JsonTbl->Json),"entry",EntryCallBack);
-
-      JSON_ProcessTokens(&(JsonTbl->Json));
+      JSON_ProcessTokens(JSON);
 
       if (JsonTbl->DataArrayEntryIdx > 0) {
 
@@ -269,10 +271,10 @@ boolean EntryCallBack (int TokenIdx)
    
    CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "\nEntryCallBack() for DataArrayEntryIdx %d and token index %d\n",JsonTbl->DataArrayEntryIdx, TokenIdx);
       
-   if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "index", &Index)) EntryCnt++;
-   if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "data1", &Data1)) EntryCnt++;
-   if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "data2", &Data2)) EntryCnt++;
-   if (JSON_GetValShortInt(&(JsonTbl->Json), TokenIdx, "data3", &Data3)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "index", &Index)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "data1", &Data1)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "data2", &Data2)) EntryCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "data3", &Data3)) EntryCnt++;
    
    if (EntryCnt == 4) {
       
@@ -305,4 +307,3 @@ boolean EntryCallBack (int TokenIdx)
 
 } /* EntryCallBack() */
 
-/* end of file */

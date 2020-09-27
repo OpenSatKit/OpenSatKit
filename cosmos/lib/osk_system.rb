@@ -25,7 +25,7 @@ module Osk
       @@instance = nil
       
       # 
-      # file_transfer configured for flight-ground file transfer protocol which
+      # File_transfer configured for flight-ground file transfer protocol which
       # typically would be TFTP or CFDP
       #
       attr_reader :file_transfer
@@ -40,9 +40,28 @@ module Osk
          @file_transfer = TftpFileTransfer.new()
       end # End init_variables()
 
+      ####################################################################
+      ##                     cFS Management Methods                     ##
+      ####################################################################
+     
+      # 
+      # Check if cFS is running and start cFS with or without a user prompt
+      #      
+      def self.check_n_start_cfs(prompt = true)
+         cfs_started = false
+         if (not Osk::System.cfs_running?)
+            if (prompt)
+               continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter '#{Osk::PASSWORD}' for the password.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
+               return unless continue == Osk::MSG_BUTTON_YES
+            end
+            Osk::System.start_cfs  # Enables telemetry
+            cfs_started = true 
+         end
+         return cfs_started 
+      end 
       
       # 
-      # Start the cFS and enable telemetry
+      # Check for cFS existing instances
       #      
       def self.cfs_running?
             
@@ -126,6 +145,10 @@ module Osk
       end # stop_cfs()
       
 
+      ###################################################################
+      ##                     42 Management Methods                     ##
+      ###################################################################
+
       # 
       # Start the 42 simulator and connect FSW I42 app
       #      
@@ -167,6 +190,10 @@ module Osk
          
       end # stop_cmd_tlm_server()
       
+
+      ######################################################################
+      ##                     PiSat Management Methods                     ##
+      ######################################################################
       
       def switch_local_to_pisat_cfs(host_ip_addr=HOST_IP_ADDR, pisat_ip_addr=PISAT_IP_ADDR)
    

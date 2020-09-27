@@ -1,8 +1,8 @@
 /*************************************************************************
  ** File:
- **   $Id: cs_mission_cfg.h 1.4.1.1 2015/03/03 11:57:56EST sstrege Exp  $
+ **   $Id: cs_mission_cfg.h 1.3 2017/02/16 15:33:13EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -21,21 +21,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_mission_cfg.h  $
- **   Revision 1.4.1.1 2015/03/03 11:57:56EST sstrege 
- **   Added copyright information
- **   Revision 1.4 2012/07/17 18:27:35EDT sstrege 
- **   Added include for cfe_mission_cfg.h
- **   Revision 1.3 2011/06/28 14:34:00EDT jmdagost 
- **   Added a couple of carriage returns to get rid of the "missing end-of-file" warnings.
- **   Revision 1.2 2008/07/23 10:34:36EDT njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:03:11EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/mission_inc/project.pj
- ** 
  *************************************************************************/
 #ifndef _cs_mission_cfg_
 #define _cs_mission_cfg_

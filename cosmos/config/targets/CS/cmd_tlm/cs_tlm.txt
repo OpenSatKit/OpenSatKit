@@ -19,8 +19,8 @@ TELEMETRY CS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet St
   APPEND_ITEM TABLESCSSTATE 8 UINT "CS Tables table checksum stat e."
   APPEND_ITEM OSCSSTATE 8 UINT "OS code segment checksum state."
   APPEND_ITEM CFECORECSSTATE 8 UINT "cFE Core code segment checksum stat e"
-  APPEND_ITEM CHILDTASKINUSE 8 UINT "CS 'Child Task In Use' flag."
-  APPEND_ITEM ONESHOTTASKINUSE 8 UINT "CS 'OneShot Task In Use' flag."
+  APPEND_ITEM RECOMPUTE_IN_PROGRESS 8 UINT ""
+  APPEND_ITEM ONESHOT_IN_PROGRESS   8 UINT ""
   APPEND_ITEM FILLER8 8 UINT "8 bit padding"
   APPEND_ITEM EEPROMCSERRCOUNTER 16 UINT "Eeprom miscompare counte r."
   APPEND_ITEM MEMORYCSERRCOUNTER 16 UINT "Memory miscompare counter."
@@ -35,6 +35,7 @@ TELEMETRY CS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet St
   APPEND_ITEM CFECOREBASELINE 32 UINT "Basline checksum for the cFE core."
   APPEND_ITEM LASTONESHOTADDRESS 32 UINT "Address used in last one shot checksum command."
   APPEND_ITEM LASTONESHOTSIZE 32 UINT "Size used in the last one shot checksum command."
+  APPEND_ITEM LASTONESHOTMAXBYTESPERCYCLE 32 UINT ""
   APPEND_ITEM LASTONESHOTCHECKSUM 32 UINT "Checksum of the last one shot checksum command."
   APPEND_ITEM PASSCOUNTER 32 UINT "Number of times CS has passed through all of its tables."
 

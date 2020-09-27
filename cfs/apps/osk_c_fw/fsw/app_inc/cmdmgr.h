@@ -99,4 +99,23 @@ void CMDMGR_ResetStatus(CMDMGR_Class* CmdMgr);
 boolean CMDMGR_DispatchFunc(CMDMGR_Class* CmdMgr, const CFE_SB_MsgPtr_t  MsgPtr);
 
 
+/******************************************************************************
+** Function: CMDMGR_ValidBoolArg
+**
+** Use uint16 because commands use both uint8 and uint16 for booleans and test   
+** is valid for casting to larger storage but not truncating to shorter storage
+*/
+boolean CMDMGR_ValidBoolArg(uint16 BoolArg);
+
+
+/******************************************************************************
+** Function: CMDMGR_BoolStr
+**
+** Purpose: Return a pointer to a string describing the enumerated type
+**
+** Notes:
+**   None
+*/
+const char* CMDMGR_BoolStr(boolean  BoolArg);
+
 #endif /* _cmdmgr_ */

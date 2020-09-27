@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_custom.h 1.2 2015/03/04 16:09:52EST sstrege Exp  $
+**   $Id: lc_custom.h 1.3 2017/01/22 17:24:48EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -17,23 +17,10 @@
 **
 ** Notes:
 **
-**   $Log: lc_custom.h  $
-**   Revision 1.2 2015/03/04 16:09:52EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:38EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.2 2008/12/03 13:59:40EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:12EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 **************************************************************************/
 #ifndef _lc_custom_
 #define _lc_custom_
-
-#define _ix86_  /* TODO - Fix endianness definitions */ 
 
 /*************************************************************************
 ** Includes

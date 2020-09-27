@@ -31,16 +31,22 @@
 **  Macro Definitions
 */
 
-#define SCHTBL_INDEX(slot,entry)  ((slot*SCHTBL_ACTIVITIES_PER_SLOT) + entry)
+#define SCHTBL_UNDEF_SLOT 9999
 
-#define SCHTBL_CREATE_FILE_ERR_EID  (SCHTBL_BASE_EID + 0)
-#define SCHTBL_LOAD_TYPE_ERR_EID    (SCHTBL_BASE_EID + 1)
-#define SCHTBL_LOAD_EMPTY_ERR_EID   (SCHTBL_BASE_EID + 2)
-#define SCHTBL_LOAD_PARSE_ERR_EID   (SCHTBL_BASE_EID + 3)
-#define SCHTBL_LOAD_ATTR_ERR_EID    (SCHTBL_BASE_EID + 4)
-#define SCHTBL_LOAD_OPEN_ERR_EID    (SCHTBL_BASE_EID + 5)
-#define SCHTBL_DUMP_INFO_EID        (SCHTBL_BASE_EID + 6)
+#define SCHTBL_INDEX(slot_index,entry_index)  ((slot_index*SCHTBL_ACTIVITIES_PER_SLOT) + entry_index)
 
+#define SCHTBL_CREATE_FILE_ERR_EID   (SCHTBL_BASE_EID + 0)
+#define SCHTBL_LOAD_TYPE_ERR_EID     (SCHTBL_BASE_EID + 1)
+#define SCHTBL_LOAD_EMPTY_ERR_EID    (SCHTBL_BASE_EID + 2)
+#define SCHTBL_LOAD_ATTR_ERR_EID     (SCHTBL_BASE_EID + 3)
+#define SCHTBL_LOAD_OPEN_ERR_EID     (SCHTBL_BASE_EID + 4)
+#define SCHTBL_LOAD_PARSE_ERR_EID    (SCHTBL_BASE_EID + 5)
+#define SCHTBL_DUMP_INFO_EID         (SCHTBL_BASE_EID + 6)
+#define SCHTBL_MSG_TBL_INDEX_ERR_EID (SCHTBL_BASE_EID + 7)
+#define SCHTBL_OFFSET_ERR_EID        (SCHTBL_BASE_EID + 8)
+#define SCHTBL_ENABLED_ERR_EID       (SCHTBL_BASE_EID + 9)
+#define SCHTBL_CMD_SLOT_ERR_EID      (SCHTBL_BASE_EID + 10)
+#define SCHTBL_CMD_ACTIVITY_ERR_EID  (SCHTBL_BASE_EID + 11)
 
 /*
 ** Type Definitions
@@ -65,14 +71,17 @@
 
 /******************************************************************************
 ** Scheduler Table
+**
+** - Minimized SCHTBL_Entry and made word-aligned for telemetry 
 */
+
 
 typedef struct {
 
    boolean Enabled;
-   uint16  Frequency;
-   uint16  Offset;
-   uint16  MsgTblEntryId;
+   uint8   Period;
+   uint8   Offset;
+   uint8   MsgTblIndex;
 
 } SCHTBL_Entry;
 
@@ -97,7 +106,7 @@ typedef boolean (*SCHTBL_LoadTblEntry)(uint16 EntryId, SCHTBL_Entry* NewEntry);
 
 
 /*
-**  Local table copy used for table load command
+** Local table copy used for table load command
 */
 
 typedef struct {
@@ -106,7 +115,7 @@ typedef struct {
    uint16   AttrErrCnt;
    uint16   ObjErrCnt;
    uint16   ObjLoadCnt;
-   int      CurSlotIdx;
+   uint16   CurSlotIdx;
 
    SCHTBL_Tbl Tbl;
    
@@ -209,4 +218,27 @@ boolean SCHTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename);
 boolean SCHTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename);
 
 
+/******************************************************************************
+** SCHTBL_GetEntryIndex
+**
+** Compute and load EntryIndex if the SlotIndex and ActivityIndex are valid.
+** Event message text assumes commands are being validated 
+*/
+boolean SCHTBL_GetEntryIndex(const char* EventStr, uint16 SlotIndex, 
+                             uint16 ActivityIndex, uint16* EntryIndex);
+
+
+/******************************************************************************
+** Function: SCHTBL_ValidEntry
+**
+** Validate table entry fields. A pointer to a structure isn't passed because
+** this function is used to validate command and table parametetrs that may not
+** be packed identically to the internal structure.
+**
+** The event string should identify the calling context such as whcih ground
+** command.
+*/
+boolean SCHTBL_ValidEntry(const char* EventStr, uint16 Enabled, uint16 Period, 
+                          uint16 Offset, uint16 MsgTblIndex);
+                          
 #endif /* _schtbl_ */

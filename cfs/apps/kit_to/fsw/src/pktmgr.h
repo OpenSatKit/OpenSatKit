@@ -3,7 +3,9 @@
 **          software bus to a socket.
 **
 ** Notes:
-**   None
+**   1. This has some of the features of a flight app such as packet filtering but it
+**      would need design/code reviews to transition it to a flight mission. For starters
+**      it uses UDP sockets and it doesn't regulate output bit rates. 
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -32,28 +34,25 @@
 /*
 ** Event Message IDs
 */
-#define PKTMGR_SOCKET_SEND_ERR_EID                  (PKTMGR_BASE_EID +  0)
-#define PKTMGR_LOAD_TBL_SUBSCRIBE_ERR_EID           (PKTMGR_BASE_EID +  1)
-#define PKTMGR_LOAD_TBL_INFO_EID                    (PKTMGR_BASE_EID +  2)
-#define PKTMGR_LOAD_TBL_ERR_EID                     (PKTMGR_BASE_EID +  3)
-#define PKTMGR_LOAD_TBL_ENTRY_SUBSCRIBE_ERR_EID     (PKTMGR_BASE_EID +  4)
-#define PKTMGR_LOAD_TBL_ENTRY_INFO_EID              (PKTMGR_BASE_EID +  5)
-#define PKTMGR_TLM_OUTPUT_ENA_INFO_EID              (PKTMGR_BASE_EID +  6)
-#define PKTMGR_TLM_OUTPUT_ENA_SOCKET_ERR_EID        (PKTMGR_BASE_EID +  7)
-#define PKTMGR_ADD_PKT_INFO_EID                     (PKTMGR_BASE_EID +  8)
-#define PKTMGR_ADD_PKT_NO_FREE_ENTRY_ERR_EID        (PKTMGR_BASE_EID +  9)
-#define PKTMGR_ADD_PKT_DUPLICATE_ENTRY_EID          (PKTMGR_BASE_EID + 10)
-#define PKTMGR_ADD_PKT_SUBSCRIPTION_ERR_EID         (PKTMGR_BASE_EID + 11)
-#define PKTMGR_REMOVE_PKT_INFO_EID                  (PKTMGR_BASE_EID + 12)
-#define PKTMGR_REMOVE_PKT_SB_ERR_EID                (PKTMGR_BASE_EID + 13)
-#define PKTMGR_REMOVE_PKT_NOT_FOUND_ERR_EID         (PKTMGR_BASE_EID + 14)
-#define PKTMGR_REMOVE_ALL_PKTS_UNSUBSCRIBE_ERR_EID  (PKTMGR_BASE_EID + 15)
-#define PKTMGR_REMOVE_ALL_PKTS_INFO_EID             (PKTMGR_BASE_EID + 16)
-#define PKTMGR_REMOVE_ALL_PKTS_ERR_EID              (PKTMGR_BASE_EID + 17)
-#define PKTMGR_DESTRUCTOR_INFO_EID                  (PKTMGR_BASE_EID + 18)
-#define PKTMGR_DEBUG_EID                            (PKTMGR_BASE_EID + 19)
+#define PKTMGR_SOCKET_SEND_ERR_EID               (PKTMGR_BASE_EID +  0)
+#define PKTMGR_LOAD_TBL_SUBSCRIBE_ERR_EID        (PKTMGR_BASE_EID +  1)
+#define PKTMGR_LOAD_TBL_INFO_EID                 (PKTMGR_BASE_EID +  2)
+#define PKTMGR_LOAD_TBL_ERR_EID                  (PKTMGR_BASE_EID +  3)
+#define PKTMGR_LOAD_TBL_ENTRY_SUBSCRIBE_ERR_EID  (PKTMGR_BASE_EID +  4)
+#define PKTMGR_LOAD_TBL_ENTRY_INFO_EID           (PKTMGR_BASE_EID +  5)
+#define PKTMGR_TLM_OUTPUT_ENA_INFO_EID           (PKTMGR_BASE_EID +  6)
+#define PKTMGR_TLM_OUTPUT_ENA_SOCKET_ERR_EID     (PKTMGR_BASE_EID +  7)
+#define PKTMGR_ADD_PKT_SUCCESS_EID               (PKTMGR_BASE_EID +  8)
+#define PKTMGR_ADD_PKT_ERROR_EID                 (PKTMGR_BASE_EID +  9)
+#define PKTMGR_REMOVE_PKT_SUCCESS_EID            (PKTMGR_BASE_EID + 10)
+#define PKTMGR_REMOVE_PKT_ERROR_EID              (PKTMGR_BASE_EID + 11)
+#define PKTMGR_REMOVE_ALL_PKTS_SUCCESS_EID       (PKTMGR_BASE_EID + 12)
+#define PKTMGR_REMOVE_ALL_PKTS_ERROR_EID         (PKTMGR_BASE_EID + 13)
+#define PKTMGR_DESTRUCTOR_INFO_EID               (PKTMGR_BASE_EID + 14)
+#define PKTMGR_UPDATE_FILTER_CMD_SUCCESS_EID     (PKTMGR_BASE_EID + 15)
+#define PKTMGR_UPDATE_FILTER_CMD_ERR_EID         (PKTMGR_BASE_EID + 16)
+#define PKTMGR_DEBUG_EID                         (PKTMGR_BASE_EID + 17)
 
-#define PKTMGR_TOTAL_EID  20
 
 /*
 ** Type Definitions
@@ -61,10 +60,95 @@
 
 
 /******************************************************************************
-** Packet Manager Statistics
-**
-** Stats are computed over an interval of PKTMGR_COMPUTE_STATS_INTERVAL_MS
+** Command Packets
 */
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   char    DestIp[PKTMGR_IP_STR_LEN];
+
+} PKTMGR_EnableOutputCmdParam;
+#define PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN  (sizeof(PKTMGR_EnableOutputCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+   uint8                CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   CFE_SB_MsgId_t       StreamId;
+   CFE_SB_Qos_t         Qos;
+   uint8                BufLim;
+   uint16               FilterType;
+   PktUtil_FilterParam  FilterParam;
+
+}  OS_PACK PKTMGR_AddPktCmdParam;
+#define PKKTMGR_ADD_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_AddPktCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+   uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   CFE_SB_MsgId_t     StreamId;
+
+}  PKTMGR_RemovePktCmdParam;
+#define PKKTMGR_REMOVE_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_RemovePktCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+   uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   CFE_SB_MsgId_t     StreamId;
+
+}  PKTMGR_SendPktTblTlmCmdParam;
+#define PKKTMGR_SEND_PKT_TBL_TLM_CMD_DATA_LEN  (sizeof(PKTMGR_SendPktTblTlmCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+   uint8                CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   CFE_SB_MsgId_t       StreamId;
+   uint16               FilterType;
+   PktUtil_FilterParam  FilterParam;
+
+}  OS_PACK PKTMGR_UpdateFilterCmdParam;
+#define PKKTMGR_UPDATE_FILTER_CMD_DATA_LEN  (sizeof(PKTMGR_UpdateFilterCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+/******************************************************************************
+** Telemetry Packets
+*/
+
+typedef struct {
+
+   uint8    Header[CFE_SB_TLM_HDR_SIZE];
+
+   CFE_SB_MsgId_t  StreamId;
+   CFE_SB_Qos_t    Qos;
+   uint16          BufLim;
+
+   uint16               FilterType;
+   PktUtil_FilterParam  FilterParam;
+
+} OS_PACK PKTMGR_PktTlm;
+
+#define PKTMGR_PKT_TLM_LEN sizeof (PKTMGR_PktTlm)
+
+
+/******************************************************************************
+** Packet Manager Class
+*/
+
+/*
+** Packet Manager Statistics
+** - Stats are computed over an interval of PKTMGR_COMPUTE_STATS_INTERVAL_MS
+*/
+typedef enum {
+
+   PKTMGR_STATS_INIT_CYCLE    = 1,
+   PKTMGR_STATS_INIT_INTERVAL,
+   PKTMGR_STATS_VALID
+   
+} PKTMGR_StatsState;
 
 typedef struct {
 
@@ -75,20 +159,16 @@ typedef struct {
    uint32  IntervalPkts;
    uint32  IntervalBytes;
    
+   CFE_TIME_SysTime_t PrevTime; 
    double  PrevIntervalAvgPkts;
    double  PrevIntervalAvgBytes;
    
    double  AvgPktsPerSec;
    double  AvgBytesPerSec;
    
-   boolean FirstInterval;
+   PKTMGR_StatsState State;
    
 } PKTMGR_Stats;
-
-
-/******************************************************************************
-** Packet Manager Class
-*/
 
 
 typedef struct {
@@ -103,44 +183,9 @@ typedef struct {
 
    PKTTBL_Tbl        Tbl;
 
+   PKTMGR_PktTlm     PktTlm;
+
 } PKTMGR_Class;
-
-
-/******************************************************************************
-** Command Packets
-*/
-
-typedef struct
-{
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   char    DestIp[PKTMGR_IP_STR_LEN];
-
-} PKTMGR_EnableOutputCmdParam;
-#define PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN  (sizeof(PKTMGR_EnableOutputCmdParam) - CFE_SB_CMD_HDR_SIZE)
-
-
-typedef struct
-{
-
-   uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   CFE_SB_MsgId_t     StreamId;
-   CFE_SB_Qos_t       Qos;
-   uint8              BufLim;
-
-}  OS_PACK PKTMGR_AddPktCmdParam;
-#define PKKTMGR_ADD_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_AddPktCmdParam) - CFE_SB_CMD_HDR_SIZE)
-
-
-typedef struct
-{
-
-   uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   CFE_SB_MsgId_t     StreamId;
-
-}  PKTMGR_RemovePktCmdParam;
-#define PKKTMGR_REMOVE_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_RemovePktCmdParam) - CFE_SB_CMD_HDR_SIZE)
-
 
 /*
 ** Exported Functions
@@ -248,8 +293,24 @@ boolean PKTMGR_EnableOutputCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 ** Function: PKTMGR_AddPktCmd
 **
 ** Add a packet to the table and subscribe for it on the SB.
+**
+** Notes:
+**   1. Command rejected if table has existing entry for thecommanded Stream ID
+**   2. Only update the table if the software bus subscription successful
+** 
 */
 boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: PKTMGR_RemoveAllPktsCmd
+**
+** Notes:
+**   1. The cFE to_lab code unsubscribes the command and send HK MIDs. I'm not
+**      sure why this is done and I'm not sure how the command is used. This 
+**      command is intended to help manage TO telemetry packets.
+*/
+boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
@@ -264,12 +325,24 @@ boolean PKTMGR_RemovePktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Function: PKTMGR_RemoveAllPktsCmd
+** Function: PKTMGR_SendPktTblTlmCmd
 **
-** Remove all packets from the table and unsubscribe from receiving them on the
-** SB.
+** Send a telemetry packet containg the packet table entry for the commanded
+** Stream ID.
+**
 */
-boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean PKTMGR_SendPktTblTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Function: PKTMGR_UpdateFilterCmd
+**
+** Notes:
+**   1. Command rejected if AppId packet entry has not been loaded 
+**   2. The filter type is verified but the filter parameter values are not 
+** 
+*/
+boolean PKTMGR_UpdateFilterCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 #endif /* _pktmgr_ */

@@ -1,0 +1,1030 @@
+        -:    0:Source:../src/lc_app.c
+        -:    0:Programs:5
+        -:    1:/************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: lc_app.c.gcov 1.4 2017/01/12 12:47:11EST czogby Exp  $
+        -:    4:**
+        -:    5:**  Copyright � 2007-2014 United States Government as represented by the 
+        -:    6:**  Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**  All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**  This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**  used, distributed and modified only pursuant to the terms of that 
+        -:   12:**  agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   The CFS Limit Checker (LC) is a table driven application
+        -:   16:**   that provides telemetry monitoring and autonomous response 
+        -:   17:**   capabilities to Core Flight Executive (cFE) based systems. 
+        -:   18:**
+        -:   19:**   $Log: lc_app.c.gcov  $
+        -:   19:**   Revision 1.4 2017/01/12 12:47:11EST czogby 
+        -:   19:**   Move function prototypes from .c to .h, and fix comments
+        -:   20:**   Revision 1.5 2016/11/21 13:17:58EST mdeschu 
+        -:   21:**   Cleaned up CFE_EVS_SendEvent format warnings by using C-Style casts
+        -:   22:**   Revision 1.4 2016/11/21 12:51:00EST mdeschu 
+        -:   23:**   Determined unused variables are not necessary as there are others that are used to determine
+        -:   24:**   the validity of the run-time state.
+        -:   25:**   
+        -:   26:**   In LC_CreateTaskCDS replaced run-time conditional with a compile-time conditional
+        -:   27:**   Revision 1.3 2016/11/18 13:40:34EST mdeschu 
+        -:   28:**   In lc_app.c, in the function LC_TableInit, moved final else-case that generates the event message "LC use of Critical Data Store disabled"
+        -:   29:**   so that it's the else-case of "if ((LC_OperData.TableResults & LC_CDS_ENABLED) == LC_CDS_ENABLED)".
+        -:   30:**   Revision 1.2 2015/11/16 14:26:17EST wmoleski 
+        -:   31:**   Most of the files were missing the Copyright comments.
+        -:   32:**   Revision 1.3 2015/03/04 16:11:32EST sstrege 
+        -:   33:**   Added copyright information
+        -:   34:**   Revision 1.2 2012/10/01 16:23:59EDT lwalling 
+        -:   35:**   Added local variable to avoid comparing 2 macros in function LC_CreateTaskCDS()
+        -:   36:**   Revision 1.1 2012/07/31 13:53:36PDT nschweis 
+        -:   37:**   Initial revision
+        -:   38:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
+        -:   39:**   Revision 1.16 2011/10/04 17:00:30EDT lwalling 
+        -:   40:**   Must load AP def table before init AP results table
+        -:   41:**   Revision 1.15 2011/06/08 16:07:40EDT lwalling 
+        -:   42:**   Change call from LC_SubscribeWP() to LC_CreateHashTable()
+        -:   43:**   Revision 1.14 2011/03/10 14:11:10EST lwalling 
+        -:   44:**   Cleanup use of debug events during task startup
+        -:   45:**   Revision 1.13 2011/03/02 10:53:23EST lwalling 
+        -:   46:**   Explicitly state return value when known to be CFE_SUCCESS
+        -:   47:**   Revision 1.12 2011/03/01 15:38:50EST lwalling 
+        -:   48:**   Cleanup local function prototypes, move LC_SubscribeWP() and LC_UpdateTaskCDS() to lc_cmds.c
+        -:   49:**   Revision 1.11 2011/03/01 09:35:30EST lwalling 
+        -:   50:**   Modified startup logic re use of CDS and critical tables
+        -:   51:**   Revision 1.10 2011/02/14 16:57:13EST lwalling 
+        -:   52:**   Created LC_StartedNoCDS() to clear results tables after CDS load error
+        -:   53:**   Revision 1.9 2011/01/19 11:32:06EST jmdagost 
+        -:   54:**   Moved mission revision number from lc_version.h to lc_platform_cfg.h.
+        -:   55:**   Revision 1.8 2010/03/08 10:37:09EST lwalling 
+        -:   56:**   Move saved, not saved state definitions to common header file
+        -:   57:**   Revision 1.7 2009/06/12 14:17:23EDT rmcgraw 
+        -:   58:**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+        -:   59:**   Revision 1.6 2009/02/23 11:15:10EST dahardis 
+        -:   60:**   Added code to update the application data in the CDS on 
+        -:   61:**   application startup after the "saved on exit" flag is reset
+        -:   62:**   (see DCR 7084)
+        -:   63:**   Revision 1.5 2009/01/15 15:36:11EST dahardis 
+        -:   64:**   Unit test fixes
+        -:   65:**   Revision 1.4 2008/12/10 15:34:07EST dahardis 
+        -:   66:**   Altered CDS restoration processing according to
+        -:   67:**   DCR 4680
+        -:   68:**   Revision 1.3 2008/12/10 09:38:33EST dahardis 
+        -:   69:**   Fixed calls to CFE_TBL_GetAddress (DCR #4699)
+        -:   70:**   Revision 1.2 2008/12/03 13:59:44EST dahardis 
+        -:   71:**   Corrections from peer code review
+        -:   72:**   Revision 1.1 2008/10/29 14:18:51EDT dahardison 
+        -:   73:**   Initial revision
+        -:   74:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
+        -:   75:** 
+        -:   76:*************************************************************************/
+        -:   77:
+        -:   78:/************************************************************************
+        -:   79:** Includes
+        -:   80:*************************************************************************/
+        -:   81:#include "lc_app.h"
+        -:   82:#include "lc_events.h"
+        -:   83:#include "lc_msgids.h"
+        -:   84:#include "lc_perfids.h"
+        -:   85:#include "lc_version.h"
+        -:   86:#include "lc_cmds.h"
+        -:   87:#include "lc_action.h"
+        -:   88:#include "lc_watch.h"
+        -:   89:#include "lc_platform_cfg.h"
+        -:   90:#include "lc_mission_cfg.h"     /* Leave these two last to make sure all   */
+        -:   91:#include "lc_verify.h"          /* LC configuration parameters are checked */
+        -:   92:
+        -:   93:/************************************************************************
+        -:   94:** LC Global Data
+        -:   95:*************************************************************************/
+        -:   96:LC_OperData_t    LC_OperData;
+        -:   97:LC_AppData_t     LC_AppData;           
+        -:   98:
+        -:   99:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  100:/*                                                                 */
+        -:  101:/* LC application entry point and main process loop                */
+        -:  102:/*                                                                 */
+        -:  103:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  104:
+        4:  105:void LC_AppMain(void)
+        -:  106:{
+        4:  107:    int32   Status      = CFE_SUCCESS;
+        4:  108:    uint32  RunStatus   = CFE_ES_APP_RUN;
+        -:  109:   
+        -:  110:    /* 
+        -:  111:    ** Performance Log, Start
+        -:  112:    */
+        4:  113:    CFE_ES_PerfLogEntry(LC_APPMAIN_PERF_ID);
+        -:  114:   
+        -:  115:    /*
+        -:  116:    **  Register this application with Executive Services 
+        -:  117:    */
+        4:  118:    Status = CFE_ES_RegisterApp();
+        -:  119:
+        -:  120:    /*
+        -:  121:    ** Perform application specific initialization
+        -:  122:    */
+        4:  123:    if (Status == CFE_SUCCESS)
+        -:  124:    {
+        3:  125:        Status = LC_AppInit();
+        -:  126:    }
+        -:  127:
+        -:  128:    /*
+        -:  129:    ** Check for start-up error...
+        -:  130:    */
+        4:  131:    if (Status != CFE_SUCCESS)
+        -:  132:    {
+        -:  133:       /*
+        -:  134:       ** Set run status to terminate main loop
+        -:  135:       */
+        2:  136:       RunStatus = CFE_ES_APP_ERROR;
+        -:  137:    }
+        -:  138:   
+        -:  139:    /*
+        -:  140:    ** Application main loop
+        -:  141:    */
+       10:  142:    while(CFE_ES_RunLoop(&RunStatus) == TRUE)
+        -:  143:    {
+        -:  144:       /* 
+        -:  145:       ** Performance Log, Stop
+        -:  146:       */
+        2:  147:       CFE_ES_PerfLogExit(LC_APPMAIN_PERF_ID);
+        -:  148:       
+        -:  149:       /* 
+        -:  150:       ** Pend on the arrival of the next Software Bus message 
+        -:  151:       */
+        2:  152:       Status = CFE_SB_RcvMsg(&LC_OperData.MsgPtr, LC_OperData.CmdPipe, CFE_SB_PEND_FOREVER);
+        -:  153:       
+        -:  154:       /* 
+        -:  155:       ** Performance Log, Start
+        -:  156:       */
+        2:  157:       CFE_ES_PerfLogEntry(LC_APPMAIN_PERF_ID);
+        -:  158:      
+        -:  159:       /*
+        -:  160:       ** Process the software bus message
+        -:  161:       */ 
+        2:  162:       if (Status == CFE_SUCCESS)
+        -:  163:       {
+        1:  164:           Status = LC_AppPipe(LC_OperData.MsgPtr);
+        -:  165:       }
+        -:  166: 
+        -:  167:       /*
+        -:  168:       ** Note: If there were some reason to exit the task
+        -:  169:       **       normally (without error) then we would set
+        -:  170:       **       RunStatus = CFE_ES_APP_EXIT
+        -:  171:       */
+        2:  172:       if (Status != CFE_SUCCESS)
+        -:  173:       {
+        -:  174:           /*
+        -:  175:           ** Set request to terminate main loop
+        -:  176:           */
+        1:  177:           RunStatus = CFE_ES_APP_ERROR;
+        -:  178:       }
+        -:  179:      
+        -:  180:    } /* end CFS_ES_RunLoop while */
+        -:  181:   
+        -:  182:    /*
+        -:  183:    ** Check for "fatal" process error...
+        -:  184:    */
+        4:  185:    if (Status != CFE_SUCCESS)
+        -:  186:    {
+        -:  187:        /*
+        -:  188:        ** Send an event describing the reason for the termination
+        -:  189:        */
+        3:  190:        CFE_EVS_SendEvent(LC_TASK_EXIT_EID, CFE_EVS_CRITICAL, 
+        -:  191:                          "Task terminating, err = 0x%08X", (unsigned int)Status);
+        -:  192:
+        -:  193:        /*
+        -:  194:        ** In case cFE Event Services is not working
+        -:  195:        */
+        3:  196:        CFE_ES_WriteToSysLog("LC task terminating, err = 0x%08X\n", (unsigned int)Status);
+        -:  197:    }
+        -:  198:   
+        -:  199:    /* 
+        -:  200:    ** Performance Log, Stop
+        -:  201:    */
+        4:  202:    CFE_ES_PerfLogExit(LC_APPMAIN_PERF_ID);
+        -:  203:
+        -:  204:    /*
+        -:  205:    ** Do not update CDS if inactive or startup was incomplete
+        -:  206:    */
+        5:  207:    if ((LC_OperData.HaveActiveCDS) &&
+        1:  208:        (LC_AppData.CDSSavedOnExit == LC_CDS_SAVED))
+        -:  209:    {
+        1:  210:        LC_UpdateTaskCDS();
+        -:  211:    }
+        -:  212:    
+        -:  213:    /* 
+        -:  214:    ** Exit the application 
+        -:  215:    */
+        4:  216:    CFE_ES_ExitApp(RunStatus); 
+        -:  217:
+        4:  218:} /* end LC_AppMain */
+        -:  219:
+        -:  220:
+        -:  221:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  222:/*                                                                 */
+        -:  223:/* LC initialization                                               */
+        -:  224:/*                                                                 */
+        -:  225:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  226:
+        7:  227:int32 LC_AppInit(void)
+        -:  228:{
+        7:  229:    int32 Status = CFE_SUCCESS;
+        -:  230:
+        -:  231:    /*
+        -:  232:    ** Zero out the global data structures...
+        -:  233:    */
+        7:  234:    CFE_PSP_MemSet(&LC_OperData, 0, sizeof(LC_OperData_t));
+        7:  235:    CFE_PSP_MemSet(&LC_AppData,  0, sizeof(LC_AppData_t));
+        -:  236:    
+        -:  237:    /*
+        -:  238:    ** Initialize event services
+        -:  239:    */
+        7:  240:    Status = LC_EvsInit();
+        7:  241:    if (Status != CFE_SUCCESS)
+        -:  242:    {
+        1:  243:       return(Status);
+        -:  244:    }
+        -:  245:
+        -:  246:    /*
+        -:  247:    ** Initialize software bus
+        -:  248:    */
+        6:  249:    Status = LC_SbInit();
+        6:  250:    if (Status != CFE_SUCCESS)
+        -:  251:    {
+        2:  252:       return(Status);
+        -:  253:    }
+        -:  254:
+        -:  255:    /*
+        -:  256:    ** Initialize table services
+        -:  257:    */
+        4:  258:    Status = LC_TableInit();
+        4:  259:    if (Status != CFE_SUCCESS)
+        -:  260:    {
+        1:  261:       return(Status);
+        -:  262:    }
+        -:  263:
+        -:  264:   /* 
+        -:  265:   ** If we get here, all is good
+        -:  266:   ** Issue the application startup event message 
+        -:  267:   */
+        3:  268:   CFE_EVS_SendEvent(LC_INIT_INF_EID, CFE_EVS_INFORMATION, 
+        -:  269:                    "LC Initialized. Version %d.%d.%d.%d",
+        -:  270:                     LC_MAJOR_VERSION,
+        -:  271:                     LC_MINOR_VERSION,
+        -:  272:                     LC_REVISION,
+        -:  273:                     LC_MISSION_REV);
+        -:  274:
+        3:  275:   return(CFE_SUCCESS);
+        -:  276:
+        -:  277:} /* end LC_AppInit */
+        -:  278:
+        -:  279:
+        -:  280:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  281:/*                                                                 */
+        -:  282:/* Initialize event services interface                             */
+        -:  283:/*                                                                 */
+        -:  284:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  285:
+        9:  286:int32 LC_EvsInit(void)
+        -:  287:{
+        9:  288:    int32   Status = CFE_SUCCESS;
+        -:  289:  
+        -:  290:    /*
+        -:  291:    ** If an application event filter table is added
+        -:  292:    ** in the future, initialize it here
+        -:  293:    */    
+        -:  294:
+        -:  295:    /*
+        -:  296:    **  Register for event services 
+        -:  297:    */
+        9:  298:    Status = CFE_EVS_Register(NULL, 0, CFE_EVS_BINARY_FILTER);
+        -:  299:    
+        9:  300:    if (Status != CFE_SUCCESS)
+        -:  301:    {
+        2:  302:       CFE_ES_WriteToSysLog("LC App: Error Registering For Event Services, RC = 0x%08X\n", (unsigned int)Status);
+        2:  303:       return (Status);
+        -:  304:    }
+        -:  305:    
+        7:  306:   return(CFE_SUCCESS);
+        -:  307:    
+        -:  308:} /* end LC_EvsInit */
+        -:  309:
+        -:  310:
+        -:  311:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  312:/*                                                                 */
+        -:  313:/* Initialize the software bus interface                           */
+        -:  314:/*                                                                 */
+        -:  315:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  316:
+       11:  317:int32 LC_SbInit(void)
+        -:  318:{
+       11:  319:    int32   Status = CFE_SUCCESS;
+        -:  320:
+        -:  321:    /* 
+        -:  322:    ** Initialize SB variables
+        -:  323:    */
+       11:  324:    LC_OperData.MsgPtr  = (CFE_SB_MsgPtr_t) NULL;
+       11:  325:    LC_OperData.CmdPipe = 0;
+        -:  326:    
+        -:  327:    /*
+        -:  328:    ** Initialize housekeeping packet...
+        -:  329:    */
+       11:  330:    CFE_SB_InitMsg(&LC_OperData.HkPacket, LC_HK_TLM_MID,
+        -:  331:                   sizeof(LC_HkPacket_t), FALSE);
+        -:  332:
+        -:  333:    /*
+        -:  334:    ** Create Software Bus message pipe...
+        -:  335:    */
+       11:  336:    Status = CFE_SB_CreatePipe(&LC_OperData.CmdPipe, LC_PIPE_DEPTH, LC_PIPE_NAME);    
+       11:  337:    if (Status != CFE_SUCCESS)
+        -:  338:    {
+        3:  339:        CFE_EVS_SendEvent(LC_CR_PIPE_ERR_EID, CFE_EVS_ERROR,
+        -:  340:                         "Error Creating LC Pipe, RC=0x%08X", (unsigned int)Status);
+        3:  341:        return(Status);
+        -:  342:    }
+        -:  343:
+        -:  344:    /*
+        -:  345:    ** Subscribe to Housekeeping request messages...
+        -:  346:    */
+        8:  347:    Status = CFE_SB_Subscribe(LC_SEND_HK_MID, LC_OperData.CmdPipe);
+        8:  348:    if (Status != CFE_SUCCESS)
+        -:  349:    {
+        1:  350:        CFE_EVS_SendEvent(LC_SUB_HK_REQ_ERR_EID, CFE_EVS_ERROR,
+        -:  351:                          "Error Subscribing to HK Request, MID=0x%04X, RC=0x%08X", 
+        -:  352:                          LC_SEND_HK_MID, (unsigned int)Status);    
+        1:  353:        return(Status);
+        -:  354:    }
+        -:  355:
+        -:  356:    /*
+        -:  357:    ** Subscribe to LC ground command messages...
+        -:  358:    */
+        7:  359:    Status = CFE_SB_Subscribe(LC_CMD_MID, LC_OperData.CmdPipe);
+        7:  360:    if (Status != CFE_SUCCESS)
+        -:  361:    {
+        1:  362:        CFE_EVS_SendEvent(LC_SUB_GND_CMD_ERR_EID, CFE_EVS_ERROR,
+        -:  363:                          "Error Subscribing to GND CMD, MID=0x%04X, RC=0x%08X", 
+        -:  364:                          LC_CMD_MID, (unsigned int)Status);    
+        1:  365:        return(Status); 
+        -:  366:    }
+        -:  367:
+        -:  368:    /*
+        -:  369:    ** Subscribe to LC internal actionpoint sample messages...
+        -:  370:    */
+        6:  371:    Status = CFE_SB_Subscribe(LC_SAMPLE_AP_MID, LC_OperData.CmdPipe);
+        6:  372:    if (Status != CFE_SUCCESS)
+        -:  373:    {
+        1:  374:        CFE_EVS_SendEvent(LC_SUB_SAMPLE_CMD_ERR_EID, CFE_EVS_ERROR,
+        -:  375:                          "Error Subscribing to Sample CMD, MID=0x%04X, RC=0x%08X", 
+        -:  376:                          LC_SAMPLE_AP_MID, (unsigned int)Status);    
+        1:  377:        return(Status); 
+        -:  378:    }
+        -:  379:    
+        5:  380:    return(CFE_SUCCESS);
+        -:  381:    
+        -:  382:} /* end LC_SbInit */
+        -:  383:
+        -:  384:
+        -:  385:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  386:/*                                                                 */
+        -:  387:/* Table initialization - includes Critical Data Store (CDS)       */
+        -:  388:/*                                                                 */
+        -:  389:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  390:
+        9:  391:int32 LC_TableInit(void)
+        -:  392:{
+        -:  393:    int32 Result;
+        -:  394:
+        -:  395:    /*
+        -:  396:    ** LC task use of Critical Data Store (CDS)
+        -:  397:    **
+        -:  398:    **    Global application data (LC_AppData)
+        -:  399:    **    Watchpint results dump only table data
+        -:  400:    **    Actionpoint results dump only table data
+        -:  401:    **
+        -:  402:    ** cFE Table Services use of CDS for LC task
+        -:  403:    **
+        -:  404:    **    Watchpint definition loadable table data
+        -:  405:    **    Actionpoint definition loadable table data
+        -:  406:    **
+        -:  407:    ** LC table initialization logic re CDS
+        -:  408:    **
+        -:  409:    **    If LC cannot create all the CDS storage at startup, then LC
+        -:  410:    **    will disable LC use of CDS and continue.
+        -:  411:    **
+        -:  412:    **    If LC cannot register definition tables as critical, then LC
+        -:  413:    **    will disable LC use of CDS and re-register tables as non-critical.
+        -:  414:    **
+        -:  415:    **    If LC cannot register definition and results tables at startup,
+        -:  416:    **    then LC will terminate - table use is a required function.
+        -:  417:    **
+        -:  418:    **    If LC can create all the CDS storage and register definition
+        -:  419:    **    tables as critical, then LC will write to CDS regardless of
+        -:  420:    **    whether LC was able to read from CDS at startup.
+        -:  421:    **
+        -:  422:    **    If LC cannot restore everything from CDS at startup, then LC
+        -:  423:    **    will initialize everything - load default definition tables,
+        -:  424:    **    init results table contents, init global application data.
+        -:  425:    */
+        -:  426:
+        -:  427:    /* lc_platform_cfg.h */
+        -:  428:    #ifdef LC_SAVE_TO_CDS
+        -:  429:    LC_OperData.HaveActiveCDS = TRUE;
+        -:  430:    #endif
+        -:  431:
+        -:  432:    /*
+        -:  433:    ** Maintain a detailed record of table initialization results
+        -:  434:    */
+        9:  435:    if (LC_OperData.HaveActiveCDS)
+        -:  436:    {
+    #####:  437:        LC_OperData.TableResults |= LC_CDS_ENABLED;
+        -:  438:    }
+        -:  439:
+        -:  440:    /*
+        -:  441:    ** Create watchpoint and actionpoint result tables
+        -:  442:    */ 
+        9:  443:    if ((Result = LC_CreateResultTables()) != CFE_SUCCESS)
+        -:  444:    {
+        1:  445:        return(Result);
+        -:  446:    }
+        -:  447:
+        -:  448:    /*
+        -:  449:    ** If CDS is enabled - create the 3 CDS areas managed by the LC task
+        -:  450:    **  (continue with init, but disable CDS if unable to create all 3)
+        -:  451:    */
+        8:  452:    if (LC_OperData.HaveActiveCDS)
+        -:  453:    {
+    #####:  454:        if (LC_CreateTaskCDS() != CFE_SUCCESS)
+        -:  455:        {
+    #####:  456:            LC_OperData.HaveActiveCDS = FALSE;
+        -:  457:        }
+        -:  458:    }
+        -:  459:
+        -:  460:    /*
+        -:  461:    ** Create wp/ap definition tables - critical if CDS enabled
+        -:  462:    */ 
+        8:  463:    if ((Result = LC_CreateDefinitionTables()) != CFE_SUCCESS)
+        -:  464:    {
+        1:  465:        return(Result);
+        -:  466:    }
+        -:  467:
+        -:  468:    /*
+        -:  469:    ** CDS still active only if we created 3 CDS areas and 2 critical tables
+        -:  470:    */
+        7:  471:    if (LC_OperData.HaveActiveCDS)
+        -:  472:    {
+    #####:  473:        LC_OperData.TableResults |= LC_CDS_CREATED;
+        -:  474:    }
+        -:  475:
+        -:  476:    /*
+        -:  477:    ** If any CDS area or critical table is not restored - initialize everything.
+        -:  478:    **  (might be due to reset type, CDS disabled or corrupt, table restore error)
+        -:  479:    */
+       15:  480:    if (((LC_OperData.TableResults & LC_WRT_CDS_RESTORED) == LC_WRT_CDS_RESTORED) &&
+        2:  481:        ((LC_OperData.TableResults & LC_ART_CDS_RESTORED) == LC_ART_CDS_RESTORED) &&
+        2:  482:        ((LC_OperData.TableResults & LC_APP_CDS_RESTORED) == LC_APP_CDS_RESTORED) &&
+        2:  483:        ((LC_OperData.TableResults & LC_WDT_TBL_RESTORED) == LC_WDT_TBL_RESTORED) &&
+        2:  484:        ((LC_OperData.TableResults & LC_ADT_TBL_RESTORED) == LC_ADT_TBL_RESTORED))
+        -:  485:    {
+        2:  486:        LC_OperData.TableResults |= LC_CDS_RESTORED;
+        -:  487:
+        -:  488:        /*
+        -:  489:        ** Get a pointer to the watchpoint definition table data...
+        -:  490:        */
+        2:  491:        Result = CFE_TBL_GetAddress((void *)&LC_OperData.WDTPtr, LC_OperData.WDTHandle);
+        -:  492:
+        2:  493:        if ((Result != CFE_SUCCESS) && (Result != CFE_TBL_INFO_UPDATED))
+        -:  494:        {
+        1:  495:            CFE_EVS_SendEvent(LC_WDT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -:  496:                              "Error getting WDT address, RC=0x%08X", (unsigned int)Result);
+        1:  497:            return(Result);
+        -:  498:        }
+        -:  499:
+        -:  500:        /*
+        -:  501:        ** Get a pointer to the actionpoint definition table data
+        -:  502:        */
+        1:  503:        Result = CFE_TBL_GetAddress((void *)&LC_OperData.ADTPtr, LC_OperData.ADTHandle);
+        -:  504:
+        1:  505:        if ((Result != CFE_SUCCESS) && (Result != CFE_TBL_INFO_UPDATED))
+        -:  506:        {
+        1:  507:            CFE_EVS_SendEvent(LC_ADT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -:  508:                              "Error getting ADT address, RC=0x%08X", (unsigned int)Result);
+        1:  509:            return(Result);
+        -:  510:        }
+        -:  511:    }
+        -:  512:    else
+        -:  513:    {
+        5:  514:        if ((Result = LC_LoadDefaultTables()) != CFE_SUCCESS)
+        -:  515:        {
+        2:  516:            return(Result);
+        -:  517:        }
+        -:  518:    }
+        -:  519:
+        -:  520:    /*
+        -:  521:    ** Create watchpoint hash tables -- also subscribes to watchpoint packets
+        -:  522:    */
+        3:  523:    LC_CreateHashTable();
+        -:  524:
+        -:  525:    /*
+        -:  526:    ** Display results of CDS initialization (if enabled at startup)
+        -:  527:    */
+        3:  528:    if ((LC_OperData.TableResults & LC_CDS_ENABLED) == LC_CDS_ENABLED)
+        -:  529:    {
+    #####:  530:        if ((LC_OperData.TableResults & LC_CDS_RESTORED) == LC_CDS_RESTORED)
+        -:  531:        {
+    #####:  532:            CFE_EVS_SendEvent(LC_CDS_RESTORED_INF_EID, CFE_EVS_INFORMATION, 
+        -:  533:                              "Previous state restored from Critical Data Store");
+        -:  534:        }
+    #####:  535:        else if ((LC_OperData.TableResults & LC_CDS_UPDATED) == LC_CDS_UPDATED)
+        -:  536:        {
+    #####:  537:            CFE_EVS_SendEvent(LC_CDS_UPDATED_INF_EID, CFE_EVS_INFORMATION, 
+        -:  538:                              "Default state loaded and written to CDS, activity mask = 0x%08X",
+        -:  539:                              (unsigned int)LC_OperData.TableResults);
+        -:  540:        }
+        -:  541:        
+        -:  542:    }
+        -:  543:    else
+        -:  544:    {
+        3:  545:        CFE_EVS_SendEvent(LC_CDS_DISABLED_INF_EID, CFE_EVS_INFORMATION, 
+        -:  546:                          "LC use of Critical Data Store disabled, activity mask = 0x%08X",
+        -:  547:                          (unsigned int)LC_OperData.TableResults);
+        -:  548:    }
+        -:  549:
+        3:  550:    return(CFE_SUCCESS);
+        -:  551:
+        -:  552:} /* LC_TableInit() */
+        -:  553:
+        -:  554:
+        -:  555:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  556:/*                                                                 */
+        -:  557:/* Startup initialization - create WP and AP results tables        */
+        -:  558:/*                                                                 */
+        -:  559:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  560:
+       14:  561:int32 LC_CreateResultTables(void)
+        -:  562:{
+        -:  563:    int32 Result;
+        -:  564:    uint32 DataSize;
+        -:  565:    uint32 OptionFlags;
+        -:  566:
+        -:  567:    /*
+        -:  568:    ** Set "dump only" table option flags
+        -:  569:    */
+       14:  570:    OptionFlags = CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY;
+        -:  571:
+        -:  572:    /*
+        -:  573:    ** Register the Watchpoint Results Table (WRT) - "dump only" tables
+        -:  574:    ** cannot be critical with CDS use managed by CFE Table Services.
+        -:  575:    */
+       14:  576:    DataSize = LC_MAX_WATCHPOINTS * sizeof(LC_WRTEntry_t);
+       14:  577:    Result = CFE_TBL_Register(&LC_OperData.WRTHandle, LC_WRT_TABLENAME,
+        -:  578:                               DataSize, OptionFlags, NULL);
+       14:  579:    if (Result != CFE_SUCCESS)
+        -:  580:    {
+        2:  581:        CFE_EVS_SendEvent(LC_WRT_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  582:                          "Error registering WRT, RC=0x%08X", (unsigned int)Result);
+        2:  583:        return(Result);
+        -:  584:    }
+        -:  585:
+       12:  586:    Result = CFE_TBL_GetAddress((void *)&LC_OperData.WRTPtr, LC_OperData.WRTHandle);
+        -:  587:
+       12:  588:    if (Result != CFE_SUCCESS)
+        -:  589:    {
+        1:  590:        CFE_EVS_SendEvent(LC_WRT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -:  591:                          "Error getting WRT address, RC=0x%08X", (unsigned int)Result);
+        1:  592:        return(Result);
+        -:  593:    }
+        -:  594:
+       11:  595:    LC_OperData.TableResults |= LC_WRT_TBL_CREATED;
+        -:  596:
+        -:  597:    /*
+        -:  598:    ** Register the Actionpoint Results Table (ART) - "dump only" tables
+        -:  599:    ** cannot be critical with CDS use managed by CFE Table Services.
+        -:  600:    */
+       11:  601:    DataSize = LC_MAX_ACTIONPOINTS * sizeof (LC_ARTEntry_t);
+       11:  602:    Result = CFE_TBL_Register(&LC_OperData.ARTHandle, LC_ART_TABLENAME,
+        -:  603:                               DataSize, OptionFlags, NULL);
+       11:  604:    if (Result != CFE_SUCCESS)
+        -:  605:    {
+        1:  606:        CFE_EVS_SendEvent(LC_ART_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  607:                          "Error registering ART, RC=0x%08X", (unsigned int)Result);
+        1:  608:        return(Result);
+        -:  609:    }
+        -:  610:
+       10:  611:    Result = CFE_TBL_GetAddress((void *)&LC_OperData.ARTPtr, LC_OperData.ARTHandle);
+        -:  612:    
+       10:  613:    if (Result != CFE_SUCCESS)
+        -:  614:    {
+        1:  615:        CFE_EVS_SendEvent(LC_ART_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -:  616:                          "Error getting ART address, RC=0x%08X", (unsigned int)Result);
+        1:  617:        return(Result);
+        -:  618:    }
+        -:  619:
+        9:  620:    LC_OperData.TableResults |= LC_ART_TBL_CREATED;
+        -:  621:
+        9:  622:    return(CFE_SUCCESS);
+        -:  623:
+        -:  624:} /* LC_CreateResultTables() */
+        -:  625:
+        -:  626:
+        -:  627:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  628:/*                                                                 */
+        -:  629:/* Startup initialization - create WP and AP definition tables     */
+        -:  630:/*                                                                 */
+        -:  631:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  632:
+       16:  633:int32 LC_CreateDefinitionTables(void)
+        -:  634:{
+        -:  635:    int32 Result;
+        -:  636:    uint32 DataSize;
+        -:  637:    uint32 OptionFlags;
+        -:  638:
+        -:  639:    /*
+        -:  640:    ** If CDS is still enabled, try to register the 2 definition tables as critical
+        -:  641:    **  (if error, continue with init - but disable CDS and re-register as non-critical)
+        -:  642:    */
+       16:  643:    if (LC_OperData.HaveActiveCDS)
+        -:  644:    {
+        3:  645:        OptionFlags = CFE_TBL_OPT_DEFAULT | CFE_TBL_OPT_CRITICAL;
+        -:  646:    }
+        -:  647:    else
+        -:  648:    {
+       13:  649:        OptionFlags = CFE_TBL_OPT_DEFAULT;
+        -:  650:    }
+        -:  651:
+        -:  652:    /* 
+        -:  653:    ** Register the Watchpoint Definition Table (WDT)
+        -:  654:    */ 
+       16:  655:    DataSize = LC_MAX_WATCHPOINTS * sizeof (LC_WDTEntry_t);
+       16:  656:    Result = CFE_TBL_Register(&LC_OperData.WDTHandle, LC_WDT_TABLENAME,
+        -:  657:                               DataSize, OptionFlags, LC_ValidateWDT);
+        -:  658: 
+       16:  659:    if ((LC_OperData.HaveActiveCDS) &&
+        -:  660:       ((Result != CFE_TBL_INFO_RECOVERED_TBL) && (Result != CFE_SUCCESS)))
+        -:  661:    { 
+        1:  662:        LC_OperData.HaveActiveCDS = FALSE;
+        1:  663:        OptionFlags = CFE_TBL_OPT_DEFAULT;
+        -:  664: 
+        -:  665:        /* 
+        -:  666:        ** Re-register the Watchpoint Definition Table (WDT) non-critical
+        -:  667:        */ 
+        1:  668:        Result = CFE_TBL_Register(&LC_OperData.WDTHandle, LC_WDT_TABLENAME,
+        -:  669:                                   DataSize, OptionFlags, LC_ValidateWDT);
+        -:  670:    } 
+        -:  671:
+       16:  672:    if (Result == CFE_TBL_INFO_RECOVERED_TBL)
+        -:  673:    {
+        4:  674:        LC_OperData.TableResults |= LC_WDT_CRITICAL_TBL;
+        4:  675:        LC_OperData.TableResults |= LC_WDT_TBL_RESTORED;
+        -:  676:    }
+       12:  677:    else if (Result == CFE_SUCCESS)
+        -:  678:    {
+       10:  679:        if (LC_OperData.HaveActiveCDS)
+        -:  680:        {
+        1:  681:            LC_OperData.TableResults |= LC_WDT_CRITICAL_TBL;
+        -:  682:        }
+        -:  683:        else
+        -:  684:        {
+        9:  685:            LC_OperData.TableResults |= LC_WDT_NOT_CRITICAL;
+        -:  686:        }
+        -:  687:    }
+        -:  688:    else
+        -:  689:    {
+        -:  690:        /*
+        -:  691:        ** Task initialization fails without this table
+        -:  692:        */ 
+        2:  693:        CFE_EVS_SendEvent(LC_WDT_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  694:                         "Error registering WDT, RC=0x%08X", (unsigned int)Result);
+        2:  695:        return(Result);
+        -:  696:    }
+        -:  697:
+        -:  698:    /* 
+        -:  699:    ** Register the Actionpoint Definition Table (ADT)
+        -:  700:    */ 
+       14:  701:    DataSize = LC_MAX_ACTIONPOINTS * sizeof (LC_ADTEntry_t);
+       14:  702:    Result = CFE_TBL_Register(&LC_OperData.ADTHandle, LC_ADT_TABLENAME,
+        -:  703:                               DataSize, OptionFlags, LC_ValidateADT);
+        -:  704:
+       14:  705:    if ((LC_OperData.HaveActiveCDS) &&
+        -:  706:       ((Result != CFE_TBL_INFO_RECOVERED_TBL) && (Result != CFE_SUCCESS)))
+        -:  707:    { 
+        1:  708:        LC_OperData.HaveActiveCDS = FALSE;
+        1:  709:        OptionFlags = CFE_TBL_OPT_DEFAULT;
+        -:  710: 
+        -:  711:        /* 
+        -:  712:        ** Re-register the Actionpoint Definition Table (ADT) non-critical
+        -:  713:        */ 
+        1:  714:        Result = CFE_TBL_Register(&LC_OperData.ADTHandle, LC_ADT_TABLENAME,
+        -:  715:                                   DataSize, OptionFlags, LC_ValidateADT);
+        -:  716:    } 
+        -:  717:
+       14:  718:    if (Result == CFE_TBL_INFO_RECOVERED_TBL)
+        -:  719:    {
+        2:  720:        LC_OperData.TableResults |= LC_ADT_CRITICAL_TBL;
+        2:  721:        LC_OperData.TableResults |= LC_ADT_TBL_RESTORED;
+        -:  722:    }
+       12:  723:    else if (Result == CFE_SUCCESS)
+        -:  724:    {
+       11:  725:        if (LC_OperData.HaveActiveCDS)
+        -:  726:        {
+        1:  727:            LC_OperData.TableResults |= LC_ADT_CRITICAL_TBL;
+        -:  728:        }
+        -:  729:        else
+        -:  730:        {
+       10:  731:            LC_OperData.TableResults |= LC_ADT_NOT_CRITICAL;
+        -:  732:        }
+        -:  733:    }
+        -:  734:    else
+        -:  735:    {
+        -:  736:        /*
+        -:  737:        ** Task initialization fails without this table
+        -:  738:        */ 
+        1:  739:        CFE_EVS_SendEvent(LC_ADT_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  740:                          "Error registering ADT, RC=0x%08X", (unsigned int)Result);
+        1:  741:        return(Result);
+        -:  742:    }
+        -:  743:
+        -:  744:    /* 
+        -:  745:    ** In case we created a critical WDT and then created a non-critical ADT
+        -:  746:    */ 
+       18:  747:    if (((LC_OperData.TableResults & LC_WDT_CRITICAL_TBL) == LC_WDT_CRITICAL_TBL) &&
+        5:  748:        ((LC_OperData.TableResults & LC_ADT_NOT_CRITICAL) == LC_ADT_NOT_CRITICAL))
+        -:  749:    {
+        -:  750:        /* 
+        -:  751:        ** Un-register the critical watchpoint Definition Table (WDT)
+        -:  752:        */ 
+        2:  753:        CFE_TBL_Unregister(LC_OperData.WDTHandle);
+        -:  754:
+        -:  755:        /* 
+        -:  756:        ** Re-register the Watchpoint Definition Table (WDT) non-critical
+        -:  757:        */ 
+        2:  758:        DataSize = LC_MAX_WATCHPOINTS * sizeof (LC_WDTEntry_t);
+        2:  759:        OptionFlags = CFE_TBL_OPT_DEFAULT;
+        2:  760:        Result = CFE_TBL_Register(&LC_OperData.WDTHandle, LC_WDT_TABLENAME,
+        -:  761:                                   DataSize, OptionFlags, LC_ValidateWDT);
+        2:  762:        if (Result == CFE_SUCCESS)
+        -:  763:        {
+        1:  764:            LC_OperData.TableResults |= LC_WDT_NOT_CRITICAL;
+        -:  765:        }
+        -:  766:        else
+        -:  767:        {
+        -:  768:            /*
+        -:  769:            ** Task initialization fails without this table
+        -:  770:            */ 
+        1:  771:            CFE_EVS_SendEvent(LC_WDT_REREGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  772:                             "Error re-registering WDT, RC=0x%08X", (unsigned int)Result);
+        1:  773:            return(Result);
+        -:  774:        }
+        -:  775:    }
+        -:  776:
+       12:  777:    return(CFE_SUCCESS);
+        -:  778:
+        -:  779:} /* LC_CreateDefinitionTables() */
+        -:  780:
+        -:  781:
+        -:  782:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  783:/*                                                                 */
+        -:  784:/* Startup initialization - create Critical Data Store (CDS)       */
+        -:  785:/*                                                                 */
+        -:  786:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  787:
+        5:  788:int32 LC_CreateTaskCDS(void)
+        -:  789:{
+        -:  790:    int32 Result;
+        -:  791:    uint32 DataSize;
+        -:  792:
+        -:  793:    /* 
+        -:  794:    ** Create CDS and try to restore Watchpoint Results Table (WRT) data
+        -:  795:    */ 
+        5:  796:    DataSize = LC_MAX_WATCHPOINTS * sizeof(LC_WRTEntry_t);
+        5:  797:    Result = CFE_ES_RegisterCDS(&LC_OperData.WRTDataCDSHandle, DataSize, LC_WRT_CDSNAME);
+        -:  798:
+        5:  799:    if (Result == CFE_SUCCESS)
+        -:  800:    {
+        -:  801:        /* 
+        -:  802:        ** Normal result after a power on reset (cold boot) - continue with next CDS area
+        -:  803:        */ 
+        3:  804:        LC_OperData.TableResults |= LC_WRT_CDS_CREATED;
+        -:  805:    }
+        2:  806:    else if (Result == CFE_ES_CDS_ALREADY_EXISTS)
+        -:  807:    {
+        -:  808:        /* 
+        -:  809:        ** Normal result after a processor reset (warm boot) - try to restore previous data
+        -:  810:        */ 
+        1:  811:        LC_OperData.TableResults |= LC_WRT_CDS_CREATED;
+        -:  812:
+        1:  813:        Result = CFE_ES_RestoreFromCDS(LC_OperData.WRTPtr, LC_OperData.WRTDataCDSHandle);
+        -:  814:
+        1:  815:        if (Result == CFE_SUCCESS)
+        -:  816:        {
+        1:  817:            LC_OperData.TableResults |= LC_WRT_CDS_RESTORED;
+        -:  818:        }
+        -:  819:    }
+        -:  820:    else
+        -:  821:    {
+        1:  822:        CFE_EVS_SendEvent(LC_WRT_CDS_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  823:                          "Error registering WRT CDS Area, RC=0x%08X", (unsigned int)Result);
+        1:  824:        return(Result);
+        -:  825:    }
+        -:  826:
+        -:  827:    /* 
+        -:  828:    ** Create CDS and try to restore Actionpoint Results Table (ART) data
+        -:  829:    */ 
+        4:  830:    DataSize = LC_MAX_ACTIONPOINTS * sizeof(LC_ARTEntry_t);
+        4:  831:    Result = CFE_ES_RegisterCDS(&LC_OperData.ARTDataCDSHandle, DataSize, LC_ART_CDSNAME);
+        -:  832:
+        4:  833:    if (Result == CFE_SUCCESS)
+        -:  834:    {
+        -:  835:        /* 
+        -:  836:        ** Normal result after a power on reset (cold boot) - continue with next CDS area
+        -:  837:        */ 
+        2:  838:        LC_OperData.TableResults |= LC_ART_CDS_CREATED;
+        -:  839:    }
+        2:  840:    else if (Result == CFE_ES_CDS_ALREADY_EXISTS)
+        -:  841:    {
+        -:  842:        /* 
+        -:  843:        ** Normal result after a processor reset (warm boot) - try to restore previous data
+        -:  844:        */ 
+        1:  845:        LC_OperData.TableResults |= LC_ART_CDS_CREATED;
+        -:  846:
+        1:  847:        Result = CFE_ES_RestoreFromCDS(LC_OperData.ARTPtr, LC_OperData.ARTDataCDSHandle);
+        -:  848:
+        1:  849:        if (Result == CFE_SUCCESS)
+        -:  850:        {
+        1:  851:            LC_OperData.TableResults |= LC_ART_CDS_RESTORED;
+        -:  852:        }
+        -:  853:    }
+        -:  854:    else
+        -:  855:    {
+        1:  856:        CFE_EVS_SendEvent(LC_ART_CDS_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  857:                          "Error registering ART CDS Area, RC=0x%08X", (unsigned int)Result);
+        1:  858:        return(Result);
+        -:  859:    }
+        -:  860:
+        -:  861:    /* 
+        -:  862:    ** Create CDS and try to restore Application (APP) data
+        -:  863:    */ 
+        3:  864:    DataSize = sizeof(LC_AppData_t);
+        3:  865:    Result = CFE_ES_RegisterCDS(&LC_OperData.AppDataCDSHandle, DataSize, LC_APPDATA_CDSNAME);
+        -:  866:
+        3:  867:    if (Result == CFE_SUCCESS)
+        -:  868:    {
+        -:  869:        /* 
+        -:  870:        ** Normal result after a power on reset (cold boot) - continue with next CDS area
+        -:  871:        */ 
+        1:  872:        LC_OperData.TableResults |= LC_APP_CDS_CREATED;
+        -:  873:    }
+        2:  874:    else if (Result == CFE_ES_CDS_ALREADY_EXISTS)
+        -:  875:    {
+        -:  876:        /* 
+        -:  877:        ** Normal result after a processor reset (warm boot) - try to restore previous data
+        -:  878:        */ 
+        1:  879:        LC_OperData.TableResults |= LC_APP_CDS_CREATED;
+        -:  880:
+        1:  881:        Result = CFE_ES_RestoreFromCDS(&LC_AppData, LC_OperData.AppDataCDSHandle);
+        -:  882:
+        1:  883:        if ((Result == CFE_SUCCESS) && (LC_AppData.CDSSavedOnExit == LC_CDS_SAVED))
+        -:  884:        {
+        -:  885:            /* 
+        -:  886:            ** Success - only if previous session saved CDS data at least once
+        -:  887:            */ 
+        1:  888:            LC_OperData.TableResults |= LC_APP_CDS_RESTORED;
+        -:  889:
+        -:  890:            /*
+        -:  891:            ** May need to override the restored application state
+        -:  892:            */
+        -:  893:
+        -:  894:#if LC_STATE_WHEN_CDS_RESTORED != LC_STATE_FROM_CDS 
+        -:  895:            LC_AppData.CurrentLCState = LC_STATE_WHEN_CDS_RESTORED;
+        -:  896:#endif
+        -:  897:        }
+        -:  898:    }
+        -:  899:    else
+        -:  900:    {
+        1:  901:        CFE_EVS_SendEvent(LC_APP_CDS_REGISTER_ERR_EID, CFE_EVS_ERROR, 
+        -:  902:                          "Error registering application data CDS Area, RC=0x%08X", (unsigned int)Result);
+        1:  903:        return(Result);
+        -:  904:    }
+        -:  905:
+        2:  906:    return(CFE_SUCCESS);
+        -:  907:
+        -:  908:} /* LC_CreateTaskCDS() */
+        -:  909:
+        -:  910:
+        -:  911:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  912:/*                                                                 */
+        -:  913:/* Startup initialization - load default WP/AP definition tables   */
+        -:  914:/*                                                                 */
+        -:  915:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  916:
+       12:  917:int32 LC_LoadDefaultTables(void)
+        -:  918:{
+        -:  919:    int32 Result;
+        -:  920:
+        -:  921:    /*
+        -:  922:    ** Load default watchpoint definition table (WDT) 
+        -:  923:    */
+       12:  924:    Result = CFE_TBL_Load(LC_OperData.WDTHandle, CFE_TBL_SRC_FILE, LC_WDT_FILENAME);
+        -:  925:
+       12:  926:    if (Result == CFE_SUCCESS)
+        -:  927:    {
+        9:  928:        LC_OperData.TableResults |= LC_WDT_DEFAULT_TBL;
+        -:  929:    }
+        -:  930:    else
+        -:  931:    {
+        -:  932:        /*
+        -:  933:        ** Task initialization fails without this table
+        -:  934:        */ 
+        3:  935:        CFE_EVS_SendEvent(LC_WDT_LOAD_ERR_EID, CFE_EVS_ERROR, 
+        -:  936:                          "Error (RC=0x%08X) Loading WDT with '%s'", (unsigned int)Result, LC_WDT_FILENAME);
+        3:  937:        return(Result);
+        -:  938:    }
+        -:  939:
+        -:  940:    /*
+        -:  941:    ** Get a pointer to the watchpoint definition table data...
+        -:  942:    */
+        9:  943:    Result = CFE_TBL_GetAddress((void *)&LC_OperData.WDTPtr, LC_OperData.WDTHandle);
+        -:  944:
+       10:  945:    if ((Result != CFE_SUCCESS) && (Result != CFE_TBL_INFO_UPDATED))
+        -:  946:    {
+        1:  947:        CFE_EVS_SendEvent(LC_WDT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -:  948:                          "Error getting WDT address, RC=0x%08X", (unsigned int)Result);
+        1:  949:        return(Result);
+        -:  950:    }
+        -:  951:
+        -:  952:    /*
+        -:  953:    ** Load default actionpoint definition table (ADT)
+        -:  954:    */
+        8:  955:    Result = CFE_TBL_Load(LC_OperData.ADTHandle, CFE_TBL_SRC_FILE, LC_ADT_FILENAME);
+        -:  956:    
+        8:  957:    if (Result == CFE_SUCCESS)
+        -:  958:    {
+        7:  959:        LC_OperData.TableResults |= LC_ADT_DEFAULT_TBL;
+        -:  960:    }
+        -:  961:    else
+        -:  962:    {
+        -:  963:        /*
+        -:  964:        ** Task initialization fails without this table
+        -:  965:        */ 
+        1:  966:        CFE_EVS_SendEvent(LC_ADT_LOAD_ERR_EID, CFE_EVS_ERROR, 
+        -:  967:                          "Error (RC=0x%08X) Loading ADT with '%s'", (unsigned int)Result, LC_ADT_FILENAME);
+        1:  968:        return(Result);
+        -:  969:    }
+        -:  970:
+        -:  971:    /*
+        -:  972:    ** Get a pointer to the actionpoint definition table data
+        -:  973:    */
+        7:  974:    Result = CFE_TBL_GetAddress((void *)&LC_OperData.ADTPtr, LC_OperData.ADTHandle);
+        -:  975:
+        8:  976:    if ((Result != CFE_SUCCESS) && (Result != CFE_TBL_INFO_UPDATED))
+        -:  977:    {
+        1:  978:        CFE_EVS_SendEvent(LC_ADT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -:  979:                          "Error getting ADT address, RC=0x%08X", (unsigned int)Result);
+        1:  980:        return(Result);
+        -:  981:    }
+        -:  982:
+        -:  983:    /*
+        -:  984:    ** Initialize the watchpoint and actionpoint result table data
+        -:  985:    */
+        6:  986:    LC_ResetResultsWP(0, LC_MAX_WATCHPOINTS - 1, FALSE);
+        6:  987:    LC_OperData.TableResults |= LC_WRT_DEFAULT_DATA;
+        -:  988:
+        6:  989:    LC_ResetResultsAP(0, LC_MAX_ACTIONPOINTS - 1, FALSE);
+        6:  990:    LC_OperData.TableResults |= LC_ART_DEFAULT_DATA;
+        -:  991: 
+        -:  992:    /*
+        -:  993:    ** Reset application data counters reported in housekeeping
+        -:  994:    */
+        6:  995:    LC_ResetCounters();
+        -:  996:
+        -:  997:    /*
+        -:  998:    ** Set LC operational state to configured startup value
+        -:  999:    */
+        6: 1000:    LC_AppData.CurrentLCState = LC_STATE_POWER_ON_RESET;
+        6: 1001:    LC_OperData.TableResults |= LC_APP_DEFAULT_DATA;
+        -: 1002:
+        -: 1003:    /*
+        -: 1004:    ** If CDS is enabled - try to update the 3 CDS areas managed by the LC task
+        -: 1005:    **  (continue, but disable CDS if unable to update all 3)
+        -: 1006:    */
+        6: 1007:    if (LC_OperData.HaveActiveCDS)
+        -: 1008:    {
+        2: 1009:        if (LC_UpdateTaskCDS() == CFE_SUCCESS)
+        -: 1010:        {
+        1: 1011:            LC_OperData.TableResults |= LC_CDS_UPDATED;
+        -: 1012:        }
+        -: 1013:        else
+        -: 1014:        {
+        1: 1015:            LC_OperData.HaveActiveCDS = FALSE;
+        -: 1016:        }
+        -: 1017:    }
+        -: 1018:
+        6: 1019:    return(CFE_SUCCESS);
+        -: 1020:    
+        -: 1021:} /* LC_LoadDefaultTables() */
+        -: 1022:
+        -: 1023:
+        -: 1024:/************************/
+        -: 1025:/*  End of File Comment */
+        -: 1026:/************************/

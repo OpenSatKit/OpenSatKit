@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_custom.c 1.2 2015/03/04 16:09:52EST sstrege Exp  $
+**   $Id: lc_custom.c 1.3 2017/01/22 17:24:49EST sstrege Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -15,19 +15,6 @@
 **   CFS Limit Checker (LC) mission specific code, including the 
 **   custom function template.
 **
-**   $Log: lc_custom.c  $
-**   Revision 1.2 2015/03/04 16:09:52EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:38EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.3 2009/12/18 14:48:28EST lwalling 
-**   Update local copy of SC start RTS command packet
-**   Revision 1.2 2008/12/03 13:59:43EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:19:08EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 

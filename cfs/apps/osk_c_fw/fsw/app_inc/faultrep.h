@@ -317,7 +317,7 @@ void FaultRep_GenTlmMsg(FaultRep_Class*  FaultRep,
 /******************************************************************************
 ** Function: FaultRep_TlmModeStr
 **
-** Purpose: Return a pointer to a string describing teh enumerated type
+** Purpose: Return a pointer to a string describing the enumerated type
 **
 ** Notes:
 **   None

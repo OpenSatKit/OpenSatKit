@@ -79,7 +79,7 @@
 **       This parameter can't be larger than 999.This parameter will dicate the size of
 **       The RTS Info Table.
 */
-#define SC_NUMBER_OF_RTS                64 
+#define SC_NUMBER_OF_RTS  8
 
 
 /** \sccfg Max buffer size for an ATS in uint16s

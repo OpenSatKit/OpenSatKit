@@ -18,12 +18,12 @@
          { 
                 "name": "Message Table",
                   "id": 0,
-            "filename": "kit_sch_msg_tbl.json"
+            "filename": "osk_sch_msg_tbl.json"
          },
          { 
                 "name": "Scheduler Table",
                   "id": 1,
-            "filename": "kit_sch_sch_tbl.json"
+            "filename": "osk_sch_sch_tbl.json"
          }
       ],
       "cmd-mid": "KIT_SCH_CMD_MID"

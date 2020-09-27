@@ -31,8 +31,15 @@
 ** Isim Application Macros
 */
 
+/*
+** Versions:
+**
+** 1.0 - Initial release
+** 1.1 - Main loop control changed from task delay to pend for scheduler wakeup
+*/
+
 #define  ISIM_MAJOR_VER      1
-#define  ISIM_MINOR_VER      0
+#define  ISIM_MINOR_VER      1
 #define  ISIM_LOCAL_REV      0
 
 /******************************************************************************

@@ -1,5 +1,5 @@
 /*
-** Purpose: Define the OpenSat Kit Telemetry Output application. This app
+** Purpose: Define the OpenSatKit Telemetry Output application. This app
 **          receives telemetry packets from the software bus and uses its
 **          packet table to determine whether packets should be sent over
 **          a UDP socket.
@@ -9,10 +9,8 @@
 **      it simple while making it robust. Limiting the number of configuration
 **      parameters and integration items (message IDs, perf IDs, etc) was
 **      also taken into consideration.
-**   2. Event message filters are not used since this is for test environments.
-**      This may be reconsidered if event flooding ever becomes a problem.
-**   3. Performance traces are not included.
-**   4. Most functions are global to assist in unit testing
+**   2. Performance traces are not included.
+**   3. Most functions are global to assist in unit testing
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -29,16 +27,18 @@
 */
 
 #include <string.h>
+#include <math.h>
 #include "kit_to_app.h"
-
+#include "cfs_utils.h"
 
 /*
 ** Local Function Prototypes
 */
 
 static int32 InitApp(void);
-static void InitDataTypePkt(void);
+static void InitDataTypePkt(KIT_TO_DataTypePkt *DataTypePkt);
 static void ProcessCommands(void);
+static void SendHousekeepingPkt(KIT_TO_HkPkt *HkPkt);
 
 /*
 ** Global Data
@@ -46,13 +46,13 @@ static void ProcessCommands(void);
 
 KIT_TO_Class  KitTo;
 
-KIT_TO_HkPkt        KitToHkPkt;
-KIT_TO_DataTypePkt  ToDataTypePkt;
 
-#define  CMDMGR_OBJ  (&(KitTo.CmdMgr))  /* Convenience macro */
-#define  TBLMGR_OBJ  (&(KitTo.TblMgr))  /* Convenience macro */
-#define  PKTTBL_OBJ  (&(KitTo.PktTbl))  /* Convenience macro */
-#define  PKTMGR_OBJ  (&(KitTo.PktMgr))  /* Convenience macro */
+/* Convenience macros */
+#define  CMDMGR_OBJ  (&(KitTo.CmdMgr))
+#define  TBLMGR_OBJ  (&(KitTo.TblMgr))
+#define  PKTTBL_OBJ  (&(KitTo.PktTbl))
+#define  PKTMGR_OBJ  (&(KitTo.PktMgr))
+
 
 /******************************************************************************
 ** Function: KIT_TO_AppMain
@@ -63,6 +63,7 @@ void KIT_TO_AppMain(void)
 
    int32  Status    = CFE_SEVERITY_ERROR;
    uint32 RunStatus = CFE_ES_APP_ERROR;
+   uint32 StartupCnt;
    uint16 NumPktsOutput;
 
    Status = CFE_ES_RegisterApp();
@@ -78,13 +79,8 @@ void KIT_TO_AppMain(void)
    
    }
 
-   /* 
-   ** Load KIT_TO towards the end in cfe_es_startup.scr (see file comments) to avoid startup pipe
-   ** overflows. The local event log can be used to analyze the events during startup.   
-   */
    if (Status == CFE_SUCCESS) {
       
-      CFE_ES_WaitForStartupSync(KIT_TO_STARTUP_SYNCH_TIMEOUT);   
       RunStatus = CFE_ES_APP_RUN;
    
    }
@@ -94,9 +90,17 @@ void KIT_TO_AppMain(void)
    */
    
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO: About to enter loop\n");
+   StartupCnt = 0;
    while (CFE_ES_RunLoop(&RunStatus)) {
-      
-      OS_TaskDelay(KitTo.RunLoopDelay);
+   
+      /* Use a short delay during startup to avoid event message pipe overflow */
+      if (StartupCnt < 50) { 
+         OS_TaskDelay(50);
+         ++StartupCnt;
+      }
+      else {
+         OS_TaskDelay(KitTo.RunLoopDelay);
+      }
 
       NumPktsOutput = PKTMGR_OutputTelemetry();
       
@@ -164,8 +168,8 @@ boolean KIT_TO_SendDataTypeTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 
    int32 Status;
 
-   CFE_SB_TimeStampMsg((CFE_SB_MsgPtr_t) &ToDataTypePkt);
-   Status = CFE_SB_SendMsg((CFE_SB_Msg_t *)&ToDataTypePkt);
+   CFE_SB_TimeStampMsg((CFE_SB_MsgPtr_t) &KitTo.DataTypePkt);
+   Status = CFE_SB_SendMsg((CFE_SB_Msg_t *)&KitTo.DataTypePkt);
 
    return (Status == CFE_SUCCESS);
 
@@ -211,45 +215,116 @@ boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 
 
 /******************************************************************************
-** Function: KIT_TO_SendHousekeepingPkt
+** Function: KIT_TO_TestFilterCmd
 **
 */
-void KIT_TO_SendHousekeepingPkt(void)
+boolean KIT_TO_TestFilterCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   const KIT_TO_TestFilterCmdParam *CmdPtr = (const KIT_TO_TestFilterCmdParam *) MsgPtr;
+      
+   uint16 SeqCnt;
+   uint32 Seconds, Subseconds;
+   uint32 SubSecDelta;
+   char   FormatStr[132];
+   CCSDS_TelemetryPacket_t TestPkt;
+   CFE_TIME_SysTime_t      PktTime;
+   PktUtil_Filter Filter;
+ 
+   
+   Filter.Type  = PKTUTIL_FILTER_BY_SEQ_CNT;
+   Filter.Param = CmdPtr->FilterParam;
+
+   CFE_EVS_SendEvent(KIT_TO_TEST_FILTER_EID, CFE_EVS_INFORMATION,
+                     "Filter by sequence counter: N=%d, X=%d, O=%d",
+                     Filter.Param.N, Filter.Param.X, Filter.Param.O);
+
+   for (SeqCnt=0; SeqCnt < 20; SeqCnt++) {
+      CCSDS_WR_SEQ(TestPkt.SpacePacket.Hdr, SeqCnt);
+      CFE_EVS_SendEvent(KIT_TO_TEST_FILTER_EID, CFE_EVS_INFORMATION,
+                        ">>>SeqCnt=%2d: Filtered=%d\n", 
+                        SeqCnt, PktUtil_IsPacketFiltered((const CFE_SB_MsgPtr_t)&TestPkt, &Filter));
+   }
+
+
+   Filter.Type  = PKTUTIL_FILTER_BY_TIME;
+
+   CFE_EVS_SendEvent(KIT_TO_TEST_FILTER_EID, CFE_EVS_INFORMATION,
+                     "Filter by time: N=%d, X=%d, O=%d. CCSDS_TIME_SIZE=%d bytes",
+                     Filter.Param.N, Filter.Param.X, Filter.Param.O, CCSDS_TIME_SIZE); 
+
+   if (CCSDS_TIME_SIZE == 6) {
+      SubSecDelta = 0x0100;
+      strcpy(FormatStr,">>>Time=0x%08X:%06X OSK Filtered=%d, cFS Filtered=%d\n");
+      CFE_SB_InitMsg(&TestPkt, KIT_TO_HK_TLM_MID, 12, TRUE);
+   }
+   else {
+      SubSecDelta = 0x01000000;
+      strcpy(FormatStr,">>>Time=0x%08X:%08X OSK Filtered=%d, cFS Filtered=%d\n");
+      CFE_SB_InitMsg(&TestPkt, KIT_TO_HK_TLM_MID, 14, TRUE);
+   }
+   
+   Seconds = 0;
+   Subseconds = 0;
+   for (SeqCnt=0; SeqCnt < 20; SeqCnt++) {
+      CCSDS_WR_SEC_HDR_SEC(TestPkt.Sec,Seconds);
+      CCSDS_WR_SEC_HDR_SUBSEC(TestPkt.Sec, Subseconds);
+      PktTime = CFE_SB_GetMsgTime((CFE_SB_MsgPtr_t)&TestPkt);
+      CFE_EVS_SendEvent(KIT_TO_TEST_FILTER_EID, CFE_EVS_INFORMATION, FormatStr,
+                        PktTime.Seconds, PktTime.Subseconds, 
+                        PktUtil_IsPacketFiltered((const CFE_SB_MsgPtr_t)&TestPkt, &Filter),
+                        CFS_IsPacketFiltered((CFE_SB_MsgPtr_t)&TestPkt,2,Filter.Param.N,Filter.Param.X,Filter.Param.O));
+      
+      Subseconds += SubSecDelta;
+      ++Seconds;
+   }
+
+   return TRUE;
+
+} /* End KIT_TO_TestFilterCmd() */
+
+
+/******************************************************************************
+** Function: SendHousekeepingPkt
+**
+*/
+static void SendHousekeepingPkt(KIT_TO_HkPkt *HkPkt)
 {
 
    /*
    ** KIT_TO Data
    */
 
-   KitToHkPkt.ValidCmdCnt   = KitTo.CmdMgr.ValidCmdCnt;
-   KitToHkPkt.InvalidCmdCnt = KitTo.CmdMgr.InvalidCmdCnt;
+   HkPkt->ValidCmdCnt   = KitTo.CmdMgr.ValidCmdCnt;
+   HkPkt->InvalidCmdCnt = KitTo.CmdMgr.InvalidCmdCnt;
 
-   KitToHkPkt.RunLoopDelay  = KitTo.RunLoopDelay;
+   HkPkt->RunLoopDelay  = KitTo.RunLoopDelay;
 
    /*
    ** TBLMGR Data
    */
 
-   KitToHkPkt.PktTblLastLoadStatus  = KitTo.PktTbl.LastLoadStatus;
-   KitToHkPkt.PktTblAttrErrCnt      = KitTo.PktTbl.AttrErrCnt;
+   HkPkt->PktTblLastLoadStatus  = KitTo.PktTbl.LastLoadStatus;
+   HkPkt->PktTblAttrErrCnt      = KitTo.PktTbl.AttrErrCnt;
 
    /*
    ** PKTMGR Data
    ** - At a minimum all pktmgr variables effected by a reset must be included
    ** - Some of these may be more diagnostic but not enough to warrant a
-   **   separate diagnostic. Also easier for the user not to hhave to command it.
+   **   separate diagnostic. Also easier for the user not to have to command it.
    */
 
-   KitToHkPkt.PktsPerSec  = round(KitTo.PktMgr.Stats.AvgPktsPerSec);
-   KitToHkPkt.BytesPerSec = round(KitTo.PktMgr.Stats.AvgBytesPerSec);
+   HkPkt->StatsValid  = (KitTo.PktMgr.Stats.State == PKTMGR_STATS_VALID);
+   HkPkt->PktsPerSec  = round(KitTo.PktMgr.Stats.AvgPktsPerSec);
+   HkPkt->BytesPerSec = round(KitTo.PktMgr.Stats.AvgBytesPerSec);
 
-   KitToHkPkt.TlmSockId = (uint16)KitTo.PktMgr.TlmSockId;
-   strncpy(KitToHkPkt.TlmDestIp, KitTo.PktMgr.TlmDestIp, PKTMGR_IP_STR_LEN);
+   HkPkt->TlmSockId = (uint16)KitTo.PktMgr.TlmSockId;
+   strncpy(HkPkt->TlmDestIp, KitTo.PktMgr.TlmDestIp, PKTMGR_IP_STR_LEN);
 
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &KitToHkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &KitToHkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) HkPkt);
 
-} /* End KIT_TO_SendHousekeepingPkt() */
+} /* End SendHousekeepingPkt() */
 
 
 /******************************************************************************
@@ -287,20 +362,23 @@ static int32 InitApp(void)
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_PKT_TBL_LOAD_CMD_FC,    TBLMGR_OBJ, TBLMGR_LoadTblCmd,         TBLMGR_LOAD_TBL_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_PKT_TBL_DUMP_CMD_FC,    TBLMGR_OBJ, TBLMGR_DumpTblCmd,         TBLMGR_DUMP_TBL_CMD_DATA_LEN);
 
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ADD_PKT_CMD_FC,         PKTMGR_OBJ, PKTMGR_AddPktCmd,          PKKTMGR_ADD_PKT_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_PKT_CMD_FC,      PKTMGR_OBJ, PKTMGR_RemovePktCmd,       PKKTMGR_REMOVE_PKT_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_ALL_PKTS_CMD_FC, PKTMGR_OBJ, PKTMGR_RemoveAllPktsCmd,   0);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ENABLE_OUTPUT_CMD_FC,   PKTMGR_OBJ, PKTMGR_EnableOutputCmd,    PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ADD_PKT_CMD_FC,          PKTMGR_OBJ, PKTMGR_AddPktCmd,          PKKTMGR_ADD_PKT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_ENABLE_OUTPUT_CMD_FC,    PKTMGR_OBJ, PKTMGR_EnableOutputCmd,    PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_ALL_PKTS_CMD_FC,  PKTMGR_OBJ, PKTMGR_RemoveAllPktsCmd,   0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_REMOVE_PKT_CMD_FC,       PKTMGR_OBJ, PKTMGR_RemovePktCmd,       PKKTMGR_REMOVE_PKT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_PKT_TBL_TLM_CMD_FC, PKTMGR_OBJ, PKTMGR_SendPktTblTlmCmd,   PKKTMGR_SEND_PKT_TBL_TLM_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_UPDATE_FILTER_CMD_FC,    PKTMGR_OBJ, PKTMGR_UpdateFilterCmd,    PKKTMGR_UPDATE_FILTER_CMD_DATA_LEN);
    
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC,    &KitTo,  KIT_TO_SendDataTypeTlmCmd, 0);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SET_RUN_LOOP_DELAY_CMD_FC, &KitTo,  KIT_TO_SetRunLoopDelayCmd, KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_TEST_FILTER_CMD_FC,        &KitTo,  KIT_TO_TestFilterCmd,      KIT_TO_TEST_FILTER_CMD_DATA_LEN);
 
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Before TBLMGR calls\n");
    TBLMGR_Constructor(TBLMGR_OBJ);
    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, PKTTBL_LoadCmd, PKTTBL_DumpCmd, KIT_TO_DEF_PKTTBL_FILE_NAME);
 
-   CFE_SB_InitMsg(&KitToHkPkt, KIT_TO_HK_TLM_MID, KIT_TO_TLM_HK_LEN, TRUE);
-   InitDataTypePkt();
+   CFE_SB_InitMsg(&KitTo.HkPkt, KIT_TO_HK_TLM_MID, KIT_TO_TLM_HK_LEN, TRUE);
+   InitDataTypePkt(&KitTo.DataTypePkt);
 
    /*
    ** Application startup event message
@@ -319,40 +397,40 @@ static int32 InitApp(void)
 ** Function: InitDataTypePkt
 **
 */
-static void InitDataTypePkt(void)
+static void InitDataTypePkt(KIT_TO_DataTypePkt *DataTypePkt)
 {
 
    int16  i;
    char   StringVariable[10] = "ABCDEFGHIJ";
 
-   CFE_SB_InitMsg(&ToDataTypePkt, KIT_TO_DATA_TYPE_TLM_MID, KIT_TO_TLM_DATA_TYPE_LEN, TRUE);
+   CFE_SB_InitMsg(DataTypePkt, KIT_TO_DATA_TYPE_TLM_MID, KIT_TO_TLM_DATA_TYPE_LEN, TRUE);
 
-   ToDataTypePkt.synch = 0x6969;
+   DataTypePkt->synch = 0x6969;
    #if 0
-      ToDataTypePkt.bit1    = 1;
-      ToDataTypePkt.bit2    = 0;
-      ToDataTypePkt.bit34   = 2;
-      ToDataTypePkt.bit56   = 3;
-      ToDataTypePkt.bit78   = 1;
-      ToDataTypePkt.nibble1 = 0xA;
-      ToDataTypePkt.nibble2 = 0x4;
+      DataTypePkt->bit1    = 1;
+      DataTypePkt->bit2    = 0;
+      DataTypePkt->bit34   = 2;
+      DataTypePkt->bit56   = 3;
+      DataTypePkt->bit78   = 1;
+      DataTypePkt->nibble1 = 0xA;
+      DataTypePkt->nibble2 = 0x4;
    #endif
-      ToDataTypePkt.bl1 = FALSE;
-      ToDataTypePkt.bl2 = TRUE;
-      ToDataTypePkt.b1  = 16;
-      ToDataTypePkt.b2  = 127;
-      ToDataTypePkt.b3  = 0x7F;
-      ToDataTypePkt.b4  = 0x45;
-      ToDataTypePkt.w1  = 0x2468;
-      ToDataTypePkt.w2  = 0x7FFF;
-      ToDataTypePkt.dw1 = 0x12345678;
-      ToDataTypePkt.dw2 = 0x87654321;
-      ToDataTypePkt.f1  = 90.01;
-      ToDataTypePkt.f2  = .0000045;
-      ToDataTypePkt.df1 = 99.9;
-      ToDataTypePkt.df2 = .4444;
+      DataTypePkt->bl1 = FALSE;
+      DataTypePkt->bl2 = TRUE;
+      DataTypePkt->b1  = 16;
+      DataTypePkt->b2  = 127;
+      DataTypePkt->b3  = 0x7F;
+      DataTypePkt->b4  = 0x45;
+      DataTypePkt->w1  = 0x2468;
+      DataTypePkt->w2  = 0x7FFF;
+      DataTypePkt->dw1 = 0x12345678;
+      DataTypePkt->dw2 = 0x87654321;
+      DataTypePkt->f1  = 90.01;
+      DataTypePkt->f2  = .0000045;
+      DataTypePkt->df1 = 99.9;
+      DataTypePkt->df2 = .4444;
 
-   for (i=0; i < 10; i++) ToDataTypePkt.str[i] = StringVariable[i];
+   for (i=0; i < 10; i++) DataTypePkt->str[i] = StringVariable[i];
 
 } /* End InitDataTypePkt() */
 
@@ -383,7 +461,7 @@ static void ProcessCommands(void)
 
          case KIT_TO_SEND_HK_MID:
             CFE_EVS_SendEvent(KIT_TO_DEMO_EID, CFE_EVS_DEBUG, "Sending housekeeping packet");
-            KIT_TO_SendHousekeepingPkt();
+            SendHousekeepingPkt(&KitTo.HkPkt);
             break;
 
          default:

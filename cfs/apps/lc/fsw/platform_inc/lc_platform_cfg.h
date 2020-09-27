@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_platform_cfg.h 1.2 2015/03/04 16:09:54EST sstrege Exp  $
+**   $Id: lc_platform_cfg.h 1.4 2017/03/07 17:35:09EST mdeschu Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -16,31 +16,6 @@
 **
 ** Notes:
 **
-**   $Log: lc_platform_cfg.h  $
-**   Revision 1.2 2015/03/04 16:09:54EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2012/07/31 16:53:35EDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/platform_inc/project.pj
-**   Revision 1.8 2011/03/04 09:47:04EST lwalling 
-**   Change default table directory from ram to cf/apps
-**   Revision 1.7 2011/01/19 11:32:05EST jmdagost 
-**   Moved mission revision number from lc_version.h to lc_platform_cfg.h.
-**   Revision 1.6 2010/02/23 11:24:14EST lwalling 
-**   Change application name from LC_APP to LC per CFS naming convention
-**   Revision 1.5 2009/12/22 13:17:45EST lwalling 
-**   Create common definition for LC application name
-**   Revision 1.4 2008/12/10 15:59:26EST dahardis 
-**   Reduced the maximum number of watchpoints and actionpoints config params
-**   from 256 to 176
-**   Revision 1.3 2008/12/10 15:33:21EST dahardis 
-**   Changed default configuration parameter setting to not attempt a restore 
-**   from CDS on application restart
-**   Revision 1.2 2008/12/03 13:59:40EST dahardis 
-**   Corrections from peer code review
-**   Revision 1.1 2008/10/29 14:18:17EDT dahardison 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/platform_inc/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_platform_cfg_
@@ -60,7 +35,7 @@
 **       no limits on the definition.  Refer to CFE Executive Services
 **       for specific information on limits related to application names.
 */
-#define LC_APP_NAME  "LC"
+#define LC_APP_NAME                    "LC"
 
 
 /** \lccfg Command Pipe Depth
@@ -84,8 +59,10 @@
 **
 **  \par Limits:
 **       This parameter can't be larger than 65520 (0xFFF0) because
-**       higher values are reserved for use as Reversh Polish 
-**       operators.
+**       higher values are reserved for use as Reverse Polish 
+**       operators. It must be a multiple of 4 to avoid
+**       indexing past the end of the array as LC indexes
+**       ahead to build the packed status bytes.
 **
 **       This parameter will dictate the size of the Watchpoint
 **       Definition Table:
@@ -106,7 +83,9 @@
 **
 **  \par Limits:
 **       This parameter can't be larger than an unsigned 16 bit
-**       integer (65535).
+**       integer (65535). It must be a multiple of 2 to avoid
+**       indexing past the end of the array as LC indexes
+**       ahead to build the packed status bytes.
 **
 **       This parameter will dictate the size of the Actionpoint
 **       Definition Table:

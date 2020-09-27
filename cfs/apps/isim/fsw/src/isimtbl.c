@@ -21,8 +21,8 @@
 #include <string.h>
 #include "isimtbl.h"
 
-/* Convenience macro */
-#define  JSON_OBJ  &(IsimTbl->Json)
+
+#define  JSON  &(IsimTbl->Json)   /* Convenience macro */
 
 /*
 ** Type Definitions
@@ -71,15 +71,19 @@ void ISIMTBL_Constructor(ISIMTBL_Class* ObjPtr,
    IsimTbl->LoadTblFunc      = LoadTblFunc;
    IsimTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
 
+   JSON_Constructor(JSON, IsimTbl->JsonFileBuf, IsimTbl->JsonFileTokens);
+
    JSON_ObjConstructor(&(IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT]),
                        ISIMTBL_OBJ_INSTRMENT_NAME,
                        InstrumentCallback,
                        (void *)&(IsimTbl->Data.Instrument));
+   JSON_RegContainerCallback(JSON, &(IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT]));
 
    JSON_ObjConstructor(&(IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE]),
                        ISIMTBL_OBJ_SCI_FILE_NAME,
                        SciFileCallback,
                        (void *)&(IsimTbl->Data.SciFile));
+   JSON_RegContainerCallback(JSON, &(IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE]));
 
 } /* End ISIMTBL_Constructor() */
 
@@ -119,23 +123,14 @@ boolean ISIMTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE, "ISIMTBL_LoadCmd() Entry\n");
    
    ISIMTBL_ResetStatus();  /* Reset status & object modified flags */
-
-   JSON_Constructor(JSON_OBJ, IsimTbl->JsonFileBuf, IsimTbl->JsonFileTokens);
    
-   if (JSON_OpenFile(JSON_OBJ, Filename)) {
+   if (JSON_OpenFile(JSON, Filename)) {
   
       CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE, "ISIMTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
       //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
       //DEBUG JSON_PrintTokens(&Json,50);
   
-      JSON_RegContainerCallback(JSON_OBJ,
-	                             IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Name,
-	                             IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Callback);
-      JSON_RegContainerCallback(JSON_OBJ,
-	                             IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Name,
-	                             IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Callback);
-
-      JSON_ProcessTokens(JSON_OBJ);
+      JSON_ProcessTokens(JSON);
 
 	  /* 
 	  ** ObjLoadCnt is used as a crude sanity check for REPLACE & UPDATE. Tighter
@@ -285,7 +280,7 @@ boolean InstrumentCallback (int TokenIdx)
                      "\nISIMTBL.InstrumentCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      IsimTbl->ObjLoadCnt, IsimTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "pwr-init-cycles", &PwrInitCycles)) AttributeCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "pwr-init-cycles", &PwrInitCycles)) AttributeCnt++;
    
    if (AttributeCnt == 1) {
    
@@ -334,9 +329,9 @@ boolean SciFileCallback (int TokenIdx)
                      "\nISIMTBL.SciFileCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      IsimTbl->ObjLoadCnt, IsimTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "cycles-per-file", &CyclesPerFile))  AttributeCnt++;
-   if (JSON_GetValStr(JSON_OBJ, TokenIdx, "path-base-filename", PathBaseFilename)) AttributeCnt++;
-   if (JSON_GetValStr(JSON_OBJ, TokenIdx, "file-extension", FileExtension))        AttributeCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "cycles-per-file", &CyclesPerFile))  AttributeCnt++;
+   if (JSON_GetValStr(JSON, TokenIdx, "path-base-filename", PathBaseFilename)) AttributeCnt++;
+   if (JSON_GetValStr(JSON, TokenIdx, "file-extension", FileExtension))        AttributeCnt++;
    
    if (AttributeCnt == 3) {
 	   

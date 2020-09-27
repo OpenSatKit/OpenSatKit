@@ -1,39 +1,18 @@
 /************************************************************************
  ** File:
- **   $Id: cs_eeprom_cmds.c 1.8.1.1 2015/03/03 11:58:44EST sstrege Exp  $
+ **   $Id: cs_eeprom_cmds.c 1.8 2017/03/29 17:29:02EDT mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
  **   This software was created at NASA's Goddard Space Flight Center.
  **   This software is governed by the NASA Open Source Agreement and may be 
  **   used, distributed and modified only pursuant to the terms of that 
- **   agreement. 
+ **   agreement.
  **
  ** Purpose: 
  **   The CFS Checksum (CS) Application's commands for checking Eeprom
- **
- **   $Log: cs_eeprom_cmds.c  $
- **   Revision 1.8.1.1 2015/03/03 11:58:44EST sstrege 
- **   Added copyright information
- **   Revision 1.8 2015/01/26 15:06:47EST lwalling 
- **   Recompute baseline checksum after CS tables are modified
- **   Revision 1.7 2011/09/06 14:49:38EDT jmdagost 
- **   Corrected Eeprom event messages text.
- **   Revision 1.6 2011/06/15 16:19:16EDT jmdagost 
- **   Initialized all local variables except local structures and some strings.
- **   Revision 1.5 2010/03/29 16:57:26EDT jmdagost 
- **   Modified enable/disable commands to update the definitions table as well as the results table.
- **   Revision 1.4 2010/03/09 14:58:27EST jmdagost 
- **   Corrected event messages (Max ID parameter).
- **   Revision 1.3 2008/10/17 08:40:04EDT njyanchik 
- **   Updated Event messages
- **   Revision 1.2 2008/07/23 15:34:34BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:13EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
  ** 
  *************************************************************************/
 
@@ -72,6 +51,10 @@ void CS_DisableEepromCmd(CFE_SB_MsgPtr_t MessagePtr)
         CS_AppData.EepromCSState = CS_STATE_DISABLED;
         CS_ZeroEepromTempValues();
         
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        CS_UpdateCDS();
+#endif
+        
         CFE_EVS_SendEvent (CS_DISABLE_EEPROM_INF_EID,
                            CFE_EVS_INFORMATION,
                            "Checksumming of Eeprom is Disabled");
@@ -95,6 +78,10 @@ void CS_EnableEepromCmd(CFE_SB_MsgPtr_t MessagePtr)
     if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
     {
         CS_AppData.EepromCSState = CS_STATE_ENABLED;
+        
+#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        CS_UpdateCDS();
+#endif
         
         CFE_EVS_SendEvent (CS_ENABLE_EEPROM_INF_EID,
                            CFE_EVS_INFORMATION,
@@ -140,7 +127,7 @@ void CS_ReportBaselineEntryIDEepromCmd(CFE_SB_MsgPtr_t MessagePtr)
                                    CFE_EVS_INFORMATION,
                                    "Report baseline of Eeprom Entry %d is 0x%08X", 
                                    EntryID,
-                                   Baseline);
+                                   (unsigned int)Baseline);
             }
             else
             {
@@ -196,7 +183,7 @@ void CS_RecomputeBaselineEepromCmd (CFE_SB_MsgPtr_t MessagePtr)
         CmdPtr = (CS_EntryCmd_t *) MessagePtr;
         EntryID = CmdPtr -> EntryID;
         
-        if (CS_AppData.ChildTaskInUse == FALSE)
+        if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
         {            
             /* make sure the entry is a valid number and is defined in the table */
             if ((EntryID < CS_MAX_NUM_EEPROM_TABLE_ENTRIES) &&
@@ -204,8 +191,7 @@ void CS_RecomputeBaselineEepromCmd (CFE_SB_MsgPtr_t MessagePtr)
             {
                 
                 /* There is no child task running right now, we can use it*/
-                CS_AppData.ChildTaskInUse                = TRUE;
-                CS_AppData.OneShotTaskInUse              = FALSE;
+                CS_AppData.RecomputeInProgress           = TRUE;
                 
                 /* fill in child task variables */
                 CS_AppData.ChildTaskTable                = CS_EEPROM_TABLE;
@@ -235,9 +221,9 @@ void CS_RecomputeBaselineEepromCmd (CFE_SB_MsgPtr_t MessagePtr)
                                        CFE_EVS_ERROR,
                                        "Recompute baseline of Eeprom Entry ID %d failed, CFE_ES_CreateChildTask returned:  0x%08X",
                                        EntryID,
-                                       Status);
+                                       (unsigned int)Status);
                     CS_AppData.CmdErrCounter++;
-                    CS_AppData.ChildTaskInUse = FALSE;
+                    CS_AppData.RecomputeInProgress = FALSE;
                 }
             }
             else
@@ -266,7 +252,7 @@ void CS_RecomputeBaselineEepromCmd (CFE_SB_MsgPtr_t MessagePtr)
             /*send event that we can't start another task right now */
             CFE_EVS_SendEvent (CS_RECOMPUTE_EEPROM_CHDTASK_ERR_EID,
                                CFE_EVS_ERROR,
-                               "Recompute baseline of Eeprom Entry ID %d failed: a child task is in use",
+                               "Recompute baseline of Eeprom Entry ID %d failed: child task in use",
                                EntryID);
             CS_AppData.CmdErrCounter++;
         }
@@ -458,7 +444,7 @@ void CS_GetEntryIDEepromCmd(CFE_SB_MsgPtr_t MessagePtr)
                 CFE_EVS_SendEvent (CS_GET_ENTRY_ID_EEPROM_INF_EID,
                                    CFE_EVS_INFORMATION,
                                    "Eeprom Found Address 0x%08X in Entry ID %d", 
-                                   CmdPtr -> Address,
+                                   (unsigned int)(CmdPtr -> Address),
                                    Loop);
                 EntryFound = TRUE;
             }
@@ -469,7 +455,7 @@ void CS_GetEntryIDEepromCmd(CFE_SB_MsgPtr_t MessagePtr)
             CFE_EVS_SendEvent (CS_GET_ENTRY_ID_EEPROM_NOT_FOUND_INF_EID,
                                CFE_EVS_INFORMATION,
                                "Address 0x%08X was not found in Eeprom table",
-                               CmdPtr -> Address);
+                               (unsigned int)(CmdPtr -> Address));
         }
         CS_AppData.CmdCounter++;
     }

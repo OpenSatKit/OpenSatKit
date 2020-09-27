@@ -21,13 +21,15 @@
 ** Command Message IDs
 */
 
-#define  KIT_SCH_CMD_MID       (0x1895)
-#define  KIT_SCH_SEND_HK_MID   (0x1896)
+#define  KIT_SCH_CMD_MID       (0x1F10)
+#define  KIT_SCH_SEND_HK_MID   (0x1F11)
 
 /*
 ** Telemetry Message IDs
 */
 
-#define  KIT_SCH_HK_TLM_MID    (0x0899)
+#define  KIT_SCH_HK_TLM_MID        (0x0F10)
+#define  KIT_SCH_DIAG_TLM_MID      (0x0F11)
+#define  KIT_SCH_TBL_ENTRY_TLM_MID (0x0F12)
 
 #endif /*_kit_sch_msgids_*/

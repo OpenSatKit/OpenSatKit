@@ -1,8 +1,8 @@
 /*************************************************************************
  ** File:
- **   $Id: cs_perfids.h 1.1.1.1 2015/03/03 11:58:52EST sstrege Exp  $
+ **   $Id: cs_perfids.h 1.3 2017/02/16 15:33:20EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -20,15 +20,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_perfids.h  $
- **   Revision 1.1.1.1 2015/03/03 11:58:52EST sstrege 
- **   Added copyright information
- **   Revision 1.1 2008/07/23 10:26:33EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/mission_inc/project.pj
- ** 
  *************************************************************************/
 #ifndef _cs_perfids_
 #define _cs_perfids_

@@ -25,12 +25,19 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_ops'
 
+require 'simsat_global'
 
 #
 # Configure global variables and utility functions
 #
 
+Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{SimSat::FLT_SRV_DIR}") # Ensure SimSat directory exists
+
 $simsat_ops_enable = true
+
+$SIMSAT_SCH_TBL_GND_FILENAME = Osk::cfg_target_dir_file("SIMSAT","tables",SimSat::SCH_TBL_FILENAME) 
+$SIMSAT_SCH_TBL_FLT_FILENAME = File.join(Osk::FLT_SRV_DIR,SimSat::SCH_TBL_FILENAME)
+
 
 simsat_ops_status = "Preparing Ops Example. Read scenario comments in Script Runner."
 load_utility('simsat_ops_example_utils.rb')
@@ -51,19 +58,19 @@ simsat_create_ops_screen
 # 1. Establish the following app configuration
 #       Runtime Environment Apps
 #          KIT_CI  - No configuration required
-#          KIT_SCH - Use default scheduler table
-#          KIT_TO  - Use default subscription table
+#          KIT_SCH - Load SimSat scheduler table
+#          KIT_TO  - OSK default packet table with uploads as needed
 #       Data/File Management
 #          FM - No configuration required
-#          HK - Default configured to create 
-#          DS - Default 
+#          HK - OSK Default: Combo#1 cFE cmd counters, Combo#2 F42 & ISIM states  
+#          DS - OSK Default:  
 #       Autonomy
 #          LC - Enable entire app to be in 'active' mode. Enable Action Point #2 that responds to ISIM faults.
 #          SC - Enable RTS #6 that powers of ISIM
 #       Attitude Determination and Control
 #          I42 - No configuration required
 #          F42 - No configuration required
-#        
+#       Health & Safety
 #          CS and HS are running but not used for the demo
 #       Maintenance
 #          MD and MM are running but not used for the demo
@@ -73,7 +80,7 @@ simsat_create_ops_screen
 #
 # 3. Perform science ops (i.e. collect data and store to file) with downlink to illustrate FSW behavior
 #
-# 4. Simulate a ground pass (Manually controlled from ground Future release will use absolute time command sequence)
+# 4. Simulate a ground pass (Manually controlled from ground (future release will use absolute time command sequence)
 #
 # 5. Continue science ops without downlink
 #
@@ -83,6 +90,7 @@ simsat_create_ops_screen
 #
 
 wait # Click <Go> when done reading the scenario
+
 
 #######################################
 ## 1. Establish the app configuration

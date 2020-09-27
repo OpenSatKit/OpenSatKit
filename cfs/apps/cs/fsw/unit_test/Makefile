@@ -1,289 +1,164 @@
 ##############################################################################
 ## File:
-##   $Id: Makefile 1.7 2012/05/24 11:13:06EDT jmdagost Exp  $
+##   $Id: makefile 1.2 2017/02/16 15:33:21EST mdeschu Exp  $
 ##
 ## Purpose:
-##   Makefile for building the CFS Checksum (CS) UTF unit tests
-##
-##   $Log: Makefile  $
-##   Revision 1.7 2012/05/24 11:13:06EDT jmdagost 
-##   Updated makefile to reference environment variables.
-##   Revision 1.6 2012/01/04 16:17:49EST jmdagost 
-##   Replaced gcov rule in CS unit test makefile.  Kept previous gcov rule as a comment for future reference.
-##   Revision 1.5 2011/09/19 13:58:15EDT jmdagost 
-##   CS Unit test updates
-##   Revision 1.4 2010/05/21 14:27:40EDT jmdagost 
-##   Updated for new OSAL paths
-##   Revision 1.3 2010/05/03 17:25:26EDT jmdagost 
-##   Major updates to account for changes in unit test framework, adding build options for test tables, and adjusting for relative paths.
-##   Revision 1.2 2008/09/08 10:39:37EDT njyanchik 
-##   Checking in of Updated unit test
-##   Revision 1.1 2008/07/23 15:28:18BST njyanchik 
-##   Initial revision
-##   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/unit_test/project.pj
+##   Makefile for building the CFS Checksum (CS) UT Assert unit tests
 ##
 ##############################################################################
+## GNU Makefile for building UT unit tests
+
 #
-# Compiler/linker definitions
+# Supported MAKEFILE targets:
+#   clean - deletes object files, executables, output files, and gcov files
+#   all   - makes cs_testrunner.exe
+#   run   - runs cs_testrunner.exe
+#   gcov  - prints a GCOV coverage report (make all, make run, make gcov)
 #
-COMPILER=gcc
-LINKER=gcc
+# GCOV is disabled by default.  If you are using the source level debugger you will want to 
+# disable GCOV.  To enable GCOV you can override the ENABLE_GCOV variable on the command line 
+# by setting it to TRUE.  For example "make ENABLE_GCOV=TRUE".
 #
-# Compiler/linker options
+
 #
-DEFAULT_COPT := -m32 -fPIC -Wall -Wstrict-prototypes -Wunreachable-code -ansi -g 
-COPT = -D_ix86_ -DSOFTWARE_LITTLE_BIT_ORDER -D_EL -DCLOCKS_PER_SEC=1000000 -DS_IFDIR=16384
-## LOPT = -m elf_i386 -o
-LOPT = -m32
-#
-# Options for gcov
-#
-GCOV_COPT= -pg -fprofile-arcs -ftest-coverage
-GCOV_LOPT= -pg -fprofile-arcs -ftest-coverage
-#
-###########################################################################
-#
-# Search path definitions
-#
-#
-###########################################################################
-#
-# Table tool definition
-ELF2TBL=$(CFE_CORE_SRC)/../../../tools/elf2cfetbl/elf2cfetbl
-#
-###########################################################################
-#
-# Source file path definitions
+# VPATH specifies the search paths for source files outside of the current directory.  Note that
+# all object files will be created in the current directory even if the source file is not in the 
+# current directory.
 #
 VPATH := .
-VPATH += ..
-VPATH += $(CFS_APP_SRC)/cs/fsw/src
-VPATH += $(CFS_APP_SRC)/cs/fsw/tables
-VPATH += $(CFS_APP_SRC)/cfs_lib/fsw/src
-VPATH += $(UTF_SRC)/src
-VPATH += $(CFE_CORE_SRC)/sb
-VPATH += $(CFE_CORE_SRC)/time
-VPATH += $(CFE_CORE_SRC)/es
-VPATH += $(CFE_CORE_SRC)/evs
-VPATH += $(CFE_CORE_SRC)/fs
-VPATH += $(CFE_CORE_SRC)/tbl
-VPATH += $(OSAL_SRC)/posix
-VPATH += $(OSAL_SRC)/../bsp/pc-linux/src
-VPATH += $(CFE_PSP_SRC)/pc-linux/src
+VPATH += $(UT_ASSERT_SRC)/src
+VPATH += $(CFS_MISSION)/apps/cfs_lib/fsw/src
+VPATH += ../src
+VPATH += ../for_build
+
+CS_PATH=../../
+
 #
-###########################################################################
-#
-# Header file path definitions
+# INCLUDES specifies the search paths for include files outside of the current directory.  
+# Note that the -I is required. 
 #
 INCLUDES := -I.
-INCLUDES += -I..
-INCLUDES += -I$(CFS_APP_SRC)/cs/fsw/src
-INCLUDES += -I$(CFS_APP_SRC)/cs/fsw/platform_inc
-INCLUDES += -I$(CFS_APP_SRC)/cs/fsw/mission_inc
-INCLUDES += -I$(CFS_APP_SRC)/cs/fsw/public_inc
-INCLUDES += -I$(OSAL_SRC)/../../build/inc
-INCLUDES += -I$(OSAL_SRC)/inc
-INCLUDES += -I$(CFE_PSP_SRC)/inc
-INCLUDES += -I$(CFE_PSP_SRC)/pc-linux/inc
-INCLUDES += -I$(UTF_SRC)/inc
-INCLUDES += -I$(CFS_APP_SRC)/cfs_lib/fsw/public_inc
-INCLUDES += -I$(CFE_CORE_SRC)/../../mission_inc
-INCLUDES += -I$(CFE_CORE_SRC)/../../platform_inc/cpu1
-INCLUDES += -I$(CFE_CORE_SRC)/inc
-INCLUDES += -I$(CFE_CORE_SRC)/time
-INCLUDES += -I$(CFE_CORE_SRC)/sb
-INCLUDES += -I$(CFE_CORE_SRC)/es
-INCLUDES += -I$(CFE_CORE_SRC)/evs
-INCLUDES += -I$(CFE_CORE_SRC)/fs
-INCLUDES += -I$(CFE_CORE_SRC)/tbl
+INCLUDES += -I$(UT_ASSERT_SRC)/inc
+INCLUDES += -I$(CFS_MISSION)/build/pc-linux/inc
+INCLUDES += -I$(APP_DIR)/cfs_lib/fsw/public_inc
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/os/inc
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/inc
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/time
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/sb
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/es
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/evs
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/fs
+INCLUDES += -I$(CFE_DIR)/fsw/cfe-core/src/tbl
+INCLUDES += -I$(CFE_DIR)/fsw/mission_inc
+INCLUDES += -I$(CFE_DIR)/fsw/platform_inc/cpu1
+INCLUDES += -I$(OSAL_DIR)/src/os/inc
+INCLUDES += -I$(OSAL_DIR)/build/inc
+INCLUDES += -I$(PSP_DIR)/fsw/inc
+INCLUDES += -I$(PSP_DIR)/fsw/pc-linux/inc
+INCLUDES += -I$(PSP_DIR)/fsw/pc-linux/inc
+INCLUDES += -I$(CS_PATH)/fsw/src
+INCLUDES += -I$(CS_PATH)/fsw/mission_inc
+INCLUDES += -I$(CS_PATH)/fsw/platform_inc
 
 #
-###########################################################################
+# FLIGHT_OBJS specifies flight software object files.
 #
-# UTF object files
-#
-UTF_OBJS := utf_osapi.o
-UTF_OBJS += utf_osfilesys.o
-UTF_OBJS += utf_osfileapi.o
-UTF_OBJS += utf_cfe_sb_api.o
-UTF_OBJS += utf_cfe_time_utils.o
-UTF_OBJS += utf_cfe_psp_memutils.o
-UTF_OBJS += utf_cfe_psp_memory.o
-UTF_OBJS += utf_cfe_psp_memrange.o
-UTF_OBJS += utf_cfe_psp_support.o
-UTF_OBJS += utf_cfe_sb.o
-UTF_OBJS += utf_sim.o
-UTF_OBJS += utf_cfe_es_api.o
-UTF_OBJS += utf_cfe_es_cds.o
-UTF_OBJS += utf_cfe_esmempool.o
-UTF_OBJS += utf_cfe_evs.o
-UTF_OBJS += utf_cfe_tbl_api.o
-UTF_OBJS += utf_cfe_tbl_internal.o
-#
-###########################################################################
-#
-# cFE object files
-#
-CFE_OBJS := ccsds.o
-CFE_OBJS += cfe_sb_util.o
-CFE_OBJS += cfe_time_api.o
-CFE_OBJS += cfe_es_cds_mempool.o
-CFE_OBJS += cfe_fs_api.o
-CFE_OBJS += cfe_psp_timer.o
-#
-###########################################################################
-#
-# CS object files
-#
-CS_OBJS := cs_app.o
-CS_OBJS += cs_app_cmds.o
-CS_OBJS += cs_cmds.o
-CS_OBJS += cs_compute.o
-CS_OBJS += cs_eeprom_cmds.o
-CS_OBJS += cs_memory_cmds.o
-CS_OBJS += cs_table_cmds.o
-CS_OBJS += cs_table_processing.o
-CS_OBJS += cs_utils.o
-CS_OBJS += cs_eepromtbl.o
-CS_OBJS += cs_memorytbl.o
-CS_OBJS += cs_tablestbl.o
-CS_OBJS += cs_apptbl.o
-#
+FLIGHT_OBJS := cs_app.o cs_app_cmds.o cs_cmds.o cs_compute.o cs_eeprom_cmds.o cs_memory_cmds.o cs_table_cmds.o cs_table_processing.o cs_utils.o
 
 #
-###########################################################################
+# UT_OBJS specifies unit test object files.
 #
-# Rules to make the specified targets
-#   
+UT_OBJS := ut_osapi_stubs.o
+UT_OBJS += ut_osfileapi_stubs.o
+UT_OBJS += ut_cfe_sb_stubs.o
+UT_OBJS += ut_cfe_es_stubs.o
+UT_OBJS += ut_cfe_evs_stubs.o
+UT_OBJS += ut_cfe_time_stubs.o
+UT_OBJS += ut_cfe_fs_stubs.o
+UT_OBJS += ut_cfe_psp_memutils_stubs.o
+UT_OBJS += ut_cfe_psp_eeprom_stubs.o
+UT_OBJS += ut_cfe_psp_ram_stubs.o
+UT_OBJS += ut_cfe_psp_memrange_stubs.o
+UT_OBJS += ut_cfe_psp_watchdog_stubs.o
+UT_OBJS += ut_cfe_psp_timer_stubs.o
+UT_OBJS += ut_cfe_tbl_stubs.o
+UT_OBJS += ut_cfe_sb_hooks.o
+UT_OBJS += ut_cfe_es_hooks.o
+UT_OBJS += ut_cfe_evs_hooks.o
+UT_OBJS += ut_cfe_tbl_hooks.o
+UT_OBJS += ut_cfe_time_hooks.o
+UT_OBJS += utassert.o
+UT_OBJS += utlist.o
+UT_OBJS += uttest.o
+UT_OBJS += uttools.o
+UT_OBJS += cs_app_test.o
+UT_OBJS += cs_app_cmds_test.o
+UT_OBJS += cs_cmds_test.o
+UT_OBJS += cs_compute_test.o
+UT_OBJS += cs_eeprom_cmds_test.o
+UT_OBJS += cs_memory_cmds_test.o
+UT_OBJS += cs_table_cmds_test.o
+UT_OBJS += cs_table_processing_test.o
+UT_OBJS += cs_utils_test.o
+UT_OBJS += cs_test_utils.o
+UT_OBJS += cs_testrunner.o
+UT_OBJS += cfs_utils.o
+
+#
+# UT_TEST_RUNNER specifies the name of the test runner.
+#
+UT_TEST_RUNNER = cs_testrunner.exe
+
+###############################################################################
+
+COMPILER=gcc
+LINKER=gcc
+
+#
+# Compiler and Linker Options
+#
+GCOV_COPT = -fprofile-arcs -ftest-coverage -pg -p
+GCOV_LOPT = -pg -p -fprofile-arcs -ftest-coverage -lgcov -lm
+
+#WARNINGS = -Wall -W -ansi -Werror -Wstrict-prototypes -Wundef
+WARNINGS = -Wall -Wstrict-prototypes -Wundef -std=c99
+DEBUGGER = -g
+
+COPT = $(WARNINGS) $(DEBUGGER) $(GCOV_COPT) -DSOFTWARE_LITTLE_BIT_ORDER -D_EL -D_ix86_ -DUT_VERBOSE -DOSAPI_NO_SPECIAL_ATTRIBS
+
+LOPT = $(GCOV_LOPT)
+
+###############################################################################
+## Rule to make the specified TARGET
+##
+%.exe: %.o
+	$(LINKER) $(LOPT) $^ -o $*.exe
+
+###############################################################################
+##  "C" COMPILER RULE
+##
 %.o: %.c
-	$(COMPILER) -c $(COPT) $(DEFAULT_COPT) $(GCOV_COPT) $(INCLUDES) $<
-#
-%.bin: %.o
-	$(LINKER) $(LOPT) $(GCOV_LOPT) $^ -o $*.bin 
-#
-all: utf_test_cs.bin defaulttbls
-#
-utf_test_cs.bin: utf_test_cs.o $(UTF_OBJS) $(CFE_OBJS) $(CS_OBJS)
+	$(COMPILER) -c $(COPT) $(INCLUDES) $<
 
-defaulttbls ::
-	$(ELF2TBL) cs_apptbl.o ./cf/apps/DefaultTable/
-	$(ELF2TBL) cs_eepromtbl.o ./cf/apps/DefaultTable/
-	$(ELF2TBL) cs_memorytbl.o ./cf/apps/DefaultTable/
-	$(ELF2TBL) cs_tablestbl.o ./cf/apps/DefaultTable/
-#
-fulltest: utf_test_cs.bin defaulttbls tables
-#
-tables: cnftbls istbls intbls cftbls detbls qqtbls enftbls
+##############################################################################
+##
 
-cnftbls: ./cf/apps/CorrNonFullTable/cs_apptbl.o \
-./cf/apps/CorrNonFullTable/cs_tablestbl.o \
-./cf/apps/CorrNonFullTable/cs_eepromtbl.o \
-./cf/apps/CorrNonFullTable/cs_memorytbl.o
-	mv cs_apptbl.o ./cf/apps/CorrNonFullTable/cs_apptbl.o
-	mv cs_tablestbl.o ./cf/apps/CorrNonFullTable/cs_tablestbl.o
-	mv cs_eepromtbl.o ./cf/apps/CorrNonFullTable/cs_eepromtbl.o
-	mv cs_memorytbl.o ./cf/apps/CorrNonFullTable/cs_memorytbl.o
-	$(ELF2TBL) ./cf/apps/CorrNonFullTable/cs_apptbl.o ./cf/apps/CorrNonFullTable/
-	$(ELF2TBL) ./cf/apps/CorrNonFullTable/cs_tablestbl.o ./cf/apps/CorrNonFullTable/
-	$(ELF2TBL) ./cf/apps/CorrNonFullTable/cs_eepromtbl.o ./cf/apps/CorrNonFullTable/
-	$(ELF2TBL) ./cf/apps/CorrNonFullTable/cs_memorytbl.o ./cf/apps/CorrNonFullTable/
-	
-istbls: ./cf/apps/InvldStNonFullTable/cs_apptbl.o \
-./cf/apps/InvldStNonFullTable/cs_eepromtbl.o \
-./cf/apps/InvldStNonFullTable/cs_tablestbl.o \
-./cf/apps/InvldStNonFullTable/cs_memorytbl.o
-	@mv cs_apptbl.o ./cf/apps/InvldStNonFullTable/cs_apptbl.o
-	@mv cs_tablestbl.o ./cf/apps/InvldStNonFullTable/cs_tablestbl.o
-	@mv cs_eepromtbl.o ./cf/apps/InvldStNonFullTable/cs_eepromtbl.o
-	@mv cs_memorytbl.o ./cf/apps/InvldStNonFullTable/cs_memorytbl.o
-	$(ELF2TBL) ./cf/apps/InvldStNonFullTable/cs_apptbl.o ./cf/apps/InvldStNonFullTable/
-	$(ELF2TBL) ./cf/apps/InvldStNonFullTable/cs_tablestbl.o ./cf/apps/InvldStNonFullTable/
-	$(ELF2TBL) ./cf/apps/InvldStNonFullTable/cs_eepromtbl.o ./cf/apps/InvldStNonFullTable/
-	$(ELF2TBL) ./cf/apps/InvldStNonFullTable/cs_memorytbl.o ./cf/apps/InvldStNonFullTable/
-	
-intbls: ./cf/apps/InvldNameNonFullTable/cs_apptbl.o \
-./cf/apps/InvldNameNonFullTable/cs_tablestbl.o
-	@mv cs_apptbl.o ./cf/apps/InvldNameNonFullTable/cs_apptbl.o
-	@mv cs_tablestbl.o ./cf/apps/InvldNameNonFullTable/cs_tablestbl.o
-	$(ELF2TBL) ./cf/apps/InvldNameNonFullTable/cs_apptbl.o ./cf/apps/InvldNameNonFullTable/
-	$(ELF2TBL) ./cf/apps/InvldNameNonFullTable/cs_tablestbl.o ./cf/apps/InvldNameNonFullTable/
-	
-enftbls: ./cf/apps/InvldEmptyNonFullTable/cs_apptbl.o \
-./cf/apps/InvldEmptyNonFullTable/cs_tablestbl.o
-	@mv cs_apptbl.o ./cf/apps/InvldEmptyNonFullTable/cs_apptbl.o
-	@mv cs_tablestbl.o ./cf/apps/InvldEmptyNonFullTable/cs_tablestbl.o
-	$(ELF2TBL) ./cf/apps/InvldEmptyNonFullTable/cs_apptbl.o ./cf/apps/InvldEmptyNonFullTable/
-	$(ELF2TBL) ./cf/apps/InvldEmptyNonFullTable/cs_tablestbl.o ./cf/apps/InvldEmptyNonFullTable/
-	
-cftbls: ./cf/apps/CorrFullTable/cs_apptbl.o \
-./cf/apps/CorrFullTable/cs_tablestbl.o \
-./cf/apps/CorrFullTable/cs_eepromtbl.o \
-./cf/apps/CorrFullTable/cs_memorytbl.o
-	@mv cs_apptbl.o ./cf/apps/CorrFullTable/cs_apptbl.o
-	@mv cs_tablestbl.o ./cf/apps/CorrFullTable/cs_tablestbl.o
-	@mv cs_eepromtbl.o ./cf/apps/CorrFullTable/cs_eepromtbl.o
-	@mv cs_memorytbl.o ./cf/apps/CorrFullTable/cs_memorytbl.o
-	$(ELF2TBL) ./cf/apps/CorrFullTable/cs_apptbl.o ./cf/apps/CorrFullTable/
-	$(ELF2TBL) ./cf/apps/CorrFullTable/cs_tablestbl.o ./cf/apps/CorrFullTable/
-	$(ELF2TBL) ./cf/apps/CorrFullTable/cs_eepromtbl.o ./cf/apps/CorrFullTable/
-	$(ELF2TBL) ./cf/apps/CorrFullTable/cs_memorytbl.o ./cf/apps/CorrFullTable/
-	
-detbls: ./cf/apps/DupEntryNonFullTable/cs_apptbl.o \
-./cf/apps/DupEntryNonFullTable/cs_tablestbl.o
-	@mv cs_apptbl.o ./cf/apps/DupEntryNonFullTable/cs_apptbl.o
-	@mv cs_tablestbl.o ./cf/apps/DupEntryNonFullTable/cs_tablestbl.o
-	$(ELF2TBL) ./cf/apps/DupEntryNonFullTable/cs_apptbl.o ./cf/apps/DupEntryNonFullTable/
-	$(ELF2TBL) ./cf/apps/DupEntryNonFullTable/cs_tablestbl.o ./cf/apps/DupEntryNonFullTable/
-	
-qqtbls: ./cf/apps/CorrQQTable/cs_tablestbl.o
-	@mv cs_tablestbl.o ./cf/apps/CorrQQTable/cs_tablestbl.o
-	$(ELF2TBL) ./cf/apps/CorrQQTable/cs_tablestbl.o ./cf/apps/CorrQQTable/
-	
+all:$(UT_TEST_RUNNER)
+
+$(UT_TEST_RUNNER): $(UT_OBJS) $(FLIGHT_OBJS)
+
 clean ::
-	rm -f *.o *.bin *.da *.out *.bbg *.bb *.gcda *.gcno *.gcov *.tbl
-	rm -f ./cf/apps/DefaultTable/*.o
-	rm -f ./cf/apps/DefaultTable/*.tbl
+	rm -f *.o *.exe *.gcda *.gcno *.gcov gmon.out
 
-cleantbl ::
-	rm -f ./cf/apps/DupEntryNonFullTable/*.o
-	rm -f ./cf/apps/DupEntryNonFullTable/*.tbl
-	rm -f ./cf/apps/CorrNonFullTable/*.o
-	rm -f ./cf/apps/CorrNonFullTable/*.tbl
-	rm -f ./cf/apps/CorrFullTable/*.o
-	rm -f ./cf/apps/CorrFullTable/*.tbl
-	rm -f ./cf/apps/CorrQQTable/*.o
-	rm -f ./cf/apps/CorrQQTable/*.tbl
-	rm -f ./cf/apps/InvldNameNonFullTable/*.o
-	rm -f ./cf/apps/InvldNameNonFullTable/*.tbl
-	rm -f ./cf/apps/InvldStNonFullTable/*.o
-	rm -f ./cf/apps/InvldStNonFullTable/*.tbl
-	rm -f ./cf/apps/InvldEmptyNonFullTable/*.o
-	rm -f ./cf/apps/InvldEmptyNonFullTable/*.tbl
-
-cleantest : clean cleantbl
-
-## Note that the following gcov sequence uses two awk scripts that are not universally
-## applied in the CFS unit test makefiles.  If you have these awk scripts, and have
-## added the CFS_TOOLS environment variable to your shell script you can uncomment
-## this gcov definition (and comment out the one below it).
-## Note that you should also include the compiler option '-Wunreachable-code' to the
-## DEFAULT_COPTS variable near the beginning of this makefile.	
-#gcov ::
-#	@echo
-#	@gcov -b $(CS_OBJS:.o=.gcda) | awk -f $(CFS_TOOLS)/gcov_parser.awk
-#	@awk -f $(CFS_TOOLS)/gcov_warning.awk $(CS_OBJS:.o=.c.gcov)
-#	@rm -f *.gcda *.gcno
-#	@echo	
+run ::
+	./$(UT_TEST_RUNNER)
 
 gcov ::
 	@echo
-	@gcov $(CS_OBJS:.o=.gcda) | sed 'N;s/\n/ /' | \
-         sed -n '/File/p' | sed -e '/\.h/d'  | \
-         sed 's/ Lines executed:/ /; s/File/gcov:/; s/of// '
+	@gcov $(FLIGHT_OBJS:.o=.gcda) | sed 'N;s/\n/ /' | \
+		sed -n '/File/p' | sed '/ads/d' | sed -e '/\.h/d'  | \
+		sed 's/ Lines executed:/ /; s/File/gcov:/; s/of// '
 	@rm -f *.gcda *.gcno
 	@echo
 
-#
-###########################################################################
-#
 # end of file

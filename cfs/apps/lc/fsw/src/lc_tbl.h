@@ -1,8 +1,8 @@
 /*************************************************************************
 ** File:
-**   $Id: lc_tbl.h 1.3 2015/03/04 16:09:53EST sstrege Exp  $
+**   $Id: lc_tbl.h 1.7 2017/06/30 12:59:53EDT mdeschu Exp  $
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
+**  Copyright (c) 2007-2014 United States Government as represented by the 
 **  Administrator of the National Aeronautics and Space Administration. 
 **  All Other Rights Reserved.  
 **
@@ -22,31 +22,10 @@
 **   declarations (see the main comment block in lc_tbldefs.h for more 
 **   info).
 **
-**   $Log: lc_tbl.h  $
-**   Revision 1.3 2015/03/04 16:09:53EST sstrege 
-**   Added copyright information
-**   Revision 1.2 2012/08/01 15:41:30EDT lwalling 
-**   Add STALE counters to watchpoint definition and result tables
-**   Revision 1.1 2012/07/31 13:53:39PDT nschweis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
-**   Revision 1.5 2010/02/19 17:44:15EST lwalling 
-**   Change state events limits to individual limits for Passive AP, FailToPass and PassToFail
-**   Revision 1.4 2009/12/28 14:50:53EST lwalling 
-**   Add event limiter to a/p def table, add event counter to a/p results table
-**   Revision 1.3 2009/04/18 14:50:45EDT dkobe 
-**   Cleaned up comments for users guide generation
-**   Revision 1.2 2009/01/15 15:36:17EST dahardis 
-**   Unit test fixes
-**   Revision 1.1 2008/12/10 10:57:04EST dahardis 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
 ** 
 *************************************************************************/
 #ifndef _lc_tbl_
 #define _lc_tbl_
-
-#define _ix86_  /* TODO - Fix endianness definitions */ 
 
 /*************************************************************************
 ** Includes
@@ -55,123 +34,27 @@
 #include "lc_platform_cfg.h"
 #include "lc_tbldefs.h"
 
-#define _STRUCT_LOW_BIT_FIRST_ /* TODO - Fix endianness definitions */
-
 /*************************************************************************
 ** Type Definitions
 *************************************************************************/
-/*
-** We need to know if we are being compiled for a big or little endian
-** target to layout these structures correctly. These compiler switches
-** are defined in the OSAL header common_types.h and assume the processor
-** family has been defined properly in the make file.
-*/
-#ifdef _STRUCT_HIGH_BIT_FIRST_
 
-    /** 
-    **  \brief Signed 8-bit byte in 32 bit double word data type, Big Endian
-    */
-    typedef struct {
-        int8    Bits31to24;
-        int8    Bits23to16;
-        int8    Bits15to8;
-        int8    Signed8;
-
-    } LC_Signed8in32_t;
-
-    /** 
-    **  \brief Unsigned 8-bit byte in 32 bit double word data type, Big Endian
-    */
-    typedef struct {
-        uint8   Bits31to24;
-        uint8   Bits23to16;
-        uint8   Bits15to8;
-        uint8   Unsigned8;
-
-    } LC_Unsigned8in32_t;
-
-    /** 
-    **  \brief Signed 16-bit word in 32 bit double word data type, Big Endian
-    */
-    typedef struct {
-        int16   Bits31to16;
-        int16   Signed16;
-
-    } LC_Signed16in32_t;
- 
-    /** 
-    **  \brief Unsigned 16-bit word in 32 bit double word data type, Big Endian
-    */
-    typedef struct {
-        uint16  Bits31to16;
-        uint16  Unsigned16;
-
-    } LC_Unsigned16in32_t;
-    
-#endif /* _STRUCT_HIGH_BIT_FIRST_ */
-
-#ifdef _STRUCT_LOW_BIT_FIRST_
-
-    /** 
-    **  \brief Signed 8-bit byte in 32 bit double word data type, Little Endian
-    */
-    typedef struct {
-        int8    Signed8;
-        int8    Bits15to8;
-        int8    Bits23to16;
-        int8    Bits31to24;
-
-    } LC_Signed8in32_t;
-
-    /** 
-    **  \brief Unsigned 8-bit byte in 32 bit double word data type, Little Endian
-    */
-    typedef struct {
-        uint8   Unsigned8;
-        uint8   Bits15to8;
-        uint8   Bits23to16;
-        uint8   Bits31to24;
-
-    } LC_Unsigned8in32_t;
-
-    /** 
-    **  \brief Signed 16-bit word in 32 bit double word data type, Little Endian
-    */
-    typedef struct {
-        int16   Signed16;
-        int16   Bits31to16;
-
-    } LC_Signed16in32_t;
-
-    /** 
-    **  \brief Unsigned 16-bit word in 32 bit double word data type, Little Endian
-    */
-    typedef struct {
-        uint16  Unsigned16;
-        uint16  Bits31to16;
-
-    } LC_Unsigned16in32_t;
-
-#endif /* _STRUCT_LOW_BIT_FIRST_ */
-
-/** 
-    \brief Watchpoint Definition Table (WDT) MultiType Union
-    This union is used to set and extract the comparison value
-    in each WDT entry since it needs to fill a 32 bit fixed
-    width field. A conditional compile switch gets the endianess 
-    right.   
-*/
-typedef union {
-    LC_Signed8in32_t      Signed8in32;
-    LC_Unsigned8in32_t    Unsigned8in32;
-    
-    LC_Signed16in32_t     Signed16in32;
-    LC_Unsigned16in32_t   Unsigned16in32;
-    
-    int32                 Signed32;
-    uint32                Unsigned32;
-    float                 Float32;
-    
+/**
+ * A union type provides a way to have many different data types occupy
+ * the same memory and legally alias each other.
+ *
+ * This is used to store the watch data points, as they may be 8, 16, or 32
+ * bits and this is defined in the table / not known until runtime.
+ */
+typedef union
+{
+   uint32   Unsigned32;
+   int32    Signed32;
+   float    Float32;
+   uint16   Unsigned16;
+   int16    Signed16;
+   uint8    Unsigned8;
+   int8     Signed8;
+   uint8    RawByte[4];
 } LC_MultiType_t;
 
 /** 
@@ -235,6 +118,10 @@ typedef struct
 {
     uint32               Value;            /**< \brief Watchpoint value at comparison that caused 
                                                        the transition                               */
+    uint8                DataType;         /**< \brief Same as Watchpoint Data Type (enumerated)    */
+
+    uint8                Padding[3];
+
     CFE_TIME_SysTime_t   Timestamp;        /**< \brief Timstamp when the transition was detected    */
 
 } LC_WRTTransition_t;
@@ -285,6 +172,7 @@ typedef struct {
                                                               has evaluated to Fail                  */
     uint32               CumulativeRTSExecCount;  /**< \brief Total number of times an RTS request
                                                               has been sent for this actionpoint     */
+    uint32               CumulativeEventMsgsSent; /**< \brief Total number of event messages sent    */
 } LC_ARTEntry_t;
 
 #endif /*_lc_tbl_*/

@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_memory_cmds.h 1.3.1.1 2015/03/03 11:58:14EST sstrege Exp  $
+ **   $Id: cs_memory_cmds.h 1.3 2017/02/16 15:33:15EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -20,19 +20,6 @@
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
  **
- ** Notes:
- **
- **   $Log: cs_memory_cmds.h  $
- **   Revision 1.3.1.1 2015/03/03 11:58:14EST sstrege 
- **   Added copyright information
- **   Revision 1.3 2010/03/29 16:49:43EDT jmdagost 
- **   Updated comments for enable/disable command descriptions.
- **   Revision 1.2 2008/07/28 14:05:31EDT njyanchik 
- **   Fix some errors with the version number update
- **   Revision 1.1 2008/07/23 15:27:05BST njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
- ** 
  *************************************************************************/
 #ifndef _cs_memory_cmds_
 #define _cs_memory_cmds_

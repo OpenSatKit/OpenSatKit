@@ -1,0 +1,107 @@
+{
+   "name": "Telemetry Output Test Table",
+   "description": "Send 1 of 4. Event msg & TFTP HK are needed for setup but are not part of the test and must be disable.",
+   "packet-array": [
+  
+      "packet": {
+         "name": "CFE_ES_HK_TLM_MID",
+         "stream-id": "\u0800",
+         "dec-id": 2048,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "CFE_EVS_EVENT_MSG_MID",
+         "stream-id": "\u0808",
+         "dec-id": 2056,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 40
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "CFE_EVS_HK_TLM_MID",
+         "stream-id": "\u0801",
+         "dec-id": 2049,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "CFE_SB_HK_TLM_MID",
+         "stream-id": "\u0803",
+         "dec-id": 2051,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "CFE_TBL_HK_TLM_MID",
+         "stream-id": "\u0804",
+         "dec-id": 2052,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "CFE_TIME_HK_TLM_MID",
+         "stream-id": "\u0805",
+         "dec-id": 2053,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "KIT_CI_HK_TLM_MID",
+         "stream-id": "\u0F00",
+         "dec-id": 3840,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+  
+      "packet": {
+         "name": "KIT_SCH_HK_TLM_MID",
+         "stream-id": "\u0F10",
+         "dec-id": 3856,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "KIT_TO_HK_TLM_MID",
+         "stream-id": "\u0F20",
+         "dec-id": 3872,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 4, "N": 1, "O": 0}
+      },
+
+      "packet": {
+         "name": "TFTP_HK_TLM_MID",
+         "stream-id": "\u0900",
+         "dec-id": 2304,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      }
+  
+   ]
+}

@@ -21,8 +21,8 @@
 #include <string.h>
 #include "pkttbl.h"
 
-/* Convenience macro */
-#define  JSON_OBJ  &(PktTbl->Json)
+
+#define  JSON  &(PktTbl->Json)  /* Convenience macro */
 
 /*
 ** Type Definitions
@@ -35,10 +35,13 @@
 
 static PKTTBL_Class* PktTbl = NULL;
 
+
 /*
 ** Local File Function Prototypes
 */
 
+static boolean WriteJsonPkt(int32 FileHandle, const PKTTBL_Pkt* Pkt, boolean FirstPktWritten);
+   
 /******************************************************************************
 ** Function: xxxCallback
 **
@@ -47,6 +50,7 @@ static PKTTBL_Class* PktTbl = NULL;
 **      JSON_ContainerFuncPtr.
 */
 static boolean PktCallback (int TokenIdx);
+static boolean FilterCallback (int TokenIdx);
 
 
 /******************************************************************************
@@ -65,24 +69,67 @@ void PKTTBL_Constructor(PKTTBL_Class*       ObjPtr,
    PktTbl = ObjPtr;
 
    CFE_PSP_MemSet(PktTbl, 0, sizeof(PKTTBL_Class));
+   PKTTBL_SetTblToUnused(&(PktTbl->Tbl));
 
    PktTbl->GetTblPtrFunc    = GetTblPtrFunc;
    PktTbl->LoadTblFunc      = LoadTblFunc;
    PktTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
 
-   JSON_Constructor(JSON_OBJ, PktTbl->JsonFileBuf, PktTbl->JsonFileTokens);
+   JSON_Constructor(JSON, PktTbl->JsonFileBuf, PktTbl->JsonFileTokens);
    
    JSON_ObjConstructor(&(PktTbl->JsonObj[PKTTBL_OBJ_PKT]),
                        PKTTBL_OBJ_PKT_NAME,
                        PktCallback,
                        (void *)&(PktTbl->Tbl.Pkt));
+
+   JSON_RegContainerCallback(JSON, &(PktTbl->JsonObj[PKTTBL_OBJ_PKT]));
    
-   JSON_RegContainerCallback(JSON_OBJ,
-	                          PktTbl->JsonObj[PKTTBL_OBJ_PKT].Name,
-	                          PktTbl->JsonObj[PKTTBL_OBJ_PKT].Callback);
+   JSON_ObjConstructor(&(PktTbl->JsonObj[PKTTBL_OBJ_FILTER]),
+                       PKTTBL_OBJ_FILTER_NAME,
+                       FilterCallback,
+                       (void *)&(PktTbl->Tbl.Pkt));
+
+   JSON_RegContainerCallback(JSON, &(PktTbl->JsonObj[PKTTBL_OBJ_FILTER]));
 
 } /* End PKTTBL_Constructor() */
 
+
+/******************************************************************************
+** Function: PKTTBL_SetPacketToUnused
+**
+**
+*/
+void PKTTBL_SetPacketToUnused(PKTTBL_Pkt* PktPtr)
+{
+   
+   CFE_PSP_MemSet(PktPtr, 0, sizeof(PKTTBL_Pkt));
+
+   PktPtr->StreamId    = PKTTBL_UNUSED_MSG_ID;
+   PktPtr->Filter.Type = PKTUTIL_FILTER_ALWAYS;
+   
+} /* End PKTTBL_SetPacketToUnused() */
+
+
+/******************************************************************************
+** Function: PKTTBL_SetTblToUnused
+**
+**
+*/
+void PKTTBL_SetTblToUnused(PKTTBL_Tbl* TblPtr)
+{
+  
+   uint16 AppId;
+   
+   CFE_PSP_MemSet(TblPtr, 0, sizeof(PKTTBL_Tbl));
+
+   for (AppId=0; AppId < PKTTBL_MAX_APP_ID; AppId++) {
+      
+      TblPtr->Pkt[AppId].StreamId    = PKTTBL_UNUSED_MSG_ID;
+      TblPtr->Pkt[AppId].Filter.Type = PKTUTIL_FILTER_ALWAYS;
+   
+   }
+   
+} /* End PKTTBL_SetTblToUnused() */
 
 
 /******************************************************************************
@@ -94,9 +141,8 @@ void PKTTBL_ResetStatus(void)
    
    PktTbl->LastLoadStatus  = TBLMGR_STATUS_UNDEF;
    PktTbl->AttrErrCnt      = 0;
-   PktTbl->MaxObjErrCnt    = 0;
-   PktTbl->ObjLoadCnt      = 0;
-   PktTbl->PktLoadIdx      = 0;
+   PktTbl->PktLoadCnt      = 0;
+   PktTbl->FilterLoadCnt   = 0; 
    
    JSON_ObjArrayReset (PktTbl->JsonObj, PKTTBL_OBJ_CNT);
     
@@ -114,7 +160,7 @@ void PKTTBL_ResetStatus(void)
 boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 {
 
-   int obj, pkt;
+   int AppId;
    
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "PKTTBL_LoadCmd() Entry. sizeof(PktTbl->Tbl) = %d\n", sizeof(PktTbl->Tbl));
    
@@ -123,16 +169,16 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    ** value is used to determine whether a packet was loaded.
    */
    PKTTBL_ResetStatus();  
-   CFE_PSP_MemSet(&(PktTbl->Tbl), 0, sizeof(PktTbl->Tbl));
-   for (pkt=0; pkt < PKTTBL_MAX_PKT_CNT; pkt++) PktTbl->Tbl.Pkt[pkt].StreamId = PKTTBL_UNUSED_MSG_ID;
+   
+   PKTTBL_SetTblToUnused(&(PktTbl->Tbl));
 
-   if (JSON_OpenFile(JSON_OBJ, Filename)) {
+   if (JSON_OpenFile(JSON, Filename)) {
   
       CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "PKTTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
       //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
       //DEBUG JSON_PrintTokens(&Json,50);
     
-      JSON_ProcessTokens(JSON_OBJ);
+      JSON_ProcessTokens(JSON);
 
       /* 
       ** Only process command if no attribute errors. No need to send an event
@@ -143,7 +189,7 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
       */
       if (PktTbl->AttrErrCnt == 0) {
       
-         if (PktTbl->PktLoadIdx > 0) {
+         if (PktTbl->PktLoadCnt > 0) {
          
             if (LoadType == TBLMGR_LOAD_TBL_REPLACE) {
          
@@ -154,64 +200,57 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
          
 		         PktTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
    
-               /* 
-               ** Logic is written to easily support the addition of new JSON 
-               ** objects. Currently only array of packets is implemented.
-               */
-               if (PktTbl->ObjLoadCnt > 0 ) {
-                  for (obj=0; obj < PKTTBL_OBJ_CNT; obj++) {
-                   
-                     if (PktTbl->JsonObj[obj].Modified) {
-                     
-                        /* 
-                        ** If at least one packet was modified then loop through
-                        ** the packet array and update each packet.
-                        */                     
-                        if (obj == PKTTBL_OBJ_PKT) {
-                       
-                           for (pkt=0; pkt < PktTbl->PktLoadIdx; pkt++) {
+               if (PktTbl->JsonObj[PKTTBL_OBJ_PKT].Modified) {
+                         
+                  for (AppId=0; (AppId < PKTTBL_MAX_APP_ID) && (PktTbl->LastLoadStatus == TBLMGR_STATUS_VALID); AppId++) {
                           
-                              if (!(PktTbl->LoadTblEntryFunc)(pkt, (PKTTBL_Pkt*)&(PktTbl->JsonObj[obj].Data)))
-                                 PktTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
-                          
-                           } /* End packet array loop */                
-                           
-                        } /* End if PKTTBL_OBJ_PKT */ 
-                     } /* End if object modified */
-                  } /* End JSON object loop */
-               } /* End if at least one object */
+                     if (PktTbl->Tbl.Pkt[AppId].StreamId != PKTTBL_UNUSED_MSG_ID) {
+
+                        if (!(PktTbl->LoadTblEntryFunc)(AppId, (PKTTBL_Pkt*)&(PktTbl->JsonObj[PKTTBL_OBJ_PKT].Data)))
+                            PktTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
+                     }     
+                  } /* End packet array loop */                
+               } /* End if at least one object modified */
                else {
                   
-                  CFE_EVS_SendEvent(PKTTBL_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Invalid table command. No packets defined.");
+                  /* This is an un explainable error */
+                  CFE_EVS_SendEvent(PKTTBL_LOAD_EMPTY_ERR_EID, CFE_EVS_ERROR, "Load packet table update rejected.");
 
                } /* End if no objects in file */
                
             } /* End if update records */
 			   else {
                
-               CFE_EVS_SendEvent(PKTTBL_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Invalid table command load type %d",LoadType);            
+               CFE_EVS_SendEvent(PKTTBL_LOAD_TYPE_ERR_EID,CFE_EVS_ERROR,"Load packet table rejected. Invalid table command load type %d", LoadType);            
             
             } /* End if invalid command option */ 
             
-         } /* End if valid packet index */
+         } /* End if at least one packet loaded */
          else {
             
-            CFE_EVS_SendEvent(PKTTBL_LOAD_UPDATE_ERR_EID,CFE_EVS_ERROR,
-			                     "PKTTBL: Update table command rejected. File contained %d packet objects which exceeds the max table size of %d",
-							         PktTbl->ObjLoadCnt, PKTTBL_MAX_PKT_CNT);
+            CFE_EVS_SendEvent(PKTTBL_LOAD_UPDATE_ERR_EID, CFE_EVS_ERROR,
+			                     "Load packet table command rejected. %s didn't contain any packet defintions", Filename);
          
          } /* End if too many packets in table file */
 
+         if (PktTbl->PktLoadCnt != PktTbl->FilterLoadCnt) {
+            
+            CFE_EVS_SendEvent(PKTTBL_LOAD_UNDEF_FILTERS_EID, CFE_EVS_INFORMATION, 
+                              "Packet table loaded with %d packets and %d undefined filters",
+                              PktTbl->PktLoadCnt, (PktTbl->PktLoadCnt-PktTbl->FilterLoadCnt));
+                              
+         }
       } /* End if no attribute errors */
             
    } /* End if valid file */
    else {
       
       //printf("**ERROR** Processing Packet Table file %s. Status = %d JSMN Status = %d\n",TEST_FILE, Json.FileStatus, Json.JsmnStatus);
-      CFE_EVS_SendEvent(PKTTBL_LOAD_OPEN_ERR_EID,CFE_EVS_ERROR,"PKTTBL: Table open failure for file %s. File Status = %s JSMN Status = %s",
+      CFE_EVS_SendEvent(PKTTBL_LOAD_OPEN_ERR_EID,CFE_EVS_ERROR,"Load packet table open failure for file %s. File Status = %s JSMN Status = %s",
 	                     Filename, JSON_GetFileStatusStr(PktTbl->Json.FileStatus), JSON_GetJsmnErrStr(PktTbl->Json.JsmnStatus));
    
    } /* End if file processing error */
+
     
    return (PktTbl->LastLoadStatus == TBLMGR_STATUS_VALID);
 
@@ -236,19 +275,20 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 {
 
    boolean  RetStatus = FALSE;
-   int32    FileHandle,i;
+   boolean  FirstPktWritten = FALSE;
+   int32    FileHandle;
+   uint16   AppId;
    char     DumpRecord[256];
    const PKTTBL_Tbl *PktTblPtr;
    char SysTimeStr[256];
    
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
-   if (FileHandle >= OS_FS_SUCCESS)
-   {
+   if (FileHandle >= OS_FS_SUCCESS) {
 
       PktTblPtr = (PktTbl->GetTblPtrFunc)();
 
-      sprintf(DumpRecord,"\n{\n\"name\": \"Kit Telemetry Output (KIT_TO) Table\",\n");
+      sprintf(DumpRecord,"\n{\n\"name\": \"Kit Telemetry Output (KIT_TO) Packet Table\",\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
@@ -268,20 +308,13 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       sprintf(DumpRecord,"\"packet-array\": [\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
-      for (i=0; i < PKTTBL_MAX_PKT_CNT; i++) {
-      
-         sprintf(DumpRecord,"\"packet\": {\n");
-         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-         sprintf(DumpRecord,"   \"dec-id\": %d,\n   \"priority\": %d,\n   \"reliability\": %d,\n   \"buf-limit\": %d\n},\n",
-                 PktTblPtr->Pkt[i].StreamId,
-                 PktTblPtr->Pkt[i].Qos.Priority,
-                 PktTblPtr->Pkt[i].Qos.Reliability,
-                 PktTblPtr->Pkt[i].BufLim);
-         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-      
+      for (AppId=0; AppId < PKTTBL_MAX_APP_ID; AppId++) {
+               
+         if (WriteJsonPkt(FileHandle, &(PktTblPtr->Pkt[AppId]), FirstPktWritten)) FirstPktWritten = TRUE;
+              
       } /* End packet loop */
 
-      sprintf(DumpRecord,"]\n}\n");
+      sprintf(DumpRecord,"\n]}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       RetStatus = TRUE;
@@ -299,6 +332,46 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
    return RetStatus;
    
 } /* End of PKTTBL_DumpCmd() */
+
+
+
+/******************************************************************************
+** Function: WriteJsonPkt
+**
+** Notes:
+**   1. Can't end last record with a comma so logic checks that commas only
+**      start to be written after the first packet has been written
+*/
+static boolean WriteJsonPkt(int32 FileHandle, const PKTTBL_Pkt* Pkt, boolean FirstPktWritten) {
+   
+   boolean PktWritten = FALSE;
+   char DumpRecord[256];
+
+   if (Pkt->StreamId != PKTTBL_UNUSED_MSG_ID) {
+      
+      if (FirstPktWritten) {
+         sprintf(DumpRecord,",\n");
+         OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+      }
+      
+      sprintf(DumpRecord,"\"packet\": {\n");
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      sprintf(DumpRecord,"   \"dec-id\": %d,\n   \"priority\": %d,\n   \"reliability\": %d,\n   \"buf-limit\": %d,\n",
+              Pkt->StreamId, Pkt->Qos.Priority, Pkt->Qos.Reliability, Pkt->BufLim);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+      
+      sprintf(DumpRecord,"   \"filter\": { \"type\": %d, \"X\": %d, \"N\": %d, \"O\": %d}\n}",
+              Pkt->Filter.Type, Pkt->Filter.Param.X, Pkt->Filter.Param.N, Pkt->Filter.Param.O);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+   
+      PktWritten = TRUE;
+      
+   } /* End if StreamId record has been loaded */
+   
+   return PktWritten;
+   
+} /* End WriteJsonPkt() */
 
 
 /******************************************************************************
@@ -320,37 +393,34 @@ static boolean PktCallback (int TokenIdx)
    PKTTBL_Pkt Pkt;
 
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE,
-                     "\nPKTTBL.PktCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
-                     PktTbl->ObjLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
+                     "PKTTBL.PktCallback: PktLoadCnt %d, AttrErrCnt %d, TokenIdx %d",
+                     PktTbl->PktLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "dec-id",      &JsonIntData)) { AttributeCnt++; Pkt.StreamId        = (CFE_SB_MsgId_t) JsonIntData; }
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "priority",    &JsonIntData)) { AttributeCnt++; Pkt.Qos.Priority    = (uint8) JsonIntData; }
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "reliability", &JsonIntData)) { AttributeCnt++; Pkt.Qos.Reliability = (uint8) JsonIntData; }
-   if (JSON_GetValShortInt(JSON_OBJ, TokenIdx, "buf-limit",   &JsonIntData)) { AttributeCnt++; Pkt.BufLim          = (uint16)JsonIntData; }
+   PKTTBL_SetPacketToUnused(&Pkt); /* Default filter to always filtered in case not loaded by FilterCallback() */
+  
+   if (JSON_GetValShortInt(JSON, TokenIdx, "dec-id",      &JsonIntData)) { AttributeCnt++; Pkt.StreamId        = (CFE_SB_MsgId_t) JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "priority",    &JsonIntData)) { AttributeCnt++; Pkt.Qos.Priority    = (uint8) JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "reliability", &JsonIntData)) { AttributeCnt++; Pkt.Qos.Reliability = (uint8) JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "buf-limit",   &JsonIntData)) { AttributeCnt++; Pkt.BufLim          = (uint16)JsonIntData; }
    
-   PktTbl->ObjLoadCnt++;
    
    if (AttributeCnt == 4) {
    
-      if (PktTbl->PktLoadIdx < PKTTBL_MAX_PKT_CNT) {
-         
-         PktTbl->Tbl.Pkt[PktTbl->PktLoadIdx] = Pkt;
-         PktTbl->PktLoadIdx++;      
-         RetStatus = TRUE;
+      ++PktTbl->PktLoadCnt;
       
-      } /* End if PktLoadIdx within limits */
-      else {
-         PktTbl->MaxObjErrCnt++;
-      }
-     
+      PktTbl->CurAppId = Pkt.StreamId & PKTTBL_APP_ID_MASK;     
+      PktTbl->Tbl.Pkt[PktTbl->CurAppId] = Pkt;   
+      
+      RetStatus = TRUE;
+      
       CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, 
-                        "PKTTBL.PktCallback (Stream ID, BufLim, Priority, Reliability): %d, %d, %d, %d\n",
+                        "PKTTBL.PktCallback (Stream ID, BufLim, Priority, Reliability): %d, %d, %d, %d",
                         Pkt.StreamId, Pkt.Qos.Priority, Pkt.Qos.Reliability, Pkt.BufLim);
    
    } /* End if valid AttributeCnt */
    else {
 	   
-      PktTbl->AttrErrCnt++;     
+      ++PktTbl->AttrErrCnt;     
       CFE_EVS_SendEvent(PKTTBL_LOAD_PKT_ATTR_ERR_EID, CFE_EVS_ERROR, "Invalid number of packet attributes %d. Should be 4.",
                         AttributeCnt);
    
@@ -360,3 +430,58 @@ static boolean PktCallback (int TokenIdx)
 
 } /* PktCallback() */
 
+
+/******************************************************************************
+** Function: FilterCallback
+**
+** Process a filter table entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. ObjLoadCnt incremented for every packet, valid or invalid.
+**      PktLoadIdx index to stored new pkt and incremented for valid packets
+**   3. Filter must be defined within a packet structure and this code assumes
+**      the filter corresponds to most recent packet callback
+*/
+static boolean FilterCallback (int TokenIdx)
+{
+
+   int  AttributeCnt = 0;
+   int  JsonIntData;
+   boolean RetStatus = FALSE;      
+   PktUtil_Filter Filter;
+   
+   CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE,
+                     "PKTTBL.FilterCallback: Current ApId 0x%04X, ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d",
+                     PktTbl->CurAppId, PktTbl->PktLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
+
+   if (JSON_GetValShortInt(JSON, TokenIdx, "type", &JsonIntData)) { AttributeCnt++; Filter.Type    = (uint16)JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "X",    &JsonIntData)) { AttributeCnt++; Filter.Param.X = (uint16)JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "N",    &JsonIntData)) { AttributeCnt++; Filter.Param.N = (uint16)JsonIntData; }
+   if (JSON_GetValShortInt(JSON, TokenIdx, "O",    &JsonIntData)) { AttributeCnt++; Filter.Param.O = (uint16)JsonIntData; }
+   
+   
+   if (AttributeCnt == 4) {
+   
+      ++PktTbl->FilterLoadCnt;
+
+      PktTbl->Tbl.Pkt[PktTbl->CurAppId].Filter = Filter;   
+
+      RetStatus = TRUE;
+               
+      CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, 
+                        "PKTTBL.FilterCallback (Type, X, N, O): %d, %d, %d, %d",
+                        Filter.Type, Filter.Param.X, Filter.Param.N, Filter.Param.O);
+   
+   } /* End if valid AttributeCnt */
+   else {
+	   
+      ++PktTbl->AttrErrCnt;     
+      CFE_EVS_SendEvent(PKTTBL_LOAD_PKT_ATTR_ERR_EID, CFE_EVS_ERROR, "Invalid number of packet attributes %d. Should be 4.",
+                        AttributeCnt);
+   
+   } /* End if invalid AttributeCnt */
+      
+   return RetStatus;
+
+} /* FilterCallback() */

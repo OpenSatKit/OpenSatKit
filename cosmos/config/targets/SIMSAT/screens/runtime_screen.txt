@@ -18,7 +18,7 @@ HORIZONTAL
 
   SETTING TEXTCOLOR black
 
-  CANVAS 900 275
+  CANVAS 770 200
     CANVASIMAGE "SimSat-Bubble-Runtime.png" 0 0
   END
   
@@ -55,7 +55,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
          
       BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_CMD")'
-      NAMED_WIDGET kit_sch_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL CFG_SCH_ENTRY LOAD_SCH_ENTRY LOAD_MSG_ENTRY
+      NAMED_WIDGET kit_sch_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL CFG_SCH_TBL_ENTRY LOAD_SCH_TBL_ENTRY SEND_SCH_TBL_ENTRY LOAD_MSG_TBL_ENTRY SEND_MSG_TBL_ENTRY
       LABEL "    "
 
       BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_TLM")'
@@ -81,7 +81,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
          
       BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_CMD")'
-      NAMED_WIDGET kit_to_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL ADD_PKT REMOVE_PKT REMOVE_ALL_PKTS ENABLE_TELEMETRY SET_RUN_LOOP_DELAY
+      NAMED_WIDGET kit_to_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL ADD_PKT REMOVE_PKT REMOVE_ALL_PKTS UPDATE_FILTER SEND_PKT_TLM ENABLE_TELEMETRY SET_RUN_LOOP_DELAY
       LABEL "    "
 
       BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "KIT_TO_TLM")'
@@ -121,11 +121,11 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
 
       BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "DEMO")'
-      NAMED_WIDGET demo COMBOBOX Coming-Soon
+      NAMED_WIDGET demo COMBOBOX 'TO Stats' 'SCH-TO Tables' 
       LABEL "    "
 
       BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "TUTORIAL")'
-      NAMED_WIDGET tutorial COMBOBOX Coming-Soon
+      NAMED_WIDGET tutorial COMBOBOX 'Training Video' 'Training Slides'
       LABEL "    "
 
     END # Matrix

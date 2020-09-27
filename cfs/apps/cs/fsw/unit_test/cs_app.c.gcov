@@ -1,1325 +1,1002 @@
-        -:    0:Source:/home/aschoening/pwned/apps/cs/fsw/src/cs_app.c
-        -:    0:Graph:cs_app.gcno
-        -:    0:Data:cs_app.gcda
-        -:    0:Runs:1
-        -:    0:Programs:1
+        -:    0:Source:../src/cs_app.c
+        -:    0:Programs:9
         -:    1:/************************************************************************
         -:    2:** File:
-        -:    3:**   $Id: cs_app.c.gcov 1.6 2012/09/14 17:20:37EDT aschoeni Exp  $
+        -:    3:**   $Id: cs_app.c.gcov 1.7 2017/03/29 19:31:13EDT mdeschu Exp  $
         -:    4:**
-        -:    5:** Purpose: 
-        -:    6:**   CFS Checksum (CS) Applications provides the service of background
-        -:    7:**   checksumming user defined objects in the CFS
+        -:    5:**   Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6:**   Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**   All Other Rights Reserved.  
         -:    8:**
-        -:    9:**
-        -:   10:**   $Log: cs_app.c.gcov  $
-        -:   10:**   Revision 1.6 2012/09/14 17:20:37EDT aschoeni 
-        -:   10:**   Updated for fix to disable error in def table command
-        -:   11:**   Revision 1.15 2012/09/14 15:02:43EDT aschoeni 
-        -:   12:**   Fixed incrementing of error counts for internal commands
-        -:   13:**   Revision 1.14 2011/09/06 14:19:56EDT jmdagost 
-        -:   14:**   Added ChildTaskInUse and OneShotInUse flags to housekeeping tlm.
-        -:   15:**   Revision 1.13 2011/06/15 16:36:43EDT jmdagost 
-        -:   16:**   Moved mission revision number from version header to platform config, so included platform config here.
-        -:   17:**   Revision 1.12 2010/08/12 14:28:18EDT jmdagost 
-        -:   18:**   Swapped App table registration and Tables table registration so that Tables table is last one registered.
-        -:   19:**   Revision 1.11 2010/04/14 15:43:39EDT jmdagost 
-        -:   20:**   Modified processing in CS_BackgroundCheckCmd() to protect against changes in table order.
-        -:   21:**   Revision 1.10 2010/03/09 15:04:26EST jmdagost 
-        -:   22:**   Removed unused LimitCmd and LimitHK terms.
-        -:   23:**   Revision 1.9 2009/06/10 13:55:43EDT rmcgraw 
-        -:   24:**   DCR8291:1 Replaced os_bsp with cfe_psp and OS_Mem with CFE_PSP_Mem
-        -:   25:**   Revision 1.8 2008/10/17 08:38:57EDT njyanchik 
-        -:   26:**   Added variables to even messages
-        -:   27:**   Revision 1.7 2008/08/28 10:24:05EDT njyanchik 
-        -:   28:**   removing a typo
-        -:   29:**   Revision 1.6 2008/08/28 09:06:04EDT njyanchik 
-        -:   30:**   Added a break statement after we process the app checksumming code.
-        -:   31:**   Revision 1.5 2008/07/31 19:03:48BST njyanchik 
-        -:   32:**   The Startup sync call has been added to the main loop and a platform config parameter has been added to the cs platform config file to regulate the 
-        -:   33:**   timeout for the synchronization.
-        -:   34:**   Revision 1.4 2008/07/28 19:05:34BST njyanchik 
-        -:   35:**   Fix some errors with the version number update
-        -:   36:**   Revision 1.3 2008/07/23 16:03:47BST njyanchik 
-        -:   37:**   Update CS with versioning information
-        -:   38:**   Revision 1.2 2008/07/23 15:34:33BST njyanchik 
-        -:   39:**   Check in of CS Unit test
-        -:   40:**   Revision 1.1 2008/06/13 09:04:06EDT njyanchik 
-        -:   41:**   Initial revision
-        -:   42:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
-        -:   43:** 
-        -:   44:*************************************************************************/
-        -:   45:#include <string.h>
-        -:   46:#include "cfe.h"
-        -:   47:#include "cs_app.h"
-        -:   48:
-        -:   49:#include "cs_platform_cfg.h"
-        -:   50:#include "cs_events.h"
-        -:   51:#include "cs_utils.h"
-        -:   52:#include "cs_compute.h"
-        -:   53:#include "cs_eeprom_cmds.h"
-        -:   54:#include "cs_table_cmds.h"
-        -:   55:#include "cs_memory_cmds.h"
-        -:   56:#include "cs_app_cmds.h"
-        -:   57:#include "cs_cmds.h"
-        -:   58:/*************************************************************************
-        -:   59:**
-        -:   60:** Macro definitions
-        -:   61:**
-        -:   62:**************************************************************************/
-        -:   63:#define CS_PIPE_NAME                    "CS_CMD_PIPE"
-        -:   64:
-        -:   65:/*************************************************************************
-        -:   66:**
-        -:   67:** Exported data
-        -:   68:**
-        -:   69:**************************************************************************/
-        -:   70:CS_AppData_t        CS_AppData;
-        -:   71:
-        -:   72:/************************************************************************/
-        -:   73:/** \brief Initialize the Checksum CFS application
-        -:   74: **  
-        -:   75: **  \par Description
-        -:   76: **       Checksum application initialization routine. This 
-        -:   77: **       function performs all the required startup steps to 
-        -:   78: **       get the application registered with the cFE services so
-        -:   79: **       it can begin to receive command messages and begin 
-        -:   80: **       background checksumming. 
-        -:   81: **
-        -:   82: **  \par Assumptions, External Events, and Notes:
-        -:   83: **       None
-        -:   84: **       
-        -:   85: **  \returns
-        -:   86: **  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
-        -:   87: **  \retstmt Return codes from #CFE_EVS_Register         \endcode
-        -:   88: **  \retstmt Return codes from #CFE_SB_CreatePipe        \endcode
-        -:   89: **  \retstmt Return codes from #CFE_SB_Subscribe         \endcode
-        -:   90: **  \endreturns
-        -:   91: **
-        -:   92: *************************************************************************/
-        -:   93:int32 CS_AppInit (void);
-        -:   94:
-        -:   95:/************************************************************************/
-        -:   96:/** \brief Process a command pipe message
-        -:   97: **  
-        -:   98: **  \par Description
-        -:   99: **       Processes a single software bus command pipe message. Checks
-        -:  100: **       the message and command IDs and calls the appropriate routine
-        -:  101: **       to handle the command.
-        -:  102: **
-        -:  103: **  \par Assumptions, External Events, and Notes:
-        -:  104: **       None
-        -:  105: **       
-        -:  106: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-        -:  107: **                             references the software bus message 
-        -:  108: **
-        -:  109: **  \sa #CFE_SB_RcvMsg
+        -:    9:**   This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**   used, distributed and modified only pursuant to the terms of that 
+        -:   12:**   agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   CFS Checksum (CS) Applications provides the service of background
+        -:   16:**   checksumming user defined objects in the CFS
+        -:   17:** 
+        -:   18:*************************************************************************/
+        -:   19:#include <string.h>
+        -:   20:#include "cfe.h"
+        -:   21:#include "cs_app.h"
+        -:   22:
+        -:   23:#include "cs_platform_cfg.h"
+        -:   24:#include "cs_events.h"
+        -:   25:#include "cs_utils.h"
+        -:   26:#include "cs_compute.h"
+        -:   27:#include "cs_eeprom_cmds.h"
+        -:   28:#include "cs_table_cmds.h"
+        -:   29:#include "cs_memory_cmds.h"
+        -:   30:#include "cs_app_cmds.h"
+        -:   31:#include "cs_cmds.h"
+        -:   32:/*************************************************************************
+        -:   33:**
+        -:   34:** Macro definitions
+        -:   35:**
+        -:   36:**************************************************************************/
+        -:   37:#define CS_PIPE_NAME                    "CS_CMD_PIPE"
+        -:   38:#define CS_NUM_DATA_STORE_STATES        6 /* 4 tables + OS CS + cFE core number of checksum states for CDS */
+        -:   39:
+        -:   40:/*************************************************************************
+        -:   41:**
+        -:   42:** Exported data
+        -:   43:**
+        -:   44:**************************************************************************/
+        -:   45:CS_AppData_t        CS_AppData;
+        -:   46:
+        -:   47:/************************************************************************/
+        -:   48:/** \brief Initialize the Checksum CFS application
+        -:   49: **  
+        -:   50: **  \par Description
+        -:   51: **       Checksum application initialization routine. This 
+        -:   52: **       function performs all the required startup steps to 
+        -:   53: **       get the application registered with the cFE services so
+        -:   54: **       it can begin to receive command messages and begin 
+        -:   55: **       background checksumming. 
+        -:   56: **
+        -:   57: **  \par Assumptions, External Events, and Notes:
+        -:   58: **       None
+        -:   59: **       
+        -:   60: **  \returns
+        -:   61: **  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
+        -:   62: **  \retstmt Return codes from #CFE_EVS_Register         \endcode
+        -:   63: **  \retstmt Return codes from #CFE_SB_CreatePipe        \endcode
+        -:   64: **  \retstmt Return codes from #CFE_SB_Subscribe         \endcode
+        -:   65: **  \endreturns
+        -:   66: **
+        -:   67: *************************************************************************/
+        -:   68:int32 CS_AppInit (void);
+        -:   69:
+        -:   70:/************************************************************************/
+        -:   71:/** \brief Process a command pipe message
+        -:   72: **  
+        -:   73: **  \par Description
+        -:   74: **       Processes a single software bus command pipe message. Checks
+        -:   75: **       the message and command IDs and calls the appropriate routine
+        -:   76: **       to handle the command.
+        -:   77: **
+        -:   78: **  \par Assumptions, External Events, and Notes:
+        -:   79: **       None
+        -:   80: **       
+        -:   81: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:   82: **                             references the software bus message 
+        -:   83: **
+        -:   84: **  \sa #CFE_SB_RcvMsg
+        -:   85: **
+        -:   86: *************************************************************************/
+        -:   87:int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr);
+        -:   88:
+        -:   89:/************************************************************************/
+        -:   90:/** \brief Process housekeeping request
+        -:   91: **  
+        -:   92: **  \par Description
+        -:   93: **       Processes an on-board housekeeping request message.
+        -:   94: **
+        -:   95: **  \par Assumptions, External Events, and Notes:
+        -:   96: **       This command does not affect the command execution counter
+        -:   97: **       
+        -:   98: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:   99: **                             references the software bus message 
+        -:  100: **
+        -:  101: *************************************************************************/
+        -:  102:void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr);
+        -:  103:
+        -:  104:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        -:  105:/************************************************************************/
+        -:  106:/** \brief Restore tables states from CDS if enabled
+        -:  107: **  
+        -:  108: **  \par Description
+        -:  109: **       Restore CS state of tables from CDS
         -:  110: **
-        -:  111: *************************************************************************/
-        -:  112:int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr);
-        -:  113:
-        -:  114:/************************************************************************/
-        -:  115:/** \brief Process housekeeping request
-        -:  116: **  
-        -:  117: **  \par Description
-        -:  118: **       Processes an on-board housekeeping request message.
-        -:  119: **
-        -:  120: **  \par Assumptions, External Events, and Notes:
-        -:  121: **       This command does not affect the command execution counter
-        -:  122: **       
-        -:  123: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-        -:  124: **                             references the software bus message 
-        -:  125: **
-        -:  126: *************************************************************************/
-        -:  127:void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr);
-        -:  128:
-        -:  129:/************************************************************************/
-        -:  130:/** \brief Process noop command
-        -:  131: **  
-        -:  132: **  \par Description
-        -:  133: **       Processes a noop ground command.
-        -:  134: **
-        -:  135: **  \par Assumptions, External Events, and Notes:
-        -:  136: **       None
-        -:  137: **       
-        -:  138: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-        -:  139: **                             references the software bus message 
-        -:  140: **
-        -:  141: **  \sa #CS_NOOP_CC
-        -:  142: **
-        -:  143: *************************************************************************/
-        -:  144:void CS_NoopCmd (CFE_SB_MsgPtr_t MessagePtr);
-        -:  145:
-        -:  146:/************************************************************************/
-        -:  147:/** \brief Process reset counters command
-        -:  148: **  
-        -:  149: **  \par Description
-        -:  150: **       Processes a reset counters ground command which will reset
-        -:  151: **       the checksum commmand error and command execution counters
-        -:  152: **       to zero. It also resets all checksum error counters and
-        -:  153: **       the passes completed counter.
-        -:  154: **
-        -:  155: **  \par Assumptions, External Events, and Notes:
-        -:  156: **       None
-        -:  157: **       
-        -:  158: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-        -:  159: **                             references the software bus message 
-        -:  160: **
-        -:  161: **  \sa #CS_RESET_CC
-        -:  162: **
-        -:  163: *************************************************************************/
-        -:  164:void CS_ResetCmd (CFE_SB_MsgPtr_t MessagePtr);
-        -:  165:
-        -:  166:/************************************************************************/
-        -:  167:/** \brief process a background checking cycle
-        -:  168: **  
-        -:  169: **  \par Description
-        -:  170: **       Processes a background checking cycle when the scheduler 
-        -:  171: **       tell CS.
-        -:  172: **
-        -:  173: **  \par Assumptions, External Events, and Notes:
-        -:  174: **       None
-        -:  175: **       
-        -:  176: **  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
-        -:  177: **                             references the software bus message 
-        -:  178: **
-        -:  179: **
-        -:  180: *************************************************************************/
-        -:  181:void CS_BackgroundCheckCmd (CFE_SB_MsgPtr_t MessagePtr);
-        -:  182:
-        -:  183:
-        -:  184:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  185:/*                                                                 */
-        -:  186:/* CS application entry point and main process loop                */
-        -:  187:/*                                                                 */
-        -:  188:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  189:void CS_AppMain (void)
-function CS_AppMain called 12 returned 100% blocks executed 100%
-       12:  190:{
-       12:  191:    int32               Result = 0;
-        -:  192:    /* Performance Log (start time counter) */
-       12:  193:    CFE_ES_PerfLogEntry (CS_APPMAIN_PERF_ID);
-call    0 returned 100%
-        -:  194:    
-        -:  195:    /* Register application */
-       12:  196:    Result = CFE_ES_RegisterApp();
-call    0 returned 100%
-        -:  197:    
-        -:  198:    /* Perform application specific initialization */
-       12:  199:    if (Result == CFE_SUCCESS)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  200:    {
-       12:  201:        Result = CS_AppInit();
-call    0 returned 100%
-        -:  202:    }
-        -:  203:    
-        -:  204:    /* Check for start-up error */
-       12:  205:    if (Result != CFE_SUCCESS)
-branch  0 taken 67% (fallthrough)
-branch  1 taken 33%
-        -:  206:    {
-        -:  207:        /* Set request to terminate main loop */
-        8:  208:        CS_AppData.RunStatus = CFE_ES_APP_ERROR;
-        -:  209:    }
-        -:  210:    
-       12:  211:    CFE_ES_WaitForStartupSync(CS_STARTUP_TIMEOUT);
-call    0 returned 100%
-        -:  212:    
-        -:  213:    /* Main process loop */
-      179:  214:    while (CFE_ES_RunLoop(&CS_AppData.RunStatus))
-call    0 returned 100%
-branch  1 taken 93%
-branch  2 taken 7% (fallthrough)
-        -:  215:    {
-        -:  216:        /* Performance Log (stop time counter) */
-      155:  217:        CFE_ES_PerfLogExit (CS_APPMAIN_PERF_ID);
-call    0 returned 100%
-        -:  218:        
-        -:  219:        /* Wait for the next Software Bus message */
-      155:  220:        Result = CFE_SB_RcvMsg (&CS_AppData.MsgPtr,
-call    0 returned 100%
-        -:  221:                                CS_AppData.CmdPipe,
-        -:  222:                                CFE_SB_PEND_FOREVER);
-        -:  223:        
-        -:  224:        /* Performance Log (start time counter)  */
-      155:  225:        CFE_ES_PerfLogEntry (CS_APPMAIN_PERF_ID);
-call    0 returned 100%
-        -:  226:        
-      155:  227:        if (Result == CFE_SUCCESS)
-branch  0 taken 99% (fallthrough)
-branch  1 taken 1%
-        -:  228:        {
-        -:  229:            /* Process Software Bus message */
-      154:  230:            Result = CS_AppPipe (CS_AppData.MsgPtr);
-call    0 returned 100%
-        -:  231:        }
-        -:  232:        
-        -:  233:        /*
-        -:  234:         ** Note: If there were some reason to exit the task
-        -:  235:         **       normally (without error) then we would set
-        -:  236:         **       RunStatus = CFE_ES_APP_EXIT
-        -:  237:         */
-      155:  238:        if (Result != CFE_SUCCESS)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  239:        {
-        -:  240:            /* Set request to terminate main loop */
-        1:  241:            CS_AppData.RunStatus = CFE_ES_APP_ERROR;
-        -:  242:        }
-        -:  243:    }/* end run loop */
+        -:  111: **  \par Assumptions, External Events, and Notes:
+        -:  112: **       None
+        -:  113: **       
+        -:  114: **
+        -:  115: **
+        -:  116: *************************************************************************/
+        -:  117:int32 CS_CreateRestoreStatesFromCDS(void);
+        -:  118:#endif
+        -:  119:
+        -:  120:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  121:/*                                                                 */
+        -:  122:/* CS application entry point and main process loop                */
+        -:  123:/*                                                                 */
+        -:  124:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  125:void CS_AppMain (void)
+        -:  126:{
+        5:  127:    int32               Result = 0;
+        -:  128:    /* Performance Log (start time counter) */
+        5:  129:    CFE_ES_PerfLogEntry (CS_APPMAIN_PERF_ID);
+        -:  130:    
+        -:  131:    /* Register application */
+        5:  132:    Result = CFE_ES_RegisterApp();
+        -:  133:    
+        -:  134:    /* Perform application specific initialization */
+        5:  135:    if (Result == CFE_SUCCESS)
+        -:  136:    {
+        4:  137:        Result = CS_AppInit();
+        -:  138:    }
+        -:  139:    
+        -:  140:    /* Check for start-up error */
+        5:  141:    if (Result != CFE_SUCCESS)
+        -:  142:    {
+        -:  143:        /* Set request to terminate main loop */
+        2:  144:        CS_AppData.RunStatus = CFE_ES_APP_ERROR;
+        -:  145:    }
+        -:  146:    
+        5:  147:    CFE_ES_WaitForStartupSync(CS_STARTUP_TIMEOUT);
+        -:  148:    
+        -:  149:    /* Main process loop */
+       14:  150:    while (CFE_ES_RunLoop(&CS_AppData.RunStatus))
+        -:  151:    {
+        -:  152:        /* Performance Log (stop time counter) */
+        4:  153:        CFE_ES_PerfLogExit (CS_APPMAIN_PERF_ID);
+        -:  154:        
+        -:  155:        /* Wait for the next Software Bus message */
+        4:  156:        Result = CFE_SB_RcvMsg (&CS_AppData.MsgPtr,
+        4:  157:                                CS_AppData.CmdPipe,
+        -:  158:                                CFE_SB_PEND_FOREVER);
+        -:  159:        
+        -:  160:        /* Performance Log (start time counter)  */
+        4:  161:        CFE_ES_PerfLogEntry (CS_APPMAIN_PERF_ID);
+        -:  162:        
+        4:  163:        if (Result == CFE_SUCCESS)
+        -:  164:        {
+        -:  165:            /* Process Software Bus message */
+        2:  166:            Result = CS_AppPipe (CS_AppData.MsgPtr);
+        -:  167:        }
+        -:  168:        
+        -:  169:        /*
+        -:  170:         ** Note: If there were some reason to exit the task
+        -:  171:         **       normally (without error) then we would set
+        -:  172:         **       RunStatus = CFE_ES_APP_EXIT
+        -:  173:         */
+        4:  174:        if (Result != CFE_SUCCESS)
+        -:  175:        {
+        -:  176:            /* Set request to terminate main loop */
+        2:  177:            CS_AppData.RunStatus = CFE_ES_APP_ERROR;
+        -:  178:        }
+        -:  179:    }/* end run loop */
+        -:  180:    
+        -:  181:    /* Check for "fatal" process error */
+        9:  182:    if (CS_AppData.RunStatus == CFE_ES_APP_ERROR || CS_AppData.RunStatus == CFE_ES_SYS_EXCEPTION )
+        -:  183:    {
+        -:  184:        /* Send an error event with run status and result */
+        4:  185:        CFE_EVS_SendEvent(CS_EXIT_ERR_EID, 
+        -:  186:                          CFE_EVS_ERROR,
+        -:  187:                          "App terminating, RunStatus:0x%08X, RC:0x%08X", 
+        -:  188:                          (unsigned int)CS_AppData.RunStatus,
+        -:  189:                          (unsigned int)Result);
+        -:  190:    }
+        -:  191:    else
+        -:  192:    {
+        -:  193:        /* Send an informational event describing the reason for the termination */
+        1:  194:        CFE_EVS_SendEvent(CS_EXIT_INF_EID, 
+        -:  195:                          CFE_EVS_INFORMATION,
+        -:  196:                          "App terminating, RunStatus:0x%08X", 
+        -:  197:                          (unsigned int)CS_AppData.RunStatus);
+        -:  198:    }
+        -:  199:    
+        -:  200:    /* In case cFE Event Services is not working */
+        5:  201:    CFE_ES_WriteToSysLog("CS App terminating, RunStatus:0x%08X, RC:0x%08X\n",
+        -:  202:                         (unsigned int)CS_AppData.RunStatus,
+        -:  203:                         (unsigned int)Result);
+        -:  204:        
+        -:  205:    /* Performance Log (stop time counter) */
+        5:  206:    CFE_ES_PerfLogExit(CS_APPMAIN_PERF_ID);
+        -:  207:    
+        -:  208:    
+        -:  209:     /* Let cFE kill the task (and child task) */
+        5:  210:    CFE_ES_ExitApp(CS_AppData.RunStatus);
+        -:  211:    
+        5:  212:} /* End of CS_AppMain () */
+        -:  213:
+        -:  214:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  215:/*                                                                 */
+        -:  216:/* CS Application initialization function                          */
+        -:  217:/*                                                                 */
+        -:  218:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       17:  219:int32 CS_AppInit (void)
+        -:  220:{
+       17:  221:    int32                                       Result = CFE_SUCCESS;
+        -:  222:    int32                                       ResultInit;
+        -:  223:    int32                                       ResultSegment;
+        -:  224:    uint32                                      KernelSize;
+        -:  225:    uint32                                      KernelAddress;
+        -:  226:    uint32                                      CFESize;
+        -:  227:    uint32                                      CFEAddress;
+        -:  228:    
+        -:  229:    /* Register for event services */
+       17:  230:    Result = CFE_EVS_Register(NULL, 0, 0);
+        -:  231:
+       17:  232:    if (Result != CFE_SUCCESS) {
+        1:  233:        CFE_ES_WriteToSysLog("CS App: Error Registering For Event Services, RC = 0x%08X\n", (unsigned int)Result);
+        1:  234:        return Result;
+        -:  235:    }
+        -:  236:        
+        -:  237:    /* Zero out all data in CS_AppData, including the housekeeping data*/
+       16:  238:    CFE_PSP_MemSet (& CS_AppData, 0, (unsigned) sizeof (CS_AppData) );
+        -:  239:    
+       16:  240:    CS_AppData.RunStatus = CFE_ES_APP_RUN;
+        -:  241:    
+        -:  242:    /* Initialize app configuration data */
+       16:  243:    strncpy(CS_AppData.PipeName, CS_CMD_PIPE_NAME, CS_CMD_PIPE_NAME_LEN);
         -:  244:    
-        -:  245:    /* Check for "fatal" process error */
-       12:  246:    if (Result != CFE_SUCCESS || CS_AppData.RunStatus != CFE_ES_APP_RUN )
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-branch  2 taken 0% (fallthrough)
-branch  3 taken 100%
-        -:  247:    {
-        -:  248:        /* Send an event describing the reason for the termination */
-        9:  249:        CFE_EVS_SendEvent(CS_EXIT_ERR_EID, 
-call    0 returned 100%
-        -:  250:                          CFE_EVS_ERROR,
-        -:  251:                          "App terminating, err = 0x%08X", 
-        -:  252:                          Result);
-        -:  253:        
-        -:  254:        /* In case cFE Event Services is not working */
-        9:  255:        CFE_ES_WriteToSysLog("CS App terminating, err = 0x%08X\n", 
-call    0 returned 100%
-        -:  256:                             Result);
-        -:  257:    }
-        -:  258:    
-        -:  259:    /* Performance Log (stop time counter) */
-       12:  260:    CFE_ES_PerfLogExit(CS_APPMAIN_PERF_ID);
-call    0 returned 100%
-        -:  261:    
-        -:  262:    
-        -:  263:     /* Let cFE kill the task (and any child tasks) */
-       12:  264:    CFE_ES_ExitApp(CS_AppData.RunStatus);
-call    0 returned 100%
-        -:  265:    
-       12:  266:} /* End of CS_AppMain () */
-        -:  267:
-        -:  268:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  269:/*                                                                 */
-        -:  270:/* CS Application initialization function                          */
-        -:  271:/*                                                                 */
-        -:  272:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  273:int32 CS_AppInit (void)
-function CS_AppInit called 12 returned 100% blocks executed 100%
-       12:  274:{
-       12:  275:    int32                                       Result = CFE_SUCCESS;
-        -:  276:    int32                                       ResultInit;
-        -:  277:    int32                                       ResultSegment;
-        -:  278:    uint32                                      KernelSize;
-        -:  279:    uint32                                      KernelAddress;
-        -:  280:    uint32                                      CFESize;
-        -:  281:    uint32                                      CFEAddress;
+       16:  245:    CS_AppData.PipeDepth = CS_PIPE_DEPTH;
+        -:  246:    
+        -:  247:    /* Initialize housekeeping packet */
+       16:  248:    CFE_SB_InitMsg (& CS_AppData.HkPacket,
+        -:  249:                    CS_HK_TLM_MID, 
+        -:  250:                    sizeof (CS_HkPacket_t),
+        -:  251:                    TRUE);
+        -:  252:    
+        -:  253:
+        -:  254:    /* Create Software Bus message pipe */
+        -:  255:    
+       16:  256:    Result = CFE_SB_CreatePipe (& CS_AppData.CmdPipe,
+       16:  257:                                CS_AppData.PipeDepth,
+        -:  258:                                CS_AppData.PipeName);
+       16:  259:    if (Result != CFE_SUCCESS)
+        -:  260:    {
+        2:  261:        CFE_EVS_SendEvent (CS_INIT_SB_CREATE_ERR_EID,
+        -:  262:                           CFE_EVS_ERROR,
+        -:  263:                           "Software Bus Create Pipe for command returned: 0x%08X",(unsigned int)Result);
+        2:  264:        return Result;
+        -:  265:    }
+        -:  266:    
+        -:  267:    /* Subscribe to Housekeeping request commands */
+        -:  268:    
+       14:  269:    Result = CFE_SB_Subscribe (CS_SEND_HK_MID,
+       14:  270:                               CS_AppData.CmdPipe);
+        -:  271:    
+       14:  272:    if (Result != CFE_SUCCESS)
+        -:  273:    {
+        1:  274:        CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_HK_ERR_EID,
+        -:  275:                           CFE_EVS_ERROR,
+        -:  276:                           "Software Bus subscribe to housekeeping returned: 0x%08X",(unsigned int)Result);
+        1:  277:        return Result;
+        -:  278:    }
+        -:  279:    
+        -:  280:    
+        -:  281:    /* Subscribe to background checking schedule */
         -:  282:    
-        -:  283:    /* Register for event services */
-       12:  284:    Result = CFE_EVS_Register(NULL, 0, 0);
-call    0 returned 100%
+       13:  283:    Result = CFE_SB_Subscribe( CS_BACKGROUND_CYCLE_MID,
+       13:  284:                              CS_AppData.CmdPipe);
         -:  285:    
-        -:  286:    /* Zero out all data in CS_AppData, including the housekeeping data*/
-       12:  287:    CFE_PSP_MemSet (& CS_AppData, 0, (unsigned) sizeof (CS_AppData) );
-call    0 returned 100%
-        -:  288:    
-       12:  289:    CS_AppData.RunStatus = CFE_ES_APP_RUN;
-        -:  290:    
-        -:  291:    /* Initialize app configuration data */
-       12:  292:    strncpy(CS_AppData.PipeName, CS_CMD_PIPE_NAME, CS_CMD_PIPE_NAME_LEN);
-call    0 returned 100%
+       13:  286:    if (Result != CFE_SUCCESS)
+        -:  287:    {
+        1:  288:        CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_BACK_ERR_EID,
+        -:  289:                           CFE_EVS_ERROR,
+        -:  290:                           "Software Bus subscribe to background cycle returned: 0x%08X",(unsigned int)Result);
+        1:  291:        return Result;
+        -:  292:    }
         -:  293:    
-       12:  294:    CS_AppData.PipeDepth = CS_PIPE_DEPTH;
-        -:  295:    
-        -:  296:    /* Initialize housekeeping packet */
-       12:  297:    CFE_SB_InitMsg (& CS_AppData.HkPacket,
-call    0 returned 100%
-        -:  298:                    CS_HK_TLM_MID, 
-        -:  299:                    sizeof (CS_HkPacket_t),
-        -:  300:                    TRUE);
-        -:  301:    
-        -:  302:    
-        -:  303:    /* Create Software Bus message pipe */
-        -:  304:    
-       12:  305:    Result = CFE_SB_CreatePipe (& CS_AppData.CmdPipe,
-call    0 returned 100%
-        -:  306:                                CS_AppData.PipeDepth,
-        -:  307:                                CS_AppData.PipeName);
-       12:  308:    if (Result != CFE_SUCCESS)
-branch  0 taken 8% (fallthrough)
-branch  1 taken 92%
-        -:  309:    {
-        1:  310:        CFE_EVS_SendEvent (CS_INIT_SB_CREATE_ERR_EID,
-call    0 returned 100%
-        -:  311:                           CFE_EVS_ERROR,
-        -:  312:                           "Software Bus Create Pipe for command returned: 0x%08X",Result);
-        1:  313:        return Result;
-        -:  314:    }
-        -:  315:    
-        -:  316:    /* Subscribe to Housekeeping request commands */
-        -:  317:    
-       11:  318:    Result = CFE_SB_Subscribe (CS_SEND_HK_MID,
-call    0 returned 100%
-        -:  319:                               CS_AppData.CmdPipe);
-        -:  320:    
-       11:  321:    if (Result != CFE_SUCCESS)
-branch  0 taken 9% (fallthrough)
-branch  1 taken 91%
-        -:  322:    {
-        1:  323:        CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_HK_ERR_EID,
-call    0 returned 100%
-        -:  324:                           CFE_EVS_ERROR,
-        -:  325:                           "Software Bus subscribe to housekeeping returned: 0x%08X",Result);
-        1:  326:        return Result;
-        -:  327:    }
-        -:  328:    
-        -:  329:    
-        -:  330:    /* Subscribe to background checking schedule */
-        -:  331:    
-       10:  332:    Result = CFE_SB_Subscribe( CS_BACKGROUND_CYCLE_MID,
-call    0 returned 100%
-        -:  333:                              CS_AppData.CmdPipe);
-        -:  334:    
-       10:  335:    if (Result != CFE_SUCCESS)
-branch  0 taken 10% (fallthrough)
-branch  1 taken 90%
-        -:  336:    {
-        1:  337:        CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_BACK_ERR_EID,
-call    0 returned 100%
-        -:  338:                           CFE_EVS_ERROR,
-        -:  339:                           "Software Bus subscribe to background cycle returned: 0x%08X",Result);
-        1:  340:        return Result;
-        -:  341:    }
-        -:  342:    
-        -:  343:    
-        -:  344:    /* Subscribe to CS Internal command packets */
-        -:  345:    
-        9:  346:    Result = CFE_SB_Subscribe (CS_CMD_MID,
-call    0 returned 100%
-        -:  347:                               CS_AppData.CmdPipe);
-        9:  348:    if (Result != CFE_SUCCESS)
-branch  0 taken 11% (fallthrough)
-branch  1 taken 89%
-        -:  349:    {
-        1:  350:        CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_CMD_ERR_EID,
-call    0 returned 100%
-        -:  351:                           CFE_EVS_ERROR,
-        -:  352:                           "Software Bus subscribe to command returned: 0x%08X",Result);
-        1:  353:        return Result;
-        -:  354:    }
-        -:  355:    
-        -:  356:    /* Set up default tables in memory */
-        8:  357:    CS_InitializeDefaultTables();
-call    0 returned 100%
-        -:  358:    
-        -:  359:    
+        -:  294:    
+        -:  295:    /* Subscribe to CS Internal command packets */
+        -:  296:    
+       12:  297:    Result = CFE_SB_Subscribe (CS_CMD_MID,
+       12:  298:                               CS_AppData.CmdPipe);
+       12:  299:    if (Result != CFE_SUCCESS)
+        -:  300:    {
+        1:  301:        CFE_EVS_SendEvent (CS_INIT_SB_SUBSCRIBE_CMD_ERR_EID,
+        -:  302:                           CFE_EVS_ERROR,
+        -:  303:                           "Software Bus subscribe to command returned: 0x%08X",(unsigned int)Result);
+        1:  304:        return Result;
+        -:  305:    }
+        -:  306:    
+        -:  307:    /* Set up default tables in memory */
+       11:  308:    CS_InitializeDefaultTables();
+        -:  309:
+       11:  310:    CS_AppData.EepromCSState = CS_EEPROM_TBL_POWERON_STATE;
+       11:  311:    CS_AppData.MemoryCSState = CS_MEMORY_TBL_POWERON_STATE;
+       11:  312:    CS_AppData.AppCSState    = CS_APPS_TBL_POWERON_STATE;
+       11:  313:    CS_AppData.TablesCSState = CS_TABLES_TBL_POWERON_STATE;
+        -:  314:    
+       11:  315:    CS_AppData.OSCSState      = CS_OSCS_CHECKSUM_STATE;
+       11:  316:    CS_AppData.CfeCoreCSState = CS_CFECORE_CHECKSUM_STATE;
+        -:  317:   
+        -:  318:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+       11:  319:    Result = CS_CreateRestoreStatesFromCDS();
+        -:  320:#endif
+        -:  321:    
+        -:  322:    
+       11:  323:    ResultInit = CS_TableInit(& CS_AppData.DefEepromTableHandle,
+        -:  324:                              & CS_AppData.ResEepromTableHandle,
+        -:  325:                              (void*) & CS_AppData.DefEepromTblPtr,
+        -:  326:                              (void*) &CS_AppData.ResEepromTblPtr,
+        -:  327:                              CS_EEPROM_TABLE, 
+        -:  328:                              CS_DEF_EEPROM_TABLE_NAME,
+        -:  329:                              CS_RESULTS_EEPROM_TABLE_NAME,
+        -:  330:                              CS_MAX_NUM_EEPROM_TABLE_ENTRIES,
+        -:  331:                              CS_DEF_EEPROM_TABLE_FILENAME,
+        -:  332:                              &CS_AppData.DefaultEepromDefTable,
+        -:  333:                              sizeof(CS_Def_EepromMemory_Table_Entry_t),
+        -:  334:                              sizeof(CS_Res_EepromMemory_Table_Entry_t),
+        -:  335:                              CS_ValidateEepromChecksumDefinitionTable);
+        -:  336:    
+       11:  337:    if(ResultInit != CFE_SUCCESS)
+        -:  338:    {
+        1:  339:        CS_AppData.EepromCSState = CS_STATE_DISABLED;
+        1:  340:        CFE_EVS_SendEvent (CS_INIT_EEPROM_ERR_EID,
+        -:  341:                           CFE_EVS_ERROR,
+        -:  342:                           "Table initialization failed for Eeprom: 0x%08X",
+        -:  343:                           (unsigned int)ResultInit);
+        1:  344:        return (ResultInit);
+        -:  345:    }
+        -:  346:    
+       10:  347:    ResultInit = CS_TableInit(& CS_AppData.DefMemoryTableHandle,
+        -:  348:                              & CS_AppData.ResMemoryTableHandle,
+        -:  349:                              (void*) & CS_AppData.DefMemoryTblPtr,
+        -:  350:                              (void*) & CS_AppData.ResMemoryTblPtr,
+        -:  351:                              CS_MEMORY_TABLE, 
+        -:  352:                              CS_DEF_MEMORY_TABLE_NAME,
+        -:  353:                              CS_RESULTS_MEMORY_TABLE_NAME,
+        -:  354:                              CS_MAX_NUM_MEMORY_TABLE_ENTRIES,
+        -:  355:                              CS_DEF_MEMORY_TABLE_FILENAME,
+        -:  356:                              &CS_AppData.DefaultMemoryDefTable,
+        -:  357:                              sizeof(CS_Def_EepromMemory_Table_Entry_t),
+        -:  358:                              sizeof(CS_Res_EepromMemory_Table_Entry_t),
+        -:  359:                              CS_ValidateMemoryChecksumDefinitionTable);
         -:  360:    
-        8:  361:    ResultInit = CS_TableInit(& CS_AppData.DefEepromTableHandle,
-call    0 returned 100%
-        -:  362:                              & CS_AppData.ResEepromTableHandle,
-        -:  363:                              (void*) & CS_AppData.DefEepromTblPtr,
-        -:  364:                              (void*) &CS_AppData.ResEepromTblPtr,
-        -:  365:                              CS_EEPROM_TABLE, 
-        -:  366:                              CS_DEF_EEPROM_TABLE_NAME,
-        -:  367:                              CS_RESULTS_EEPROM_TABLE_NAME,
-        -:  368:                              CS_MAX_NUM_EEPROM_TABLE_ENTRIES,
-        -:  369:                              CS_DEF_EEPROM_TABLE_FILENAME,
-        -:  370:                              &CS_AppData.DefaultEepromDefTable,
-        -:  371:                              sizeof(CS_Def_EepromMemory_Table_Entry_t),
-        -:  372:                              sizeof(CS_Res_EepromMemory_Table_Entry_t),
-        -:  373:                              CS_ValidateEepromChecksumDefinitionTable);
-        -:  374:    
-        8:  375:    if(ResultInit != CFE_SUCCESS)
-branch  0 taken 13% (fallthrough)
-branch  1 taken 88%
-        -:  376:    {
-        1:  377:        CS_AppData.EepromCSState = CS_STATE_DISABLED;
-        1:  378:        CFE_EVS_SendEvent (CS_INIT_EEPROM_ERR_EID,
-call    0 returned 100%
-        -:  379:                           CFE_EVS_ERROR,
-        -:  380:                           "Table initialization failed for Eeprom: 0x%08X",
-        -:  381:                           ResultInit);
-        1:  382:        return (ResultInit);
-        -:  383:    }
-        -:  384:    
-        7:  385:    ResultInit = CS_TableInit(& CS_AppData.DefMemoryTableHandle,
-call    0 returned 100%
-        -:  386:                              & CS_AppData.ResMemoryTableHandle,
-        -:  387:                              (void*) & CS_AppData.DefMemoryTblPtr,
-        -:  388:                              (void*) & CS_AppData.ResMemoryTblPtr,
-        -:  389:                              CS_MEMORY_TABLE, 
-        -:  390:                              CS_DEF_MEMORY_TABLE_NAME,
-        -:  391:                              CS_RESULTS_MEMORY_TABLE_NAME,
-        -:  392:                              CS_MAX_NUM_MEMORY_TABLE_ENTRIES,
-        -:  393:                              CS_DEF_MEMORY_TABLE_FILENAME,
-        -:  394:                              &CS_AppData.DefaultMemoryDefTable,
-        -:  395:                              sizeof(CS_Def_EepromMemory_Table_Entry_t),
-        -:  396:                              sizeof(CS_Res_EepromMemory_Table_Entry_t),
-        -:  397:                              CS_ValidateMemoryChecksumDefinitionTable);
-        -:  398:    
-        -:  399:    
-        7:  400:    if(ResultInit != CFE_SUCCESS)
-branch  0 taken 14% (fallthrough)
-branch  1 taken 86%
-        -:  401:    {
-        1:  402:        CS_AppData.MemoryCSState = CS_STATE_DISABLED;
-        1:  403:        CFE_EVS_SendEvent (CS_INIT_MEMORY_ERR_EID,
-call    0 returned 100%
-        -:  404:                           CFE_EVS_ERROR,
-        -:  405:                           "Table initialization failed for Memory: 0x%08X",
-        -:  406:                           ResultInit);
-        1:  407:        return (ResultInit);
-        -:  408:    }
+        -:  361:    
+       10:  362:    if(ResultInit != CFE_SUCCESS)
+        -:  363:    {
+        1:  364:        CS_AppData.MemoryCSState = CS_STATE_DISABLED;
+        1:  365:        CFE_EVS_SendEvent (CS_INIT_MEMORY_ERR_EID,
+        -:  366:                           CFE_EVS_ERROR,
+        -:  367:                           "Table initialization failed for Memory: 0x%08X",
+        -:  368:                           (unsigned int)ResultInit);
+        1:  369:        return (ResultInit);
+        -:  370:    }
+        -:  371:    
+        9:  372:    ResultInit= CS_TableInit(& CS_AppData.DefAppTableHandle,
+        -:  373:                             & CS_AppData.ResAppTableHandle,
+        -:  374:                             (void*) & CS_AppData.DefAppTblPtr,
+        -:  375:                             (void*) & CS_AppData.ResAppTblPtr,
+        -:  376:                             CS_APP_TABLE, 
+        -:  377:                             CS_DEF_APP_TABLE_NAME,
+        -:  378:                             CS_RESULTS_APP_TABLE_NAME,
+        -:  379:                             CS_MAX_NUM_APP_TABLE_ENTRIES,
+        -:  380:                             CS_DEF_APP_TABLE_FILENAME,
+        -:  381:                             &CS_AppData.DefaultAppDefTable,
+        -:  382:                             sizeof(CS_Def_App_Table_Entry_t),
+        -:  383:                             sizeof(CS_Res_App_Table_Entry_t),
+        -:  384:                             CS_ValidateAppChecksumDefinitionTable);
+        -:  385:    
+        9:  386:    if(ResultInit != CFE_SUCCESS)
+        -:  387:    {
+        1:  388:        CS_AppData.AppCSState = CS_STATE_DISABLED;
+        1:  389:        CFE_EVS_SendEvent (CS_INIT_APP_ERR_EID,
+        -:  390:                           CFE_EVS_ERROR,
+        -:  391:                           "Table initialization failed for Apps: 0x%08X",
+        -:  392:                           (unsigned int)ResultInit);
+        1:  393:        return (ResultInit);
+        -:  394:    }
+        -:  395:
+        8:  396:    ResultInit = CS_TableInit(& CS_AppData.DefTablesTableHandle,
+        -:  397:                              & CS_AppData.ResTablesTableHandle,
+        -:  398:                              (void*) & CS_AppData.DefTablesTblPtr,
+        -:  399:                              (void*) & CS_AppData.ResTablesTblPtr,
+        -:  400:                              CS_TABLES_TABLE, 
+        -:  401:                              CS_DEF_TABLES_TABLE_NAME,
+        -:  402:                              CS_RESULTS_TABLES_TABLE_NAME,
+        -:  403:                              CS_MAX_NUM_TABLES_TABLE_ENTRIES,
+        -:  404:                              CS_DEF_TABLES_TABLE_FILENAME,
+        -:  405:                              &CS_AppData.DefaultTablesDefTable,
+        -:  406:                              sizeof(CS_Def_Tables_Table_Entry_t),
+        -:  407:                              sizeof(CS_Res_Tables_Table_Entry_t),
+        -:  408:                              CS_ValidateTablesChecksumDefinitionTable);
         -:  409:    
-        6:  410:    ResultInit= CS_TableInit(& CS_AppData.DefAppTableHandle,
-call    0 returned 100%
-        -:  411:                             & CS_AppData.ResAppTableHandle,
-        -:  412:                             (void*) & CS_AppData.DefAppTblPtr,
-        -:  413:                             (void*) & CS_AppData.ResAppTblPtr,
-        -:  414:                             CS_APP_TABLE, 
-        -:  415:                             CS_DEF_APP_TABLE_NAME,
-        -:  416:                             CS_RESULTS_APP_TABLE_NAME,
-        -:  417:                             CS_MAX_NUM_APP_TABLE_ENTRIES,
-        -:  418:                             CS_DEF_APP_TABLE_FILENAME,
-        -:  419:                             &CS_AppData.DefaultAppDefTable,
-        -:  420:                             sizeof(CS_Def_App_Table_Entry_t),
-        -:  421:                             sizeof(CS_Res_App_Table_Entry_t),
-        -:  422:                             CS_ValidateAppChecksumDefinitionTable);
+        8:  410:    if(ResultInit != CFE_SUCCESS)
+        -:  411:    {
+        1:  412:        CS_AppData.TablesCSState = CS_STATE_DISABLED;
+        1:  413:        CFE_EVS_SendEvent (CS_INIT_TABLES_ERR_EID,
+        -:  414:                           CFE_EVS_ERROR,
+        -:  415:                           "Table initialization failed for Tables: 0x%08X",
+        -:  416:                           (unsigned int)ResultInit);
+        1:  417:        return (ResultInit);
+        -:  418:    }
+        -:  419:    
+        -:  420:
+        -:  421:    /* Initalize the CFE core segments */
+        7:  422:    CFE_PSP_GetCFETextSegmentInfo((void*) &CFEAddress, &CFESize);
         -:  423:    
-        6:  424:    if(ResultInit != CFE_SUCCESS)
-branch  0 taken 17% (fallthrough)
-branch  1 taken 83%
-        -:  425:    {
-        1:  426:        CS_AppData.AppCSState = CS_STATE_DISABLED;
-        1:  427:        CFE_EVS_SendEvent (CS_INIT_APP_ERR_EID,
-call    0 returned 100%
-        -:  428:                           CFE_EVS_ERROR,
-        -:  429:                           "Table initialization failed for Apps: 0x%08X",
-        -:  430:                           ResultInit);
-        1:  431:        return (ResultInit);
-        -:  432:    }
-        -:  433:
-        5:  434:    ResultInit = CS_TableInit(& CS_AppData.DefTablesTableHandle,
-call    0 returned 100%
-        -:  435:                              & CS_AppData.ResTablesTableHandle,
-        -:  436:                              (void*) & CS_AppData.DefTablesTblPtr,
-        -:  437:                              (void*) & CS_AppData.ResTablesTblPtr,
-        -:  438:                              CS_TABLES_TABLE, 
-        -:  439:                              CS_DEF_TABLES_TABLE_NAME,
-        -:  440:                              CS_RESULTS_TABLES_TABLE_NAME,
-        -:  441:                              CS_MAX_NUM_TABLES_TABLE_ENTRIES,
-        -:  442:                              CS_DEF_TABLES_TABLE_FILENAME,
-        -:  443:                              &CS_AppData.DefaultTablesDefTable,
-        -:  444:                              sizeof(CS_Def_Tables_Table_Entry_t),
-        -:  445:                              sizeof(CS_Res_Tables_Table_Entry_t),
-        -:  446:                              CS_ValidateTablesChecksumDefinitionTable);
-        -:  447:    
-        5:  448:    if(ResultInit != CFE_SUCCESS)
-branch  0 taken 20% (fallthrough)
-branch  1 taken 80%
-        -:  449:    {
-        1:  450:        CS_AppData.TablesCSState = CS_STATE_DISABLED;
-        1:  451:        CFE_EVS_SendEvent (CS_INIT_TABLES_ERR_EID,
-call    0 returned 100%
-        -:  452:                           CFE_EVS_ERROR,
-        -:  453:                           "Table initialization failed for Tables: 0x%08X",
-        -:  454:                           ResultInit);
-        1:  455:        return (ResultInit);
-        -:  456:    }
-        -:  457:    
-        -:  458:
-        -:  459:    /* Initalize the CFE core segments */
-        4:  460:    CFE_PSP_GetCFETextSegmentInfo((void*) &CFEAddress, &CFESize);
-call    0 returned 100%
-        -:  461:    
-        4:  462:    CS_AppData.CfeCoreCodeSeg.StartAddress           = CFEAddress;
-        4:  463:    CS_AppData.CfeCoreCodeSeg.NumBytesToChecksum     = CFESize;
-        4:  464:    CS_AppData.CfeCoreCodeSeg.ComputedYet            = FALSE;
-        4:  465:    CS_AppData.CfeCoreCodeSeg.ComparisonValue        = 0;
-        4:  466:    CS_AppData.CfeCoreCodeSeg.ByteOffset             = 0;
-        4:  467:    CS_AppData.CfeCoreCodeSeg.TempChecksumValue      = 0;
-        4:  468:    CS_AppData.CfeCoreCodeSeg.State                  = CS_STATE_ENABLED;
-        -:  469:    
-        -:  470:    /* Initialize the OS Core code segment*/
-        -:  471:    
-        4:  472:    ResultSegment  = CFE_PSP_GetKernelTextSegmentInfo( &KernelAddress, &KernelSize);
-call    0 returned 100%
+        7:  424:    CS_AppData.CfeCoreCodeSeg.StartAddress           = CFEAddress;
+        7:  425:    CS_AppData.CfeCoreCodeSeg.NumBytesToChecksum     = CFESize;
+        7:  426:    CS_AppData.CfeCoreCodeSeg.ComputedYet            = FALSE;
+        7:  427:    CS_AppData.CfeCoreCodeSeg.ComparisonValue        = 0;
+        7:  428:    CS_AppData.CfeCoreCodeSeg.ByteOffset             = 0;
+        7:  429:    CS_AppData.CfeCoreCodeSeg.TempChecksumValue      = 0;
+        7:  430:    CS_AppData.CfeCoreCodeSeg.State                  = CS_STATE_ENABLED;
+        -:  431:    
+        -:  432:    /* Initialize the OS Core code segment*/
+        -:  433:    
+        7:  434:    ResultSegment  = CFE_PSP_GetKernelTextSegmentInfo( &KernelAddress, &KernelSize);
+        -:  435:    
+        7:  436:    if (ResultSegment != OS_SUCCESS)
+        -:  437:    {
+        1:  438:        CS_AppData.OSCodeSeg.StartAddress           = 0;
+        1:  439:        CS_AppData.OSCodeSeg.NumBytesToChecksum     = 0;
+        1:  440:        CS_AppData.OSCodeSeg.ComputedYet            = FALSE;
+        1:  441:        CS_AppData.OSCodeSeg.ComparisonValue        = 0;
+        1:  442:        CS_AppData.OSCodeSeg.ByteOffset             = 0;
+        1:  443:        CS_AppData.OSCodeSeg.TempChecksumValue      = 0;
+        1:  444:        CS_AppData.OSCodeSeg.State                  = CS_STATE_DISABLED;
+        -:  445:        
+        -:  446:        
+        1:  447:        CFE_EVS_SendEvent (CS_OS_TEXT_SEG_INF_EID,
+        -:  448:                           CFE_EVS_INFORMATION,
+        -:  449:                           "OS Text Segment disabled due to platform");
+        -:  450:    }
+        -:  451:    else
+        -:  452:    {
+        6:  453:        CS_AppData.OSCodeSeg.StartAddress           = KernelAddress;
+        6:  454:        CS_AppData.OSCodeSeg.NumBytesToChecksum     = KernelSize;
+        6:  455:        CS_AppData.OSCodeSeg.ComputedYet            = FALSE;
+        6:  456:        CS_AppData.OSCodeSeg.ComparisonValue        = 0;
+        6:  457:        CS_AppData.OSCodeSeg.ByteOffset             = 0;
+        6:  458:        CS_AppData.OSCodeSeg.TempChecksumValue      = 0;
+        6:  459:        CS_AppData.OSCodeSeg.State                  = CS_STATE_ENABLED;
+        -:  460:        
+        -:  461:    }
+        -:  462:
+        -:  463:    
+        -:  464:    /* initialize the place to ostart background checksumming */
+        7:  465:    CS_AppData.CurrentCSTable      = 0;
+        7:  466:    CS_AppData.CurrentEntryInTable = 0;
+        -:  467:    
+        -:  468:    
+        -:  469:    /* Initial settings for the CS Application */
+        -:  470:    /* the rest of the tables are initialized in CS_TableInit */
+        7:  471:    CS_AppData.ChecksumState  = CS_STATE_ENABLED;
+        -:  472:    
         -:  473:    
-        4:  474:    if (ResultSegment != OS_SUCCESS)
-branch  0 taken 25% (fallthrough)
-branch  1 taken 75%
-        -:  475:    {
-        1:  476:        CS_AppData.OSCodeSeg.StartAddress           = 0;
-        1:  477:        CS_AppData.OSCodeSeg.NumBytesToChecksum     = 0;
-        1:  478:        CS_AppData.OSCodeSeg.ComputedYet            = FALSE;
-        1:  479:        CS_AppData.OSCodeSeg.ComparisonValue        = 0;
-        1:  480:        CS_AppData.OSCodeSeg.ByteOffset             = 0;
-        1:  481:        CS_AppData.OSCodeSeg.TempChecksumValue      = 0;
-        1:  482:        CS_AppData.OSCodeSeg.State                  = CS_STATE_DISABLED;
-        -:  483:        
-        -:  484:        
-        1:  485:        CFE_EVS_SendEvent (CS_OS_TEXT_SEG_INF_EID,
-call    0 returned 100%
-        -:  486:                           CFE_EVS_INFORMATION,
-        -:  487:                           "OS Text Segment disabled due to platform");
-        -:  488:    }
-        -:  489:    else
-        -:  490:    {
-        3:  491:        CS_AppData.OSCodeSeg.StartAddress           = KernelAddress;
-        3:  492:        CS_AppData.OSCodeSeg.NumBytesToChecksum     = KernelSize;
-        3:  493:        CS_AppData.OSCodeSeg.ComputedYet            = FALSE;
-        3:  494:        CS_AppData.OSCodeSeg.ComparisonValue        = 0;
-        3:  495:        CS_AppData.OSCodeSeg.ByteOffset             = 0;
-        3:  496:        CS_AppData.OSCodeSeg.TempChecksumValue      = 0;
-        3:  497:        CS_AppData.OSCodeSeg.State                  = CS_STATE_ENABLED;
-        -:  498:        
-        -:  499:    }
-        -:  500:
-        -:  501:    
-        -:  502:    /* initialize the place to ostart background checksumming */
-        4:  503:    CS_AppData.CurrentCSTable      = 0;
-        4:  504:    CS_AppData.CurrentEntryInTable = 0;
-        -:  505:    
-        -:  506:    
-        -:  507:    /* Initial settings for the CS Application */
-        -:  508:    /* the rest of the tables are initialized in CS_TableInit */
-        -:  509:    
-        4:  510:    CS_AppData.ChecksumState  = CS_STATE_ENABLED;
-        4:  511:    CS_AppData.OSCSState      = CS_STATE_ENABLED;
-        4:  512:    CS_AppData.CfeCoreCSState = CS_STATE_ENABLED;
-        -:  513:    
-        -:  514:    
-        4:  515:    CS_AppData.ChildTaskInUse    = FALSE;
-        4:  516:    CS_AppData.OneShotTaskInUse  = FALSE;
-        -:  517:    
-        -:  518:    
-        4:  519:    CS_AppData.MaxBytesPerCycle = CS_DEFAULT_BYTES_PER_CYCLE;
-        -:  520:    
-        -:  521:    /* Application startup event message */
-        4:  522:    if (Result == CFE_SUCCESS)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  523:    {
-        4:  524:        Result = CFE_EVS_SendEvent (CS_INIT_INF_EID,
-call    0 returned 100%
-        -:  525:                                    CFE_EVS_INFORMATION,
-        -:  526:                                    "CS Initialized. Version %d.%d.%d.%d",
-        -:  527:                                    CS_MAJOR_VERSION,
-        -:  528:                                    CS_MINOR_VERSION,
-        -:  529:                                    CS_REVISION,
-        -:  530:                                    CS_MISSION_REV);
-        -:  531:    }
-        4:  532:    return (Result);
-        -:  533:} /* End of CS_AppInit () */
-        -:  534:
-        -:  535:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  536:/*                                                                 */
-        -:  537:/* CS's command pipe processing                                    */
-        -:  538:/*                                                                 */
-        -:  539:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  540:int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
-function CS_AppPipe called 154 returned 100% blocks executed 93%
-      154:  541:{
-      154:  542:    CFE_SB_MsgId_t          MessageID = 0;
-      154:  543:    uint16                  CommandCode = 0;
-      154:  544:    int32                   Result = CFE_SUCCESS;
-        -:  545:        
-      154:  546:    MessageID = CFE_SB_GetMsgId(MessagePtr);
-call    0 returned 100%
-      154:  547:    switch (MessageID)
-branch  0 taken 14%
-branch  1 taken 1%
-branch  2 taken 84%
-branch  3 taken 1%
-        -:  548:    {
-        -:  549:            /* Housekeeping telemetry request */
-        -:  550:        case CS_SEND_HK_MID:
-       22:  551:            CS_HousekeepingCmd(MessagePtr);
-call    0 returned 100%
-        -:  552:            
-        -:  553:            /* update each table if there is no recompute happening on that table */
+        7:  474:    CS_AppData.RecomputeInProgress    = FALSE;
+        7:  475:    CS_AppData.OneShotInProgress  = FALSE;
+        -:  476:    
+        -:  477:    
+        7:  478:    CS_AppData.MaxBytesPerCycle = CS_DEFAULT_BYTES_PER_CYCLE;
+        -:  479:    
+        -:  480:    /* Application startup event message */
+        7:  481:    if (Result == CFE_SUCCESS)
+        -:  482:    {
+        7:  483:        Result = CFE_EVS_SendEvent (CS_INIT_INF_EID,
+        -:  484:                                    CFE_EVS_INFORMATION,
+        -:  485:                                    "CS Initialized. Version %d.%d.%d.%d",
+        -:  486:                                    CS_MAJOR_VERSION,
+        -:  487:                                    CS_MINOR_VERSION,
+        -:  488:                                    CS_REVISION,
+        -:  489:                                    CS_MISSION_REV);
+        -:  490:    }
+        7:  491:    return (Result);
+        -:  492:} /* End of CS_AppInit () */
+        -:  493:
+        -:  494:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  495:/*                                                                 */
+        -:  496:/* CS's command pipe processing                                    */
+        -:  497:/*                                                                 */
+        -:  498:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       46:  499:int32 CS_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
+        -:  500:{
+       46:  501:    CFE_SB_MsgId_t          MessageID = 0;
+       46:  502:    uint16                  CommandCode = 0;
+       46:  503:    int32                   Result = CFE_SUCCESS;
+        -:  504:        
+       46:  505:    MessageID = CFE_SB_GetMsgId(MessagePtr);
+       46:  506:    switch (MessageID)
+        -:  507:    {
+        -:  508:            /* Housekeeping telemetry request */
+        -:  509:        case CS_SEND_HK_MID:
+        2:  510:            CS_HousekeepingCmd(MessagePtr);
+        -:  511:            
+        -:  512:            /* update each table if there is no recompute happening on that table */
+        -:  513:            
+        2:  514:            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+        -:  515:                  ( CS_AppData.OneShotInProgress == FALSE) && 
+        -:  516:                  (CS_AppData.ChildTaskTable == CS_EEPROM_TABLE)))
+        -:  517:            {
+        4:  518:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefEepromTblPtr,
+        -:  519:                                               (void*) & CS_AppData.ResEepromTblPtr,
+        2:  520:                                               CS_AppData.DefEepromTableHandle,
+        2:  521:                                               CS_AppData.ResEepromTableHandle,
+        -:  522:                                               CS_EEPROM_TABLE,
+        -:  523:                                               CS_MAX_NUM_EEPROM_TABLE_ENTRIES);
+        -:  524:                
+        2:  525:                if(Result != CFE_SUCCESS)
+        -:  526:                {
+        2:  527:                    CS_AppData.EepromCSState = CS_STATE_DISABLED;
+        2:  528:                    Result = CFE_EVS_SendEvent (CS_UPDATE_EEPROM_ERR_EID,
+        -:  529:                                                CFE_EVS_ERROR,
+        -:  530:                                                "Table update failed for Eeprom: 0x%08X, checksumming Eeprom is disabled",
+        -:  531:                                                (unsigned int)Result);
+        -:  532:                }
+        -:  533:            }
+        -:  534:            
+        2:  535:            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+        -:  536:                  ( CS_AppData.OneShotInProgress == FALSE) && 
+        -:  537:                  (CS_AppData.ChildTaskTable == CS_MEMORY_TABLE)))
+        -:  538:            {
+        4:  539:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefMemoryTblPtr,
+        -:  540:                                               (void*) & CS_AppData.ResMemoryTblPtr,
+        2:  541:                                               CS_AppData.DefMemoryTableHandle,
+        2:  542:                                               CS_AppData.ResMemoryTableHandle,
+        -:  543:                                               CS_MEMORY_TABLE,
+        -:  544:                                               CS_MAX_NUM_MEMORY_TABLE_ENTRIES);
+        2:  545:                if(Result != CFE_SUCCESS)
+        -:  546:                {
+        1:  547:                    CS_AppData.MemoryCSState = CS_STATE_DISABLED;
+        1:  548:                    Result = CFE_EVS_SendEvent (CS_UPDATE_MEMORY_ERR_EID,
+        -:  549:                                                CFE_EVS_ERROR,
+        -:  550:                                                "Table update failed for Memory: 0x%08X, checksumming Memory is disabled",
+        -:  551:                                                (unsigned int)Result);
+        -:  552:                }
+        -:  553:            }
         -:  554:            
-       22:  555:            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-branch  0 taken 0% (fallthrough)
-branch  1 taken 100%
-branch  2 never executed
-branch  3 never executed
-branch  4 never executed
-branch  5 never executed
-        -:  556:                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
-        -:  557:                  (CS_AppData.ChildTaskTable == CS_EEPROM_TABLE)))
+        2:  555:            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+        -:  556:                  ( CS_AppData.OneShotInProgress == FALSE) && 
+        -:  557:                  (CS_AppData.ChildTaskTable == CS_APP_TABLE)))
         -:  558:            {
-       22:  559:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefEepromTblPtr,
-call    0 returned 100%
-        -:  560:                                               (void*) & CS_AppData.ResEepromTblPtr,
-        -:  561:                                               CS_AppData.DefEepromTableHandle,
-        -:  562:                                               CS_AppData.ResEepromTableHandle,
-        -:  563:                                               CS_EEPROM_TABLE,
-        -:  564:                                               CS_MAX_NUM_EEPROM_TABLE_ENTRIES);
-        -:  565:                
-       22:  566:                if(Result != CFE_SUCCESS)
-branch  0 taken 5% (fallthrough)
-branch  1 taken 95%
-        -:  567:                {
-        1:  568:                    CS_AppData.EepromCSState = CS_STATE_DISABLED;
-        1:  569:                    Result = CFE_EVS_SendEvent (CS_UPDATE_EEPROM_ERR_EID,
-call    0 returned 100%
-        -:  570:                                                CFE_EVS_ERROR,
-        -:  571:                                                "Table update failed for Eeprom: 0x%08X, checksumming Eeprom is disabled",
-        -:  572:                                                Result);
-        -:  573:                }
-        -:  574:            }
-        -:  575:            
-       22:  576:            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-branch  0 taken 0% (fallthrough)
-branch  1 taken 100%
-branch  2 never executed
-branch  3 never executed
-branch  4 never executed
-branch  5 never executed
-        -:  577:                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
-        -:  578:                  (CS_AppData.ChildTaskTable == CS_MEMORY_TABLE)))
-        -:  579:            {
-       22:  580:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefMemoryTblPtr,
-call    0 returned 100%
-        -:  581:                                               (void*) & CS_AppData.ResMemoryTblPtr,
-        -:  582:                                               CS_AppData.DefMemoryTableHandle,
-        -:  583:                                               CS_AppData.ResMemoryTableHandle,
-        -:  584:                                               CS_MEMORY_TABLE,
-        -:  585:                                               CS_MAX_NUM_MEMORY_TABLE_ENTRIES);
-       22:  586:                if(Result != CFE_SUCCESS)
-branch  0 taken 5% (fallthrough)
-branch  1 taken 95%
-        -:  587:                {
-        1:  588:                    CS_AppData.MemoryCSState = CS_STATE_DISABLED;
-        1:  589:                    Result = CFE_EVS_SendEvent (CS_UPDATE_MEMORY_ERR_EID,
-call    0 returned 100%
-        -:  590:                                                CFE_EVS_ERROR,
-        -:  591:                                                "Table update failed for Memory: 0x%08X, checksumming Memory is disabled",
-        -:  592:                                                Result);
-        -:  593:                }
-        -:  594:            }
-        -:  595:            
-       22:  596:            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-branch  0 taken 0% (fallthrough)
-branch  1 taken 100%
-branch  2 never executed
-branch  3 never executed
-branch  4 never executed
-branch  5 never executed
-        -:  597:                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
-        -:  598:                  (CS_AppData.ChildTaskTable == CS_APP_TABLE)))
-        -:  599:            {
-       22:  600:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefAppTblPtr,
-call    0 returned 100%
-        -:  601:                                               (void*) & CS_AppData.ResAppTblPtr,
-        -:  602:                                               CS_AppData.DefAppTableHandle,
-        -:  603:                                               CS_AppData.ResAppTableHandle,
-        -:  604:                                               CS_APP_TABLE,
-        -:  605:                                               CS_MAX_NUM_APP_TABLE_ENTRIES);
-       22:  606:                if(Result != CFE_SUCCESS)
-branch  0 taken 5% (fallthrough)
-branch  1 taken 95%
-        -:  607:                {
-        1:  608:                    CS_AppData.AppCSState = CS_STATE_DISABLED;
-        1:  609:                    Result = CFE_EVS_SendEvent (CS_UPDATE_APP_ERR_EID,
-call    0 returned 100%
-        -:  610:                                                CFE_EVS_ERROR,
-        -:  611:                                                "Table update failed for Apps: 0x%08X, checksumming Apps is disabled",
-        -:  612:                                                Result);
-        -:  613:                }
+        4:  559:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefAppTblPtr,
+        -:  560:                                               (void*) & CS_AppData.ResAppTblPtr,
+        2:  561:                                               CS_AppData.DefAppTableHandle,
+        2:  562:                                               CS_AppData.ResAppTableHandle,
+        -:  563:                                               CS_APP_TABLE,
+        -:  564:                                               CS_MAX_NUM_APP_TABLE_ENTRIES);
+        2:  565:                if(Result != CFE_SUCCESS)
+        -:  566:                {
+        1:  567:                    CS_AppData.AppCSState = CS_STATE_DISABLED;
+        1:  568:                    Result = CFE_EVS_SendEvent (CS_UPDATE_APP_ERR_EID,
+        -:  569:                                                CFE_EVS_ERROR,
+        -:  570:                                                "Table update failed for Apps: 0x%08X, checksumming Apps is disabled",
+        -:  571:                                                (unsigned int)Result);
+        -:  572:                }
+        -:  573:                
+        -:  574:                
+        -:  575:            }
+        -:  576:            
+        2:  577:            if (!((CS_AppData.RecomputeInProgress == TRUE)  && 
+        -:  578:                  ( CS_AppData.OneShotInProgress == FALSE) && 
+        -:  579:                  (CS_AppData.ChildTaskTable == CS_TABLES_TABLE)))
+        -:  580:            {
+        4:  581:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefTablesTblPtr,
+        -:  582:                                               (void*) & CS_AppData.ResTablesTblPtr,
+        2:  583:                                               CS_AppData.DefTablesTableHandle,
+        2:  584:                                               CS_AppData.ResTablesTableHandle,
+        -:  585:                                               CS_TABLES_TABLE,
+        -:  586:                                               CS_MAX_NUM_TABLES_TABLE_ENTRIES);
+        -:  587:                
+        2:  588:                if(Result != CFE_SUCCESS)
+        -:  589:                {
+        1:  590:                    CS_AppData.TablesCSState = CS_STATE_DISABLED;
+        1:  591:                    Result = CFE_EVS_SendEvent (CS_UPDATE_TABLES_ERR_EID,
+        -:  592:                                                CFE_EVS_ERROR,
+        -:  593:                                                "Table update failed for Tables: 0x%08X, checksumming Tables is disabled",
+        -:  594:                                                (unsigned int)Result);
+        -:  595:                }
+        -:  596:                
+        -:  597:            }
+        -:  598:
+        2:  599:            break;
+        -:  600:            
+        -:  601:        case CS_BACKGROUND_CYCLE_MID:
+        1:  602:            CS_BackgroundCheckCmd (MessagePtr);
+        1:  603:            break;   
+        -:  604:                        
+        -:  605:        case CS_CMD_MID:
+        -:  606:            
+       41:  607:            CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+       41:  608:            switch (CommandCode)
+        -:  609:        {
+        -:  610:                /* All CS Commands */
+        -:  611:            case CS_NOOP_CC:
+        1:  612:                CS_NoopCmd (MessagePtr);
+        1:  613:                break;
         -:  614:                
-        -:  615:                
-        -:  616:            }
-        -:  617:            
-       22:  618:            if (!((CS_AppData.ChildTaskInUse == TRUE)  && 
-branch  0 taken 0% (fallthrough)
-branch  1 taken 100%
-branch  2 never executed
-branch  3 never executed
-branch  4 never executed
-branch  5 never executed
-        -:  619:                  ( CS_AppData.OneShotTaskInUse == FALSE) && 
-        -:  620:                  (CS_AppData.ChildTaskTable == CS_TABLES_TABLE)))
-        -:  621:            {
-       22:  622:                Result = CS_HandleTableUpdate ((void*) & CS_AppData.DefTablesTblPtr,
-call    0 returned 100%
-        -:  623:                                               (void*) & CS_AppData.ResTablesTblPtr,
-        -:  624:                                               CS_AppData.DefTablesTableHandle,
-        -:  625:                                               CS_AppData.ResTablesTableHandle,
-        -:  626:                                               CS_TABLES_TABLE,
-        -:  627:                                               CS_MAX_NUM_TABLES_TABLE_ENTRIES);
-        -:  628:                
-       22:  629:                if(Result != CFE_SUCCESS)
-branch  0 taken 5% (fallthrough)
-branch  1 taken 95%
-        -:  630:                {
-        1:  631:                    CS_AppData.TablesCSState = CS_STATE_DISABLED;
-        1:  632:                    Result = CFE_EVS_SendEvent (CS_UPDATE_TABLES_ERR_EID,
-call    0 returned 100%
-        -:  633:                                                CFE_EVS_ERROR,
-        -:  634:                                                "Table update failed for Tables: 0x%08X, checksumming Tables is disabled",
-        -:  635:                                                Result);
-        -:  636:                }
-        -:  637:                
-        -:  638:            }
-        -:  639:
-       22:  640:            break;
-        -:  641:            
-        -:  642:        case CS_BACKGROUND_CYCLE_MID:
-        2:  643:            CS_BackgroundCheckCmd (MessagePtr);
-call    0 returned 100%
-        2:  644:            break;   
-        -:  645:                        
-        -:  646:        case CS_CMD_MID:
-        -:  647:            
-      129:  648:            CommandCode = CFE_SB_GetCmdCode(MessagePtr);
-call    0 returned 100%
-      129:  649:            switch (CommandCode)
-branch  0 taken 2%
-branch  1 taken 1%
-branch  2 taken 6%
-branch  3 taken 4%
-branch  4 taken 1%
-branch  5 taken 1%
-branch  6 taken 2%
-branch  7 taken 2%
-branch  8 taken 2%
-branch  9 taken 2%
-branch 10 taken 2%
-branch 11 taken 2%
-branch 12 taken 2%
-branch 13 taken 2%
-branch 14 taken 3%
-branch 15 taken 1%
-branch 16 taken 3%
-branch 17 taken 5%
-branch 18 taken 3%
-branch 19 taken 3%
-branch 20 taken 2%
-branch 21 taken 3%
-branch 22 taken 1%
-branch 23 taken 3%
-branch 24 taken 5%
-branch 25 taken 3%
-branch 26 taken 3%
-branch 27 taken 2%
-branch 28 taken 3%
-branch 29 taken 1%
-branch 30 taken 2%
-branch 31 taken 4%
-branch 32 taken 3%
-branch 33 taken 3%
-branch 34 taken 3%
-branch 35 taken 1%
-branch 36 taken 2%
-branch 37 taken 4%
-branch 38 taken 3%
-branch 39 taken 3%
-branch 40 taken 1%
-        -:  650:        {
-        -:  651:                /* All CS Commands */
-        -:  652:            case CS_NOOP_CC:
-        2:  653:                CS_NoopCmd (MessagePtr);
-call    0 returned 100%
-        2:  654:                break;
-        -:  655:                
-        -:  656:            case CS_RESET_CC:
-        1:  657:                CS_ResetCmd (MessagePtr);
-call    0 returned 100%
-        1:  658:                break;
-        -:  659:                
-        -:  660:            case CS_ONESHOT_CC:
-        8:  661:                CS_OneShotCmd(MessagePtr);
-call    0 returned 100%
-        8:  662:                break;
-        -:  663:                
-        -:  664:            case CS_CANCEL_ONESHOT_CC:
-        5:  665:                CS_CancelOneShotCmd(MessagePtr);
-call    0 returned 100%
-        5:  666:                break;                
-        -:  667:            
-        -:  668:            case CS_ENABLE_ALL_CS_CC:
-        1:  669:                CS_EnableAllCSCmd(MessagePtr);
-call    0 returned 100%
-        1:  670:                break;                
-        -:  671:                
-        -:  672:            case CS_DISABLE_ALL_CS_CC:
-        1:  673:                CS_DisableAllCSCmd(MessagePtr);
-call    0 returned 100%
-        1:  674:                break;                
-        -:  675:                
-        -:  676:            /* cFE core Commands */                
-        -:  677:            case CS_ENABLE_CFECORE_CC:
-        2:  678:                CS_EnableCfeCoreCmd(MessagePtr);
-call    0 returned 100%
-        2:  679:                break;                
-        -:  680:                
-        -:  681:            case CS_DISABLE_CFECORE_CC:
-        2:  682:                CS_DisableCfeCoreCmd(MessagePtr);
-call    0 returned 100%
-        2:  683:                break;                
-        -:  684:                
-        -:  685:            case CS_REPORT_BASELINE_CFECORE_CC:
-        2:  686:                CS_ReportBaselineCfeCoreCmd(MessagePtr);
-call    0 returned 100%
-        2:  687:                break;                
-        -:  688:                
-        -:  689:            case CS_RECOMPUTE_BASELINE_CFECORE_CC:
-        3:  690:                CS_RecomputeBaselineCfeCoreCmd(MessagePtr);
-call    0 returned 100%
-        3:  691:                break;                
-        -:  692:              
-        -:  693:                /* OS Commands */
-        -:  694:            case CS_ENABLE_OS_CC:
-        2:  695:                CS_EnableOSCmd(MessagePtr);
-call    0 returned 100%
-        2:  696:                break;                
-        -:  697:                
-        -:  698:            case CS_DISABLE_OS_CC:
-        2:  699:                CS_DisableOSCmd(MessagePtr);
-call    0 returned 100%
-        2:  700:                break;                
-        -:  701:                
-        -:  702:            case CS_REPORT_BASELINE_OS_CC:
-        2:  703:                CS_ReportBaselineOSCmd(MessagePtr);
-call    0 returned 100%
-        2:  704:                break;                
-        -:  705:                
-        -:  706:            case CS_RECOMPUTE_BASELINE_OS_CC:
-        3:  707:                CS_RecomputeBaselineOSCmd(MessagePtr);
-call    0 returned 100%
-        3:  708:                break;   
-        -:  709:            
-        -:  710:            /* Eeprom Commands */                                
-        -:  711:            case CS_ENABLE_EEPROM_CC:
-        4:  712:                CS_EnableEepromCmd(MessagePtr);
-call    0 returned 100%
-        4:  713:                break;                
+        -:  615:            case CS_RESET_CC:
+        1:  616:                CS_ResetCmd (MessagePtr);
+        1:  617:                break;
+        -:  618:                
+        -:  619:            case CS_ONESHOT_CC:
+        1:  620:                CS_OneShotCmd(MessagePtr);
+        1:  621:                break;
+        -:  622:                
+        -:  623:            case CS_CANCEL_ONESHOT_CC:
+        1:  624:                CS_CancelOneShotCmd(MessagePtr);
+        1:  625:                break;                
+        -:  626:            
+        -:  627:            case CS_ENABLE_ALL_CS_CC:
+        1:  628:                CS_EnableAllCSCmd(MessagePtr);
+        1:  629:                break;                
+        -:  630:                
+        -:  631:            case CS_DISABLE_ALL_CS_CC:
+        1:  632:                CS_DisableAllCSCmd(MessagePtr);
+        1:  633:                break;                
+        -:  634:                
+        -:  635:            /* cFE core Commands */                
+        -:  636:            case CS_ENABLE_CFECORE_CC:
+        1:  637:                CS_EnableCfeCoreCmd(MessagePtr);
+        1:  638:                break;                
+        -:  639:                
+        -:  640:            case CS_DISABLE_CFECORE_CC:
+        1:  641:                CS_DisableCfeCoreCmd(MessagePtr);
+        1:  642:                break;                
+        -:  643:                
+        -:  644:            case CS_REPORT_BASELINE_CFECORE_CC:
+        1:  645:                CS_ReportBaselineCfeCoreCmd(MessagePtr);
+        1:  646:                break;                
+        -:  647:                
+        -:  648:            case CS_RECOMPUTE_BASELINE_CFECORE_CC:
+        1:  649:                CS_RecomputeBaselineCfeCoreCmd(MessagePtr);
+        1:  650:                break;                
+        -:  651:              
+        -:  652:                /* OS Commands */
+        -:  653:            case CS_ENABLE_OS_CC:
+        1:  654:                CS_EnableOSCmd(MessagePtr);
+        1:  655:                break;                
+        -:  656:                
+        -:  657:            case CS_DISABLE_OS_CC:
+        1:  658:                CS_DisableOSCmd(MessagePtr);
+        1:  659:                break;                
+        -:  660:                
+        -:  661:            case CS_REPORT_BASELINE_OS_CC:
+        1:  662:                CS_ReportBaselineOSCmd(MessagePtr);
+        1:  663:                break;                
+        -:  664:                
+        -:  665:            case CS_RECOMPUTE_BASELINE_OS_CC:
+        1:  666:                CS_RecomputeBaselineOSCmd(MessagePtr);
+        1:  667:                break;   
+        -:  668:            
+        -:  669:            /* Eeprom Commands */                                
+        -:  670:            case CS_ENABLE_EEPROM_CC:
+        1:  671:                CS_EnableEepromCmd(MessagePtr);
+        1:  672:                break;                
+        -:  673:                
+        -:  674:            case CS_DISABLE_EEPROM_CC:
+        1:  675:                CS_DisableEepromCmd(MessagePtr);
+        1:  676:                break;                
+        -:  677:                
+        -:  678:            case CS_REPORT_BASELINE_EEPROM_CC:
+        1:  679:                CS_ReportBaselineEntryIDEepromCmd(MessagePtr);
+        1:  680:                break;                
+        -:  681:                
+        -:  682:            case CS_RECOMPUTE_BASELINE_EEPROM_CC:
+        1:  683:                CS_RecomputeBaselineEepromCmd(MessagePtr);
+        1:  684:                break;                
+        -:  685:                
+        -:  686:            case CS_ENABLE_ENTRY_EEPROM_CC:
+        1:  687:                CS_EnableEntryIDEepromCmd(MessagePtr);
+        1:  688:                break;  
+        -:  689:                
+        -:  690:            case CS_DISABLE_ENTRY_EEPROM_CC:
+        1:  691:                CS_DisableEntryIDEepromCmd(MessagePtr);
+        1:  692:                break;                  
+        -:  693:                
+        -:  694:            case CS_GET_ENTRY_ID_EEPROM_CC:
+        1:  695:                CS_GetEntryIDEepromCmd(MessagePtr);
+        1:  696:                break;                  
+        -:  697: 
+        -:  698:                /* Memory Commands */
+        -:  699:            case CS_ENABLE_MEMORY_CC:
+        1:  700:                CS_EnableMemoryCmd(MessagePtr);
+        1:  701:                break;                
+        -:  702:                
+        -:  703:            case CS_DISABLE_MEMORY_CC:
+        1:  704:                CS_DisableMemoryCmd(MessagePtr);
+        1:  705:                break;                
+        -:  706:                
+        -:  707:            case CS_REPORT_BASELINE_MEMORY_CC:
+        1:  708:                CS_ReportBaselineEntryIDMemoryCmd(MessagePtr);
+        1:  709:                break;                
+        -:  710:                
+        -:  711:            case CS_RECOMPUTE_BASELINE_MEMORY_CC:
+        1:  712:                CS_RecomputeBaselineMemoryCmd(MessagePtr);
+        1:  713:                break;                
         -:  714:                
-        -:  715:            case CS_DISABLE_EEPROM_CC:
-        1:  716:                CS_DisableEepromCmd(MessagePtr);
-call    0 returned 100%
-        1:  717:                break;                
+        -:  715:            case CS_ENABLE_ENTRY_MEMORY_CC:
+        1:  716:                CS_EnableEntryIDMemoryCmd(MessagePtr);
+        1:  717:                break;  
         -:  718:                
-        -:  719:            case CS_REPORT_BASELINE_EEPROM_CC:
-        4:  720:                CS_ReportBaselineEntryIDEepromCmd(MessagePtr);
-call    0 returned 100%
-        4:  721:                break;                
+        -:  719:            case CS_DISABLE_ENTRY_MEMORY_CC:
+        1:  720:                CS_DisableEntryIDMemoryCmd(MessagePtr);
+        1:  721:                break;                  
         -:  722:                
-        -:  723:            case CS_RECOMPUTE_BASELINE_EEPROM_CC:
-        6:  724:                CS_RecomputeBaselineEepromCmd(MessagePtr);
-call    0 returned 100%
-        6:  725:                break;                
+        -:  723:            case CS_GET_ENTRY_ID_MEMORY_CC:
+        1:  724:                CS_GetEntryIDMemoryCmd(MessagePtr);
+        1:  725:                break;   
         -:  726:                
-        -:  727:            case CS_ENABLE_ENTRY_EEPROM_CC:
-        4:  728:                CS_EnableEntryIDEepromCmd(MessagePtr);
-call    0 returned 100%
-        4:  729:                break;  
-        -:  730:                
-        -:  731:            case CS_DISABLE_ENTRY_EEPROM_CC:
-        4:  732:                CS_DisableEntryIDEepromCmd(MessagePtr);
-call    0 returned 100%
-        4:  733:                break;                  
-        -:  734:                
-        -:  735:            case CS_GET_ENTRY_ID_EEPROM_CC:
-        2:  736:                CS_GetEntryIDEepromCmd(MessagePtr);
-call    0 returned 100%
-        2:  737:                break;                  
-        -:  738: 
-        -:  739:                /* Memory Commands */
-        -:  740:            case CS_ENABLE_MEMORY_CC:
-        4:  741:                CS_EnableMemoryCmd(MessagePtr);
-call    0 returned 100%
-        4:  742:                break;                
+        -:  727:            /*Tables Commands */
+        -:  728:            case CS_ENABLE_TABLES_CC:
+        1:  729:                CS_EnableTablesCmd(MessagePtr);
+        1:  730:                break;                
+        -:  731:                
+        -:  732:            case CS_DISABLE_TABLES_CC:
+        1:  733:                CS_DisableTablesCmd(MessagePtr);
+        1:  734:                break;                
+        -:  735:                
+        -:  736:            case CS_REPORT_BASELINE_TABLE_CC:
+        1:  737:                CS_ReportBaselineTablesCmd(MessagePtr);
+        1:  738:                break;                
+        -:  739:                
+        -:  740:            case CS_RECOMPUTE_BASELINE_TABLE_CC:
+        1:  741:                CS_RecomputeBaselineTablesCmd(MessagePtr);
+        1:  742:                break;                
         -:  743:                
-        -:  744:            case CS_DISABLE_MEMORY_CC:
-        1:  745:                CS_DisableMemoryCmd(MessagePtr);
-call    0 returned 100%
-        1:  746:                break;                
+        -:  744:            case CS_ENABLE_NAME_TABLE_CC:
+        1:  745:                CS_EnableNameTablesCmd(MessagePtr);
+        1:  746:                break;  
         -:  747:                
-        -:  748:            case CS_REPORT_BASELINE_MEMORY_CC:
-        4:  749:                CS_ReportBaselineEntryIDMemoryCmd(MessagePtr);
-call    0 returned 100%
-        4:  750:                break;                
-        -:  751:                
-        -:  752:            case CS_RECOMPUTE_BASELINE_MEMORY_CC:
-        6:  753:                CS_RecomputeBaselineMemoryCmd(MessagePtr);
-call    0 returned 100%
-        6:  754:                break;                
-        -:  755:                
-        -:  756:            case CS_ENABLE_ENTRY_MEMORY_CC:
-        4:  757:                CS_EnableEntryIDMemoryCmd(MessagePtr);
-call    0 returned 100%
-        4:  758:                break;  
-        -:  759:                
-        -:  760:            case CS_DISABLE_ENTRY_MEMORY_CC:
-        4:  761:                CS_DisableEntryIDMemoryCmd(MessagePtr);
-call    0 returned 100%
-        4:  762:                break;                  
-        -:  763:                
-        -:  764:            case CS_GET_ENTRY_ID_MEMORY_CC:
-        2:  765:                CS_GetEntryIDMemoryCmd(MessagePtr);
-call    0 returned 100%
-        2:  766:                break;   
-        -:  767:                
-        -:  768:            /*Tables Commands */
-        -:  769:            case CS_ENABLE_TABLES_CC:
-        4:  770:                CS_EnableTablesCmd(MessagePtr);
-call    0 returned 100%
-        4:  771:                break;                
+        -:  748:            case CS_DISABLE_NAME_TABLE_CC:
+        1:  749:                CS_DisableNameTablesCmd(MessagePtr);
+        1:  750:                break;   
+        -:  751:
+        -:  752:                /*App Commands */
+        -:  753:            case CS_ENABLE_APPS_CC:
+        1:  754:                CS_EnableAppCmd(MessagePtr);
+        1:  755:                break;                
+        -:  756:                
+        -:  757:            case CS_DISABLE_APPS_CC:
+        1:  758:                CS_DisableAppCmd(MessagePtr);
+        1:  759:                break;                
+        -:  760:                
+        -:  761:            case CS_REPORT_BASELINE_APP_CC:
+        1:  762:                CS_ReportBaselineAppCmd(MessagePtr);
+        1:  763:                break;                
+        -:  764:                
+        -:  765:            case CS_RECOMPUTE_BASELINE_APP_CC:
+        1:  766:                CS_RecomputeBaselineAppCmd(MessagePtr);
+        1:  767:                break;                
+        -:  768:                
+        -:  769:            case CS_ENABLE_NAME_APP_CC:
+        1:  770:                CS_EnableNameAppCmd(MessagePtr);
+        1:  771:                break;  
         -:  772:                
-        -:  773:            case CS_DISABLE_TABLES_CC:
-        1:  774:                CS_DisableTablesCmd(MessagePtr);
-call    0 returned 100%
-        1:  775:                break;                
-        -:  776:                
-        -:  777:            case CS_REPORT_BASELINE_TABLE_CC:
-        3:  778:                CS_ReportBaselineTablesCmd(MessagePtr);
-call    0 returned 100%
-        3:  779:                break;                
-        -:  780:                
-        -:  781:            case CS_RECOMPUTE_BASELINE_TABLE_CC:
-        5:  782:                CS_RecomputeBaselineTablesCmd(MessagePtr);
-call    0 returned 100%
-        5:  783:                break;                
-        -:  784:                
-        -:  785:            case CS_ENABLE_NAME_TABLE_CC:
-        4:  786:                CS_EnableNameTablesCmd(MessagePtr);
-call    0 returned 100%
-        4:  787:                break;  
-        -:  788:                
-        -:  789:            case CS_DISABLE_NAME_TABLE_CC:
-        4:  790:                CS_DisableNameTablesCmd(MessagePtr);
-call    0 returned 100%
-        4:  791:                break;   
-        -:  792:
-        -:  793:                /*App Commands */
-        -:  794:            case CS_ENABLE_APPS_CC:
-        4:  795:                CS_EnableAppCmd(MessagePtr);
-call    0 returned 100%
-        4:  796:                break;                
-        -:  797:                
-        -:  798:            case CS_DISABLE_APPS_CC:
-        1:  799:                CS_DisableAppCmd(MessagePtr);
-call    0 returned 100%
-        1:  800:                break;                
-        -:  801:                
-        -:  802:            case CS_REPORT_BASELINE_APP_CC:
-        3:  803:                CS_ReportBaselineAppCmd(MessagePtr);
-call    0 returned 100%
-        3:  804:                break;                
-        -:  805:                
-        -:  806:            case CS_RECOMPUTE_BASELINE_APP_CC:
-        5:  807:                CS_RecomputeBaselineAppCmd(MessagePtr);
-call    0 returned 100%
-        5:  808:                break;                
-        -:  809:                
-        -:  810:            case CS_ENABLE_NAME_APP_CC:
-        4:  811:                CS_EnableNameAppCmd(MessagePtr);
-call    0 returned 100%
-        4:  812:                break;  
-        -:  813:                
-        -:  814:            case CS_DISABLE_NAME_APP_CC:
-        4:  815:                CS_DisableNameAppCmd(MessagePtr);
-call    0 returned 100%
-        4:  816:                break;   
-        -:  817:
-        -:  818:            default:
-        1:  819:                CFE_EVS_SendEvent (CS_CC1_ERR_EID,
-call    0 returned 100%
-        -:  820:                                   CFE_EVS_ERROR,
-        -:  821:                                   "Invalid ground command code: ID = 0x%04X, CC = %d",
-        -:  822:                                   MessageID, 
-        -:  823:                                   CommandCode);
-        -:  824:                
-        1:  825:                CS_AppData.CmdErrCounter++;
-        -:  826:                break;
-        -:  827:        }/* end switch */
-      129:  828:        break;
-        -:  829:            
-        -:  830:        default:
-        1:  831:            CFE_EVS_SendEvent (CS_MID_ERR_EID, CFE_EVS_ERROR,
-call    0 returned 100%
-        -:  832:                               "Invalid command pipe message ID: 0x%04X",
-        -:  833:                               MessageID);
-        -:  834:            
-        1:  835:            CS_AppData.CmdErrCounter++;
-        -:  836:            break;
-        -:  837:    }
-        -:  838:    
-      154:  839:    return (Result);
-        -:  840:} /* End of CS_AppPipe () */
-        -:  841:
-        -:  842:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  843:/*                                                                 */
-        -:  844:/* CS Housekeeping command                                         */
-        -:  845:/*                                                                 */
-        -:  846:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  847:void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
-function CS_HousekeepingCmd called 22 returned 100% blocks executed 100%
-       22:  848:{
-        -:  849:    /* command verification variables */
-       22:  850:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);;
-        -:  851:    CFE_SB_MsgId_t MessageID;
-        -:  852:    uint16  CommandCode;
-       22:  853:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
-call    0 returned 100%
-        -:  854:    
-        -:  855:    /* Verify the command packet length */
-       22:  856:    if (ExpectedLength != ActualLength)
-branch  0 taken 5% (fallthrough)
-branch  1 taken 95%
-        -:  857:    {
-        1:  858:        CommandCode = CFE_SB_GetCmdCode(MessagePtr);
-call    0 returned 100%
-        1:  859:        MessageID= CFE_SB_GetMsgId(MessagePtr);
-call    0 returned 100%
-        -:  860:        
-        1:  861:        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
-call    0 returned 100%
-        -:  862:                          CFE_EVS_ERROR,
-        -:  863:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
-        -:  864:                          MessageID,
-        -:  865:                          CommandCode,
-        -:  866:                          ActualLength,
-        -:  867:                          ExpectedLength);
-        -:  868:    }    
-        -:  869:    else
-        -:  870:    {
-       21:  871:        CS_AppData.HkPacket.CmdCounter          = CS_AppData.CmdCounter;
-       21:  872:        CS_AppData.HkPacket.CmdErrCounter       = CS_AppData.CmdErrCounter;
-       21:  873:        CS_AppData.HkPacket.ChecksumState       = CS_AppData.ChecksumState;
-       21:  874:        CS_AppData.HkPacket.EepromCSState       = CS_AppData.EepromCSState;
-       21:  875:        CS_AppData.HkPacket.MemoryCSState       = CS_AppData.MemoryCSState;
-       21:  876:        CS_AppData.HkPacket.AppCSState          = CS_AppData.AppCSState;
-       21:  877:        CS_AppData.HkPacket.TablesCSState       = CS_AppData.TablesCSState;
-       21:  878:        CS_AppData.HkPacket.OSCSState           = CS_AppData.OSCSState;
-       21:  879:        CS_AppData.HkPacket.CfeCoreCSState      = CS_AppData.CfeCoreCSState;
-       21:  880:        CS_AppData.HkPacket.ChildTaskInUse      = (uint8)CS_AppData.ChildTaskInUse;
-       21:  881:        CS_AppData.HkPacket.OneShotTaskInUse    = (uint8)CS_AppData.OneShotTaskInUse;
-       21:  882:        CS_AppData.HkPacket.EepromCSErrCounter  = CS_AppData.EepromCSErrCounter;
-       21:  883:        CS_AppData.HkPacket.MemoryCSErrCounter  = CS_AppData.MemoryCSErrCounter;
-       21:  884:        CS_AppData.HkPacket.AppCSErrCounter     = CS_AppData.AppCSErrCounter;
-       21:  885:        CS_AppData.HkPacket.TablesCSErrCounter  = CS_AppData.TablesCSErrCounter;
-       21:  886:        CS_AppData.HkPacket.CfeCoreCSErrCounter = CS_AppData.CfeCoreCSErrCounter;
-       21:  887:        CS_AppData.HkPacket.OSCSErrCounter      = CS_AppData.OSCSErrCounter;
-       21:  888:        CS_AppData.HkPacket.CurrentCSTable      = CS_AppData.CurrentCSTable;
-       21:  889:        CS_AppData.HkPacket.CurrentEntryInTable = CS_AppData.CurrentEntryInTable;
-       21:  890:        CS_AppData.HkPacket.EepromBaseline      = CS_AppData.EepromBaseline;
-       21:  891:        CS_AppData.HkPacket.OSBaseline          = CS_AppData.OSBaseline;
-       21:  892:        CS_AppData.HkPacket.CfeCoreBaseline     = CS_AppData.CfeCoreBaseline;
-       21:  893:        CS_AppData.HkPacket.LastOneShotAddress  = CS_AppData.LastOneShotAddress;
-       21:  894:        CS_AppData.HkPacket.LastOneShotSize     = CS_AppData.LastOneShotSize;
-       21:  895:        CS_AppData.HkPacket.LastOneShotChecksum = CS_AppData.LastOneShotChecksum;
-       21:  896:        CS_AppData.HkPacket.PassCounter         = CS_AppData.PassCounter;
-        -:  897:
-        -:  898:        /* Send housekeeping telemetry packet */
-       21:  899:        CFE_SB_TimeStampMsg ( (CFE_SB_Msg_t *) & CS_AppData.HkPacket);
-call    0 returned 100%
-       21:  900:        CFE_SB_SendMsg      ( (CFE_SB_Msg_t *) & CS_AppData.HkPacket);
-call    0 returned 100%
-        -:  901:    }
-        -:  902:
-        -:  903:    return;
-        -:  904:} /* End of CS_HousekeepingCmd () */
-        -:  905:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  906:/*                                                                 */
-        -:  907:/* CS no operation command                                         */
-        -:  908:/*                                                                 */
-        -:  909:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  910:void CS_NoopCmd (CFE_SB_MsgPtr_t MessagePtr)
-function CS_NoopCmd called 2 returned 100% blocks executed 100%
-        2:  911:{
-        -:  912:    /* command verification variables */
-        2:  913:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
-        -:  914:
-        -:  915:    /* Verify command packet length */
-        2:  916:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
-call    0 returned 100%
-branch  1 taken 50% (fallthrough)
-branch  2 taken 50%
-        -:  917:    {
-        1:  918:        CS_AppData.CmdCounter++;
-        -:  919:        
-        1:  920:        CFE_EVS_SendEvent (CS_NOOP_INF_EID, CFE_EVS_INFORMATION,
-call    0 returned 100%
-        -:  921:                           "No-op command. Version %d.%d.%d.%d",
-        -:  922:                           CS_MAJOR_VERSION,
-        -:  923:                           CS_MINOR_VERSION,
-        -:  924:                           CS_REVISION,
-        -:  925:                           CS_MISSION_REV);
-        -:  926:    }
-        -:  927:    return;
-        -:  928:} /* End of CS_NoopCmd () */
-        -:  929:
-        -:  930:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  931:/*                                                                 */
-        -:  932:/* CS Reset Application counters command                           */
-        -:  933:/*                                                                 */
-        -:  934:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  935:void CS_ResetCmd (CFE_SB_MsgPtr_t MessagePtr)
-function CS_ResetCmd called 1 returned 100% blocks executed 100%
-        1:  936:{
-        -:  937:    /* command verification variables */
-        1:  938:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
-        -:  939:
-        -:  940:    /* Verify command packet length */
-        1:  941:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
-call    0 returned 100%
-branch  1 taken 100% (fallthrough)
-branch  2 taken 0%
-        -:  942:    {
-        1:  943:        CS_AppData.CmdCounter          = 0;
-        1:  944:        CS_AppData.CmdErrCounter       = 0;
-        -:  945:        
-        1:  946:        CS_AppData.EepromCSErrCounter  = 0;
-        1:  947:        CS_AppData.MemoryCSErrCounter  = 0;
-        1:  948:        CS_AppData.TablesCSErrCounter  = 0;
-        1:  949:        CS_AppData.AppCSErrCounter     = 0;
-        1:  950:        CS_AppData.CfeCoreCSErrCounter = 0;
-        1:  951:        CS_AppData.OSCSErrCounter      = 0;
-        1:  952:        CS_AppData.PassCounter         = 0;        
-        -:  953:        
-        1:  954:        CFE_EVS_SendEvent (CS_RESET_DBG_EID, CFE_EVS_DEBUG,
-call    0 returned 100%
-        -:  955:                           "Reset Counters command recieved");
-        -:  956:    }
-        -:  957:    return;
-        -:  958:} /* End of CS_ResetCmd () */
-        -:  959:
+        -:  773:            case CS_DISABLE_NAME_APP_CC:
+        1:  774:                CS_DisableNameAppCmd(MessagePtr);
+        1:  775:                break;   
+        -:  776:
+        -:  777:            default:
+        1:  778:                CFE_EVS_SendEvent (CS_CC1_ERR_EID,
+        -:  779:                                   CFE_EVS_ERROR,
+        -:  780:                                   "Invalid ground command code: ID = 0x%04X, CC = %d",
+        -:  781:                                   MessageID, 
+        -:  782:                                   CommandCode);
+        -:  783:                
+        1:  784:                CS_AppData.CmdErrCounter++;
+        -:  785:                break;
+        -:  786:        }/* end switch */
+       41:  787:        break;
+        -:  788:            
+        -:  789:        default:
+        2:  790:            CFE_EVS_SendEvent (CS_MID_ERR_EID, CFE_EVS_ERROR,
+        -:  791:                               "Invalid command pipe message ID: 0x%04X",
+        -:  792:                               MessageID);
+        -:  793:            
+        2:  794:            CS_AppData.CmdErrCounter++;
+        -:  795:            break;
+        -:  796:    }
+        -:  797:    
+       46:  798:    return (Result);
+        -:  799:} /* End of CS_AppPipe () */
+        -:  800:
+        -:  801:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  802:/*                                                                 */
+        -:  803:/* CS Housekeeping command                                         */
+        -:  804:/*                                                                 */
+        -:  805:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  806:void CS_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  807:{
+        -:  808:    /* command verification variables */
+        4:  809:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  810:    CFE_SB_MsgId_t MessageID;
+        -:  811:    uint16  CommandCode;
+        4:  812:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
+        -:  813:    
+        -:  814:    /* Verify the command packet length */
+        4:  815:    if (ExpectedLength != ActualLength)
+        -:  816:    {
+        2:  817:        CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+        2:  818:        MessageID= CFE_SB_GetMsgId(MessagePtr);
+        -:  819:        
+        2:  820:        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
+        -:  821:                          CFE_EVS_ERROR,
+        -:  822:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -:  823:                          MessageID,
+        -:  824:                          CommandCode,
+        -:  825:                          ActualLength,
+        -:  826:                          ExpectedLength);
+        -:  827:    }    
+        -:  828:    else
+        -:  829:    {
+        2:  830:        CS_AppData.HkPacket.CmdCounter          = CS_AppData.CmdCounter;
+        2:  831:        CS_AppData.HkPacket.CmdErrCounter       = CS_AppData.CmdErrCounter;
+        2:  832:        CS_AppData.HkPacket.ChecksumState       = CS_AppData.ChecksumState;
+        2:  833:        CS_AppData.HkPacket.EepromCSState       = CS_AppData.EepromCSState;
+        2:  834:        CS_AppData.HkPacket.MemoryCSState       = CS_AppData.MemoryCSState;
+        2:  835:        CS_AppData.HkPacket.AppCSState          = CS_AppData.AppCSState;
+        2:  836:        CS_AppData.HkPacket.TablesCSState       = CS_AppData.TablesCSState;
+        2:  837:        CS_AppData.HkPacket.OSCSState           = CS_AppData.OSCSState;
+        2:  838:        CS_AppData.HkPacket.CfeCoreCSState      = CS_AppData.CfeCoreCSState;
+        2:  839:        CS_AppData.HkPacket.RecomputeInProgress = (uint8)CS_AppData.RecomputeInProgress;
+        2:  840:        CS_AppData.HkPacket.OneShotInProgress   = (uint8)CS_AppData.OneShotInProgress;
+        2:  841:        CS_AppData.HkPacket.EepromCSErrCounter  = CS_AppData.EepromCSErrCounter;
+        2:  842:        CS_AppData.HkPacket.MemoryCSErrCounter  = CS_AppData.MemoryCSErrCounter;
+        2:  843:        CS_AppData.HkPacket.AppCSErrCounter     = CS_AppData.AppCSErrCounter;
+        2:  844:        CS_AppData.HkPacket.TablesCSErrCounter  = CS_AppData.TablesCSErrCounter;
+        2:  845:        CS_AppData.HkPacket.CfeCoreCSErrCounter = CS_AppData.CfeCoreCSErrCounter;
+        2:  846:        CS_AppData.HkPacket.OSCSErrCounter      = CS_AppData.OSCSErrCounter;
+        2:  847:        CS_AppData.HkPacket.CurrentCSTable      = CS_AppData.CurrentCSTable;
+        2:  848:        CS_AppData.HkPacket.CurrentEntryInTable = CS_AppData.CurrentEntryInTable;
+        2:  849:        CS_AppData.HkPacket.EepromBaseline      = CS_AppData.EepromBaseline;
+        2:  850:        CS_AppData.HkPacket.OSBaseline          = CS_AppData.OSBaseline;
+        2:  851:        CS_AppData.HkPacket.CfeCoreBaseline     = CS_AppData.CfeCoreBaseline;
+        2:  852:        CS_AppData.HkPacket.LastOneShotAddress  = CS_AppData.LastOneShotAddress;
+        2:  853:        CS_AppData.HkPacket.LastOneShotSize     = CS_AppData.LastOneShotSize;
+        2:  854:        CS_AppData.HkPacket.LastOneShotMaxBytesPerCycle = CS_AppData.LastOneShotMaxBytesPerCycle;
+        2:  855:        CS_AppData.HkPacket.LastOneShotChecksum = CS_AppData.LastOneShotChecksum;
+        2:  856:        CS_AppData.HkPacket.PassCounter         = CS_AppData.PassCounter;
+        -:  857:
+        -:  858:        /* Send housekeeping telemetry packet */
+        2:  859:        CFE_SB_TimeStampMsg ( (CFE_SB_Msg_t *) & CS_AppData.HkPacket);
+        2:  860:        CFE_SB_SendMsg      ( (CFE_SB_Msg_t *) & CS_AppData.HkPacket);
+        -:  861:    }
+        -:  862:
+        4:  863:    return;
+        -:  864:} /* End of CS_HousekeepingCmd () */
+        -:  865:
+        -:  866:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        -:  867:
+        -:  868:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  869:/*                                                                 */
+        -:  870:/* CS_CreateCDS() - create CS storage area in CDS                  */
+        -:  871:/*                                                                 */
+        -:  872:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  873:
+       14:  874:int32 CS_CreateRestoreStatesFromCDS(void)
+        -:  875:{
+        -:  876:    /* Store task ena/dis state of tables in CDS */
+        -:  877:    uint8 DataStoreBuffer[CS_NUM_DATA_STORE_STATES];
+        -:  878:    int32 Result;
+        -:  879:
+        -:  880:    /*
+        -:  881:    ** Request for CDS area from cFE Executive Services...
+        -:  882:    */
+       14:  883:    Result = CFE_ES_RegisterCDS(&CS_AppData.DataStoreHandle,
+        -:  884:                                 sizeof(DataStoreBuffer), CS_CDS_NAME);
+        -:  885:
+       14:  886:    if (Result == CFE_SUCCESS)
+        -:  887:    {
+        -:  888:        /*
+        -:  889:        ** New CDS area - write to Critical Data Store...
+        -:  890:        */
+       12:  891:        DataStoreBuffer[0] = CS_AppData.EepromCSState;
+       12:  892:        DataStoreBuffer[1] = CS_AppData.MemoryCSState;
+       12:  893:        DataStoreBuffer[2] = CS_AppData.AppCSState;
+       12:  894:        DataStoreBuffer[3] = CS_AppData.TablesCSState;
+        -:  895:        
+       12:  896:        DataStoreBuffer[4] = CS_AppData.OSCSState;
+       12:  897:        DataStoreBuffer[5] = CS_AppData.CfeCoreCSState;
+        -:  898:
+       12:  899:        Result = CFE_ES_CopyToCDS(CS_AppData.DataStoreHandle,  DataStoreBuffer);
+        -:  900:    }
+        2:  901:    else if (Result == CFE_ES_CDS_ALREADY_EXISTS)
+        -:  902:    {
+        -:  903:        /*
+        -:  904:        ** Pre-existing CDS area - read from Critical Data Store...
+        -:  905:        */
+        2:  906:        Result = CFE_ES_RestoreFromCDS(DataStoreBuffer, CS_AppData.DataStoreHandle);
+        -:  907:
+        2:  908:        if (Result == CFE_SUCCESS)
+        -:  909:        {
+        1:  910:            CS_AppData.EepromCSState = DataStoreBuffer[0];
+        1:  911:            CS_AppData.MemoryCSState = DataStoreBuffer[1];
+        1:  912:            CS_AppData.AppCSState    = DataStoreBuffer[2];
+        1:  913:            CS_AppData.TablesCSState = DataStoreBuffer[3];
+        -:  914:            
+        1:  915:            CS_AppData.OSCSState     = DataStoreBuffer[4];
+        1:  916:            CS_AppData.CfeCoreCSState = DataStoreBuffer[5];
+        -:  917:        }
+        -:  918:    }
+        -:  919:
+       14:  920:    if (Result != CFE_SUCCESS)
+        -:  921:    {
+        -:  922:        /*
+        -:  923:        ** CDS is broken - prevent further errors...
+        -:  924:        */
+        1:  925:        CS_AppData.DataStoreHandle = 0;
+        -:  926:
+        -:  927:        /* Use states from platform configuration */
+        1:  928:        CS_AppData.EepromCSState = CS_EEPROM_TBL_POWERON_STATE;
+        1:  929:        CS_AppData.MemoryCSState = CS_MEMORY_TBL_POWERON_STATE;
+        1:  930:        CS_AppData.AppCSState    = CS_APPS_TBL_POWERON_STATE;
+        1:  931:        CS_AppData.TablesCSState = CS_TABLES_TBL_POWERON_STATE;
+        -:  932:        
+        1:  933:        CS_AppData.OSCSState      = CS_OSCS_CHECKSUM_STATE;
+        1:  934:        CS_AppData.CfeCoreCSState = CS_CFECORE_CHECKSUM_STATE;
+        -:  935:        
+        1:  936:        CFE_EVS_SendEvent(CS_INIT_CDS_ERR_EID, CFE_EVS_ERROR,
+        -:  937:                         "Critical Data Store access error = 0x%08X", (unsigned int)Result);
+        -:  938:        /*
+        -:  939:        ** CDS errors are not fatal - CS can still run...
+        -:  940:        */
+        1:  941:        Result = CFE_SUCCESS;
+        -:  942:    }
+        -:  943:
+       14:  944:    return(Result);
+        -:  945:
+        -:  946:} /* End of CS_CreateCDS() */
+        -:  947:
+        -:  948:
+        -:  949:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  950:/*                                                                 */
+        -:  951:/* CS_UpdateCDS() - update DS storage area in CDS                  */
+        -:  952:/*                                                                 */
+        -:  953:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  954:
+       27:  955:void CS_UpdateCDS(void)
+        -:  956:{
+        -:  957:    /* Store table ena/dis state in CDS */
+        -:  958:    uint8 DataStoreBuffer[CS_NUM_DATA_STORE_STATES];
+        -:  959:    int32 Result;
         -:  960:
-        -:  961:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  962:/*                                                                 */
-        -:  963:/* CS's background checksumming command                            */
-        -:  964:/*                                                                 */
-        -:  965:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        -:  966:void CS_BackgroundCheckCmd (CFE_SB_MsgPtr_t MessagePtr)
-function CS_BackgroundCheckCmd called 4403 returned 100% blocks executed 100%
-     4403:  967:{
-        -:  968:    /* command verification variables */
-     4403:  969:    uint16                                  ExpectedLength = sizeof(CS_NoArgsCmd_t);
-     4403:  970:    boolean                                 DoneWithCycle = FALSE;
-     4403:  971:    boolean                                 EndOfList = FALSE;
-        -:  972:    CFE_SB_MsgId_t MessageID;
-        -:  973:    uint16  CommandCode;
-     4403:  974:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
-call    0 returned 100%
-        -:  975:    
-        -:  976:    /* Verify the command packet length */
-     4403:  977:    if (ExpectedLength != ActualLength)
-branch  0 taken 1% (fallthrough)
-branch  1 taken 99%
-        -:  978:    {
-        1:  979:        CommandCode = CFE_SB_GetCmdCode(MessagePtr);
-call    0 returned 100%
-        1:  980:        MessageID= CFE_SB_GetMsgId(MessagePtr);
-call    0 returned 100%
-        -:  981:        
-        1:  982:        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
-call    0 returned 100%
-        -:  983:                          CFE_EVS_ERROR,
-        -:  984:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
-        -:  985:                          MessageID,
-        -:  986:                          CommandCode,
-        -:  987:                          ActualLength,
-        -:  988:                          ExpectedLength);
-        -:  989:    }    
-        -:  990:    else
-        -:  991:    {
-     4402:  992:        if (CS_AppData.ChecksumState == CS_STATE_ENABLED)
-branch  0 taken 100% (fallthrough)
-branch  1 taken 0%
-        -:  993:        {
-     4402:  994:            DoneWithCycle = FALSE;
-     4402:  995:            EndOfList = FALSE;
-        -:  996:            
-        -:  997:            /* We check for end-of-list because we don't necessarily know the
-        -:  998:               order in which the table entries are defined, and we don't
-        -:  999:               want to keep looping through the list */
-        -: 1000:            
-    14372: 1001:            while ((DoneWithCycle != TRUE) && (EndOfList != TRUE))
-branch  0 taken 59% (fallthrough)
-branch  1 taken 41%
-branch  2 taken 95%
-branch  3 taken 5% (fallthrough)
-        -: 1002:            {
-        -: 1003:                /* We need to check the current table value here because
-        -: 1004:                   it is updated (and possibly reset to zero) inside each
-        -: 1005:                   function called */
-     5568: 1006:                if (CS_AppData.CurrentCSTable >= (CS_NUM_TABLES - 1))
-branch  0 taken 26% (fallthrough)
-branch  1 taken 74%
-        -: 1007:                {
-     1463: 1008:                    EndOfList = TRUE;
-        -: 1009:                }
-        -: 1010:                
-        -: 1011:                /* Call the appropriate background function based on the current table
-        -: 1012:                   value.  The value is updated inside each function */
-     5568: 1013:                switch (CS_AppData.CurrentCSTable)
-branch  0 taken 11%
-branch  1 taken 11%
-branch  2 taken 17%
-branch  3 taken 16%
-branch  4 taken 20%
-branch  5 taken 26%
-branch  6 taken 1%
-        -: 1014:                {
-        -: 1015:                    case (CS_CFECORE):
-      597: 1016:                        DoneWithCycle = CS_BackgroundCfeCore();
-call    0 returned 100%
-      597: 1017:                        break;
-        -: 1018:                        
-        -: 1019:                    case(CS_OSCORE):
-        -: 1020:                        
-      595: 1021:                        DoneWithCycle = CS_BackgroundOS();
-call    0 returned 100%
-      595: 1022:                        break;
-        -: 1023:                        
-        -: 1024:                    case (CS_EEPROM_TABLE):
-      941: 1025:                        DoneWithCycle = CS_BackgroundEeprom();
-call    0 returned 100%
-      941: 1026:                        break;
-        -: 1027:                        
-        -: 1028:                    case (CS_MEMORY_TABLE):
-      885: 1029:                        DoneWithCycle = CS_BackgroundMemory();
-call    0 returned 100%
-      885: 1030:                        break;
-        -: 1031:                        
-        -: 1032:                    case (CS_TABLES_TABLE):
-     1087: 1033:                        DoneWithCycle = CS_BackgroundTables();
-call    0 returned 100%
-     1087: 1034:                        break;
-        -: 1035:                        
-        -: 1036:                    case (CS_APP_TABLE):
-        -: 1037:                        
-     1462: 1038:                        DoneWithCycle = CS_BackgroundApp();
-call    0 returned 100%
-     1462: 1039:                        break;
-        -: 1040:                        
-        -: 1041:                        /* default case in case CS_AppData.CurrentCSTable is some random bad value */
-        -: 1042:                    default:
-        -: 1043:                        
-        -: 1044:                        /* We are at the end of the line */
-        1: 1045:                        CS_AppData.CurrentCSTable = 0;
-        1: 1046:                        CS_AppData.CurrentEntryInTable = 0;
-        1: 1047:                        CS_AppData.PassCounter++;
-        1: 1048:                        DoneWithCycle = TRUE;
-        -: 1049:                        break;
-        -: 1050:                        
-        -: 1051:                        
-        -: 1052:                }/* end switch */
-        -: 1053:            } /* end while */
-        -: 1054:        }
-        -: 1055:        else
-        -: 1056:        {
-        -: 1057:            /* CS is disabled, Application-wide */
-        -: 1058:        }
-        -: 1059:    }
-        -: 1060:    return;
-        -: 1061:} /* End of CS_BackgroundCheckCmd () */
-        -: 1062:
-        -: 1063:/************************/
-        -: 1064:/*  End of File Comment */
-        -: 1065:/************************/
+        -:  961:    /*
+        -:  962:    ** Handle is non-zero when CDS is active...
+        -:  963:    */
+       27:  964:    if (CS_AppData.DataStoreHandle != 0)
+        -:  965:    {
+        -:  966:        /*
+        -:  967:        ** Copy ena/dis states of tables to the data array...
+        -:  968:        */
+        2:  969:        DataStoreBuffer[0] = CS_AppData.EepromCSState;
+        2:  970:        DataStoreBuffer[1] = CS_AppData.MemoryCSState;
+        2:  971:        DataStoreBuffer[2] = CS_AppData.AppCSState;
+        2:  972:        DataStoreBuffer[3] = CS_AppData.TablesCSState;
+        -:  973:        
+        2:  974:        DataStoreBuffer[4] = CS_AppData.OSCSState;
+        2:  975:        DataStoreBuffer[5] = CS_AppData.CfeCoreCSState;
+        -:  976:
+        -:  977:        /*
+        -:  978:        ** Update CS portion of Critical Data Store...
+        -:  979:        */
+        2:  980:        Result = CFE_ES_CopyToCDS(CS_AppData.DataStoreHandle, DataStoreBuffer);
+        -:  981:
+        2:  982:        if (Result != CFE_SUCCESS)
+        -:  983:        {
+        1:  984:            CFE_EVS_SendEvent(CS_INIT_CDS_ERR_EID, CFE_EVS_ERROR,
+        -:  985:                             "Critical Data Store access error = 0x%08X", (unsigned int)Result);
+        -:  986:            /*
+        -:  987:            ** CDS is broken - prevent further errors...
+        -:  988:            */
+        1:  989:            CS_AppData.DataStoreHandle = 0;
+        -:  990:        }
+        -:  991:    }
+        -:  992:
+       27:  993:    return;
+        -:  994:
+        -:  995:} /* End of CS_UpdateCDS() */
+        -:  996:#endif /* #if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE) */
+        -:  997:
+        -:  998:/************************/
+        -:  999:/*  End of File Comment */
+        -: 1000:/************************/

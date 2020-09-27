@@ -1,8 +1,8 @@
 /************************************************************************
  ** File:
- **   $Id: cs_eeprom_cmds.h 1.4.1.1 2015/03/03 11:58:26EST sstrege Exp  $
+ **   $Id: cs_eeprom_cmds.h 1.3 2017/02/16 15:33:16EST mdeschu Exp  $
  **
- **   Copyright © 2007-2014 United States Government as represented by the 
+ **   Copyright (c) 2007-2014 United States Government as represented by the 
  **   Administrator of the National Aeronautics and Space Administration. 
  **   All Other Rights Reserved.  
  **
@@ -19,21 +19,6 @@
  **   CFS Development Standards Document
  **   CFS CS Heritage Analysis Document
  **   CFS CS CDR Package
- **
- ** Notes:
- **
- **   $Log: cs_eeprom_cmds.h  $
- **   Revision 1.4.1.1 2015/03/03 11:58:26EST sstrege 
- **   Added copyright information
- **   Revision 1.4 2010/03/29 16:49:16EDT jmdagost 
- **   Updated comments for enable/disable command descriptions.
- **   Revision 1.3 2008/07/28 14:05:30EDT njyanchik 
- **   Fix some errors with the version number update
- **   Revision 1.2 2008/07/23 15:34:32BST njyanchik 
- **   Check in of CS Unit test
- **   Revision 1.1 2008/06/13 09:04:14EDT njyanchik 
- **   Initial revision
- **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/fsw/src/project.pj
  ** 
  *************************************************************************/
 #ifndef _cs_eeprom_cmds_

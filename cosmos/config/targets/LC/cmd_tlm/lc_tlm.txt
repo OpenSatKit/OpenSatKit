@@ -14,11 +14,13 @@ TELEMETRY LC HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet St
   APPEND_ITEM CMD_ERROR_COUNT      8 UINT "LC Application Command Error Counter"
   APPEND_ITEM APP_STATE            8 UINT "Current LC application operating state"
     STATE UNDEF    0
-    STATE ACTIVE   1 GREEN
-    STATE PASSIVE  2 YELLOW
-    STATE DISABLED 3 RED
+    STATE ACTIVE   1
+    STATE PASSIVE  2
+    STATE DISABLED 3
   APPEND_ITEM PAD8                 8 UINT "8-bit pad"
   # Byte 16 => Bit 128
+  # Cmd & Tlm Server will output the following warning that can be ignored:
+  #   WARN: Bit definition overlap at bit offset 128 for packet LC HK_TLM_PKT items WP_3_RESULT and WP_RESULTS
   APPEND_ARRAY_ITEM WP_RESULTS     8 UINT 352 "Packed watchpoint results data, 2 bits per watchpoint."
     ITEM WP_3_RESULT  128 2 UINT
        STATE FALSE 0
@@ -101,6 +103,8 @@ TELEMETRY LC HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet St
        STATE ERROR 2
        STATE STALE 3
   # Byte 60 => Bit 480
+  # Cmd & Tlm Server will output the following warning that can be ignored:
+  #   WARN: Bit definition overlap at bit offset 480 for packet LC HK_TLM_PKT items AP_1_STATE and AP_RESULTS
   APPEND_ARRAY_ITEM AP_RESULTS     8 UINT 704 "Packed actionpoint results data, 4 bits per actionpoint."
     ITEM AP_1_STATE  480 2 UINT
        STATE UNUSED   0

@@ -70,6 +70,42 @@ static void CheckFileOpenState(uint32 ObjId, void* CallbackArg)
 /** Exported Functions **/
 /************************/
 
+
+/******************************************************************************
+** Function: FileUtil_AppendPathSep
+**
+** Append a path separator to a directory path. 
+** 
+** Returns FALSE if invalid string length or appending the separator would
+** exceed the BufferLen.
+**
+*/
+boolean FileUtil_AppendPathSep(char *DirName, uint16 BufferLen)
+{
+
+   uint16 StringLen;
+   boolean RetStatus = FALSE;
+   
+   StringLen = strlen(DirName);
+
+   if (( StringLen > 0) && (StringLen < BufferLen)) {
+
+      if (DirName[StringLen - 1] != FILEUTIL_DIR_SEP_CHAR) {
+         
+         if (StringLen < BufferLen-1) {
+         
+            strcat(DirName, FILEUTIL_DIR_SEP_STR);
+            RetStatus = TRUE;        
+   
+         }      
+      } /* End if no path separator */
+   } /* End if valid string length */
+
+   return RetStatus;
+   
+} /* End FileUtil_AppendPathSep() */
+
+
 /******************************************************************************
 ** Function: FileUtil_GetFileInfo
 **
@@ -90,7 +126,7 @@ FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, bo
 
    /* TODO - Fix all file utilities to accept a length parameter with a OS_MAX_PATH_LEN check */
    if (FilenameBufLen != OS_MAX_PATH_LEN) {
-      CFE_EVS_SendEvent(FILE_UTIL_MAX_PATH_LEN_CONFLICT_EID, CFE_EVS_ERROR, 
+      CFE_EVS_SendEvent(FILEUTIL_MAX_PATH_LEN_CONFLICT_EID, CFE_EVS_ERROR, 
          "FileUtil_GetFileInfo() checking a filename buffer len=%d using a utility hard coded with OS_MAX_PATH_LEN=%d",
          FilenameBufLen, OS_MAX_PATH_LEN);
    }
@@ -134,7 +170,7 @@ FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, bo
 
    return (FileInfo);
 
-} /* End FM_GetFilenameState */
+} /* End FileUtil_GetFileInfo() */
 
 
 /******************************************************************************
@@ -166,6 +202,50 @@ const char* FileUtil_FileStateStr(FileUtil_FileState  FileState)
    return FileStateStr[i];
 
 } /* End FileUtil_FileStateStr() */
+
+
+static void LoadOpenFileData(uint32 ObjId, void* CallbackArg)
+{
+   FileUtil_OpenFileList *OpenFileList = (FileUtil_OpenFileList*)CallbackArg;
+   CFE_ES_TaskInfo_t      TaskInfo;
+   OS_file_prop_t         FdProp;
+
+   if(OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
+      
+      if(OpenFileList != (FileUtil_OpenFileList*) NULL) {
+         
+         if(OS_FDGetInfo(ObjId, &FdProp) == OS_SUCCESS) {
+            
+            strncpy(OpenFileList->Entry[OpenFileList->OpenCount].Filename,
+                    FdProp.Path, OS_MAX_PATH_LEN);
+
+            /* Get the name of the application that opened the file */
+            memset(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+
+            if(CFE_ES_GetTaskInfo(&TaskInfo, FdProp.User) == CFE_SUCCESS) {
+               
+               strncpy(OpenFileList->Entry[OpenFileList->OpenCount].AppName,
+                       (char*)TaskInfo.AppName, OS_MAX_API_NAME);
+            }
+         }
+      } 
+
+      ++OpenFileList->OpenCount;
+   }
+
+} /* End LoadOpenFileData() */
+
+
+
+uint16 FileUtil_LoadOpenFileList(FileUtil_OpenFileList *OpenFileList)
+{
+    OpenFileList->OpenCount = 0;
+    
+    OS_ForEachObject(0, LoadOpenFileData, (void*)OpenFileList);
+
+    return (OpenFileList->OpenCount);
+
+} /* End FileUtil_GetOpenFileList() */
 
 
 /******************************************************************************
@@ -226,11 +306,11 @@ boolean FileUtil_VerifyFilenameStr(const char* Filename)
    if (Len == 0)
    {
       /* TODO - Could allow a default filename to be used when no file specified */
-      CFE_EVS_SendEvent(FILE_UTIL_INVLD_FILENAME_LEN_EID, CFE_EVS_ERROR, "Invalid filename string: Length is 0");
+      CFE_EVS_SendEvent(FILEUTIL_INVLD_FILENAME_LEN_EID, CFE_EVS_ERROR, "Invalid filename string: Length is 0");
    } 
    else if (Len == OS_MAX_PATH_LEN)
    {
-      CFE_EVS_SendEvent(FILE_UTIL_INVLD_FILENAME_STR_EID, CFE_EVS_ERROR, "Invalid filename string: No NUL termintaion character");     
+      CFE_EVS_SendEvent(FILEUTIL_INVLD_FILENAME_STR_EID, CFE_EVS_ERROR, "Invalid filename string: No NUL termintaion character");     
    }
    else {
    
@@ -241,7 +321,7 @@ boolean FileUtil_VerifyFilenameStr(const char* Filename)
       }
       else
       {
-         CFE_EVS_SendEvent(FILE_UTIL_INVLD_FILENAME_CHR_EID, CFE_EVS_ERROR, "Invalid characters in filename %s",Filename);     
+         CFE_EVS_SendEvent(FILEUTIL_INVLD_FILENAME_CHR_EID, CFE_EVS_ERROR, "Invalid characters in filename %s",Filename);     
       }
       
    } /* End if valid length */
@@ -280,7 +360,7 @@ boolean FileUtil_VerifyFileForRead(const char* Filename)
       }
       else
       {
-         CFE_EVS_SendEvent(FILE_UTIL_FILE_READ_OPEN_ERR_EID, CFE_EVS_ERROR, "Read file open failed for %s ",Filename);     
+         CFE_EVS_SendEvent(FILEUTIL_FILE_READ_OPEN_ERR_EID, CFE_EVS_ERROR, "Read file open failed for %s ",Filename);     
       }
       
    } /* End if valid filename */

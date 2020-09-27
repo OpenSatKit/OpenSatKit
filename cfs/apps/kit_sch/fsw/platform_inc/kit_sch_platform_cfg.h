@@ -31,8 +31,8 @@
 
 #define  KIT_SCH_STARTUP_SYNCH_TIMEOUT  10000  /* Timeout in milliseconds */
 
-#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/kit_sch_msg_tbl.json"
-#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/kit_sch_sch_tbl.json"
+#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/osk_sch_msg_tbl.json"
+#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/osk_sch_sch_tbl.json"
 
 /******************************************************************************
 ** Scheduler Table Configurations
@@ -42,13 +42,13 @@
 /*
 ** Number of minor frame slots within each Major Frame. Must be 2 or more and less than 65536.
 */
-#define SCHTBL_SLOTS      5
+#define SCHTBL_SLOTS      4
 
 
 /*
 ** Maximum number of Activities per Minor Frame. Must be greater than zero.
 */
-#define SCHTBL_ACTIVITIES_PER_SLOT  10
+#define SCHTBL_ACTIVITIES_PER_SLOT  15
 
 
 #define SCHTBL_MAX_ENTRIES (SCHTBL_SLOTS * SCHTBL_ACTIVITIES_PER_SLOT)
@@ -71,7 +71,7 @@
 ** smallest possible message header(see #CFE_SB_TLM_HDR_SIZE and 
 ** #CFE_SB_CMD_HDR_SIZE)
 */
-#define MSGTBL_MAX_MSG_WORDS      32
+#define MSGTBL_MAX_MSG_WORDS      8
 #define MSGTBL_MAX_MSG_BYTES      (MSGTBL_MAX_MSG_WORDS*2)
 
 

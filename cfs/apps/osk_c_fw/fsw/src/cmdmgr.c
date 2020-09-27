@@ -165,3 +165,45 @@ static boolean UnusedFuncCode(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 } /* End UnusedFuncCode() */
 
+
+/******************************************************************************
+** Function: CMDMGR_ValidBoolArg
+**
+*/
+boolean CMDMGR_ValidBoolArg(uint16 BoolArg)
+{
+   
+   return ((BoolArg == TRUE) || (BoolArg == FALSE));
+
+} /* CMDMGR_ValidBoolArg() */
+
+
+/******************************************************************************
+** Function: CMDMGR_BoolStr
+**
+** Purpose: Return a pointer to a string describing a boolean
+**
+** Notes:
+**   Assumes  FALSE=0 and TRUE=1
+*/
+const char* CMDMGR_BoolStr(boolean BoolArg)
+{
+   
+   static char* BoolStr[] = {
+      "FALSE",
+      "TRUE",
+      "UNDEF"
+   };
+
+   uint8 i = 2;
+   
+   if ( BoolArg == TRUE || BoolArg == FALSE) {
+   
+      i = BoolArg;
+   
+   }
+        
+   return BoolStr[i];
+
+} /* End CMDMGR_BoolStr() */
+

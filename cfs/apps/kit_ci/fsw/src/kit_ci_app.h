@@ -25,9 +25,14 @@
 #include "uplink.h"
 
 
+/***********************/
+/** Macro Definitions **/
+/***********************/
+
 /*
-** Macro Definitions
+** Events
 */
+
 
 #define KIT_CI_APP_INIT_EID         (KIT_CI_APP_BASE_EID + 0)
 #define KIT_CI_APP_NOOP_EID         (KIT_CI_APP_BASE_EID + 1)
@@ -35,22 +40,21 @@
 #define KIT_CI_APP_EXIT_EID         (KIT_CI_APP_BASE_EID + 3)
 
 
-/*
-** Type Definitions
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+
+/******************************************************************************
+** Command Functions
 */
 
-typedef struct
-{
 
-   CMDMGR_Class CmdMgr;
-   UPLINK_Class Uplink;
+/******************************************************************************
+** Telemetry Packets
+*/
 
-   CFE_SB_PipeId_t CmdPipe;
-
-} KIT_CI_Class;
-
-typedef struct
-{
+typedef struct {
 
    uint8    Header[CFE_SB_TLM_HDR_SIZE];
 
@@ -74,20 +78,45 @@ typedef struct
    UPLINK_LastMapping  LastMapping;
 
 } OS_PACK KIT_CI_HkPkt;
-
 #define KIT_CI_TLM_HK_LEN sizeof (KIT_CI_HkPkt)
 
 
-/*
-** Exported Data
+/******************************************************************************
+** KIT_CI Class
 */
+
+typedef struct {
+
+   /* 
+   ** App Framework
+   */   
+   CFE_SB_PipeId_t CmdPipe;   
+   CMDMGR_Class    CmdMgr;
+   
+   /*
+   ** Telemetry Packets
+   */
+   KIT_CI_HkPkt  HkPkt;
+
+   /*
+   ** App Objects
+   */   
+   UPLINK_Class  Uplink;
+
+} KIT_CI_Class;
+
+
+/*******************/
+/** Exported Data **/
+/*******************/
 
 extern KIT_CI_Class KitCi;
 
 
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
+
 
 /******************************************************************************
 ** Function: KIT_CI_AppMain
@@ -104,6 +133,7 @@ void KIT_CI_AppMain(void);
 **
 */
 boolean KIT_CI_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
 
 /******************************************************************************
 ** Function: KIT_CI_ResetAppCmd

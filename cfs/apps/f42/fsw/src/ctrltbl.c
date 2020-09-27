@@ -21,8 +21,8 @@
 #include <string.h>
 #include "ctrltbl.h"
 
-/* Convenience macro */
-#define  JSON_OBJ  &(CtrlTbl->Json)
+
+#define JSON  &(CtrlTbl->Json)  /* Convenience macro */
 
 /*
 ** Type Definitions
@@ -72,20 +72,25 @@ void CTRLTBL_Constructor(CTRLTBL_Class* ObjPtr,
    CtrlTbl->LoadTblFunc      = LoadTblFunc;
    CtrlTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
 
+   JSON_Constructor(JSON, CtrlTbl->JsonFileBuf, CtrlTbl->JsonFileTokens);
+   
    JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI]),
                        CTRLTBL_OBJ_MOI_NAME,
                        MoiCallback,
                        (void *)&(CtrlTbl->Data.Moi));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI]));
 
    JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM]),
                        CTRLTBL_OBJ_PD_GAIN_PARAM_NAME,
                        PdGainParamCallback,
                        (void *)&(CtrlTbl->Data.PdGainParam));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM]));
 
    JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM]),
                        CTRLTBL_OBJ_WHL_TGT_MOM_LIM_NAME,
                        WhlTgtMomLimCallback,
                        (void *)&(CtrlTbl->Data.WhlTgtMomLim));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM]));
 
 
 } /* End CTRLTBL_Constructor() */
@@ -125,27 +130,14 @@ boolean CTRLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, "CTRLTBL_LoadCmd() Entry\n");
    
    CTRLTBL_ResetStatus();  /* Reset status & object modified flags */
-
-   /* TODO - Why is this here? I copied from demo which may be f'd up */
-   JSON_Constructor(JSON_OBJ, CtrlTbl->JsonFileBuf, CtrlTbl->JsonFileTokens);
    
-   if (JSON_OpenFile(JSON_OBJ, Filename)) {
+   if (JSON_OpenFile(JSON, Filename)) {
   
       CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, "CTRLTBL_LoadCmd() - Successfully prepared file %s\n", Filename);
       //DEBUG JSON_PrintTokens(&Json,JsonFileTokens[0].size);
       //DEBUG JSON_PrintTokens(&Json,50);
   
-      JSON_RegContainerCallback(JSON_OBJ,
-	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI].Name,
-	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI].Callback);
-      JSON_RegContainerCallback(JSON_OBJ,
-	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM].Name,
-	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM].Callback);
-      JSON_RegContainerCallback(JSON_OBJ,
-	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM].Name,
-	                            CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM].Callback);
-
-      JSON_ProcessTokens(JSON_OBJ);
+      JSON_ProcessTokens(JSON);
 
 	  /* 
 	  ** ObjLoadCnt is used as a crude sanity check for REPLACE & UPDATE. Tighter
@@ -303,9 +295,9 @@ boolean MoiCallback (int TokenIdx)
                      "\nCTRLTBL.MoiCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "x", &x)) AxisCnt++;
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "y", &y)) AxisCnt++;
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "z", &z)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "x", &x)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "y", &y)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "z", &z)) AxisCnt++;
    
    if (AxisCnt == 3) {
    
@@ -353,8 +345,8 @@ boolean PdGainParamCallback (int TokenIdx)
                      "\nCTRLTBL.PdGainParamCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "w", &w)) AxisCnt++;
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "z", &z)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "w", &w)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "z", &z)) AxisCnt++;
    
    if (AxisCnt == 2)
    {
@@ -403,8 +395,8 @@ boolean WhlTgtMomLimCallback (int TokenIdx)
                      "\nCTRLTBL.WhlTgtMomLimCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "lower", &Lower)) LimCnt++;
-   if (JSON_GetValDouble(JSON_OBJ, TokenIdx, "upper", &Upper)) LimCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "lower", &Lower)) LimCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "upper", &Upper)) LimCnt++;
    
    if (LimCnt == 2)
    {

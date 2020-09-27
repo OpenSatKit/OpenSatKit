@@ -33,6 +33,10 @@ require 'osk_flight'
 require 'osk_ops'
 require 'ccsds'
 
+require 'fsw_const'
+
+require 'simsat_global'
+
 def verify_noop (target,noop_fc=0)
   
    result = false
@@ -68,8 +72,12 @@ end # verify_noop()
 simsat_ops_status = "Verifying Command Ingest App (KIT_CI) Noop command."
 verify_noop("KIT_CI")
 
-simsat_ops_status = "Verifying Scheduler App (KIT_SCH) Noop command."
-verify_noop("KIT_SCH")
+simsat_ops_status = "Load SimSat Scheduler Table: Transfer #{$SIMSAT_SCH_TBL_GND_FILENAME} and load #{SimSat::SCH_TBL_FILENAME}"
+if (Osk::Ops.put_flt_file($SIMSAT_SCH_TBL_GND_FILENAME,$SIMSAT_SCH_TBL_FLT_FILENAME)) 
+   Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{Osk::CPU1_PKT_TBL_FILE.sub!("cpu1_", "")}")  
+else
+   message_box("Failed to load SimSat scheduler table #{SimSat::SCH_TBL_FILENAME}",false)
+end
 
 simsat_ops_status = "Verifying Telemetry Output App (KIT_TO) Noop command."
 verify_noop("KIT_TO")
@@ -97,12 +105,13 @@ wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 6)
 wait("DS FILE_INFO_PKT FILE7_ENABLE == 1", 6)
 
 
-#verify_noop("HK")
-
-simsat_ops_status = "Enabling Housekeeping to create auxiliary packets."
-Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 6, CONFIG 1") # Enable HK Combo Pkt #1 
-wait 2
-Osk::flight.send_cmd("KIT_SCH","CFG_SCH_ENTRY with SLOT 2, ACTIVITY 7, CONFIG 1") # Enable HK Combo Pkt #2
+simsat_ops_status = "Verifying Housekeeping (TFTP) app noop command"
+verify_noop("HK")
+# SimSat scheduler table enables 1Hz HK combo packets by default
+#simsat_ops_status = "Enabling Housekeeping to create auxiliary packets."
+#Osk::flight.send_cmd("KIT_SCH","CFG_SCH_TBL_ENTRY with SLOT 1, ACTIVITY 1, CONFIG 1") # Enable HK Combo Pkt #1 
+#wait 2
+#Osk::flight.send_cmd("KIT_SCH","CFG_SCH_TBL_ENTRY with SLOT 1, ACTIVITY 2, CONFIG 1") # Enable HK Combo Pkt #2
 
 simsat_ops_status = "Verifying Trivial File Transfer Protocol (TFTP) app noop command"
 verify_noop("TFTP")

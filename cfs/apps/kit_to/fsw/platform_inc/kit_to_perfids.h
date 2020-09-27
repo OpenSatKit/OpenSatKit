@@ -1,5 +1,5 @@
 /*
-** Purpose: Define cFS performance ID's used by OpenSat Kit Telemetry Output
+** Purpose: Define cFS performance ID's used by OpenSatKit Telemetry Output
 **
 ** Notes:
 **   None
