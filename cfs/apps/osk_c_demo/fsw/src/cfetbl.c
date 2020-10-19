@@ -65,7 +65,7 @@ void CFETBL_Constructor(CFETBL_Class*  CfeTblPtr)
    }
    else {
       
-      CFE_EVS_SendEvent(999, CFE_EVS_ERROR,
+      CFE_EVS_SendEvent(CFETBL_REG_TBL_ERR_EID, CFE_EVS_ERROR,
                         "Error registering table %s, CFE_TBL_Register() status = 0x%08X",
                         OSK_C_DEMO_CFE_TBL_NAME, CfeTbl->Status);                        
    }
@@ -90,14 +90,12 @@ void CFETBL_ResetStatus()
 ** Function: CFETBL_GetTblEntry
 **
 ** Assumes valid index since this is a 'low level' function and should only by
-** called by functions that have verified data coming from external sourcesfunctions
-** like commands.
+** called by functions that have verified data coming from external sources.
 **
 */
 void CFETBL_GetTblEntry(ExTblData_Entry* TblEntryData, uint8 Index)
 {
 
-   ExTblData_Param* TblData = NULL;
    
    if (CfeTbl->DataPtr != NULL) {
       
@@ -106,7 +104,7 @@ void CFETBL_GetTblEntry(ExTblData_Entry* TblEntryData, uint8 Index)
    }
    else {
 
-      CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION,
+      CFE_EVS_SendEvent(CFETBL_ENTRY_ERR_EID, CFE_EVS_INFORMATION,
                         "CFETBL_GetTblEntry() called but the table has not been loaded. Last table status = 0x%08X",CfeTbl->Status);                        
 
    }

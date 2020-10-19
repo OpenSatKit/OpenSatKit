@@ -27,9 +27,9 @@
 #include "app_cfg.h"
 #include "json.h"
 
-/*
-**  Macro Definitions
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
 #define SCHTBL_UNDEF_SLOT 9999
 
@@ -48,9 +48,6 @@
 #define SCHTBL_CMD_SLOT_ERR_EID      (SCHTBL_BASE_EID + 10)
 #define SCHTBL_CMD_ACTIVITY_ERR_EID  (SCHTBL_BASE_EID + 11)
 
-/*
-** Type Definitions
-*/
 
 /*
 ** Table Structure Objects 
@@ -60,13 +57,13 @@
 #define  SCHTBL_OBJ_ACTIVITY    1
 #define  SCHTBL_OBJ_CNT         2
 
-#define  SCHTBL_OBJ_SLOT_NAME       "slot"
-#define  SCHTBL_OBJ_ACTIVITY_NAME   "activity"
+#define  SCHTBL_OBJ_NAME_SLOT      "slot"
+#define  SCHTBL_OBJ_NAME_ACTIVITY  "activity"
                                            
 
-/*
-** Type Definitions
-*/
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 
 /******************************************************************************
@@ -132,9 +129,9 @@ typedef struct {
    
 } SCHTBL_Class;
 
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
 
 
 /******************************************************************************

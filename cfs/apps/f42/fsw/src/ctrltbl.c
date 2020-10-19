@@ -1,16 +1,16 @@
 /*
-** Purpose: Implement ThreeAxisFsw Controller Table.
+** Purpose: Implement Standalone Controller Table.
 **
 ** Notes:
 **   None
 **
-** License:
-**   Written by David McComas, licensed under the copyleft GNU General
-**   Public License (GPL).
-**
 ** References:
 **   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU General
+**   Public License (GPL).
 **
 */
 
@@ -21,13 +21,16 @@
 #include <string.h>
 #include "ctrltbl.h"
 
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
 #define JSON  &(CtrlTbl->Json)  /* Convenience macro */
 
-/*
-** Type Definitions
-*/
 
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 /*
 ** Global File Data
@@ -46,10 +49,10 @@ static CTRLTBL_Class* CtrlTbl = NULL;
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-boolean MoiCallback (int TokenIdx);
-boolean PdGainParamCallback (int TokenIdx);
-boolean WhlTgtMomLimCallback (int TokenIdx);
-
+static boolean KpCallback (int TokenIdx);
+static boolean KrCallback (int TokenIdx);
+static boolean KunlCallback (int TokenIdx);
+static boolean HcmdLimCallback (int TokenIdx);
 
 /******************************************************************************
 ** Function: CTRLTBL_Constructor
@@ -74,24 +77,29 @@ void CTRLTBL_Constructor(CTRLTBL_Class* ObjPtr,
 
    JSON_Constructor(JSON, CtrlTbl->JsonFileBuf, CtrlTbl->JsonFileTokens);
    
-   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI]),
-                       CTRLTBL_OBJ_MOI_NAME,
-                       MoiCallback,
-                       (void *)&(CtrlTbl->Data.Moi));
-   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI]));
+   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_KP]),
+                       CTRLTBL_OBJ_NAME_KP,
+                       KpCallback,
+                       (void *)&(CtrlTbl->Data.Kp));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_KP]));
 
-   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM]),
-                       CTRLTBL_OBJ_PD_GAIN_PARAM_NAME,
-                       PdGainParamCallback,
-                       (void *)&(CtrlTbl->Data.PdGainParam));
-   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM]));
+   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_KR]),
+                       CTRLTBL_OBJ_NAME_KR,
+                       KrCallback,
+                       (void *)&(CtrlTbl->Data.Kr));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_KR]));
 
-   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM]),
-                       CTRLTBL_OBJ_WHL_TGT_MOM_LIM_NAME,
-                       WhlTgtMomLimCallback,
-                       (void *)&(CtrlTbl->Data.WhlTgtMomLim));
-   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM]));
+   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_KUNL]),
+                       CTRLTBL_OBJ_NAME_KUNL,
+                       KunlCallback,
+                       (void *)&(CtrlTbl->Data.Kunl));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_KUNL]));
 
+   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM]),
+                       CTRLTBL_OBJ_NAME_HCMD_LIM,
+                       HcmdLimCallback,
+                       (void *)&(CtrlTbl->Data.HcmdLim));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM]));
 
 } /* End CTRLTBL_Constructor() */
 
@@ -159,7 +167,7 @@ boolean CTRLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
 		 
 	  } /* End if replace entire table */
       else if (LoadType == TBLMGR_LOAD_TBL_UPDATE) {
-         
+
          if (CtrlTbl->ObjLoadCnt > 0 && CtrlTbl->ObjLoadCnt <= CTRLTBL_OBJ_CNT) {
 			 
 		    CtrlTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
@@ -167,7 +175,7 @@ boolean CTRLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
             for (i=0; i < CTRLTBL_OBJ_CNT; i++) {
 
                if (CtrlTbl->JsonObj[i].Modified) {
-                  if (!(CtrlTbl->LoadTblEntryFunc)(i, &(CtrlTbl->JsonObj[i].Data)))
+                  if (!(CtrlTbl->LoadTblEntryFunc)(i, CtrlTbl->JsonObj[i].Data))
                      CtrlTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                }
 
@@ -218,53 +226,58 @@ boolean CTRLTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
    boolean  RetStatus = FALSE;
    int32    FileHandle;
    char     DumpRecord[256];
+   char     SysTimeStr[256];
    const CTRLTBL_Struct *CtrlTblPtr;
 
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
-   if (FileHandle >= OS_FS_SUCCESS)
-   {
+   if (FileHandle >= OS_FS_SUCCESS) {
 
       CtrlTblPtr = (CtrlTbl->GetTblPtrFunc)();
 
-      sprintf(DumpRecord,"\n{\n\"name\": \"F42 Control Table\",\n");
+      sprintf(DumpRecord,"\n{\n\"name\": \"42 Standalone App Controller Table\",\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-      sprintf(DumpRecord,"\"description\": \"Example 42 FSW application attitude control parameters.\",\n");
+      CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
+      sprintf(DumpRecord,"\"description\": \"F42 controller gains dumped at %s\",\n", SysTimeStr);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-      /* MOI */
-      sprintf(DumpRecord,"\"%s\": {\n",CtrlTbl->JsonObj[CTRLTBL_OBJ_MOI].Name);
+      /* Kp */
+      sprintf(DumpRecord,"\"%s\": {\n",CtrlTbl->JsonObj[CTRLTBL_OBJ_KP].Name);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       sprintf(DumpRecord,"   \"x\": %f,\n   \"y\": %f,\n   \"z\": %f\n},\n",
-              CtrlTblPtr->Moi.x, CtrlTblPtr->Moi.y, CtrlTblPtr->Moi.z);
+              CtrlTblPtr->Kp.X, CtrlTblPtr->Kp.Y, CtrlTblPtr->Kp.Z);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 			  
-      /* PD Gain Parameters */      
-      sprintf(DumpRecord,"\"%s\": {\n",CtrlTbl->JsonObj[CTRLTBL_OBJ_PD_GAIN_PARAM].Name);
+      /* Kr */      
+      sprintf(DumpRecord,"\"%s\": {\n",CtrlTbl->JsonObj[CTRLTBL_OBJ_KR].Name);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-      sprintf(DumpRecord,"   \"w\": %f,\n   \"z\": %f\n},\n",
-              CtrlTblPtr->PdGainParam.w, CtrlTblPtr->PdGainParam.z);
+      sprintf(DumpRecord,"   \"x\": %f,\n   \"y\": %f,\n   \"z\": %f\n},\n",
+                CtrlTblPtr->Kr.X, CtrlTblPtr->Kr.Y, CtrlTblPtr->Kr.Z);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-      /* Wheel Target Momentum Limits*/
-      sprintf(DumpRecord,"\"%s\": {\n",CtrlTbl->JsonObj[CTRLTBL_OBJ_WHL_TGT_MOM_LIM].Name);
+      /* Kunl*/
+      sprintf(DumpRecord,"\"%s\": {\n\"k\": %f\n},\n",
+              CtrlTbl->JsonObj[CTRLTBL_OBJ_KUNL].Name,CtrlTblPtr->Kunl);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+
+      /* Hcmd*/
+      sprintf(DumpRecord,"\"%s\": {\n",CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM].Name);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       sprintf(DumpRecord,"   \"lower\": %f,\n   \"upper\": %f\n}\n",
-              CtrlTblPtr->WhlTgtMomLim.Lower, CtrlTblPtr->WhlTgtMomLim.Upper);
+              CtrlTblPtr->HcmdLim.Lower, CtrlTblPtr->HcmdLim.Upper);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       sprintf(DumpRecord,"}\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
-      /* TODO - Add addition meta data when file dumped */
+      /* TODO - Add additional meta data when file dumped */
       RetStatus = TRUE;
 
       OS_close(FileHandle);
 
    } /* End if file create */
-   else
-   {
+   else {
    
       CFE_EVS_SendEvent(CTRLTBL_CREATE_FILE_ERR_EID, CFE_EVS_ERROR,
                         "Error creating dump file '%s', Status=0x%08X", Filename, FileHandle);
@@ -277,22 +290,24 @@ boolean CTRLTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
 
 /******************************************************************************
-** Function: MoiCallback
+** Function: KpCallback
 **
-** Process a moment-of-inertia table entry.
+** Process a Kp table entry.
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-boolean MoiCallback (int TokenIdx)
+static boolean KpCallback (int TokenIdx)
 {
 
    int     AxisCnt=0;
    double  x, y, z;
-   boolean RetStatus = FALSE;   
+   
+   
+   CtrlTbl->JsonObj[CTRLTBL_OBJ_KP].Modified = FALSE;   
    
    CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
-                     "\nCTRLTBL.MoiCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     "\nCTRLTBL.KpCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
    if (JSON_GetValDouble(JSON, TokenIdx, "x", &x)) AxisCnt++;
@@ -301,98 +316,144 @@ boolean MoiCallback (int TokenIdx)
    
    if (AxisCnt == 3) {
    
-      CtrlTbl->Data.Moi.x = x;
-      CtrlTbl->Data.Moi.y = y;
-      CtrlTbl->Data.Moi.z = z;
+      CtrlTbl->Data.Kp.X = x;
+      CtrlTbl->Data.Kp.Y = y;
+      CtrlTbl->Data.Kp.Z = z;
 
       CtrlTbl->ObjLoadCnt++;
-      RetStatus = TRUE;
+      CtrlTbl->JsonObj[CTRLTBL_OBJ_KP].Modified = TRUE;
 	  
-      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,  "CTRLTBL.MoiCallback: %f, %f, %f\n",
-                        CtrlTbl->Data.Moi.x,CtrlTbl->Data.Moi.y,CtrlTbl->Data.Moi.z);
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,  "CTRLTBL.KpCallback: %f, %f, %f\n",
+                        CtrlTbl->Data.Kp.X,CtrlTbl->Data.Kp.Y,CtrlTbl->Data.Kp.Z);
    
    } /* End if AxisCnt == 3 */
    else {
 	   
       CtrlTbl->AttrErrCnt++;     
-      CFE_EVS_SendEvent(CTRLTBL_LOAD_MOI_ERR_EID, CFE_EVS_ERROR, "Invalid number of MOI axes %d. Should be 3.",
+      CFE_EVS_SendEvent(CTRLTBL_LOAD_KP_ERR_EID, CFE_EVS_ERROR, "Invalid number of Kp axes %d. Should be 3.",
                         AxisCnt);
    
    } /* End if AxisCnt != 3 */
       
-   return RetStatus;
+   return CtrlTbl->JsonObj[CTRLTBL_OBJ_KP].Modified;
 
-} /* MoiCallback() */
-
+} /* KpCallback() */
 
 
 /******************************************************************************
-** Function: PdGainParamCallback
+** Function: KrCallback
 **
-** Parameters used to compute the PD controller gains.
+** Process a Kr table entry.
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-boolean PdGainParamCallback (int TokenIdx)
+static boolean KrCallback (int TokenIdx)
 {
 
    int     AxisCnt=0;
-   double  w, z;
-   boolean RetStatus = FALSE;   
+   double  x, y, z;
+   
+   
+   CtrlTbl->JsonObj[CTRLTBL_OBJ_KR].Modified = FALSE;   
    
    CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
-                     "\nCTRLTBL.PdGainParamCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     "\nCTRLTBL.KrCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValDouble(JSON, TokenIdx, "w", &w)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "x", &x)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "y", &y)) AxisCnt++;
    if (JSON_GetValDouble(JSON, TokenIdx, "z", &z)) AxisCnt++;
    
-   if (AxisCnt == 2)
-   {
-	   
-      CtrlTbl->Data.PdGainParam.w = w;
-      CtrlTbl->Data.PdGainParam.z = z;
+   if (AxisCnt == 3) {
+   
+      CtrlTbl->Data.Kr.X = x;
+      CtrlTbl->Data.Kr.Y = y;
+      CtrlTbl->Data.Kr.Z = z;
 
       CtrlTbl->ObjLoadCnt++;
-      RetStatus = TRUE;
+      CtrlTbl->JsonObj[CTRLTBL_OBJ_KR].Modified = TRUE;
 	  
-      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,
-                        "CTRLTBL.PdGainParamCallback: %f, %f\n", 
-                        CtrlTbl->Data.PdGainParam.w,CtrlTbl->Data.PdGainParam.z);
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,  "CTRLTBL.KrCallback: %f, %f, %f\n",
+                        CtrlTbl->Data.Kr.X,CtrlTbl->Data.Kr.Y,CtrlTbl->Data.Kr.Z);
    
-   } /* End if AxisCnt == 2 */
-   else
-   {
+   } /* End if AxisCnt == 3 */
+   else {
 	   
       CtrlTbl->AttrErrCnt++;     
-      CFE_EVS_SendEvent(CTRLTBL_LOAD_MOI_ERR_EID, CFE_EVS_ERROR, "Invalid number of PD Gain Parameters %d. Should be 2.",
+      CFE_EVS_SendEvent(CTRLTBL_LOAD_KP_ERR_EID, CFE_EVS_ERROR, "Invalid number of Kr axes %d. Should be 3.",
                         AxisCnt);
-						
-   } /* End if AxisCnt != 2 */
+   
+   } /* End if AxisCnt != 3 */
       
-   return RetStatus;
+   return CtrlTbl->JsonObj[CTRLTBL_OBJ_KR].Modified;
 
-} /* PdGainParamCallback() */
+} /* KrCallback() */
 
 
 /******************************************************************************
-** Function: WhlTgtMomLimCallback
+** Function: KunlCallback
+**
+** Process a Kunl table entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
+*/
+static boolean KunlCallback (int TokenIdx)
+{
+
+   int     EntryCnt=0;
+   double  k;
+   
+   
+   CtrlTbl->JsonObj[CTRLTBL_OBJ_KUNL].Modified = FALSE;   
+   
+   CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
+                     "\nCTRLTBL.KunlCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
+      
+   if (JSON_GetValDouble(JSON, TokenIdx, "k", &k)) EntryCnt++;
+   
+   if (EntryCnt == 1) {
+	   
+      CtrlTbl->Data.Kunl = k;
+      CtrlTbl->ObjLoadCnt++;
+      CtrlTbl->JsonObj[CTRLTBL_OBJ_KUNL].Modified = TRUE;
+	  
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,
+                        "CTRLTBL.KunlCallback: %f\n", CtrlTbl->Data.Kunl);
+   
+   } /* End if EntryCnt == 1 */
+   else {
+	   
+      CtrlTbl->AttrErrCnt++;     
+      CFE_EVS_SendEvent(CTRLTBL_LOAD_KUNL_ERR_EID, CFE_EVS_ERROR, "Invalid number of Kunl Parameters %d. Should be 1.",
+                       EntryCnt);
+						
+   } /* End if EntryCnt != 1 */
+      
+   return CtrlTbl->JsonObj[CTRLTBL_OBJ_KUNL].Modified;
+
+} /* KunlCallback() */
+
+
+/******************************************************************************
+** Function: HcmdLimCallback
 **
 ** Wheel target momentum limits.
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-boolean WhlTgtMomLimCallback (int TokenIdx)
+boolean HcmdLimCallback (int TokenIdx)
 {
 
    int     LimCnt=0;
    double  Lower, Upper;
-   boolean RetStatus = FALSE;   
    
+   CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM].Modified = FALSE;
    CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,
-                     "\nCTRLTBL.WhlTgtMomLimCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     "\nCTRLTBL.HcmdCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
       
    if (JSON_GetValDouble(JSON, TokenIdx, "lower", &Lower)) LimCnt++;
@@ -401,28 +462,28 @@ boolean WhlTgtMomLimCallback (int TokenIdx)
    if (LimCnt == 2)
    {
 	   
-      CtrlTbl->Data.WhlTgtMomLim.Lower = Lower;
-      CtrlTbl->Data.WhlTgtMomLim.Upper = Upper;
+      CtrlTbl->Data.HcmdLim.Lower = Lower;
+      CtrlTbl->Data.HcmdLim.Upper = Upper;
 
       CtrlTbl->ObjLoadCnt++;
-      RetStatus = TRUE;
+      CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM].Modified = TRUE;
 	  
       CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
-                        "CTRLTBL.WhlTgtMomLimCallback: %f, %f\n",
-                        CtrlTbl->Data.WhlTgtMomLim.Lower,CtrlTbl->Data.WhlTgtMomLim.Upper);
+                        "CTRLTBL.HcmdLimCallback: %f, %f\n",
+                        CtrlTbl->Data.HcmdLim.Lower,CtrlTbl->Data.HcmdLim.Upper);
    
    } /* End if LimCnt == 2 */
    else
    {
 	   
       CtrlTbl->AttrErrCnt++;     
-      CFE_EVS_SendEvent(CTRLTBL_LOAD_WHL_TGT_MOM_LIM_ERR_EID, CFE_EVS_ERROR, 
+      CFE_EVS_SendEvent(CTRLTBL_LOAD_HCMD_ERR_EID, CFE_EVS_ERROR, 
                         "Invalid number of wheel target momentum limit parameters %d. Should be 2.",
                         LimCnt);
 						
    } /* End if LimCnt != 2 */
       
-   return RetStatus;
+   return CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM].Modified;
 
-} /* WhlTgtMomLimCallback() */
+} /* HcmdLimCallback() */
 

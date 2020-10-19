@@ -51,7 +51,7 @@ module Osk
          cfs_started = false
          if (not Osk::System.cfs_running?)
             if (prompt)
-               continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter '#{Osk::PASSWORD}' for the password.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
+               continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter your user password when prompted.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
                return unless continue == Osk::MSG_BUTTON_YES
             end
             Osk::System.start_cfs  # Enables telemetry
@@ -77,10 +77,8 @@ module Osk
       def self.start_cfs()
          
          # Start the cFS
-         spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute sudo ./core-cpu1""")
+         spawn("xfce4-terminal --title=\"core Flight System\" --default-working-directory=\"#{Osk::CFS_EXE_DIR}\" --execute sudo ./core-cpu1")
          #spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute echo #{Osk::PASSWORD} | sudo ./core-cpu1""")
-
-         #spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/../cfs/build/exe/cpu1"" --execute sudo ./core-cpu1""")
          #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
 
          wait(4)  # Give some time to type in password
@@ -130,18 +128,30 @@ module Osk
       # Stop all instances of the cFS
       #
       def self.stop_cfs()
-      
-         done = false
-         while (not done)
-            core = `pgrep core`
-            if (core.length > 1)
-               #puts core + " len = #{core.length}"
-               `echo #{Osk::PASSWORD} | sudo -S kill #{core}`  # Echo supplies the password to sudo
-            else
-               done = true
+         stopped_instances = false
+         core = `pgrep core`  # If cFS instances are running this creates a string with with process IDs such as "xxxxx\nxxxxx\n" where xxxxx=Process ID
+         if (core.length > 1)
+            message_box("Instances of the cFS are running. You will be prompted to kill each instance. Enter your user password when prompted.",Osk::MSG_BUTTON_CONT,false)
+            sh_file = "kill_cfs.sh"
+            sh_path_file = File.join(Osk::OSK_CFS_DIR,sh_file)
+            begin
+               File.open(sh_path_file,"w") do |f|
+                  f.write ("#!/bin/bash\n")
+                  f.write ("set -o verbose\n")
+                  core.split.each do |pid|
+                     f.write ("sudo kill #{pid}\n")
+                  end
+               end # File
+               spawn("xfce4-terminal --title=\"Kill cFS Instances\" --default-working-directory=\"#{Osk::OSK_CFS_DIR}\" --execute ./#{sh_file}")
+               stopped_instances = true
+               #echo #{Osk::PASSWORD} | sudo -S kill #{core}`  # Echo supplies the password to sudo. Can only do this if user can store their password
+            rescue Exception => e
+               puts e.message
+               puts e.backtrace.inspect  
             end
-         end
-      
+
+         end # If cores running
+         return stopped_instances
       end # stop_cfs()
       
 
@@ -153,11 +163,9 @@ module Osk
       # Start the 42 simulator and connect FSW I42 app
       #      
       def self.start_42(display_scr=false)
-     
-         message_box("The 42 simulator takes about 20 seconds to initialize.",Osk::MSG_BUTTON_CONT,false)
-      
-         spawn("xfce4-terminal --default-working-directory=""#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}"" --execute ./42 OSK""")
-         wait(15)
+         
+         spawn("xfce4-terminal --title=\"42 Simulator\" --default-working-directory=\"#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}\" --execute ./42 OSK")
+         wait(2)
          Osk::flight.send_cmd("I42","CONNECT_42")
      
          display("CFS_KIT SIM_42_SCREEN",1500,50) if display_scr
@@ -190,7 +198,6 @@ module Osk
          
       end # stop_cmd_tlm_server()
       
-
       ######################################################################
       ##                     PiSat Management Methods                     ##
       ######################################################################

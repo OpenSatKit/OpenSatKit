@@ -510,8 +510,8 @@ void DrawNearFOV(long Nv,double Width,double Height,double Length,
       r[3] = 1.0/Length;
 
       jmax = (long) (Nv/4)+1;
-      a = Width/(2.0*cos(0.5*daz));
-      b = Height/(2.0*sin((((double) jmax)-0.5)*daz));
+      a = tan(Width/2.0)/cos(0.5*daz);
+      b = tan(Height/2.0)/sin((((double) jmax)-0.5)*daz);
 
       if (Type == 0) { /* FOV_WIREFRAME */
          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -601,8 +601,8 @@ void DrawFarFOV(long Nv,double Width,double Height,long Type, GLfloat Color[4],
       r[3] = 1.0/SkyDistance;
 
       jmax = (long) (Nv/4)+1;
-      a = Width/(2.0*cos(0.5*daz));
-      b = Height/(2.0*sin((((double) jmax)-0.5)*daz));
+      a = tan(Width/2.0)/cos(0.5*daz);
+      b = tan(Height/2.0)/sin((((double) jmax)-0.5)*daz);
 
       if (Type == 0 || Type == 1) { /* FOV_WIREFRAME or FOV_SOLID */
          glLineWidth(2.0);
@@ -1396,158 +1396,6 @@ void DrawPulsars(double LineOfSight[3],double BuckyPf[32][3],
       glEnable(GL_LIGHTING);
 }
 /**********************************************************************/
-void LoadSunTextures(GLfloat SunDiskColor[3], GLfloat SunlightColor[3],
-                     GLuint *SunTexTag,GLuint *SunlightTexTag,
-                     GLuint *SunlightRingTexTag)
-{
-
-      float f,sinlat;
-      long i,j;
-      GLubyte SunTex[128][4];
-      GLubyte SunlightTex[512][4];
-      GLubyte SunlightRingTex[2048][4];
-      double Pi = 4.0*atan(1.0);
-
-      for(i=0;i<128;i++) {
-         f = 255.0*(127.0-((float) i))/127.0;
-         SunTex[i][0] = (GLubyte) (f*SunDiskColor[0]);
-         SunTex[i][1] = (GLubyte) (f*SunDiskColor[1]);
-         SunTex[i][2] = (GLubyte) (f*SunDiskColor[2]);
-         SunTex[i][3] = (GLubyte) (f);
-      }
-      glGenTextures(1,SunTexTag);
-      glBindTexture(GL_TEXTURE_1D,*SunTexTag);
-      glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexImage1D(GL_TEXTURE_1D,0,GL_RGBA,128,0,GL_RGBA,
-         GL_UNSIGNED_BYTE,SunTex);
-
-      for(i=0;i<512;i++) {
-         sinlat = sin((((float) i) - 255.5)/512.0*Pi);
-         if (sinlat < 0.0) {
-            for(j=0;j<3;j++) {
-               SunlightTex[i][j] = 0;
-            }
-         }
-         else {
-            for(j=0;j<3;j++) {
-               /* Cube root chosen for aesthetics */
-               SunlightTex[i][j] =
-                  (GLubyte) (255.0*pow(sinlat,0.33)*SunlightColor[j]);
-            }
-         }
-         for(j=0;j<3;j++) {
-            if (SunlightTex[i][j] < 32) SunlightTex[i][j] = 32;
-         }
-      }
-      for(i=0;i<512;i++) SunlightTex[i][3] = 255;
-
-      glGenTextures(1,SunlightTexTag);
-      glBindTexture(GL_TEXTURE_1D,*SunlightTexTag);
-      glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexImage1D(GL_TEXTURE_1D,0,GL_RGBA,512,0,GL_RGBA,
-         GL_UNSIGNED_BYTE,SunlightTex);
-
-      for(i=0;i<1000;i++) {
-         for(j=0;j<3;j++)
-            SunlightRingTex[i][j] =
-               (GLubyte) (255.0*SunlightColor[j]);
-      }
-      for(i=1048;i<2048;i++) {
-         for(j=0;j<3;j++)
-            SunlightRingTex[i][j] = 0;
-      }
-      for(i=0;i<48;i++) {
-         f = 255.0*(1.0-((float) i)/48.0);
-         for(j=0;j<3;j++)
-            SunlightRingTex[1000+i][j] =
-               (GLubyte) (f*SunlightColor[j]);
-      }
-      for(i=0;i<2048;i++) SunlightRingTex[i][3] = 255;
-
-      glGenTextures(1,SunlightRingTexTag);
-      glBindTexture(GL_TEXTURE_1D,*SunlightRingTexTag);
-      glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexImage1D(GL_TEXTURE_1D,0,GL_RGBA,2048,0,GL_RGBA,
-         GL_UNSIGNED_BYTE,SunlightRingTex);
-}
-/**********************************************************************/
-void DrawSun(double LoS[3], double SunRad, double rh[3],
-             GLfloat SunDiskColor[3],GLuint SunTexTag)
-{
-      double TwoPi = 6.28318530717959;
-
-      static long First = 1;
-      static double x1[48];
-      static double x2[48];
-      static double y1[48];
-      static double y2[48];
-      double r[3],LoR,C[3][3];
-      long i;
-
-      if (First) {
-         double CoronaRad = 4.0;
-         First = 0;
-         for(i=0;i<48;i++) {
-            x1[i] = cos(((double) i)/48.0*TwoPi);
-            y1[i] = sin(((double) i)/48.0*TwoPi);
-            x2[i] = CoronaRad*cos(((double) i)/48.0*TwoPi);
-            y2[i] = CoronaRad*sin(((double) i)/48.0*TwoPi);
-         }
-      }
-
-      CopyUnitV(rh,r);
-      LoR = VoV(LoS,r);
-      if (LoR < 0.0) {
-
-         glPushMatrix();
-
-         glTranslatef(-rh[0],-rh[1],-rh[2]);
-         glScalef(SunRad,SunRad,SunRad);
-
-         for(i=0;i<3;i++) C[2][i] = r[i];
-         PerpBasis(C[2],C[0],C[1]);
-         RotateR2L(C);
-
-         /* Solar disk */
-         glMaterialfv(GL_FRONT,GL_EMISSION,SunDiskColor);
-         glBegin(GL_TRIANGLE_FAN);
-            glVertex3f(0.0,0.0,0.0);
-            for(i=0;i<48;i++) {
-               glVertex3f(x1[i],y1[i],0.0);
-            }
-            glVertex3f(x1[0],y1[0],0.0);
-         glEnd();
-
-         /* Corona */
-         glActiveTexture(GL_TEXTURE0);
-         glEnable(GL_TEXTURE_1D);
-         glBindTexture(GL_TEXTURE_1D,SunTexTag);
-         glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
-
-         glBegin(GL_QUAD_STRIP);
-            for(i=0;i<48;i++) {
-               glTexCoord1f(0.008);
-               glVertex3f(x1[i],y1[i],0.0);
-               glTexCoord1f(1.0);
-               glVertex3f(x2[i],y2[i],0.0);
-            }
-            glTexCoord1f(0.008);
-            glVertex3f(x1[0],y1[0],0.0);
-            glTexCoord1f(1.0);
-            glVertex3f(x2[0],y2[0],0.0);
-         glEnd();
-         glDisable(GL_TEXTURE_1D);
-
-         glPopMatrix();
-      }
-}
-/**********************************************************************/
 GLuint LoadMilkyWay(const char *PathName, const char *FileName, double CGH[3][3],
    double SkyDistance, double AlphaMask[4])
 {
@@ -1797,7 +1645,7 @@ void LoadEgretCatalog(const char *EgretFileName,double BuckyPf[32][3],
             glColor4fv(Black);
          glEndList();
       }
-	   glPointSize(2.0);
+      glPointSize(2.0);
 #undef Nsource
 #undef D2R
 }
@@ -2469,161 +2317,6 @@ void DrawUnitMercatorSphere(GLuint Nlat, GLuint Nlng)
          glEnd();
       }
 }
-/**********************************************************************/
-void DrawRing(GLfloat InRad, GLfloat OutRad, GLuint Nring, GLuint Nslice)
-{
-      GLfloat PosNorm[3] = {0.0,0.0,1.0};
-      GLfloat NegNorm[3] = {0.0,0.0,-1.0};
-      GLfloat White[4] = {1.0,1.0,1.0,1.0};
-      GLfloat Black[4] = {0.0,0.0,0.0,1.0};
-      GLfloat TwoPi = 8.0*atan(1.0);
-      GLfloat dR,dang,Rin,Rout,ang,c,s,r[3];
-      GLfloat Sin,Sout;
-      GLuint Iring,Islice;
-
-      glMaterialfv(GL_FRONT,GL_AMBIENT_AND_DIFFUSE,White);
-      glMaterialfv(GL_FRONT,GL_SPECULAR,Black);
-      glMaterialfv(GL_FRONT,GL_EMISSION,Black);
-
-      dR = (OutRad-InRad)/((GLfloat) Nring);
-      dang = TwoPi/((GLfloat) Nslice);
-      for(Iring=0;Iring<Nring-1;Iring++) {
-         Rin = InRad + ((GLfloat) Iring)*dR;
-         Rout = Rin + dR;
-         Sin = ((GLfloat) Iring)/((GLfloat) Nring);
-         Sout = ((GLfloat) Iring+1)/((GLfloat) Nring);
-         glBegin(GL_QUAD_STRIP);
-            glNormal3fv(PosNorm);
-            for(Islice=0;Islice<=Nslice;Islice++) {
-               ang = ((GLfloat) Islice)*dang;
-               c = cos(ang);
-               s = sin(ang);
-               r[0] = Rin*c;
-               r[1] = Rin*s;
-               r[2] = 0.0;
-               glMultiTexCoord1f(GL_TEXTURE0,Sin);
-               glVertex3fv(r);
-               r[0] = Rout*c;
-               r[1] = Rout*s;
-               r[2] = 0.0;
-               glMultiTexCoord1f(GL_TEXTURE0,Sout);
-               glVertex3fv(r);
-            }
-         glEnd();
-         glBegin(GL_QUAD_STRIP);
-            glNormal3fv(NegNorm);
-            for(Islice=0;Islice<=Nslice;Islice++) {
-               ang = -((GLfloat) Islice)*dang;
-               c = cos(ang);
-               s = sin(ang);
-               r[0] = Rin*c;
-               r[1] = Rin*s;
-               r[2] = 0.0;
-               glMultiTexCoord1f(GL_TEXTURE0,Sin);
-               glVertex3fv(r);
-               r[0] = Rout*c;
-               r[1] = Rout*s;
-               r[2] = 0.0;
-               glMultiTexCoord1f(GL_TEXTURE0,Sout);
-               glVertex3fv(r);
-            }
-         glEnd();
-      }
-}
-/**********************************************************************/
-void DrawWorld(double LoS[3],double rad,double drn[3],double CWN[3][3],
-         double svn[3],long HasRing, long HasAtmo, GLfloat WorldColor[4],
-         GLuint TexTag,GLuint ColCubeTag, GLuint BumpCubeTag,
-         GLuint CloudGlossCubeTag, GLuint RingTexTag,
-         GLuint SphereList, GLuint RingList)
-{
-      long k;
-      double svw[3],PovPosW[3];
-      GLfloat Black[4] = {0.0,0.0,0.0,1.0};
-      GLfloat White[4] = {1.0,1.0,1.0,1.0};
-      GLfloat LightPos[4] = {0.0,0.0,0.0,0.0};
-      GLint PovLoc,HazeLoc;
-      #ifndef _USE_SHADERS_
-         GLfloat DistantAmbientLightColor[4] = {0.1,0.1,0.1,1.0};
-      #endif
-
-      glPushMatrix();
-
-      glMaterialfv(GL_FRONT,GL_AMBIENT,White);
-      glMaterialfv(GL_FRONT,GL_DIFFUSE,White);
-      glMaterialfv(GL_FRONT,GL_SPECULAR,White);
-      glMaterialfv(GL_FRONT,GL_EMISSION,Black);
-      glMaterialf(GL_FRONT,GL_SHININESS,100.0);
-
-#ifndef _USE_SHADERS_
-      /* No shaders or cube maps */
-      /* Scale to project to desired radius */
-      glTranslated(-drn[0],-drn[1],-drn[2]);
-      MxV(CWN,svn,svw);
-      for(k=0;k<3;k++) LightPos[k] = svn[k];
-      glLightfv(GL_LIGHT0,GL_POSITION,LightPos);
-
-      RotateR2L(CWN);
-      glScalef(rad,rad,rad);
-
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D,TexTag);
-      glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-      glCallList(SphereList);
-      glDisable(GL_TEXTURE_2D);
-
-      if (HasRing) {
-         glEnable(GL_TEXTURE_1D);
-         glBindTexture(GL_TEXTURE_1D,RingTexTag);
-         glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-         glLightModelfv(GL_LIGHT_MODEL_AMBIENT,White);
-         glCallList(RingList);
-         glLightModelfv(GL_LIGHT_MODEL_AMBIENT,DistantAmbientLightColor);
-         glDisable(GL_TEXTURE_1D);
-      }
-#else
-      /* Use shaders and cube maps */
-      /* Scale to project to desired radius */
-      glTranslated(-drn[0],-drn[1],-drn[2]);
-
-      /* Modify next 3 lines for multiple suns */
-      MxV(CWN,svn,svw);
-      MxV(CWN,drn,PovPosW);
-      for(k=0;k<3;k++) LightPos[k] = svn[k];
-      glLightfv(GL_LIGHT0,GL_POSITION,LightPos);
-
-      RotateR2L(CWN);
-      glScalef(rad,rad,rad);
-
-      glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_CUBE_MAP,ColCubeTag);
-      glActiveTexture(GL_TEXTURE1);
-      glBindTexture(GL_TEXTURE_CUBE_MAP,BumpCubeTag);
-      glActiveTexture(GL_TEXTURE2);
-      glBindTexture(GL_TEXTURE_CUBE_MAP,CloudGlossCubeTag);
-      glActiveTexture(GL_TEXTURE3);
-      glBindTexture(GL_TEXTURE_1D,RingTexTag);
-
-      glUseProgram(WorldShaderProgram);
-      PovLoc = glGetUniformLocation(WorldShaderProgram,"PovPosW");
-      HazeLoc = glGetUniformLocation(WorldShaderProgram,"HazeEnabled");
-      for(k=0;k<3;k++) PovPosW[k] /= rad;
-      glUniform3f(PovLoc,PovPosW[0],PovPosW[1],PovPosW[2]);
-      glUniform1i(HazeLoc,HasAtmo);
-      glCallList(SphereList);
-
-      if (HasRing) {
-         glActiveTexture(GL_TEXTURE0);
-         glBindTexture(GL_TEXTURE_1D,RingTexTag);
-         glUseProgram(RingShaderProgram);
-         glCallList(RingList);
-      }
-      glUseProgram(0);
-      glActiveTexture(GL_TEXTURE0);
-#endif
-
-      glPopMatrix();
-}
 /*********************************************************************/
 void DrawBullseye(GLfloat Color[4],double p[4])
 {
@@ -2688,6 +2381,7 @@ void DrawVector(double v[3], const char Label[8], const char Units[8],
          glBitmap(0,0,0,0,4,-5,0);
          glBitmap(7,3,0,-11.0,0.0,0.0,GlyphVec);
       }
+      glColor4f(0.0,0.0,0.0,1.0);
       glEnable(GL_LIGHTING);
 }
 /*********************************************************************/
@@ -3048,6 +2742,229 @@ void DrawSmallCircle(double lngc, double latc, double rad)
       glEnd();
 
 }
+/*********************************************************************/
+/* Draws a full grid of any orientation on a Mercator projection.
+   CVA is the DCM from the Axis frame to the Viewing frame           */
+void DrawMercatorGrid(double CVA[3][3])
+{
+      long min = 30; /* Degrees between each minor gridline */
+      long maj = 90; /* Degrees between each major gridline */
+
+      double D2R = 0.0174532925199433;
+
+      double norm[3];
+      double x[3] = {1,0,0};
+      double z[3] = {0,0,1};
+
+      long ang; /* Tracked in degrees */
+      double lng,lat;
+      double CNA[3][3]; /* DCM from normal vector to axis frame */
+      double CNV[3][3]; /* DCM from normal vector to viewing frame */
+
+      /* Latitude lines */
+      MxV(CVA,z,norm);
+
+      VecToLngLat(norm,&lng,&lat);
+
+      for (ang = min; ang < 179; ang = ang+min) {
+         glLineWidth(1.0);
+         DrawSmallCircle(lng, lat, ang*D2R);
+      }
+
+      for (ang = maj; ang < 179; ang = ang+maj) {
+         glLineWidth(2.0);
+         DrawSmallCircle(lng, lat, ang*D2R);
+      }
+
+      /* Longitude lines */
+      for (ang = 0; ang < 179; ang = ang+min) {
+         SimpRot(z,ang*D2R,CNA);
+         MxMT(CNA,CVA,CNV);
+         MTxV(CNV,x,norm);
+
+         VecToLngLat(norm,&lng,&lat);
+
+         glLineWidth(1.0);
+         DrawSmallCircle(lng,lat,90*D2R);
+      }
+
+      for (ang = 0; ang < 179; ang = ang+maj) {
+         SimpRot(z,ang*D2R,CNA);
+         MxMT(CNA,CVA,CNV);
+         MTxV(CNV,x,norm);
+
+         VecToLngLat(norm,&lng,&lat);
+
+         glLineWidth(2.0);
+         DrawSmallCircle(lng,lat,90*D2R);
+      }
+
+      glLineWidth(1);
+}
+/*********************************************************************/
+/* Draws a great circle arc between two points (angular distance must
+   be less than 180 degrees)                                         */
+void DrawMercatorLine(double lngA, double latA, double lngB, double latB)
+{
+      double R2D = 57.2957795130823;
+      double A[3],B[3],norm[3],C[3][3],ang,totalang,p[3];
+      double x,y,xold,yold;
+
+      A[0] = cos(lngA)*cos(latA);
+      A[1] = sin(lngA)*cos(latA);
+      A[2] = sin(latA);
+
+      B[0] = cos(lngB)*cos(latB);
+      B[1] = sin(lngB)*cos(latB);
+      B[2] = sin(latB);
+
+      totalang = acos(VoV(A,B));
+
+      VxV(A,B,norm);
+      UNITV(norm);
+      SimpRot(A,0.0,C);
+      MxV(C,A,p);
+      VecToLngLat(p,&xold,&yold);
+      xold *= R2D;
+      yold *= R2D;
+      glBegin(GL_LINES);
+         for(ang = 0.0; ang < 1.01*totalang; ang += 0.05*totalang) {
+            SimpRot(norm,-ang,C);
+            MxV(C,A,p);
+            VecToLngLat(p,&x,&y);
+            x *= R2D;
+            y *= R2D;
+            
+            if (fabs(xold-x) > 180) { /* >180deg (crosses 180lng) - draw two lines */
+               if (xold < 0) {
+                  glVertex2f(xold,yold); 
+                  glVertex2f(x-360,y);
+                  glVertex2f(xold+360,yold);
+                  glVertex2f(x,y);
+               } 
+               else {
+                  glVertex2f(xold,yold); 
+                  glVertex2f(x+360,y);
+                  glVertex2f(xold-360,yold);
+                  glVertex2f(x,y);
+               }
+            } 
+            else { /* <180deg - draw one line */
+               glVertex2f(xold,yold); 
+               glVertex2f(x,y);
+            }
+            
+            xold = x;
+            yold = y;
+         }
+      glEnd();
+
+}
+/**********************************************************************/
+/* Draws a square FOV on a Mercator projection using DrawMercatorLine.
+   Square is centered on x-axis of CCV; FOV half-angles given in radians.
+   CVS = DCM from Center of square to Viewing frame                   */
+void DrawMercatorSquare(double CVS[3][3], double FOV[2])
+{
+      double p[3],q[3];
+      double zaxis[3] = {0, 0, 1};
+      double lngA,latA,lngB,latB;
+      double xang[4],yang[4];
+      double CPC[3][3]; /* DCM from Center to corner Point */
+      long i,j;
+
+
+      xang[0] = -FOV[0]; /* x to the left, y up, z out of the sensor in boresight direction */
+      xang[1] =  FOV[0];
+      xang[2] =  FOV[0];
+      xang[3] = -FOV[0];
+
+      yang[0] = -FOV[1];
+      yang[1] = -FOV[1];
+      yang[2] =  FOV[1];
+      yang[3] =  FOV[1];
+
+      for (i=0; i<4; i++) {
+         A2C(21,xang[i],-yang[i],0.0,CPC);
+         MxV(CPC,zaxis,q); /* Assume sensor axis is z-axis */
+         MxV(CVS,q,p);
+         VecToLngLat(p,&lngA,&latA);
+
+         j = (i+1)%4;
+         A2C(21,xang[j],-yang[j],0.0,CPC);
+         MxV(CPC,zaxis,q); /* Assume sensor axis is z-axis */
+         MxV(CVS,q,p);
+         VecToLngLat(p,&lngB,&latB);
+
+         DrawMercatorLine(lngA,latA,lngB,latB);
+      }
+}
+/**********************************************************************/
+/* Draws a small X at the lat/lng point of a vector, as well as label;
+   lat and lng are in radians                                         */
+void DrawMercatorVector(double lng, double lat, char *label)
+{
+      double R2D = 57.2957795130823;
+
+      glLineWidth(1);
+
+      lat *= R2D;
+      lng *= R2D;
+
+      glBegin(GL_LINES);
+         glVertex2f(lng-2,lat-2);
+         glVertex2f(lng+2,lat+2);
+         glVertex2f(lng+2,lat-2);
+         glVertex2f(lng-2,lat+2);
+      glEnd();
+
+      glRasterPos2f(lng+2.5*strlen(label),lat-12);
+      DrawBitmapString(GLUT_BITMAP_8_BY_13,label);
+}
+/**********************************************************************/
+/* Draws all 6 primary axes on a Mercator projection
+   CAV is the DCM from the Axis frame to the Viewing frame            */
+void DrawMercatorAxes(double CVA[3][3], char *label)
+{
+      double TwoPi = 6.28318530717959;
+
+      double x[6] = {1,-1, 0, 0, 0, 0};
+      double y[6] = {0, 0, 1,-1, 0, 0};
+      double z[6] = {0, 0, 0, 0, 1,-1};
+      
+      double a[3],v[3];
+      long i;
+      double lat,lng;
+      char str[20];
+
+      for (i=0; i<6; i++) {
+         a[0] = x[i];
+         a[1] = y[i];
+         a[2] = z[i];
+
+         MxV(CVA,a,v);
+
+         VecToLngLat(v,&lng,&lat);
+
+         if (a[0]+a[1]+a[2] > 0) {
+            sprintf(str,"+%s%ld",label,(long)i/2 + 1);
+         } 
+         else {
+            sprintf(str,"-%s%ld",label,(long)i/2 + 1);            
+         }
+
+         DrawMercatorVector(lng,lat,str);
+
+         if (lng > 180-8*strlen(label)) {
+            DrawMercatorVector(lng-TwoPi,lat,str);
+         }
+
+         if (lng < -180+8*strlen(label)) {
+            DrawMercatorVector(lng+TwoPi,lat,str);
+         }
+
+      }
+}
 /**********************************************************************/
 /*  When porting to a new platform, check for OpenGL version,        */
 /*  extensions, etc.                                                  */
@@ -3088,19 +3005,21 @@ void CheckOpenGLProperties(void)
 /**********************************************************************/
 /*  The Hammer (or Aitoff-Hammer) projection is an equal-area map     */
 /*  projection.  This function copied from Wikipedia.                 */
+/*  -2*SqrtTwo < x < +2*SqrtTwo                                       */
+/*  -SqrtTwo < y < +SqrtTwo                                           */
 void HammerProjection(double Lng, double Lat, double *x, double *y)
 {
       double SQRTTWO = 1.41421356237310;
 
-      double CosLat,SinLat,CosHalfLng,SinHalfLat,Den;
+      double CosLat,SinLat,CosHalfLng,SinHalfLng,Den;
 
       CosLat = cos(Lat);
       SinLat = sin(Lat);
       CosHalfLng = cos(0.5*Lng);
-      SinHalfLat = sin(0.5*Lat);
+      SinHalfLng = sin(0.5*Lng);
       Den = sqrt(1.0+CosLat*CosHalfLng);
 
-      *x = 2.0*SQRTTWO*CosLat*SinHalfLat/Den;
+      *x = 2.0*SQRTTWO*CosLat*SinHalfLng/Den;
       *y = SQRTTWO*SinLat/Den;
 
 }

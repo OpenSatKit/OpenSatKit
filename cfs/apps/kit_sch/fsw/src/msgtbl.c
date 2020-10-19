@@ -79,7 +79,7 @@ void MSGTBL_Constructor(MSGTBL_Class*       ObjPtr,
    JSON_Constructor(JSON, MsgTbl->JsonFileBuf, MsgTbl->JsonFileTokens);
    
    JSON_ObjConstructor(&(MsgTbl->JsonObj[MSGTBL_OBJ_MSG]),
-                       MSGTBL_OBJ_MSG_NAME,
+                       MSGTBL_OBJ_NAME_MSG,
                        MsgCallback,
                        (void *)&(MsgTbl->Tbl.Entry));
    
@@ -174,7 +174,7 @@ boolean MSGTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
                            for (msg=0; msg < MSGTBL_MAX_ENTRIES; msg++) {
                          
                               if  ((MsgTbl->Tbl.Entry[msg].Buffer[2] > 0)) {
-                                 if (!(MsgTbl->LoadTblEntryFunc)(msg, (MSGTBL_Entry*)&(MsgTbl->JsonObj[obj].Data)))  /* Should I use MsgTbl->Tbl.Entry[]? */
+                                 if (!(MsgTbl->LoadTblEntryFunc)(msg, (MSGTBL_Entry*)&MsgTbl->Tbl.Entry[msg]))
                                     MsgTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                               }
                            } /* End message array loop */                
@@ -409,9 +409,12 @@ static boolean MsgCallback (int TokenIdx)
    int    JsonIntData, Id, i;
    char   DataStr[(MSGTBL_MAX_MSG_WORDS-3)*10];  /* 6 digits per word plus any extra commas and spaces */
    char  *DataStrPtr;
-   boolean RetStatus = FALSE, DataWords = FALSE;      
+   boolean DataWords = FALSE;      
    MSGTBL_Entry MsgEntry;
 
+
+   MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Modified = FALSE;
+   
    CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"\nMSGTBL.MsgCallback: ObjLoadCnt %d, ObjErrCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      MsgTbl->ObjLoadCnt, MsgTbl->ObjErrCnt, MsgTbl->AttrErrCnt, TokenIdx);
 
@@ -467,7 +470,7 @@ static boolean MsgCallback (int TokenIdx)
       if (Id < MSGTBL_MAX_ENTRIES) {
          
          MsgTbl->Tbl.Entry[Id] = MsgEntry;
-         RetStatus = TRUE;
+         MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Modified = TRUE;
       
       } /* End if Id within limits */
       else {
@@ -486,7 +489,7 @@ static boolean MsgCallback (int TokenIdx)
    
    } /* End if invalid AttributeCnt */
       
-   return RetStatus;
+   return MsgTbl->JsonObj[MSGTBL_OBJ_MSG].Modified;
 
 } /* MsgCallback() */
 

@@ -18,7 +18,6 @@ require 'cosmos'
 
 module Osk
 
-   PASSWORD = "osk"
 
    ###########################
    ## JSON Naming standards ##
@@ -102,9 +101,11 @@ module Osk
    TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
    TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
 
+   TRAIN_OSK_APPS_ADC_FILE     = "OSK-Apps-ADC.pdf"
    TRAIN_OSK_APPS_RUNTIME_FILE = "OSK-Apps-RunTime.pdf"
 
    ABOUT_SCR_FILE   = "about_scr.txt"
+   VERSION_SCR_FILE = "version_scr.txt"
    ADD_APP_SCR_FILE = "add_app_scr.txt"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"

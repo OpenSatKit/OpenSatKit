@@ -218,6 +218,67 @@ void SurfaceForceProps(struct GeomType *G)
       }
 }
 /*********************************************************************/
+/* Ref Werner and Scheeres, "Exterior Gravitation of a Polyhedron ..." */
+void EdgeAndPolyDyads(struct GeomType *G)
+{
+      struct EdgeType *E;
+      struct PolyType *P1,*P2,*P;
+      double *V1,*V2;
+      double Axis[3],N1[3],N2[3];
+      long Ie,Ip,i,j;
+
+      for(Ie=0;Ie<G->Nedge;Ie++) {
+         E = &G->Edge[Ie];
+         if (E->Poly2 >= 0) {
+            P1 = &G->Poly[E->Poly1];
+            P2 = &G->Poly[E->Poly2];
+            V1 = G->V[E->Vtx1];
+            V2 = G->V[E->Vtx2];
+            for(i=0;i<3;i++) Axis[i] = V2[i]-V1[i];
+            UNITV(Axis);
+            /* Unit vectors in plane, pointing outward */
+            VxV(Axis,P1->Norm,N1);
+            VxV(P2->Norm,Axis,N2);
+            UNITV(N1);
+            UNITV(N2);
+            for(i=0;i<3;i++) {
+               for(j=0;j<3;j++) {
+                  E->Dyad[i][j] = P1->Norm[i]*N1[j] + P2->Norm[i]*N2[j];
+               }
+            }
+         }
+      }
+      
+      for(Ip=0;Ip<G->Npoly;Ip++) {
+         P = &G->Poly[Ip];
+         for(i=0;i<3;i++) {
+            for(j=0;j<3;j++) {
+               P->Dyad[i][j] = P->Norm[i]*P->Norm[j];
+            }
+         }
+      }
+}
+/*********************************************************************/
+double PolyhedronVolume(struct GeomType *G)
+{
+      double Vol;
+      struct PolyType *P;
+      double *V1,*V2,*V3;
+      double V2xV3[3];
+      long Ip;
+      
+      Vol = 0.0;
+      for(Ip=0;Ip<G->Npoly;Ip++) {
+         P = &G->Poly[Ip];
+         V1 = G->V[P->V[0]];
+         V2 = G->V[P->V[1]];
+         V3 = G->V[P->V[2]];
+         VxV(V2,V3,V2xV3);
+         Vol += VoV(V1,V2xV3)/6.0;
+      }
+      return(Vol);
+}
+/*********************************************************************/
 long PolyIsDegenerate(struct PolyType *P, double **V)
 {
 #define EPS (1.0E-6)
@@ -619,18 +680,18 @@ void LoadOctree(struct GeomType *G)
             Ic++;
          }
       }
-/* .. Assign NextOnHit, NextOnMiss */
-      for(i=1;i<585-1;i++) {
-         O->OctCell[i].NextOnMiss = i+1;
-      }
-      for(i=0;i<73;i++) {
-         O->OctCell[i].NextOnHit = O->OctCell[i].Child[0];
-         O->OctCell[O->OctCell[i].Child[7]].NextOnMiss = i+1;
-      }
-      O->OctCell[0].NextOnMiss = 0;
-      O->OctCell[8].NextOnMiss = 0;
-      O->OctCell[72].NextOnMiss = 0;
-      O->OctCell[585-1].NextOnMiss = 0;
+
+/* .. Assign NextOnHit, NextOnMiss (Credit Matt Heron) */
+      for(i=0;i<73;i++)      O->OctCell[i].NextOnHit = 8*i+1;
+      for(i=73;i<585;i++)    O->OctCell[i].NextOnHit = i+1;
+      for(i=80;i<577;i+=8)   O->OctCell[i].NextOnHit = i/8;
+      for(i=136;i<577;i+=64) O->OctCell[i].NextOnHit = (i/8-1)/8;
+      for(i=584;i<585;i++)   O->OctCell[i].NextOnHit = 0;
+   
+      for(i=0;i<585;i++)     O->OctCell[i].NextOnMiss = i+1;
+      for(i=16;i<585;i+=8)   O->OctCell[i].NextOnMiss = i/8;
+      for(i=136;i<585;i+=64) O->OctCell[i].NextOnMiss = (i/8-1)/8;
+      for(i=0;i<585;i=8*i+8) O->OctCell[i].NextOnMiss = 0;
 
 /* .. Find centers, min and max */
       OC = &O->OctCell[0];
@@ -750,7 +811,7 @@ void LoadOctree(struct GeomType *G)
       }
 }
 /*********************************************************************/
-/* Point and Axis have already been transformed into Geom frame      */
+/* Point and DirVec have already been transformed into Geom frame      */
 long OCProjectRayOntoGeom(double Point[3],double DirVec[3],
    struct GeomType *G,double ProjPoint[3],long *ClosestPoly)
 {
@@ -817,6 +878,12 @@ long OCProjectRayOntoGeom(double Point[3],double DirVec[3],
                OC = &O->OctCell[OC->NextOnMiss];
             }
          }
+         else if (OC->NextOnMiss == 0) {
+            Exhausted = 1;
+         }
+         else {
+            OC = &O->OctCell[OC->NextOnMiss];
+         }
       }
 
       return(FoundPoly);
@@ -827,6 +894,7 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
                        struct GeomType *Geom, long *Ngeom, long *GeomTag,
                        long EdgesEnabled)
 {
+#define D2R (0.0174532925199433)
       FILE *infile,*outfile;
       FILE *TmpFile;
       char *txtptr;
@@ -844,6 +912,11 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
       long BeenHereOnce;
       long NoArraySizesFound;
       double Value,Scale = 1.0;
+      double Val1,Val2,Val3;
+      long Seq;
+      double RotM[3][3] = {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
+      double TransVec[3] = {0.0,0.0,0.0};
+      double Vr[3];
       long FirstUse;
 
       char line[512],vtxstring[512],*vtxtoken,MatlName[40];
@@ -864,7 +937,8 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
       Geom = (struct GeomType *) realloc(Geom,Ng*sizeof(struct GeomType));
       G = &Geom[Ng-1];
 
-      strncpy(G->ObjFileName,ObjFilename,40);
+      strncpy(G->ObjFileName,ObjFilename,39);
+      G->ObjFileName[39] = 0; /* Null-terminated string */
       G->Nmatl = 0;
       G->Nv = 0;
       G->Nvt = 0;
@@ -954,8 +1028,19 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
          if (sscanf(line,"# Scale up by %lf to actual size",&Value) == 1) {
             Scale = Value;
          }
+         else if (sscanf(line,"# Translate by [%lf %lf %lf]",
+            &Val1,&Val2,&Val3) == 3) {
+            TransVec[0] = Val1;
+            TransVec[1] = Val2;
+            TransVec[2] = Val3;
+         }
+         else if (sscanf(line,"# Rotate via Seq = %ld by [%lf %lf %lf] deg",
+            &Seq,&Val1,&Val2,&Val3) == 4) {
+            A2C(Seq,Val1*D2R,Val2*D2R,Val3*D2R,RotM);
+         }
          else if (sscanf(line,"v  %lf %lf %lf",&V[0],&V[1],&V[2]) == 3) {
-            for(i=0;i<3;i++) G->V[Ivtx][i] = Scale*V[i];
+            MTxV(RotM,V,Vr);
+            for(i=0;i<3;i++) G->V[Ivtx][i] = Scale*Vr[i]+TransVec[i];
             Ivtx++;
          }
          else if (sscanf(line,"vt %lf %lf",&V[0],&V[1]) == 2 ||
@@ -969,7 +1054,7 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
                for(i=0;i<3;i++) {
                   V[i] = 1.0;  /* Kludge.  Who defines a zero-length normal?? */
                }
-               printf("Zero-length normal in LoadWingsObjFile %s\n",ObjFilename);
+               /* printf("Zero-length normal in LoadWingsObjFile %s\n",ObjFilename); */
             }
             for(i=0;i<3;i++) G->Vn[Ivn][i] = V[i];
             Ivn++;
@@ -1163,6 +1248,9 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
 
       /* Find Normals, Areas, Centroids for use in surface force models */
       SurfaceForceProps(G);
+      
+      /* For polyhedron gravity */
+      if (EdgesEnabled) EdgeAndPolyDyads(G);
 
       /* Find radius of bounding sphere for each poly */
       for(Ipoly=0;Ipoly<G->Npoly;Ipoly++) {
@@ -1179,6 +1267,7 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80],const char ObjFilenam
       *Ngeom = Ng;
       *GeomTag = Ng-1;
       return(Geom);
+#undef D2R
 }
 /*********************************************************************/
 void WriteGeomToObjFile(struct MatlType *Matl,struct GeomType *Geom,const char Path[80],

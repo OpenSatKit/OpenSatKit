@@ -1,5 +1,22 @@
 { "app": {
    
+   "title": "Instrument Simulator",
+   "version": "1.1.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "ISIM provides a simple example instrument that has states of operation",
+      "and can generate science data files. These features provide a context",
+      "for demonstrating how some of the open source apps can be configured",
+      "and used."
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
    "cosmos": {
       "target": "ISIM"
    },

@@ -22,7 +22,7 @@
 
 #include <string.h>
 #include "osk_c_demo_app.h"
-
+#include "cfetbl.h"
 
 /*
 ** Local Function Prototypes

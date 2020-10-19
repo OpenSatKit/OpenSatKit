@@ -21,6 +21,7 @@
 #include <math.h>
 #include "iokit.h"
 #include "mathkit.h"
+#include "dcmkit.h"
 
 /*
 ** #ifdef __cplusplus
@@ -55,6 +56,7 @@ struct PolyType {
    long Matl;
    double Area;
    double Norm[3];
+   double Dyad[3][3]; /* For polyhedron gravity */
    double Uhat[3],Vhat[3]; /* In-plane basis vectors */
    double Centroid[3];
    double radius; /* of bounding sphere centered on Centroid */
@@ -68,6 +70,7 @@ struct EdgeType {
    long Poly1; /* Left */
    long Poly2; /* Right */
    double Length;
+   double Dyad[3][3]; /* For polyhedron gravity */
 };
 
 struct BoundingBoxType {
@@ -179,6 +182,7 @@ struct GeomType *LoadWingsObjFile(const char ModelPath[80], const char ObjFilena
                        long EdgesEnabled);
 void WriteGeomToObjFile(struct MatlType *Matl,struct GeomType *Geom,const char Path[80],
    const char FileName[40]);
+double PolyhedronVolume(struct GeomType *G);
 
 /*
 ** #ifdef __cplusplus

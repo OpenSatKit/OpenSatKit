@@ -1,14 +1,20 @@
 {
 "app": {
 
-   "title": "Heater Control App",
-   "version": "2.0",
+   "title": "Heater Control",
+   "version": "2.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
 
    "description": [
+      "HC is a prototype heater control app."
+   ],
 
-      "Prototype app that demonstrates controlling heaters.",
-      ""
-      ],
+   "system": {
+      "build": true,
+      "simsat": false
+   },
+   
 
    "cosmos": {
       "target": "HC"

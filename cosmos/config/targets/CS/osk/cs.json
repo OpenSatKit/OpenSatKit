@@ -1,6 +1,20 @@
 { 
 "app": {
    
+   "title": "Checksum",
+   "version": "2.4.1",
+   "owner": "NASA/Goddard",
+   "url": "https://github.com/nasa/CS",
+
+   "description": [
+      "CS computes checksums across user-defined memory regions"
+   ],
+   
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
    "cosmos": {
       "target": "CS"
    },

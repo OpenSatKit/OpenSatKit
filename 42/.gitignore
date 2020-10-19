@@ -1,1 +1,9 @@
+*.DS_Store
+a.out
+*.o
+*.so
+*~
+*.webarchive
 *.42
+42
+

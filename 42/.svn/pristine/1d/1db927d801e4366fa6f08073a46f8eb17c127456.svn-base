@@ -1,1 +1,0 @@
-Source: maps.jpl.nasa.gov

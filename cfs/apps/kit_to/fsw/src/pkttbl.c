@@ -78,14 +78,14 @@ void PKTTBL_Constructor(PKTTBL_Class*       ObjPtr,
    JSON_Constructor(JSON, PktTbl->JsonFileBuf, PktTbl->JsonFileTokens);
    
    JSON_ObjConstructor(&(PktTbl->JsonObj[PKTTBL_OBJ_PKT]),
-                       PKTTBL_OBJ_PKT_NAME,
+                       PKTTBL_OBJ_NAME_PKT,
                        PktCallback,
                        (void *)&(PktTbl->Tbl.Pkt));
 
    JSON_RegContainerCallback(JSON, &(PktTbl->JsonObj[PKTTBL_OBJ_PKT]));
    
    JSON_ObjConstructor(&(PktTbl->JsonObj[PKTTBL_OBJ_FILTER]),
-                       PKTTBL_OBJ_FILTER_NAME,
+                       PKTTBL_OBJ_NAME_FILTER,
                        FilterCallback,
                        (void *)&(PktTbl->Tbl.Pkt));
 
@@ -206,7 +206,7 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
                           
                      if (PktTbl->Tbl.Pkt[AppId].StreamId != PKTTBL_UNUSED_MSG_ID) {
 
-                        if (!(PktTbl->LoadTblEntryFunc)(AppId, (PKTTBL_Pkt*)&(PktTbl->JsonObj[PKTTBL_OBJ_PKT].Data)))
+                        if (!(PktTbl->LoadTblEntryFunc)(AppId, (PKTTBL_Pkt*)PktTbl->JsonObj[PKTTBL_OBJ_PKT].Data))
                             PktTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                      }     
                   } /* End packet array loop */                
@@ -293,7 +293,7 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
       CFE_TIME_Print(SysTimeStr, CFE_TIME_GetTime());
       
-      sprintf(DumpRecord,"\"description\": \"KIT_TO dump at %s\",\n",SysTimeStr);
+      sprintf(DumpRecord,"\"description\": \"KIT_TO dumped at %s\",\n",SysTimeStr);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
 
@@ -388,10 +388,11 @@ static boolean PktCallback (int TokenIdx)
 {
 
    int  AttributeCnt = 0;
-   int  JsonIntData;
-   boolean RetStatus = FALSE;      
+   int  JsonIntData;   
    PKTTBL_Pkt Pkt;
-
+   
+   PktTbl->JsonObj[PKTTBL_OBJ_PKT].Modified = FALSE; 
+   
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE,
                      "PKTTBL.PktCallback: PktLoadCnt %d, AttrErrCnt %d, TokenIdx %d",
                      PktTbl->PktLoadCnt, PktTbl->AttrErrCnt, TokenIdx);
@@ -411,7 +412,7 @@ static boolean PktCallback (int TokenIdx)
       PktTbl->CurAppId = Pkt.StreamId & PKTTBL_APP_ID_MASK;     
       PktTbl->Tbl.Pkt[PktTbl->CurAppId] = Pkt;   
       
-      RetStatus = TRUE;
+      PktTbl->JsonObj[PKTTBL_OBJ_PKT].Modified = TRUE;
       
       CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, 
                         "PKTTBL.PktCallback (Stream ID, BufLim, Priority, Reliability): %d, %d, %d, %d",
@@ -426,7 +427,7 @@ static boolean PktCallback (int TokenIdx)
    
    } /* End if invalid AttributeCnt */
       
-   return RetStatus;
+   return PktTbl->JsonObj[PKTTBL_OBJ_PKT].Modified;
 
 } /* PktCallback() */
 
@@ -447,9 +448,10 @@ static boolean FilterCallback (int TokenIdx)
 {
 
    int  AttributeCnt = 0;
-   int  JsonIntData;
-   boolean RetStatus = FALSE;      
+   int  JsonIntData;     
    PktUtil_Filter Filter;
+   
+   PktTbl->JsonObj[PKTTBL_OBJ_FILTER].Modified = FALSE;
    
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE,
                      "PKTTBL.FilterCallback: Current ApId 0x%04X, ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d",
@@ -467,7 +469,7 @@ static boolean FilterCallback (int TokenIdx)
 
       PktTbl->Tbl.Pkt[PktTbl->CurAppId].Filter = Filter;   
 
-      RetStatus = TRUE;
+      PktTbl->JsonObj[PKTTBL_OBJ_FILTER].Modified = TRUE;
                
       CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, 
                         "PKTTBL.FilterCallback (Type, X, N, O): %d, %d, %d, %d",
@@ -482,6 +484,6 @@ static boolean FilterCallback (int TokenIdx)
    
    } /* End if invalid AttributeCnt */
       
-   return RetStatus;
+   return PktTbl->JsonObj[PKTTBL_OBJ_FILTER].Modified;
 
 } /* FilterCallback() */

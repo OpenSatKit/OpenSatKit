@@ -56,7 +56,7 @@ void NominalAtmoParam(void)
                fscanf(KPAP_Schattenfile,"%lf %lf %lf %lf %lf %lf,%[^\n] %[\n]",
                   &fileyear,&filemonth,&twosigF10,&nomF10,&twosigKP,
                   &KPnom1[n],junk,&newline);
-               JD[n] = YMDHMS2JD(fileyear, filemonth, 01, 12, 00, 00);
+               JD[n] = DateToJD(fileyear, filemonth, 01, 12, 00, 00);
             }
          }
          fclose(KPAP_Schattenfile);
@@ -81,7 +81,7 @@ void NominalAtmoParam(void)
          fclose(NOAA_Flux);
       }
 
-      KPnomvalue=LinInterp(JD, KPnom1, JulDay, 410);
+      KPnomvalue=LinInterp(JD, KPnom1, TT.JulDay, 410);
 
       /* Use KP data to get AP values */
       if (KPnomvalue<=0.0)
@@ -142,7 +142,7 @@ void NominalAtmoParam(void)
          GeomagIndex= 400;
 
       /*Interpolate date and solar flux info to find current F10.7 value*/
-      Flux10p7=LinInterp(JD2, SolFlux, JulDay, 59535);
+      Flux10p7=LinInterp(JD2, SolFlux, TT.JulDay, 59535);
 }
 
 /**********************************************************************/
@@ -176,7 +176,7 @@ void TwoSigmaAtmoParam(void)
                fscanf(KPAP_Schattenfile,"%lf %lf %lf %lf %lf %lf,%[^\n] %[\n]",
                   &fileyear,&filemonth,&twosigF10,&nomF10,&twosigmaKP[n],
                   &nomKP,junk,&newline);
-               JD1[n] = YMDHMS2JD(fileyear, filemonth, 01, 12, 00, 00);
+               JD1[n] = DateToJD(fileyear, filemonth, 01, 12, 00, 00);
             }
          }
          fclose(KPAP_Schattenfile);
@@ -202,7 +202,7 @@ void TwoSigmaAtmoParam(void)
       }
 
       /*Interpolate date and solar flux info to find current KP value*/
-      KPtwosig = LinInterp(JD1, twosigmaKP, JulDay, 410);
+      KPtwosig = LinInterp(JD1, twosigmaKP, TT.JulDay, 410);
 
       /* Use KP data to get AP values */
       if (KPtwosig<=0.0)
@@ -263,17 +263,19 @@ void TwoSigmaAtmoParam(void)
          GeomagIndex= 400;
 
       /*Interpolate date and solar flux info to find current F10.7 value*/
-      Flux10p7=LinInterp(JD2, SolFlux, JulDay, 59535);
+      Flux10p7=LinInterp(JD2, SolFlux, TT.JulDay, 59535);
 }
 
 /**********************************************************************/
+/* #define _RADBELT_ */
 void Environment(struct SCType *S)
 {
       struct OrbitType *O;
       struct WorldType *P;
       double Alt;
       double PosW[3];
-      int NumEnergies = 5;
+      #ifdef _RADBELT_
+      int NumEnergies = 5; */
       float ElectronEnergy[5] = {0.15,0.5,1.0,3.0,4.0}; /* MeV */
       float ProtonEnergy[5] = {4.0,10.0,20.0,30.0,50.0}; /* MeV */
       static double **Flux;
@@ -284,6 +286,7 @@ void Environment(struct SCType *S)
          First = 0;
          Flux = CreateMatrix(4,NumEnergies);
       }
+      #endif
 
       O = &Orb[S->RefOrb];
       P = &World[O->World];
@@ -322,7 +325,7 @@ void Environment(struct SCType *S)
          MxV(World[EARTH].CWN,S->PosN,PosW);
          Alt = MAGV(PosW)-World[EARTH].rad;
          if (Alt < 1000.0E3) { /* What is max alt of MSISE00 validity? */
-            S->AtmoDensity = NRLMSISE00(Year,doy,Hour,Minute,Second,PosW,
+            S->AtmoDensity = NRLMSISE00(TT.Year,TT.doy,TT.Hour,TT.Minute,TT.Second,PosW,
                                         Flux10p7,GeomagIndex);
          }
          else S->AtmoDensity = 0.0;
@@ -335,6 +338,7 @@ void Environment(struct SCType *S)
       else S->AtmoDensity = 0.0;
       
 /* .. Radiation Belt Electron and Proton Fluxes, particles/cm^2/sec */
+      #ifdef _RADBELT_
       if (O->World == EARTH) {
          MxV(World[EARTH].CWN,S->PosN,PosW);
          UNITV(PosW);
@@ -342,6 +346,7 @@ void Environment(struct SCType *S)
          RadBelt(MAGV(S->PosN)/1000.0,fabs(MagLat)*R2D,NumEnergies,
             ElectronEnergy,ProtonEnergy,Flux);
       }
+      #endif
 
 }
 

@@ -1,0 +1,40 @@
+{ "app": {
+   
+   "title": "OSK File Manager",
+   "version": "0.9.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "FILEMGR implements a redesign of NASA/Goddard's file manager app. The",
+      "design uses OSK's application C framework (osk_c_fw) and is part of an",
+      "app prototyping effort to explore app packaging ideas for a future app",
+      "cFS app exchange forum."
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": false
+   },
+   
+   "cosmos": {
+      "target": "FILEMGR"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/filemgr.so",
+      "entry-symbol": "FILEMGR_AppMain",
+      "name": "FILEMGR",
+      "priority": 80,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [],
+      "cmd-mid": "FILEMGR_CMD_MID"
+   }
+   
+}}
+
+

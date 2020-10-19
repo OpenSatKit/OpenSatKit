@@ -256,7 +256,7 @@
                "name":    "I42_EXECUTE_MID",
                "descr":   "42 interface synchronization.",
                "index":   0,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 41

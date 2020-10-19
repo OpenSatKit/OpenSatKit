@@ -47,25 +47,22 @@ GND_TEST_PUT_FILE = "#{Osk::GND_SRV_DIR}/tf_put_test_src.txt"
 def cfs_kit_scr_explore_cfs(screen, cmd)
 
    case cmd
-   when "START_CFS"
+   when "START_CFS", "START_CFS_42"
    
-      # Kill all instances of the cFS before starting a new instance. 
-      Osk::System.stop_cfs
+      #
+      # Kill all instances of the cFS before starting a new instance.  The stop
+      # cFS method spawns a new terminal window. The delay helps the user see
+      # the window 
+      #
+      if (Osk::System.stop_cfs) 
+         wait 10
+      end
       Osk::System.start_cfs  # Enables telemetry
       
-   when "START_CFS_42"
-         
-      # Kill all instances of the cFS before starting a new instance. 
-
-      Osk::System.stop_cfs
- 
-      Osk::System.start_cfs  # Enables telemetry
-      
-      wait 3
-      
-      Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
-    
-      cmd("KIT_TO ENABLE_TELEMETRY") # Sometimes it doesn't flow
+      if (cmd == "START_CFS_42")
+         wait 3                      # Give cFS chance to start
+         Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
+      end
       
    when "STOP_CFS"
       # Hopefully ES cleans up resources and does a controlled shutdown
@@ -112,21 +109,23 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          about_str = ["<b>SimSat Overview</b> - Describe Simple Sat reference architecture and operational contect.",
                       "<b>OSK Quick Start</b> - Highlights OSK features to allow a user to start experimenting.",
                       "<b>OSK Users Guide</b> - Indepth description of all of the OSKs features with some design descriptions.",            
-                      "<b>OSK Version</b>     - Display the OpenSatKit version identifier."]
+                      "<b>OSK Version IDs</b> - Display version identifiers for all OSK components."]
          cfs_kit_create_about_screen("Learn OSK",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
-      when "OSK_Version"
-         about_str = ["<b>OpenSatKit</b> provides a complete <b>Core Flight System</b> (<i>https://github.com/nasa/cfs</i>) training and application",
-                      "development environment that includes the <b>COSMOS</b> (<i>https://cosmosrb.com</i>) mission",
-                      "control software and the <b>42 Dynamic Simulator</b> (<i>https://software.nasa.gov/software/GSC-16720-1</i>)",
-                      " ",
-                      "A special thanks to the following open source projects:",
-                      "   NASA/Goddard Core Flight System",
-                      "   Ball Aerospace COSMOS",
-                      "   NASA/Goddard 42 Simulator",
-                      " "]
-         cfs_kit_create_about_screen("Version: #{USER_VERSION}",about_str)
-         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      when "OSK_Version_IDs"
+         cfs_kit_create_version_screen
+         display("CFS_KIT #{File.basename(Osk::VERSION_SCR_FILE,'.txt')}",50,50)
+         #about_str = ["<b>OpenSatKit</b> provides a complete <b>Core Flight System</b> (<i>https://github.com/nasa/cfs</i>) training and application",
+         #             "development environment that includes the <b>COSMOS</b> (<i>https://cosmosrb.com</i>) mission",
+         #             "control software and the <b>42 Dynamic Simulator</b> (<i>https://software.nasa.gov/software/GSC-16720-1</i>)",
+         #             " ",
+         #             "A special thanks to the following open source projects:",
+         #             "   NASA/Goddard Core Flight System",
+         #             "   Ball Aerospace COSMOS",
+         #             "   NASA/Goddard 42 Simulator",
+         #             " "]
+         #cfs_kit_create_about_screen("Version: #{USER_VERSION}",about_str)
+         #display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
          # Default to first choice - SimpleSat_Overview
          doc_dir_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
@@ -258,6 +257,11 @@ def cfs_kit_scr_develop_apps(screen, cmd)
       prompt(Osk::MSG_TBD_FEATURE)   
    
    when "ADD_APP"
+      # 
+      # Create a list of apps that have been compiled (.o file exists in /cf directory) but have
+      # not been loaded. Create a new screen that allows the user to select from a list to load
+      # an app. This is a precurser to an app store
+      #
       # 1. Get current FSW apps
       #    A. Get cFE ES app log
       #    B. Parse file and create a hash      
@@ -265,6 +269,12 @@ def cfs_kit_scr_develop_apps(screen, cmd)
       #    a list of potential apps that can be loaded by the user
       # 3. Create user screen
       #
+      if (not Osk::System.cfs_running?)
+         continue = message_box("This feature allows you to install an app to a running cFS system. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter your user password when prompted.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
+         return unless continue == Osk::MSG_BUTTON_YES
+         Osk::System.start_cfs
+         wait 4  # Give the cFS time to start
+      end
       Osk::flight.cfe_es.send_cmd("WRITE_APP_INFO_TO_FILE with FILENAME #{Osk::TMP_FLT_BIN_PATH_FILE}")
       wait 1
       #~if (Osk::system.file_transfer.get(Osk::TMP_FLT_BIN_PATH_FILE,Osk::TMP_GND_BIN_PATH_FILE,10)) # 10 sec timeout
@@ -294,9 +304,14 @@ def cfs_kit_scr_develop_apps(screen, cmd)
             end
          end
          app_list = Osk::flight.app.keys - fsw_apps
-         #~ Kludge to remove apps that aren't built by default
-         app_list.delete("BM")
-         app_list.delete("CF")
+         # Remove apps that aren't built by default
+         app_list.each do |app|
+            if (not Osk::flight.app[app.to_s].sys_build)
+               puts "Removing " + Osk::flight.app[app.to_s].fsw_name + "\n"
+               app_list.delete(app)
+            end
+         end
+         #~puts "Osk::flight.app[app].sys_build  = " + Osk::flight.app[app.to_s].sys_build.to_s + "\n"
          #~puts "fsw_apps: #{fsw_apps}\n"
          #~puts "Flight.app: #{Osk::flight.app.keys}\n"
          #~puts "Available Apps: #{app_list}\n"
@@ -818,4 +833,113 @@ def cfs_kit_add_app_screen(scr_title, app_list)
    end
 
 end # cfs_kit_add_app_screen()
+
+
+################################################################################
+## Version Identification Screen
+################################################################################
+
+def cfs_kit_create_version_screen
+
+   t = Time.new 
+   time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
+
+   scr_header = "
+   ###############################################################################
+   # Version Identififcation Screen
+   #
+   # Notes:
+   #   1. Do not edit this file because it is automatically generated and your
+   #      changes will not be saved.
+   #   2. File created by cfs_kit_add_app_screen.rb on #{time_stamp}
+   #
+   # License:
+   #   Written by David McComas, licensed under the copyleft GNU General Public
+   #   License (GPL). 
+   #
+   ###############################################################################
+
+   SCREEN AUTO AUTO 0.5
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+   TITLE \"OSK #{USER_VERSION_OSK}\"
+     SETTING BACKCOLOR 162 181 205
+     SETTING TEXTCOLOR black
+
+   VERTICALBOX \"System Components\"
+     MATRIXBYCOLUMNS 3 5 5
+   
+       LABEL \"<b>Name</b>\"
+       LABEL \"<b>Version</b>\"
+       LABEL \"<b>Supplier</b>\"
+       
+       LABEL \"COSMOS\"
+       LABEL \"#{COSMOS_VERSION}\"
+       LABEL \"Ball Aerospace\"
+       
+       LABEL \"42\"
+       LABEL \"#{USER_VERSION_42}\"
+       LABEL \"NASA/Goddard\"
+
+       LABEL \"cFE\"
+       LABEL \"#{USER_VERSION_CFE}\"
+       LABEL \"NASA/Goddard\"
+
+       LABEL \"OSAL\"
+       LABEL \"#{USER_VERSION_OSAL}\"
+       LABEL \"NASA/Goddard\"
+
+       LABEL \"PSP\"
+       LABEL \"#{USER_VERSION_PSP}\"
+       LABEL \"NASA/Goddard\"
+     
+     END # Matrix
+   END # VerticalBox
+
+   HORIZONTALLINE
+
+   VERTICALBOX \"FSW Applications\"
+     SCROLLWINDOW
+     MATRIXBYCOLUMNS 3 5 5
+     
+       LABEL \"<b>Name</b>\"
+       LABEL \"<b>Version</b>\"
+       LABEL \"<b>Supplier</b>\"
+   
+   " # End scr_header
+       
+       
+   scr_trailer = "
+     END # Scroll Window
+     END # Matrix
+   END # VerticalBox
+   "
+   scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::VERSION_SCR_FILE)
+
+   begin
+         
+      # Always overwrite the auto generated screen file      
+      File.open(scr_file,"w") do |f| 
+           
+         f.write (scr_header)
+
+         Osk::flight.app.each_value { |app|
+            # Skip CFE apps
+            if not app.fsw_name.include? "CFE_"
+               f.write ("       LABEL \"#{app.title}\"\n")
+               f.write ("       LABEL \"#{app.version}\"\n")
+               f.write ("       LABEL \"#{app.owner}\"\n\n")         
+            end
+         }
+         
+         f.write (scr_trailer)
+
+      end # File
+         
+   rescue Exception => e
+      puts e.message
+      puts e.backtrace.inspect  
+   end
+
+end # cfs_kit_create_version_screen()
 

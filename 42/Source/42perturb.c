@@ -87,6 +87,8 @@ void FindUnshadedAreas(struct SCType *S, double DirVecN[3])
       double PtA[3],PtB[3],PtC[3],dV1[3],dV2[3],V1xV2[3],dA;
       long SilNe,SilNv,SilNc,SilNin,Nout;
       long Ib,Ie,Je,Ipoly,i,Ic,Iout,Iv;
+      double pn[3];
+      long B1,B2;
 
       ClipVtx = (struct SilVtxType *) calloc(1,sizeof(struct SilVtxType));
 
@@ -216,21 +218,28 @@ void FindUnshadedAreas(struct SCType *S, double DirVecN[3])
                   if (SilNin > 2) {
                      SilNc = 0;
                      for(Ie=0;Ie<SilNin;Ie++) {
-                        for(i=0;i<3;i++) {
-                           V1[i] = InVtx[Ie].PosN[i];
-                           V2[i] = InVtx[(Ie+1)%SilNin].PosN[i];
-                        }
-                        Nout = ClipEdgeAgainstPlane(V1,V2,
-                           Vtx[Iv],Vtx[(Iv+1)%3],Vtx[(Iv+2)%3],
-                           DirVecN,OutVtx);
-                        if (Nout > 0) {
-                           ClipVtx = (struct SilVtxType *) realloc(ClipVtx,(SilNc+Nout)*sizeof(struct SilVtxType));
-                           for(Iout=0;Iout<Nout;Iout++) {
-                              for(i=0;i<3;i++) {
-                                 ClipVtx[SilNc+Iout].PosN[i] = OutVtx[Iout][i];
-                              }
+                        B1 = InVtx[Ie].Body;
+                        B2 = InVtx[(Ie+1)%SilNin].Body;
+                        if (B1 == B2) { /* Skip edges that jump between bodies */
+                           for(i=0;i<3;i++) {
+                              V1[i] = InVtx[Ie].PosN[i];
+                              V2[i] = InVtx[(Ie+1)%SilNin].PosN[i];
                            }
-                           SilNc+=Nout;
+                           Nout = ClipEdgeAgainstPlane(V1,V2,
+                              Vtx[Iv],Vtx[(Iv+1)%3],Vtx[(Iv+2)%3],
+                              DirVecN,OutVtx);
+                           if (Nout > 0) {
+                              ClipVtx = (struct SilVtxType *) realloc(ClipVtx,(SilNc+Nout)*sizeof(struct SilVtxType));
+                              for(Iout=0;Iout<Nout;Iout++) {
+                                 ClipVtx[SilNc+Iout].Body = B1;
+                                 for(i=0;i<3;i++) {
+                                    ClipVtx[SilNc+Iout].PosN[i] = OutVtx[Iout][i];
+                                    pn[i] = OutVtx[Iout][i] - S->B[B1].pn[i];
+                                 }
+                                 MxV(S->B[B1].CN,pn,ClipVtx[SilNc+Iout].PosB);
+                              }
+                              SilNc+=Nout;
+                           }
                         }
                      }
                      free(InVtx);
@@ -241,9 +250,6 @@ void FindUnshadedAreas(struct SCType *S, double DirVecN[3])
                }
 
                /* Compute unshaded area, centroid in B */
-               if (SimTime > 1.0 && Ib == 0 && Ipoly == 4) {
-                 i = 0; /* Put breakpoint here */
-               }
                ClipArea = 0.0;
                ClipCtr[0] = 0.0;
                ClipCtr[1] = 0.0;
@@ -254,13 +260,16 @@ void FindUnshadedAreas(struct SCType *S, double DirVecN[3])
                if (SilNc > 2) {
                   ProjectPointOntoTriangle(Vtx[0],Vtx[1],Vtx[2],DirVecN,ClipVtx[0].PosN,
                      ProjPtN,Bary);
+                  for(i=0;i<3;i++) ProjPtN[i] -= B->pn[i];
                   MxV(B->CN,ProjPtN,PtA);
                   ProjectPointOntoTriangle(Vtx[0],Vtx[1],Vtx[2],DirVecN,ClipVtx[1].PosN,
                      ProjPtN,Bary);
+                  for(i=0;i<3;i++) ProjPtN[i] -= B->pn[i];
                   MxV(B->CN,ProjPtN,PtB);
                   for(Ic=2;Ic<SilNc;Ic++) {
                      ProjectPointOntoTriangle(Vtx[0],Vtx[1],Vtx[2],DirVecN,ClipVtx[Ic].PosN,
                         ProjPtN,Bary);
+                     for(i=0;i<3;i++) ProjPtN[i] -= B->pn[i];
                      MxV(B->CN,ProjPtN,PtC);
                      for(i=0;i<3;i++) {
                         dV1[i] =  PtB[i] - PtA[i];
@@ -304,31 +313,70 @@ void GravGradFrcTrq(struct SCType *S)
       double rhat[3],c[3],rhatoc;
       long Ib,i;
       struct BodyType *B;
+      struct OrbitType *O;
+      struct WorldType *W;
+      double GravGradN[3][3],CGG[3][3],GravGradB[3][3],GGxI[3],GGxpn[3];
 
-      r = CopyUnitV(S->PosN,rhat);
-      Coef = Orb[S->RefOrb].mu/(r*r*r);
+      O = &Orb[S->RefOrb];
+      
+      if ((O->Regime == ORB_ZERO || O->Regime == ORB_FLIGHT) &&
+           O->PolyhedronGravityEnabled) {
+         W = &World[O->World];
+         PolyhedronGravGrad(&Geom[W->GeomTag],W->Density,S->PosN,W->CWN,
+            GravGradN);
 
-      if (S->Nb == 1) {
-         B = &S->B[0];
-         /* GG torque */
-         MxV(B->CN,rhat,rb);
-         vxMov(rb,B->I,axIoa);
-         for(i=0;i<3;i++) B->Trq[i] += 3.0*Coef*axIoa[i];
+         if (S->Nb == 1) {
+            B = &S->B[0];
+            /* GG torque */
+            MxM(B->CN,GravGradN,CGG);
+            MxMT(CGG,B->CN,GravGradB);
+            GravGradTimesInertia(GravGradB,B->I,GGxI);
+            for(i=0;i<3;i++) B->Trq[i] += GGxI[i];
+         }
+         else {
+            for(Ib=0;Ib<S->Nb;Ib++) {
+               B = &S->B[Ib];
+               /* GG torque */
+               MxM(B->CN,GravGradN,CGG);
+               MxMT(CGG,B->CN,GravGradB);
+               GravGradTimesInertia(GravGradB,B->I,GGxI);
+               for(i=0;i<3;i++) B->Trq[i] += GGxI[i];
+
+               /* GG force */
+               MxV(GravGradN,B->pn,GGxpn);
+               for(i=0;i<3;i++) {
+                  B->Frc[i] += B->mass*GGxpn[i];
+               }
+            }
+         }
+         
       }
       else {
-         CopyUnitV(S->PosN,rhat);
-         for(Ib=0;Ib<S->Nb;Ib++) {
-            B = &S->B[Ib];
+         r = CopyUnitV(S->PosN,rhat);
+         Coef = Orb[S->RefOrb].mu/(r*r*r);
+
+         if (S->Nb == 1) {
+            B = &S->B[0];
             /* GG torque */
             MxV(B->CN,rhat,rb);
             vxMov(rb,B->I,axIoa);
             for(i=0;i<3;i++) B->Trq[i] += 3.0*Coef*axIoa[i];
+         }
+         else {
+            CopyUnitV(S->PosN,rhat);
+            for(Ib=0;Ib<S->Nb;Ib++) {
+               B = &S->B[Ib];
+               /* GG torque */
+               MxV(B->CN,rhat,rb);
+               vxMov(rb,B->I,axIoa);
+               for(i=0;i<3;i++) B->Trq[i] += 3.0*Coef*axIoa[i];
 
-            /* GG force from Hughes, p. 246, eq. (56) */
-            for(i=0;i<3;i++) c[i] = B->mass*B->pn[i];
-            rhatoc = VoV(rhat,c);
-            for(i=0;i<3;i++) {
-               B->Frc[i] -= Coef*(c[i]-3.0*rhat[i]*rhatoc);
+               /* GG force from Hughes, p. 246, eq. (56) */
+               for(i=0;i<3;i++) c[i] = B->mass*B->pn[i];
+               rhatoc = VoV(rhat,c);
+               for(i=0;i<3;i++) {
+                  B->Frc[i] -= Coef*(c[i]-3.0*rhat[i]*rhatoc);
+               }
             }
          }
       }
@@ -345,6 +393,16 @@ void ThirdBodyGravForce(double p[3],double s[3],double mu, double mass,
       p3 = magp*magp*magp;
       s3 = mags*mags*mags;
       for(j=0;j<3;j++) Frc[j] = mu*mass*(s[j]/s3-p[j]/p3);
+}
+/**********************************************************************/
+void J2Force(struct SCType *S, struct OrbitType *O, double FrcN[3])
+{
+      double Fh;
+      long i;
+      
+      Fh = S->mass*O->J2Fh1*sin(O->ArgP+O->anom);
+      
+      for(i=0;i<3;i++) FrcN[i] = -Fh*S->CLN[1][i];
 }
 /**********************************************************************/
 void GravPertForce(struct SCType *S)
@@ -411,6 +469,10 @@ void GravPertForce(struct SCType *S)
          EGM96(ModelPath,EarthGravModel.N,EarthGravModel.M,S->mass,S->PosN,
                World[EARTH].PriMerAng,FgeoN);
          for(j=0;j<3;j++) S->Frc[j] += FgeoN[j];
+         if (O->J2DriftEnabled) {
+            J2Force(S,O,Frc);
+            for(j=0;j<3;j++) S->Frc[j] -= Frc[j];
+         }
       }
       else if (OrbCenter == MARS) {
          GMM2B(ModelPath,MarsGravModel.N,MarsGravModel.M,S->mass,S->PosN,
@@ -916,11 +978,11 @@ void ContactFrcTrq(struct SCType *S)
       }
 
 /* .. Contact with other S/C */
-      for(Isc=S->Tag+1;Isc<Nsc;Isc++) {
+      for(Isc=S->ID+1;Isc<Nsc;Isc++) {
          Sc = &SC[Isc];
          /* Cheap S/Sc proximity checks */
          if (!Sc->Exists) continue;
-         if (Sc->Tag == S->Tag) continue;
+         if (Sc->ID == S->ID) continue;
          if (Orb[Sc->RefOrb].World != O->World) continue;
          for(i=0;i<3;i++) dx[i] = S->PosN[i] - Sc->PosN[i];
          if (MAGV(dx) > 1.2*(S->BBox.radius + Sc->BBox.radius)) continue;
@@ -964,7 +1026,7 @@ void EnvTrq(struct SCType *S)
 
       if (E->First) {
          E->First = 0;
-         sprintf(envfilename,"EnvTrq%02li.42",S->Tag);
+         sprintf(envfilename,"EnvTrq%02ld.42",S->ID);
          E->envfile = FileOpen(InOutPath,envfilename,"w");
       }
 
@@ -1033,11 +1095,8 @@ void Perturbations(struct SCType *S)
 /* .. CFD Slosh Forces and Torques */
       #ifdef _ENABLE_CFD_SLOSH_
          if (SloshActive)
-            #ifdef _ENABLE_SOCKETS_
-               CfdSlosh(S);
-            #else
-               FakeCfdSlosh(S);
-            #endif
+            CfdSlosh(S);
+            /* FakeCfdSlosh(S); */
       #endif
 
 /* .. Find Momentum Accumulation for Actuator Sizing */

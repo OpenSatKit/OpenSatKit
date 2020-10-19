@@ -21,14 +21,22 @@
 */
 
 /**********************************************************************/
-void ThrModel(double ImpulseCmd,double DT,double cm[3],
-              struct ThrusterType *Thr)
+void ThrModel(double *PulseWidthCmd,double DT,struct ThrType *Thr,
+   struct SCType *S)
 {
-
+      struct FlexNodeType *FN;
       double r[3];
       long i;
 
-      Thr->F = ImpulseCmd/DT;
+      if (*PulseWidthCmd > DT) {
+         Thr->F = Thr->Fmax;
+         *PulseWidthCmd -= DT;
+      }
+      else {
+         Thr->F = (*PulseWidthCmd/DT)*Thr->Fmax;
+         *PulseWidthCmd = 0.0;
+      }
+
       if (Thr->F < 0.0) Thr->F = 0.0;
       if (Thr->F > Thr->Fmax) Thr->F = Thr->Fmax;
 
@@ -36,20 +44,33 @@ void ThrModel(double ImpulseCmd,double DT,double cm[3],
       Thr->Frc[1] = Thr->F*Thr->A[1];
       Thr->Frc[2] = Thr->F*Thr->A[2];
 
-      for(i=0;i<3;i++) r[i] = Thr->r[i] - cm[i];
+      for(i=0;i<3;i++) r[i] = Thr->PosB[i] - S->B[Thr->Body].cm[i];
       VxV(r,Thr->Frc,Thr->Trq);
 
+      if (S->FlexActive) {
+         FN = &S->B[0].FlexNode[Thr->FlexNode];
+         for(i=0;i<3;i++) {
+            FN->Trq[i] += Thr->Trq[i];
+            FN->Frc[i] += Thr->Frc[i];
+         }
+      }
 }
 /**********************************************************************/
-void WhlModel(double Tcmd,double H,double Hmax,double Tmax, double *Trq)
+void WhlModel(double Tcmd,struct WhlType *W,struct SCType *S)
 {
+      struct FlexNodeType *FN;
+      long i;
 
-      *Trq = Tcmd;
-      if (*Trq < -Tmax) *Trq = -Tmax;
-      if (*Trq >  Tmax) *Trq =  Tmax;
-      if (*Trq < 0.0 && H <= -Hmax) *Trq = 0.0;
-      if (*Trq > 0.0 && H >=  Hmax) *Trq = 0.0;
+      W->Trq = Tcmd;
+      if (W->Trq < -W->Tmax) W->Trq = -W->Tmax;
+      if (W->Trq >  W->Tmax) W->Trq =  W->Tmax;
+      if (W->Trq < 0.0 && W->H <= -W->Hmax) W->Trq = 0.0;
+      if (W->Trq > 0.0 && W->H >=  W->Hmax) W->Trq = 0.0;
 
+      if (S->FlexActive) {
+         FN = &S->B[0].FlexNode[W->FlexNode];
+         for(i=0;i<3;i++) FN->Trq[i] += W->Trq*W->A[i];
+      }
 
 }
 /**********************************************************************/
@@ -79,8 +100,13 @@ void GimbalModel(long DOF,double Rate[3],double Ang[3],
          AngErr = fmod(Ang[i] - AngCmd[i],TwoPi);
          if (AngErr > Pi) AngErr -= TwoPi;
          if (AngErr < -Pi) AngErr += TwoPi;
-         DesiredRate = Limit(RateCmd[i] - AngGain[i]*AngErr,
-                             -MaxRate[i],MaxRate[i]);
+         if (RateGain[i] != 0.0) {
+            DesiredRate = Limit(RateCmd[i] - AngGain[i]/RateGain[i]*AngErr,
+                                -MaxRate[i],MaxRate[i]);
+         }
+         else {
+            DesiredRate = Limit(RateCmd[i],-MaxRate[i],MaxRate[i]);
+         }
          Trq[i] = Limit(-RateGain[i]*(Rate[i]-DesiredRate),
                         -MaxTrq[i],MaxTrq[i]);
       }
@@ -96,7 +122,7 @@ void TranslationalModel(long DOF, double Rate[3], double Pos[3],
 
    for(i=0;i<DOF;i++) {
       PosErr = Pos[i] - PosCmd[i];
-      DesiredRate = Limit(RateCmd[i] - PosGain[i]*PosErr,
+      DesiredRate = Limit(RateCmd[i] - PosGain[i]/RateGain[i]*PosErr,
                           -MaxRate[i],MaxRate[i]);
       Frc[i] = Limit(-RateGain[i]*(Rate[i]-DesiredRate),
                      -MaxFrc[i],MaxFrc[i]);
@@ -116,7 +142,7 @@ void ThrusterPlumeFrcTrq(struct SCType *S)
       double mdot = 0.1; /* WAG */
       double Coef = mdot/(Beta*A1*Pi);
       /* Other variables */
-      struct ThrusterType *T;
+      struct ThrType *T;
       struct BodyType *B;
       struct GeomType *G;
       struct PolyType *P;
@@ -135,7 +161,7 @@ void ThrusterPlumeFrcTrq(struct SCType *S)
                G = &Geom[B->GeomTag];
 
                /* Find thruster location, axis in B */
-               MTxV(S->B[0].CN,T->r,PosThrN);
+               MTxV(S->B[0].CN,T->PosB,PosThrN);
                for(i=0;i<3;i++) PosThrN[i] += S->B[0].pn[i] - B->pn[i];
                MxV(B->CN,PosThrN,PosThrB);
                /* Note that plume axis is opposite T->A */
@@ -192,60 +218,58 @@ void Actuators(struct SCType *S)
 
       long i,j;
       double FrcN[3];
-      struct FSWType *FSW;
+      struct AcType *AC;
       struct JointType *G;
-      struct FswGimType *FG;
+      struct AcJointType *AG;
+      struct ThrType *Thr;
 
-      FSW = &S->FSW;
+      AC = &S->AC;
 
       /* Ideal Actuators */
       for(j=0;j<3;j++) {
-         S->B[0].Frc[j] += FSW->IdealFrc[j];
-         S->B[0].Trq[j] += FSW->IdealTrq[j];
+         S->B[0].Frc[j] += AC->IdealFrc[j];
+         S->B[0].Trq[j] += AC->IdealTrq[j];
       }
       /* Wheels */
       for(i=0;i<S->Nw;i++) {
-         WhlModel(FSW->Twhlcmd[i],
-                  S->Whl[i].H,
-                  S->Whl[i].Hmax,
-                  S->Whl[i].Tmax,
-                 &S->Whl[i].Trq);
+         WhlModel(AC->Whl[i].Tcmd,&S->Whl[i],S);
       }
       /* MTBs */
       for(i=0;i<S->Nmtb;i++){
-         MTBModel(S->bvb,FSW->Mmtbcmd[i],S->MTB[i].Mmax,
+         MTBModel(S->bvb,AC->MTB[i].Mcmd,S->MTB[i].Mmax,
                   S->MTB[i].A,&S->MTB[i].M,
                   S->MTB[i].Trq);
          for(j=0;j<3;j++){
             S->B[0].Trq[j] += S->MTB[i].Trq[j];
          }
       }
-
+      
       /* Gimbal Drives */
-      for(i=0;i<FSW->Ngim;i++) {
+      for(i=0;i<AC->Ng;i++) {
          G = &S->G[i];
-         FG = &FSW->Gim[i];
-         if (FG->IsUnderActiveControl) {
+         AG = &AC->G[i];
+         if (AG->IsUnderActiveControl) {
             /* PD Gimbal Control */
-            GimbalModel(G->RotDOF,FG->Rate,FG->Ang,
-                        FSW->GimCmd[i].Rate,FSW->GimCmd[i].Ang,
-                        FG->RateGain,FG->AngGain,
-                        FG->MaxRate,FG->MaxTrq,G->Trq);
+            GimbalModel(G->RotDOF,AG->AngRate,AG->Ang,
+                        AG->Cmd.AngRate,AG->Cmd.Ang,
+                        AG->AngRateGain,AG->AngGain,
+                        AG->MaxAngRate,AG->MaxTrq,G->Trq);
             /* Ideal Kinematic Gimbal Control */
             for(j=0;j<G->RotDOF;j++) {
-               G->RateCmd[j] = FSW->GimCmd[i].Rate[j];
-               G->AngCmd[j] = FSW->GimCmd[i].Ang[j];
+               G->RateCmd[j] = AG->Cmd.AngRate[j];
+               G->AngCmd[j] = AG->Cmd.Ang[j];
             }
          }
       }
 
       /* Thrusters */
       for(i=0;i<S->Nthr;i++) {
-         ThrModel(FSW->Thrcmd[i],DTSIM,S->B[0].cm,&S->Thr[i]);
-         MTxV(S->B[0].CN,S->Thr[i].Frc,FrcN);
+         Thr = &S->Thr[i];
+         ThrModel(&AC->Thr[i].PulseWidthCmd,DTSIM,Thr,S);
+         MTxV(S->B[Thr->Body].CN,Thr->Frc,FrcN);
          for(j=0;j<3;j++) {
-            S->B[0].Trq[j] += S->Thr[i].Trq[j];
-            S->B[0].Frc[j] += FrcN[j];
+            S->B[Thr->Body].Trq[j] += Thr->Trq[j];
+            S->B[Thr->Body].Frc[j] += FrcN[j];
          }
       }
       if (ThrusterPlumesActive) {

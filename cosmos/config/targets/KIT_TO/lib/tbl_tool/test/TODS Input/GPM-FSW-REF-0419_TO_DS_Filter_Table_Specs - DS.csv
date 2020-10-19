@@ -1,0 +1,696 @@
+GPM FSW DS Destination/Filter Table Definitions,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,DS_Nom,,,,,,,,DS_LEO,,,,,,,,DS_DV,,,,,,,,DS_Safehold,,,,,,,
+,,,,,,,,,,,,SCHK Filter Rate (kbps):,,,,,,,37.96,SCHK Filter Rate (kbps):,,,,,,,14.12,SCHK Filter Rate (kbps):,,,,,,,14.33,SCHK Filter Rate (kbps):,,,,,,,14.08
+,,,,,,,,,,,,Difference,,,,,,,2.04,Difference,,,,,,,1.88,Difference,,,,,,,1.67,Difference,,,,,,,1.92
+,,,,,,,,,,,,Margin:,,,,,,,5.10%,Margin:,,,,,,,4.69%,Margin:,,,,,,,4.16%,Margin:,,,,,,,4.80%
+,,,,,,,,,,,,SCAD Filter Rate (kbps):,,,,,,,15.85,SCAD Filter Rate (kbps):,,,,,,,0.00,SCAD Filter Rate (kbps):,,,,,,,0.00,SCAD Filter Rate (kbps):,,,,,,,0.00
+,,,,,,,,,,,,Storage Time (Mins):,,,,,,,9.54,Storage Time (Mins):,,,,,,,33.24,Storage Time (Mins):,,,,,,,33.25,Storage Time (Mins):,,,,,,,33.23
+342,Sub System,APID Name,APID Type,No=only 1 AB=Both A=PwrSelB=PwrSel,APID (Dec),APID (Hex),MSGID (Hex),Packet Size (Bits),Production Interval (secs),Pkt Type,Nom. Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec
+KEYWORD_ROW,,APID_NAME,,,APID,,,,,,,F1_TYPE,F1_N,F1_X,,F1_O,F1_FILE,,,F2_TYPE,F2_N,F2_X,,F2_O,F2_FILE,,,F3_TYPE,F3_N,F3_X,,F3_O,F3_FILE,,,F4_TYPE,F4_N,F4_X,,F4_O,F4_FILE,,
+1,FSW,cFE Executive Services (ES) HK,Internal,No,0,0x000,0x800,"1,248",5.0,Sync,249.6,Count,1,3,15,0,0,SCHK,83.2,Count,1,12,60,0,0,SCHK,20.8,Count,1,12,60,0,0,SCHK,20.8,Count,1,12,60,0,0,SCHK,20.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+2,FSW,cFE Event Services (EVS) HK,Internal,No,1,0x001,0x801,"2,784",5.0,Sync,556.8,Count,1,3,15,0,0,SCHK,185.6,Count,1,12,60,0,0,SCHK,46.4,Count,1,12,60,0,0,SCHK,46.4,Count,1,12,60,0,0,SCHK,46.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+3,FSW,cFE Software Bus (SB) HK,Internal,No,3,0x003,0x803,320,5.0,Sync,64.0,Count,1,3,15,0,0,SCHK,21.3,Count,1,12,60,0,0,SCHK,5.3,Count,1,12,60,0,0,SCHK,5.3,Count,1,12,60,0,0,SCHK,5.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+4,FSW,cFE Table Services (TBL) HK,Internal,No,4,0x004,0x804,"2,016",5.0,Sync,403.2,Count,1,3,15,0,0,SCHK,134.4,Count,1,12,60,0,0,SCHK,33.6,Count,1,12,60,0,0,SCHK,33.6,Count,1,12,60,0,0,SCHK,33.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+5,FSW,cFE Time Services (TIME) HK,Internal,No,5,0x005,0x805,352,5.0,Sync,70.4,Count,1,3,15,0,0,SCHK,23.5,Count,1,12,60,0,0,SCHK,5.9,Count,1,12,60,0,0,SCHK,5.9,Count,1,12,60,0,0,SCHK,5.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+6,0,cFE Time Services (TIME) DiagTlm,Internal,0,6,0x006,0x806,"1,696",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+7,0,cFE Event Service (EVS) Message Tlm,Internal,0,8,0x008,0x808,"1,344",0.0,Async,0.0,Count,1,1,0,0,1,SCEV,0.0,Count,1,1,0,0,1,SCEV,0.0,Count,1,1,0,0,1,SCEV,0.0,Count,1,1,0,0,1,SCEV,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+8,0,cFE Software Bus (SB) Statistics Tlm,Internal,0,10,0x00A,0x80A,"6,976",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+9,FSW,cFE Executive Service (ES) Application Tlm,Internal,No,11,0x00B,0x80B,"1,600",5.0,Sync,320.0,Count,1,3,15,0,0,SCHK,106.7,Count,1,12,60,0,0,SCHK,26.7,Count,1,12,60,0,0,SCHK,26.7,Count,1,12,60,0,0,SCHK,26.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+10,0,cFE Table Services (TBL) Register Tlm,Internal,0,12,0x00C,0x80C,"1,408",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+11,0,cFE Executive Service (ES) Shell Tlm,Internal,0,15,0x00F,0x80F,608,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+12,0,cFE Executive Service (ES) Memory Stats Tlm,Internal,0,16,0x010,0x810,"1,888",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+13,RF,S-Comm A Xponder A HK,External,AB,110,0x06E,0x86E,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+14,RF,S-Band Comm. Card A HK,External,AB,111,0x06F,0x86F,"2,192",1.0,Sync,2192.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+15,RF,S-Comm A Xponder B HK,External,AB,113,0x071,0x871,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+16,0,S-Comm to SBC Backup Data Frame,External,0,120,0x078,0x878,"2,144",0.0,Async,0.0,Count,1,1,0,0,3,SCHR,0.0,Count,1,1,0,0,3,SCHR,0.0,Count,1,1,0,0,3,SCHR,0.0,Count,1,1,0,0,3,SCHR,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+17,RF,S-Band Comm. Card B HK,External,AB,121,0x079,0x879,"2,192",1.0,Sync,2192.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+18,RF,S-Comm B Xponder A HK,External,AB,122,0x07A,0x87A,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+19,RF,S-Comm B Xponder B HK,External,AB,123,0x07B,0x87B,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+20,FSW,Telemetry Output (TO) HK (lab),Internal,No,128,0x080,0x880,128,5.0,Sync,25.6,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+21,0,Telemetry Output (TO) Data Types (lab),Internal,0,129,0x081,0x881,70,0.0,Async,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+22,FSW,Command Ingest (CI) HK (lab),Internal,No,132,0x084,0x884,224,5.0,Sync,44.8,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+23,FSW,Memory Manager (MM) HK,Internal,No,135,0x087,0x887,736,5.0,Sync,147.2,Count,1,3,15,0,0,SCHK,49.1,Count,1,6,30,0,0,SCHK,24.5,Count,1,6,30,0,0,SCHK,24.5,Count,1,12,60,0,0,SCHK,12.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+24,FSW,File Manager (FM) HK,Internal,No,138,0x08A,0x88A,176,5.0,Sync,35.2,Count,1,3,15,0,0,SCHK,11.7,Count,1,6,30,0,0,SCHK,5.9,Count,1,6,30,0,0,SCHK,5.9,Count,1,12,60,0,0,SCHK,2.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+25,0,File Manager (FM) File Stats Tlm,Internal,0,139,0x08B,0x88B,736,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+26,0,File Manager (FM) Directory Listing Tlm,Internal,0,140,0x08C,0x88C,"12,224",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+27,0,File Manager (FM) Open File Stats Tlm,Internal,0,141,0x08D,0x88D,"33,728",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+28,0,File Manager (FM) Free Space Tlm,Internal,0,142,0x08E,0x88E,"2,400",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+29,GMI,GMI Housekeeping #1,External,No,144,0x090,0x890,"4,096",2.0,Sync,2048.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+30,GMI,GMI Housekeeping #2,External,No,145,0x091,0x891,"4,096",2.0,Sync,2048.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+31,GMI,GMI Science,External,No,146,0x092,0x892,"7,168",0.2,Sync,35840.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+32,GMI,GMI Memory Dump,External,No,148,0x094,0x894,"7,168",0.2,Sync,35840.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+33,GMI,GMI Calibration Data,External,No,149,0x095,0x895,"7,168",0.2,Sync,35840.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+34,FSW,Scheduler (SCH) HK  ,Internal,No,153,0x099,0x899,544,5.0,Sync,108.8,Count,1,3,15,0,0,SCHK,36.3,Count,1,6,30,0,0,SCHK,18.1,Count,1,6,30,0,0,SCHK,18.1,Count,1,12,60,0,0,SCHK,9.1
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+35,0,Scheduler (SCH) Diag,Internal,0,154,0x09A,0x89A,"18,096",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+36,FSW,Housekeeping (HK) HK,Internal,No,155,0x09B,0x89B,192,5.0,Sync,38.4,Count,1,3,15,0,0,SCHK,12.8,Count,1,6,30,0,0,SCHK,6.4,Count,1,6,30,0,0,SCHK,6.4,Count,1,12,60,0,0,SCHK,3.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+37,FSW,Housekeeping (HK) Combined1 - Xpndr,Internal,No,156,0x09C,0x89C,448,5.0,Sync,89.6,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+38,FSW,Housekeeping (HK) Combined2 - CDH + MAC A,Internal,No,157,0x09D,0x89D,480,5.0,Sync,96.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+39,FSW,Housekeeping (HK) Combined3 - CDH FSW HS,Internal,No,158,0x09E,0x89E,"3,384",5.0,Sync,676.8,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+40,FSW,Housekeeping (HK) Combined4 - GNC FSW HS,Internal,No,159,0x09F,0x89F,352,5.0,Sync,70.4,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+41,FSW,Housekeeping (HK) Combined5 - GNC CL DV,Internal,No,160,0x0A0,0x8A0,904,0.1,Sync,9040.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,10,1,0,0,SCHK,904.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+42,FSW,Housekeeping (HK) Combined6 - CDH + MAC B,Internal,No,161,0x0A1,0x8A1,480,5.0,Sync,96.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+43,0,Spare,Internal,0,162,0x0A2,0x8A2,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+44,0,Spare,Internal,0,163,0x0A3,0x8A3,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+45,FSW,Checksum (CS) HK,Internal,No,164,0x0A4,0x8A4,544,5.0,Sync,108.8,Count,1,3,15,0,0,SCHK,36.3,Count,1,6,30,0,0,SCHK,18.1,Count,1,6,30,0,0,SCHK,18.1,Count,1,12,60,0,0,SCHK,9.1
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+46,FSW,Limit Checker (LC) HK,Internal,No,167,0x0A7,0x8A7,"1,344",5.0,Sync,268.8,Count,1,2,10,0,0,SCHK,134.4,Count,1,3,15,0,0,SCHK,89.6,Count,1,3,15,0,0,SCHK,89.6,Count,1,3,15,0,0,SCHK,89.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+47,FSW,Stored Command (SC) HK,Internal,No,170,0x0AA,0x8AA,"1,120",5.0,Sync,224.0,Count,1,2,10,0,0,SCHK,112.0,Count,1,3,15,0,0,SCHK,74.7,Count,1,3,15,0,0,SCHK,74.7,Count,1,3,15,0,0,SCHK,74.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+48,FSW,Health and Safety (HS) HK,Internal,No,173,0x0AD,0x8AD,"1,632",5.0,Sync,326.4,Count,1,2,10,0,0,SCHK,163.2,Count,1,3,15,0,0,SCHK,108.8,Count,1,3,15,0,0,SCHK,108.8,Count,1,3,15,0,0,SCHK,108.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+49,FSW,Health and Safety (HS) TEP HK,Internal,No,174,0x0AE,0x8AE,"9,760",1.0,Sync,9760.0,Count,1,15,15,0,0,SCHK,650.7,Count,1,30,30,0,0,SCHK,325.3,Count,1,30,30,0,0,SCHK,325.3,Count,1,30,30,0,0,SCHK,325.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+50,FSW,CCSDS File Delivery Protocl (CF) HK,Internal,No,176,0x0B0,0x8B0,"3,360",5.0,Sync,672.0,Count,1,3,15,0,0,SCHK,224.0,Count,1,6,30,0,0,SCHK,112.0,Count,1,6,30,0,0,SCHK,112.0,Count,1,12,60,0,0,SCHK,56.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+51,0,CF Transaction HK,Internal,0,177,0x0B1,0x8B1,"3,552",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+52,0,CF Config HK,Internal,0,179,0x0B3,0x8B3,"2,880",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+53,FSW,Data Storage (DS) HK,Internal,No,184,0x0B8,0x8B8,"3,776",5.0,Sync,755.2,Count,1,3,15,0,0,SCHK,251.7,Count,1,6,30,0,0,SCHK,125.9,Count,1,6,30,0,0,SCHK,125.9,Count,1,12,60,0,0,SCHK,62.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+54,FSW,Memory Dwell (MD) HK,Internal,No,187,0x0BB,0x8BB,512,5.0,Sync,102.4,Count,1,3,15,0,0,SCHK,34.1,Count,1,6,30,0,0,SCHK,17.1,Count,1,6,30,0,0,SCHK,17.1,Count,1,12,60,0,0,SCHK,8.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+55,FSW,MD Pkt1,Internal,No,188,0x0BC,0x8BC,"2,208",0.1,Sync,44160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+56,FSW,MD Pkt2,Internal,No,189,0x0BD,0x8BD,"2,208",0.1,Sync,44160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+57,FSW,MD Pkt3,Internal,No,190,0x0BE,0x8BE,"2,208",0.1,Sync,44160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+58,FSW,MD Pkt4,Internal,No,191,0x0BF,0x8BF,"2,208",0.1,Sync,44160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+59,IRU,AGS IRU A,Internal,No,250,0x0FA,0x8FA,176,1.0,Sync,176.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+60,FSW,AGS ST A,Internal,No,251,0x0FB,0x8FB,288,0.1,Sync,2880.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+61,FSW,AGS ATB A,Internal,No,252,0x0FC,0x8FC,384,1.0,Sync,384.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+62,IRU,AGS IRU B,Internal,No,253,0x0FD,0x8FD,176,1.0,Sync,176.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+63,FSW,AGS ST B,Internal,No,254,0x0FE,0x8FE,288,0.1,Sync,2880.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+64,FSW,AGS ATB B,Internal,No,255,0x0FF,0x8FF,384,1.0,Sync,384.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+65,0,Spare,Internal,0,400,0x190,0x990,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+66,0,Spare,Internal,0,401,0x191,0x991,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+67,0,Spare,Internal,0,402,0x192,0x992,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+68,0,Spare,Internal,0,403,0x193,0x993,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+69,0,Spare,Internal,0,404,0x194,0x994,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+70,0,Spare,Internal,0,405,0x195,0x995,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+71,0,Spare,Internal,0,406,0x196,0x996,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+72,0,Spare,Internal,0,407,0x197,0x997,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+73,0,Spare,Internal,0,408,0x198,0x998,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+74,0,Spare,Internal,0,409,0x199,0x999,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+75,FSW,Spacewire (SW) EOP HK,Internal,No,410,0x19A,0x99A,384,5.0,Sync,76.8,Count,1,12,60,0,0,SCHK,6.4,Count,1,12,60,0,0,SCHK,6.4,Count,1,12,60,0,0,SCHK,6.4,Count,1,12,60,0,0,SCHK,6.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+76,FSW,Spacewire (SW) S-Comm HK,Internal,No,411,0x19B,0x99B,"7,936",5.0,Sync,1587.2,Count,1,12,60,0,0,SCHK,132.3,Count,1,12,60,0,0,SCHK,132.3,Count,1,12,60,0,0,SCHK,132.3,Count,1,12,60,0,0,SCHK,132.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+77,FSW,File Commanding (FC) HK,Internal,No,412,0x19C,0x99C,688,5.0,Sync,137.6,Count,1,3,15,0,0,SCHK,45.9,Count,1,6,30,0,0,SCHK,22.9,Count,1,6,30,0,0,SCHK,22.9,Count,1,12,60,0,0,SCHK,11.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+78,FSW,Housekeeping Recorder (HR) HK,Internal,No,413,0x19D,0x99D,176,5.0,Sync,35.2,Count,1,3,15,0,0,SCHK,11.7,Count,1,6,30,0,0,SCHK,5.9,Count,1,6,30,0,0,SCHK,5.9,Count,1,12,60,0,0,SCHK,2.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+79,FSW,Time Manager DIO Latch HK,Internal,No,414,0x19E,0x99E,640,5.0,Sync,128.0,Count,1,1,5,0,0,SCHK,128.0,Count,1,1,5,0,0,SCHK,128.0,Count,1,1,5,0,0,SCHK,128.0,Count,1,1,5,0,0,SCHK,128.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+80,FSW,Time Manager DownSync HK,Internal,No,415,0x19F,0x99F,352,128.0,Sync,2.8,Count,1,1,128,0,0,SCHK,2.8,Count,1,1,128,0,0,SCHK,2.8,Count,1,1,128,0,0,SCHK,2.8,Count,1,1,128,0,0,SCHK,2.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+81,FSW,Command Ingest (CI) HK,Internal,No,416,0x1A0,0x9A0,736,5.0,Sync,147.2,Count,1,2,10,0,0,SCHK,73.6,Count,1,3,15,0,0,SCHK,49.1,Count,1,3,15,0,0,SCHK,49.1,Count,1,3,15,0,0,SCHK,49.1
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+82,FSW,Telemetry Output (TO) HK,Internal,No,417,0x1A1,0x9A1,992,5.0,Sync,198.4,Count,1,2,10,0,0,SCHK,99.2,Count,1,3,15,0,0,SCHK,66.1,Count,1,3,15,0,0,SCHK,66.1,Count,1,3,15,0,0,SCHK,66.1
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+83,FSW,DPR Instrument Manager (DM) Tlm,Internal,No,418,0x1A2,0x9A2,656,5.0,Sync,131.2,Count,1,3,15,0,0,SCHK,43.7,Count,1,12,60,0,0,SCHK,10.9,Count,1,12,60,0,0,SCHK,10.9,Count,1,12,60,0,0,SCHK,10.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+84,FSW,GMI Instrument Manager (GM) Tlm,Internal,No,419,0x1A3,0x9A3,464,5.0,Sync,92.8,Count,1,3,15,0,0,SCHK,30.9,Count,1,12,60,0,0,SCHK,7.7,Count,1,12,60,0,0,SCHK,7.7,Count,1,12,60,0,0,SCHK,7.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+85,FSW,Memory Scrub (MS) HK,Internal,No,420,0x1A4,0x9A4,928,5.0,Sync,185.6,Count,1,3,15,0,0,SCHK,61.9,Count,1,6,30,0,0,SCHK,30.9,Count,1,6,30,0,0,SCHK,30.9,Count,1,12,60,0,0,SCHK,15.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+86,FSW,Power and Support (PS) HK,Internal,No,421,0x1A5,0x9A5,"2,368",5.0,Sync,473.6,Count,1,3,15,0,0,SCHK,157.9,Count,1,6,30,0,0,SCHK,78.9,Count,1,6,30,0,0,SCHK,78.9,Count,1,12,60,0,0,SCHK,39.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+87,FSW,Recorder Manager (RM) HK,Internal,No,422,0x1A6,0x9A6,832,5.0,Sync,166.4,Count,1,3,15,0,0,SCHK,55.5,Count,1,6,30,0,0,SCHK,27.7,Count,1,6,30,0,0,SCHK,27.7,Count,1,12,60,0,0,SCHK,13.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+88,FSW,SpaceWire (SW) HK,Internal,No,423,0x1A7,0x9A7,"1,536",5.0,Sync,307.2,Count,1,2,10,0,0,SCHK,153.6,Count,1,3,15,0,0,SCHK,102.4,Count,1,3,15,0,0,SCHK,102.4,Count,1,3,15,0,0,SCHK,102.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+89,FSW,External Bus (XB) HK,Internal,No,424,0x1A8,0x9A8,"1,360",5.0,Sync,272.0,Count,1,2,10,0,0,SCHK,136.0,Count,1,3,15,0,0,SCHK,90.7,Count,1,3,15,0,0,SCHK,90.7,Count,1,3,15,0,0,SCHK,90.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+90,0,Telemetry Output (TO) Data Types,Internal,0,425,0x1A9,0x9A9,640,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+91,0,XB Diagnostic Telemetry,Internal,0,426,0x1AA,0x9AA,928,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+92,0,DM Diagnostic Telemetry,Internal,0,427,0x1AB,0x9AB,"6,560",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+93,0,GM Diagnostic Telemetry,Internal,0,428,0x1AC,0x9AC,"4,096",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+94,FSW,SDR Housekeeping Telemetry Packet,Internal,No,429,0x1AD,0x9AD,"2,976",5.0,Sync,595.2,Count,1,3,15,0,0,SCHK,198.4,Count,1,6,30,0,0,SCHK,99.2,Count,1,6,30,0,0,SCHK,99.2,Count,1,12,60,0,0,SCHK,49.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+95,0,SDR Diagnostic Telemetry Packet,Internal,0,430,0x1AE,0x9AE,"4,960",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+96,0,SDR Bad Memory Map Diagnostic Packet,Internal,0,431,0x1AF,0x9AF,"4,192",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+97,FSW,RM SDB Diagnostic Packet,Internal,No,432,0x1B0,0x9B0,512,5.0,Sync,102.4,Count,1,30,150,0,0,SCHK,3.4,Count,1,60,300,0,0,SCHK,1.7,Count,1,1,5,0,0,SCHK,102.4,Count,1,1,5,0,0,SCHK,102.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+98,FSW,Time Manager HK,Internal,No,433,0x1B1,0x9B1,384,5.0,Sync,76.8,Count,1,3,15,0,0,SCHK,25.6,Count,1,6,30,0,0,SCHK,12.8,Count,1,6,30,0,0,SCHK,12.8,Count,1,12,60,0,0,SCHK,6.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+99,FSW,Time Manager Diag HK,Internal,No,434,0x1B2,0x9B2,576,5.0,Sync,115.2,Count,1,6,30,0,0,SCHK,19.2,Count,1,12,60,0,0,SCHK,9.6,Count,1,12,60,0,0,SCHK,9.6,Count,1,12,60,0,0,SCHK,9.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+100,ACS,CL SA Diag Tlm,Internal,No,435,0x1B3,0x9B3,"1,344",0.1,Sync,13440.0,Count,1,50,5,0,0,SCHK,268.8,Count,1,100,10,0,0,SCHK,134.4,Count,0,0,0,0,0,SCHK,0.0,Count,1,150,15,0,0,SCHK,89.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+101,ACS,CL HGA Diag Tlm,Internal,No,436,0x1B4,0x9B4,"1,344",0.1,Sync,13440.0,Count,1,50,5,0,0,SCHK,268.8,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+102,ACS,CL Target Diagnostic Generation,Internal,No,437,0x1B5,0x9B5,480,0.1,Sync,4800.0,Count,1,50,5,0,0,SCHK,96.0,Count,1,100,10,0,0,SCHK,48.0,Count,1,150,15,0,0,SCHK,32.0,Count,1,150,15,0,0,SCHK,32.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+103,0,Spare,Internal,0,438,0x1B6,0x9B6,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+104,0,Spare,Internal,0,439,0x1B7,0x9B7,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+105,0,Spare,Internal,0,440,0x1B8,0x9B8,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+106,0,Spare,Internal,0,441,0x1B9,0x9B9,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+107,0,Spare,Internal,0,442,0x1BA,0x9BA,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+108,0,Spare,Internal,0,443,0x1BB,0x9BB,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+109,0,Spare,Internal,0,444,0x1BC,0x9BC,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+110,0,Spare,Internal,0,445,0x1BD,0x9BD,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+111,0,Spare,Internal,0,446,0x1BE,0x9BE,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+112,0,Spare,Internal,0,447,0x1BF,0x9BF,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+113,0,Spare,Internal,0,448,0x1C0,0x9C0,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+114,ACS,SD SS/TAM Diagnostic Telemetry,Internal,No,449,0x1C1,0x9C1,"1,056",0.1,Sync,10560.0,Count,1,50,5,0,0,SCHK,211.2,Count,1,50,5,0,0,SCHK,211.2,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,211.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+115,ACS,SD KF Diagnostic Telemetry,Internal,No,450,0x1C2,0x9C2,"2,336",0.1,Sync,23360.0,Count,1,20,2,0,0,SCHK,1168.0,Count,1,100,10,0,0,SCHK,233.6,Count,0,0,0,0,0,SCHK,0.0,Count,1,100,10,0,0,SCHK,233.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+116,ACS,SD Momentum Telemetry,Internal,No,451,0x1C3,0x9C3,"1,024",0.1,Sync,10240.0,Count,1,50,5,0,0,SCHK,204.8,Count,1,50,5,0,0,SCHK,204.8,Count,1,50,5,0,0,SCHK,204.8,Count,1,50,5,0,0,SCHK,204.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+117,ACS,CG MTB Diag Tlm,Internal,No,452,0x1C4,0x9C4,480,0.1,Sync,4800.0,Count,1,50,5,0,0,SCHK,96.0,Count,1,100,10,0,0,SCHK,48.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,100,10,0,0,SCHK,48.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+118,ACS,CG RW Diag Tlm,Internal,No,453,0x1C5,0x9C5,"3,072",0.1,Sync,30720.0,Count,1,50,5,0,0,SCHK,614.4,Count,1,100,10,0,0,SCHK,307.2,Count,0,0,0,0,0,SCHK,0.0,Count,1,100,10,0,0,SCHK,307.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+119,ACS,CG SA Diag Tlm,Internal,No,454,0x1C6,0x9C6,"1,312",0.1,Sync,13120.0,Count,1,50,5,0,0,SCHK,262.4,Count,1,100,10,0,0,SCHK,131.2,Count,0,0,0,0,0,SCHK,0.0,Count,1,150,15,0,0,SCHK,87.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+120,ACS,CG HGA Diag Tlm,Internal,No,455,0x1C7,0x9C7,"1,312",0.1,Sync,13120.0,Count,1,50,5,0,0,SCHK,262.4,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+121,ACS,CG Prop Diag Tlm,Internal,No,456,0x1C8,0x9C8,"1,152",0.1,Sync,11520.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,2,0,0,SCHK,576.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+122,ACS,DI HK,Internal,No,457,0x1C9,0x9C9,320,1.0,Sync,320.0,Count,1,1,1,0,0,SCHK,320.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+123,ACS,OM HK,Internal,No,458,0x1CA,0x9CA,320,1.0,Sync,320.0,Count,1,1,1,0,0,SCHK,320.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+124,ACS,SD HK,Internal,No,459,0x1CB,0x9CB,320,1.0,Sync,320.0,Count,1,1,1,0,0,SCHK,320.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+125,ACS,CL HK,Internal,No,460,0x1CC,0x9CC,320,1.0,Sync,320.0,Count,1,1,1,0,0,SCHK,320.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+126,ACS,CG HK,Internal,No,461,0x1CD,0x9CD,320,1.0,Sync,320.0,Count,1,1,1,0,0,SCHK,320.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0,Count,1,5,5,0,0,SCHK,64.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+127,ACS,DI FDC Tlm,Internal,No,462,0x1CE,0x9CE,192,0.1,Sync,1920.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+128,ACS,OM FDC Tlm,Internal,No,463,0x1CF,0x9CF,192,0.1,Sync,1920.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+129,ACS,SD FDC Tlm,Internal,No,464,0x1D0,0x9D0,192,0.1,Sync,1920.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+130,ACS,CL FDC Tlm,Internal,No,465,0x1D1,0x9D1,192,0.1,Sync,1920.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+131,ACS,CG FDC Tlm,Internal,No,466,0x1D2,0x9D2,192,0.1,Sync,1920.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+132,ACS,DI Downlink Telemetry,Internal,No,467,0x1D3,0x9D3,"1,312",0.1,Sync,13120.0,Count,1,10,1,0,0,SCHK,1312.0,Count,1,100,10,0,0,SCHK,131.2,Count,1,100,10,0,0,SCHK,131.2,Count,1,100,10,0,0,SCHK,131.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+133,ACS,OM Downllink Telemetry,Internal,No,468,0x1D4,0x9D4,384,0.1,Sync,3840.0,Count,1,50,5,0,0,SCHK,76.8,Count,1,100,10,0,0,SCHK,38.4,Count,1,300,30,0,0,SCHK,12.8,Count,1,100,10,0,0,SCHK,38.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+134,ACS,SD Downlink Telemetry,Internal,No,469,0x1D5,0x9D5,"1,344",0.1,Sync,13440.0,Count,1,10,1,0,0,SCHK,1344.0,Count,1,100,10,0,0,SCHK,134.4,Count,1,50,5,0,0,SCHK,268.8,Count,1,150,15,0,0,SCHK,89.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+135,ACS,CL Downlink Telemetry,Internal,No,470,0x1D6,0x9D6,"1,632",0.1,Sync,16320.0,Count,1,10,1,0,0,SCHK,1632.0,Count,1,100,10,0,0,SCHK,163.2,Count,1,50,5,0,0,SCHK,326.4,Count,1,100,10,0,0,SCHK,163.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+136,ACS,CG Downlink Telemetry,Internal,No,471,0x1D7,0x9D7,576,0.1,Sync,5760.0,Count,1,10,1,0,0,SCHK,576.0,Count,1,100,10,0,0,SCHK,57.6,Count,1,150,15,0,0,SCHK,38.4,Count,1,100,10,0,0,SCHK,57.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+137,ACS,DI to OM Internal Telemetry,Internal,No,472,0x1D8,0x9D8,640,0.1,Sync,6400.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+138,ACS,OM to SD Internal Telemetry,Internal,No,473,0x1D9,0x9D9,"1,856",0.1,Sync,18560.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+139,ACS,SD to CL Internal Telemetry,Internal,No,474,0x1DA,0x9DA,"5,120",0.1,Sync,51200.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+140,ACS,CL to CG Internal Telemetry,Internal,No,475,0x1DB,0x9DB,"3,008",0.1,Sync,30080.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+141,ATB,ATB A Raw Thermal Telemetry,External,AB,477,0x1DD,0x9DD,448,1.0,Sync,448.0,Count,1,15,15,0,0,SCHK,29.9,Count,1,15,15,0,0,SCHK,29.9,Count,1,5,5,0,0,SCHK,89.6,Count,1,30,30,0,0,SCHK,14.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+142,ATB,ATB A Raw Position Telemetry,External,AB,478,0x1DE,0x9DE,400,1.0,Sync,400.0,Count,1,30,30,0,0,SCHK,13.3,Count,1,1,1,0,0,SCHK,400.0,Count,1,30,30,0,0,SCHK,13.3,Count,1,60,60,0,0,SCHK,6.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+143,ATB,ATB B Raw Thermal Telemetry,External,AB,479,0x1DF,0x9DF,448,1.0,Sync,448.0,Count,1,15,15,0,0,SCHK,29.9,Count,1,15,15,0,0,SCHK,29.9,Count,1,5,5,0,0,SCHK,89.6,Count,1,30,30,0,0,SCHK,14.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+144,ATB,ATB B Raw Position Telemetry,External,AB,480,0x1E0,0x9E0,400,1.0,Sync,400.0,Count,1,30,30,0,0,SCHK,13.3,Count,1,1,1,0,0,SCHK,400.0,Count,1,30,30,0,0,SCHK,13.3,Count,1,60,60,0,0,SCHK,6.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+145,IRU,IRU A BIT Raw Telemetry,External,A,483,0x1E3,0x9E3,304,1.0,Sync,304.0,Count,1,5,5,0,0,SCHK,60.8,Count,1,30,30,0,0,SCHK,10.1,Count,1,30,30,0,0,SCHK,10.1,Count,1,30,30,0,0,SCHK,10.1
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+146,IRU,IRU B BIT Raw Telemetry,External,B,484,0x1E4,0x9E4,304,1.0,Sync,304.0,Count,1,5,5,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+147,Prop,Prop Card A1 Raw Telemetry,External,A,485,0x1E5,0x9E5,336,0.1,Sync,3360.0,Count,1,600,60,0,0,SCHK,5.6,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,67.2,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+148,Prop,Prop Card A2 Raw Telemetry,External,A,486,0x1E6,0x9E6,336,0.1,Sync,3360.0,Count,1,600,60,0,0,SCHK,5.6,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,67.2,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+149,Prop,Prop Card B1 Raw Telemetry,External,B,487,0x1E7,0x9E7,336,0.1,Sync,3360.0,Count,1,600,60,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+150,Prop,Prop Card B2 Raw Telemetry,External,B,488,0x1E8,0x9E8,336,0.1,Sync,3360.0,Count,1,600,60,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+151,MCE,HGA MCE A Raw Gimbal Telemetry,External,A,489,0x1E9,0x9E9,544,0.1,Sync,5440.0,Count,1,10,1,0,0,SCHK,544.0,Count,1,50,5,0,0,SCHK,108.8,Count,0,0,0,0,0,SCHK,0.0,Count,1,100,10,0,0,SCHK,54.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+152,IRU,IRU A Raw Telemetry,External,A,490,0x1EA,0x9EA,352,0.1,Sync,3520.0,Count,1,10,1,0,0,SCHK,352.0,Count,1,50,5,0,0,SCHK,70.4,Count,1,50,5,0,0,SCHK,70.4,Count,1,50,5,0,0,SCHK,70.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+153,RW,RW Raw Telemetry,External,A,491,0x1EB,0x9EB,"1,328",0.1,Sync,13280.0,Count,1,10,1,0,0,SCHK,1328.0,Count,1,50,5,0,0,SCHK,265.6,Count,1,50,5,0,0,SCHK,265.6,Count,1,50,5,0,0,SCHK,265.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+154,ATB,ATB A Raw MTB/SS/TAM Telemetry,External,AB,492,0x1EC,0x9EC,688,0.1,Sync,6880.0,Count,1,10,1,0,0,SCHK,688.0,Count,1,50,5,0,0,SCHK,137.6,Count,1,50,5,0,0,SCHK,137.6,Count,1,50,5,0,0,SCHK,137.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+155,ST,Star Tracker A Raw Quaternion Telemetry,External,AB,494,0x1EE,0x9EE,608,0.1,Sync,6080.0,Count,1,10,1,0,0,SCHK,608.0,Count,1,150,15,0,0,SCHK,40.5,Count,1,150,15,0,0,SCHK,40.5,Count,1,150,15,0,0,SCHK,40.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+156,ACS,DI to SD Internal Telemetry,External,No,495,0x1EF,0x9EF,"2,816",0.1,Sync,28160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+157,MCE,SA MCE A Raw Gimbal Telemetry,External,A,496,0x1F0,0x9F0,544,0.1,Sync,5440.0,Count,1,10,1,0,0,SCHK,544.0,Count,1,50,5,0,0,SCHK,108.8,Count,1,150,15,0,0,SCHK,36.3,Count,1,150,15,0,0,SCHK,36.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+158,Deploy,Deploy Card A1 Raw Telemetry,External,AB,500,0x1F4,0x9F4,240,1.0,Sync,240.0,Count,1,60,60,0,0,SCHK,4.0,Count,1,5,5,0,0,SCHK,48.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+159,Deploy,Deploy Card A2 Raw Telemetry,External,AB,501,0x1F5,0x9F5,240,1.0,Sync,240.0,Count,1,60,60,0,0,SCHK,4.0,Count,1,5,5,0,0,SCHK,48.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+160,Deploy,Deploy Card B1 Raw Telemetry,External,AB,502,0x1F6,0x9F6,240,1.0,Sync,240.0,Count,1,60,60,0,0,SCHK,4.0,Count,1,5,5,0,0,SCHK,48.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+161,Deploy,Deploy Card B2 Raw Telemetry,External,AB,503,0x1F7,0x9F7,240,1.0,Sync,240.0,Count,1,60,60,0,0,SCHK,4.0,Count,1,5,5,0,0,SCHK,48.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+162,MCE,HGA MCE B Raw Gimbal Telemetry,External,B,505,0x1F9,0x9F9,544,0.1,Sync,5440.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+163,IRU,IRU B Raw Rate Data,External,B,506,0x1FA,0x9FA,352,0.1,Sync,3520.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+164,MCE,SA MCE B Raw Gimbal Data,External,B,507,0x1FB,0x9FB,544,0.1,Sync,5440.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+165,ATB,ATB B Raw MTB/SS/TAM Telemetry,External,AB,508,0x1FC,0x9FC,688,0.1,Sync,6880.0,Count,1,10,1,0,0,SCHK,688.0,Count,1,50,5,0,0,SCHK,137.6,Count,1,50,5,0,0,SCHK,137.6,Count,1,50,5,0,0,SCHK,137.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+166,ST,Star Tracker B Raw Quaternion Data,External,AB,510,0x1FE,0x9FE,608,0.1,Sync,6080.0,Count,1,10,1,0,0,SCHK,608.0,Count,1,150,15,0,0,SCHK,40.5,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+167,CDH,MAC A HK Telemetry,External,A,512,0x200,0xA00,"5,376",1.0,Sync,5376.0,Count,1,30,30,0,0,SCHK,179.2,Count,1,30,30,0,0,SCHK,179.2,Count,1,30,30,0,0,SCHK,179.2,Count,1,30,30,0,0,SCHK,179.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+168,0,MAC A Diagnostic Telemetry,External,0,513,0x201,0xA01,"5,376",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+169,CDH,MAC B HK Telemetry,External,B,514,0x202,0xA02,"5,376",1.0,Sync,5376.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+170,0,MAC B Diagnostic Telemetry,External,0,515,0x203,0xA03,"5,376",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+171,ATB,ATB A HK Telemetry,External,AB,516,0x204,0xA04,432,1.0,Sync,432.0,Count,1,15,15,0,0,SCHK,28.8,Count,1,30,30,0,0,SCHK,14.4,Count,1,30,30,0,0,SCHK,14.4,Count,1,30,30,0,0,SCHK,14.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+172,ATB,ATB A FPGA HK Telemetry,External,AB,517,0x205,0xA05,176,1.0,Sync,176.0,Count,1,30,30,0,0,SCHK,5.9,Count,1,30,30,0,0,SCHK,5.9,Count,1,30,30,0,0,SCHK,5.9,Count,1,30,30,0,0,SCHK,5.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+173,ATB,ATB A Voltage (test) Telemetry,External,AB,518,0x206,0xA06,144,1.0,Sync,144.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+174,ATB,ATB A DAC (test) Telemetry,External,AB,519,0x207,0xA07,160,1.0,Sync,160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+175,ATB,ATB B HK Telemetry,External,AB,521,0x209,0xA09,432,1.0,Sync,432.0,Count,1,15,15,0,0,SCHK,28.8,Count,1,30,30,0,0,SCHK,14.4,Count,1,30,30,0,0,SCHK,14.4,Count,1,30,30,0,0,SCHK,14.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+176,ATB,ATB B FPGA HK Telemetry,External,AB,522,0x20A,0xA0A,176,1.0,Sync,176.0,Count,1,30,30,0,0,SCHK,5.9,Count,1,30,30,0,0,SCHK,5.9,Count,1,30,30,0,0,SCHK,5.9,Count,1,30,30,0,0,SCHK,5.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+177,ATB,ATB B Voltage (test) Telemetry,External,AB,523,0x20B,0xA0B,144,1.0,Sync,144.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+178,ATB,ATB B DAC (test) Telemetry,External,AB,524,0x20C,0xA0C,160,1.0,Sync,160.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+179,0,Raw 1553 Read,External,0,525,0x20D,0xA0D,"2,176",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+180,MCE,SA MCE A HK Telemetry,External,A,528,0x210,0xA10,352,1.0,Sync,352.0,Count,1,15,15,0,0,SCHK,23.5,Count,1,30,30,0,0,SCHK,11.7,Count,1,30,30,0,0,SCHK,11.7,Count,1,30,30,0,0,SCHK,11.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+181,MCE,SA MCE B HK Telemetry,External,B,529,0x211,0xA11,352,1.0,Sync,352.0,Count,1,15,15,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+182,MCE,HGA MCE A HK Telemetry,External,A,531,0x213,0xA13,352,1.0,Sync,352.0,Count,1,15,15,0,0,SCHK,23.5,Count,1,30,30,0,0,SCHK,11.7,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+183,MCE,HGA MCE B HK Telemetry,External,B,532,0x214,0xA14,352,1.0,Sync,352.0,Count,1,15,15,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+184,PWR,PSE A Analog HK Telemetry,External,AB,534,0x216,0xA16,"3,584",1.0,Sync,3584.0,Count,1,1,1,0,0,SCHK,3584.0,Count,1,5,5,0,0,SCHK,716.8,Count,1,5,5,0,0,SCHK,716.8,Count,1,5,5,0,0,SCHK,716.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+185,PWR,PSE A FDC HK Telemetry,External,AB,535,0x217,0xA17,"2,112",1.0,Sync,2112.0,Count,1,2,2,0,0,SCHK,1056.0,Count,1,15,15,0,0,SCHK,140.8,Count,1,15,15,0,0,SCHK,140.8,Count,1,15,15,0,0,SCHK,140.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+186,PWR,PSE A Debug HK Telemetry,External,AB,536,0x218,0xA18,"5,248",1.0,Sync,5248.0,Count,1,30,30,0,0,SCHK,174.9,Count,1,60,60,0,0,SCHK,87.5,Count,1,60,60,0,0,SCHK,87.5,Count,1,60,60,0,0,SCHK,87.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+187,PWR,PSE A Overview HK Telemetry,External,AB,537,0x219,0xA19,496,1.0,Sync,496.0,Count,1,1,1,0,0,SCHK,496.0,Count,1,1,1,0,0,SCHK,496.0,Count,1,1,1,0,0,SCHK,496.0,Count,1,1,1,0,0,SCHK,496.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+188,PWR,PSE B Analog HK Telemetry,External,AB,538,0x21A,0xA1A,"3,584",1.0,Sync,3584.0,Count,1,2,2,0,0,SCHK,1792.0,Count,1,15,15,0,0,SCHK,238.9,Count,1,15,15,0,0,SCHK,238.9,Count,1,15,15,0,0,SCHK,238.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+189,PWR,PSE B FDC HK Telemetry,External,AB,539,0x21B,0xA1B,"2,112",1.0,Sync,2112.0,Count,1,5,5,0,0,SCHK,422.4,Count,1,15,15,0,0,SCHK,140.8,Count,1,15,15,0,0,SCHK,140.8,Count,1,15,15,0,0,SCHK,140.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+190,PWR,PSE B Debug HK Telemetry,External,AB,540,0x21C,0xA1C,"5,248",1.0,Sync,5248.0,Count,1,60,60,0,0,SCHK,87.5,Count,1,60,60,0,0,SCHK,87.5,Count,1,60,60,0,0,SCHK,87.5,Count,1,60,60,0,0,SCHK,87.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+191,PWR,PSE B Overview HK Telemetry,External,AB,541,0x21D,0xA1D,496,1.0,Sync,496.0,Count,1,1,1,0,0,SCHK,496.0,Count,1,5,5,0,0,SCHK,99.2,Count,1,5,5,0,0,SCHK,99.2,Count,1,5,5,0,0,SCHK,99.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+192,ST,Star Tracker A Housekeeping Telemetry,External,AB,542,0x21E,0xA1E,640,1.0,Sync,640.0,Count,1,5,5,0,0,SCHK,128.0,Count,1,30,30,0,0,SCHK,21.3,Count,1,60,60,0,0,SCHK,10.7,Count,1,60,60,0,0,SCHK,10.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+193,ST,Star Tracker A Diagnostic Telemetry,External,AB,543,0x21F,0xA1F,"2,112",1.0,Sync,2112.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+194,ST,Star Tracker A Star Field Telemetry,External,AB,544,0x220,0xA20,"1,152",1.0,Sync,1152.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+195,ST,Star Tracker B Housekeeping Telemetry,External,AB,545,0x221,0xA21,640,1.0,Sync,640.0,Count,1,5,5,0,0,SCHK,128.0,Count,1,30,30,0,0,SCHK,21.3,Count,1,60,60,0,0,SCHK,10.7,Count,1,60,60,0,0,SCHK,10.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+196,ST,Star Tracker B Diagnostic Telemetry,External,AB,546,0x222,0xA22,"2,112",1.0,Sync,2112.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+197,ST,Star Tracker B Star Field Telemetry,External,AB,547,0x223,0xA23,"1,152",1.0,Sync,1152.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+198,RW,"DiRWA #1 HK (SAs 3,5,6,7,8,9)",External,A,548,0x224,0xA24,"1,600",1.0,Sync,1600.0,Count,1,15,15,0,0,SCHK,106.7,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+199,RW,"DiRWA #2 HK (SAs 3,5,6,7,8,9)",External,A,549,0x225,0xA25,"1,600",1.0,Sync,1600.0,Count,1,15,15,0,0,SCHK,106.7,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+200,RW,"DiRWA #3 HK (SAs 3,5,6,7,8,9)",External,A,550,0x226,0xA26,"1,600",1.0,Sync,1600.0,Count,1,15,15,0,0,SCHK,106.7,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+201,RW,"DiRWA #4 HK (SAs 3,5,6,7,8,9)",External,A,551,0x227,0xA27,"1,600",1.0,Sync,1600.0,Count,1,15,15,0,0,SCHK,106.7,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+202,RW,"DiRWA #5 HK (SAs 3,5,6,7,8,9)",External,A,552,0x228,0xA28,"1,600",1.0,Sync,1600.0,Count,1,15,15,0,0,SCHK,106.7,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3,Count,1,30,30,0,0,SCHK,53.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+203,0,RW SW Command Response,External,0,553,0x229,0xA29,640,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+204,IRU,IRU Interface Card A Telemetry,External,A,555,0x22B,0xA2B,240,1.0,Sync,240.0,Count,1,1,1,0,0,SCHK,240.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+205,IRU,IRU Interface Card B Telemetry,External,B,557,0x22D,0xA2D,240,1.0,Sync,240.0,Count,1,1,1,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+206,IRU,IRU A Absolute Read,External,A,559,0x22F,0xA2F,640,1.0,Sync,640.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+207,IRU,IRU A Gyro A Output,External,A,560,0x230,0xA30,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,64.0,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+208,IRU,IRU A Gyro B Output,External,A,561,0x231,0xA31,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,64.0,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+209,IRU,IRU A Gyro C Output,External,A,562,0x232,0xA32,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,64.0,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+210,IRU,IRU A Gyro D Output,External,A,563,0x233,0xA33,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,64.0,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3,Count,1,30,30,0,0,SCHK,21.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+211,IRU,IRU B Absolute Read,External,B,564,0x234,0xA34,640,1.0,Sync,640.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+212,IRU,IRU B Gyro A Output,External,B,565,0x235,0xA35,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+213,IRU,IRU B Gyro B Output,External,B,566,0x236,0xA36,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+214,IRU,IRU B Gyro C Output,External,B,567,0x237,0xA37,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+215,IRU,IRU B Gyro D Output,External,B,568,0x238,0xA38,640,1.0,Sync,640.0,Count,1,10,10,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0,Count,1,30,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+216,ACS,CL Rate Null Mode Diagnostic,Internal,No,569,0x239,0xA39,576,0.1,Sync,5760.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,115.2,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,115.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+217,ACS,CL Sun Point Mode Diagnostic,Internal,No,570,0x23A,0xA3A,896,0.1,Sync,8960.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,179.2,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,179.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+218,ACS,CL Gyroless Sun Point Mode Diagnostic,Internal,No,571,0x23B,0xA3B,800,0.1,Sync,8000.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,160.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,160.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+219,ACS,CL Mission Science Mode Diagnostic,Internal,No,572,0x23C,0xA3C,"1,120",0.1,Sync,11200.0,Count,1,10,1,0,0,SCHK,1120.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+220,ACS,CL Slew Mode Diagnostic,Internal,No,573,0x23D,0xA3D,"1,760",0.1,Sync,17600.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+221,ACS,CL Delta H Mode Diagnostic,Internal,No,574,0x23E,0xA3E,"1,024",0.1,Sync,10240.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+222,ACS,CL Delta V Mode Diagnostic,Internal,No,575,0x23F,0xA3F,640,0.1,Sync,6400.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,50,5,0,0,SCHK,128.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+223,0,GPS A - Reserved,External,A,576,0x240,0xA40,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+224,0,GPS A - Reserved,External,A,577,0x241,0xA41,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+225,GPS,GPS A - Board Health,External,A,578,0x242,0xA42,"2,000",5.0,Sync,400.0,Count,1,1,5,0,0,SCHK,400.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,400.0,Count,1,1,5,0,0,SCHK,400.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+226,GPS,GPS A - Task Health,External,A,579,0x243,0xA43,"1,776",30.0,Sync,59.2,Count,1,1,30,0,0,SCHK,59.2,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,59.2,Count,1,1,30,0,0,SCHK,59.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+227,GPS,GPS A - Single Point Solution,External,A,580,0x244,0xA44,"1,712",5.0,Sync,342.4,Count,1,1,5,0,0,SCHK,342.4,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,342.4,Count,1,1,5,0,0,SCHK,342.4
+,,,,,,,,,,,,Count,1,1,0,0,2,SCAD,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+228,GPS,GPS A - Time of Tone,External,A,581,0x245,0xA45,240,1.0,Sync,240.0,Count,1,1,1,0,0,SCHK,240.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,1,0,0,SCHK,240.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+229,GPS,GPS A - PPS,External,A,582,0x246,0xA46,560,30.0,Sync,18.7,Count,1,1,30,0,0,SCHK,18.7,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,18.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+230,GPS,GPS A - Clock,External,A,583,0x247,0xA47,720,5.0,Sync,144.0,Count,1,1,5,0,0,SCHK,144.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,144.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+231,GPS,GPS A - Channel,External,A,584,0x248,0xA48,"2,912",1.0,Sync,2912.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+232,GPS,GPS A - SV Position,External,A,585,0x249,0xA49,"2,864",5.0,Sync,572.8,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+233,GPS,GPS A - Measurement,External,A,586,0x24A,0xA4A,"3,040",5.0,Sync,608.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+234,GPS,GPS A - Pseudorange,External,A,587,0x24B,0xA4B,"2,928",5.0,Sync,585.6,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+235,GPS,GPS A - SV Prediction,External,A,588,0x24C,0xA4C,816,1.0,Sync,816.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+236,0,GPS A - Reserved,External,A,589,0x24D,0xA4D,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+237,GPS,GPS A - GEONS Real Time State,External,A,590,0x24E,0xA4E,"1,200",5.0,Sync,240.0,Count,1,1,5,0,0,SCHK,240.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,1,5,0,0,SCHK,240.0,Count,0,1,5,0,0,SCHK,240.0
+,,,,,,,,,,,,Count,1,6,0,0,2,SCAD,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+238,GPS,GPS A - GEONS Covariance,External,A,591,0x24F,0xA4F,"1,008",30.0,Sync,33.6,Count,1,1,30,0,0,SCHK,33.6,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,33.6,Count,1,1,30,0,0,SCHK,33.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+239,GPS,GPS A - GEONS Residual,External,A,592,0x250,0xA50,"2,432",30.0,Sync,81.1,Count,1,1,30,0,0,SCHK,81.1,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,81.1,Count,1,1,30,0,0,SCHK,81.1
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+240,GPS,GPS A - GEONS Estimated State,External,A,593,0x251,0xA51,"1,200",30.0,Sync,40.0,Count,1,1,30,0,0,SCHK,40.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,40.0,Count,1,1,30,0,0,SCHK,40.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+241,0,GPS A - Command Ack,External,A,594,0x252,0xA52,272,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+242,0,GPS A - Ephemeris,External,A,595,0x253,0xA53,"2,192",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+243,0,GPS A - Almanac,External,A,596,0x254,0xA54,944,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+244,0,GPS A - Ephemeris Status,External,A,597,0x255,0xA55,"3,248",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+245,0,GPS A - SV Select Status,External,A,598,0x256,0xA56,"1,296",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+246,0,GPS A - Reserved,External,A,599,0x257,0xA57,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+247,0,GPS A - FPGA Data,External,A,600,0x258,0xA58,240,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+248,0,GPS A - Memory,External,A,601,0x259,0xA59,"2,288",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+249,0,GPS A - Memory Checksum,External,A,602,0x25A,0xA5A,272,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+250,0,GPS A - GEONS Covariance_D Matrix,External,A,603,0x25B,0xA5B,912,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+251,0,GPS A - GEONS Covariance_U Matrix,External,A,604,0x25C,0xA5C,944,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+252,GPS,GPS A - GEONS Acceleration,External,A,605,0x25D,0xA5D,"1,456",30.0,Sync,48.5,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+253,GPS,GPS A - Acquisition,External,A,606,0x25E,0xA5E,880,0.5,Sync,1760.0,Count,1,20,10,0,0,SCHK,88.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,10,0,0,SCHK,88.0,Count,1,20,10,0,0,SCHK,88.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+254,GPS PPBL,GPS A - PPBL Telemetry,External,B,607,0x25F,0xA5F,"2,000",1.0,Sync,2000.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+255,GPS,GPS A - Detail,External,A,608,0x260,0xA60,"2,256",60.0,Sync,37.6,Count,1,1,60,0,0,SCHK,37.6,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,60,0,0,SCHK,37.6,Count,1,1,60,0,0,SCHK,37.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+256,GPS,GPS A - GEONS Comparison,External,A,609,0x261,0xA61,880,30.0,Sync,29.3,Count,1,1,30,0,0,SCHK,29.3,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,29.3,Count,1,1,30,0,0,SCHK,29.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+257,0,GPS A - GEONS Maneuver,External,A,610,0x262,0xA62,976,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+258,0,GPS A - GEONS Operation Parameters,External,A,611,0x263,0xA63,"1,488",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+259,0,GPS A - GEONS Spacecraft Constants,External,A,612,0x264,0xA64,620,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+260,0,GPS A - GEONS Coordinate Transformation,External,A,613,0x265,0xA65,"1,424",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+261,0,GPS A - GEONS Measurement Transmitter,External,A,614,0x266,0xA66,368,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+262,0,GPS A - GEONS Process Noise,External,A,615,0x267,0xA67,"2,576",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+263,0,GPS A - GEONS Measurement Processing,External,A,616,0x268,0xA68,688,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+264,0,GPS A - GEONS Raw,External,A,617,0x269,0xA69,"2,288",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+265,0,GPS A - Configuration Data,External,A,618,0x26A,0xA6A,"2,064",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+266,0,GPS A - Event,External,A,619,0x26B,0xA6B,"1,200",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+267,Inst,KaPR Housekeeping Packet,External,No,640,0x280,0xA80,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+268,Inst,KaPR SSPA Analysis Packet,External,No,641,0x281,0xA81,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+269,Inst,KaPR LNA Analysis Packet,External,No,642,0x282,0xA82,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+270,Inst,KaPR External Calibration Packet,External,No,643,0x283,0xA83,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+271,Inst,KaPR Internal Calibration Packet,External,No,644,0x284,0xA84,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+272,Inst,KaPR Phase Code Dump Packet,External,No,645,0x285,0xA85,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+273,Inst,KaPR Variable PRF Packet,External,No,646,0x286,0xA86,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+274,Inst,KaPR Memory Dump Packet,External,No,647,0x287,0xA87,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+275,Inst,KaPR Observation Packet,External,No,648,0x288,0xA88,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+276,Inst,DPR Ancillary 4 Second Packet,External,No,656,0x290,0xA90,800,4.0,Sync,200.0,Count,1,1,4,0,2,SCAD,200.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+277,Inst,KuPR Housekeeping Packet,External,No,672,0x2A0,0xAA0,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+278,Inst,KuPR SSPA Analysis Packet,External,No,673,0x2A1,0xAA1,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+279,Inst,KuPR LNA Analysis Packet,External,No,674,0x2A2,0xAA2,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+280,Inst,KuPR External Calibration Packet,External,No,675,0x2A3,0xAA3,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+281,Inst,KuPR Internal Calibration Packet,External,No,676,0x2A4,0xAA4,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+282,Inst,KuPR Phase Code Dump Packet,External,No,677,0x2A5,0xAA5,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+283,Inst,KuPR Variable PRF Packet,External,No,678,0x2A6,0xAA6,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+284,Inst,KuPR Memory Dump Packet,External,No,679,0x2A7,0xAA7,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+285,Inst,KuPR Observation Packet,External,No,680,0x2A8,0xAA8,512,0.5,Sync,1024.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+286,ACS,DI CSS Diag Tlm,Internal,No,688,0x2B0,0xAB0,672,0.1,Sync,6720.0,Count,1,160,16,0,0,SCHK,42.0,Count,1,50,5,0,0,SCHK,134.4,Count,1,150,15,0,0,SCHK,44.8,Count,1,50,5,0,0,SCHK,134.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+287,ACS,DI HGA Diag Tlm,Internal,No,689,0x2B1,0xAB1,320,0.1,Sync,3200.0,Count,1,20,2,0,0,SCHK,160.0,Count,1,50,5,0,0,SCHK,64.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+288,ACS,DI IRU Diag Tlm,Internal,No,690,0x2B2,0xAB2,736,0.1,Sync,7360.0,Count,1,20,2,0,0,SCHK,368.0,Count,1,50,5,0,0,SCHK,147.2,Count,1,50,5,0,0,SCHK,147.2,Count,1,50,5,0,0,SCHK,147.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+289,ACS,DI RW Diag Tlm,Internal,No,691,0x2B3,0xAB3,896,0.1,Sync,8960.0,Count,1,20,2,0,0,SCHK,448.0,Count,1,50,5,0,0,SCHK,179.2,Count,1,100,10,0,0,SCHK,89.6,Count,1,50,5,0,0,SCHK,179.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+290,ACS,DI SA Diag Tlm,Internal,No,692,0x2B4,0xAB4,320,0.1,Sync,3200.0,Count,1,20,2,0,0,SCHK,160.0,Count,1,50,5,0,0,SCHK,64.0,Count,1,150,15,0,0,SCHK,21.3,Count,1,150,15,0,0,SCHK,21.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+291,ACS,DI ST Diag Tlm,Internal,No,693,0x2B5,0xAB5,832,0.1,Sync,8320.0,Count,1,20,2,0,0,SCHK,416.0,Count,1,100,10,0,0,SCHK,83.2,Count,1,150,15,0,0,SCHK,55.5,Count,1,150,15,0,0,SCHK,55.5
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+292,ACS,DI MSS Diag Tlm,Internal,No,694,0x2B6,0xAB6,512,0.1,Sync,5120.0,Count,1,320,32,0,0,SCHK,16.0,Count,1,50,5,0,0,SCHK,102.4,Count,1,150,15,0,0,SCHK,34.1,Count,1,50,5,0,0,SCHK,102.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+293,ACS,DI TAM Diag Tlm,Internal,No,695,0x2B7,0xAB7,640,0.1,Sync,6400.0,Count,1,40,4,0,0,SCHK,160.0,Count,1,50,5,0,0,SCHK,128.0,Count,1,150,15,0,0,SCHK,42.7,Count,1,50,5,0,0,SCHK,128.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+294,ACS,DI MTB Diag Tlm,Internal,No,696,0x2B8,0xAB8,224,0.1,Sync,2240.0,Count,1,40,4,0,0,SCHK,56.0,Count,1,50,5,0,0,SCHK,44.8,Count,1,150,15,0,0,SCHK,14.9,Count,1,50,5,0,0,SCHK,44.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+295,ACS,DI GPS Diag Tlm,Internal,No,697,0x2B9,0xAB9,768,0.1,Sync,7680.0,Count,1,20,2,0,0,SCHK,384.0,Count,1,50,5,0,0,SCHK,153.6,Count,1,150,15,0,0,SCHK,51.2,Count,1,150,15,0,0,SCHK,51.2
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+296,ACS,OM Diag Tlm,Internal,No,698,0x2BA,0xABA,"1,088",0.1,Sync,10880.0,Count,1,40,4,0,0,SCHK,272.0,Count,1,100,10,0,0,SCHK,108.8,Count,1,100,10,0,0,SCHK,108.8,Count,1,100,10,0,0,SCHK,108.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+297,ACS,GN&C / Ancillary 2Hz Combined,Internal,No,700,0x2BC,0xABC,384,0.1,Sync,3840.0,Count,1,5,0.5,0,2,SCAD,768.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+298,ACS,GN&C / Ancillary 10Hz Combined,Internal,No,703,0x2BF,0xABF,"1,488",0.1,Sync,14880.0,Count,1,1,0.1,0,2,SCAD,14880.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+299,0,GPS B - Reserved,External,B,704,0x2C0,0xAC0,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+300,0,GPS B - Reserved,External,B,705,0x2C1,0xAC1,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+301,GPS,GPS B - Board Health,External,B,706,0x2C2,0xAC2,"2,000",5.0,Sync,400.0,Count,1,1,5,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+302,GPS,GPS B - Task Health,External,B,707,0x2C3,0xAC3,"1,776",30.0,Sync,59.2,Count,1,1,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+303,GPS,GPS B - Single Point Solution,External,B,708,0x2C4,0xAC4,"1,712",5.0,Sync,342.4,Count,1,1,5,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,0.0,Count,1,1,5,0,0,SCHK,0.0
+,,,,,,,,,,,,Count,1,1,0,0,2,SCAD,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+304,GPS,GPS B - Time of Tone,External,B,709,0x2C5,0xAC5,240,1.0,Sync,240.0,Count,1,1,1,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+305,0,GPS B - PPS,External,B,710,0x2C6,0xAC6,560,30.0,Sync,18.7,Count,1,1,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+306,GPS,GPS B - Clock,External,B,711,0x2C7,0xAC7,720,5.0,Sync,144.0,Count,1,1,5,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+307,GPS,GPS B - Channel,External,B,712,0x2C8,0xAC8,"2,912",1.0,Sync,2912.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+308,GPS,GPS B - SV Position,External,B,713,0x2C9,0xAC9,"2,864",5.0,Sync,572.8,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+309,GPS,GPS B - Measurement,External,B,714,0x2CA,0xACA,"3,040",5.0,Sync,608.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+310,GPS,GPS B - Pseudorange,External,B,715,0x2CB,0xACB,"2,928",5.0,Sync,585.6,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+311,GPS,GPS B - SV Prediction,External,B,716,0x2CC,0xACC,816,1.0,Sync,816.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+312,0,GPS B - Reserved,External,B,717,0x2CD,0xACD,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+313,GPS,GPS B - GEONS Real Time State,External,B,718,0x2CE,0xACE,"1,200",5.0,Sync,240.0,Count,1,1,5,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,1,5,0,0,SCHK,0.0,Count,0,1,5,0,0,SCHK,0.0
+,,,,,,,,,,,,Count,1,6,0,0,2,SCAD,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+314,GPS,GPS B - GEONS Covariance,External,B,719,0x2CF,0xACF,"1,008",30.0,Sync,33.6,Count,1,1,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,1,30,0,0,SCHK,0.0,Count,0,1,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+315,GPS,GPS B - GEONS Residual,External,B,720,0x2D0,0xAD0,"2,432",30.0,Sync,81.1,Count,1,1,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,1,30,0,0,SCHK,0.0,Count,0,1,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+316,GPS,GPS B - GEONS Estimated State,External,B,721,0x2D1,0xAD1,"1,200",30.0,Sync,40.0,Count,1,1,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+317,0,GPS B - Command Ack,External,B,722,0x2D2,0xAD2,272,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+318,0,GPS B - Ephemeris,External,B,723,0x2D3,0xAD3,"2,192",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+319,0,GPS B - Almanac,External,B,724,0x2D4,0xAD4,944,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+320,0,GPS B - Ephemeris Status,External,B,725,0x2D5,0xAD5,"3,248",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+321,0,GPS B - SV Select Status,External,B,726,0x2D6,0xAD6,"1,296",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+322,0,GPS B - Reserved,External,B,727,0x2D7,0xAD7,,0.0,N/A,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+323,0,GPS B - FPGA Data,External,B,728,0x2D8,0xAD8,240,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+324,0,GPS B - Memory,External,B,729,0x2D9,0xAD9,"2,288",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+325,0,GPS B - Memory Checksum,External,B,730,0x2DA,0xADA,272,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+326,0,GPS B - GEONS Covariance_D Matrix,External,B,731,0x2DB,0xADB,912,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+327,0,GPS B - GEONS Covariance_U Matrix,External,B,732,0x2DC,0xADC,944,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,1,0,0,0,SCHK,0.0,Count,0,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+328,GPS,GPS B - GEONS Acceleration,External,B,733,0x2DD,0xADD,"1,456",30.0,Sync,48.5,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+329,GPS,GPS B- Acquisition,External,B,734,0x2DE,0xADE,880,0.5,Sync,1760.0,Count,1,20,10,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,20,10,0,0,SCHK,0.0,Count,1,20,10,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+330,GPS PPBL,GPS B - PPBL Telemetry,External,B,735,0x2DF,0xADF,"2,000",1.0,Sync,2000.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+331,GPS,GPS B - Detail,External,B,736,0x2E0,0xAE0,"2,256",60.0,Sync,37.6,Count,1,1,60,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,60,0,0,SCHK,0.0,Count,1,1,60,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+332,GPS,GPS B - GEONS Comparison,External,B,737,0x2E1,0xAE1,880,30.0,Sync,29.3,Count,1,1,30,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,0.0,Count,1,1,30,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+333,0,GPS B - GEONS Maneuver,External,B,738,0x2E2,0xAE2,976,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+334,0,GPS B - GEONS Operation Parameters,External,B,739,0x2E3,0xAE3,"1,488",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+335,0,GPS B - GEONS Spacecraft Constants,External,B,740,0x2E4,0xAE4,620,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+336,0,GPS B - GEONS Coordinate Transformation,External,B,741,0x2E5,0xAE5,"1,424",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+337,0,GPS B - GEONS Measurement Transmitter,External,B,742,0x2E6,0xAE6,368,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+338,0,GPS B - GEONS Process Noise,External,B,743,0x2E7,0xAE7,"2,576",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+339,0,GPS B - GEONS Measurement Processing,External,B,744,0x2E8,0xAE8,688,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+340,0,GPS B - GEONS Raw,External,B,745,0x2E9,0xAE9,"2,288",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+341,0,GPS B - Configuration Data,External,0,746,0x2EA,0xAEA,"2,064",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+342,0,GPS B - Event,External,0,747,0x2EB,0xAEB,"1,200",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -33,8 +33,13 @@
 ** OSK Demo Application Macros
 */
 
+/*
+** 1.0.0 - Initial release
+** 1.4.0 - Moved table buffers from app to DemoObj
+*/
+
 #define  OSK_C_DEMO_MAJOR_VER     1
-#define  OSK_C_DEMO_MINOR_VER     4 /* Moved table buffers from app to DemoObj */
+#define  OSK_C_DEMO_MINOR_VER     4
 #define  OSK_C_DEMO_LOCAL_REV     0
 
 /******************************************************************************
@@ -64,7 +69,8 @@
 #define XMLTBL_BASE_EID     (OSK_C_FW_APP_BASE_EID + 20)
 #define SCANFTBL_BASE_EID   (OSK_C_FW_APP_BASE_EID + 30)
 #define JSONTBL_BASE_EID    (OSK_C_FW_APP_BASE_EID + 40)
-#define DEMOFR_BASE_EID     (OSK_C_FW_APP_BASE_EID + 50)
+#define CFETBL_BASE_EID     (OSK_C_FW_APP_BASE_EID + 50)
+#define DEMOFR_BASE_EID     (OSK_C_FW_APP_BASE_EID + 60)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of

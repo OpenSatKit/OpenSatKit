@@ -94,8 +94,8 @@ void KIT_TO_AppMain(void)
    while (CFE_ES_RunLoop(&RunStatus)) {
    
       /* Use a short delay during startup to avoid event message pipe overflow */
-      if (StartupCnt < 50) { 
-         OS_TaskDelay(50);
+      if (StartupCnt < 200) { 
+         OS_TaskDelay(20);
          ++StartupCnt;
       }
       else {

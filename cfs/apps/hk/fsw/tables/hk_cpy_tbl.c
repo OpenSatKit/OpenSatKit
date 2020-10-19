@@ -68,8 +68,8 @@ hk_copy_table_entry_t      HK_CopyTable[HK_COPY_TABLE_ENTRIES] =
 
 /*   5 */ { ISIM_TLM_HK_MID,      18,   HK_COMBINED_PKT2_MID,      12,   4, },
 /*   6 */ { F42_HK_TLM_MID,       20,   HK_COMBINED_PKT2_MID,      16,   2, },
-/*   7 */ { F42_CONTROL_MID,      12,   HK_COMBINED_PKT2_MID,      18,  40, },
-/*   8 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,         0,   0, },
+/*   7 */ { F42_CTRL_TLM_MID,     12,   HK_COMBINED_PKT2_MID,      18,  12, },
+/*   8 */ { F42_CTRL_TLM_MID,     36,   HK_COMBINED_PKT2_MID,      30,  28, },
 
 /*   9 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },
 /*  10 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },

@@ -1,0 +1,44 @@
+/*************************************************************************
+** File:
+**  $Id: TO_32kNom_tbl.c 1.16 2013/08/26 14:17:41EDT sstrege Exp  $
+**
+** Purpose:
+**   Telemetry Output (TO) Filter definition table
+**
+** Notes:
+**   This table is computer generated and is NOT to be hand modified.
+**   Generated August 26, 2013, 1:11 pm
+**
+**
+**   $Log: TO_32kNom_tbl.c  $
+**   Revision 1.16 2013/08/26 14:17:41EDT sstrege
+**   GPM-SCoRe-2270 Updates
+**
+*/
+/*************************************************************************
+** Includes
+*************************************************************************/
+#include "cfe.h"
+#include "to_filter.h"
+#include "cfe_tbl_filedef.h"
+#include "cdh_lib.h"
+
+/*************************************************************************
+** Exported Data
+*************************************************************************/
+/*
+** Table file header
+*/
+static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
+{
+    "TO_FilterTable", TO_APP_FILTER_TABLE_NAME, TO_FILTER_TABLE_TITLE,
+    "TO_32kNom_tbl.tbl", sizeof(TO_FilterTable_t)
+};
+/*
+** TO_32kNom filter definition table data
+*/
+TO_FilterTable_t TO_FilterTable =
+{
+    32000 /* bps */,
+    {
+        /** Tlm Pipe,   Filter Method,   N,   X,   O  **/

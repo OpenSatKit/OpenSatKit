@@ -30,8 +30,15 @@
 ** TFTP Application Macros
 */
 
+/*
+** Versions:
+**
+** 1.0 - Initial release
+** 1.1 - Refactored for OSK 2.2
+*/
+
 #define  TFTP_MAJOR_VER   1
-#define  TFTP_MINOR_VER   1  /* Refactored for OSK 2.2 */
+#define  TFTP_MINOR_VER   1
 #define  TFTP_LOCAL_REV   0
 
 

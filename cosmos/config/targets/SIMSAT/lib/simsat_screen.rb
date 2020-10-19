@@ -79,7 +79,10 @@ def simsat_adc(screen, cmd)
    when "DEMO"
       prompt(Osk::MSG_TBD_FEATURE)
    when "TUTORIAL"
-      prompt(Osk::MSG_TBD_FEATURE)
+      case screen.get_named_widget("tutorial").text
+      when "#{Osk::TXT_TRAINING_SLIDES}"
+         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_ADC_FILE}")
+      end
    else
       raise "Error in screen definition file. Undefined attitude determination and control screen command '#{cmd}' sent to simsat_src_cmd()"
    end

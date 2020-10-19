@@ -125,7 +125,7 @@ HORIZONTAL
       LABEL "    "
 
       BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "RUNTIME", "TUTORIAL")'
-      NAMED_WIDGET tutorial COMBOBOX 'Training Video' 'Training Slides'
+      NAMED_WIDGET tutorial COMBOBOX  'Training Video' 'Training Slides'
       LABEL "    "
 
     END # Matrix

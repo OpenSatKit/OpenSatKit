@@ -1,0 +1,31 @@
+{
+   "limit-checker": {
+
+      "endian": "little",
+      "output-path":  "./output/",
+      "tlm_csv_file": "20121126114103_mnemonic_lookup_rpt.11.26.12.csv",
+      
+      "watch-point": {
+         "count": 256,
+         "tbl-file": "lc_def_wdt.c",
+         "log-file": "lc_wp_log.txt",
+         "header-file": "lc_def_wdt_header.c",
+         "footer-file": "lc_def_wdt_footer.c"
+      },
+
+      "action-point": {
+         "count": 160,
+         "max-rpn-equ-size": 20,
+         "max-action-text": 32,
+         "max-passive-events": 2,
+         "max-pass-fail-events": 2,
+         "max-fail-pass-events": 2,
+         "tbl-file": "lc_def_adt.c",
+         "log-file": "lc_ap_log.txt",
+         "header-file": "./input/lc_def_adt.top",
+         "footer-file": "./input/lc_def_adt.bot"
+      }
+   }
+}
+
+

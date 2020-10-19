@@ -37,5 +37,5 @@ uint32 OSK_C_FW_LibInit(void)
    
   return OS_SUCCESS;
 
-} /* End OSK_APP_FW_LibInit() */
+} /* End OSK_C_FW_LibInit() */
 

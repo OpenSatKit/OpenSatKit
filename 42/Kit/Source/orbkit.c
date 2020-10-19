@@ -415,52 +415,60 @@ void TLE2Eph(const char Line1[80], const char Line2[80], double JD,
       char MeanMotionString[12];
       long year,DOY,Month,Day;
       double FloatDOY,FracDay,MeanAnom,JDepoch;
-      double Epoch,AbsTime;
+      double Epoch,DynTime;
 
       strncpy(YearString,&Line1[18],2);
+      YearString[2] = 0;
       year = (long) atoi(YearString);
       if (year < 57) year += 2000;
       else year += 1900;
       strncpy(DOYstring,&Line1[20],12);
+      DOYstring[12] = 0;
       FloatDOY = (double) atof(DOYstring);
       DOY = (long) FloatDOY;
       FracDay = FloatDOY - ((double) DOY);
       DOY2MD(year,DOY,&Month,&Day);
-      JDepoch = YMDHMS2JD(year,Month,Day,0,0,0.0);
+      JDepoch = DateToJD(year,Month,Day,0,0,0.0);
       JDepoch += FracDay;
-      Epoch = JDToAbsTime(JDepoch);
-      AbsTime = JDToAbsTime(JD);
+      Epoch = JDToTime(JDepoch);
+      DynTime = JDToTime(JD);
 
       strncpy(IncString,&Line2[8],8);
+      IncString[8] = 0;
       *i = ((double) atof(IncString))*D2R;
 
       strncpy(RAANstring,&Line2[17],9);
+      RAANstring[9] = 0;
       *RAAN = ((double) atof(RAANstring))*D2R;
 
       strncpy(EccString,&Line2[26],7);
+      EccString[7] = 0;
       *e = ((double) atof(EccString))*1.0E-7;
 
       strncpy(omgstring,&Line2[34],8);
+      omgstring[8] = 0;
       *ArgP = ((double) atof(omgstring))*D2R;
 
       strncpy(MeanAnomString,&Line2[43],8);
+      MeanAnomString[8] = 0;
       MeanAnom = ((double) atof(MeanAnomString))*D2R;
 
       strncpy(MeanMotionString,&Line2[52],11);
+      MeanMotionString[11] = 0;
       *MeanMotion = ((double) atof(MeanMotionString))*TWOPI/86400.0;
       *Period = TWOPI/(*MeanMotion);
 
       /* Time of Periapsis passage given in seconds since J2000 */
       *tp = Epoch - MeanAnom/(*MeanMotion);
-      while ((*tp-AbsTime) < -(*Period)) *tp += *Period;
-      while ((*tp-AbsTime) >   *Period ) *tp -= *Period;
+      while ((*tp-DynTime) < -(*Period)) *tp += *Period;
+      while ((*tp-DynTime) >   *Period ) *tp -= *Period;
 
       *SMA = pow(mu/(*MeanMotion)/(*MeanMotion),1.0/3.0);
       *alpha = 1.0/(*SMA);
       *SLR = (*SMA)*(1.0-(*e)*(*e));
       *rmin = *SLR/(1.0 + *e);
 
-      *th = TrueAnomaly(mu, *SLR, *e, AbsTime-(*tp));
+      *th = TrueAnomaly(mu, *SLR, *e, DynTime-(*tp));
 
 #undef TWOPI
 #undef D2R
@@ -552,15 +560,15 @@ double RV2RVp(double mu, double r[3], double v[3], double rp[3], double vp[3])
       return(anom);
 }
 /**********************************************************************/
-/*  This function finds the mean orbit of planet "i", and its         */
-/*  position and velocity.  Ref. Chap 31 of Meeus, "Astronomical      */
-/*  Algorithms", second edition, QB51.3.E43, M42, 1998.               */
+/*  This function finds the mean orbit of planet "i" with respect to  */
+/*  the mean-equinox-of-date frame.  Ref. Chap 31 of Meeus,           */
+/*  "Astronomical Algorithms", second edition, QB51.3.E43, M42, 1998. */
 /*  Index 1=Mercury, 2=Venus, ... 9=Pluto.  0=Sun is not used.        */
 /*  Note that the elements for Pluto are not from Meeus, but from a   */
 /*  lower-fidelity data set from JPL.                                 */
 void PlanetEphemerides(long i, double JD, double mu,
        double *SMA, double *ecc, double *inc, double *RAAN, double *ArgP,
-		 double *tp, double *anom, double *SLR, double *alpha, double *rmin,
+       double *tp, double *anom, double *SLR, double *alpha, double *rmin,
        double *MeanMotion, double *Period)
 {
 #define TWOPI (6.283185307179586)
@@ -2494,7 +2502,7 @@ void PlanTwoImpulseRendezvous(double mu, double r1e[3], double v1e[3],
 /*                will arrive.                                        */
 /*  Two iterations gives < mm accuracy for GEO-LEO distances.         */
 /*  Will need more iterations for interplanetary-scale applications.  */
-void FindLightLagOffsets(double AbsTime, struct OrbitType *Observer,
+void FindLightLagOffsets(double DynTime, struct OrbitType *Observer,
    struct OrbitType *Target, double PastPos[3], double FuturePos[3])
 {
 #define SPEED_OF_LIGHT 299792458.0
@@ -2506,27 +2514,59 @@ void FindLightLagOffsets(double AbsTime, struct OrbitType *Observer,
       for(i=0;i<3;i++) RelPos[i] = Target->PosN[i] - Observer->PosN[i];
       dt = MAGV(RelPos)/SPEED_OF_LIGHT;
       Eph2RV(Target->mu,Target->SLR,Target->ecc,Target->inc,Target->RAAN,
-         Target->ArgP,AbsTime-dt-Target->tp,PastPos,Vel,&anom);
+         Target->ArgP,DynTime-dt-Target->tp,PastPos,Vel,&anom);
 
       for(i=0;i<3;i++) RelPos[i] = PastPos[i] - Observer->PosN[i];
       dt = MAGV(RelPos)/SPEED_OF_LIGHT;
       Eph2RV(Target->mu,Target->SLR,Target->ecc,Target->inc,Target->RAAN,
-         Target->ArgP,AbsTime-dt-Target->tp,PastPos,Vel,&anom);
+         Target->ArgP,DynTime-dt-Target->tp,PastPos,Vel,&anom);
 
 /* .. Future */
       for(i=0;i<3;i++) RelPos[i] = Target->PosN[i] - Observer->PosN[i];
       dt = MAGV(RelPos)/SPEED_OF_LIGHT;
       Eph2RV(Target->mu,Target->SLR,Target->ecc,Target->inc,Target->RAAN,
-         Target->ArgP,AbsTime+dt-Target->tp,PastPos,Vel,&anom);
+         Target->ArgP,DynTime+dt-Target->tp,PastPos,Vel,&anom);
 
       for(i=0;i<3;i++) RelPos[i] = PastPos[i] - Observer->PosN[i];
       dt = MAGV(RelPos)/SPEED_OF_LIGHT;
       Eph2RV(Target->mu,Target->SLR,Target->ecc,Target->inc,Target->RAAN,
-         Target->ArgP,AbsTime+dt-Target->tp,PastPos,Vel,&anom);
+         Target->ArgP,DynTime+dt-Target->tp,PastPos,Vel,&anom);
 
 #undef SPEED_OF_LIGHT
 }
+/**********************************************************************/
+void FindJ2DriftParms(double mu, double J2, double Rw, struct OrbitType *O)
+{
+#define TWOPI (6.283185307179586)
+      double p2,Coef,e2,e4,sin2i,n;
+      
+      n = sqrt(mu/O->SMA/O->SMA/O->SMA);
+      p2 = O->SLR*O->SLR;
+      Coef = 1.5*J2*Rw*Rw/p2;
+      e2 = O->ecc*O->ecc;
+      e4 = e2*e2;
+      sin2i = sin(O->inc)*sin(O->inc);
 
+/* .. Regression of Ascending Node */
+      O->RAANdot = -Coef*n*cos(O->inc);
+
+/* .. Precession of Periapsis */
+      O->ArgPdot = Coef*n*(2.0-2.5*sin2i);
+      
+/* .. Avg Radial Accel (positive toward zenith) */
+      O->J2Fr0 = -Coef*mu/p2*(1.0+3.0*e2+0.375*e4-1.5*sin2i*(1.0-cos(2.0*O->ArgP)*(1.5*e2+0.25*e4)));
+/* .. Amplitude for orbit-rate orbit-normal accel */
+      O->J2Fh1 = -2.0*Coef*mu/p2*cos(O->inc)*sin(O->inc);
+
+/* .. Effective Mu */
+      O->MuPlusJ2 = O->mu - O->SMA*O->SMA*O->J2Fr0;
+
+/* .. Adjust mean motion, period */
+      O->MeanMotion = sqrt(O->MuPlusJ2/O->SMA/O->SMA/O->SMA);
+      O->Period = TWOPI/O->MeanMotion;
+      
+#undef TWOPI
+}
 
 /* #ifdef __cplusplus
 ** }

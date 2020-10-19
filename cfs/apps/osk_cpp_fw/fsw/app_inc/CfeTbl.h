@@ -190,7 +190,7 @@ void CfeTbl<T>::ManageService() {
    
    m_data_ptr = GetAddress();
 
-} // CFETBL_Manage()
+} // ManageService()
 
 } // End namespace oskfw
 

@@ -74,14 +74,14 @@ void SCHTBL_Constructor(SCHTBL_Class*       ObjPtr,
    JSON_Constructor(JSON, SchTbl->JsonFileBuf, SchTbl->JsonFileTokens);
    
    JSON_ObjConstructor(&(SchTbl->JsonObj[SCHTBL_OBJ_SLOT]),
-                       SCHTBL_OBJ_SLOT_NAME,
+                       SCHTBL_OBJ_NAME_SLOT,
                        SlotCallback,
                        (void *)&(SchTbl->Tbl.Entry));
    
    JSON_RegContainerCallback(JSON, &(SchTbl->JsonObj[SCHTBL_OBJ_SLOT]));
 
    JSON_ObjConstructor(&(SchTbl->JsonObj[SCHTBL_OBJ_ACTIVITY]),
-                       SCHTBL_OBJ_ACTIVITY_NAME,
+                       SCHTBL_OBJ_NAME_ACTIVITY,
                        ActivityCallback,
                        (void *)&(SchTbl->Tbl.Entry));
    
@@ -493,8 +493,9 @@ static boolean SlotCallback (int TokenIdx)
 
    int     AttributeCnt = 0;
    int     JsonIntData, SlotIdx;
-   boolean RetStatus = FALSE;      
-
+ 
+   SchTbl->JsonObj[SCHTBL_OBJ_SLOT].Modified = FALSE;
+   
    CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
                      "\nSCHTBL.SlotCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      SchTbl->ObjLoadCnt, SchTbl->AttrErrCnt, TokenIdx);
@@ -522,7 +523,7 @@ static boolean SlotCallback (int TokenIdx)
       if (SlotIdx >= 0 && SlotIdx < SCHTBL_SLOTS) {
          
          SchTbl->CurSlotIdx = SlotIdx;
-         RetStatus = TRUE;
+         SchTbl->JsonObj[SCHTBL_OBJ_SLOT].Modified = TRUE;
       
       } /* End if Id within limits */
       else {
@@ -545,7 +546,7 @@ static boolean SlotCallback (int TokenIdx)
    
    } /* End if invalid AttributeCnt */
       
-   return RetStatus;
+   return SchTbl->JsonObj[SCHTBL_OBJ_SLOT].Modified;
 
 } /* SlotCallback() */
 
@@ -567,9 +568,10 @@ static boolean ActivityCallback (int TokenIdx)
    int    JsonIntData, ActivityIdx;
    char   DataStr[128];  /* Need room for 'true' or 'false'. Spare in case erroneous entry */
    char   EventStr[128];
-   boolean RetStatus = FALSE;      
    SCHTBL_Entry SchEntry;
 
+   SchTbl->JsonObj[SCHTBL_OBJ_ACTIVITY].Modified = FALSE;
+   
    CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
                      "\nSCHTBL.ActivityCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d, CurSlotIdx %d\n",
                      SchTbl->ObjLoadCnt, SchTbl->AttrErrCnt, TokenIdx, SchTbl->CurSlotIdx);
@@ -634,7 +636,7 @@ static boolean ActivityCallback (int TokenIdx)
                              SchEntry.Offset,SchEntry.MsgTblIndex)) {
             
                SchTbl->Tbl.Entry[Index] = SchEntry;
-               RetStatus = TRUE;
+               SchTbl->JsonObj[SCHTBL_OBJ_ACTIVITY].Modified = TRUE;
             
                CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,
                                  "SCHTBL.ActivityCallback (activty idx, period, offset, msg idx, enabled): %d, %d, %d, %d, %d\n",
@@ -652,11 +654,11 @@ static boolean ActivityCallback (int TokenIdx)
       } /* End if invalid AttributeCnt */
 
       /* Incremented if CurSlotIdx invalid which technically is not this object's error, but something wrong with JSON file */
-      if (!RetStatus) SchTbl->ObjErrCnt++;
+      if (!SchTbl->JsonObj[SCHTBL_OBJ_ACTIVITY].Modified) SchTbl->ObjErrCnt++;
    
    } /* End if valid SchTbl->CurSlotIdx */
    
-   return RetStatus;
+   return SchTbl->JsonObj[SCHTBL_OBJ_ACTIVITY].Modified;
 
 } /* ActivityCallback() */
 

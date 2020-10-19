@@ -7,13 +7,13 @@
 **      This is a table-specific file so it doesn't need to be re-entrant.
 **   2. The table file is a JSON text file.
 **
-** License:
-**   Written by David McComas, licensed under the copyleft GNU
-**   General Public License (GPL).
-**
 ** References:
 **   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL).
 **
 */
 #ifndef _ctrltbl_
@@ -26,42 +26,42 @@
 #include "app_cfg.h"
 #include "json.h"
 
-/*
-** Macro Definitions
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
 /*
 ** Event Message IDs
 */
 
-#define CTRLTBL_CREATE_FILE_ERR_EID          (CTRLTBL_BASE_EID + 0)
-#define CTRLTBL_LOAD_INDEX_ERR_EID           (CTRLTBL_BASE_EID + 1)
-#define CTRLTBL_LOAD_LINE_ERR_EID            (CTRLTBL_BASE_EID + 2)
-#define CTRLTBL_CMD_LOAD_TYPE_ERR_EID        (CTRLTBL_BASE_EID + 3)
-#define CTRLTBL_CMD_LOAD_PARSE_ERR_EID       (CTRLTBL_BASE_EID + 4)
-#define CTRLTBL_CMD_LOAD_OPEN_ERR_EID        (CTRLTBL_BASE_EID + 5)
-#define CTRLTBL_CMD_LOAD_REPLACE_ERR_EID     (CTRLTBL_BASE_EID + 6)
-#define CTRLTBL_CMD_LOAD_UPDATE_ERR_EID      (CTRLTBL_BASE_EID + 7)
-#define CTRLTBL_LOAD_MOI_ERR_EID             (CTRLTBL_BASE_EID + 8)
-#define CTRLTBL_LOAD_WHL_TGT_MOM_LIM_ERR_EID (CTRLTBL_BASE_EID + 9)
+#define CTRLTBL_CREATE_FILE_ERR_EID       (CTRLTBL_BASE_EID + 0)
+#define CTRLTBL_CMD_LOAD_TYPE_ERR_EID     (CTRLTBL_BASE_EID + 1)
+#define CTRLTBL_CMD_LOAD_OPEN_ERR_EID     (CTRLTBL_BASE_EID + 2)
+#define CTRLTBL_CMD_LOAD_REPLACE_ERR_EID  (CTRLTBL_BASE_EID + 3)
+#define CTRLTBL_CMD_LOAD_UPDATE_ERR_EID   (CTRLTBL_BASE_EID + 4)
+#define CTRLTBL_LOAD_KP_ERR_EID           (CTRLTBL_BASE_EID + 5)
+#define CTRLTBL_LOAD_KR_ERR_EID           (CTRLTBL_BASE_EID + 6)
+#define CTRLTBL_LOAD_KUNL_ERR_EID         (CTRLTBL_BASE_EID + 7)
+#define CTRLTBL_LOAD_HCMD_ERR_EID         (CTRLTBL_BASE_EID + 8)
 
 /*
 ** Table Structure Objects 
 */
 
-#define  CTRLTBL_OBJ_MOI             0
-#define  CTRLTBL_OBJ_PD_GAIN_PARAM   1
-#define  CTRLTBL_OBJ_WHL_TGT_MOM_LIM 2
-#define  CTRLTBL_OBJ_CNT             3
+#define  CTRLTBL_OBJ_KR       0
+#define  CTRLTBL_OBJ_KP       1
+#define  CTRLTBL_OBJ_KUNL     2
+#define  CTRLTBL_OBJ_HCMD_LIM 3
+#define  CTRLTBL_OBJ_CNT      4
 
-#define  CTRLTBL_OBJ_MOI_NAME              "moment-of-inertia"
-#define  CTRLTBL_OBJ_PD_GAIN_PARAM_NAME    "pd-gain-param"
-#define  CTRLTBL_OBJ_WHL_TGT_MOM_LIM_NAME  "whl-tgt-mom-lim"
-                                           
+#define  CTRLTBL_OBJ_NAME_KR       "kr"
+#define  CTRLTBL_OBJ_NAME_KP       "kp"
+#define  CTRLTBL_OBJ_NAME_KUNL     "kunl"
+#define  CTRLTBL_OBJ_NAME_HCMD_LIM "hcmd-lim"                                        
 
-/*
-** Type Definitions
-*/
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 
 /******************************************************************************
@@ -71,33 +71,38 @@
 
 typedef struct {
 
-   float x;
-   float y;
-   float z;
+   float X;
+   float Y;
+   float Z;
 
-} MomentOfInteria_Struct;
+} Kp_Struct;
 
 typedef struct {
 
-   float w;
-   float z;
+   float X;
+   float Y;
+   float Z;
 
-} PdGainParam_Struct;
+} Kr_Struct;
+
 
 typedef struct {
 
    float Lower;
    float Upper;
 
-} WhlTgtMomLim_Struct;
+} HcmdLim_Struct;
 
-typedef struct
-{
+typedef struct {
 
-   MomentOfInteria_Struct  Moi;
-   PdGainParam_Struct      PdGainParam;
-   WhlTgtMomLim_Struct     WhlTgtMomLim;
+   /* Attitude Controller */
+   Kp_Struct   Kp;
+   Kr_Struct   Kr;
 
+   /* Momentum Unload Controller */
+   HcmdLim_Struct HcmdLim;
+   float          Kunl;
+   
 } CTRLTBL_Struct;
 
 
@@ -135,9 +140,9 @@ typedef struct {
 } CTRLTBL_Class;
 
 
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
 
 /******************************************************************************
 ** Function: CTRLTBL_Constructor

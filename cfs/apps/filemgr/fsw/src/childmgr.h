@@ -3,7 +3,7 @@
 **
 ** Notes:
 **   1. This is part of a FM refactor prototype. Initial version is hardcoded
-**      for ChildMgr being dedciated to one app. The prototype will investigate
+**      for ChildMgr being dedicated to one app. The prototype will investigate
 **      whether an app framework module can be created.
 **   2. The initial prototype uses a singleton pattern so it is not reentrant
 **      and only one instance can exist per app. It would need to be refactored

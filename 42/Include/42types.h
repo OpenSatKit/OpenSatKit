@@ -14,7 +14,8 @@
 
 #include "geomkit.h"
 #include "orbkit.h"
-#include "fswtypes.h"
+#include "sigkit.h"
+#include "AcTypes.h"
 
 #ifndef __42TYPES_H__
 #define __42TYPES_H__
@@ -25,13 +26,16 @@
 ** #endif
 */
 
+
 struct SphereHarmType {
+   /*~ Internal Variables ~*/
    long Type;
    long N;
    long M;
 };
 
 struct FormationType {
+   /*~ Internal Variables ~*/
    char FixedInFrame;
    double CN[3][3];
    double CL[3][3];
@@ -40,6 +44,7 @@ struct FormationType {
 
 /* "Analysis" flex nodes, ("Force" nodes and "Measurement" nodes) */
 struct FlexNodeType {
+   /*~ Internal Variables ~*/
    long ID; /* For referring back to Nastran */
    double PosB[3];
    double **PSI, **THETA; /* Mode shapes, 3 x B.Nf */
@@ -47,21 +52,24 @@ struct FlexNodeType {
    double *FlexFrc;  /* "Fbendy + Tbendy", B.Nf x 1 */
    double pos[3],vel[3],ang[3],angrate[3]; /* Deflection variables */
    double TotAngVel[3];
+   double TotTrnVel[3];
+   double TotTrnAcc[3];
 };
 
 struct BodyType {
+   /*~ Internal Variables ~*/
    double mass;
    double cm[3]; /* wrt origin of convenience, expressed in B frame */
    double c[3]; /* First mass moment about ref pt, expressed in B */
    double I[3][3]; /* Moment of Inertia, about ref pt, expressed in B frame */
    double Hgyro[3];  /* Constant embedded momentum, for CMGs and rotating instruments */
-   double wn[3]; /* Angular Velocity of B expressed in B frame */
-   double qn[4];
+   double wn[3]; /* Angular Velocity of B expressed in B frame [[rad/sec]] [~=~] */
+   double qn[4]; /* [~=~] */
    double vn[3]; /* velocity of B ref pt expressed in N frame */
    double pn[3]; /* position of B ref pt in N frame expressed in N frame */
    double CN[3][3]; /* Direction Cosine of B frame in N frame */
    double Trq[3]; /* expressed in B */
-   double Frc[3]; /* expressed in B */
+   double Frc[3]; /* expressed in N */
    double alpha[3]; /* Angular acceleration of B wrt N, expressed in B */
    double accel[3]; /* Linear acceleration of B wrt N, expressed in N */
    char GeomFileName[40];
@@ -103,11 +111,14 @@ struct BodyType {
 };
 
 struct JointType {
+   /*~ Internal Variables ~*/
    long IsSpherical;      /* TRUE or FALSE */
    long RotDOF;           /* 0,1,2,3 */
    long TrnDOF;           /* 0,1,2,3 */
    long Bin;              /* Index of inner body */
    long Bout;             /* Index of outer body */
+   long Nanc;             /* Number of "ancestor" joints: joints between this one and B[0] */
+   long *Anc;             /* Indices of ancestor joints */
    double RigidRin[3];    /* Position wrt inner body ref pt (rigid) */
    double RigidRout[3];   /* Position wrt outer body ref pt (rigid) */
    double rin[3];         /* Position wrt inner body ref pt (incl flex & TrnDOF) */
@@ -116,12 +127,12 @@ struct JointType {
    long RotLocked[3];     /* Set TRUE if individual DOF is to be locked in place */
    long TrnSeq;           /* Translational joint sequence */
    long TrnLocked[3];
-   double d[3];           /* translational kinematic state variables */
-   double s[3];           /* translational dynamic state variables */
+   double Pos[3];         /* translational kinematic state variables [~=~] */
+   double PosRate[3];     /* translational dynamic state variables [~=~] */
    double xb[3];          /* translational displacement in the Bi frame */
    double xn[3];          /* translational displacement in the N frame */
-   double ang[3];         /* Joint Euler angles */
-   double rate[3];        /* Euler angle rates about gim axes */
+   double Ang[3];         /* Joint Euler angles [~=~] */
+   double AngRate[3];     /* Euler angle rates about gim axes [~=~] */
    double AngCmd[3];      /* Euler angle commands, for kinematic joints */
    double RateCmd[3];     /* Euler angle rate commands, for kinematic joints */
    double RotSpringCoef[3];  /* For passive joint torques */
@@ -139,16 +150,20 @@ struct JointType {
    double COI[3][3];      /* DCM from inner body to outer body, (incl flex) */
    double Trq[3];         /* Exerted on Bout, components along gimbal axes */
    double Frc[3];         /* Force exerted on Bout, components along translational axes */
-   double Gamma[3][3];        /* w = Gamma*sigma */
-   double Delta[3][3];        /* v = Delta*s -- matrix of joint partials for translational joints */
+   double Gamma[3][3];    /* w = Gamma*sigma */
+   double Delta[3][3];    /* v = Delta*s -- matrix of joint partials for translational joints */
    double Gs[3];          /* Gamma*sigma */
    double Gds[3];         /* Gammadot*sigma */
    double Ds[3];          /* Delta*s */
    double Dds[3];         /* Deltadot*s */
-   long Rotu0;              /* Index of first Rot element in u */
-   long Rotx0;              /* Index of first Rot element in x */
-   long Trnu0;              /* Index of first Trn element in u */
-   long Trnx0;              /* Index of first Trn element in x */
+   long Rotu0;            /* Index of first Rot element in u */
+   long Rotx0;            /* Index of first Rot element in x */
+   long Trnu0;            /* Index of first Trn element in u */
+   long Trnx0;            /* Index of first Trn element in x */
+   long ActiveRotu0;         /* Index in DynStateIdx of first unlocked Rot DOF in DynState */
+   long ActiveTrnu0;         /* Index in DynStateIdx of first unlocked Trn DOF in DynState */
+   long ActiveRotDOF;        /* Number of unlocked RotDOF */
+   long ActiveTrnDOF;        /* Number of unlocked TrnDOF */
    /* For Flex */
    double **PSIi;         /* Translation Mode Shapes, 3 x Bi.Nf */
    double **THETAi;       /* Rotational Mode Shapes, 3 x Bi.Nf */
@@ -168,7 +183,8 @@ struct JointType {
 };
 
 struct WhlType {
-   double H;  /* Angular Momentum, Nms */
+   /*~ Internal Variables ~*/
+   double H;  /* Angular Momentum, [[Nms]] [~=~] */
    double J;  /* Rotary inertia, kg-m^2 */
    double w;  /* Angular speed, rad/sec */
    double A[3]; /* Axis vector wrt Body 0 */
@@ -180,62 +196,200 @@ struct WhlType {
    double ang; /* Spin angle, rad */
    double Ks;  /* Static imbalance coefficient, [kg-m] */
    double Kd;  /* Dynamic imbalance coefficient, [kg-m^2] */
+   struct DelayType *Delay; /* For injecting delay into control loops */
 };
 
 struct MTBType {
+   /*~ Internal Variables ~*/
    double M;
    double A[3]; /* Axis vector wrt Body 0 */
    double Mmax;
    double Trq[3]; /* Exerted on Body 0, expressed in B[0] frame */
    long FlexNode;
+   struct DelayType *Delay; /* For injecting delay into control loops */
 };
 
-struct ThrusterType {
+struct ThrType {
+   /*~ Internal Variables ~*/
    double Fmax;
    double F;
+   long Body; /* Body that thruster is mounted on */
    double A[3]; /* Axis vector wrt Body 0 */
-   double r[3]; /* Position vector in Body 0 */
+   double PosB[3]; /* Position vector in Body 0 */
    double Frc[3]; /* Force exerted */
    double Trq[3]; /* Torque exerted */
    long FlexNode;
+   struct DelayType *Delay; /* For injecting delay into control loops */
 };
 
-struct CMGType {
-   /* CMG Rotor Axis (A) is the Z axis of the frame defined by gimbal rotations */
-   long DOF;     /* 1, 2, or 3 */
-   long Seq; /* Euler Sequence */
-   double CG[3][3]; /* Dynamic orientation */
-   double CGB[3][3]; /* Static Mounting DCM */
-   double CB[3][3]; /* Total orientation */
-   double ang[3]; /* Typically only 1 or 2 used */
-   double angrate[3]; /* Typically only 1 or 2 used */
-   double MaxAngRate[3];
-   double MaxAng[3];
-   double J; /* Rotor MOI, kg-m^2 */
-   double H; /* Momentum, constant, Nms */
-   double A[3]; /* Axis, expressed in B[0] */
-   double Trq[3]; /* Exerted on B[0], expressed in B[0] */
+struct GyroType {
+   /*~ Parameters ~*/
+   double SampleTime;
+   long MaxCounter;
+   double Axis[3];
+   double MaxRate;
+   double Scale;
+   double Quant;
+   double SigV; /* ARW, rad/rt-sec */
+   double SigU; /* Bias Stability, rad/sec^1.5 */
+   double SigE; /* Angle Readout Noise, rad */
    long FlexNode;
+   
+   double BiasStabCoef;
+   double ARWCoef;
+   double AngNoiseCoef;
+   double CorrCoef; /* Correlation Coef, exp(-SampleTime/BiasTime) */
+
+   /*~ Internal Variables ~*/
+   long SampleCounter;
+   double TrueRate; /* rad/sec [~>~] */
+   double Bias; /* rad/sec */
+   double Angle; /* rad */
+   double MeasRate; /* rad/sec */
+};
+
+struct MagnetometerType {
+   /*~ Parameters ~*/
+   double SampleTime;
+   long MaxCounter;
+   double Axis[3];
+   double Saturation;
+   double Scale;
+   double Quant;
+   double Noise;
+   long FlexNode;
+
+   /*~ Internal Variables ~*/
+   long SampleCounter;
+   double Field; /* Magfield Component, Tesla */
+};
+
+struct CssType {
+   /*~ Parameters ~*/
+   double SampleTime;
+   long MaxCounter;
+   long Body;
+   double Axis[3];
+   double FovHalfAng;
+   double CosFov;
+   double Scale;
+   double Quant;
+   long FlexNode;
+
+   /*~ Internal Variables ~*/
+   long SampleCounter;
+   long Valid;
+   double Illum; /* Units defined by scale */
+};
+
+struct FssType {
+   /*~ Parameters ~*/
+   double SampleTime;
+   long MaxCounter;
+   double qb[4];
+   double CB[3][3];
+   double FovHalfAng[2];
+   double NEA;
+   double Quant;
+   long FlexNode;
+
+   /*~ Internal Variables ~*/
+   long SampleCounter;
+   long Valid;
+   double SunAng[2];
+   double SunVecS[3];
+   double SunVecB[3];
+};
+
+struct StarTrackerType {
+   /*~ Parameters ~*/
+   double SampleTime;
+   long MaxCounter;
+   double qb[4];
+   double CB[3][3];
+   double FovHalfAng[2];
+   double CosFov[2];
+   double SunExclAng;
+   double CosSunExclAng;
+   double EarthExclAng;
+   double CosEarthExclAng;
+   double MoonExclAng;
+   double CosMoonExclAng;
+   double NEA[3];
+   long FlexNode;
+
+   /*~ Internal Variables ~*/
+   long SampleCounter;
+   long Valid;
+   double qn[4];
+};
+
+struct GpsType {
+   /*~ Parameters ~*/
+   double SampleTime;
+   long MaxCounter;
+   double PosNoise;
+   double VelNoise;
+   double TimeNoise;
+   long FlexNode;
+   
+   /*~ Internal Variables ~*/
+   long SampleCounter;
+   long Valid;
+   long Rollover;
+   long Week;
+   double Sec;
+   double PosN[3];
+   double VelN[3];
+   double PosW[3];
+   double VelW[3];
+   double Lng,Lat,Alt; /* Geocentric */
+   double WgsLng,WgsLat,WgsAlt; /* Geodetic, WGS-84 */
 };
 
 struct AccelType {
-   double pb[3];  /* Position in B[0] */
-   double CB[3][3]; /* Mounting matrix */
-   double acc[3];  /* Measured acceleration, expressed in A */
+   /* Parameters */
+   double SampleTime;
+   long SampleCounter;
+   long MaxCounter;
    long FlexNode;
+   double PosB[3];  /* Position in B[0] */
+   double Axis[3]; /* Mounting matrix */
+   double Quant;
+   double Scale;
+   double SigV; /* DVRW m/s/rt-sec */
+   double SigU;/* Bias Stability m/s^1.5 */
+   double SigE; /* DV Readout Noise, m/s  */
+   
+   /*~ Internal Variables ~*/
+   double TrueAcc; /* the true acceleration m/s^2 */
+   double Bias; /* m/s^2 */
+   double DV; /* Change in velocity m/s */
+   double MeasAcc; /* m/s^2 */
+   double MaxAcc; /* m/s^2 max acceleration */
+   double AccError;
+
+   /* Coef */
+   double BiasStabCoef;
+   double DVRWCoef;
+   double DVNoiseCoef; 
+   double CorrCoef; /* Correlation Coef, exp(-SampleTime/BiasTime) */
 };
 
 struct JointPathTableType { /* tells if joint is in path of body*/
+   /*~ Internal Variables ~*/
    long InPath;
    double rho[3];
 };
 
 struct BodyPathTableType { /* tells if inner body is in path of outer body*/
+   /*~ Internal Variables ~*/
    long InPath;
    double Coi[3][3];
 };
 
 struct DynType {
+   /*~ Internal Variables ~*/
    long Nu;   /* 6 + Sum(Joint DOFs) */
    long Nx;   /* 7 + Sum(Joint DOFs), (spherical gives 4) */
    long **ConnectTable;  /* Nb x Ng */
@@ -251,8 +405,8 @@ struct DynType {
    double *RHS;    /* (Nu+Nf) x 1 */
    long SomeJointsLocked; /* 1 if any DOFs are locked */
    long Ns;  /* Number of active states (joint + flex), <= (Nu+Nf) */
-   double *DynState; /* u and uf concatenated, (Nu+Nf) x 1 */
-   long *DynStateIdx;  /* Keeps track of active states, (Nu+Nf) x 1 */
+   double *ActiveState; /* u and uf concatenated, (Nu+Nf) x 1 */
+   long *ActiveStateIdx;  /* Keeps track of active states, (Nu+Nf) x 1 */
    double *u,*uu,*du,*udot;  /* Nu  (Dynamic States) */
    double *x,*xx,*dx,*xdot;  /* Nx  (Kinematic States) */
    double *h,*hh,*dh,*hdot;  /* Nw  (Wheel Momentum States) */
@@ -280,53 +434,61 @@ struct DynType {
 };
 
 struct EnvTrqType {
+   /*~ Internal Variables ~*/
    long First;
    FILE *envfile;
    double Hs[3];
 };
 
 struct SCType {
-   long Tag;     /* SC[Tag].Tag = Tag */
+   /*~ Internal Variables ~*/
+   long ID;     /* SC[x].ID = x */
    long Exists;
    char Label[40];
    long RotDOF;  /* STEADY, KIN_JOINT, DYN_JOINT */
    long OrbDOF;  /* FIXED, EULER_HILL, ENCKE, COWELL */
    long RefOrb;
-   long FswTag;  /* Tag for FSW function */
+   long FswTag;  /* Tag for FSW function, eg. PROTOTYPE_FSW */
+   double FswSampleTime;
+   long FswMaxCounter;
+   long FswSampleCounter;
+   long InitAC;
+
    long Nb;   /* Number of bodies */
    long Ng;   /* Number of joints, = Nb-1 */
+   
    long Nw;   /* Number of wheels */
-   long Nmtb; /* Number of MTB's  [0 - 4] */
-   long Nthr; /* Number of thrusters [0 - 12] */
-   long Ncmg; /* Number of Control Moment Gyros [0 - 4] */
-   long Nacc; /* Number of accelerometers [0 - 4] */
-   struct BodyType *B;
-   struct JointType *G;
-   struct WhlType *Whl;
-   struct MTBType *MTB;
-   struct ThrusterType *Thr;
-   struct CMGType *CMG;
-   struct AccelType Accel[4];
+   long Nmtb; /* Number of MTB's */
+   long Nthr; /* Number of thrusters */
+   
+   long Ngyro; /* Number of Gyro axes */
+   long Nmag; /* Number of magnetometer axes */
+   long Ncss; /* Number of coarse sun sensors */
+   long Nfss; /* Number of Fine Sun Sensors */
+   long Nst; /* Number of star trackers */
+   long Ngps; /* Number of GPS receivers */
+   long Nacc; /* Number of accelerometer axes */
+   
    double mass;
    double cm[3]; /* wrt B0 origin, expressed in B0 frame */
    double I[3][3]; /* Inertia matrix, wrt SC.cm, expressed in B0 frame */
-   double PosR[3]; /* Position of cm wrt Reference Orbit (Orb[RefOrb], or R), m, expressed in N */
-   double VelR[3]; /* Velocity of cm wrt R, m/sec, expressed in N */
+   double PosR[3]; /* Position of cm wrt Reference Orbit [[m]], expressed in N [~=~] */
+   double VelR[3]; /* Velocity of cm wrt R [[m/s]], expressed in N [~=~] */
    double PosEH[3];  /* Position of cm wrt R, m, in Euler-Hill coords */
    double VelEH[3];  /* Velocity of cm wrt R, m, in Euler-Hill coords */
    double PosN[3];   /* Position of cm wrt origin of N, m, expressed in N */
    double VelN[3];   /* Velocity of cm wrt origin of N, m/sec, expressed in N */
-   double CLN[3][3]; /* Note that SC.CLN != Orb[RefOrb].CLN if SC.Rrel != 0 */
+   double CLN[3][3]; /* Note that SC.CLN != Orb[RefOrb].CLN if SC.PosR != 0.0 */
    double wln[3]; /* Expressed in N */
    double PosH[3];  /* Position of cm wrt H frame, expressed in H */
    double VelH[3];  /* Velocity of cm wrt H frame, expressed in H */
    double Frc[3]; /* Force, N, expressed in N */
    double svn[3]; /* Sun-pointing unit vector, expressed in N */
-   double svb[3]; /* Sun-pointing unit vector, expressed in SC.B[0] */
+   double svb[3]; /* Sun-pointing unit vector, expressed in SC.B[0] [~=~] */
    double bvn[3]; /* Magfield, Tesla, expressed in N */
-   double bvb[3]; /* Magfield, Tesla, expressed in SC.B[0] */
+   double bvb[3]; /* Magfield [[Tesla]], expressed in SC.B[0] [~=~] */
    double Hvn[3]; /* Total SC angular momentum, Nms, expressed in N */
-   double Hvb[3]; /* Total SC angular momentum, Nms, expressed in SC.B[0] */
+   double Hvb[3]; /* Total SC angular momentum [[Nms]], expressed in SC.B[0] [~=~] */
    long Eclipse;
    double AtmoDensity;
    double DragCoef;
@@ -341,8 +503,6 @@ struct SCType {
    double asn[3];  /* Non-gravitational accel of SC.cm in N */
    double alfbn[3]; /* Angular accel of B wrt N, expressed in B */
    double abs[3];  /* Non-grav accel of B[0].cm, wrt SC.cm, in N */
-   /* For dynamics model construction */
-   long MassIsConstant;
    /* Enable/Disable Passive Joint Forces or Torques (i.e. spring/damper) */
    long PassiveJointFrcTrqEnabled;
    /* Constraint forces and torques are computed if requested */
@@ -357,15 +517,34 @@ struct SCType {
    struct DynType Dyn;
    /* Workspace for Actuator Sizing */
    struct EnvTrqType EnvTrq;
-   /* Should FSW be part of SC, or its own structure? */
-   struct FSWType FSW;
    /* Bounding Box used for shadowmap */
    struct BoundingBoxType BBox;
    /* See ReadStatesFromSocket */
    long RequestStateRefresh;
+   
+   /* For stability analysis */
+   long GainAndDelayActive;
+   double LoopGain; /* [[None]] */
+   double LoopDelay; /* [[sec]] */
+   
+   /*~ Structures ~*/
+   struct AcType AC;
+   struct BodyType *B;           /* [*Nb*] */
+   struct JointType *G;          /* [*Ng*] */
+   struct WhlType *Whl;          /* [*Nw*] */
+   struct MTBType *MTB;          /* [*Nmtb*] */
+   struct ThrType *Thr;          /* [*Nthr*] */
+   struct GyroType *Gyro;        /* [*Ngyro*] */
+   struct MagnetometerType *MAG; /* [*Nmag*] */
+   struct CssType *CSS;          /* [*Ncss*] */
+   struct FssType *FSS;          /* [*Nfss*] */
+   struct StarTrackerType *ST;   /* [*Nst*] */
+   struct GpsType *GPS;          /* [*Ngps*] */
+   struct AccelType *Accel;      /* [*Nacc*] */
 };
 
 struct TargetType {
+   /*~ Internal Variables ~*/
    long Type;
    long World;
    long RefOrb;
@@ -378,6 +557,7 @@ struct TargetType {
 };
 
 struct POVType {
+   /*~ Internal Variables ~*/
    long Mode; /* Track Host, Track Target, or Fixed in Host */
    struct TargetType Host;
    struct TargetType Target;
@@ -418,6 +598,7 @@ struct POVType {
 };
 
 struct RegionType {
+   /*~ Internal Variables ~*/
    long Exists;
    long World;
    double Lng,Lat,Alt; /* Origin location */
@@ -435,34 +616,42 @@ struct RegionType {
 };
 
 struct AtmoType {
+   /*~ Internal Variables ~*/
    long Exists;
    float GasColor[3];
    float DustColor[3];
-   double ScaleHt;
+   float RayScat[3];
+   float MieScat;
+   float RayScaleHt;
+   float MieScaleHt;
+   float MieG;
    double MaxHt;
    double rad;
 };
 
 struct WorldType {
+   /*~ Parameters ~*/
+   
    /* Relationships */
    long Exists;
    long Type; /* STAR, PLANET, MOON, ASTEROID, COMET */
    long Parent;
    long Nsat;
-   long *Sat;
+   long *Sat; /* [*Nsat*] */
 
    /* Physical Properties */
    double mu; /* Gravitation constant  */
+   double J2; /* Gravitation oblateness parameter */
    double rad; /* Radius */
    double w; /* Spin Rate */
+   double PriMerAngJ2000; /* Prime Meridian Angle at J2000 epoch, rad */
    double RadOfInfluence; /* Radius of Sphere of Influence */
    double DipoleMoment;  /* Magnetic Field Dipole Moment, Wb-m */
    double DipoleAxis[3]; /* Magnetic Field Dipole Axis */
    double DipoleOffset[3]; /* Dipole Offset, m */
    double RingInner, RingOuter;
+   double Density; /* For minor bodies, polyhedron gravity */
 
-   /* Ephemeris */
-   struct OrbitType eph; /* Ephemeris Parameters */
 
    /* Graphical Properties */
    long HasRing;
@@ -482,22 +671,30 @@ struct WorldType {
    unsigned int CloudGlossCubeTag;
    long GeomTag;
    unsigned int RingTexTag;
-   unsigned int RingList;
-   struct AtmoType Atmo;
+   double NearExtent,FarExtent;
 
-   /* State Variables */
-   double PosH[3];         /* Position in H frame */
-   double VelH[3];         /* Velocity in H frame */
    double CNH[3][3]; /* DCM from heliocentric ecliptic frame
                         to world-centric equatorial inertial frame */
+   double qnh[4]; /* ~*/
+
+   /*~ Internal Variables ~*/
+   
+   double PosH[3];         /* Position in H frame [~=~] */
+   double VelH[3];         /* Velocity in H frame */
    double PriMerAng; /* Angle from N1 to prime meridian */
    double CWN[3][3]; /* DCM from world-centric inertial frame
                         to world-centric rotating frame */
+   double qwn[4]; /* ~*/
    long Visibility; /* Too small to see, point-sized, or shows disk */
    float ModelMatrix[16];
+
+   /*~ Structures ~*/
+   struct OrbitType eph; /* Ephemeris */
+   struct AtmoType Atmo;
 };
 
 struct SpotType {
+   /*~ Internal Variables ~*/
    long xmin,ymin;
    long xmax,ymax;
    long Visible;
@@ -505,6 +702,7 @@ struct SpotType {
 };
 
 struct WidgetType {
+   /*~ Internal Variables ~*/
    long xmin,ymin;
    long xmax,ymax;
    float BorderColor[4];
@@ -516,6 +714,7 @@ struct WidgetType {
 };
 
 struct FovType {
+   /*~ Internal Variables ~*/
    long Type; /* WIREFRAME, SOLID, or VECTOR */
    long NearExists;
    long FarExists;
@@ -533,6 +732,7 @@ struct FovType {
 };
 
 struct TdrsType {
+   /*~ Internal Variables ~*/
    long Exists;
    double JD;
    double rw[3]; /* Position vector in ECEF frame */
@@ -544,6 +744,7 @@ struct TdrsType {
 };
 
 struct GroundStationType {
+   /*~ Internal Variables ~*/
    long Exists;
    long World;
    long Show;
@@ -554,6 +755,7 @@ struct GroundStationType {
 
 /* Framebuffer Objects for Spacecraft Shadows */
 struct FBOType {
+   /*~ Internal Variables ~*/
    unsigned int FrameTag;
    unsigned int Height, Width;
    unsigned int RenderTag;
@@ -562,6 +764,7 @@ struct FBOType {
 
 /* Orrery POV is different from POV */
 struct OrreryPOVType {
+   /*~ Internal Variables ~*/
    long Regime;  /* CENTRAL or THREE_BODY */
    long CenterType;
    long World;
@@ -578,6 +781,32 @@ struct OrreryPOVType {
    double CN[3][3];
    double CH[3][3];
    double CL[3][3];
+};
+
+struct ConstellationType {
+   char Tag[4]; 
+   long Class;  /* MAJOR, ZODIAC, or MINOR */
+   long Nstars;
+   long Nlines;
+   double **StarVec;
+   /* For each line */
+   long *Star1;
+   long *Star2;
+};
+
+struct IpcType {
+   long Init;
+   long Mode; /* OFF, TX, RX, TXRX, ACS, WRITEFILE, READFILE */
+   long SocketRole; /* SERVER, CLIENT, GMSEC_CLIENT */
+   long AcsID;  /* AC.ID for ACS mode */
+   char HostName[40];
+   long Port;
+   long AllowBlocking;
+   long EchoEnabled;
+   SOCKET Socket;
+   FILE *File;
+   long Nprefix;
+   char **Prefix;
 };
 
 /*
