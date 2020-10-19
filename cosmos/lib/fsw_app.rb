@@ -8,7 +8,9 @@
 #      use subclasses
 #   2. Refer to osk_global.rb for JSON definitions that are used to initialize
 #      most of the attributes
-#   
+#   3. Eventually an OSK toolchain will manage processing app definition files
+#      and generating flight/ground artifacts. This is an imperfect stop gap
+#      measure that has duplication of definitions.
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -43,7 +45,18 @@ class FswApp
    @@validate_cmd     = false     # Is command counter increment validated after command sent?
    @@validate_timeout = 7         # Timeout(secs) to wait for telemetry verification
 
+   ### Overview ###
+   attr_reader :title             # Brief app title, not the acronym
+   attr_reader :version           # Release version
+   attr_reader :owner             # Organization that controls/releases the app
+   attr_reader :url                  # URL to access the app
    attr_reader :description       # Brief description of application's purpose 
+
+   ### System ###
+   attr_reader :sys_build
+   attr_reader :sys_simsat
+
+   ### cFS/FSW ###
    attr_reader :app_framework     # Application framework: 'cfs', 'osk_c_fw' or 'osk_cpp_fw'
    attr_reader :cfe_type          # cFE supports apps and libraries: 'app' or 'lib' These should be apps
    attr_reader :obj_path_filename # Path/Filename of object loaded during FSW startup
@@ -54,6 +67,7 @@ class FswApp
    attr_reader :exception_action  # 0 = Reset app, Non-zero = reset processor
    attr_reader :tables            # 
    
+   ### COSMOS/Ops ###
    attr_reader :target, :hk_pkt   # COSMOS definitions
    attr_reader :cmd_mid
    attr_reader :cmd_valid         # Status of last command sent
@@ -91,8 +105,17 @@ class FswApp
       begin
          if (not app_json.nil?)
          
+            @title   = app_json["app"]["title"]
+            @version = app_json["app"]["version"]
+            @owner   = app_json["app"]["owner"]
+            @url     = app_json["app"]["url"]
+            
             @description = app_json["app"]["description"]
 
+            sys = app_json["app"]["system"]
+            @sys_build  = sys["build"]
+            @sys_simsat = sys["simsat"]
+            
             app = app_json["app"]["fsw"]
             @app_framework     = app["app-framework"] 
             @cfe_type          = app["cfe-type"]

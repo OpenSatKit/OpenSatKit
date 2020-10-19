@@ -96,7 +96,7 @@ void DEMOBJ_Execute(void)
 {
 
    /*
-   ** Load table data from the last commanded table. This is just an exmaple of
+   ** Load table data from the last commanded table. This is just an example of
    ** doing something during the execution cycle.
    */   
    if (DemObj->TblDataEnabled) {
@@ -117,7 +117,7 @@ void DEMOBJ_Execute(void)
          /* Valid state, but nothing to do */
          break;
       default:
-         CFE_EVS_SendEvent(999, CFE_EVS_CRITICAL,
+         CFE_EVS_SendEvent(DEMOBJ_INVALID_TBL_ID_EID, CFE_EVS_CRITICAL,
                            "Invalid demo object table ID %d. Set ID to %s",
                            DemObj->TblId, TblIdStr(DEMOBJ_UNDEF_TBL_ID));
          DemObj->TblId = DEMOBJ_UNDEF_TBL_ID;

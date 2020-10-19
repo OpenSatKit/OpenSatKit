@@ -1,15 +1,21 @@
 {
 "app": {
    
-   "title": "OSK C++ Demo App",
-   "version": "1.0",
+   "title": "OSK C++ Demo",
+   "version": "1.1.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
 
    "description": [
+      "OSK_CPP_DEMO provides an example app that uses the OSK C++ framework",
+      "library(osk_cpp_fw). It explores different JSON table parsing options",
+      "as well as demonstrates how a cFE binary table can be used in a C++ app."
+   ],
 
-      "Prototype app that demonstrates using the OSK C++ app framework. It",
-      "explores different JSON table parsing options as well as demonstrates",
-      "how a cFE binary table can be used in a C++ app"
-      ],
+   "system": {
+      "build": true,
+      "simsat": false
+   },
 
    "cosmos": {
       "target": "OSK_CPP_DEMO"

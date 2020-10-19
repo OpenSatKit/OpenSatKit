@@ -4,14 +4,17 @@
 ** Notes:
 **   1. This is part of prototype effort to port a 42 simulator FSW controller
 **      component into a cFS-based application.
-**   2. The 42 FSW data structure is used unchanged and serves as the I/O
+**   2. The 42 AcType data structure is used unchanged and serves as the I/O
 **      between this adapter and the 42 code.
 **   3. This object serves as a wrapper/adapter for the 42 FSW module. The cFS
 **      FSW controller application should use this adapter for all interactions
-**      to/from the 42 interface. It is tightly coupled with i42's netif. If 
-**      i42 is changed/replaced to interface with hardware then only this
-**      adapter object will need to change.
-**   4. TODO - Fix partial & full table load/commit process. Right now a quick & dirty
+**      to/from the 42 interface. I42's interface object IF42 defines the packets
+**      that are exchanged between the two apps. If 
+**      i42 is changed/replaced to interface with hardware then only this adapter
+**      object will need to change.
+**   4. Since this is an educational app many events are defined as informational. A
+**      flight app should minimize "event clutter" and define some of these as debug.
+**   5. TODO - Fix partial & full table load/commit process. Right now a quick & dirty
 **      copy to local structure and then update 42's FSW structure. Get rid of
 **      local adapter table copy and add a commit function that is called from
 **      the control table load function. Think through initial values from a
@@ -30,9 +33,13 @@
 ** Includes
 */
 
+#include "i42_msgids.h"
+#include "osk_42_lib.h"
 #include "f42_adp.h"
-#include "ThreeAxisFsw.h"
-#include "fswkit.h"
+
+/* Ac struct access macros */
+#define AC42          &(F42Adp->Ac42->Obj)  
+#define AC42_(field)  (F42Adp->Ac42->Obj.field)
 
 /*
 ** Global File Data
@@ -45,10 +52,11 @@ static F42_ADP_Class* F42Adp = NULL;
 ** Local Function Prototypes
 */
 
-static void  CopySensorPktToFswStruct(F42_ADP_SensorPkt*  SensorPkt);
-static void  CopyFswStructToActuatorPkt(F42_ADP_ActuatorPkt* ActuatorPkt);
+static void  SensorPktToAcStruct(IF42_SensorDataPkt* SensorDataPkt);
+static void  AcStructToTlm(void);
+static void  TblToAcStruct(void);
 static char* GetOvrStr (uint8 State);
-static void  SendActuatorPkt(F42_ADP_ActuatorPkt* ActuatorPkt);
+
 
 /******************************************************************************
 ** Function: F42_ADP_Constructor
@@ -57,25 +65,25 @@ static void  SendActuatorPkt(F42_ADP_ActuatorPkt* ActuatorPkt);
 **
 ** Notes:
 **   1. This must be called prior to any other function.
+**   2. Assumes IF42 has constructed osk_42_lib's AC42 shared data structure 
 **
 */
-void F42_ADP_Constructor(F42_ADP_Class*  F42AdpPtr) {
+void F42_ADP_Constructor(F42_ADP_Class*  F42AdpObj) {
 
    int i;
    
-   F42Adp = F42AdpPtr;
+   F42Adp = F42AdpObj;
 
    /* If a class state variable can't default to zero then must be set after this */
    CFE_PSP_MemSet((void*)F42Adp, 0, sizeof(F42_ADP_Class));
    
    for (i=F42_ADP_OVR_ID_MIN; i<F42_ADP_OVR_ID_MAX; i++) F42Adp->Override[i] = F42_ADP_OVR_USE_SIM;
-   
-   InitFSW(&(F42Adp->Fsw));
-
+     
    CTRLTBL_Constructor(&(F42Adp->CtrlTbl), F42_ADP_GetCtrlTblPtr, F42_ADP_LoadCtrlTbl, F42_ADP_LoadCtrlTblEntry);
 	   
-   CFE_SB_InitMsg(&(F42Adp->ActuatorPkt), F42_ACTUATOR_MID,
-                  F42_ADP_ACTUATOR_PKT_LEN, TRUE);
+   CFE_SB_InitMsg(&F42Adp->ActuatorPkt,  I42_ACTUATOR_CMD_DATA_MID, IF42_ACTUATOR_CMD_DATA_PKT_LEN, TRUE);
+   CFE_SB_InitMsg(&F42Adp->CtrlPkt,      F42_CTRL_TLM_MID,          F42_ADP_TLM_CTRL_PKT_LEN, TRUE);
+   CFE_SB_InitMsg(&F42Adp->CtrlGainsPkt, F42_CTRL_GAINS_TLM_MID,    F42_ADP_TLM_CTRL_GAINS_PKT_LEN, TRUE);
 
 } /* End F42_ADP_Constructor() */
 
@@ -83,32 +91,33 @@ void F42_ADP_Constructor(F42_ADP_Class*  F42AdpPtr) {
 /******************************************************************************
 ** Function: F42_ADP_Run42Fsw
 **
-** Run the 42 simulator's FSW control law. 42's FSW data structure is used for
+** Run the 42 simulator's FSW control law. 42's Ac structure is used for
 ** all sensor/actuator data I/O. 
 **
 */
-void F42_ADP_Run42Fsw(F42_ADP_SensorPkt*  SensorPkt) {
+void F42_ADP_Run42Fsw(IF42_SensorDataPkt*  SensorDataPkt) {
 
-
-
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_Run42Fsw() - About to run ThreeAxisFSW()\n");
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "DeltaTime = %f, SunValid  = %d\n",SensorPkt->DeltaTime,SensorPkt->SunValid);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "PosN[0] = %.6f, PosN[1] = %.6f, PosN[2] = %.6f\n",SensorPkt->PosN[0],SensorPkt->PosN[1],SensorPkt->PosN[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "VelN[0] = %.6f, VelN[1] = %.6f, VelN[2] = %.6f\n",SensorPkt->VelN[0],SensorPkt->VelN[1],SensorPkt->VelN[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "wbn[0] = %.6f, wbn[1] = %.6f, wbn[2] = %.6f\n",SensorPkt->wbn[0],SensorPkt->wbn[1],SensorPkt->wbn[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "qbn[0] = %.6f, qbn[1] = %.6f, qbn[2] = %.6f, qbn[3] = %.6f\n",SensorPkt->qbn[0],SensorPkt->qbn[1],SensorPkt->qbn[2],SensorPkt->qbn[3]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "svn[0] = %.6f, svn[1] = %.6f, svn[2] = %.6f\n",SensorPkt->svn[0],SensorPkt->svn[1],SensorPkt->svn[2]);
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "svb[0] = %.6f, svb[1] = %.6f, svb[2] = %.6f\n",SensorPkt->svb[0],SensorPkt->svb[1],SensorPkt->svb[2]);
-
-   CopySensorPktToFswStruct(SensorPkt);
-   ThreeAxisFSW(&(F42Adp->Fsw));
-   CopyFswStructToActuatorPkt(&(F42Adp->ActuatorPkt));
-
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_Run42Fsw(): %0.6e\n", F42Adp->Fsw.GimCmd[0].Ang[0]);
-
-   SendActuatorPkt(&(F42Adp->ActuatorPkt));
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG,
+                     "**** F42_ADP_Run42Fsw(%d) ****", (int)F42Adp->CtrlExeCnt);
+    
+   F42Adp->Ac42 = AC42_GetPtr();
+   AC42_(EchoEnabled) = FALSE;
    
-} /* End F42_ADP_RunRun42Fsw() */
+   SensorPktToAcStruct(SensorDataPkt);
+
+   if (SensorDataPkt->InitCycle == TRUE) {
+      CFE_EVS_SendEvent(F42_ADP_INIT_CONTROLLER_EID, CFE_EVS_INFORMATION, "Initialized contoller");
+      InitAC(AC42);
+   }
+   
+   AcFsw(AC42);
+   ++F42Adp->CtrlExeCnt;
+
+   AcStructToTlm();
+
+   AC42_ReleasePtr(F42Adp->Ac42);
+
+} /* End F42_ADP_Run42Fsw() */
 
 
 /******************************************************************************
@@ -119,71 +128,51 @@ void F42_ADP_ResetStatus(void) {
   
    CTRLTBL_ResetStatus();
   
+   F42Adp->CtrlExeCnt = 0;
+
 } /* End F42_ADP_ResetStatus() */
 
 
 /******************************************************************************
-** Function:  CopySensorPktToFswStruct
+** Function: F42_ADP_SendCtrlGainsCmd
 **
+** Send the control gains telemetry packet containing the gains from the
+** control table.
 */
-static void CopySensorPktToFswStruct(F42_ADP_SensorPkt*  SensorPkt) {
+boolean F42_ADP_SendCtrlGainsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
+
+   int32    CfeStatus;
+
+   F42Adp->CtrlGainsPkt.Kp[0] = F42Adp->CtrlTbl.Data.Kp.X;
+   F42Adp->CtrlGainsPkt.Kp[1] = F42Adp->CtrlTbl.Data.Kp.Y;
+   F42Adp->CtrlGainsPkt.Kp[2] = F42Adp->CtrlTbl.Data.Kp.Z;
    
-   int i;
+   F42Adp->CtrlGainsPkt.Kr[0] = F42Adp->CtrlTbl.Data.Kr.X;
+   F42Adp->CtrlGainsPkt.Kr[1] = F42Adp->CtrlTbl.Data.Kr.Y;
+   F42Adp->CtrlGainsPkt.Kr[2] = F42Adp->CtrlTbl.Data.Kr.Z;
+
+   F42Adp->CtrlGainsPkt.Kunl  = F42Adp->CtrlTbl.Data.Kunl;
    
-   F42Adp->Fsw.DT       = SensorPkt->DeltaTime;
+   F42Adp->Ac42 = AC42_GetPtr();
    
-   F42Adp->Fsw.SunValid = SensorPkt->SunValid;
-
-   if (F42Adp->Override[F42_ADP_OVR_SUN_VALID] == F42_ADP_OVR_TO_TRUE)
-      F42Adp->Fsw.SunValid = TRUE;
-   if (F42Adp->Override[F42_ADP_OVR_SUN_VALID] == F42_ADP_OVR_TO_FALSE)
-      F42Adp->Fsw.SunValid = FALSE;
+   F42Adp->CtrlGainsPkt.Kp[0] = AC42_(CfsCtrl.Kp[0]);
+   F42Adp->CtrlGainsPkt.Kp[1] = AC42_(CfsCtrl.Kp[1]);
+   F42Adp->CtrlGainsPkt.Kp[2] = AC42_(CfsCtrl.Kp[2]);
    
-	
-   for (i=0; i < 3; i++) {
-      F42Adp->Fsw.PosN[i] = SensorPkt->PosN[i];
-      F42Adp->Fsw.VelN[i] = SensorPkt->VelN[i];
-      F42Adp->Fsw.wbn[i]  = SensorPkt->wbn[i];
-      F42Adp->Fsw.qbn[i]  = SensorPkt->qbn[i];
-      F42Adp->Fsw.svn[i]  = SensorPkt->svn[i];
-      F42Adp->Fsw.svb[i]  = SensorPkt->svb[i];
-      F42Adp->Fsw.bvb[i]  = SensorPkt->bvb[i];
-      F42Adp->Fsw.Hw[i]   = SensorPkt->Hw[i];
-   }
-   F42Adp->Fsw.qbn[3] = SensorPkt->qbn[3];  
+   F42Adp->CtrlGainsPkt.Kr[0] = AC42_(CfsCtrl.Kr[0]);
+   F42Adp->CtrlGainsPkt.Kr[1] = AC42_(CfsCtrl.Kr[1]);
+   F42Adp->CtrlGainsPkt.Kr[2] = AC42_(CfsCtrl.Kr[2]);
 
-} /* End CopySensorPktToFswStruct() */
-
-
-/******************************************************************************
-** Function:  CopyFswStructToActuatorPkt
-**
-*/
-static void CopyFswStructToActuatorPkt(F42_ADP_ActuatorPkt* ActuatorPkt) {
-
-   int i;
+   F42Adp->CtrlGainsPkt.Kunl  = AC42_(CfsCtrl.Kunl);
    
-   ActuatorPkt->SaGimbalCmd = F42Adp->Fsw.GimCmd[0].Ang[0];
-	
-   for (i=0; i < 3; i++) {
-      ActuatorPkt->WhlTorqCmd[i] = F42Adp->Fsw.Twhlcmd[i];
-      ActuatorPkt->MtbCmd[i]     = F42Adp->Fsw.Mmtbcmd[i];
-   }
-    
-} /* End CopyFswStructToActuatorPkt() */
+   AC42_ReleasePtr(F42Adp->Ac42);
 
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &F42Adp->CtrlGainsPkt);
+   CfeStatus = CFE_SB_SendMsg((CFE_SB_Msg_t *) &F42Adp->CtrlGainsPkt);
+   
+   return (CfeStatus == CFE_SUCCESS);
 
-/******************************************************************************
-** Function:  SendActuatorPkt
-**
-*/
-static void SendActuatorPkt(F42_ADP_ActuatorPkt* ActuatorPkt) {
-    
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "SendActuatorPkt()\n");
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) ActuatorPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) ActuatorPkt);
-
-} /* End SendActuatorPkt() */
+} /* End F42_ADP_SendCtrlGainsCmd() */
 
 
 /******************************************************************************
@@ -197,17 +186,19 @@ boolean F42_ADP_SetCtrlModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
    const F42_ADP_SetCtrlModeCmdPkt *SetCtrlModeCmd = (const F42_ADP_SetCtrlModeCmdPkt *) MsgPtr;
    boolean  RetStatus = FALSE;
 
-   if ( SetCtrlModeCmd->NewMode == TAF_CTRL_MODE_INIT) {
+   if ( SetCtrlModeCmd->NewMode == F42_ADP_CTRL_MODE_INIT) {
      
-     InitFSW(&(F42Adp->Fsw));
+     //TODO InitFSW(&(F42Adp->Fsw));
      RetStatus = TRUE;
-     CFE_EVS_SendEvent(F42_ADP_SET_CTRL_MODE_INFO_EID, CFE_EVS_INFORMATION,
+     CFE_EVS_SendEvent(F42_ADP_SET_CTRL_MODE_EID, CFE_EVS_INFORMATION,
                        "Set control mode to init. Commanded Mode = %d",SetCtrlModeCmd->NewMode);
+      CFE_EVS_SendEvent(F42_ADP_SET_CTRL_MODE_EID, CFE_EVS_INFORMATION,
+                        "**** OSK v2.3: This command has no effect with the current 42 standalone controller ****"); 
 	 
    }
    else {
      
-     CFE_EVS_SendEvent(F42_ADP_INVALID_CTRL_MODE_ERR_EID, CFE_EVS_ERROR,
+     CFE_EVS_SendEvent(F42_ADP_INVLD_CTRL_MODE_EID, CFE_EVS_ERROR,
                        "Invalid commanded control mode %d",SetCtrlModeCmd->NewMode);
      
    }
@@ -215,7 +206,6 @@ boolean F42_ADP_SetCtrlModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
    return RetStatus;
 
 } /* End F42_ADP_SetCtrlModeCmd() */
-
 
 
 /******************************************************************************
@@ -233,11 +223,13 @@ boolean F42_ADP_SetOvrCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
       if (SetOvrCmd->State >= F42_ADP_OVR_STATE_MIN && SetOvrCmd->State <= F42_ADP_OVR_STATE_MAX) {
          F42Adp->Override[SetOvrCmd->Id] = SetOvrCmd->State;
          RetStatus = TRUE;
-         CFE_EVS_SendEvent(F42_ADP_SET_OVR_INFO_EID, CFE_EVS_INFORMATION,
+         CFE_EVS_SendEvent(F42_ADP_SET_OVR_EID, CFE_EVS_INFORMATION,
                            "Set override identifier %d to state %s", SetOvrCmd->Id, GetOvrStr(SetOvrCmd->State));
+         CFE_EVS_SendEvent(F42_ADP_SET_OVR_EID, CFE_EVS_INFORMATION,
+                           "**** OSK v2.3: This command has no effect with the current 42 standalone controller ****"); 
 	  }
 	  else {
-         CFE_EVS_SendEvent(F42_ADP_INVALID_OVR_STATE_ERR_EID, CFE_EVS_ERROR,
+         CFE_EVS_SendEvent(F42_ADP_INVLD_OVR_STATE_EID, CFE_EVS_ERROR,
                            "Invalid commanded override state %d. Must be between %d and %d",SetOvrCmd->State,F42_ADP_OVR_STATE_MIN,F42_ADP_OVR_STATE_MAX);
 	  } /* End if valid state */
 	  
@@ -245,7 +237,7 @@ boolean F42_ADP_SetOvrCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
    
    else {
      
-      CFE_EVS_SendEvent(F42_ADP_INVALID_OVR_ID_ERR_EID, CFE_EVS_ERROR,
+      CFE_EVS_SendEvent(F42_ADP_INVLD_OVR_ID_EID, CFE_EVS_ERROR,
                         "Invalid commanded override identifier %d is greater than max ID %d",SetOvrCmd->Id, F42_ADP_OVR_ID_MAX);
      
    }
@@ -263,39 +255,217 @@ boolean F42_ADP_SetOvrCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
 */
 boolean F42_ADP_SetTargetWhlMomCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
 
+   boolean RetStatus = FALSE;
+   
    const F42_ADP_SetTargetWhlMomCmdPkt* SetTargetWhlMomCmd = (const F42_ADP_SetTargetWhlMomCmdPkt *) MsgPtr;
    uint8 ValidWheels = 0, i;   
 
-   for (i=0; i<3; i++) {
+   for (i=0; i<AC42_NWHL; i++) {
    
-      if ( SetTargetWhlMomCmd->Whl[i] >= F42Adp->CtrlTbl.Data.WhlTgtMomLim.Lower &&
-           SetTargetWhlMomCmd->Whl[i] <= F42Adp->CtrlTbl.Data.WhlTgtMomLim.Upper ) {
+      if ( SetTargetWhlMomCmd->Whl[i] >= F42Adp->CtrlTbl.Data.HcmdLim.Lower &&
+           SetTargetWhlMomCmd->Whl[i] <= F42Adp->CtrlTbl.Data.HcmdLim.Upper ) {
       
-         F42Adp->Fsw.Hwcmd[i] = SetTargetWhlMomCmd->Whl[i];
+         F42Adp->Hcmd[i] = SetTargetWhlMomCmd->Whl[i];
          ValidWheels++;
       
       }
       else {
          
-         CFE_EVS_SendEvent(F42_ADP_SET_TARGET_WHL_MOM_ERR_EID, CFE_EVS_ERROR,
+         CFE_EVS_SendEvent(F42_ADP_INVLD_TARGET_WHL_MOM_EID, CFE_EVS_ERROR,
                            "Commanded target wheel %d momentum %0.6e exceeds (lower,upper) limits (%0.6e,%0.6e)",
-                           i, SetTargetWhlMomCmd->Whl[i], F42Adp->CtrlTbl.Data.WhlTgtMomLim.Lower, F42Adp->CtrlTbl.Data.WhlTgtMomLim.Upper);
+                           i, SetTargetWhlMomCmd->Whl[i], F42Adp->CtrlTbl.Data.HcmdLim.Lower, F42Adp->CtrlTbl.Data.HcmdLim.Upper);
       }
       
    } /* End wheel loop */ 
       
-   if (ValidWheels == 3) {
+   if (ValidWheels == AC42_NWHL) {
       
-      CFE_EVS_SendEvent(F42_ADP_SET_TARGET_WHL_MOM_INFO_EID, CFE_EVS_ERROR,
-                        "Target wheel momentum set to %0.6e, %0.6e, %0.6e",
-                        F42Adp->Fsw.Hwcmd[0],F42Adp->Fsw.Hwcmd[1],F42Adp->Fsw.Hwcmd[2]);
-      return TRUE;
+      CFE_EVS_SendEvent(F42_ADP_SET_TARGET_WHL_MOM_EID, CFE_EVS_INFORMATION,
+                        "Target wheel momentum set to %0.6e, %0.6e, %0.6e, %0.6e",
+                        F42Adp->Hcmd[0],F42Adp->Hcmd[1],F42Adp->Hcmd[2],F42Adp->Hcmd[3]);
+      
+      CFE_EVS_SendEvent(F42_ADP_SET_TARGET_WHL_MOM_EID, CFE_EVS_INFORMATION,
+                        "**** OSK v2.3: This command has no effect with the current 42 standalone controller ****"); 
+
+      RetStatus = TRUE;
       
    } /* End if valid command */
    
-   return FALSE;
+   return RetStatus;
 
 } /* End F42_ADP_SetTargetWhlMomCmd() */
+
+
+/******************************************************************************
+** Function: F42_ADP_ConfigDbgCmd
+**
+** TODO - Add file command parameter
+*/
+
+boolean F42_ADP_ConfigDbgCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   const F42_ADP_ConfigDbgCmdPkt *ConfigDbgCmd = (const F42_ADP_ConfigDbgCmdPkt *) MsgPtr;
+   boolean  RetStatus = FALSE;
+
+   if ( ConfigDbgCmd->NewState == TRUE) {
+     
+      if (F42Adp->DbgEnabled == TRUE) {
+         
+         CFE_EVS_SendEvent(F42_ADP_DEBUG_CMD_ERR_EID, CFE_EVS_ERROR, "Enable debug command rejected; debug file currently opened.");
+      
+      }
+      else {
+         
+         F42Adp->DbgFileHandle = OS_creat(F42_DBG_FILE, OS_WRITE_ONLY);
+         
+         if (F42Adp->DbgFileHandle >= OS_FS_SUCCESS) {
+            
+            F42Adp->DbgEnabled = TRUE;
+            CFE_EVS_SendEvent(F42_ADP_DEBUG_CMD_EID, CFE_EVS_INFORMATION, "Created debug file %s",F42_DBG_FILE);
+            RetStatus = TRUE;
+         
+         }
+         else {
+
+            CFE_EVS_SendEvent(F42_ADP_DEBUG_CMD_ERR_EID, CFE_EVS_ERROR, "Error creating debug file %s",F42_DBG_FILE);
+         
+         } /* End if error creating file */
+      } /* End if debug not enabled */
+   } /* End if enable debug command */
+   else {
+      
+      if (F42Adp->DbgEnabled == TRUE) {
+         
+         F42Adp->DbgEnabled = FALSE;
+         OS_close(F42Adp->DbgFileHandle);
+         CFE_EVS_SendEvent(F42_ADP_DEBUG_CMD_EID, CFE_EVS_INFORMATION, "Debug file %s closed", F42_DBG_FILE);
+      
+      }
+      else {
+
+         CFE_EVS_SendEvent(F42_ADP_DEBUG_CMD_EID, CFE_EVS_INFORMATION, "Disable debug command rejected; debug not enabled.");
+      }
+      
+   } /* End if disable debug command */
+        
+   return RetStatus;
+
+} /* End F42_ADP_ConfigDbgCmd() */
+
+
+/******************************************************************************
+** Function:  SensorPktToAcStruct
+**
+** Notes:
+**   1. Assumes caller is performng AC42_GetPtr() and AC42_ReleasePtr() calls.
+**
+*/
+static void SensorPktToAcStruct(IF42_SensorDataPkt* SensorDataPkt) 
+{
+   
+   int i;
+
+   AC42_(Time)         = SensorDataPkt->Time;
+   AC42_(GPS[0].Valid) = SensorDataPkt->GpsValid;
+   AC42_(StValid)      = SensorDataPkt->StValid;  
+   AC42_(SunValid)     = SensorDataPkt->SunValid;  /* CSS/FSS */
+
+   for (i=0; i < 3; i++) {
+
+      AC42_(PosN[i])  = SensorDataPkt->PosN[i];  /* GPS */
+      AC42_(VelN[i])  = SensorDataPkt->VelN[i];
+   
+      AC42_(qbn[i])   = SensorDataPkt->qbn[i];   /* ST */
+
+      AC42_(wbn[i])   = SensorDataPkt->wbn[i];   /* Gyro */
+   
+      AC42_(svb[i])   = SensorDataPkt->svb[i];   /* CSS/FSS */
+
+      AC42_(bvb[i])   = SensorDataPkt->bvb[i];   /* MTB s*/
+
+      AC42_(Whl[i].H) = SensorDataPkt->WhlH[i];  /* Wheels */
+
+   }
+   
+   AC42_(qbn[3])   = SensorDataPkt->qbn[3];   /* ST */
+   AC42_(Whl[3].H) = SensorDataPkt->WhlH[4];  /* Wheels */
+
+} /* End  SensorPktToAcStruct() */
+
+
+/******************************************************************************
+** Function: AcStructToTlm
+**
+** Notes:
+**   1. Assumes caller is performng AC42_GetPtr() and AC42_ReleasePtr() calls.
+**
+*/
+static void AcStructToTlm(void)
+{
+
+   int i;
+
+   F42Adp->CtrlPkt.GpsValid = AC42_(GPS[0].Valid);
+   F42Adp->CtrlPkt.StValid  = AC42_(StValid);  
+   F42Adp->CtrlPkt.SunValid = AC42_(SunValid); 
+
+   F42Adp->CtrlPkt.SaGcmd     = (float)AC42_(G->Cmd.Ang[0]);
+   F42Adp->ActuatorPkt.SaGcmd = AC42_(G->Cmd.Ang[0]);
+
+   for (i=0; i < 3; i++) {
+
+      F42Adp->CtrlPkt.wbn[i]   = (float)AC42_(wbn[i]);
+      F42Adp->CtrlPkt.wln[i]   = (float)AC42_(wln[i]);
+      F42Adp->CtrlPkt.qbr[i]   = (float)AC42_(qbr[i]);
+      F42Adp->CtrlPkt.therr[i] = (float)AC42_(CfsCtrl.therr[i]);
+      F42Adp->CtrlPkt.werr[i]  = (float)AC42_(CfsCtrl.werr[i]);
+      F42Adp->CtrlPkt.Hvb[i]   = (float)AC42_(Hvb[i]);
+      F42Adp->CtrlPkt.svb[i]   = (float)AC42_(svb[i]);
+
+      F42Adp->CtrlPkt.Tcmd[i]     = (float)AC42_(Tcmd[i]); /* Wheel */
+      F42Adp->ActuatorPkt.Tcmd[i] = AC42_(Tcmd[i]);
+     
+      F42Adp->CtrlPkt.Mcmd[i]     = (float)AC42_(Mcmd[i]); /* MTB   */
+      F42Adp->ActuatorPkt.Mcmd[i] = AC42_(Mcmd[i]);
+
+   }
+
+   F42Adp->CtrlPkt.qbr[3] = (float)AC42_(qbr[3]);
+
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "**** SendActuatorPkt()\n");
+   
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &F42Adp->ActuatorPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &F42Adp->ActuatorPkt);
+
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &F42Adp->CtrlPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &F42Adp->CtrlPkt);
+
+} /* End AcStructToTlm() */
+                    
+
+/******************************************************************************
+** Function: TblToAcStruct
+**
+*/
+static void TblToAcStruct(void)
+{
+
+   F42Adp->Ac42 = AC42_GetPtr();
+ 
+   AC42_(CfsCtrl.Kp[0]) = F42Adp->CtrlTbl.Data.Kp.X;
+   AC42_(CfsCtrl.Kp[1]) = F42Adp->CtrlTbl.Data.Kp.Y;
+   AC42_(CfsCtrl.Kp[2]) = F42Adp->CtrlTbl.Data.Kp.Z;
+
+   AC42_(CfsCtrl.Kr[0]) = F42Adp->CtrlTbl.Data.Kr.X;
+   AC42_(CfsCtrl.Kr[1]) = F42Adp->CtrlTbl.Data.Kr.Y;
+   AC42_(CfsCtrl.Kr[2]) = F42Adp->CtrlTbl.Data.Kr.Z;
+
+   AC42_(CfsCtrl.Kunl)  = F42Adp->CtrlTbl.Data.Kunl;
+
+   AC42_ReleasePtr(F42Adp->Ac42);
+
+} /* End TblToAcStruct() */
 
 
 /******************************************************************************
@@ -321,19 +491,12 @@ const CTRLTBL_Struct* F42_ADP_GetCtrlTblPtr()
 boolean F42_ADP_LoadCtrlTbl(CTRLTBL_Struct* NewTbl)
 {
 
-   int i;
-
    CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data), NewTbl, sizeof(CTRLTBL_Struct));
    
-   F42Adp->Fsw.MOI[0] = F42Adp->CtrlTbl.Data.Moi.x;
-   F42Adp->Fsw.MOI[1] = F42Adp->CtrlTbl.Data.Moi.y;
-   F42Adp->Fsw.MOI[2] = F42Adp->CtrlTbl.Data.Moi.z;
-
-   for(i=0;i<3;i++) 
-      FindPDGains(F42Adp->Fsw.MOI[i], F42Adp->CtrlTbl.Data.PdGainParam.w,F42Adp->CtrlTbl.Data.PdGainParam.z,
-                  &(F42Adp->Fsw.Kr[i]),&(F42Adp->Fsw.Kp[i]));
+   TblToAcStruct();
    
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_LoadCtrlTbl() Kr[0] = %.6f, Kp[0] = %.6f\n", F42Adp->Fsw.Kr[0], F42Adp->Fsw.Kp[0] );
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_LoadCtrlTbl() Kp.X = %.6f, Kr.X = %.6f\n", 
+                     F42Adp->CtrlTbl.Data.Kp.X,F42Adp->CtrlTbl.Data.Kr.X);
    
    return TRUE;
 
@@ -350,24 +513,24 @@ boolean F42_ADP_LoadCtrlTbl(CTRLTBL_Struct* NewTbl)
 boolean F42_ADP_LoadCtrlTblEntry(uint16 ObjId, void* ObjData)
 {
 
-   int i;
    boolean RetStatus = TRUE;
    
    switch (ObjId) {
       
-	  case CTRLTBL_OBJ_MOI:
-         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.Moi), ObjData, sizeof(MomentOfInteria_Struct));
-         F42Adp->Fsw.MOI[0] = F42Adp->CtrlTbl.Data.Moi.x;
-         F42Adp->Fsw.MOI[1] = F42Adp->CtrlTbl.Data.Moi.y;
-         F42Adp->Fsw.MOI[2] = F42Adp->CtrlTbl.Data.Moi.z;
+      case CTRLTBL_OBJ_KP:
+         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.Kp), ObjData, sizeof(Kp_Struct));
          break;
 		 
-      case CTRLTBL_OBJ_PD_GAIN_PARAM:
-         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.PdGainParam), ObjData, sizeof(PdGainParam_Struct));
+      case CTRLTBL_OBJ_KR:
+         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.Kr), ObjData, sizeof(Kr_Struct));
+         break;
+		 
+      case CTRLTBL_OBJ_KUNL:
+         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.Kunl), ObjData, sizeof(float));
          break;
 	  
-      case CTRLTBL_OBJ_WHL_TGT_MOM_LIM:
-         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.WhlTgtMomLim), ObjData, sizeof(WhlTgtMomLim_Struct));
+      case CTRLTBL_OBJ_HCMD_LIM:
+         CFE_PSP_MemCpy(&(F42Adp->CtrlTbl.Data.HcmdLim), ObjData, sizeof(HcmdLim_Struct));
          break;
 
       default:
@@ -375,24 +538,22 @@ boolean F42_ADP_LoadCtrlTblEntry(uint16 ObjId, void* ObjData)
    
    } /* End ObjId switch */
    
-   for(i=0;i<3;i++) 
-      FindPDGains(F42Adp->Fsw.MOI[i], F42Adp->CtrlTbl.Data.PdGainParam.w,F42Adp->CtrlTbl.Data.PdGainParam.z,
-                  &(F42Adp->Fsw.Kr[i]),&(F42Adp->Fsw.Kp[i]));
+   TblToAcStruct();
 
-   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_LoadCtrlEntry() Kr[0] = %.6f, Kp[0] = %.6f\n", F42Adp->Fsw.Kr[0], F42Adp->Fsw.Kp[0] );
-   
+   CFE_EVS_SendEvent(F42_ADP_DEBUG_EID, CFE_EVS_DEBUG, "F42_ADP_LoadCtrlTbl() Kp.X = %.6f, Kr.X = %.6f\n", 
+                     F42Adp->CtrlTbl.Data.Kp.X,F42Adp->CtrlTbl.Data.Kr.X);
+  
    return RetStatus;
 
 } /* End F42_ADP_LoadCtrlTblEntry() */
 
+
 /******************************************************************************
-** Function: F42_ADP_LoadCtrlTblEntry
+** Function: GetOvrStr
 **
-** Notes:
-**   1. This is a simple data copy. Pass/fail criteria could be added.
-**   2. TODO - See file header TODO
+** Return an override string for event messages
 */
-char* GetOvrStr (uint8 State) {
+static char* GetOvrStr (uint8 State) {
 
    static char* OvrStr[] = {"UNDEFINED", "USE 42 SIM", "TRUE", "FALSE"};
    
@@ -403,7 +564,6 @@ char* GetOvrStr (uint8 State) {
    else
 
       return OvrStr[0];
- 
  
 } /* End GetOvrStr() */
 

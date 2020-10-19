@@ -1,21 +1,26 @@
 {
 "app": {
 
-   "title": "OSK C Demo App",
-   "version": "1.2",
+   "title": "OSK C Demo",
+   "version": "1.4.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
 
    "description": [
+      "OSK_C_DEMO provides an example app that uses the OSK C framework",
+      "library(osk_c_fw). It explores options for parsing text files used",
+      "for parameter and configuration settings."
+   ],
 
-      "Prototype app that demonstrates using the OSK C app framework. It",
-      "explores options for parsing text files used for parameter and",
-      "configuration settings."
-      ],
+   "system": {
+      "build": true,
+      "simsat": false
+   },
 
    "cosmos": {
       "target": "OSK_C_DEMO"
    },
-   
-   
+      
    "fsw": {
       "cfe-type": "CFE_APP",
       "obj-path-file": "/cf/osk_c_demo.so",

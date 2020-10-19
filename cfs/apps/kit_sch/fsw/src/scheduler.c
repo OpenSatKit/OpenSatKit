@@ -546,13 +546,14 @@ boolean SCHEDULER_LoadMsgTbl(MSGTBL_Tbl* NewTbl)
 **
 ** Notes:
 **   1. Range checking is not performed on the parameters.
-**   2. Function signature must match MSGTBL_LoadTblEntry
+**   2. Function signature must match MSGTBL_LoadTblEntry 
 **
 */
 boolean SCHEDULER_LoadMsgTblEntry(uint16 Index, MSGTBL_Entry* NewEntry)
 {
 
-   CFE_PSP_MemCpy(&(Scheduler->MsgTbl.Entry[Index]),NewEntry,sizeof(MSGTBL_Entry));
+   CFE_PSP_MemCpy(&(Scheduler->MsgTbl.Entry[Index]),NewEntry,
+                  CFE_SB_GetTotalMsgLength((const CFE_SB_Msg_t*)NewEntry));
 
    return TRUE;
 
@@ -1295,7 +1296,7 @@ static boolean SendTblEntryTlm(uint16 SchTblIndex, uint16 MsgTblIndex, boolean U
       }
      
       MsgDataIndex = (CCSDS_RD_TYPE(SpacePkt->Hdr) == CCSDS_CMD) ? sizeof(CCSDS_CommandPacket_t)/2 : sizeof(CCSDS_TelemetryPacket_t)/2;
-OS_printf("MsgDataIndex = %d\n",MsgDataIndex);
+
       CFE_PSP_MemCpy(&(TlmPkt->MsgTblEntry.Buffer[MsgDataIndex]),
                      &(Scheduler->MsgTbl.Entry[MsgTblIndex].Buffer[MsgDataIndex]),
                     (MSGTBL_MAX_MSG_WORDS-MsgDataIndex)*2);

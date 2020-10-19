@@ -1,5 +1,19 @@
 { "app": {
    
+   "title": "42 FSW Controller",
+   "version": "2.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "F42 implements the 42 Standalone controllers."
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
    "cosmos": {
       "target": "F42"
    },

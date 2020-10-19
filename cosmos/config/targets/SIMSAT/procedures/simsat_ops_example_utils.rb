@@ -57,7 +57,7 @@ def simsat_ops_example_setup(start_cfs)
    if start_cfs
    
       # Simplest way to get into a known configuration is to restart the flight software   
-      message_box("The flight software will be restarted to establish a known configuration. Enter '#{Osk::PASSWORD}' when prompted for the password.",false)
+      message_box("The flight software will be restarted to establish a known configuration. A terminal window will be created to run the FSW. Enter your user password when prompted.",false)
    
       Osk::System.stop_cfs
       Osk::System.start_cfs  # Enables telemetry

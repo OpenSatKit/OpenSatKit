@@ -26,9 +26,9 @@
 #include "app_cfg.h"
 #include "json.h"
 
-/*
-** Macro Definitions
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
 
 #define PKTTBL_MAX_APP_ID    (0x0800)  /* Maximum CCSDS v1 ApId */
@@ -58,13 +58,13 @@
 #define  PKTTBL_OBJ_FILTER    1
 #define  PKTTBL_OBJ_CNT       2
 
-#define  PKTTBL_OBJ_PKT_NAME     "packet"
-#define  PKTTBL_OBJ_FILTER_NAME  "filter"
+#define  PKTTBL_OBJ_NAME_PKT     "packet"
+#define  PKTTBL_OBJ_NAME_FILTER  "filter"
                                            
 
-/*
-** Type Definitions
-*/
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 
 /******************************************************************************
@@ -126,9 +126,10 @@ typedef struct {
 } PKTTBL_Class;
 
 
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
+
 
 /******************************************************************************
 ** Function: PKTTBL_Constructor

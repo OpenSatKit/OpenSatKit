@@ -1,16 +1,20 @@
 {
-   "name": "CubeSat Controller",
-   "description": "Attitude Control Parameters",
-   "moment-of-inertia": {
-      "x": 2759.831373,
-      "y": 2117.500000,
-      "z": 3835.272549
+   "name": "Standlone Controller",
+   "description": "Attitude Control Gains",
+   "kp": {
+      "x": 2.759831372549e+01,
+      "y": 2.117500000000e+01,
+      "z": 3.835272549020e+01
    },
-   "pd-gain-param": {
-      "w": 0.628,
-      "z": 0.7
+   "kr": {
+      "x": 3.863763921569e+02,
+      "y": 2.964500000000e+02,
+      "z": 5.369381568628e+02
    },
-   "whl-tgt-mom-lim": {
+   "kunl": {
+      "k": 1.000000000000e+06
+   },
+   "hcmd-lim": {
       "lower": -0.9,
       "upper":  0.9
    }

@@ -160,7 +160,7 @@ boolean ISIMTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
             for (i=0; i < ISIMTBL_OBJ_CNT; i++) {
 
                if (IsimTbl->JsonObj[i].Modified) {
-                  if (!(IsimTbl->LoadTblEntryFunc)(i, &(IsimTbl->JsonObj[i].Data)))
+                  if (!(IsimTbl->LoadTblEntryFunc)(i, IsimTbl->JsonObj[i].Data))
                      IsimTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                }
 
@@ -274,7 +274,8 @@ boolean InstrumentCallback (int TokenIdx)
 
    int     AttributeCnt = 0;
    int     PwrInitCycles;
-   boolean RetStatus = FALSE;   
+   
+   IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Modified = FALSE;   
    
    CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE, 
                      "\nISIMTBL.InstrumentCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
@@ -287,7 +288,7 @@ boolean InstrumentCallback (int TokenIdx)
       IsimTbl->Data.Instrument.PwrInitCycles = PwrInitCycles;
 
       IsimTbl->ObjLoadCnt++;
-      RetStatus = TRUE;
+      IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Modified = TRUE;
 	  
       CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE,  "ISIMTBL.InstrumentCallback: %d\n",
                         IsimTbl->Data.Instrument.PwrInitCycles);
@@ -301,7 +302,7 @@ boolean InstrumentCallback (int TokenIdx)
    
    } /* End if invalid AttributeCnt */
       
-   return RetStatus;
+   return IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Modified;
 
 } /* InstrumentCallback() */
 
@@ -323,7 +324,8 @@ boolean SciFileCallback (int TokenIdx)
    int     CyclesPerFile;
    char    PathBaseFilename[OS_MAX_PATH_LEN];
    char    FileExtension[ISIM_FILE_EXT_MAX_CHAR];
-   boolean RetStatus = FALSE;   
+   
+   IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Modified = FALSE;   
    
    CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE, 
                      "\nISIMTBL.SciFileCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
@@ -340,7 +342,7 @@ boolean SciFileCallback (int TokenIdx)
       strncpy(IsimTbl->Data.SciFile.FileExtension,FileExtension,ISIM_FILE_EXT_MAX_CHAR);
 
       IsimTbl->ObjLoadCnt++;
-      RetStatus = TRUE;
+      IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Modified = TRUE;
 	  
       CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE,
                         "ISIMTBL.SciFileCallback: %s, %s, %d\n", 
@@ -357,7 +359,7 @@ boolean SciFileCallback (int TokenIdx)
 						
    } /* End if invalid AttributeCnt */
       
-   return RetStatus;
+   return IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Modified;
 
 } /* SciFileCallback() */
 

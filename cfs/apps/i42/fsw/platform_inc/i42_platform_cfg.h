@@ -6,8 +6,9 @@
 **      component into a cFS-based application 
 **
 ** References:
-**   1. OpenSat Object-based Application Developer's Guide.
-**   2. cFS Application Developer's Guide.
+**   1. OpenSat Object-based Application Developer's Guide
+**   2. cFS Application Developer's Guide
+**   3. 42/Docs/Standalone AcApp text file
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -27,24 +28,25 @@
 /******************************************************************************
 ** I42 Application Configurations
 */
+#define  I42_APP_NAME "I42"
 
-//TODO #define  I42_ACTUATOR_TIMEOUT              1500  /* Pend timeout (ms) for actuator data read */
-//TODO #define  I42_ACTUATOR_TIMEOUT               200  /* Pend timeout (ms) for actuator data read. Less than half scheduler wakeup */
-#define  I42_NO_SENSOR_DISCONNECT_LIM      2000  /* Number of 'no data' sensor data read attempts before disconnect */
-#define  I42_NO_SENSOR_RESEND_ACTUATOR_LIM   50  /* Number of 'no data' sensor data read attempts before resend actutaor packet */
-
-#define  I42_EXECUTE_CYCLE_MIN   1
-#define  I42_EXECUTE_CYCLE_MAX  20
-#define  I42_EXECUTE_CYCLE_DEF   2
+#define  I42_EXECUTE_MSG_CYCLES_MIN   1
+#define  I42_EXECUTE_MSG_CYCLES_MAX  20
+#define  I42_EXECUTE_MSG_CYCLES_DEF   1
 
 #define  I42_EXECUTE_CYCLE_DELAY_MIN   10
 #define  I42_EXECUTE_CYCLE_DELAY_MAX  250
-#define  I42_EXECUTE_CYCLE_DELAY_DEF   50
+#define  I42_EXECUTE_CYCLE_DELAY_DEF  200
 
+#define  I42_EXECUTE_UNCLOSED_CYCLE_LIM 3   /* Number of 'unclosed' cycles before force child task to run */
 
 #define  I42_LOCAL_HOST_STR   "localhost"
 #define  I42_SOCKET_ADDR_STR  "127.000.000.001"
-#define  I42_SOCKET_PORT      4242
-#define  I42_SOCKET_BUF_LEN   1024
+#define  I42_SOCKET_PORT      10001   /* 42's standalone default */
+
+#define  I42_CHILD_NAME       "IF42_CHILD"
+#define  I42_CHILD_SEM_NAME   "IF42_CHILD_SEM"
+#define  I42_CHILD_STACK_SIZE  32768
+#define  I42_CHILD_PRIORITY    60
 
 #endif /* _i42_platform_cfg_ */

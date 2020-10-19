@@ -1,5 +1,20 @@
 { "app": {
    
+   "title": "Trivial File Transfer Protocol",
+   "version": "1.1.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "Implement the basic file transfer protion of RFC-1350.",
+      "It does not implement the timer features."
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
    "cosmos": {
       "target": "TFTP"
    },

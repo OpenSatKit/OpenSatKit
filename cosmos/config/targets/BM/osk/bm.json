@@ -2,18 +2,23 @@
 "app": {
 
    "title": "Benchmark App",
-   "version": "0.9",
+   "version": "0.9.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
 
    "description": [
+      "BM is a prototype app that allows the user to select benchmarks",
+      "to run ranging from simple a Dhrystone to complex multi-app",
+      "software bus message passing scenarios. Benchmarks are configurable",
+      "including the number of executions. Statistical reports are generated",
+      "for when multiple runs a performd."
+   ],
 
-      "Prototype app that allows the user to select benchmarks to run",
-      "ranging from simple Dhrystone to complex multi-app software bus",
-      "message passing scenarios. Benchmarks are configurable including",
-      "the number of executions. Statistical reports are generated for",
-      "when multiple runs a performd."
-      ],
-
-   
+   "system": {
+      "build": true,
+      "simsat": false
+   },
+      
    "cosmos": {
       "target": "BM"
    },

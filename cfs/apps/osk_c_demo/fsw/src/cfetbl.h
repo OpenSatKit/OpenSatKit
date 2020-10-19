@@ -26,6 +26,12 @@
 #include "app_cfg.h"
 #include "extbldata.h"
 
+/*
+** Event Message IDs
+*/
+
+#define CFETBL_REG_TBL_ERR_EID  (CFETBL_BASE_EID + 0)
+#define CFETBL_ENTRY_ERR_EID    (CFETBL_BASE_EID + 1)
 
 /*
 ** Type Definitions

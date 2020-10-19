@@ -1,11 +1,10 @@
 <% 
   require 'osk_config' 
 
-  @APP_PREFIX_STR   = "F42"
-  @HK_TLM_MID_STR   = "F42_HK_TLM_MID"
-  @CONTROL_MID_STR  = "F42_CONTROL_MID"
-  @SENSOR_MID_STR   = "F42_SENSOR_MID"
-  @ACTUATOR_MID_STR = "F42_ACTUATOR_MID"
+  @APP_PREFIX_STR     = "F42"
+  @HK_TLM_MID_STR     = "F42_HK_TLM_MID"
+  @CTRL_MID_STR       = "F42_CTRL_TLM_MID"
+  @CTRL_GAINS_MID_STR = "F42_CTRL_GAINS_TLM_MID"
 
 %>
     
@@ -22,48 +21,13 @@ TELEMETRY F42 HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "F42 Housekeeping Pack
     STATE Init 1
     STATE TBD  2
   APPEND_ITEM OVR_SUN_VALID   16 UINT "SunValid override"
-    STATE USE_42_SIM   1
-    STATE OVR_VALID    2 
-    STATE OVR_INVALID  3 
-
-  APPEND_ITEM WC_1 32 FLOAT "FSW->wc[0]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM WC_2 32 FLOAT "FSW->wc[1]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM WC_3 32 FLOAT "FSW->wc[2]"
-    FORMAT_STRING "%.6f"
-
-  APPEND_ITEM ZC_1 32 FLOAT "FSW->zc[0]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM ZC_2 32 FLOAT "FSW->zc[1]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM ZC_3 32 FLOAT "FSW->zc[2]"
-    FORMAT_STRING "%.6f"
-
-  APPEND_ITEM KR_1 32 FLOAT "FSW->Kr[0]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM KR_2 32 FLOAT "FSW->Kr[1]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM KR_3 32 FLOAT "FSW->Kr[2]"
-    FORMAT_STRING "%.6f"
-
-  APPEND_ITEM KP_1 32 FLOAT "FSW->Kp[0]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM KP_2 32 FLOAT "FSW->Kp[1]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM KP_3 32 FLOAT "FSW->Kp[2]"
-    FORMAT_STRING "%.6f"
-
-  APPEND_ITEM WHL_1_TGT_MOM 32 FLOAT "Commanded target momentum: FSW->Hwcmd[0]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_2_TGT_MOM 32 FLOAT "Commanded target momentum: FSW->Hwcmd[1]"
-    FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_3_TGT_MOM 32 FLOAT "Commanded target momentum: FSW->Hwcmd[2]"
-    FORMAT_STRING "%.6f"
+    STATE USE_42_SIM    1
+    STATE OVR_TO_VALID  2 
+    STATE OVR_TO_INVLD  3 
 
     
 TELEMETRY F42 CONTROL_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @CONTROL_MID_STR) %>
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @CTRL_MID_STR) %>
 
   APPEND_ITEM WBN_1       32 FLOAT "wbn[0]"
     FORMAT_STRING "%.6f"
@@ -71,6 +35,14 @@ TELEMETRY F42 CONTROL_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Packe
     FORMAT_STRING "%.6f"
   APPEND_ITEM WBN_3       32 FLOAT "wbn[2]"
     FORMAT_STRING "%.6f"
+
+  APPEND_ITEM WLN_1       32 FLOAT "wln[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WLN_2       32 FLOAT "wln[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WLN_3       32 FLOAT "wln[2]"
+    FORMAT_STRING "%.6f"
+
   APPEND_ITEM QBR_1       32 FLOAT "qbr[0]"
     FORMAT_STRING "%.6f"
   APPEND_ITEM QBR_2       32 FLOAT "qbr[1]"
@@ -79,87 +51,74 @@ TELEMETRY F42 CONTROL_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Packe
     FORMAT_STRING "%.6f"
   APPEND_ITEM QBR_4       32 FLOAT "qbr[3]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM ATT_ERR_X   32 FLOAT "qbr[0]*2.0"
+
+  APPEND_ITEM THERR_X   32 FLOAT "CfsCtrl.therr[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM ATT_ERR_Y   32 FLOAT "qbr[1]*2.0"
+  APPEND_ITEM THERR_Y   32 FLOAT "CfsCtrl.therr[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM ATT_ERR_Z   32 FLOAT "qbr[2]*2.0"
+  APPEND_ITEM THERR_Z   32 FLOAT "CfsCtrl.therr[2]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MOM_ERR_X   32 FLOAT "Herr[0]"
+
+  APPEND_ITEM WERR_X   32 FLOAT "CfsCtrl.werr[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MOM_ERR_Y   32 FLOAT "Herr[1]"
+  APPEND_ITEM WERR_Y   32 FLOAT "CfsCtrl.werr[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MOM_ERR_Z   32 FLOAT "Herr[2]"
+  APPEND_ITEM WERR_Z   32 FLOAT "CfsCtrl.werr[2]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM SVB_1       32 FLOAT "svb[0]"
+
+  APPEND_ITEM HVB_X       32 FLOAT "Hvb[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM SVB_2       32 FLOAT "svb[1]"
+  APPEND_ITEM HVB_Y       32 FLOAT "Hvb[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM SVB_3       32 FLOAT "svb[2]"
+  APPEND_ITEM HVB_Z       32 FLOAT "Hvb[2]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_1_CMD   32 FLOAT "Twhlcmd[0]"
+
+  APPEND_ITEM SVB_X       32 FLOAT "svb[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_2_CMD   32 FLOAT "Twhlcmd[1]"
+  APPEND_ITEM SVB_Y       32 FLOAT "svb[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_3_CMD   32 FLOAT "Twhlcmd[2]"
+  APPEND_ITEM SVB_Z       32 FLOAT "svb[2]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MTB_1_CMD   32 FLOAT "Mmtbcmd[0]"
+
+  APPEND_ITEM TRQ_CMD_X   32 FLOAT "Tcmd[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MTB_2_CMD   32 FLOAT "Mmtbcmd[1]"
+  APPEND_ITEM TRQ_CMD_Y   32 FLOAT "Tcmd[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MTB_3_CMD   32 FLOAT "Mmtbcmd[2]"
+  APPEND_ITEM TRQ_CMD_Z   32 FLOAT "Tcmd[2]"
     FORMAT_STRING "%.6f"
+
+  APPEND_ITEM MOM_CMD_X   32 FLOAT "Mcmd[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM MOM_CMD_Y   32 FLOAT "Mcmd[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM MOM_CMD_Z   32 FLOAT "Mcmd[2]"
+    FORMAT_STRING "%.6f"
+
   APPEND_ITEM SA_GIM_CMD  32 FLOAT "Gimcmd[0].Ang[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM SUN_VALID   16 UINT  "Sun present to use in controller"
 
-TELEMETRY F42 SENSOR_DATA_PKT <%= Osk::Cfg.processor_endian %> "F42 Sensor Data Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @SENSOR_MID_STR) %>
-  APPEND_ITEM DELTA_TIME  64 FLOAT "Time between controller executions"
-  APPEND_ITEM PosN_1      64 FLOAT "42 FSW->PosN[0]"
-  APPEND_ITEM PosN_2      64 FLOAT "42 FSW->PosN[1]"
-  APPEND_ITEM PosN_3      64 FLOAT "42 FSW->PosN[2]"
-  APPEND_ITEM VelN_1      64 FLOAT "42 FSW->VelN[0]"
-  APPEND_ITEM VelN_2      64 FLOAT "42 FSW->VelN[1]"
-  APPEND_ITEM VelN_3      64 FLOAT "42 FSW->VelN[2]"
-  APPEND_ITEM WBN_1       64 FLOAT "42 FSW->wbn[0]"
-  APPEND_ITEM WBN_2       64 FLOAT "42 FSW->wbn[1]"
-  APPEND_ITEM WBN_3       64 FLOAT "42 FSW->wbn[2]"
-  APPEND_ITEM QBN_1       64 FLOAT "42 FSW->qbn[0]"
-  APPEND_ITEM QBN_2       64 FLOAT "42 FSW->qbn[1]"
-  APPEND_ITEM QBN_3       64 FLOAT "42 FSW->qbn[2]"
-  APPEND_ITEM QBN_4       64 FLOAT "42 FSW->qbn[3]"
-  APPEND_ITEM SVN_1       64 FLOAT "42 FSW->svn[0]"
-  APPEND_ITEM SVN_2       64 FLOAT "42 FSW->svn[1]"
-  APPEND_ITEM SVN_3       64 FLOAT "42 FSW->svn[2]"
-  APPEND_ITEM SVB_1       64 FLOAT "42 FSW->svb[0]"
-  APPEND_ITEM SVB_2       64 FLOAT "42 FSW->svb[1]"
-  APPEND_ITEM SVB_3       64 FLOAT "42 FSW->svb[2]"
-  APPEND_ITEM BVB_1       64 FLOAT "42 FSW->bvb[0]"
-  APPEND_ITEM BVB_2       64 FLOAT "42 FSW->bvb[1]"
-  APPEND_ITEM BVB_3       64 FLOAT "42 FSW->bvb[2]"
-  APPEND_ITEM Hw_1        64 FLOAT "42 FSW->Hw[0]"
-  APPEND_ITEM Hw_2        64 FLOAT "42 FSW->Hw[1]"
-  APPEND_ITEM Hw_3        64 FLOAT "42 FSW->Hw[2]"
-  APPEND_ITEM SUN_VALID   16 UINT  "Sun present to use in controller"
-  APPEND_ITEM SPARE_16    16 UINT  "2 byte pad"
+  APPEND_ITEM GPS_VALID    8 UINT  "Valid GPS measurements"
+  APPEND_ITEM ST_VALID     8 UINT  "Valid star tracker quaternion"
+  APPEND_ITEM SUN_VALID    8 UINT  "Valid CSS/FSS sun measurement"
+  APPEND_ITEM SPARE_8      8 UINT  "Word align pad"
 
-TELEMETRY F42 ACTUATOR_CMD_PKT <%= Osk::Cfg.processor_endian %> "F42 Actuator Command Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @ACTUATOR_MID_STR) %>
 
-  APPEND_ITEM WHL_1  64 FLOAT "Wheel 1 torque command"
+TELEMETRY F42 CONTROL_GAINS_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Gains"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @CTRL_GAINS_MID_STR) %>
+
+  APPEND_ITEM KP_X  32 FLOAT "Kp[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_2  64 FLOAT "Wheel 2 torque command"
+  APPEND_ITEM KP_Y  32 FLOAT "Kp[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM WHL_3  64 FLOAT "Wheel 3 torque command"
+  APPEND_ITEM KP_Z  32 FLOAT "Kp[2]"
     FORMAT_STRING "%.6f"
 
-  APPEND_ITEM MTB_1  64 FLOAT "MTB 1 command"
+  APPEND_ITEM KR_X  32 FLOAT "Kr[0]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MTB_2  64 FLOAT "MTB 2 command"
+  APPEND_ITEM KR_Y  32 FLOAT "Kr[1]"
     FORMAT_STRING "%.6f"
-  APPEND_ITEM MTB_3  64 FLOAT "MTB 3 command"
+  APPEND_ITEM KR_Z  32 FLOAT "Kr[2]"
     FORMAT_STRING "%.6f"
 
-  APPEND_ITEM SA_GIM 64 FLOAT "Solar array gimbal command"
+  APPEND_ITEM KUNL  32 FLOAT "Kunl"
     FORMAT_STRING "%.6f"

@@ -145,7 +145,7 @@ class KitToFuncTest < Cosmos::Test
       #
       Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{@@TEST_4S_SCH_TBL_FLT_FILENAME}")  
       wait 1
-      Osk::flight.send_cmd("KIT_TO","UPDATE_FILTER with MSG_ID #{Fsw::MsgId::F42_CONTROL_MID}, FILTER_TYPE #{Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT}, FILTER_PARAM_N 0, FILTER_PARAM_X 0, FILTER_PARAM_O 0")  
+      Osk::flight.send_cmd("KIT_TO","UPDATE_FILTER with MSG_ID #{Fsw::MsgId::F42_CTRL_TLM_MID}, FILTER_TYPE #{Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT}, FILTER_PARAM_N 0, FILTER_PARAM_X 0, FILTER_PARAM_O 0")  
       wait 1
       Osk::flight.send_cmd("KIT_TO","SET_RUN_LOOP_DELAY with RUN_LOOP_DELAY 500")  
       wait("KIT_TO HK_TLM_PKT STATS_VALID == 'FALSE'", 10)
@@ -217,7 +217,7 @@ class KitToFuncTest < Cosmos::Test
       #
       Osk::flight.send_cmd("KIT_TO","UPDATE_FILTER with MSG_ID #{Fsw::MsgId::CFE_EVS_EVENT_MSG_MID}, FILTER_TYPE #{Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT}, FILTER_PARAM_N 1, FILTER_PARAM_X 1, FILTER_PARAM_O 0")  
       wait 1
-      Osk::flight.send_cmd("KIT_TO","UPDATE_FILTER with MSG_ID #{Fsw::MsgId::F42_CONTROL_MID}, FILTER_TYPE #{Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT}, FILTER_PARAM_N 1, FILTER_PARAM_X 1, FILTER_PARAM_O 0")  
+      Osk::flight.send_cmd("KIT_TO","UPDATE_FILTER with MSG_ID #{Fsw::MsgId::F42_CTRL_TLM_MID}, FILTER_TYPE #{Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT}, FILTER_PARAM_N 1, FILTER_PARAM_X 1, FILTER_PARAM_O 0")  
       wait 1
       Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{File.join(Osk::FLT_SRV_DIR,FswConfigParam::KIT_SCH_DEF_SCHTBL_FILENAME)}")  
       

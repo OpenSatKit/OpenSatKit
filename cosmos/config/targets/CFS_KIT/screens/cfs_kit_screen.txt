@@ -51,7 +51,7 @@ VERTICAL
         MATRIXBYCOLUMNS 2
           BUTTON 'Open Doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_OSK")'
           SETTING BACKCOLOR 255 255 255
-          NAMED_WIDGET learn_osk COMBOBOX About SimpleSat_Overview OSK_Quick_Start OSK_Users_Guide OSK_Version
+          NAMED_WIDGET learn_osk COMBOBOX About SimpleSat_Overview OSK_Quick_Start OSK_Users_Guide OSK_Version_IDs
           #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
         END # Matrix
         SETTING BACKCOLOR 162 181 205

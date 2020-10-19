@@ -22,17 +22,14 @@
 
 /* Command Message IDs */ 
 
-#define  F42_CMD_MID       (0x19D0)
-#define  F42_SEND_HK_MID   (0x19D1)   
+#define  F42_CMD_MID      (0x19D0)
+#define  F42_SEND_HK_MID  (0x19D1)   
 
 /* Telemetry Message IDs */ 
 
-#define  F42_HK_TLM_MID    (0x09D0)
-#define  F42_CONTROL_MID   (0x09D1)
-
-#define  F42_SENSOR_MID    (0x09D2)
-#define  F42_ACTUATOR_MID  (0x09D3)
-
+#define  F42_HK_TLM_MID         (0x09D0)
+#define  F42_CTRL_TLM_MID       (0x09D1)
+#define  F42_CTRL_GAINS_TLM_MID (0x09D2)
 
 #endif /*_f42_msgids_*/
 

@@ -160,12 +160,11 @@ module Fsw
 
       # F42 - 42 Simulator FSW
   
-      F42_CMD_MID      = "0x19D0"
-      F42_HK_TLM_MID   = "0x09D0"
-      F42_CONTROL_MID  = "0x09D1"
-      F42_SENSOR_MID   = "0x09D2"
-      F42_ACTUATOR_MID = "0x09D3"
-  
+      F42_CMD_MID            = "0x19D0"
+      F42_HK_TLM_MID         = "0x09D0"
+      F42_CTRL_TLM_MID       = "0x09D1"
+      F42_CTRL_GAINS_TLM_MID = "0x09D2"
+      
       # Heater Control
   
       HC_CMD_MID       = "0x19A0"
@@ -180,8 +179,10 @@ module Fsw
   
       # I42 - 42 Simulator Interface
   
-      I42_CMD_MID      = "0x19E0"
-      I42_HK_TLM_MID   = "0x09E0"
+      I42_CMD_MID    = "0x19E0"
+      I42_HK_TLM_MID = "0x09E0"
+      I42_SENSOR_DATA_MID       = "0x09E1"
+      I42_ACTUATOR_CMD_DATA_MID = "0x09E2"
 
       # ISIM - Simple Sat (SimSat) Instrument Simulator (Isim)
   

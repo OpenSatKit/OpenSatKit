@@ -33,7 +33,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
          
       BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "F42_CMD")'
-      NAMED_WIDGET f42_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL SET_CTRL_MODE SET_OVR_STATE SET_TARGET_WHL_MOM CONFIG_DBG
+      NAMED_WIDGET f42_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL SEND_CTRL_GAINS SET_CTRL_MODE SET_OVR_STATE SET_TARGET_WHL_MOM CONFIG_DBG
       LABEL "    "
 
       BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "F42_TLM")'
@@ -56,7 +56,7 @@ HORIZONTAL
     MATRIXBYCOLUMNS 3 5
          
       BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "I42_CMD")'
-      NAMED_WIDGET i42_cmd COMBOBOX NOOP RESET_CTRS CONNECT_42 DISCONNECT_42
+      NAMED_WIDGET i42_cmd COMBOBOX NOOP RESET_CTRS CONFIG_EXECUTE CONNECT_42 DISCONNECT_42
 
       LABEL "    "
 
@@ -98,7 +98,7 @@ HORIZONTAL
       LABEL "    "
 
       BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "TUTORIAL")'
-      NAMED_WIDGET tutorial COMBOBOX Coming-Soon
+      NAMED_WIDGET tutorial COMBOBOX 'Training Slides'
       LABEL "    "
 
     END # Matrix

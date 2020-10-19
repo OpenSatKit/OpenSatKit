@@ -1,6 +1,7 @@
 CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,         CFS_LIB,        0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,    OSK_C_FW,       0,   16384, 0x0, 0;
 CFE_LIB, /cf/osk_cpp_fw.so,   OSK_CPP_FW_LibInit,  OSK_CPP_FW,     0,   16384, 0x0, 0;
+CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,  OSK_42_LIB,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,          EXPAT_LIB,      0,   16384, 0x0, 0;
 CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        20,   32768, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        20,   16384, 0x0, 0;
@@ -35,7 +36,7 @@ CFE_APP, /cf/i42.so,          I42_AppMain,         I42,           50,   80192, 0
 ! hog the system. The current design has a crude throttling and rate limiting mechanism
 ! for this.
 !
-! App generation 
+! Auto generated "Hello World" app examples 
 !
 !CFE_APP, /cf/example.so,     EXAMPLE_AppMain,  EXAMPLE,       90,   16384, 0x0, 0;
 !CFE_LIB, /cf/sample_lib.so,  SAMPLE_LibInit,   SAMPLE_LIB,     0,       0, 0x0, 0;

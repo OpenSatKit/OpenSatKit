@@ -1,5 +1,19 @@
 { "app": {
    
+   "title": "File Manager",
+   "version": "2.5.2",
+   "owner": "NASA/Goddard",
+   "url": "https://github.com/nasa/FM",
+
+   "description": [
+      "FM provides a ground interface for file and directory management."
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
    "cosmos": {
       "target": "FM"
    },

@@ -4,9 +4,6 @@
 ** Notes:
 **   1. This is part of prototype effort to port a 42 simulator FSW controller
 **      component into a cFS-based application 
-**   2. F42 definitions are included for the I42 app to use. This is backwards
-**      from typical message producer/consumer but in this situation F42
-**      drove the interface definition. 
 **
 ** References:
 **   1. OpenSat Object-based Application Developer's Guide.
@@ -19,7 +16,6 @@
 #ifndef _i42_msgids_
 #define _i42_msgids_
 
-#include "f42_msgids.h"
 
 /*
 ** Macro Definitions
@@ -33,7 +29,9 @@
 
 /* Telemetry Message IDs */ 
 
-#define  I42_HK_TLM_MID    (0x09E0)
+#define  I42_HK_TLM_MID            (0x09E0)
+#define  I42_SENSOR_DATA_MID       (0x09E1)
+#define  I42_ACTUATOR_CMD_DATA_MID (0x09E2)
 
 #endif /*_i42_msgids_*/
 

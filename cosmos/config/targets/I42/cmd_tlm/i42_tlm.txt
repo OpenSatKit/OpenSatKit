@@ -1,9 +1,11 @@
 <% 
   require 'osk_config' 
 
-  @APP_PREFIX_STR  = "I42"
-  @HK_TLM_MID_STR  = "I42_HK_TLM_MID"
-  
+  @APP_PREFIX_STR = "I42"
+  @HK_TLM_MID_STR = "I42_HK_TLM_MID"
+  @SENSOR_DATA_MID_STR       = "I42_SENSOR_DATA_MID"
+  @ACTUATOR_CMD_DATA_MID_STR = "I42_ACTUATOR_CMD_DATA_MID"
+
 %>  
 
 TELEMETRY I42 HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "I42 Housekeeping Packet"
@@ -17,3 +19,54 @@ TELEMETRY I42 HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "I42 Housekeeping Pack
     STATE FALSE 0
     STATE TRUE  1
 
+TELEMETRY I42 SENSOR_DATA_PKT <%= Osk::Cfg.processor_endian %> "Sensor Data Packet from I42 to F42"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @SENSOR_DATA_MID_STR) %>
+  APPEND_ITEM TIME        64 FLOAT "GPS Time"
+  APPEND_ITEM PosN_1      64 FLOAT "GPS PosN[0]"
+  APPEND_ITEM PosN_2      64 FLOAT "GPS PosN[1]"
+  APPEND_ITEM PosN_3      64 FLOAT "GPS PosN[2]"
+  APPEND_ITEM VelN_1      64 FLOAT "GPS VelN[0]"
+  APPEND_ITEM VelN_2      64 FLOAT "GPS VelN[1]"
+  APPEND_ITEM VelN_3      64 FLOAT "GPS VelN[2]"
+  APPEND_ITEM QBN_1       64 FLOAT "ST qbn[0]"
+  APPEND_ITEM QBN_2       64 FLOAT "ST qbn[1]"
+  APPEND_ITEM QBN_3       64 FLOAT "ST qbn[2]"
+  APPEND_ITEM QBN_4       64 FLOAT "ST qbn[3]"
+  APPEND_ITEM WBN_1       64 FLOAT "Gyro wbn[0]"
+  APPEND_ITEM WBN_2       64 FLOAT "Gyro wbn[1]"
+  APPEND_ITEM WBN_3       64 FLOAT "Gyro wbn[2]"
+  APPEND_ITEM SVB_1       64 FLOAT "CSS/FSS svb[0]"
+  APPEND_ITEM SVB_2       64 FLOAT "CSS/FSS svb[1]"
+  APPEND_ITEM SVB_3       64 FLOAT "CSS/FSS svb[2]"
+  APPEND_ITEM BVB_1       64 FLOAT "TAM bvb[0]"
+  APPEND_ITEM BVB_2       64 FLOAT "TAM bvb[1]"
+  APPEND_ITEM BVB_3       64 FLOAT "TAM bvb[2]"
+  APPEND_ITEM WhlH_1      64 FLOAT "WhlH[0]"
+  APPEND_ITEM WhlH_1      64 FLOAT "WhlH[1]"
+  APPEND_ITEM WhlH_1      64 FLOAT "WhlH[2]"
+  APPEND_ITEM WhlH_1      64 FLOAT "WhlH[3]"
+  APPEND_ITEM GPS_VALID    8 UINT  "Valid GPS measurements"
+  APPEND_ITEM ST_VALID     8 UINT  "Valid star tracker quaternion"
+  APPEND_ITEM SUN_VALID    8 UINT  "Valid CSS/FSS sun measurement"
+  APPEND_ITEM INIT_CYCLE   8 UINT  "First control cycle flag"
+
+
+TELEMETRY I42 ACTUATOR_CMD_DATA_PKT <%= Osk::Cfg.processor_endian %> "F42 Actuator Command Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @ACTUATOR_CMD_DATA_MID_STR) %>
+
+  APPEND_ITEM WHL_1  64 FLOAT "Wheel 1 torque command"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WHL_2  64 FLOAT "Wheel 2 torque command"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WHL_3  64 FLOAT "Wheel 3 torque command"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM MTB_1  64 FLOAT "MTB 1 command"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM MTB_2  64 FLOAT "MTB 2 command"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM MTB_3  64 FLOAT "MTB 3 command"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM SA_GIM 64 FLOAT "Solar array gimbal command"
+    FORMAT_STRING "%.6f"

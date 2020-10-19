@@ -127,7 +127,7 @@ void CheckOrbitRectification(struct OrbitType *O)
             O->VelN[i] += VelR[i];
          }
          if (O->Regime == ORB_CENTRAL)
-            RV2Eph(AbsTime,O->mu,O->PosN,O->VelN,
+            RV2Eph(DynTime,O->mu,O->PosN,O->VelN,
                    &O->SMA,&O->ecc,&O->inc,
                    &O->RAAN,&O->ArgP,&O->anom,
                    &O->tp,&O->SLR,&O->alpha,&O->rmin,
@@ -344,7 +344,7 @@ void CheckChangeOfOrbitWorld(struct OrbitType *O)
                O->PosN[i] += World[Body2].eph.PosN[i];
                O->VelN[i] += World[Body2].eph.VelN[i];
             }
-            RV2Eph(AbsTime,O->mu,O->PosN,O->VelN,
+            RV2Eph(DynTime,O->mu,O->PosN,O->VelN,
                    &O->SMA,&O->ecc,&O->inc,
                    &O->RAAN,&O->ArgP,&O->anom,
                    &O->tp,&O->SLR,&O->alpha,&O->rmin,
@@ -371,7 +371,7 @@ void CheckChangeOfOrbitWorld(struct OrbitType *O)
             MTxV(World[Body1].CNH,O->VelN,vh);
             MxV(World[Body2].CNH,rh,O->PosN);
             MxV(World[Body2].CNH,vh,O->VelN);
-            RV2Eph(AbsTime,O->mu,O->PosN,O->VelN,
+            RV2Eph(DynTime,O->mu,O->PosN,O->VelN,
                    &O->SMA,&O->ecc,&O->inc,
                    &O->RAAN,&O->ArgP,&O->anom,
                    &O->tp,&O->SLR,&O->alpha,&O->rmin,
@@ -399,9 +399,9 @@ void SplineToPosVel(struct OrbitType *O)
       double x[3],v[3],xn[3],vn[3];
 
 /* .. Get nodes from O->SplineFile */
-      while(AbsTime > O->NodeAbsTime[2]) {
+      while(DynTime > O->NodeDynTime[2]) {
          for(i=0;i<3;i++) {
-            O->NodeAbsTime[i] = O->NodeAbsTime[i+1];
+            O->NodeDynTime[i] = O->NodeDynTime[i+1];
             for(j=0;j<3;j++) {
                O->NodePos[i][j] = O->NodePos[i+1][j];
                O->NodeVel[i][j] = O->NodeVel[i+1][j];
@@ -412,7 +412,7 @@ void SplineToPosVel(struct OrbitType *O)
                   &O->NodePos[3][0],&O->NodePos[3][1],&O->NodePos[3][2],
                   &O->NodeVel[3][0],&O->NodeVel[3][1],&O->NodeVel[3][2],
                   &newline);
-               O->NodeAbsTime[3] = DateToAbsTime(NodeYear,NodeMonth,NodeDay,
+               O->NodeDynTime[3] = DateToTime(NodeYear,NodeMonth,NodeDay,
                   NodeHour,NodeMin,NodeSec);
                for(j=0;j<3;j++) {
                   O->NodePos[3][j] *= 1000.0;
@@ -425,12 +425,12 @@ void SplineToPosVel(struct OrbitType *O)
       }
 
 /* .. Interpolate Spline */
-      for(k=0;k<4;k++) X[k] = O->NodeAbsTime[k];
+      for(k=0;k<4;k++) X[k] = O->NodeDynTime[k];
       for(j=0;j<3;j++) {
          for(k=0;k<4;k++) Y[k] = O->NodePos[k][j];
-         x[j] = CubicSpline(AbsTime,X,Y);
+         x[j] = CubicSpline(DynTime,X,Y);
          for(k=0;k<4;k++) Y[k] = O->NodeVel[k][j];
-         v[j] = CubicSpline(AbsTime,X,Y);
+         v[j] = CubicSpline(DynTime,X,Y);
       }
 
 /* .. XYZ to Pos, Vel */
@@ -442,13 +442,14 @@ void SplineToPosVel(struct OrbitType *O)
       }
 }
 /**********************************************************************/
-void OrbitMotion(void)
+void OrbitMotion(double Time)
 {
-      /* static long RectCtr = 0; */
-      long Iorb;
+      long Iorb,i,j;
       struct OrbitType *O;
+      struct RegionType *R;
 
 #if 0
+      static long RectCtr = 0;
       RectCtr++;
       if (RectCtr > 100) {
          RectCtr = 0;
@@ -466,160 +467,37 @@ void OrbitMotion(void)
          if (O->Exists) {
             if (O->Regime == ORB_THREE_BODY) {
                if (O->LagDOF == LAGDOF_MODES) {
-                  LagModes2RV(AbsTime,&LagSys[O->Sys],
+                  LagModes2RV(Time,&LagSys[O->Sys],
                      O,O->PosN,O->VelN);
                }
                else if (O->LagDOF == LAGDOF_COWELL) {
                   ThreeBodyOrbitRK4(O);
-                  RV2LagModes(AbsTime,&LagSys[O->Sys],O);
-                  O->Epoch = AbsTime;
+                  RV2LagModes(Time,&LagSys[O->Sys],O);
+                  O->Epoch = Time;
                }
                else if (O->LagDOF == LAGDOF_SPLINE) {
                   SplineToPosVel(O);
                }
             }
             else if (O->Regime == ORB_CENTRAL) {
-               Eph2RV(O->mu,O->SLR,O->ecc,
-                      O->inc,O->RAAN,O->ArgP,
-                      AbsTime+DTSIM-O->tp,
-                      O->PosN,O->VelN,&O->anom);
-            }
-            /* Else is ORB_ZERO or ORB_FLIGHT, and no action required */
-         }
-      }
-}
-/**********************************************************************/
-void Ephemerides(void)
-{
-
-      struct OrbitType *Eph;
-      struct OrbitType *O;
-      struct WorldType *W;
-      struct RegionType *R;
-      struct SCType *S;
-      double svh[3],p,pvn[3],SoP,Rp,GMST;
-      double r1[3],rh[3],vh[3];
-      double ptn[10][3],vtn[10][3],ptw[3];
-      double ZAxis[3] = {0.0,0.0,1.0};
-      struct LagrangeSystemType *LS;
-      long i,j,Ip,Im,Iw,Imb,Ir,Isc;
-      long Iorb;
-
-/* .. Update Julian Day, etc */
-      JulDay = AbsTimeToJD(AbsTime);
-      AbsTimeToDate(AbsTime,&Year,&Month,&Day,&Hour,&Minute,&Second,DTSIM);
-      doy = MD2DOY(Year,Month,Day);
-      JDToGpsTime(JulDay,&GpsRollover,&GpsWeek,&GpsSecond);
-
-/* .. Locate Planets */
-      for(Ip=MERCURY;Ip<=PLUTO;Ip++){
-         if(World[Ip].Exists) {
-            W = &World[Ip];
-            /* Call PlanetEphemerides again only for
-               ridiculously high accuracy or rather long sims (years) */
-            /*PlanetEphemerides(i,JulDay,... */
-            Eph = &W->eph;
-            Eph2RV(Eph->mu,Eph->SLR,Eph->ecc,Eph->inc,Eph->RAAN,Eph->ArgP,
-                   AbsTime-Eph->tp,Eph->PosN,Eph->VelN,&Eph->anom);
-            for(j=0;j<3;j++) {
-               W->PosH[j] = Eph->PosN[j];
-               W->VelH[j] = Eph->VelN[j];
-            }
-            W->PriMerAng = fmod(W->w*AbsTime,TwoPi);
-            SimpRot(ZAxis,W->PriMerAng,W->CWN);
-         }
-      }
-
-/* .. Locate Asteroids and Comets */
-      for(Imb=0;Imb<Nmb;Imb++) {
-         if(World[55+Imb].Exists){
-            W = &World[55+Imb];
-            Eph = &W->eph;
-            Eph2RV(Eph->mu,Eph->SLR,Eph->ecc,Eph->inc,Eph->RAAN,Eph->ArgP,
-                   AbsTime-Eph->tp,Eph->PosN,Eph->VelN,&Eph->anom);
-            for(j=0;j<3;j++) {
-               W->PosH[j] = Eph->PosN[j];
-               W->VelH[j] = Eph->VelN[j];
-            }
-            W->PriMerAng = fmod(W->w*AbsTime,TwoPi);
-            SimpRot(ZAxis,W->PriMerAng,W->CWN);
-         }
-      }
-
-/* .. Earth rotation is a special case */
-      GMST = JD2GMST(JulDay);
-      World[EARTH].PriMerAng = TwoPi*GMST;
-      SimpRot(ZAxis,World[EARTH].PriMerAng,World[EARTH].CWN);
-
-/* .. Locate Luna */
-      if (World[LUNA].Exists){
-         Eph = &World[LUNA].eph;
-         /* Meeus computes Luna Position in geocentric ecliptic */
-         LunaPosition(JulDay,rh);
-         LunaPosition(JulDay+0.01,r1);
-         for(j=0;j<3;j++) vh[j] = (r1[j]-rh[j])/(864.0);
-         /* Convert to Earth's N frame */
-         MxV(World[EARTH].CNH,rh,Eph->PosN);
-         MxV(World[EARTH].CNH,vh,Eph->VelN);
-         /* Find Luna's osculating elements */
-         RV2Eph(AbsTime,Eph->mu,Eph->PosN,Eph->VelN,
-            &Eph->SMA,&Eph->ecc,&Eph->inc,&Eph->RAAN,
-            &Eph->ArgP,&Eph->anom,&Eph->tp,&Eph->SLR,&Eph->alpha,
-            &Eph->rmin,&Eph->MeanMotion,&Eph->Period);
-         World[LUNA].PriMerAng = LunaPriMerAng(JulDay);
-         SimpRot(ZAxis,World[LUNA].PriMerAng,World[LUNA].CWN);
-         for(j=0;j<3;j++) {
-            World[LUNA].PosH[j] = rh[j] + World[EARTH].PosH[j];
-            World[LUNA].VelH[j] = vh[j] + World[EARTH].VelH[j];
-         }
-      }
-
-/* .. Other planets' moons */
-      for(Ip=MARS;Ip<=PLUTO;Ip++) {
-         if (World[Ip].Exists) {
-            for(Im=0;Im<World[Ip].Nsat;Im++) {
-               Iw = World[Ip].Sat[Im];
-               Eph = &World[Iw].eph;
-               Eph2RV(Eph->mu, Eph->SLR,Eph->ecc,Eph->inc,Eph->RAAN,
-                      Eph->ArgP,AbsTime-Eph->tp,Eph->PosN,Eph->VelN,&Eph->anom);
-               World[Iw].PriMerAng = fmod(World[Iw].w*AbsTime,TwoPi);
-               SimpRot(ZAxis,World[Iw].PriMerAng,World[Iw].CWN);
-               MTxV(World[Ip].CNH,Eph->PosN,rh);
-               MTxV(World[Ip].CNH,Eph->VelN,vh);
-               for(i=0;i<3;i++) {
-                  World[Iw].PosH[i] = rh[i] + World[Ip].PosH[i];
-                  World[Iw].VelH[i] = vh[i] + World[Ip].VelH[i];
+               if (O->J2DriftEnabled) {
+                  O->RAAN = O->RAAN0 + O->RAANdot*(SimTime - 0.5/O->MeanMotion*sin(2.0*O->ArgP+2.0*O->anom));
+                  O->ArgP = O->ArgP0 + O->ArgPdot*SimTime;
+                  Eph2RV(O->MuPlusJ2,O->SLR,O->ecc,
+                         O->inc,O->RAAN,O->ArgP,
+                         Time-O->tp,
+                         O->PosN,O->VelN,&O->anom);
+               }
+               else {
+                  Eph2RV(O->mu,O->SLR,O->ecc,
+                         O->inc,O->RAAN,O->ArgP,
+                         Time-O->tp,
+                         O->PosN,O->VelN,&O->anom);
                }
             }
-         }
-      }
-
-/* .. Locate Lagrange Points in N of LagSys Body 1 */
-      for(i=0;i<3;i++) {
-         LS = &LagSys[i];
-         if (LS->Exists) {
-            for(j=0;j<5;j++) {
-               FindLagPtPosVel(AbsTime,LS,j,
-                  LS->LP[j].PosN,LS->LP[j].VelN,LS->CLN);
-            }
-         }
-      }
-
-/* .. Regions */
-      for(Ir=0;Ir<Nrgn;Ir++) {
-         R = &Rgn[Ir];
-         W = &World[R->World];
-         MTxV(W->CWN,R->PosW,R->PosN);
-         R->VelN[0] = -W->w*R->PosN[1];
-         R->VelN[1] = W->w*R->PosN[0];
-         R->VelN[2] = 0.0;
-         MxM(R->CW,W->CWN,R->CN);
-      }
-
-/* .. Local Vertical frame tied to Reference Orbit */
-      for(Iorb=0;Iorb<Norb;Iorb++){
-         if (Orb[Iorb].Exists) {
-            O = &Orb[Iorb];
+            /* Else is ORB_ZERO or ORB_FLIGHT, and no action required */
+            
+            /* Update CLN */
             switch (O->Regime) {
                case ORB_ZERO :
                   /* L is aligned with N, wln is zero */
@@ -650,6 +528,7 @@ void Ephemerides(void)
                   printf("Unknown Orbit Regime in Ephemerides.  Bailing out.\n");
                   exit(1);
             }
+            
             /* Update Formation Frame */
             if (Frm[Iorb].FixedInFrame == 'L') {
                MxM(Frm[Iorb].CL,O->CLN,Frm[Iorb].CN);
@@ -659,9 +538,203 @@ void Ephemerides(void)
             }
          }
       }
+}
+/**********************************************************************/
+void Ephemerides(void)
+{
+
+      struct OrbitType *Eph;
+      struct OrbitType *O;
+      struct WorldType *W;
+      struct RegionType *R;
+      struct SCType *S;
+      double svh[3],p,pvn[3],SoP,Rp,GMST;
+      double r1[3],rh[3],vh[3];
+      double ptn[10][3],vtn[10][3],ptw[3];
+      double ZAxis[3] = {0.0,0.0,1.0};
+      double EarthMoonBaryPosH[3],EarthMoonBaryVelH[3];
+      struct LagrangeSystemType *LS;
+      long i,j,Ip,Im,Iw,Imb,Ir,Isc;
+      long Ic;
+      struct Cheb3DType *C;
+      double u,dudJD,T[20],U[20],P,dPdu;
+      double EMRAT = 81.30056907419062; /* Earth-Moon mass ratio */
+      double PosJ[3],VelJ[3];
+      double qJ2000H[4] = {-0.203123038887,  0.0,  0.0,  0.979153221449};
+
+/* .. Locate Planets and Luna */
+      if (EphemOption == EPH_MEAN) {
+         for(Ip=MERCURY;Ip<=PLUTO;Ip++){
+            if(World[Ip].Exists) {
+               W = &World[Ip];
+               /* Call PlanetEphemerides again only for
+                  ridiculously high accuracy or rather long sims (years) */
+               /*PlanetEphemerides(i,JulDay,... */
+               Eph = &W->eph;
+               Eph2RV(Eph->mu,Eph->SLR,Eph->ecc,Eph->inc,Eph->RAAN,Eph->ArgP,
+                      DynTime-Eph->tp,Eph->PosN,Eph->VelN,&Eph->anom);
+               for(j=0;j<3;j++) {
+                  W->PosH[j] = Eph->PosN[j];
+                  W->VelH[j] = Eph->VelN[j];
+               }
+               W->PriMerAng = fmod(W->PriMerAngJ2000+W->w*DynTime,TwoPi);
+               SimpRot(ZAxis,W->PriMerAng,W->CWN);
+            }
+         }
+         if (World[LUNA].Exists){
+            Eph = &World[LUNA].eph;
+            /* Meeus computes Luna Position in geocentric ecliptic */
+            LunaPosition(TT.JulDay,rh);
+            LunaPosition(TT.JulDay+0.01,r1);
+            for(j=0;j<3;j++) vh[j] = (r1[j]-rh[j])/(864.0);
+            /* Convert to Earth's N frame */
+            MxV(World[EARTH].CNH,rh,Eph->PosN);
+            MxV(World[EARTH].CNH,vh,Eph->VelN);
+            /* Find Luna's osculating elements */
+            RV2Eph(DynTime,Eph->mu,Eph->PosN,Eph->VelN,
+               &Eph->SMA,&Eph->ecc,&Eph->inc,&Eph->RAAN,
+               &Eph->ArgP,&Eph->anom,&Eph->tp,&Eph->SLR,&Eph->alpha,
+               &Eph->rmin,&Eph->MeanMotion,&Eph->Period);
+            World[LUNA].PriMerAng = LunaPriMerAng(TT.JulDay);
+            SimpRot(ZAxis,World[LUNA].PriMerAng,World[LUNA].CWN);
+            for(j=0;j<3;j++) {
+               World[LUNA].PosH[j] = rh[j] + World[EARTH].PosH[j];
+               World[LUNA].VelH[j] = vh[j] + World[EARTH].VelH[j];
+            }
+         }
+      }
+      else if (EphemOption == EPH_DE430) {
+         /* Update DE430 block if needed */
+         if (TT.JulDay > World[SOL].eph.Cheb[1].JD2) LoadDE430(ModelPath,TT.JulDay);
+         for(Iw=SOL;Iw<=LUNA;Iw++) {
+            W = &World[Iw];
+            Eph = &W->eph;
+            /* Determine segment */
+            Ic=0;
+            while(TT.JulDay > Eph->Cheb[Ic].JD2) Ic++;
+            /* Apply Chebyshev polynomials */
+            C = &Eph->Cheb[Ic];
+            dudJD = 2.0/(C->JD2-C->JD1);
+            u = (TT.JulDay-C->JD1)*dudJD - 1.0;
+            ChebyPolys(u,C->N,T,U);
+            for(i=0;i<3;i++) {
+               ChebyInterp(T,U,C->Coef[i],C->N,&P,&dPdu);
+               PosJ[i] = 1000.0*P;
+               VelJ[i] = 1000.0*dPdu*dudJD/86400.0;
+            }
+            QTxV(qJ2000H,PosJ,Eph->PosN);
+            QTxV(qJ2000H,VelJ,Eph->VelN);
+         }
+         /* Adjust for barycenters */
+         /* Move planets from barycentric to Sun-centered */
+         for(Iw=MERCURY;Iw<=PLUTO;Iw++) {
+            W = &World[Iw];
+            for(i=0;i<3;i++) {
+               W->eph.PosN[i] -= World[SOL].eph.PosN[i];
+               W->eph.VelN[i] -= World[SOL].eph.VelN[i];
+               W->PosH[i] = W->eph.PosN[i];
+               W->VelH[i] = W->eph.VelN[i];
+            }
+            W->PriMerAng = fmod(W->w*DynTime,TwoPi);
+            SimpRot(ZAxis,W->PriMerAng,W->CWN);
+         }
+         /* Move Sun to origin */
+         for(i=0;i<3;i++) {
+            World[SOL].PosH[i] = 0.0;
+            World[SOL].VelH[i] = 0.0;
+            World[SOL].eph.PosN[i] = 0.0;
+            World[SOL].eph.VelN[i] = 0.0;
+         }
+         /* Adjust Earth from Earth-Moon barycenter */
+         /* (Moon PosVel is geocentric, not from barycenter) */
+         for(i=0;i<3;i++) {
+            EarthMoonBaryPosH[i] = World[EARTH].eph.PosN[i];
+            EarthMoonBaryVelH[i] = World[EARTH].eph.VelN[i];
+            World[EARTH].eph.PosN[i] -= World[LUNA].eph.PosN[i]/(1.0+EMRAT);
+            World[EARTH].eph.VelN[i] -= World[LUNA].eph.VelN[i]/(1.0+EMRAT);
+            World[EARTH].PosH[i] = World[EARTH].eph.PosN[i];
+            World[EARTH].VelH[i] = World[EARTH].eph.VelN[i];
+         }
+         for(i=0;i<3;i++) {
+            World[LUNA].PosH[i] = World[EARTH].PosH[i] + World[LUNA].eph.PosN[i];
+            World[LUNA].VelH[i] = World[EARTH].VelH[i] + World[LUNA].eph.VelN[i];
+         }
+         /* Rotate Moon into ECI */
+         QxV(qJ2000H,rh,World[LUNA].eph.PosN);
+         QxV(qJ2000H,vh,World[LUNA].eph.VelN);
+         World[LUNA].PriMerAng = LunaPriMerAng(TT.JulDay);
+         SimpRot(ZAxis,World[LUNA].PriMerAng,World[LUNA].CWN);
+      }
+      else {
+         printf("Bogus Ephem Option in Ephemerides.  Bailing out.\n");
+         exit(1);
+      }
+      
+/* .. Locate Asteroids and Comets */
+      for(Imb=0;Imb<Nmb;Imb++) {
+         if(World[55+Imb].Exists){
+            W = &World[55+Imb];
+            Eph = &W->eph;
+            Eph2RV(Eph->mu,Eph->SLR,Eph->ecc,Eph->inc,Eph->RAAN,Eph->ArgP,
+                   DynTime-Eph->tp,Eph->PosN,Eph->VelN,&Eph->anom);
+            for(j=0;j<3;j++) {
+               W->PosH[j] = Eph->PosN[j];
+               W->VelH[j] = Eph->VelN[j];
+            }
+            W->PriMerAng = fmod(W->w*DynTime,TwoPi);
+            SimpRot(ZAxis,W->PriMerAng,W->CWN);
+         }
+      }
+
+/* .. Earth rotation is a special case */
+      GMST = JD2GMST(TT.JulDay);
+      World[EARTH].PriMerAng = TwoPi*GMST;
+      SimpRot(ZAxis,World[EARTH].PriMerAng,World[EARTH].CWN);
+
+/* .. Other planets' moons */
+      for(Ip=MARS;Ip<=PLUTO;Ip++) {
+         if (World[Ip].Exists) {
+            for(Im=0;Im<World[Ip].Nsat;Im++) {
+               Iw = World[Ip].Sat[Im];
+               Eph = &World[Iw].eph;
+               Eph2RV(Eph->mu, Eph->SLR,Eph->ecc,Eph->inc,Eph->RAAN,
+                      Eph->ArgP,DynTime-Eph->tp,Eph->PosN,Eph->VelN,&Eph->anom);
+               World[Iw].PriMerAng = fmod(World[Iw].w*DynTime,TwoPi);
+               SimpRot(ZAxis,World[Iw].PriMerAng,World[Iw].CWN);
+               MTxV(World[Ip].CNH,Eph->PosN,rh);
+               MTxV(World[Ip].CNH,Eph->VelN,vh);
+               for(i=0;i<3;i++) {
+                  World[Iw].PosH[i] = rh[i] + World[Ip].PosH[i];
+                  World[Iw].VelH[i] = vh[i] + World[Ip].VelH[i];
+               }
+            }
+         }
+      }
+
+/* .. Locate Lagrange Points in N of LagSys Body 1 */
+      for(i=0;i<3;i++) {
+         LS = &LagSys[i];
+         if (LS->Exists) {
+            for(j=0;j<5;j++) {
+               FindLagPtPosVel(DynTime,LS,j,
+                  LS->LP[j].PosN,LS->LP[j].VelN,LS->CLN);
+            }
+         }
+      }
+
+/* .. Regions */
+      for(Ir=0;Ir<Nrgn;Ir++) {
+         R = &Rgn[Ir];
+         W = &World[R->World];
+         MTxV(W->CWN,R->PosW,R->PosN);
+         R->VelN[0] = -W->w*R->PosN[1];
+         R->VelN[1] = W->w*R->PosN[0];
+         R->VelN[2] = 0.0;
+         MxM(R->CW,W->CWN,R->CN);
+      }
 
 /* .. TDRS Spacecraft */
-      TDRSPosVel(World[EARTH].PriMerAng,AbsTime,ptn,vtn);
+      TDRSPosVel(World[EARTH].PriMerAng,DynTime,ptn,vtn);
       for(i=0;i<10;i++) {
          MxV(World[EARTH].CWN,ptn[i],Tdrs[i].rw);
          for(j=0;j<3;j++) {
@@ -673,14 +746,13 @@ void Ephemerides(void)
          Tdrs[i].lng = atan2(ptw[1],ptw[0]);
       }
 
-
 /* .. SC */
       for(Isc=0;Isc<Nsc;Isc++){
          if (SC[Isc].Exists) {
             S = &SC[Isc];
             O = &Orb[S->RefOrb];
             W = &World[O->World];
-
+            
             /* Local-vertical frame tied to SC */
             if (O->Regime == ORB_ZERO) {
                for(i=0;i<3;i++) {

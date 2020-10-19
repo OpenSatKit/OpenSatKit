@@ -75,49 +75,115 @@ void ManageFlags(void)
 long AdvanceTime(void)
 {
       static long itime = 0;
+      static long PrevTick = 0;
+      static long CurrTick = 1;
       long Done;
+      static long First = 1;
 
       /* Advance time to next Timestep */
-      #if defined _USE_SYSTEM_TIME_
-         switch (TimeMode) {
-            case FAST_TIME :
-               SimTime += DTSIM;
-               itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
-               SimTime = ((double) itime)*DTSIM;
-               AbsTime = AbsTime0 + SimTime;
-               break;
-            case REAL_TIME :
-               usleep(1.0E6*DTSIM);
-               SimTime += DTSIM;
-               itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
-               SimTime = ((double) itime)*DTSIM;
-               AbsTime = AbsTime0 + SimTime;
-               break;
-            case EXTERNAL_TIME :
-               usleep(1.0E6*DTSIM);
-               SimTime += DTSIM;
-               itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
-               SimTime = ((double) itime)*DTSIM;
-               RealSystemTime(&Year,&doy,&Month,&Day,&Hour,&Minute,&Second,DTSIM);
-               AbsTime = DateToAbsTime(Year,Month,Day,Hour,Minute,Second+AbsTimeOffset);
-               JulDay = AbsTimeToJD(AbsTime);
-               JDToGpsTime(JulDay,&GpsRollover,&GpsWeek,&GpsSecond);
-               AbsTime0 = AbsTime - SimTime;
-               break;
-            /* case SSUP_TIME:
-            **   RealSystemTime(&Year,&doy,&Month,&Day,&Hour,&Minute,&Second);
-            **   AbsTime = DateToAbsTime(Year,Month,Day,Hour,Minute,Second+AbsTimeOffset);
-            **   JulDay = AbsTimeToJD(AbsTime);
-            **   SimTime = AbsTime - AbsTime0;
-            **   break;
-            */
-         }
-      #else
-         SimTime += DTSIM;
-         itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
-         SimTime = ((double) itime)*DTSIM;
-         AbsTime = AbsTime0 + SimTime;
-      #endif
+      switch (TimeMode) {
+         case FAST_TIME :
+            SimTime += DTSIM;
+            itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
+            SimTime = ((double) itime)*DTSIM;
+            DynTime = DynTime0 + SimTime;
+
+            AtomicTime = DynTime - 32.184; /* TAI */
+            CivilTime = AtomicTime - LeapSec; /* UTC "clock" time */
+            GpsTime = AtomicTime - 19.0;
+
+            TT.JulDay = TimeToJD(DynTime);
+            TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
+               &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
+            TT.doy = MD2DOY(TT.Year,TT.Month,TT.Day);
+
+            UTC.JulDay = TimeToJD(CivilTime);
+            TimeToDate(CivilTime,&UTC.Year,&UTC.Month,&UTC.Day,
+               &UTC.Hour,&UTC.Minute,&UTC.Second,DTSIM);
+            UTC.doy = MD2DOY(UTC.Year,UTC.Month,UTC.Day);
+
+            JDToGpsTime(TT.JulDay,&GpsRollover,&GpsWeek,&GpsSecond);
+
+            break;
+         case REAL_TIME :
+            usleep(1.0E6*DTSIM);
+            SimTime += DTSIM;
+            itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
+            SimTime = ((double) itime)*DTSIM;
+            DynTime = DynTime0 + SimTime;
+
+            AtomicTime = DynTime - 32.184; /* TAI */
+            CivilTime = AtomicTime - LeapSec; /* UTC "clock" time */
+            GpsTime = AtomicTime - 19.0;
+
+            TT.JulDay = TimeToJD(DynTime);
+            TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
+               &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
+            TT.doy = MD2DOY(TT.Year,TT.Month,TT.Day);
+
+            UTC.JulDay = TimeToJD(CivilTime);
+            TimeToDate(CivilTime,&UTC.Year,&UTC.Month,&UTC.Day,
+               &UTC.Hour,&UTC.Minute,&UTC.Second,DTSIM);
+            UTC.doy = MD2DOY(UTC.Year,UTC.Month,UTC.Day);
+
+            JDToGpsTime(TT.JulDay,&GpsRollover,&GpsWeek,&GpsSecond);
+
+            break;
+         case EXTERNAL_TIME :
+            while(CurrTick == PrevTick) {
+               CurrTick = (long) (1.0E-6*usec()/DTSIM);
+            }
+            PrevTick = CurrTick;
+            SimTime += DTSIM;
+            itime = (long) ((SimTime+0.5*DTSIM)/(DTSIM));
+            SimTime = ((double) itime)*DTSIM;
+
+            RealSystemTime(&UTC.Year,&UTC.doy,&UTC.Month,&UTC.Day,
+               &UTC.Hour,&UTC.Minute,&UTC.Second,DTSIM);
+            CivilTime = DateToTime(UTC.Year,UTC.Month,UTC.Day,
+               UTC.Hour,UTC.Minute,UTC.Second);
+            AtomicTime = CivilTime + LeapSec;
+            DynTime = AtomicTime + 32.184;
+
+            TT.JulDay = TimeToJD(DynTime);
+            TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
+               &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
+            TT.doy = MD2DOY(TT.Year,TT.Month,TT.Day);
+
+            UTC.JulDay = TimeToJD(CivilTime);
+            UTC.doy = MD2DOY(UTC.Year,UTC.Month,UTC.Day);
+
+            JDToGpsTime(TT.JulDay,&GpsRollover,&GpsWeek,&GpsSecond);
+            DynTime0 = DynTime - SimTime;
+
+            break;
+         case NOS3_TIME :
+            if (First) {
+               First = 0;
+               double JD = DateToJD(TT.Year, TT.Month, TT.Day,
+                  TT.Hour, TT.Minute, TT.Second);
+               DynTime0 = JDToTime(JD);
+            }
+            usleep(1.0E6*DTSIM);
+            NOS3Time(&UTC.Year,&UTC.doy,&UTC.Month,&UTC.Day,
+               &UTC.Hour,&UTC.Minute,&UTC.Second);
+            CivilTime = DateToTime(UTC.Year,UTC.Month,UTC.Day,
+               UTC.Hour,UTC.Minute,UTC.Second);
+            AtomicTime = CivilTime + LeapSec;
+            DynTime = AtomicTime + 32.184;
+
+            TT.JulDay = TimeToJD(DynTime);
+            TimeToDate(DynTime,&TT.Year,&TT.Month,&TT.Day,
+               &TT.Hour,&TT.Minute,&TT.Second,DTSIM);
+            TT.doy = MD2DOY(TT.Year,TT.Month,TT.Day);
+
+            UTC.JulDay = TimeToJD(CivilTime);
+            UTC.doy = MD2DOY(UTC.Year,UTC.Month,UTC.Day);
+
+            JDToGpsTime(TT.JulDay,&GpsRollover,&GpsWeek,&GpsSecond);
+            SimTime = DynTime - DynTime0;
+            break;
+      }
 
       /* Check for end of run */
       if (SimTime > STOPTIME) Done = 1;
@@ -194,7 +260,10 @@ void ManageBoundingBoxes(void)
 void ZeroFrcTrq(void)
 {
       struct SCType *S;
-      long Isc,Ib;
+      struct BodyType *B;
+      struct JointType *G;
+      struct FlexNodeType *FN;
+      long Isc,Ib,Ig,In;
 
       for(Isc=0;Isc<Nsc;Isc++) {
          S = &SC[Isc];
@@ -202,12 +271,36 @@ void ZeroFrcTrq(void)
          S->Frc[1] = 0.0;
          S->Frc[2] = 0.0;
          for(Ib=0;Ib<S->Nb;Ib++) {
-            S->B[Ib].Frc[0] = 0.0;
-            S->B[Ib].Frc[1] = 0.0;
-            S->B[Ib].Frc[2] = 0.0;
-            S->B[Ib].Trq[0] = 0.0;
-            S->B[Ib].Trq[1] = 0.0;
-            S->B[Ib].Trq[2] = 0.0;
+            B = &S->B[Ib];
+            B->Frc[0] = 0.0;
+            B->Frc[1] = 0.0;
+            B->Frc[2] = 0.0;
+            B->Trq[0] = 0.0;
+            B->Trq[1] = 0.0;
+            B->Trq[2] = 0.0;
+         }
+         for(Ig=0;Ig<S->Ng;Ig++) {
+            G = &S->G[Ig];
+            G->Frc[0] = 0.0;
+            G->Frc[1] = 0.0;
+            G->Frc[2] = 0.0;
+            G->Trq[0] = 0.0;
+            G->Trq[1] = 0.0;
+            G->Trq[2] = 0.0;
+         }
+         if (S->FlexActive) {
+            for(Ib=0;Ib<S->Nb;Ib++) {
+               B = &S->B[Ib];
+               for(In=0;In<B->NumFlexNodes;In++) {
+                 FN = &B->FlexNode[In];
+                 FN->Frc[0] = 0.0;
+                 FN->Frc[1] = 0.0;
+                 FN->Frc[2] = 0.0;
+                 FN->Trq[0] = 0.0;
+                 FN->Trq[1] = 0.0;
+                 FN->Trq[2] = 0.0;
+               }
+            }
          }
       }
 }
@@ -223,10 +316,8 @@ long SimStep(void)
       if (First) {
          First = 0;
          SimTime = 0.0;
-         #if defined _USE_SYSTEM_TIME_
-            /* First call just initializes timer */
-            RealRunTime(&TotalRunTime,DTSIM);
-         #endif
+         /* First call just initializes timer */
+         RealRunTime(&TotalRunTime,DTSIM);
          ManageFlags();
 
          Ephemerides(); /* Sun, Moon, Planets, Spacecraft, Useful Auxiliary Frames */
@@ -256,15 +347,13 @@ long SimStep(void)
       for(Isc=0;Isc<Nsc;Isc++) {
          if (SC[Isc].Exists) Dynamics(&SC[Isc]);
       }
-      OrbitMotion();
+      OrbitMotion(DynTime+DTSIM);
       SimComplete = AdvanceTime();
 
       /* Update SC Bounding Boxes occasionally */
       ManageBoundingBoxes();
 
-      #ifdef _ENABLE_SOCKETS_
-         InterProcessComm(); /* Send and receive from external processes */
-      #endif
+      InterProcessComm(); /* Send and receive from external processes */
       Ephemerides(); /* Sun, Moon, Planets, Spacecraft, Useful Auxiliary Frames */
       ZeroFrcTrq();
       for(Isc=0;Isc<Nsc;Isc++) {
@@ -282,14 +371,12 @@ long SimStep(void)
 
       /* Exit when Stoptime is reached */
       if (SimComplete) {
-         #if defined _USE_SYSTEM_TIME_
-            if (TimeMode == FAST_TIME) {
-               RealRunTime(&TotalRunTime,DTSIM);
-               printf("     Total Run Time = %9.2lf sec\n", TotalRunTime);
-               printf("     Sim Speed = %8.2lf x Real\n",
-                  STOPTIME/TotalRunTime);
-            }
-         #endif
+         if (TimeMode == FAST_TIME) {
+            RealRunTime(&TotalRunTime,DTSIM);
+            printf("     Total Run Time = %9.2lf sec\n", TotalRunTime);
+            printf("     Sim Speed = %8.2lf x Real\n",
+               STOPTIME/TotalRunTime);
+         }
       }
       return(SimComplete);
 
@@ -297,20 +384,22 @@ long SimStep(void)
 /**********************************************************************/
 int exec(int argc,char **argv)
 {
-      long Isc;
       long Done = 0;
 
+      MapTime = 0.0;
+      JointTime = 0.0;
+      PathTime = 0.0;
+      PVelTime = 0.0;
+      FrcTrqTime = 0.0;
+      AssembleTime = 0.0;
+      LockTime = 0.0;
+      TriangleTime = 0.0;
+      SubstTime = 0.0;
+      SolveTime = 0.0;
+
       InitSim(argc,argv);
-      for (Isc=0;Isc<Nsc;Isc++) {
-         if (SC[Isc].Exists) {
-            InitSpacecraft(&SC[Isc]);
-            InitFSW(&SC[Isc]);
-         }
-      }
       CmdInterpreter();
-      #ifdef _ENABLE_SOCKETS_
-         InitInterProcessComm();
-      #endif
+      InitInterProcessComm();
       #ifdef _USE_GUI_
          if (GLEnable) HandoffToGui(argc,argv);
          else {
@@ -325,6 +414,16 @@ int exec(int argc,char **argv)
          }
       #endif
 
+      //printf("\n\nMap Time = %lf sec\n",MapTime);
+      //printf("Joint Partial Time = %lf sec\n",JointTime);
+      //printf("Path Time = %lf sec\n",PathTime);
+      //printf("PVel Time = %lf sec\n",PVelTime);
+      //printf("FrcTrq Time = %lf sec\n",FrcTrqTime);
+      //printf("Assemble Time = %lf sec\n",AssembleTime);
+      //printf("Lock Time = %lf sec\n",LockTime);
+      //printf("Triangularize Time = %lf sec\n",TriangleTime);
+      //printf("Fwd Substitution Time = %lf sec\n",SubstTime);
+      //printf("Solve Time = %lf sec\n",SolveTime);
       return(0);
 }
 

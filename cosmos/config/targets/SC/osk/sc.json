@@ -1,5 +1,21 @@
 { "app": {
    
+   "title": "Stored Command",
+   "version": "2.5.0",
+   "owner": "NASA/Goddard",
+   "url": "https://github.com/nasa/MD",
+
+   "description": [
+      "SC manages table-defined time-tagged command sequences. It supports Absolute",
+      "Time Sequences(ATS) and Relative Time Sequences(RTS) that can be used to",
+      "automate operations and fault responses"
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
    "cosmos": {
       "target": "SC"
    },

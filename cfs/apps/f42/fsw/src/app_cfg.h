@@ -5,17 +5,17 @@
 ** Notes:
 **   1. This is part of prototype effort to port a 42 simulator FSW controller
 **      component into a cFS-based application 
-**   2. These macros can only be build with the application and can't
+**   2. These macros can only be built with the application and can't
 **      have a platform scope because the same app_cfg.h file name is used for
 **      all applications following the object-based application design.
-**
-** License:
-**   Written by David McComas, licensed under the copyleft GNU
-**   General Public License (GPL). 
 **
 ** References:
 **   1. OpenSatKit Object-based Application Developer's Guide.
 **   2. cFS Application Developer's Guide.
+**
+** License:
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 */
 #ifndef _app_cfg_
 #define _app_cfg_
@@ -31,15 +31,19 @@
 ** F42 Application Macros
 */
 
-#define  F42_MAJOR_VER      1
-#define  F42_MINOR_VER      1  /* Refactored for OSK 2.2 */
+/*
+** 1.1.0 - Refactored for OSK 2.2
+** 2.0.0 - Refactored for OSK 3.0, upgrade to 42 version 2042 that includes
+**         standalone AcApp and autocode database I/F
+*/
+
+#define  F42_MAJOR_VER      2
+#define  F42_MINOR_VER      0
 #define  F42_LOCAL_REV      0
 
-#define  F42_CMD_PIPE_DEPTH     10
-#define  F42_CMD_PIPE_NAME      "F42_CMD_PIPE"
+#define  F42_SB_PIPE_DEPTH  10
+#define  F42_SB_PIPE_NAME   "F42"
 
-#define  F42_SENSOR_PIPE_DEPTH  10
-#define  F42_SENSOR_PIPE_NAME   "F42_SENSOR_PIPE"
 
 /******************************************************************************
 ** Command Macros
@@ -48,11 +52,11 @@
 #define F42_ADP_TBL_LOAD_CMD_FC           (CMDMGR_APP_START_FC + 0)
 #define F42_ADP_TBL_DUMP_CMD_FC           (CMDMGR_APP_START_FC + 1)
 
-#define F42_ADP_SET_CTRL_MODE_CMD_FC      (CMDMGR_APP_START_FC + 2)
-#define F42_ADP_SET_OVR_CMD_FC            (CMDMGR_APP_START_FC + 3)
-#define F42_ADP_SET_TARGET_WHL_MOM_CMD_FC (CMDMGR_APP_START_FC + 4)
-
-#define F42_CONFIG_DBG_CMD_FC             (CMDMGR_APP_START_FC + 5)
+#define F42_ADP_SEND_CTRL_GAINS_CMD_FC    (CMDMGR_APP_START_FC + 2)
+#define F42_ADP_SET_CTRL_MODE_CMD_FC      (CMDMGR_APP_START_FC + 3)
+#define F42_ADP_SET_OVR_CMD_FC            (CMDMGR_APP_START_FC + 4)
+#define F42_ADP_SET_TARGET_WHL_MOM_CMD_FC (CMDMGR_APP_START_FC + 5)
+#define F42_ADP_CONFIG_DBG_CMD_FC         (CMDMGR_APP_START_FC + 6)
 
 
 /******************************************************************************
@@ -65,9 +69,8 @@
 
 
 #define F42_BASE_EID           (OSK_C_FW_APP_BASE_EID +  0)
-#define F42_ADP_BASE_EID       (OSK_C_FW_APP_BASE_EID + 10)
-#define CTRLTBL_BASE_EID       (OSK_C_FW_APP_BASE_EID + 20)
-#define THREEAXISFSW_BASE_EID  (OSK_C_FW_APP_BASE_EID + 30)
+#define F42_ADP_BASE_EID       (OSK_C_FW_APP_BASE_EID + 20)
+#define CTRLTBL_BASE_EID       (OSK_C_FW_APP_BASE_EID + 40)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of
@@ -79,6 +82,12 @@
 #define F42_INIT_DEBUG_EID 999
 #define F42_INIT_EVS_TYPE CFE_EVS_DEBUG
 //#define F42_INIT_EVS_TYPE CFE_EVS_INFORMATION
+
+
+/******************************************************************************
+** F42_ADP Configurations
+*/
+
 
 
 #endif /* _app_cfg_ */
