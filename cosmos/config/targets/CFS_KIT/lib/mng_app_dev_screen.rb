@@ -51,9 +51,9 @@ def mng_app_dev(screen, cmd)
   elsif (cmd == "TRAINING_VIDEO") 
 
       case screen.get_named_widget("training_video").text
-      when "CREATE_HELLO_WORLD_APP"
+      when "Create 'Hello World' App"
          Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD}")   
-      when "INSPECT_HELLO_WORLD_CODE"
+      when "Inspect 'Hello World' Code"
          Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD}")   
       end
 

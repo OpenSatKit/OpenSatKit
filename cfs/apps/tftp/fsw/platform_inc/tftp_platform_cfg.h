@@ -29,7 +29,7 @@
 ** TFTP Application Macros
 */
 
-#define  TFTP_APP_RUNLOOP_DELAY       500  /* Delay in milliseconds for main loop        */
+#define  TFTP_APP_RUNLOOP_DELAY       250  /* Delay in milliseconds for main loop        */
 #define  TFTP_APP_RUNLOOP_PKTS          8  /* Max number of packets to read per run loop */
  
 

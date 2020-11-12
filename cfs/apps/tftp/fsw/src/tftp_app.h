@@ -23,9 +23,9 @@
 #include "app_cfg.h"
 #include "tftp.h"
 
-/*
-** Macro Definitions
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
 #define TFTP_APP_INIT_EID        (TFTP_APP_BASE_EID + 0)
 #define TFTP_APP_NOOP_EID        (TFTP_APP_BASE_EID + 1)
@@ -33,22 +33,20 @@
 #define TFTP_APP_INVALID_MID_EID (TFTP_APP_BASE_EID + 3)
 
 
-/*
-** Type Definitions
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+/******************************************************************************
+** Command Packets
 */
 
-typedef struct
-{
 
-   CMDMGR_Class CmdMgr;
-   TFTP_Class   Tftp;
+/******************************************************************************
+** Telemetry Packets
+*/
 
-   CFE_SB_PipeId_t CmdPipe;
-
-} TFTP_APP_Class;
-
-typedef struct
-{
+typedef struct {
 
    uint8    Header[CFE_SB_TLM_HDR_SIZE];
 
@@ -66,8 +64,8 @@ typedef struct
    uint16  PutFileCnt;
    uint16  BlockNum;
 
-   char    SrcFileName[TFTP_FILE_NAME_LEN];
-   char    DestFileName[TFTP_FILE_NAME_LEN];
+   char    SrcFilename[TFTP_FILE_NAME_LEN];
+   char    DestFilename[TFTP_FILE_NAME_LEN];
 
    uint8   State;
    uint8   NetIFid; /* Peer for file transfer */
@@ -80,20 +78,44 @@ typedef struct
    uint32   RecvMsgErrCnt;
 
 } OS_PACK TFTP_APP_HkPkt;
-
 #define TFTP_APP_TLM_HK_LEN sizeof (TFTP_APP_HkPkt)
 
-
-/*
-** Exported Data
+   
+/******************************************************************************
+** TFTP Class
 */
+
+typedef struct {
+
+   /* 
+   ** App Framework
+   */   
+   CFE_SB_PipeId_t CmdPipe;
+   CMDMGR_Class    CmdMgr;
+
+   /*
+   ** Telemetry Packets
+   */
+   TFTP_APP_HkPkt  HkPkt;
+
+   /*
+   ** App Objects
+   */   
+   TFTP_Class   Tftp;
+
+} TFTP_APP_Class;
+
+/*******************/
+/** Exported Data **/
+/*******************/
 
 extern TFTP_APP_Class  TftpApp;
 
 
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
+
 
 /******************************************************************************
 ** Function: TFTP_AppMain
@@ -115,10 +137,5 @@ boolean TFTP_APP_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 */
 boolean TFTP_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
-/******************************************************************************
-** Function: TFTP_APP_SendHousekeepingPkt
-**
-*/
-void TFTP_APP_SendHousekeepingPkt(void);
 
 #endif /* _tftp_app_ */

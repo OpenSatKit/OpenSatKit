@@ -47,11 +47,11 @@ def cfe_tbl_scr_cmd(screen, cmd)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "TBL_TRAINING_VIDEO"
+      when "TBL Training Video"
          Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_CFE_TBL}")      
-      when "TBL_TRAINING_SLIDES"
+      when "TBL Training Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::TBL_TRAINING_SLIDES_FILE}")
-      when "TBL_EXERCISE_SCRIPT"
+      when "TBL Exercise Script"
          launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TBL")
       end
    

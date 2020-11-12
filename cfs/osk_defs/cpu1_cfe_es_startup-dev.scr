@@ -10,8 +10,10 @@ CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,   OSK_C_DEMO,   120,   16384, 
 CFE_APP, /cf/osk_cpp_demo.so, OSK_CPP_DEMO_Main,    OSK_CPP_DEMO, 120,   16384, 0x0, 0;
 CFE_APP, /cf/filemgr.so,      FILEMGR_AppMain,      FILEMGR,       80,   16384, 0x0, 0;
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,         TFTP,          60,   16384, 0x0, 0;
+CFE_APP, /cf/cf.so,           CF_AppMain,           CF,           100,   80192, 0x0, 0;
 CFE_APP, /cf/f42.so,          F42_AppMain,          F42,           50,   16384, 0x0, 0;
 CFE_APP, /cf/i42.so,          I42_AppMain,          I42,          100,   80192, 0x0, 0;
+CFE_APP, /cf/cf.so,           CF_AppMain,           CF,           100,   80192, 0x0, 0;
 !!!! Above load runtime apps and then any apps being developed
 CFE_APP, /cf/ds.so,           DS_AppMain,           DS,            70,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,           FM,            80,   16384, 0x0, 0;

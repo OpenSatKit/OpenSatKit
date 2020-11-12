@@ -28,6 +28,7 @@
 
 /* Telemetry Message IDs */ 
 
-#define  TFTP_HK_TLM_MID    (0x0900)
+#define  TFTP_HK_TLM_MID       (0x0900)
+#define  TFTP_TRANSFER_REQ_MID (0x0901)
 
 #endif /*_tftp_msgids_*/

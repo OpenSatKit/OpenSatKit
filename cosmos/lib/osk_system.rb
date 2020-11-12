@@ -45,22 +45,6 @@ module Osk
       ####################################################################
      
       # 
-      # Check if cFS is running and start cFS with or without a user prompt
-      #      
-      def self.check_n_start_cfs(prompt = true)
-         cfs_started = false
-         if (not Osk::System.cfs_running?)
-            if (prompt)
-               continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter your user password when prompted.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
-               return unless continue == Osk::MSG_BUTTON_YES
-            end
-            Osk::System.start_cfs  # Enables telemetry
-            cfs_started = true 
-         end
-         return cfs_started 
-      end 
-      
-      # 
       # Check for cFS existing instances
       #      
       def self.cfs_running?
@@ -70,6 +54,42 @@ module Osk
          return (core.length > 1)
       
       end
+
+      # 
+      # Check if cFS is running and start cFS with or without a user prompt
+      #      
+      def self.check_n_start_cfs(interactive = true)
+         
+         return true if Osk::System.cfs_running?
+         
+         if (interactive)
+            continue = message_box("The flight software is not running. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter your user password when prompted.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
+            return false unless (continue == Osk::MSG_BUTTON_YES)
+         end
+         
+         Osk::System.start_cfs  # Enables telemetry
+         
+         return true
+
+      end 
+      
+      # 
+      # Force a termination of an executing cFS if one exsists. This method
+      # is used when user wants a clean system
+      #      
+      def self.stop_n_start_cfs(interactive = true)
+         
+         #
+         # Kill all instances of the cFS before starting a new instance.  The stop
+         # cFS method spawns a new terminal window. The delay helps the user see
+         # the window 
+         #
+         if (Osk::System.stop_cfs) 
+            wait 6
+         end
+         Osk::System.start_cfs  # Enables telemetry
+         
+      end # stop_n_start_cfs()
       
       # 
       # Start the cFS and enable telemetry
@@ -81,7 +101,7 @@ module Osk
          #spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute echo #{Osk::PASSWORD} | sudo ./core-cpu1""")
          #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
 
-         wait(4)  # Give some time to type in password
+         wait(6)  # Give some time to type in password
          
          # Enable telemetry
          done = false
@@ -162,13 +182,25 @@ module Osk
       # 
       # Start the 42 simulator and connect FSW I42 app
       #      
-      def self.start_42(display_scr=false)
+      def self.start_42(interactive=true, display_scr=false)
+
+         started_42 = false
+         if (not Osk::System.check_n_start_cfs(interactive))
+            return started_42
+         end
+         if tlm("I42 HK_TLM_PKT CONNECTED") == "TRUE"
+            message_box("42 not started. It's already running and connected.",Osk::MSG_BUTTON_CONT,false) if interactive
+            return started_42
+         end
          
+         started_42 = true
          spawn("xfce4-terminal --title=\"42 Simulator\" --default-working-directory=\"#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}\" --execute ./42 OSK")
-         wait(2)
+         wait(4)
          Osk::flight.send_cmd("I42","CONNECT_42")
-     
+        
          display("CFS_KIT SIM_42_SCREEN",1500,50) if display_scr
+         
+         return started_42
       
       end # start_42()
 

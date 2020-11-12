@@ -1,9 +1,9 @@
 <% 
   require 'osk_config' 
 
-  @APP_PREFIX_STR = "TFTP"
-  @HK_TLM_MID_STR = "TFTP_HK_TLM_MID"
-  
+  @APP_PREFIX_STR       = "TFTP"
+  @HK_TLM_MID_STR       = "TFTP_HK_TLM_MID"
+  @TRANSFER_REQ_MID_STR = "TFTP_TRANSFER_REQ_MID"
 %>  
 
 TELEMETRY TFTP HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "TFTP Housekeeping Packet"
@@ -13,9 +13,15 @@ TELEMETRY TFTP HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "TFTP Housekeeping Pa
   APPEND_ITEM GET_FILE_COUNT  16 UINT "Get file Count"
   APPEND_ITEM PUT_FILE_COUNT  16 UINT "Put file count"
   APPEND_ITEM BLOCK_NUMBER    16 UINT "Block Number"
-  APPEND_ITEM SRC_FILE       512 STRING "Source file name"
-  APPEND_ITEM DEST_FILE      512 STRING "Destination file name"
+  APPEND_ITEM SRC_FILE       512 STRING "Source filename"
+  APPEND_ITEM DEST_FILE      512 STRING "Destination filename"
   APPEND_ITEM TFTP_STATE       8 UINT "TFTP state machine"
   APPEND_ITEM NET_IF_ID        8 UINT "Spare1"
   APPEND_ITEM RECV_MSG_CNT    32 UINT "Receive Message count"
   APPEND_ITEM RECV_MSG_ERRCNT 32 UINT "Receive Message error count"
+
+TELEMETRY TFTP TRANSFER_REQ_PKT <%= Osk::Cfg.processor_endian %> "TFTP Initiate a transfer request from TFTP app to COSMOS"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @TRANSFER_REQ_MID_STR) %>
+  APPEND_ITEM CMD_CODE   16 UINT "1=Get (Flt->Gnd), 2=Put (Gnd->Flt)"
+  APPEND_ITEM SRC_FILE  512 STRING "Source filename"
+  APPEND_ITEM DEST_FILE 512 STRING "Destination filename"

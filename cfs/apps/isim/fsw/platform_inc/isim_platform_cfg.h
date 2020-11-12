@@ -1,5 +1,5 @@
 /*
-** Purpose: Define platform configurations for the Isim application
+** Purpose: Define platform configurations for the Instrument Simulator App
 **
 ** Notes:
 **   None
@@ -33,7 +33,7 @@
 #define  ISIM_CMD_PIPE_NAME     "ISIM_CMD_PIPE"
 
 /******************************************************************************
-** Example Object Macros
+** ISIM Table Object Macros
 */
 
 #define  ISIMTBL_DEF_LOAD_FILE  "/cf/isim_tbl.json"

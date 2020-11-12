@@ -277,7 +277,7 @@
 **       the filename type to "count".  This value should match
 **       the definition for #DS_MAX_SEQUENCE_COUNT, below.
 */
-#define DS_SEQUENCE_DIGITS              8
+#define DS_SEQUENCE_DIGITS              4 //osk
 
 
 /**

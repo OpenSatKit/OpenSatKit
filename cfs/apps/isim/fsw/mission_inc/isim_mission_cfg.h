@@ -1,5 +1,5 @@
 /*
-** Purpose: Define mission configurations for the Isim application
+** Purpose: Define mission configurations for the Instrument Simulator App
 **
 ** Notes:
 **   None

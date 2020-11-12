@@ -32,7 +32,7 @@ COMMAND KIT_TO ADD_PKT <%= Osk::Cfg.processor_endian %> "Add an individual packe
   APPEND_PARAMETER QOS_RELIABILITY 8 UINT MIN_UINT8 MAX_UINT8 0 "Quality of Service: Reliability"
   APPEND_PARAMETER QOS_PRIORITY    8 UINT MIN_UINT8 MAX_UINT8 0 "Quality of Service: Priority"
   APPEND_PARAMETER BUF_LIM         8 UINT MIN_UINT8 MAX_UINT8 4 "TO input buffer limit"
-  APPEND_PARAMETER FILTER_TYPE    16 UINT MIN_UINT16 MAX_UINT16 1 "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
+  APPEND_PARAMETER FILTER_TYPE    16 UINT MIN_UINT16 MAX_UINT16 2 "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
   APPEND_PARAMETER FILTER_PARAM_N 16 UINT MIN_UINT16 MAX_UINT16 0 "N = Filter will pass this many packets"
   APPEND_PARAMETER FILTER_PARAM_X 16 UINT MIN_UINT16 MAX_UINT16 0 "X = out of every group of this many packets"
   APPEND_PARAMETER FILTER_PARAM_O 16 UINT MIN_UINT16 MAX_UINT16 0 "O = starting at this offset within the group"

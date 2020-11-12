@@ -1,5 +1,8 @@
 TITLE 'cFS Command and Telemetry Server'
 
+# OSK TFTP Interface
+BACKGROUND_TASK tftp_task.rb
+
 # Visiona CFDP Interface
 BACKGROUND_TASK cfdp_engine_task.rb
 

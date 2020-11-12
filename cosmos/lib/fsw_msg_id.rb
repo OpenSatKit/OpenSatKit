@@ -228,9 +228,10 @@ module Fsw
 
       # Trivial File Transfer Protocol
   
-      TFTP_CMD_MID    = "0x1900"
-      TFTP_HK_TLM_MID = "0x0900" 
-  
+      TFTP_CMD_MID          = "0x1900"
+      TFTP_HK_TLM_MID       = "0x0900" 
+      TFTP_TRANSFER_REQ_MID = "0x0901" 
+        
       ###############
       ## PiSat Kit ##
       ###############

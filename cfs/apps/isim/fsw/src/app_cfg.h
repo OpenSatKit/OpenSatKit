@@ -1,5 +1,5 @@
 /*
-** Purpose: Define configurations for the Isim application.
+** Purpose: Define configurations for the Instrument Simulator App
 **
 ** Notes:
 **   1. These macros can only be built with the application and can't

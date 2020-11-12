@@ -1,0 +1,34 @@
+{
+  "tlm-tbl-tool": {
+    "description": [
+      "Template KIT_TO and DS table generation tool configuration file",
+      "@undefined@ indicates the field needs to be defined before the tables are generated",
+      "@file_substr@ is replaced by each string in the 'files' object"
+    ],
+    "verbose": false,
+    "input-path": "/mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/tbl_tool",
+    "output-path": "/mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/tbl_tool",
+    "template-path": "/mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/tlm/templates",
+    "telemetry-output": {
+      "csv-file": "simsat-kit_to-ds-tbl.csv",
+      "log-file": "simsat-kit_to-ds-tbl_log.txt",
+      "header-file": "kit_to-tbl-header.json",
+      "footer-file": "kit_to-tbl-footer.json",
+      "output-file": "kit_to_@file_substr@_tbl.json",
+      "max-apid": 16384,
+      "files": {
+        "1": "32kNom",
+        "2": "4kSafe"
+      }
+    },
+    "data-storage": {
+      "csv-file": "@undefined@",
+      "log-file": "@undefined@",
+      "filters-per-entry": 2,
+      "files": {
+        "1": "Nom",
+        "2": "Safe"
+      }
+    }
+  }
+}

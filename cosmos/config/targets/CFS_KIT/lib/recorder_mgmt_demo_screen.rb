@@ -24,8 +24,8 @@ RMD_HK_FILE_TBL_IDX      = 1
 
 RMD_TBL_PATH_FILE = "#{Osk::FLT_SRV_DIR}/#{Osk::TMP_TBL_FILE}"
 
-RMD_EVS_FILE = "events00001000.dat"
-RMD_EVS_PATH_FILE = "#{SimSat::FLT_SRV_DIR}/#{RMD_EVS_FILE}"
+RMD_EVS_FILE = "events1000.dat"   # Assumes DS configured for 4 digit count in file name 
+RMD_EVS_PATH_FILE = "#{SimSat::FLT_REC_DIR}/#{RMD_EVS_FILE}"
 
 ################################################################################
 ## Demo Narrative Text

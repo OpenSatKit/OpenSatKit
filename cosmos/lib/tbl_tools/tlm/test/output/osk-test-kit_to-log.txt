@@ -1,0 +1,12 @@
+Generating tables from CSV ./test/input/osk-test-kit_to-tbl.csv
+> Input directory:    ./test/input/
+> Output directory:   ./test/output/
+> Template directory: ./templates/
+
+
+Processing table file 32kNom with ID 1
+Sucessfully created ./test/output/kit_to_32kNom_tbl.json at 2020-11-05 16:56:18 -0800
+
+Processing table file 4kSafe with ID 2
+Sucessfully created ./test/output/kit_to_4kSafe_tbl.json at 2020-11-05 16:56:18 -0800
+

@@ -93,7 +93,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "events",
       /* .Extension     = */ ".dat",
 
@@ -109,7 +109,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "cfe",
       /* .Extension     = */ ".hk",
 
@@ -125,7 +125,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "app",
       /* .Extension     = */ ".hk",
 
@@ -141,7 +141,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "app",
       /* .Extension     = */ ".tlm",
 
@@ -157,7 +157,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "hw",
       /* .Extension     = */ "tlm",
 
@@ -173,7 +173,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "cfe",
       /* .Extension     = */ "tlm",
 
@@ -189,7 +189,7 @@ DS_DestFileTable_t DS_DestFileTable =
 #if (DS_MOVE_FILES == TRUE)
       /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-      /* .Pathname      = */ "/cf/simsat",
+      /* .Pathname      = */ "/cf/simsat/rec",
       /* .Basename      = */ "sci_aux",
       /* .Extension     = */ ".dat",
 

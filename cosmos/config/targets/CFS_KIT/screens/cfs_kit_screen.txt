@@ -23,35 +23,40 @@ VERTICAL
     TABITEM "Explore cFS/SimSat"
       
       VERTICALBOX System
-        MATRIXBYCOLUMNS 5
+        HORIZONTAL
+        MATRIXBYCOLUMNS 3 4 4 
 
           BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS")'
           SETTING BACKCOLOR 0 200 0
+          BUTTON 'Start 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_42")'
+          SETTING BACKCOLOR 0 200 0
           BUTTON 'Start cFS with 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS_42")'
           SETTING BACKCOLOR 0 200 0
-          LABEL "          "
-          LABEL "System Time(secs)"
-          VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
 
           BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_CFS")'
           SETTING BACKCOLOR 220 50 50
           BUTTON 'Stop 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_42")'
           SETTING BACKCOLOR 220 50 50
           LABEL "          "
-          LABEL "          "
-          LABEL "          "
 
         END # Matrix
+        MATRIXBYCOLUMNS 2 4 4
+          LABEL "          "
+          LABEL "System Time(secs)"
+          LABEL "          "
+          VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
+        END # Matrix
+        END # Horizontal
         SETTING BACKCOLOR 162 181 205
         
         LABEL "          "
 
         HORIZONTAL
-        VERTICALBOX 'Learn OpenSatKit'
+        VERTICALBOX "Learn OpenSatKit"
         MATRIXBYCOLUMNS 2
           BUTTON 'Open Doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_OSK")'
           SETTING BACKCOLOR 255 255 255
-          NAMED_WIDGET learn_osk COMBOBOX About SimpleSat_Overview OSK_Quick_Start OSK_Users_Guide OSK_Version_IDs
+          NAMED_WIDGET learn_osk COMBOBOX "About" "SimpleSat Overview" "OSK Quick Start" "OSK Users Guide" "OSK Version IDs"
           #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
         END # Matrix
         SETTING BACKCOLOR 162 181 205
@@ -60,7 +65,7 @@ VERTICAL
         MATRIXBYCOLUMNS 2
           BUTTON 'Open doc'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_CFS")'
           SETTING BACKCOLOR 255 255 255
-          NAMED_WIDGET learn_cfs COMBOBOX About OSK_Training_Intro cFS_Training_Intro cFE_Service_Training OSK_cFE_Exercises cFE_App_Training OSK_cFE_App_Exercises
+          NAMED_WIDGET learn_cfs COMBOBOX "About" "OSK Training Intro" "cFS Training Intro" "cFE Service Training" "OSK cFE Exercises" "cFE App Training" "OSK cFE App Exercises"
           #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
           END # Matrix
         End # Learn cFS Box
@@ -68,10 +73,10 @@ VERTICAL
         End # HORIZONTAL
 
         HORIZONTAL
-        VERTICALBOX 'Example Scripts'
+        VERTICALBOX 'SimpleSat Ref Mission'
         MATRIXBYCOLUMNS 2
-          BUTTON 'Run Script'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_SCRIPT")'
-          NAMED_WIDGET run_script COMBOBOX About Functional_Test Integration_Test Ops_Example
+          BUTTON 'Run Script'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMPLE_SAT")'
+          NAMED_WIDGET simple_sat COMBOBOX "About" "Functional Test" "Integration Test" "Ops Example"
           #BUTTON 'Run Ops Example' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_OPS_EXAMPLE")'
           #BUTTON 'Run Integration Test'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_INTG_TEST")'
         END # Matrix
@@ -80,7 +85,7 @@ VERTICAL
         VERTICALBOX 'Config System'          
         MATRIXBYCOLUMNS 2
           BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
-          NAMED_WIDGET config_sys COMBOBOX About Enable_Tlm Reset_Time Config_Cmd_Verify Config_App_Events
+          NAMED_WIDGET config_sys COMBOBOX "About" "Enable Tlm" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events"
         END # Matrix
         SETTING BACKCOLOR 162 181 205
         End # Config System Box

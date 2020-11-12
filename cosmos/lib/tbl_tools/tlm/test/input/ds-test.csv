@@ -1,0 +1,53 @@
+GPM FSW DS Destination/Filter Table Definitions,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,DS_Nom,,,,,,,,DS_LEO,,,,,,,,DS_DV,,,,,,,,DS_Safehold,,,,,,,
+,,,,,,,,,,,,SCHK Filter Rate (kbps):,,,,,,,37.96,SCHK Filter Rate (kbps):,,,,,,,14.12,SCHK Filter Rate (kbps):,,,,,,,14.33,SCHK Filter Rate (kbps):,,,,,,,14.08
+,,,,,,,,,,,,Difference,,,,,,,2.04,Difference,,,,,,,1.88,Difference,,,,,,,1.67,Difference,,,,,,,1.92
+,,,,,,,,,,,,Margin:,,,,,,,5.10%,Margin:,,,,,,,4.69%,Margin:,,,,,,,4.16%,Margin:,,,,,,,4.80%
+,,,,,,,,,,,,SCAD Filter Rate (kbps):,,,,,,,15.85,SCAD Filter Rate (kbps):,,,,,,,0.00,SCAD Filter Rate (kbps):,,,,,,,0.00,SCAD Filter Rate (kbps):,,,,,,,0.00
+,,,,,,,,,,,,Storage Time (Mins):,,,,,,,9.54,Storage Time (Mins):,,,,,,,33.24,Storage Time (Mins):,,,,,,,33.25,Storage Time (Mins):,,,,,,,33.23
+342,Sub System,APID Name,APID Type,No=only 1 AB=Both A=PwrSelB=PwrSel,APID (Dec),APID (Hex),MSGID (Hex),Packet Size (Bits),Production Interval (secs),Pkt Type,Nom. Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec,Filter Type,N,X,Effective Interval (sec),O,Dest. File ID,Dest. File,Filtered Bits/Sec
+KEYWORD_ROW,,APID_NAME,,,APID,,,,,,,F1_TYPE,F1_N,F1_X,,F1_O,F1_FILE,,,F2_TYPE,F2_N,F2_X,,F2_O,F2_FILE,,,F3_TYPE,F3_N,F3_X,,F3_O,F3_FILE,,,F4_TYPE,F4_N,F4_X,,F4_O,F4_FILE,,
+1,FSW,cFE Executive Services (ES) HK,Internal,No,0,0x000,0x800,"1,248",5.0,Sync,249.6,Count,1,3,15,0,0,SCHK,83.2,Count,1,12,60,0,0,SCHK,20.8,Count,1,12,60,0,0,SCHK,20.8,Count,1,12,60,0,0,SCHK,20.8
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+2,FSW,cFE Event Services (EVS) HK,Internal,No,1,0x001,0x801,"2,784",5.0,Sync,556.8,Count,1,3,15,0,0,SCHK,185.6,Count,1,12,60,0,0,SCHK,46.4,Count,1,12,60,0,0,SCHK,46.4,Count,1,12,60,0,0,SCHK,46.4
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+3,FSW,cFE Software Bus (SB) HK,Internal,No,3,0x003,0x803,320,5.0,Sync,64.0,Count,1,3,15,0,0,SCHK,21.3,Count,1,12,60,0,0,SCHK,5.3,Count,1,12,60,0,0,SCHK,5.3,Count,1,12,60,0,0,SCHK,5.3
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+4,FSW,cFE Table Services (TBL) HK,Internal,No,4,0x004,0x804,"2,016",5.0,Sync,403.2,Count,1,3,15,0,0,SCHK,134.4,Count,1,12,60,0,0,SCHK,33.6,Count,1,12,60,0,0,SCHK,33.6,Count,1,12,60,0,0,SCHK,33.6
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+5,FSW,cFE Time Services (TIME) HK,Internal,No,5,0x005,0x805,352,5.0,Sync,70.4,Count,1,3,15,0,0,SCHK,23.5,Count,1,12,60,0,0,SCHK,5.9,Count,1,12,60,0,0,SCHK,5.9,Count,1,12,60,0,0,SCHK,5.9
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+6,0,cFE Time Services (TIME) DiagTlm,Internal,0,6,0x006,0x806,"1,696",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+7,0,cFE Event Service (EVS) Message Tlm,Internal,0,8,0x008,0x808,"1,344",0.0,Async,0.0,Count,1,1,0,0,1,SCEV,0.0,Count,1,1,0,0,1,SCEV,0.0,Count,1,1,0,0,1,SCEV,0.0,Count,1,1,0,0,1,SCEV,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+8,0,cFE Software Bus (SB) Statistics Tlm,Internal,0,10,0x00A,0x80A,"6,976",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+9,FSW,cFE Executive Service (ES) Application Tlm,Internal,No,11,0x00B,0x80B,"1,600",5.0,Sync,320.0,Count,1,3,15,0,0,SCHK,106.7,Count,1,12,60,0,0,SCHK,26.7,Count,1,12,60,0,0,SCHK,26.7,Count,1,12,60,0,0,SCHK,26.7
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+10,0,cFE Table Services (TBL) Register Tlm,Internal,0,12,0x00C,0x80C,"1,408",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+11,0,cFE Executive Service (ES) Shell Tlm,Internal,0,15,0x00F,0x80F,608,0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+12,0,cFE Executive Service (ES) Memory Stats Tlm,Internal,0,16,0x010,0x810,"1,888",0.0,Async,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0,Count,1,1,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+13,RF,S-Comm A Xponder A HK,External,AB,110,0x06E,0x86E,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+14,RF,S-Band Comm. Card A HK,External,AB,111,0x06F,0x86F,"2,192",1.0,Sync,2192.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+15,RF,S-Comm A Xponder B HK,External,AB,113,0x071,0x871,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+16,0,S-Comm to SBC Backup Data Frame,External,0,120,0x078,0x878,"2,144",0.0,Async,0.0,Count,1,1,0,0,3,SCHR,0.0,Count,1,1,0,0,3,SCHR,0.0,Count,1,1,0,0,3,SCHR,0.0,Count,1,1,0,0,3,SCHR,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+17,RF,S-Band Comm. Card B HK,External,AB,121,0x079,0x879,"2,192",1.0,Sync,2192.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0,Count,1,2,2,0,0,SCHK,1096.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+18,RF,S-Comm B Xponder A HK,External,AB,122,0x07A,0x87A,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+19,RF,S-Comm B Xponder B HK,External,AB,123,0x07B,0x87B,384,0.5,Sync,768.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0,Count,1,2,1,0,0,SCHK,384.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+20,FSW,Telemetry Output (TO) HK (lab),Internal,No,128,0x080,0x880,128,5.0,Sync,25.6,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0
+21,0,Telemetry Output (TO) Data Types (lab),Internal,0,129,0x081,0x881,70,0.0,Async,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0,Count,0,0,0,0,0,SCHK,0.0
+,,,,,,,,,,,,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0,N/A,,,,,,,0.0

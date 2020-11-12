@@ -1,3 +1,3 @@
 #!/bin/bash
 set -o verbose
-sudo kill 98462
+sudo kill 21713

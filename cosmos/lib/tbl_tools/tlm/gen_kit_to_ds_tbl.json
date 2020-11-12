@@ -1,0 +1,37 @@
+{
+   "tlm-tbl-tool": {
+
+      "description": [
+         "Test the gen_kit_to_tbl.rb and the gen_ds_tbl.rb tools"
+      ],
+      
+      "verbose": true,
+      
+      "input-path":    "./test/input/",
+      "output-path":   "./test/output/",
+      "template-path": "./templates/",
+      
+      "telemetry-output": {
+         "csv-file": "osk-test-kit_to-tbl.csv",
+         "log-file": "osk-test-kit_to-log.txt",
+         "header-file": "kit_to_tbl_header.json",
+         "footer-file": "kit_to_tbl_footer.json",
+         "output-file": "kit_to_@substr@_tbl.json",
+         "max-apid": 767,
+         "files": {
+             "1": "32kNom",
+             "2": "4kSafe"
+         }
+      },
+
+      "data-storage": {
+         "csv-file": "osk-test-ds-tbl.csv",
+         "log-file": "osk-test-ds-log.txt",
+         "filters-per-entry": 2,
+         "files": {
+            "1": "Nom",
+            "2": "Safe"
+         }
+      }
+   }
+}

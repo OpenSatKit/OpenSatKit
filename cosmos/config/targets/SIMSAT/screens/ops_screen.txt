@@ -200,9 +200,9 @@ VERTICALBOX "Attitude Determination and Control"
     LABEL '    Att Err Y'
     LABEL '    Att Err Z'
     LABEL '             '
-    VALUE F42 CONTROL_PKT ATT_ERR_X WITH_UNITS 8
-    VALUE F42 CONTROL_PKT ATT_ERR_Y WITH_UNITS 8
-    VALUE F42 CONTROL_PKT ATT_ERR_Z WITH_UNITS 8
+    VALUE F42 CONTROL_PKT THERR_X WITH_UNITS 8
+    VALUE F42 CONTROL_PKT THERR_Y WITH_UNITS 8
+    VALUE F42 CONTROL_PKT THERR_Z WITH_UNITS 8
     BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_ATT_ERR")'
   END # Matrix
   

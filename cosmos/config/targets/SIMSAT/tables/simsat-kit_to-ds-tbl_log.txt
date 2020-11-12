@@ -1,0 +1,12 @@
+Generating tables from CSV /mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/tbl_tool/simsat-kit_to-ds-tbl.csv
+> Input directory:    /mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/tbl_tool
+> Output directory:   /mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables
+> Template directory: /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/tlm/templates
+
+
+Processing table file 32kNom with ID 1
+Sucessfully created /mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/kit_to_32kNom_tbl.json at 2020-11-10 06:04:36 -0800
+
+Processing table file 4kSafe with ID 2
+Sucessfully created /mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/kit_to_4kSafe_tbl.json at 2020-11-10 06:04:36 -0800
+
