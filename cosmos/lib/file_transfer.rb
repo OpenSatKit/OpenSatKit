@@ -4,6 +4,10 @@
 # Notes:
 #   1. Abstract file transfer services so different protocols can be used
 #      Currently hard coded for TFTP.
+#   2. The orginal design concept evolved from having a single file transfer 
+#      protocol to using both TFTP and CFDP. CFDP is used/configured for the
+#      reference mission and TFTP has been left in place for OSK
+#      "infrastructure". 
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -31,6 +35,11 @@ module Osk
  
    end # Class FileTransfer
    
+   #
+   # The simple get/put methods are designed to be used in oeprational type
+   # procedures that are synchronous and have user interaction. The threaded
+   # get/put versions are for background tasks.
+   #
    class TftpFileTransfer < FileTransfer
 
       attr_reader :tftp
@@ -72,6 +81,43 @@ module Osk
          return put_file 
     
       end # put()
+
+      def get_threaded(flt_filename, gnd_filename)
+
+         got_file = false
+         
+         transfer = Thread.new do
+            begin
+               @tftp.getbinaryfile(flt_filename, gnd_filename)
+               got_file = true
+            rescue TFTPTimeout => e
+               # Do nothing since errors will be reported by caller
+            end
+         end
+         
+         transfer.join
+         return got_file
+          
+      end # get_threaded()
+
+      def put_threaded (gnd_filename, flt_filename)
+      
+         put_file = false
+         
+         transfer = Thread.new do
+            begin
+               @tftp.putbinaryfile(gnd_filename, flt_filename)
+               put_file = true
+            rescue TFTPTimeout => e
+               # Do nothing since errors will be reported by caller
+            end
+         end
+         
+         transfer.join
+         return put_file
+
+      end # put_threaded()
+
 
    end # Class FileTransfer
 

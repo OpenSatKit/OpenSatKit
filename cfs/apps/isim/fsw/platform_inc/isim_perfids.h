@@ -1,5 +1,5 @@
 /* 
-** Purpose: Define cFS performance ID's used by Isim application
+** Purpose: Define cFS performance ID's used by Instrument Simulator App
 **
 ** Notes:
 **   None

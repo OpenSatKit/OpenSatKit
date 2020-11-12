@@ -29,7 +29,13 @@ module Fsw
       CFE_ES_PERF_TRIGGER_END     = 2
       CFE_ES_PERF_MAX_MODES       = 3
 
+      ########################
+      ## LC - Limit Checker ##
+      ########################
 
+      FM_IGNORE_CRC     = 0 
+      FM_COMPUTE_CRC_16 = 2  # Not explicitly defined in the FSW but it should be
+      
       ########################
       ## LC - Limit Checker ##
       ########################

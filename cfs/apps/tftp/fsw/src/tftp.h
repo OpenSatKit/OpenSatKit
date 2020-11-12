@@ -36,6 +36,11 @@
 #include "netif.h"
 #include "app_cfg.h"
 
+
+/***********************/
+/** Macro Definitions **/
+/***********************/
+
 /*
 ** See RFC 1350 section 5 and the appendix.
 */
@@ -50,20 +55,20 @@
 #define TFTP_DEF_TIMEOUT_SEC  0
 #define TFTP_DEF_TIMEOUT_USEC 50000
 #define TFTP_MAX_DATA_LEN     512
-#define TFTP_MAX_MSGSIZE	 (4 + TFTP_MAX_DATA_LEN)
+#define TFTP_MAX_MSGSIZE      (4 + TFTP_MAX_DATA_LEN)
 
-#define TFTP_MODE_OCTET		"octet"
-#define TFTP_MODE_NETASCII	"netascii"
-#define TFTP_MODE_MAIL		"mail"
+#define TFTP_MODE_OCTET    "octet"
+#define TFTP_MODE_NETASCII "netascii"
+#define TFTP_MODE_MAIL     "mail"
 
-#define TFTP_ERR_NOT_DEFINED	0
+#define TFTP_ERR_NOT_DEFINED   0
 #define TFTP_ERR_NOT_FOUND	    1
-#define TFTP_ERR_ACCESS_DENIED	2
-#define TFTP_ERR_DISK_FULL	    3
-#define TFTP_ERR_UNKNOWN_TID	4
-#define TFTP_ERR_ILLEGAL_OP	    5
-#define TFTP_ERR_FILE_EXISTS	6
-#define TFTP_ERR_NO_SUCH_USER	7
+#define TFTP_ERR_ACCESS_DENIED 2
+#define TFTP_ERR_DISK_FULL     3
+#define TFTP_ERR_UNKNOWN_TID   4
+#define TFTP_ERR_ILLEGAL_OP    5
+#define TFTP_ERR_FILE_EXISTS   6
+#define TFTP_ERR_NO_SUCH_USER  7
 
 
 #define TFTP_STATE_IDLE      10
@@ -73,9 +78,12 @@
 #define TFTP_STATE_GET       13
 #define TFTP_STATE_GET_FINI  14
 
-#define TFTP_MAX_MODE_LEN      10
-#define TFTP_IP_ADDR_STR_LEN   32
-#define TFTP_FILE_NAME_LEN     64
+#define TFTP_MAX_MODE_LEN    10
+#define TFTP_IP_ADDR_STR_LEN 32
+#define TFTP_FILE_NAME_LEN   64
+
+#define TFTP_GET_CMD_CODE  1
+#define TFTP_PUT_CMD_CODE  2
 
 /*
 ** Event Message IDs
@@ -111,9 +119,52 @@
 
 #define TFTP_TOTAL_EID  27
 
-/*
-** Type Definitions
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+/******************************************************************************
+** Command Packets
 */
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   int16   ServerPort;
+   char    SrcFilename[TFTP_FILE_NAME_LEN];
+   char    DestFilename[TFTP_FILE_NAME_LEN];
+
+}  OS_PACK TFTP_PutFileCmdParam;
+#define TFTP_PUT_FILE_CMD_DATA_LEN  (sizeof(TFTP_PutFileCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   int16   ServerPort;
+   char    SrcFilename[TFTP_FILE_NAME_LEN];
+   char    DestFilename[TFTP_FILE_NAME_LEN];
+
+}  OS_PACK TFTP_GetFileCmdParam;
+#define TFTP_GET_FILE_CMD_DATA_LEN  (sizeof(TFTP_GetFileCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
+
+/******************************************************************************
+** Telemetry Packets
+*/
+
+typedef struct {
+
+   uint8   Header[CFE_SB_TLM_HDR_SIZE];
+
+   uint16  CmdCode;  /* TFTP_xxx_CMD_CODE  */
+
+   char    SrcFilename[TFTP_FILE_NAME_LEN];
+   char    DestFilename[TFTP_FILE_NAME_LEN];
+
+
+} OS_PACK TFTP_TransferReqPkt;
+#define TFTP_TRANSFER_REQ_PKT_LEN sizeof (TFTP_TransferReqPkt)
 
 
 /******************************************************************************
@@ -143,6 +194,7 @@ typedef struct {
 
    uint8   NetIFid;
    uint8   Pad0;
+   
    /*
    ** File information
    */
@@ -150,8 +202,8 @@ typedef struct {
    int32    FileHandle;                        /* File OSAL file descriptor       */
    uint16   GetFileCnt;
    uint16   PutFileCnt;
-   char     SrcFileName[TFTP_FILE_NAME_LEN];
-   char     DestFileName[TFTP_FILE_NAME_LEN];
+   char     SrcFilename[TFTP_FILE_NAME_LEN];
+   char     DestFilename[TFTP_FILE_NAME_LEN];
 
    /*
    ** TFTP state information
@@ -162,39 +214,18 @@ typedef struct {
    uint16   Timer;                    /* Iimer for timeout logic         */
    uint16   BlockNum;                 /* Current block number            */
 
+   /*
+   ** Telemetry Packets
+   */
+   
+   TFTP_TransferReqPkt TransferReqPkt;
+
 } TFTP_Class;
 
 
-/******************************************************************************
-** Command Functions
-*/
-
-typedef struct
-{
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   int16   ServerPort;
-   char    SrcFileName[TFTP_FILE_NAME_LEN];
-   char    DestFileName[TFTP_FILE_NAME_LEN];
-
-}  OS_PACK TFTP_PutFileCmdParam;
-#define TFTP_PUT_FILE_CMD_DATA_LEN  (sizeof(TFTP_PutFileCmdParam) - CFE_SB_CMD_HDR_SIZE)
-
-typedef struct
-{
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   int16   ServerPort;
-   char    SrcFileName[TFTP_FILE_NAME_LEN];
-   char    DestFileName[TFTP_FILE_NAME_LEN];
-
-}  OS_PACK TFTP_GetFileCmdParam;
-#define TFTP_GET_FILE_CMD_DATA_LEN  (sizeof(TFTP_GetFileCmdParam) - CFE_SB_CMD_HDR_SIZE)
-
-
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
 
 /******************************************************************************
 ** Function: TFTP_Constructor
@@ -234,6 +265,7 @@ void TFTP_ResetStatus(void);
 **   1. Must match CMDMGR_CmdFuncPtr function signature
 */
 boolean TFTP_PutFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
 
 /******************************************************************************
 ** Function: TFTP_GetFileCmd

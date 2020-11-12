@@ -29,6 +29,10 @@
 #include "cfe.h"
 #include "app_cfg.h"
 
+/***********************/
+/** Macro Definitions **/
+/***********************/
+
 #define NETIF_IP_STR_LEN  16
 
 /*
@@ -44,9 +48,24 @@
 #define NETIF_DEBUG_EID              ( NETIF_BASE_EID +  6)
 
 
-/*
-** Type Definitions
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+
+/******************************************************************************
+** Command Packets
 */
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   int16   ServerPort;
+   char    IpAddrStr[NETIF_IP_STR_LEN];
+   
+}  OS_PACK NETIF_InitSocketCmdParam;
+#define NETIF_INIT_SOCKET_CMD_DATA_LEN  (sizeof(NETIF_InitSocketCmdParam) - CFE_SB_CMD_HDR_SIZE)
+
 
 /******************************************************************************
 ** NETIF Class
@@ -65,23 +84,10 @@ typedef struct {
 } NETIF_Class;
 
 
-/******************************************************************************
-** Command Functions
-*/
 
-typedef struct
-{
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   int16   ServerPort;
-   char    IpAddrStr[NETIF_IP_STR_LEN];
-   
-}  OS_PACK NETIF_InitSocketCmdParam;
-#define NETIF_INIT_SOCKET_CMD_DATA_LEN  (sizeof(NETIF_InitSocketCmdParam) - CFE_SB_CMD_HDR_SIZE)
-
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
 
 /******************************************************************************
 ** Function: NETIF_Constructor
@@ -117,7 +123,8 @@ void NETIF_ClearClient();
 **
 **
 */
-int32 NETIF_RcvFrom(const uint8 NetIFid, void *BufPtr, const uint16 BufSize, boolean ServerListen);
+int32 NETIF_RcvFrom(const uint8 NetIFid, void *BufPtr, const uint16 BufSize, 
+                    boolean ServerListen);
 
 
 /******************************************************************************
@@ -126,6 +133,7 @@ int32 NETIF_RcvFrom(const uint8 NetIFid, void *BufPtr, const uint16 BufSize, boo
 **
 */
 int32 NETIF_SendTo (const uint8 NetIFid, const uint8 *BufPtr, uint16 len); 
+
 
 /******************************************************************************
 ** Function: NETIF_InitSocketCmd

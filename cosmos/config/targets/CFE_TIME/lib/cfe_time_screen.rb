@@ -32,11 +32,11 @@ def cfe_time_scr_cmd(screen, cmd)
  
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "CFE_TRAINING_SLIDES"
+      when "cFE Training Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
-      when "TIME_EXERCISE_SCRIPT"
+      when "Time Exercise Script"
          launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TIME")
-      when "CFE_EXERCISE_SLIDES"
+      when "cFE Exercise Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
       end
    

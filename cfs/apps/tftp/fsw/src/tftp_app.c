@@ -9,7 +9,6 @@
 **   2. Event message filters are not used since this is for test environments.
 **      This may be reconsidered if event flooding ever becomes a problem.
 **   3. Performance traces are not included.
-**   4. Most functions are global to assist in unit testing
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -35,14 +34,13 @@
 
 static int32 InitApp(void);
 static void ProcessCommands(void);
+static void SendHousekeepingPkt(void);
 
 /*
 ** Global Data
 */
 
 TFTP_APP_Class  TftpApp;
-
-TFTP_APP_HkPkt  TftpAppHkPkt;
 
 /* Convenience macros */
 #define  CMDMGR_OBJ  (&(TftpApp.CmdMgr))  
@@ -138,18 +136,18 @@ boolean TFTP_APP_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 
 /******************************************************************************
-** Function: TFTP_APP_SendHousekeepingPkt
+** Function: SendHousekeepingPkt
 **
 */
-void TFTP_APP_SendHousekeepingPkt(void)
+static void SendHousekeepingPkt(void)
 {
 
    /*
    ** TFTP Application Data
    */
 
-   TftpAppHkPkt.ValidCmdCnt   = TftpApp.CmdMgr.ValidCmdCnt;
-   TftpAppHkPkt.InvalidCmdCnt = TftpApp.CmdMgr.InvalidCmdCnt;
+   TftpApp.HkPkt.ValidCmdCnt   = TftpApp.CmdMgr.ValidCmdCnt;
+   TftpApp.HkPkt.InvalidCmdCnt = TftpApp.CmdMgr.InvalidCmdCnt;
 
    /*
    ** TFTP Data
@@ -158,26 +156,26 @@ void TFTP_APP_SendHousekeepingPkt(void)
    **   separate diagnostic packet. Also easier for the user not to have to command it.
    */
 
-   TftpAppHkPkt.GetFileCnt = TftpApp.Tftp.GetFileCnt;
-   TftpAppHkPkt.PutFileCnt = TftpApp.Tftp.PutFileCnt;
+   TftpApp.HkPkt.GetFileCnt = TftpApp.Tftp.GetFileCnt;
+   TftpApp.HkPkt.PutFileCnt = TftpApp.Tftp.PutFileCnt;
 
-   TftpAppHkPkt.State      = TftpApp.Tftp.State;
-   TftpAppHkPkt.BlockNum   = TftpApp.Tftp.BlockNum;
+   TftpApp.HkPkt.State      = TftpApp.Tftp.State;
+   TftpApp.HkPkt.BlockNum   = TftpApp.Tftp.BlockNum;
 
-   strncpy(TftpAppHkPkt.SrcFileName,  TftpApp.Tftp.SrcFileName,  TFTP_FILE_NAME_LEN);
-   strncpy(TftpAppHkPkt.DestFileName, TftpApp.Tftp.DestFileName, TFTP_FILE_NAME_LEN);
+   strncpy(TftpApp.HkPkt.SrcFilename,  TftpApp.Tftp.SrcFilename,  TFTP_FILE_NAME_LEN);
+   strncpy(TftpApp.HkPkt.DestFilename, TftpApp.Tftp.DestFilename, TFTP_FILE_NAME_LEN);
 
    /*
    ** Connection Data
    */
 
-   TftpAppHkPkt.RecvMsgCnt      = TftpApp.Tftp.MsgCnt;
-   TftpAppHkPkt.RecvMsgErrCnt   = TftpApp.Tftp.MsgErrCnt;
+   TftpApp.HkPkt.RecvMsgCnt      = TftpApp.Tftp.MsgCnt;
+   TftpApp.HkPkt.RecvMsgErrCnt   = TftpApp.Tftp.MsgErrCnt;
 
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &TftpAppHkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &TftpAppHkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &TftpApp.HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &TftpApp.HkPkt);
 
-} /* End TFTP_APP_SendHousekeepingPkt() */
+} /* End SendHousekeepingPkt() */
 
 
 /******************************************************************************
@@ -187,39 +185,39 @@ void TFTP_APP_SendHousekeepingPkt(void)
 static int32 InitApp(void)
 {
 
-    int32 Status = CFE_SUCCESS;
+   int32 Status = CFE_SUCCESS;
 
-    /*
-    ** Initialize 'entity' objects
-    */
+   /*
+   ** Initialize 'entity' objects
+   */
 
-    TFTP_Constructor(&TftpApp.Tftp);
+   TFTP_Constructor(&TftpApp.Tftp);
 
-    /*
-    ** Initialize application managers
-    */
+   /*
+   ** Initialize application managers
+   */
 
-    CFE_SB_CreatePipe(&TftpApp.CmdPipe, TFTP_CMD_PIPE_DEPTH, TFTP_CMD_PIPE_NAME);
-    CFE_SB_Subscribe(TFTP_CMD_MID, TftpApp.CmdPipe);
-    CFE_SB_Subscribe(TFTP_SEND_HK_MID, TftpApp.CmdPipe);
+   CFE_SB_CreatePipe(&TftpApp.CmdPipe, TFTP_CMD_PIPE_DEPTH, TFTP_CMD_PIPE_NAME);
+   CFE_SB_Subscribe(TFTP_CMD_MID, TftpApp.CmdPipe);
+   CFE_SB_Subscribe(TFTP_SEND_HK_MID, TftpApp.CmdPipe);
 
-    CMDMGR_Constructor(CMDMGR_OBJ);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, TFTP_APP_NoOpCmd,     0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, TFTP_APP_ResetAppCmd, 0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, TFTP_GET_FILE_CMD_FC, TFTP_OBJ, TFTP_GetFileCmd, TFTP_GET_FILE_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, TFTP_PUT_FILE_CMD_FC, TFTP_OBJ, TFTP_PutFileCmd, TFTP_PUT_FILE_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, NETIF_INIT_SOCKET_CMD_FC, NETIF_OBJ, NETIF_InitSocketCmd, NETIF_INIT_SOCKET_CMD_DATA_LEN);
+   CMDMGR_Constructor(CMDMGR_OBJ);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, TFTP_APP_NoOpCmd,     0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, TFTP_APP_ResetAppCmd, 0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, TFTP_GET_FILE_CMD_FC, TFTP_OBJ, TFTP_GetFileCmd, TFTP_GET_FILE_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, TFTP_PUT_FILE_CMD_FC, TFTP_OBJ, TFTP_PutFileCmd, TFTP_PUT_FILE_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, NETIF_INIT_SOCKET_CMD_FC, NETIF_OBJ, NETIF_InitSocketCmd, NETIF_INIT_SOCKET_CMD_DATA_LEN);
 
-    CFE_SB_InitMsg(&TftpAppHkPkt, TFTP_HK_TLM_MID, TFTP_APP_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&TftpApp.HkPkt, TFTP_HK_TLM_MID, TFTP_APP_TLM_HK_LEN, TRUE);
 
-    /*
-    ** Application startup event message
-    */
+   /*
+   ** Application startup event message
+   */
    Status = CFE_EVS_SendEvent(TFTP_APP_INIT_EID, CFE_EVS_INFORMATION,
                               "TFTP App Initialized. Version %d.%d.%d",
                               TFTP_MAJOR_VER, TFTP_MINOR_VER, TFTP_LOCAL_REV);
 
-    return(Status);
+   return(Status);
 
 } /* End of InitApp() */
 
@@ -237,19 +235,18 @@ static void ProcessCommands(void)
 
    Status = CFE_SB_RcvMsg(&CmdMsgPtr, TftpApp.CmdPipe, CFE_SB_POLL);
 
-   if (Status == CFE_SUCCESS)
-   {
+   if (Status == CFE_SUCCESS) {
 
       MsgId = CFE_SB_GetMsgId(CmdMsgPtr);
 
-      switch (MsgId)
-      {
+      switch (MsgId) {
+         
          case TFTP_CMD_MID:
             CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
             break;
 
          case TFTP_SEND_HK_MID:
-            TFTP_APP_SendHousekeepingPkt();
+            SendHousekeepingPkt();
             break;
 
          default:

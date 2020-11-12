@@ -206,14 +206,27 @@ def simsat_data_file(screen, cmd)
       display("CFS_KIT RECORDER_MGMT_SCREEN",1500,50)
    when "FUNC_TBL_MGMT"
       display("CFS_KIT TABLE_MGMT_SCREEN",1500,50)
+   when "CREATE_KIT_TO_TBL"
+      display("SIMSAT GEN_TLM_TBL_SCREEN",1500,50)
    when "DEMO"
-      demo_scr = "FILE_MGMT_DEMO_SCREEN"
-      if screen.get_named_widget("demo").text == "RECORDER"
-         demo_scr = "RECORDER_MGMT_DEMO_SCREEN"
+      display_scr = nil
+      case screen.get_named_widget("demo").text
+      when "File Manager"
+         display_scr = "CFS_KIT FILE_MGMT_DEMO_SCREEN"
+      when "Data Storage"
+         display_scr = "CFS_KIT RECORDER_MGMT_DEMO_SCREEN"
+      when "Data-File Mgmt"
+         display_scr = "SIMSAT DEMO_DATA_FILE_MGMT_SCREEN"
       end
-      display("CFS_KIT #{demo_scr}",500,50)
+      display(display_scr,500,50) unless display_scr.nil?
    when "TUTORIAL"
-      prompt(Osk::MSG_TBD_FEATURE)
+      case screen.get_named_widget("tutorial").text
+      when "#{Osk::TXT_TRAINING_VIDEO}"
+         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_COMMUNITY_APPS_DATAFILE}")      
+      when "#{Osk::TXT_TRAINING_SLIDES}"
+         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_DATAFILE_FILE}")
+      end
+
    else
       raise "Error in screen definition file. Undefined data/file management screen command '#{cmd}' sent to simsat_src_cmd()"
    end
@@ -347,13 +360,14 @@ def simsat_runtime(screen, cmd)
    when "FUNC_ES_APP_MGMT"
       display("CFS_KIT APP_MGMT_SCREEN",1500,10)
    when "DEMO"
-      Osk::System.check_n_start_cfs
-      # Demo scripts manage screens & PacketViewer
-      case screen.get_named_widget("demo").text
-      when "TO Stats"
-         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_runtime_to_stats.rb")
-      when "SCH-TO Tables"
-         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_runtime_tables.rb")
+      if (Osk::System.check_n_start_cfs)
+         # Demo scripts manage screens & PacketViewer
+         case screen.get_named_widget("demo").text
+         when "KIT_TO Stats"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_runtime_to_stats.rb")
+         when "SCH_TO Tables"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_runtime_tables.rb")
+         end
       end
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text

@@ -3,7 +3,7 @@
    "description": ["Activities are defined in time slots. There are 4 slots per second", 
                    "and 15 entries per slot. The goal of this scheduler table is to assist",
                    "with learning and exploring the cFS. A separate SimSat scheduler table",
-                   "is maintained for teh reference mission. The following conventions are",
+                   "is maintained for the reference mission. The following conventions are",
                    "used when defining activities similar to the simsat table:",                   
                    " 1. App execution control flow requests start at Activity 0 in each slot",
                    " 2. HK requests are in activity indices 10..14",
@@ -158,9 +158,9 @@
                "name":    "HK Combined Pkt 2",
                "descr":   "Period can be shortened based on what's in combo packet",
                "index":   2,
-               "enabled": "false",
-               "period":  4,
-               "offset":  2,
+               "enabled": "true",
+               "period":  2,
+               "offset":  1,
                "msg-idx": 25
             }},
             
@@ -172,6 +172,16 @@
                "period":  10,
                "offset":  0,
                "msg-idx": 33
+            }},
+                        
+           {"activity": {
+               "name":    "CF Execution",
+               "descr":   "",
+               "index":   4,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 27
             }},
                         
             {"activity": {
@@ -273,19 +283,9 @@
             }},
 
             {"activity": {
-               "name":    "CF Execution",
-               "descr":   "",
-               "index":   2,
-               "enabled": "true",
-               "period":  2,
-               "offset":  0,
-               "msg-idx": 27
-            }},
-                        
-            {"activity": {
                "name":    "ISIM Execution",
                "descr":   "",
-               "index":   3,
+               "index":   2,
                "enabled": "true",
                "period":  1,
                "offset":  0,
@@ -345,10 +345,10 @@
             
             {"activity": {
                "name":    "TFTP Housekeeping",
-               "descr":   "",
+               "descr":   "Send every cycle for faster file transfer verification",
                "index":   13,
                "enabled": "true",
-               "period":  4,
+               "period":  1,
                "offset":  0,
                "msg-idx": 39
             }},
@@ -390,7 +390,17 @@
                "offset":  0,
                "msg-idx": 31
             }},
-          
+            
+            {"activity": {
+               "name":    "CF Execution",
+               "descr":   "",
+               "index":   2,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 27
+            }},
+                        
            {"activity": {
                "name":    "TEST",
                "descr":   "Used by Create App and available for development",

@@ -17,11 +17,7 @@ require 'osk_system'
 def sim_42_send_cmd(screen, cmd)
 
    if (cmd == "START_42_SIM")
-      if tlm("I42 HK_TLM_PKT CONNECTED") == "FALSE"
-         Osk::System.start_42
-      else
-         continue = message_box("42 not started. It's already running and connected.",Osk::MSG_BUTTON_CONT,false)
-      end      
+      Osk::System.start_42
    elsif (cmd == "STOP_42_SIM")
       Osk::System.stop_42
    elsif (cmd == "RECONNECT_42")

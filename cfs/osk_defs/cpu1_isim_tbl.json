@@ -5,7 +5,7 @@
       "pwr-init-cycles": 20
    },
    "sci-file": {
-      "path-base-filename":   "/cf/simsat/isim_",
+      "path-base-filename":   "/cf/simsat/rec/isim_",
       "file-extension":       ".txt",
       "cycles-per-file":      60
    }

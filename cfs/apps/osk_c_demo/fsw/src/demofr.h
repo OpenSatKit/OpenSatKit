@@ -86,7 +86,7 @@ typedef struct {
 
 
 /******************************************************************************
-** Command Functions
+** Command Packets
 */
 
 typedef struct {

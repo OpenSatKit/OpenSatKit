@@ -66,21 +66,21 @@ def cfe_es_scr_cmd(screen, cmd)
    when "DEMO"
       Osk::System.check_n_start_cfs
       case screen.get_named_widget("demo").text
-      when "APP_MGMT"
+      when "App Management"
          display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
-      when "PERF_MON"
+      when "Performance Monitor"
          display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
-      when "PERF_MON_SCRIPT"
+      when "Performance Mon Script"
          spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_perf_mon.rb")
       end
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "CFE_TRAINING_SLIDES"
+      when "cFE Training Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
-      when "ES_EXERCISE_SCRIPT"
+      when "ES Exercise Script"
          launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "ES")
-      when "CFE_EXERCISE_SLIDES"
+      when "cFE Exercise Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
       end
    

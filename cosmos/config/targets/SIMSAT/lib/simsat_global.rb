@@ -17,10 +17,43 @@ require 'osk_global'
 
 module SimSat
 
-   # Directories
+   #####################
+   ## Directory Paths ##
+   #####################
+
    
-   FLT_SRV_DIR = "#{Osk::FLT_SRV_DIR}/simsat"
-   GND_SRV_DIR = "#{Osk::GND_SRV_DIR}/simsat"
+   # Directories
+   # - DS and ISIM tables are dependent of recorder path definitions
+   # - GND2FSW supports "cheating" because scripts can manipulate FSW directories
+   #   via ground paths
+   
+   SIMSAT_DIR = 'simsat'
+   
+   FLT_SRV_DIR = "#{Osk::FLT_SRV_DIR}/#{SIMSAT_DIR}"
+   FLT_REC_DIR = "#{Osk::FLT_SRV_DIR}/#{SIMSAT_DIR}/rec"
+   GND_SRV_DIR = "#{Osk::GND_SRV_DIR}/#{SIMSAT_DIR}"
+   GND_REL_SRV_DIR = "#{Osk::REL_SRV_DIR}/#{SIMSAT_DIR}"
+
+   # CFDP App has it's own dir ending in slash conventions and defaults to simsat's needs 
+   CFDP_FLT_DIR = FLT_REC_DIR + "/"
+   CFDP_GND_DIR = GND_REL_SRV_DIR + "/"
+
+   # Table
+   TBL_DIR      = Osk::cfg_target_dir(SIMSAT_DIR,'tables')   
+   TBL_TOOL_DIR = Osk::cfg_target_dir(SIMSAT_DIR,'tables/tbl_tool')
+   
+   GND2FSW_REC_DIR = File.join(Osk::CFS_EXE_DIR,SimSat::FLT_REC_DIR)
+
+   # Files
+   
+   KIT_TO_4K_TBL  = "kit_to_4kSafe_tbl.json"   # TODO - Assumption between tbl_tool config and this definition
+   KIT_TO_32K_TBL = "kit_to_32kNom_tbl.json"
+   
+   KIT_TO_4K_FLT_FILE  = File.join(FLT_SRV_DIR,KIT_TO_4K_TBL) 
+   KIT_TO_32K_FLT_FILE = File.join(FLT_SRV_DIR,KIT_TO_32K_TBL) 
+   
+   KIT_TO_4K_GND_FILE  = Osk::cfg_target_dir_file(SIMSAT_DIR,'tables',KIT_TO_4K_TBL)
+   KIT_TO_32K_GND_FILE = Osk::cfg_target_dir_file(SIMSAT_DIR,'tables',KIT_TO_32K_TBL)
 
    # These definitions must match the Data Storage app's table ".Basename"
    # definitions
@@ -33,6 +66,7 @@ module SimSat
    
    # Temporary file used to indicate the end of the ops example
    STOP_OPS_FILE = "simsat_stop_ops.txt"
+   GND2FSW_STOP_OPS_FILE = File.join(GND2FSW_REC_DIR,STOP_OPS_FILE)
 
    SCH_TBL_FILENAME = "simsat_sch_tbl.json"
 

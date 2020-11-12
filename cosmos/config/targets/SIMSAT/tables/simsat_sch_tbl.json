@@ -131,21 +131,21 @@
             
             {"activity": {
                "name":    "HK Combined Pkt 1",
-               "descr":   "Period can be shortened based on what's in combo packet",
+               "descr":   "Period matches input HK pkt rates",
                "index":   1,
                "enabled": "true",
                "period":  4,
-               "offset":  2,
+               "offset":  1,
                "msg-idx": 24
             }},
             
             {"activity": {
                "name":    "HK Combined Pkt 2",
-               "descr":   "Period can be shortened based on what's in combo packet",
+               "descr":   "Run in slot after I42 and F42 slot",
                "index":   2,
                "enabled": "true",
-               "period":  4,
-               "offset":  2,
+               "period":  1,
+               "offset":  1,
                "msg-idx": 25
             }},
             
@@ -158,7 +158,6 @@
                "offset":  0,
                "msg-idx": 27
             }},
-            
             
             {"activity": {
                "name":    "KIT_CI Housekeeping",
@@ -301,10 +300,10 @@
             
             {"activity": {
                "name":    "TFTP Housekeeping",
-               "descr":   "",
+               "descr":   "Send every cycle for faster file transfer verification",
                "index":   13,
                "enabled": "true",
-               "period":  4,
+               "period":  1,
                "offset":  0,
                "msg-idx": 39
             }},
@@ -338,21 +337,11 @@
             }},
             
             {"activity": {
-               "name":    "HK Combined Pkt 1",
-               "descr":   "Period can be shortened based on what's in combo packet",
-               "index":   1,
-               "enabled": "false",
-               "period":  4,
-               "offset":  2,
-               "msg-idx": 24
-            }},
-            
-            {"activity": {
                "name":    "HK Combined Pkt 2",
-               "descr":   "Period can be shortened based on what's in combo packet",
+               "descr":   "Run in slot after I42 and F42 slot",
                "index":   2,
-               "enabled": "false",
-               "period":  4,
+               "enabled": "true",
+               "period":  1,
                "offset":  2,
                "msg-idx": 25
             }},
@@ -361,7 +350,7 @@
             {"activity": {
                "name":    "CF Execution",
                "descr":   "",
-               "index":   0,
+               "index":   3,
                "enabled": "true",
                "period":  1,
                "offset":  0,

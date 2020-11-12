@@ -1,0 +1,515 @@
+{
+   "name": "KIT_TO Packet Table",
+   "description": "Test using 4kSafe",
+   "packet-array": [
+      "packet": {
+      "name": "CFE_ES_HK_TLM_MID",
+      "stream-id": "\u0x0800",
+      "dec-id": 2048,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_EVS_EVENT_MSG_MID",
+      "stream-id": "\u0x0801",
+      "dec-id": 2049,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_SB_HK_TLM_MID",
+      "stream-id": "\u0x0803",
+      "dec-id": 2051,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_TBL_HK_TLM_MID",
+      "stream-id": "\u0x0804",
+      "dec-id": 2052,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_TIME_HK_TLM_MID",
+      "stream-id": "\u0x0805",
+      "dec-id": 2053,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_TIME_DIAG_TLM_MID",
+      "stream-id": "\u0x0806",
+      "dec-id": 2054,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_EVS_EVENT_MSG_MID",
+      "stream-id": "\u0x0808",
+      "dec-id": 2056,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 40,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_SB_STATS_TLM_MID",
+      "stream-id": "\u0x080A",
+      "dec-id": 2058,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_TBL_REG_TLM_MID",
+      "stream-id": "\u0x080C",
+      "dec-id": 2060,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_ES_SHELL_TLM_MID",
+      "stream-id": "\u0x080F",
+      "dec-id": 2063,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CFE_ES_MEMSTATS_TLM_MID",
+      "stream-id": "\u0x0810",
+      "dec-id": 2064,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "MM_HK_TLM_MID",
+      "stream-id": "\u0x0887",
+      "dec-id": 2183,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "FM_HK_TLM_MID",
+      "stream-id": "\u0x088A",
+      "dec-id": 2186,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "FM_FILE_INFO_TLM_MID",
+      "stream-id": "\u0x088B",
+      "dec-id": 2187,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "FM_DIR_LIST_TLM_MID",
+      "stream-id": "\u0x088C",
+      "dec-id": 2188,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "FM_OPEN_FILES_TLM_MID",
+      "stream-id": "\u0x088D",
+      "dec-id": 2189,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "FM_FREE_SPACE_TLM_MID",
+      "stream-id": "\u0x088E",
+      "dec-id": 2190,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "MD_HK_TLM_MID",
+      "stream-id": "\u0x0890",
+      "dec-id": 2192,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "MD_HK_TLM_MID",
+      "stream-id": "\u0x0891",
+      "dec-id": 2193,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "MD_HK_TLM_MID",
+      "stream-id": "\u0x0892",
+      "dec-id": 2194,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "MD_HK_TLM_MID",
+      "stream-id": "\u0x0893",
+      "dec-id": 2195,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "MD_HK_TLM_MID",
+      "stream-id": "\u0x0894",
+      "dec-id": 2196,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "HK_HK_TLM_MID",
+      "stream-id": "\u0x089B",
+      "dec-id": 2203,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "HK_COMBINED_PKT1_MID",
+      "stream-id": "\u0x089C",
+      "dec-id": 2204,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 0      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "HK_COMBINED_PKT2_MID",
+      "stream-id": "\u0x089D",
+      "dec-id": 2205,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 0      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CS_HK_TLM_MID",
+      "stream-id": "\u0x08A4",
+      "dec-id": 2212,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "LC_HK_TLM_MID",
+      "stream-id": "\u0x08A7",
+      "dec-id": 2215,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "SC_HK_TLM_MID",
+      "stream-id": "\u0x08AA",
+      "dec-id": 2218,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "HS_HK_TLM_MID",
+      "stream-id": "\u0x08AD",
+      "dec-id": 2221,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CF_HK_TLM_MID",
+      "stream-id": "\u0x08B0",
+      "dec-id": 2224,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CF_TRANS_TLM_MID",
+      "stream-id": "\u0x08B1",
+      "dec-id": 2225,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CF_CONFIG_TLM_MID",
+      "stream-id": "\u0x08B2",
+      "dec-id": 2226,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "DS_HK_TLM_MID",
+      "stream-id": "\u0x08B8",
+      "dec-id": 2232,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "DS_DIAG_TLM_MID",
+      "stream-id": "\u0x08B9",
+      "dec-id": 2233,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "TFTP_HK_TLM_MID",
+      "stream-id": "\u0x0900",
+      "dec-id": 2304,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "TFTP_TRANSFER_REQ_MID",
+      "stream-id": "\u0x0901",
+      "dec-id": 2305,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 4      , "X": 0      , "N": 0      , "O": 0}
+   },
+
+      "packet": {
+      "name": "ISIM_HK_TLM_MID",
+      "stream-id": "\u0x09C0",
+      "dec-id": 2496,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "F42_HK_TLM_MID",
+      "stream-id": "\u0x09D0",
+      "dec-id": 2512,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "F42_CTRL_MID",
+      "stream-id": "\u0x09D1",
+      "dec-id": 2513,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 8,
+      "filter": { "type": 2      , "X": 3      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "F42_CTRL_GAINS_TLM_MID",
+      "stream-id": "\u0x09D2",
+      "dec-id": 2514,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 8,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "I42_HK_TLM_MID",
+      "stream-id": "\u0x09E0",
+      "dec-id": 2528,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "I42_SENSOR_DATA_MID",
+      "stream-id": "\u0x09E1",
+      "dec-id": 2529,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 10,
+      "filter": { "type": 2      , "X": 3      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "I42_ACTUATOR_CMD_DATA_MID",
+      "stream-id": "\u0x09E2",
+      "dec-id": 2530,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 10,
+      "filter": { "type": 2      , "X": 3      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_CI_HK_TLM_MID",
+      "stream-id": "\u0x0F00",
+      "dec-id": 3840,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_SCH_HK_TLM_MID",
+      "stream-id": "\u0x0F10",
+      "dec-id": 3856,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_SCH_DIAG_TLM_MID",
+      "stream-id": "\u0x0F11",
+      "dec-id": 3857,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_SCH_TBL_ENTRY_TLM_MID",
+      "stream-id": "\u0x0F12",
+      "dec-id": 3858,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_TO_HK_TLM_MID",
+      "stream-id": "\u0x0F20",
+      "dec-id": 3872,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_TO_PKT_TBL_TLM_MID",
+      "stream-id": "\u0x0F21",
+      "dec-id": 3873,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "KIT_TO_DATA_TYPE_TLM_MID",
+      "stream-id": "\u0x0F22",
+      "dec-id": 3874,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 4,
+      "filter": { "type": 2      , "X": 4      , "N": 1      , "O": 0}
+   },
+
+      "packet": {
+      "name": "CF_SPACE_TO_GND_PDU_MID",
+      "stream-id": "\u0x0FFD",
+      "dec-id": 4093,
+      "priority": 0,
+      "reliability": 0,
+      "buf-limit": 20,
+      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+   }
+   ]
+}

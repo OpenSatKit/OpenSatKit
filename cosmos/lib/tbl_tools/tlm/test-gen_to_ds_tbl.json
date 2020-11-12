@@ -1,0 +1,42 @@
+{
+   "tlm-tbl-tool": {
+
+      "description": [
+         "Table numbering scheme"
+      ],
+      
+      "verbose": false,
+      
+      "input-path":    "./tbl_tool/test/input/",
+      "output-path":   "./tbl_tool/test/output/",
+      "template-path": "./tbl_tool/templates/",
+      
+      "telemetry-output": {
+         "csv-file": "to-test.csv",
+         "log-file": "to-filter-log.txt",
+         "max-apid": 767,
+         "files": {
+             "1": "32kNom",
+             "8": "32kDV",
+             "2": "4kLEO",
+             "7": "4kLEO_CF",
+             "3": "4kDV",
+             "4": "4kSlew",
+             "5": "4kSafe",
+             "6": "2kSafe"
+         }
+      },
+
+      "data-storage": {
+         "csv-file": "ds-test.csv",
+         "log-file": "ds-filter-log.txt",
+         "filters-per-entry": 2,
+         "files": {
+            "1": "Nom",
+            "2": "LEO",           
+            "3": "DV",
+            "4": "Safe"
+         }
+      }
+   }
+}

@@ -23,9 +23,9 @@
 #include "app_cfg.h"
 #include "isim.h"
 
-/*
-** Types
-*/
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 typedef enum {
 
@@ -35,9 +35,9 @@ typedef enum {
 
 } SciFileAction_Enum;
 
-/*
-** Global File Data
-*/
+/**********************/
+/** Global File Data **/
+/**********************/
 
 static ISIM_Class*  Isim = NULL;
 
@@ -66,9 +66,9 @@ static char* DataSample[ISIM_DATA_SAMPLE_MAX] = {
   "90919293949596979899\n" 
 };
 
-/*
-** Local Function Prototypes
-*/
+/*******************************/
+/** Local Function Prototypes **/
+/*******************************/
 
 static boolean ManageSciFile(SciFileAction_Enum Action, ISIM_Sci* Sci, SciFile_Struct* SciTbl);
 static void CreateTimeFilename(char* Filename, SciFile_Struct* SciTbl);

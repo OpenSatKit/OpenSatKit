@@ -44,10 +44,10 @@ static boolean ProcessMsg(uint8* Buf, uint16 BufLen);
 static void CompleteFileTransfer(void);
 
 static int16 EncodePkt(const uint16 Opcode, uint16 BlockNum,
-		               uint8 *DataPtr, uint16 DataLen);
+                       uint8 *DataPtr, uint16 DataLen);
 					   
 static boolean SendPkt(const uint16 Opcode, uint16 BlockNum,
-		               uint8 *DataPtr, uint16 DataLen);
+                       uint8 *DataPtr, uint16 DataLen);
 
 static boolean DecodeOpcode(uint8 *Buf, uint16 BufLen, uint16 *Opcode);
 
@@ -57,8 +57,7 @@ static boolean DecodeData(uint8 *Buf, uint16 BufLen, uint8 **Data, uint16 *DataL
 
 static boolean DecodeErrorMsg(uint8 *Buf, uint16 BufLen, uint16 *ErrCode, char **ErrMsg);
 
-static boolean DecodeRequestStrings(uint8 *Buf, uint16 BufLen,
-	                                char  *FileName, char *Mode);
+static boolean DecodeRequestStrings(uint8 *Buf, uint16 BufLen, char  *Filename, char *Mode);
 
 static void SendDumpBufEvent(void);
 
@@ -70,7 +69,7 @@ void TFTP_Constructor(TFTP_Class*  TftpPtr) {
 
    Tftp = TftpPtr;
 
-  /* Assumes some default/undefined states are 0 */
+   /* Assumes some default/undefined states are 0 */
    
    CFE_PSP_MemSet((void*)TftpPtr, 0, sizeof(TFTP_Class));
    
@@ -78,13 +77,15 @@ void TFTP_Constructor(TFTP_Class*  TftpPtr) {
    Tftp->Timer = 0;
    Tftp->NetIFid = 0;
    
-   strcpy(Tftp->SrcFileName, "Undefined");
-   strcpy(Tftp->DestFileName, "Undefined");
+   strcpy(Tftp->SrcFilename, "Undefined");
+   strcpy(Tftp->DestFilename, "Undefined");
 
    /* Set up the network interfaces */
    NETIF_Constructor(&(Tftp->NetIf), TFTP_IP_ADDR_STR, TFTP_IN_PORT);
    
    OS_TaskInstallDeleteHandler((void *)(&DestructorCallback)); /* Call when application terminates */
+
+   CFE_SB_InitMsg(&Tftp->TransferReqPkt, TFTP_TRANSFER_REQ_MID, TFTP_TRANSFER_REQ_PKT_LEN, TRUE);
 
 } /* End TFTP_Constructor() */
 
@@ -107,6 +108,7 @@ void TFTP_ResetStatus() {
 
 } /* End TFTP_ResetStatus() */
 
+
 /******************************************************************************
 ** Function: TFTP_Read
 **
@@ -114,49 +116,52 @@ void TFTP_ResetStatus() {
 */
 uint16 TFTP_Read(uint16 MaxMsgRead) {
 
-  int i = 0;
-  int Status;
-  boolean ServerListen = FALSE;
+   int i = 0;
+   int Status;
+   boolean ServerListen = FALSE;
   
-  if (Tftp->State != TFTP_STATE_IDLE) {
-    Tftp->Timer++;
-  }
+   if (Tftp->State != TFTP_STATE_IDLE) {
+      Tftp->Timer++;
+   }
    
-  if ( (Tftp->Timer > TFTP_STATE_TIMEOUT) && (Tftp->State  != TFTP_STATE_IDLE) ) /* TODO use timer to reset state machines */
-  {
-	  CFE_EVS_SendEvent(TFTP_STATE_TIMEOUT_EID, CFE_EVS_INFORMATION, "TFTP timed out on peer response State = %d, Timer = %d", Tftp->State, Tftp->Timer);
-	  CompleteFileTransfer();
+   /* TODO use timer to reset state machines */
+   if ( (Tftp->Timer > TFTP_STATE_TIMEOUT) && 
+        (Tftp->State  != TFTP_STATE_IDLE) ) {
+           
+	   CFE_EVS_SendEvent(TFTP_STATE_TIMEOUT_EID, CFE_EVS_INFORMATION, 
+                        "TFTP timed out on peer response State = %d, Timer = %d", Tftp->State, Tftp->Timer);
+	   CompleteFileTransfer();
 	}
 
 
-  for (i = 0; i < MaxMsgRead; i++) {
+   for (i = 0; i < MaxMsgRead; i++) {
       
-    ServerListen = (Tftp->State == TFTP_STATE_IDLE);
-    Status = NETIF_RcvFrom(Tftp->NetIFid, Tftp->MsgBuf, sizeof(Tftp->MsgBuf), ServerListen );
+      ServerListen = (Tftp->State == TFTP_STATE_IDLE);
+      Status = NETIF_RcvFrom(Tftp->NetIFid, Tftp->MsgBuf, sizeof(Tftp->MsgBuf), ServerListen );
         
-    if (Status <= 0)
-      break; /* no (more) messages or an error has occurred*/
-    else {
+      if (Status <= 0)
+         break; /* no (more) messages or an error has occurred*/
+      else {
             
-	    if (Status <= TFTP_MAX_MSGSIZE) {
-        Tftp->MsgCnt++;
-        ProcessMsg(Tftp->MsgBuf,Status);
-      }
-	    else {
-        /* TODO -- Also had a message buffer overflow so bigger issues if this occurs */
-	      Tftp->MsgErrCnt++;
-        CFE_EVS_SendEvent(TFTP_RECV_LEN_ERR_EID,CFE_EVS_ERROR,
-	                        "TFTP message dropped (too long). Header: 0x%0lx 0x%0lx",
-			                    *(long *)Tftp->MsgBuf,  *(long *)(&Tftp->MsgBuf[4]) );
-      }
-    } /* End if valid read */
+	      if (Status <= TFTP_MAX_MSGSIZE) {
+            Tftp->MsgCnt++;
+            ProcessMsg(Tftp->MsgBuf,Status);
+         }
+	      else {
+            /* TODO -- Also had a message buffer overflow so bigger issues if this occurs */
+	         Tftp->MsgErrCnt++;
+            CFE_EVS_SendEvent(TFTP_RECV_LEN_ERR_EID,CFE_EVS_ERROR,
+	                           "TFTP message dropped (too long). Header: 0x%0lx 0x%0lx",
+			                     *(long *)Tftp->MsgBuf,  *(long *)(&Tftp->MsgBuf[4]) );
+         }
+      } /* End if valid read */
 
-  } /* End receive loop */
+   } /* End receive loop */
 
-  if (Status < 0)
-    return(Status); /* return the error number */
-  else
-    return i;
+   if (Status < 0)
+      return(Status); /* return the error number */
+   else
+      return i;
 
 } /* End TFTP_Read() */
 
@@ -164,7 +169,7 @@ uint16 TFTP_Read(uint16 MaxMsgRead) {
 /******************************************************************************
 ** Function: DestructorCallback
 **
-** This function is called when the THE app is terminated. This should
+** This function is called when the app is terminated. This should
 ** never occur but if it does this will close the network interfaces.
 */
 static void DestructorCallback(void) {
@@ -177,9 +182,9 @@ static void DestructorCallback(void) {
 /******************************************************************************
 ** Function: TFTP_PutFileCmd
 **
-** Put a file from the caller to the system hosting this TFTP app. Caller is
-** the TFTP server so this app will issue a RRQ to the server in response to
-** this command.
+** Send a put file TRANSFER_REQ_PKT to the ground so it can initiate a file
+** transfer. The FSW is always the TFTP server to avoid having the OSK
+** installation require a TFTP server installation. 
 **
 ** Notes:
 **   1. Must match CMDMGR_CmdFuncPtr function signature
@@ -189,31 +194,28 @@ boolean TFTP_PutFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
    const TFTP_PutFileCmdParam *PutFileCmd = (const TFTP_PutFileCmdParam *) MsgPtr;
    boolean  RetStatus = TRUE;
 
+   Tftp->TransferReqPkt.CmdCode = TFTP_PUT_CMD_CODE;
 
-//    strncpy(Tftp->SrcFileName, PutFileCmd->SrcFileName, TFTP_FILE_NAME_LEN); 
-   strncpy(Tftp->SrcFileName, "/cf/upload/t.txt", TFTP_FILE_NAME_LEN);
-   Tftp->SrcFileName[TFTP_FILE_NAME_LEN-1] = '\0';
+   strncpy(Tftp->TransferReqPkt.SrcFilename, PutFileCmd->SrcFilename, TFTP_FILE_NAME_LEN);
+   Tftp->TransferReqPkt.SrcFilename[TFTP_FILE_NAME_LEN-1] = '\0';
 
-//      strncpy(Tftp->DestFileName, PutFileCmd->DestFileName, TFTP_FILE_NAME_LEN); /*TODO fix cosmos*/
-   strncpy(Tftp->DestFileName, "/cf/download/t.txt", TFTP_FILE_NAME_LEN);
-   Tftp->DestFileName[TFTP_FILE_NAME_LEN-1] = '\0';
- 
- 
-   if (SendPkt(TFTP_OPCODE_WRQ, 0, NULL, TFTP_MAX_MSGSIZE)) {
-	  Tftp->FileHandle = OS_open(Tftp->SrcFileName, OS_READ_ONLY, 0);
-      Tftp->BlockNum = 0;
-      Tftp->State = TFTP_STATE_GET;
-   }
+   strncpy(Tftp->TransferReqPkt.DestFilename, PutFileCmd->DestFilename, TFTP_FILE_NAME_LEN);
+   Tftp->TransferReqPkt.DestFilename[TFTP_FILE_NAME_LEN-1] = '\0';
+
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
 
    return RetStatus;
 
 } /* End TFTP_PutFileCmd() */
 
+
 /******************************************************************************
 ** Function: TFTP_GetFileCmd
 **
-** Get a file from this TFTP app and send to the caller.The caller is the TFTP
-** server so this app will issue a WRQ to the server in response to this command.
+** Send a put file TRANSFER_REQ_PKT to the ground so it can initiate a file
+** transfer. The FSW is always the TFTP server to avoid having the OSK
+** installation require a TFTP server installation. 
 **
 ** Notes:
 **   1. Must match CMDMGR_CmdFuncPtr function signature
@@ -224,28 +226,20 @@ boolean TFTP_GetFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    const TFTP_GetFileCmdParam *GetFileCmd = (const TFTP_GetFileCmdParam *) MsgPtr;
    boolean  RetStatus = TRUE;
 
-   strncpy(Tftp->SrcFileName, GetFileCmd->SrcFileName, TFTP_FILE_NAME_LEN);
-   Tftp->SrcFileName[TFTP_FILE_NAME_LEN-1] = '\0';  /* Ensure null termination */
+   Tftp->TransferReqPkt.CmdCode = TFTP_GET_CMD_CODE;
 
-   strncpy(Tftp->DestFileName, GetFileCmd->DestFileName, TFTP_FILE_NAME_LEN);   
-   Tftp->DestFileName[TFTP_FILE_NAME_LEN-1] = '\0'; /* Ensure null termination */
+   strncpy(Tftp->TransferReqPkt.SrcFilename, GetFileCmd->SrcFilename, TFTP_FILE_NAME_LEN);
+   Tftp->TransferReqPkt.SrcFilename[TFTP_FILE_NAME_LEN-1] = '\0';
 
-   Tftp->BlockNum=0;
+   strncpy(Tftp->TransferReqPkt.DestFilename, GetFileCmd->DestFilename, TFTP_FILE_NAME_LEN);
+   Tftp->TransferReqPkt.DestFilename[TFTP_FILE_NAME_LEN-1] = '\0';
 
-   if(SendPkt(TFTP_OPCODE_RRQ, Tftp->BlockNum, NULL, TFTP_MAX_MSGSIZE)){
-	   Tftp->FileHandle = OS_creat(Tftp->DestFileName, OS_WRITE_ONLY);
-	   if(Tftp->FileHandle>=0){
-		   Tftp->BlockNum++;
-		   Tftp->State = TFTP_STATE_PUT;
-	   }
-          else
-           CFE_EVS_SendEvent(TFTP_RRQ_FILE_OPEN_ERR_EID, CFE_EVS_ERROR,"OS create error %s,%d", Tftp->SrcFileName, Tftp->FileHandle);
-   }
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
 
    return RetStatus;
 
 } /* End TFTP_GetFileCmd() */
-
 
 
 /******************************************************************************
@@ -286,33 +280,34 @@ static boolean SendPkt(const uint16 Opcode, uint16 BlockNum,
    Tftp->Timer = 0;
    if ( (SendMsgLen = EncodePkt(Opcode, BlockNum, DataPtr, DataLen)) > 0) {
    
-	   Tftp->SendMsgLen = SendMsgLen;
+      Tftp->SendMsgLen = SendMsgLen;
     
-     CFE_EVS_SendEvent(TFTP_SEND_PKT_DBG_EID, CFE_EVS_DEBUG, 
-	                     "TFTP sending data on Net IF %d, block number %d, Length %d\n", 
-		                   Tftp->NetIFid, Tftp->BlockNum, Tftp->SendMsgLen);
+      CFE_EVS_SendEvent(TFTP_SEND_PKT_DBG_EID, CFE_EVS_DEBUG, 
+                        "TFTP sending data on Net IF %d, block number %d, Length %d\n", 
+                        Tftp->NetIFid, Tftp->BlockNum, Tftp->SendMsgLen);
 	  
-	   Status = NETIF_SendTo(Tftp->NetIFid, Tftp->SendMsgBuf, SendMsgLen);
+      Status = NETIF_SendTo(Tftp->NetIFid, Tftp->SendMsgBuf, SendMsgLen);
 
-     if (Status < 0) {
-     
-        CFE_EVS_SendEvent(TFTP_SEND_PKT_DBG_EID, CFE_EVS_ERROR, 
-	                       "Error sending packet on NET IF %d, return status %d",
-			                   Tftp->NetIFid, Status);
-     } /* End if sent packet */
-     else {
-       PktSent = TRUE;
-     }
+      if (Status < 0) {
+
+         CFE_EVS_SendEvent(TFTP_SEND_PKT_DBG_EID, CFE_EVS_ERROR, 
+	                        "Error sending packet on NET IF %d, return status %d",
+                           Tftp->NetIFid, Status);
+      } /* End if sent packet */
+      else {
+         PktSent = TRUE;
+      }
    
    } /* End if encoded packet */
    else {
-    CFE_EVS_SendEvent(TFTP_SEND_PKT_ENCODE_ERR_EID,CFE_EVS_ERROR, 
-                      "Error encoding packet. Opcode %d, BlockNum %d, DataLen %d", Opcode, BlockNum, DataLen);
+      CFE_EVS_SendEvent(TFTP_SEND_PKT_ENCODE_ERR_EID,CFE_EVS_ERROR, 
+                        "Error encoding packet. Opcode %d, BlockNum %d, DataLen %d", Opcode, BlockNum, DataLen);
    } /* End if encode packet failed */
    
    return PktSent;
 					   
 } /* End SendPkt() */
+
 
 /******************************************************************************
 ** Function: EncodePkt
@@ -329,7 +324,7 @@ static boolean SendPkt(const uint16 Opcode, uint16 BlockNum,
 ** get/put command.  The source and destination file names are relative
 ** to the sender of those commands:
 **
-** Command   FSW Response  FileName
+** Command   FSW Response  Filename
 **   Put        RRQ        Put source file is read from
 **   Get        WRQ        Get destination file is written to
 */
@@ -338,7 +333,7 @@ static int16 EncodePkt(const uint16 Opcode, uint16 BlockNum,
 		               uint8 *DataPtr, uint16 DataLen) {
 
    uint8 *MsgPtr = Tftp->SendMsgBuf;
-   uint16 FileNameLen, ModeLen, ErrStrLen, MsgLen;
+   uint16 FilenameLen, ModeLen, ErrStrLen, MsgLen;
 
    *MsgPtr = ((Opcode >> 8) & 0xff); MsgPtr++;
    *MsgPtr = (Opcode & 0xff);        MsgPtr++;
@@ -348,82 +343,86 @@ static int16 EncodePkt(const uint16 Opcode, uint16 BlockNum,
 
       case TFTP_OPCODE_RRQ:
 
- 	     FileNameLen = strlen(Tftp->SrcFileName) + 1;
- 	     ModeLen     = strlen(Tftp->Mode) + 1;
-          if ( (FileNameLen + ModeLen + 4) > TFTP_MAX_MSGSIZE) {
- 		    CFE_EVS_SendEvent(TFTP_ENCODE_RRQ_ERR_EID, CFE_EVS_ERROR,
- 		    		          "TFTP encoding error: RRQ filename too long. File name len %d, Mode len %d\n", FileNameLen, ModeLen);
- 	        return -1;
- 	     }
+         FilenameLen = strlen(Tftp->SrcFilename) + 1;
+         ModeLen     = strlen(Tftp->Mode) + 1;
+        
+         if ( (FilenameLen + ModeLen + 4) > TFTP_MAX_MSGSIZE) {
+ 		   
+            CFE_EVS_SendEvent(TFTP_ENCODE_RRQ_ERR_EID, CFE_EVS_ERROR,
+ 		    	                  "TFTP encoding error: RRQ filename too long. File name len %d, Mode len %d\n",
+                              FilenameLen, ModeLen);
+            return -1;
+ 	      }
 
- 	     memcpy(MsgPtr, Tftp->SrcFileName, FileNameLen);
- 	     MsgPtr += FileNameLen;
- 		 memcpy(MsgPtr, Tftp->Mode, ModeLen);
+ 	      memcpy(MsgPtr, Tftp->SrcFilename, FilenameLen);
+ 	      MsgPtr += FilenameLen;
+         memcpy(MsgPtr, Tftp->Mode, ModeLen);
          MsgPtr += ModeLen;
          break;
 
       case TFTP_OPCODE_WRQ:
 
-	     FileNameLen = strlen(Tftp->DestFileName) + 1;
-	     ModeLen     = strlen(Tftp->Mode) + 1;
-         if ( (FileNameLen + ModeLen + 4) > TFTP_MAX_MSGSIZE) {
-		    CFE_EVS_SendEvent(TFTP_ENCODE_WRQ_ERR_EID, CFE_EVS_ERROR,
-		    		          "TFTP encoding error: WRQ filename too long. File name len %d, Mode len %d\n", FileNameLen, ModeLen);
-	        return -1;
-	     }
+         FilenameLen = strlen(Tftp->DestFilename) + 1;
+         ModeLen     = strlen(Tftp->Mode) + 1;
+         if ( (FilenameLen + ModeLen + 4) > TFTP_MAX_MSGSIZE) {
+            CFE_EVS_SendEvent(TFTP_ENCODE_WRQ_ERR_EID, CFE_EVS_ERROR,
+                              "TFTP encoding error: WRQ filename too long. File name len %d, Mode len %d\n",
+                              FilenameLen, ModeLen);
+            return -1;
+         }
 
-	     memcpy(MsgPtr, Tftp->DestFileName, FileNameLen);
-	     MsgPtr += FileNameLen;
-		 memcpy(MsgPtr, Tftp->Mode, ModeLen);
+         memcpy(MsgPtr, Tftp->DestFilename, FilenameLen);
+         MsgPtr += FilenameLen;
+         memcpy(MsgPtr, Tftp->Mode, ModeLen);
          MsgPtr += ModeLen;
          break;
-	
+
       case TFTP_OPCODE_DATA:
 	  
          *MsgPtr = ((BlockNum >> 8) & 0xff); MsgPtr++;
-	     *MsgPtr = (BlockNum & 0xff); MsgPtr++;
+         *MsgPtr = (BlockNum & 0xff); MsgPtr++;
 
-	     if ((DataLen + 4) > TFTP_MAX_MSGSIZE) {
-		    CFE_EVS_SendEvent(TFTP_ENCODE_DATA_ERR_EID, CFE_EVS_ERROR,
-		    		          "TFTP encoding error: Data too big %d", DataLen);
-	        return -1;
-	     }
-	     memcpy(MsgPtr, DataPtr, DataLen);
-	     MsgPtr += DataLen;
-	     break;
+         if ((DataLen + 4) > TFTP_MAX_MSGSIZE) {
+            CFE_EVS_SendEvent(TFTP_ENCODE_DATA_ERR_EID, CFE_EVS_ERROR,
+                              "TFTP encoding error: Data too big %d", DataLen);
+            return -1;
+         }
+         memcpy(MsgPtr, DataPtr, DataLen);
+         MsgPtr += DataLen;
+         break;
 	
       case TFTP_OPCODE_ACK:
 	
-	     *MsgPtr = ((BlockNum >> 8) & 0xff); MsgPtr++;
-	     *MsgPtr = (BlockNum & 0xff);        MsgPtr++;
-	     break;
+         *MsgPtr = ((BlockNum >> 8) & 0xff); MsgPtr++;
+         *MsgPtr = (BlockNum & 0xff);        MsgPtr++;
+         break;
 	
       case TFTP_OPCODE_ERROR:
 	
-	    /* 
-		** BlockNum contains an error code and data is a NUL-terminated
-	    ** string with an error message.
-		*/
-		
-	    *MsgPtr = ((BlockNum >> 8) & 0xff); MsgPtr++;
-	    *MsgPtr = (BlockNum & 0xff);        MsgPtr++;
+         /*
+         ** BlockNum contains an error code and data is a NUL-terminated
+         ** string with an error message.
+         */
 
-	    ErrStrLen = strlen((char *) DataPtr) + 1;
-	    if ((ErrStrLen + 4) > TFTP_MAX_MSGSIZE) {
-		    CFE_EVS_SendEvent(TFTP_ENCODE_ERR_MSG_ERR_EID, CFE_EVS_ERROR,
-		    		          "TFTP encoding error: Error message too long. Len = %d", ErrStrLen);
-	        return -1;
-	    }
+         *MsgPtr = ((BlockNum >> 8) & 0xff); MsgPtr++;
+         *MsgPtr = (BlockNum & 0xff);        MsgPtr++;
+         
+         ErrStrLen = strlen((char *) DataPtr) + 1;
+         if ((ErrStrLen + 4) > TFTP_MAX_MSGSIZE) {
+            CFE_EVS_SendEvent(TFTP_ENCODE_ERR_MSG_ERR_EID, CFE_EVS_ERROR,
+                              "TFTP encoding error: Error message too long. Len = %d", ErrStrLen);
+            return -1;
+         }
+
+         memcpy(MsgPtr, DataPtr, ErrStrLen);
+         MsgPtr += ErrStrLen;
+         break;
 	
-	    memcpy(MsgPtr, DataPtr, ErrStrLen);
-	    MsgPtr += ErrStrLen;
-	    break;
-	
-    } /* End Opcode switch */
+   } /* End Opcode switch */
 
-    MsgLen = (MsgPtr - Tftp->SendMsgBuf);
+   MsgLen = (MsgPtr - Tftp->SendMsgBuf);
 
-	return MsgLen;
+   return MsgLen;
 	
 } /* End EncodePkt() */
 
@@ -433,31 +432,31 @@ static int16 EncodePkt(const uint16 Opcode, uint16 BlockNum,
 **
 ** Utility functions to decode fields from a received TFTP message.
 */
-
 static boolean DecodeOpcode(uint8 *Buf, uint16 BufLen, uint16 *Opcode) {
 
    if (BufLen < 2) {
-	  CFE_EVS_SendEvent(TFTP_DECODE_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP decode opcode error. BufLen = %d",BufLen);
+      CFE_EVS_SendEvent(TFTP_DECODE_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP decode opcode error. BufLen = %d",BufLen);
       return FALSE;
    }
 
    *Opcode = (Buf[0] << 8) + Buf[1];
-    
+
    return TRUE;
 
 } /* End DecodeOpcode() */
+
 
 /******************************************************************************
 ** Function: DecodeBlockNum
 **
 ** Utility functions to decode fields from a received TFTP message.
 */
-
 static boolean DecodeBlockNum(uint8 *Buf, uint16 BufLen, uint16 *BlockNum)
 {
 
    if (BufLen < 4) {
-      CFE_EVS_SendEvent(TFTP_DECODE_BLOCK_NUM_ERR_EID, CFE_EVS_ERROR, "TFTP decode block number error. BufLen = %d",BufLen);
+      CFE_EVS_SendEvent(TFTP_DECODE_BLOCK_NUM_ERR_EID, CFE_EVS_ERROR,
+                        "TFTP decode block number error. BufLen = %d",BufLen);
       return FALSE;
    }
 
@@ -472,9 +471,8 @@ static boolean DecodeBlockNum(uint8 *Buf, uint16 BufLen, uint16 *BlockNum)
 **
 ** Utility functions to decode fields from a received TFTP message.
 */
-
 static boolean DecodeData(uint8 *Buf, uint16 BufLen,
-	                        uint8 **Data, uint16 *DataLen)
+                          uint8 **Data, uint16 *DataLen)
 {
 
    if (BufLen < 4) {
@@ -485,9 +483,10 @@ static boolean DecodeData(uint8 *Buf, uint16 BufLen,
       return FALSE;
    }
 
-   if (BufLen == 4) { /* zero data indicating no more data to be sent (data was multiple of block size) */
-       *Data = NULL;
-     *DataLen = 0;  
+   /* zero data indicating no more data to be sent (data was multiple of block size) */
+   if (BufLen == 4) { 
+      *Data = NULL;
+      *DataLen = 0;  
    }
    else {
       *Data = Buf + 4;
@@ -498,67 +497,67 @@ static boolean DecodeData(uint8 *Buf, uint16 BufLen,
 	
 } /* End DecodeData() */
 
+
 /******************************************************************************
 ** Function: DecodeRequestStrings
 **
 ** Utility function to retrieve file name and mode from a RRQ/WRQ
 */
-
 static boolean DecodeRequestStrings(uint8 *Buf, uint16 BufLen,
-	                                char  *FileName, char *Mode)
+	                                char  *Filename, char *Mode)
 {
 
-   char     *FileNameBufPtr = (char *)&Buf[2], *ModeBufPtr;
-   uint16   FileNameLen;
+   char     *FilenameBufPtr = (char *)&Buf[2], *ModeBufPtr;
+   uint16   FilenameLen;
    boolean  DecodedStrings = FALSE;
 
-   strncpy(FileName, FileNameBufPtr, TFTP_FILE_NAME_LEN-1);
-   FileName[TFTP_FILE_NAME_LEN-1] = '\0';
-   FileNameLen = strlen(FileName);
+   strncpy(Filename, FilenameBufPtr, TFTP_FILE_NAME_LEN-1);
+   Filename[TFTP_FILE_NAME_LEN-1] = '\0';
+   FilenameLen = strlen(Filename);
 
    /* Sanity length check, not a precise check */
-   if (BufLen > FileNameLen) {
-	   
-      ModeBufPtr = FileNameBufPtr+FileNameLen+1;  /* Remember to skip the /0 */
+   if (BufLen > FilenameLen) {
+
+      ModeBufPtr = FilenameBufPtr+FilenameLen+1;  /* Remember to skip the /0 */
       strncpy(Mode, ModeBufPtr, TFTP_MAX_MODE_LEN-1);
       Mode[TFTP_MAX_MODE_LEN-1] = '\0';
-	      
-	  DecodedStrings = TRUE;
-	   
+
+      DecodedStrings = TRUE;
+
    }  /* End if buffer has room for mode string */
    else {
 
-	   CFE_EVS_SendEvent(TFTP_DECODE_REQ_STR_ERR_EID, CFE_EVS_ERROR,
-	    		        "TFTP decoding error: Invalid request string message length %d", BufLen);
-	   SendDumpBufEvent();
+      CFE_EVS_SendEvent(TFTP_DECODE_REQ_STR_ERR_EID, CFE_EVS_ERROR,
+                        "TFTP decoding error: Invalid request string message length %d", BufLen);
+      SendDumpBufEvent();
 
    } /* End if buffer doesn't has room for mode string */
 
    /* TODO - Change all DBG message to DEBUG types */
    CFE_EVS_SendEvent(TFTP_DECODE_DBG_EID, CFE_EVS_ERROR,
-		             "DecodeRequestString(): %s, %s",FileName,Mode);
-	  
+                     "DecodeRequestString(): %s, %s",Filename,Mode);
+
    return DecodedStrings;
-   
+
 } /* End DecodeRequestStrings() */
+
 
 /******************************************************************************
 ** Function: DecodeErrorMsg
 **
 ** Utility functions to decode fields from a received TFTP message.
 */
-
 static boolean DecodeErrorMsg(uint8 *Buf, uint16 BufLen,
 	                          uint16 *ErrCode, char **ErrMsg)
 {
 
    int i;
-    
+
    if (BufLen < 5) {
       *ErrMsg = NULL;
       CFE_EVS_SendEvent(TFTP_DECODE_ERR_MSG_ERR_EID, CFE_EVS_ERROR,
-    		            "TFTP decoding error: Invalid error message length %d", BufLen);
-	  return FALSE;
+                        "TFTP decoding error: Invalid error message length %d", BufLen);
+      return FALSE;
    }
 
    /* 
@@ -569,9 +568,10 @@ static boolean DecodeErrorMsg(uint8 *Buf, uint16 BufLen,
    for (i = 4; i < BufLen; i++) {
       if (Buf[i] == 0) break;
    }
+   
    if (i == BufLen) {
       CFE_EVS_SendEvent(TFTP_DECODE_ERR_MSG_ERR_EID, CFE_EVS_ERROR,
-    		            "TFTP decoding error: Error message is not a null-terminated string");
+                        "TFTP decoding error: Error message is not a null-terminated string");
       return FALSE;
    }
 
@@ -581,30 +581,31 @@ static boolean DecodeErrorMsg(uint8 *Buf, uint16 BufLen,
 	
 } /* End DecodeErrorMsg() */
 
+
 /******************************************************************************
 ** Function: SendDumpBufEvent
 **
 ** Utility function to dump the buffer in event messages
 */
-
 static void SendDumpBufEvent()
 {
 
-    CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[00:15] %04X %04X %04X %04X",*(uint16 *)(&Tftp->MsgBuf[0]),*(uint16 *)(&Tftp->MsgBuf[4]),*(uint16 *)(&Tftp->MsgBuf[8]),*(uint16 *)(&Tftp->MsgBuf[12]));
-    CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[00:15] %02X%02X%02X%02X %2X%2X%2X%2X %2X%2X%2X%2X %2X%2X%2X%2X",
-                      Tftp->MsgBuf[0],Tftp->MsgBuf[1],Tftp->MsgBuf[2],Tftp->MsgBuf[3],
-                      Tftp->MsgBuf[4],Tftp->MsgBuf[5],Tftp->MsgBuf[6],Tftp->MsgBuf[7],
-                      Tftp->MsgBuf[8],Tftp->MsgBuf[9],Tftp->MsgBuf[10],Tftp->MsgBuf[11],
-                      Tftp->MsgBuf[12],Tftp->MsgBuf[13],Tftp->MsgBuf[14],Tftp->MsgBuf[15]);
+   CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[00:15] %04X %04X %04X %04X",*(uint16 *)(&Tftp->MsgBuf[0]),*(uint16 *)(&Tftp->MsgBuf[4]),*(uint16 *)(&Tftp->MsgBuf[8]),*(uint16 *)(&Tftp->MsgBuf[12]));
+   CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[00:15] %02X%02X%02X%02X %2X%2X%2X%2X %2X%2X%2X%2X %2X%2X%2X%2X",
+                     Tftp->MsgBuf[0],Tftp->MsgBuf[1],Tftp->MsgBuf[2],Tftp->MsgBuf[3],
+                     Tftp->MsgBuf[4],Tftp->MsgBuf[5],Tftp->MsgBuf[6],Tftp->MsgBuf[7],
+                     Tftp->MsgBuf[8],Tftp->MsgBuf[9],Tftp->MsgBuf[10],Tftp->MsgBuf[11],
+                     Tftp->MsgBuf[12],Tftp->MsgBuf[13],Tftp->MsgBuf[14],Tftp->MsgBuf[15]);
 
-    CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[16:31] %04X %04X %04X %04X",*(uint16 *)(&Tftp->MsgBuf[16]),*(uint16 *)(&Tftp->MsgBuf[20]),*(uint16 *)(&Tftp->MsgBuf[24]),*(uint16 *)(&Tftp->MsgBuf[28]));
-    CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[16:31] %2X%2X%2X%2X %2X%2X%2X%2X %2X%2X%2X%2X %2X%2X%2X%2X",
-    		              Tftp->MsgBuf[16],Tftp->MsgBuf[17],Tftp->MsgBuf[18],Tftp->MsgBuf[19],
-                      Tftp->MsgBuf[20],Tftp->MsgBuf[21],Tftp->MsgBuf[22],Tftp->MsgBuf[23],
-                      Tftp->MsgBuf[24],Tftp->MsgBuf[25],Tftp->MsgBuf[26],Tftp->MsgBuf[27],
-                      Tftp->MsgBuf[28],Tftp->MsgBuf[29],Tftp->MsgBuf[30],Tftp->MsgBuf[31]);
+   CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[16:31] %04X %04X %04X %04X",*(uint16 *)(&Tftp->MsgBuf[16]),*(uint16 *)(&Tftp->MsgBuf[20]),*(uint16 *)(&Tftp->MsgBuf[24]),*(uint16 *)(&Tftp->MsgBuf[28]));
+   CFE_EVS_SendEvent(TFTP_DUMP_DBG_EID, CFE_EVS_ERROR, "[16:31] %2X%2X%2X%2X %2X%2X%2X%2X %2X%2X%2X%2X %2X%2X%2X%2X",
+                     Tftp->MsgBuf[16],Tftp->MsgBuf[17],Tftp->MsgBuf[18],Tftp->MsgBuf[19],
+                     Tftp->MsgBuf[20],Tftp->MsgBuf[21],Tftp->MsgBuf[22],Tftp->MsgBuf[23],
+                     Tftp->MsgBuf[24],Tftp->MsgBuf[25],Tftp->MsgBuf[26],Tftp->MsgBuf[27],
+                     Tftp->MsgBuf[28],Tftp->MsgBuf[29],Tftp->MsgBuf[30],Tftp->MsgBuf[31]);
 
 } /* End SendDumpBufEvent() */
+
 
 /******************************************************************************
 ** Function: ProcessMsg
@@ -622,7 +623,6 @@ static void SendDumpBufEvent()
 **
 **
 */
-
 static boolean ProcessMsg(uint8* Buf, uint16 BufLen) {
 
    uint8    FileBuf[TFTP_MAX_MSGSIZE];
@@ -634,8 +634,8 @@ static boolean ProcessMsg(uint8* Buf, uint16 BufLen) {
    boolean  MsgProcessed = TRUE;
 
 
- 
-   CFE_EVS_SendEvent(TFTP_SEND_PKT_DBG_EID, CFE_EVS_DEBUG,"TFTP: ProcessMsg() - State=%d, BlockNum=%d",Tftp->State,Tftp->BlockNum);
+   CFE_EVS_SendEvent(TFTP_SEND_PKT_DBG_EID, CFE_EVS_DEBUG,
+                     "TFTP: ProcessMsg() - State=%d, BlockNum=%d",Tftp->State,Tftp->BlockNum);
    
    if (!DecodeOpcode(Buf, BufLen, &OpCode)) {
       MsgProcessed = FALSE;
@@ -644,157 +644,161 @@ static boolean ProcessMsg(uint8* Buf, uint16 BufLen) {
 
       if (OpCode == TFTP_OPCODE_ERROR) {
 
-    	   if (DecodeErrorMsg(Buf, BufLen, &ErrCode, &ErrMsg)) {
-		        CFE_EVS_SendEvent(TFTP_DECODE_ERR_MSG_EID, CFE_EVS_ERROR, "TFTP error code %d, msg = %s\n", ErrCode, ErrMsg);
-	       }
-	       MsgProcessed = FALSE;
+         if (DecodeErrorMsg(Buf, BufLen, &ErrCode, &ErrMsg)) {
+            CFE_EVS_SendEvent(TFTP_DECODE_ERR_MSG_EID, CFE_EVS_ERROR, "TFTP error code %d, msg = %s\n", ErrCode, ErrMsg);
+         }
+         MsgProcessed = FALSE;
 
       } /* End if Opcode error */
       else {
 
          switch (Tftp->State) {
+         case TFTP_STATE_IDLE:
 
-          case TFTP_STATE_IDLE:
-	          switch (OpCode) {
-	            case TFTP_OPCODE_RRQ:
-                /* 
-					      ** Decode RRQ, Open file and send first data packet 
-					      ** Don't increment block number so ACK will verify block number sent 
-					      */
-	            	if (DecodeRequestStrings(Buf, BufLen, Tftp->SrcFileName,Tftp->Mode)) {
-					        Tftp->FileHandle = OS_open(Tftp->SrcFileName, OS_READ_ONLY, 0);
+            switch (OpCode) {
+	         case TFTP_OPCODE_RRQ:
+               /* 
+               ** Decode RRQ, Open file and send first data packet 
+               ** Don't increment block number so ACK will verify block number sent 
+               */
+               if (DecodeRequestStrings(Buf, BufLen, Tftp->SrcFilename,Tftp->Mode)) {
+                  
+                  Tftp->FileHandle = OS_open(Tftp->SrcFilename, OS_READ_ONLY, 0);
                   if (Tftp->FileHandle >= 0) {
-						        Tftp->BlockNum = 1;
-                    ReadStatus = OS_read(Tftp->FileHandle, FileBuf, TFTP_MAX_DATA_LEN);
-						        SendPkt(TFTP_OPCODE_DATA, Tftp->BlockNum, FileBuf, ReadStatus);
-						      }
-						      else {
-						        CFE_EVS_SendEvent(TFTP_RRQ_FILE_OPEN_ERR_EID, CFE_EVS_ERROR,
-								                      "TFTP error opening RRQ file %s. Status = 0x%4x", Tftp->SrcFileName, Tftp->FileHandle);
-						      }
+                    
+                     Tftp->BlockNum = 1;
+                     ReadStatus = OS_read(Tftp->FileHandle, FileBuf, TFTP_MAX_DATA_LEN);
+                     SendPkt(TFTP_OPCODE_DATA, Tftp->BlockNum, FileBuf, ReadStatus);
+                  }
+                  else {
+                     CFE_EVS_SendEvent(TFTP_RRQ_FILE_OPEN_ERR_EID, CFE_EVS_ERROR,
+                                       "TFTP error opening RRQ file %s. Status = 0x%4x",
+                                       Tftp->SrcFilename, Tftp->FileHandle);
+                  }
 
-					        Tftp->State = (ReadStatus == TFTP_MAX_DATA_LEN) ? TFTP_STATE_GET : TFTP_STATE_GET_FINI;
+                  Tftp->State = (ReadStatus == TFTP_MAX_DATA_LEN) ? TFTP_STATE_GET : TFTP_STATE_GET_FINI;
 
-       				  } /* End if decoded request strings */
-	            	break;
+               } /* End if decoded request strings */
+               break;
 			 
-	            case TFTP_OPCODE_WRQ:
-                /* Decode WRQ, Create file and send ack. Note block number is zero in this special case. */
-	            	if (DecodeRequestStrings(Buf, BufLen, Tftp->DestFileName,Tftp->Mode)) {
-					        Tftp->FileHandle = OS_creat(Tftp->DestFileName, OS_WRITE_ONLY);
+            case TFTP_OPCODE_WRQ:
+               /* Decode WRQ, Create file and send ack. Note block number is zero in this special case. */
+               if (DecodeRequestStrings(Buf, BufLen, Tftp->DestFilename,Tftp->Mode)) {
+                  Tftp->FileHandle = OS_creat(Tftp->DestFilename, OS_WRITE_ONLY);
                   if (Tftp->FileHandle >= 0) {
-						        Tftp->BlockNum = 0;
-						        CFE_EVS_SendEvent(TFTP_WRQ_DBG_EID, CFE_EVS_DEBUG, "TFTP sending WRQ ack. Block number = %d\n", Tftp->BlockNum);
-  	                SendPkt(TFTP_OPCODE_ACK, Tftp->BlockNum, NULL, 0);
-  	                CFE_EVS_SendEvent(TFTP_WRQ_DBG_EID, CFE_EVS_DEBUG, "TFTP sent WRQ ack. Block number = %d\n", Tftp->BlockNum);
-						        Tftp->BlockNum++;
-						      }
-						      else {
-						        CFE_EVS_SendEvent(TFTP_WRQ_FILE_OPEN_ERR_EID, CFE_EVS_ERROR,
-								                      "TFTP error opening WRQ file %s Status = %d\n", Tftp->DestFileName, Tftp->FileHandle);
-						      } /* End if fiel create error */
-				     
-   	              Tftp->State = TFTP_STATE_PUT;
-					      } /* End if decoded request strings */
-	              break;
-			        default:
-		            CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode in idle state %d ignored\n", OpCode);
-		          } /* End Opcode switch */
+                     Tftp->BlockNum = 0;
+                     CFE_EVS_SendEvent(TFTP_WRQ_DBG_EID, CFE_EVS_DEBUG, "TFTP sending WRQ ack. Block number = %d\n", Tftp->BlockNum);
+                     SendPkt(TFTP_OPCODE_ACK, Tftp->BlockNum, NULL, 0);
+                     CFE_EVS_SendEvent(TFTP_WRQ_DBG_EID, CFE_EVS_DEBUG, "TFTP sent WRQ ack. Block number = %d\n", Tftp->BlockNum);
+                     Tftp->BlockNum++;
+                  }
+                  else {
+                     CFE_EVS_SendEvent(TFTP_WRQ_FILE_OPEN_ERR_EID, CFE_EVS_ERROR,
+                                       "TFTP error opening WRQ file %s Status = %d\n",
+                                       Tftp->DestFilename, Tftp->FileHandle);
+                  } /* End if fiel create error */
+
+                  Tftp->State = TFTP_STATE_PUT;
+               } /* End if decoded request strings */
+               break;
+            default:
+               CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode in idle state %d ignored\n", OpCode);
+            } /* End Opcode switch */
             break; /* End TFTP_STATE_IDLE */
 
-	        case TFTP_STATE_GET:
+         case TFTP_STATE_GET:
 	    	    /* Verify Ack opcode, read data from file and send it */
             if (OpCode == TFTP_OPCODE_ACK) {
-              /*  DecodeBlockNum() sends event if error */
-              if (DecodeBlockNum(Buf, BufLen, &BlockNum)) {
-                if (BlockNum == Tftp->BlockNum) {
+               /*  DecodeBlockNum() sends event if error */
+               if (DecodeBlockNum(Buf, BufLen, &BlockNum)) {
+                  if (BlockNum == Tftp->BlockNum) {
 	
-	   	            ReadStatus = OS_read(Tftp->FileHandle, FileBuf, TFTP_MAX_DATA_LEN);
-                  Tftp->BlockNum++;
+                     ReadStatus = OS_read(Tftp->FileHandle, FileBuf, TFTP_MAX_DATA_LEN);
+                     Tftp->BlockNum++;
 
-	                if (ReadStatus > 0) {    /* More file data */
-			              SendPkt(TFTP_OPCODE_DATA, Tftp->BlockNum, FileBuf, ReadStatus);
-			              if (ReadStatus < TFTP_MAX_DATA_LEN){
-			                Tftp->State = TFTP_STATE_GET_FINI;
-			              }
-			              else { 
-			                Tftp->State = TFTP_STATE_GET;
-			              } /* End if max data */
-			     
-			              Tftp->Timer = 0;
-			            }
-                  else { /* Special case where file ends on block boundries */
-			              /* TODO handle read error < 0) */
- 			              SendPkt(TFTP_OPCODE_DATA, Tftp->BlockNum, FileBuf, 0);
-                    Tftp->State = TFTP_STATE_GET_FINI;
-			            }
-		            } /* End if valid block num */
-		            else {
-		              CFE_EVS_SendEvent(TFTP_UNEXP_BLOCKNUM_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected block number in ack packet. Expect %d, Received %d",Tftp->BlockNum, BlockNum);
-		            } /* End if invalid block num */
-		          } /* End if DecodeBlockNum() */
-		        } /* End if Ack Opcode */
+                     if (ReadStatus > 0) {    /* More file data */
+                        SendPkt(TFTP_OPCODE_DATA, Tftp->BlockNum, FileBuf, ReadStatus);
+                        if (ReadStatus < TFTP_MAX_DATA_LEN) {
+                           Tftp->State = TFTP_STATE_GET_FINI;
+                        }
+                        else {
+                           Tftp->State = TFTP_STATE_GET;
+                        } /* End if max data */
+                        Tftp->Timer = 0;
+                     }
+                     else { 
+                        /* Special case where file ends on block boundries */
+                        /* TODO handle read error < 0) */
+                        SendPkt(TFTP_OPCODE_DATA, Tftp->BlockNum, FileBuf, 0);
+                        Tftp->State = TFTP_STATE_GET_FINI;
+                     }
+                  } /* End if valid block num */
+                  else {
+                     CFE_EVS_SendEvent(TFTP_UNEXP_BLOCKNUM_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected block number in ack packet. Expect %d, Received %d",Tftp->BlockNum, BlockNum);
+                  } /* End if invalid block num */
+               } /* End if DecodeBlockNum() */
+            } /* End if Ack Opcode */
             else {
-              CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode %d when expecting an Ack", OpCode);
-            	CompleteFileTransfer();
-              MsgProcessed = FALSE;
+               CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode %d when expecting an Ack", OpCode);
+               CompleteFileTransfer();
+               MsgProcessed = FALSE;
             } /* Invalid Opcode */
-	          break; /* End TFTP_STATE_GET */
+            break; /* End TFTP_STATE_GET */
 
-          case TFTP_STATE_GET_FINI:
+         case TFTP_STATE_GET_FINI:
             if (OpCode == TFTP_OPCODE_ACK) {
-		          Tftp->GetFileCnt++;
-  	          CFE_EVS_SendEvent(TFTP_GND_GET_COMPLETE_EID, CFE_EVS_INFORMATION,
-	                              "TFTP successfully transferred a %d block file", Tftp->BlockNum);
-		        }
+               Tftp->GetFileCnt++;
+               CFE_EVS_SendEvent(TFTP_GND_GET_COMPLETE_EID, CFE_EVS_INFORMATION,
+                                 "TFTP successfully transferred a %d block file", Tftp->BlockNum);
+            }
             else {
-		          CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode %d when expecting an Ack", OpCode);
-		        }		
+               CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode %d when expecting an Ack", OpCode);
+            }		
             CompleteFileTransfer();   
             break;
 	      
-	        case TFTP_STATE_PUT:
+         case TFTP_STATE_PUT:
 	    	    /* Verify data opcode, write data to file and ack it */
             if (OpCode == TFTP_OPCODE_DATA) {
-              if (DecodeBlockNum(Buf, BufLen, &BlockNum)) {
-                if (BlockNum == Tftp->BlockNum) {
-		              if (DecodeData(Buf, BufLen, &Data, &DataLen)) {
-			              /* TODO - Verify file write, Fix buffers */
-			              if (DataLen > 0) { /* no more data */
-			                OS_write(Tftp->FileHandle,Data,DataLen);
-			              }
-                    SendPkt(TFTP_OPCODE_ACK, Tftp->BlockNum, NULL, 0);
-                    CFE_EVS_SendEvent(TFTP_WRQ_DBG_EID, CFE_EVS_DEBUG, "TFTP sending ACK for block number = %d\n", Tftp->BlockNum);
-                    /* TODO - May want tlm to indicate last file transferred. Pass parameter to complete file transfer */
-	                  if (DataLen != TFTP_MAX_DATA_LEN) {
-				              Tftp->PutFileCnt++;
-				              CompleteFileTransfer();
-    	                CFE_EVS_SendEvent(TFTP_GND_PUT_COMPLETE_EID, CFE_EVS_INFORMATION,
-                                        "TFTP successfully received a %d block file", Tftp->BlockNum);
-                    }
-                    else {
-                      Tftp->BlockNum++;
-                    }
-	                } /* End if DecodeData() */
-	              } /* End if valid block num */
-	              else {
-                  CFE_EVS_SendEvent(TFTP_UNEXP_BLOCKNUM_ERR_EID, CFE_EVS_ERROR,
-                                    "TFTP unexpected block number in data packet. Expect %d, Received %d",Tftp->BlockNum, BlockNum);
-	              } /* End if invalid block num */
-		          } /* End if DecodeBlockNum() */
+               if (DecodeBlockNum(Buf, BufLen, &BlockNum)) {
+                  if (BlockNum == Tftp->BlockNum) {
+                     if (DecodeData(Buf, BufLen, &Data, &DataLen)) {
+                        /* TODO - Verify file write, Fix buffers */
+                        if (DataLen > 0) { /* no more data */
+                           OS_write(Tftp->FileHandle,Data,DataLen);
+                        }
+                        SendPkt(TFTP_OPCODE_ACK, Tftp->BlockNum, NULL, 0);
+                        CFE_EVS_SendEvent(TFTP_WRQ_DBG_EID, CFE_EVS_DEBUG, "TFTP sending ACK for block number = %d\n", Tftp->BlockNum);
+                        /* TODO - May want tlm to indicate last file transferred. Pass parameter to complete file transfer */
+                        if (DataLen != TFTP_MAX_DATA_LEN) {
+                           Tftp->PutFileCnt++;
+                           CompleteFileTransfer();
+                           CFE_EVS_SendEvent(TFTP_GND_PUT_COMPLETE_EID, CFE_EVS_INFORMATION,
+                                             "TFTP successfully received a %d block file", Tftp->BlockNum);
+                        }
+                        else {
+                           Tftp->BlockNum++;
+                        }
+                     } /* End if DecodeData() */
+                  } /* End if valid block num */
+                  else {
+                     CFE_EVS_SendEvent(TFTP_UNEXP_BLOCKNUM_ERR_EID, CFE_EVS_ERROR,
+                                       "TFTP unexpected block number in data packet. Expect %d, Received %d",Tftp->BlockNum, BlockNum);
+                  } /* End if invalid block num */
+               } /* End if DecodeBlockNum() */
             } /* End if DATA OpCode */
             else {
-              CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode %d when expecting data", OpCode);
-            	CompleteFileTransfer();
-              MsgProcessed = FALSE;
+               CFE_EVS_SendEvent(TFTP_UNEXP_OPCODE_ERR_EID, CFE_EVS_ERROR, "TFTP unexpected opcode %d when expecting data", OpCode);
+               CompleteFileTransfer();
+               MsgProcessed = FALSE;
             } /* Invalid Opcode */
             break; /* End TFTP_STATE_PUT */
 
-	        default:
-	           CFE_EVS_SendEvent(TFTP_UNDEF_STATE_ERR_EID, CFE_EVS_ERROR, "TFTP undefined state %d while processing opcode %d", Tftp->State, OpCode);
-             CompleteFileTransfer(); /* TODO - Only if not idle */
-             Tftp->State = TFTP_STATE_IDLE;
-             MsgProcessed = FALSE;
+         default:
+            CFE_EVS_SendEvent(TFTP_UNDEF_STATE_ERR_EID, CFE_EVS_ERROR, "TFTP undefined state %d while processing opcode %d", Tftp->State, OpCode);
+            CompleteFileTransfer(); /* TODO - Only if not idle */
+            Tftp->State = TFTP_STATE_IDLE;
+            MsgProcessed = FALSE;
 
          } /* End State switch */
       } /* End if TFTP_OPCODE_ERROR */ 
@@ -803,4 +807,3 @@ static boolean ProcessMsg(uint8* Buf, uint16 BufLen) {
    return MsgProcessed;
 
 } /* End ProcessMsg() */
-

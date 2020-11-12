@@ -59,8 +59,7 @@ def simsat_ops_example_setup(start_cfs)
       # Simplest way to get into a known configuration is to restart the flight software   
       message_box("The flight software will be restarted to establish a known configuration. A terminal window will be created to run the FSW. Enter your user password when prompted.",false)
    
-      Osk::System.stop_cfs
-      Osk::System.start_cfs  # Enables telemetry
+      Osk::System.stop_n_start_cfs
    
    end # End if start_cfs
    
@@ -72,22 +71,20 @@ def simsat_ops_example_setup(start_cfs)
    # Since this is not an operational script example it "cheats" by directly
    # deleting files in the FSW recorder
    #
-   simsat_fsw_dir = File.join(Osk::CFS_EXE_DIR,SimSat::FLT_SRV_DIR)
-   simsat_files = File.join(simsat_fsw_dir,"*")
+   simsat_files = File.join(SimSat::GND2FSW_REC_DIR,"*")
 
    begin
             
-      event_file_base = File.join(simsat_fsw_dir,SimSat::EVENT_FILENAME_BASE)
+      event_file_base = File.join(SimSat::GND2FSW_REC_DIR,SimSat::EVENT_FILENAME_BASE)
       Dir.glob(simsat_files).select{ |file| /^#{event_file_base}/.match file}.each { |file| File.delete(file)}
       
-      sci_aux_file_base = File.join(simsat_fsw_dir,SimSat::SCI_AUX_FILENAME_BASE)
+      sci_aux_file_base = File.join(SimSat::GND2FSW_REC_DIR,SimSat::SCI_AUX_FILENAME_BASE)
       Dir.glob(simsat_files).select{ |file| /^#{sci_aux_file_base}/.match file }.each { |file| File.delete(file)}
       
-      isim_file_base = File.join(simsat_fsw_dir,SimSat::ISIM_FILENAME_BASE)
+      isim_file_base = File.join(SimSat::GND2FSW_REC_DIR,SimSat::ISIM_FILENAME_BASE)
       Dir.glob(simsat_files).select{ |file| /^#{isim_file_base}/.match file }.each { |file| File.delete(file)}
       
-      stop_ops_file = File.join(simsat_fsw_dir,SimSat::STOP_OPS_FILE)
-      File.delete(stop_ops_file) unless !File.exist?(stop_ops_file)
+      File.delete(SimSat::GND2FSW_STOP_OPS_FILE) unless !File.exist?(SimSat::GND2FSW_STOP_OPS_FILE)
       
    rescue Exception => e
       puts e.message
@@ -115,12 +112,11 @@ def simsat_ops_example_teardown
    
    t = Time.new 
    time_stamp = "#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
-   stop_ops_example_file = File.join(Osk::CFS_EXE_DIR,SimSat::FLT_SRV_DIR,SimSat::STOP_OPS_FILE)
 
    begin
          
       # Always overwrite the temp file      
-      File.open(stop_ops_example_file,"w") do |f| 
+      File.open(SimSat::GND2FSW_STOP_OPS_FILE,"w") do |f| 
            
          f.write ("Ops example terminated at #{time_stamp}")
 
@@ -167,7 +163,6 @@ class ReqTlmThread < Thread
 
    def initialize
       @ops_active = true
-      @stop_ops_example_file = File.join(Osk::CFS_EXE_DIR,SimSat::FLT_SRV_DIR,SimSat::STOP_OPS_FILE)
     
       super do
     
@@ -176,10 +171,10 @@ class ReqTlmThread < Thread
             Osk::flight.send_cmd("DS","SEND_FILE_INFO")
             wait 2
          
-            Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{SimSat::FLT_SRV_DIR}, DIR_LIST_OFFSET 0")
+            Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{SimSat::FLT_REC_DIR}, DIR_LIST_OFFSET 0")
             wait 2
 
-            @ops_active = !File.exist?(@stop_ops_example_file)
+            @ops_active = !File.exist?(SimSat::GND2FSW_STOP_OPS_FILE)
 
          end # while simsat_ops_enable
     

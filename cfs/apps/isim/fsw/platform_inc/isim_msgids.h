@@ -1,5 +1,5 @@
 /*
-** Purpose: Define message IDs for the Isim application
+** Purpose: Define message IDs for the Instrument Simulator App
 **
 ** Notes:
 **   None

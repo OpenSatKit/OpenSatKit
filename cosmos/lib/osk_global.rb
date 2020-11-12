@@ -2,11 +2,7 @@
 # OSK Global
 #
 # Notes:
-#   1. System is the primary entry point into the OpenSatKit framework. It
-#      serves as a central access point for all OSK configurations and
-#      definitions. Whenever possible it uses existing COSMOS definitions
-#      to prevent multiple definitions
-#   2. System is designed as a Singleton 
+#   1. SimSat definitions are in config/targets/SIMSAT/lib/simsat_global.rb
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -60,7 +56,7 @@ module Osk
 
    CFDP_APP_ENTITY_ID = "23"     # Ground tool prepends "0."
    CFDP_GND_ENTITY_ID = "0.21"
-   
+      
    ###################
    ## TFTP Settings ##
    ###################
@@ -101,8 +97,9 @@ module Osk
    TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
    TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
 
-   TRAIN_OSK_APPS_ADC_FILE     = "OSK-Apps-ADC.pdf"
-   TRAIN_OSK_APPS_RUNTIME_FILE = "OSK-Apps-RunTime.pdf"
+   TRAIN_OSK_APPS_ADC_FILE      = "OSK-Apps-ADC.pdf"
+   TRAIN_OSK_APPS_RUNTIME_FILE  = "OSK-Apps-RunTime.pdf"
+   TRAIN_OSK_APPS_DATAFILE_FILE = "OSK-Apps-DataFileMgmt.pdf"
 
    ABOUT_SCR_FILE   = "about_scr.txt"
    VERSION_SCR_FILE = "version_scr.txt"
@@ -115,6 +112,9 @@ module Osk
    CREATE_APP_TEMPLATE_FILE = "app-template.json"
    CREATE_APP_SCR_FILE      = "create_app_scr.txt"
    TEMPLATE_INFO_SCR_FILE   = "template_info_scr.txt"
+
+   GEN_TLM_TBL_XLS_FILE = "kit_to-ds-tbl.xlsx"
+   GEN_TLM_TBL_JSON_TEMPLATE_FILE = "kit_to-ds-tbl.json"
 
    SIMSAT_OVERVIEW_FILE = "OSK-Simple-Sat.pdf"
    
@@ -249,12 +249,13 @@ module Osk
    CFE_TRAINING_DIR   = "#{Osk::TUTORIAL_DIR}/cfe/training"
    OSK_APPS_TRAIN_DIR = "#{Osk::TUTORIAL_DIR}/op_apps"
    
+   TBL_TOOLS_DIR  = "#{Cosmos::USERPATH}/lib/tbl_tools"
+   TBL_TLM_TEMPLATE_DIR = "#{TBL_TOOLS_DIR}/tlm/templates"
    TOOLS_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tools"
    PERF_MON_DIR   = "#{TOOLS_DIR}/perf-monitor"
    CREATE_APP_DIR = "#{TOOLS_DIR}/create-app"
 
    PROC_DIR        = "#{Cosmos::USERPATH}/procedures"
-   
    
    TMP_FLT_BIN_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_BIN_FILE}"
    TMP_GND_BIN_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_BIN_FILE}"
@@ -264,7 +265,7 @@ module Osk
 
    TMP_FLT_TXT_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_TXT_FILE}"
    TMP_GND_TXT_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_TXT_FILE}"
-    
+
    #################################
    ## Demo Standard Text Strings  ## 
    #################################
@@ -290,7 +291,7 @@ module Osk
    CMD_DEF_FILENAME  = TMP_BIN_FILE
    CMD_DEF_TBL_NAME  = TMP_TBL_FILE
    CMD_DEF_DIR_NAME  = FLT_SRV_DIR
-  
+   
    TLM_STR_HK_PKT    = "HK_TLM_PKT"
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
@@ -308,5 +309,6 @@ module Osk
    YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD  = "https://www.youtube.com/watch?v=0BSMXeq8B5c&t=4s"
 
    YOUTUBE_TRAINING_COMMUNITY_APPS_RUNTIME   = "https://youtu.be/7upUnU63YFc"
+   YOUTUBE_TRAINING_COMMUNITY_APPS_DATAFILE  = "https://youtu.be/Y-oxWg8rNB0"
    
 end # Module Osk

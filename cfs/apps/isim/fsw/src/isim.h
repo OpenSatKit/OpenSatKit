@@ -1,5 +1,5 @@
 /*
-** Purpose: Define instrument simulator
+** Purpose: Define Instrument Simulator App
 **
 ** Notes:
 **   None
@@ -23,9 +23,10 @@
 #include "app_cfg.h"
 #include "isimtbl.h"
 
-/*
-**
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
+
 
 #define ISIM_DATA_SAMPLE_MAX 10
 #define ISIM_NULL_FILENAME   "null"
@@ -49,9 +50,9 @@
 #define ISIM_CLOSE_SCI_FILE_EID        (ISIM_BASE_EID + 12)
 #define ISIM_CREATE_SCI_FILE_ERROR_EID (ISIM_BASE_EID + 13)
 
-/*
-** Type Definitions
-*/
+/**********************/
+/** Type Definitions **/
+/**********************/
 
 typedef enum {
 
@@ -75,10 +76,47 @@ typedef enum {
 
 } ISIM_SciState;
 
+
+/******************************************************************************
+** Command Packets
+**
+** Use separate function codes for power on/off and start/stop science
+** commands. Therefore they all have command length with no parameters.
+**
+*/
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+
+} ISIM_NoParamCmdMsg;
+#define ISIM_NO_PARAM_CMD_DATA_LEN  (sizeof(ISIM_NoParamCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+#define ISIM_PWR_ON_SCI_CMD_DATA_LEN  ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_PWR_OFF_SCI_CMD_DATA_LEN ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_START_SCI_CMD_DATA_LEN   ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_STOP_SCI_CMD_DATA_LEN    ISIM_NO_PARAM_CMD_DATA_LEN
+
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+   uint16  NewState;
+
+} ISIM_CfgFaultCmdMsg;
+#define ISIM_CFG_FAULT_CMD_DATA_LEN  (sizeof(ISIM_CfgFaultCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+
+/******************************************************************************
+** Telemetry Packets
+*/
+
+
+
 /******************************************************************************
 ** Isim_Class
 */
-
 
 typedef struct {
 
@@ -112,41 +150,9 @@ typedef struct {
 } ISIM_Class;
 
 
-/******************************************************************************
-** Command Functions
-**
-** Use separate function codes for power on/off and start/stop science
-** commands. Therefore they all have command length with no parameters.
-**
-*/
-
-typedef struct
-{
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-
-} ISIM_NoParamCmdMsg;
-#define ISIM_NO_PARAM_CMD_DATA_LEN  (sizeof(ISIM_NoParamCmdMsg) - CFE_SB_CMD_HDR_SIZE)
-
-#define ISIM_PWR_ON_SCI_CMD_DATA_LEN  ISIM_NO_PARAM_CMD_DATA_LEN
-#define ISIM_PWR_OFF_SCI_CMD_DATA_LEN ISIM_NO_PARAM_CMD_DATA_LEN
-#define ISIM_START_SCI_CMD_DATA_LEN   ISIM_NO_PARAM_CMD_DATA_LEN
-#define ISIM_STOP_SCI_CMD_DATA_LEN    ISIM_NO_PARAM_CMD_DATA_LEN
-
-
-typedef struct
-{
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   uint16  NewState;
-
-} ISIM_CfgFaultCmdMsg;
-#define ISIM_CFG_FAULT_CMD_DATA_LEN  (sizeof(ISIM_CfgFaultCmdMsg) - CFE_SB_CMD_HDR_SIZE)
-
-
-/*
-** Exported Functions
-*/
+/************************/
+/** Exported Functions **/
+/************************/
 
 /******************************************************************************
 ** Function: ISIM_Constructor
@@ -218,6 +224,7 @@ boolean ISIM_LoadTbl (ISIMTBL_Struct* NewTbl);
 **  2. Supplied as a callback to IsimTbl.
 */
 boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData);
+
 
 /******************************************************************************
 ** Functions: ISIM_PwrOnSciCmd, ISIM_PwrOffSciCmd

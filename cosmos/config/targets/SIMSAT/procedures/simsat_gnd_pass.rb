@@ -74,7 +74,7 @@ Osk::flight.send_cmd("SC", "#{Osk::CMD_STR_RESET}")
 # Manage Onboard Files
 #
 
-simsat_manage_recorder
+simsat_recorder_playback("TFTP")
  
 #
 # Prepare for ops while out of contact

@@ -1,7 +1,8 @@
 <% 
   require 'osk_config' 
   require 'osk_global'
-
+  require 'simsat_global'
+  
   @APP_PREFIX_STR  = "CF"
   @CMD_MID_STR     = "CF_CMD_MID"
   
@@ -24,19 +25,18 @@ COMMAND CF PLAYBACK_FILE <%= Osk::Cfg.processor_endian %> "Put the specified fil
   APPEND_PARAMETER PRIORITY        8 UINT MIN_UINT8 MAX_UINT8 0 "Priority – 00 (highest priority) – 0xff (lowest priority)"
   APPEND_PARAMETER PRESERVE        8 UINT MIN_UINT8 MAX_UINT8 1 "Delete_File(0), Keep_File(1)"
   APPEND_PARAMETER PEER_ID       128 STRING <%= Osk::CFDP_GND_ENTITY_ID %> "Entity ID of ground engine to receive file (ex 0.23)"
-  APPEND_PARAMETER SRC_FILENAME  512 STRING "/cf/cf_test.txt"  "Complete target /path/filename"
-  APPEND_PARAMETER DEST_FILENAME 512 STRING <%= Osk::TMP_GND_TXT_PATH_FILE %> "Complete target /path/filename"
+  APPEND_PARAMETER SRC_FILENAME  512 STRING <%= SimSat::CFDP_FLT_DIR %> "Complete target /path/filename"
+  APPEND_PARAMETER DEST_FILENAME 512 STRING <%= SimSat::CFDP_GND_DIR %> "GND dir relative to COSMOS base dir"
 
 COMMAND CF PLAYBACK_DIR <%= Osk::Cfg.processor_endian %> "Put all of the files in the specified directory in the playback queue"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 148) %>
-  APPEND_PARAMETER CLASS           8 UINT MIN_UINT8 MAX_UINT8 1 "Class_1(1), Class_2(2)"
-  APPEND_PARAMETER CHANNEL         8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
-  APPEND_PARAMETER PRIORITY        8 UINT MIN_UINT8 MAX_UINT8 0 "Priority – 00 (highest priority) – 0xff (lowest priority)"
-  APPEND_PARAMETER PRESERVE        8 UINT MIN_UINT8 MAX_UINT8 0 "Delete_File(0), Keep_File(1)"
-  APPEND_PARAMETER PEER_ID       128 STRING <%= Osk::CFDP_GND_ENTITY_ID %> "Entity ID of ground engine to receive file (ex 0.23)"
-  APPEND_PARAMETER SRC_FILENAME  512 STRING <%= Osk::CMD_DEF_FILENAME %>   "Complete target /path/filename"
-  APPEND_PARAMETER DEST_FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>   "Complete target /path/filename"
-
+  APPEND_PARAMETER CLASS       8 UINT MIN_UINT8 MAX_UINT8 1 "Class_1(1), Class_2(2)"
+  APPEND_PARAMETER CHANNEL     8 UINT MIN_UINT8 MAX_UINT8 0 "Chan_0(0), Chan_1(1)"
+  APPEND_PARAMETER PRIORITY    8 UINT MIN_UINT8 MAX_UINT8 0 "Priority – 00 (highest priority) – 0xff (lowest priority)"
+  APPEND_PARAMETER PRESERVE    8 UINT MIN_UINT8 MAX_UINT8 0 "Delete_File(0), Keep_File(1)"
+  APPEND_PARAMETER PEER_ID   128 STRING <%= Osk::CFDP_GND_ENTITY_ID %> "Entity ID of ground engine to receive file (ex 0.23)"
+  APPEND_PARAMETER SRC_DIR   512 STRING <%= SimSat::CFDP_FLT_DIR %>   "FSW dir must end in slash: /cf/x/y/z/"
+  APPEND_PARAMETER DEST_DIR  512 STRING <%= SimSat::CFDP_GND_DIR %>   "GND dir relative to COSMOS base dir and must end in slash"
 #~~define CF_FREEZE_CC                    4
 #~~define CF_THAW_CC                      5 
 #~~define CF_SUSPEND_CC                   6

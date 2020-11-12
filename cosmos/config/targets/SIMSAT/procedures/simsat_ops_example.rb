@@ -31,7 +31,22 @@ require 'simsat_global'
 # Configure global variables and utility functions
 #
 
-Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{SimSat::FLT_SRV_DIR}") # Ensure SimSat directory exists
+# Ensure SimSat directories exist
+seq_count = tlm("FM FILE_INFO_PKT CCSDS_SEQUENCE")
+Osk::flight.send_cmd("FM","SEND_FILE_INFO with FILENAME #{SimSat::FLT_SRV_DIR}")
+wait("FM FILE_INFO_PKT CCSDS_SEQUENCE != #{seq_count}", 5)
+if (tlm("FM FILE_INFO_PKT SIZE") == 0)
+   Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{SimSat::FLT_SRV_DIR}")
+   wait 1
+   Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{SimSat::FLT_REC_DIR}")
+else
+   seq_count = tlm("FM FILE_INFO_PKT CCSDS_SEQUENCE")
+   Osk::flight.send_cmd("FM","SEND_FILE_INFO with FILENAME #{SimSat::FLT_REC_DIR}")
+   wait("FM FILE_INFO_PKT CCSDS_SEQUENCE != #{seq_count}", 5)
+   if (tlm("FM FILE_INFO_PKT SIZE") == 0)
+      Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{SimSat::FLT_REC_DIR}")
+   end
+end
 
 $simsat_ops_enable = true
 
@@ -41,7 +56,7 @@ $SIMSAT_SCH_TBL_FLT_FILENAME = File.join(Osk::FLT_SRV_DIR,SimSat::SCH_TBL_FILENA
 
 simsat_ops_status = "Preparing Ops Example. Read scenario comments in Script Runner."
 load_utility('simsat_ops_example_utils.rb')
-load_utility('simsat_file_mgmt.rb')
+load_utility('simsat_recorder_mgmt.rb')
 load_utility('simsat_isim_mgmt.rb')  #Provide methods for managing the instrument. E.g. power instrument on/off
 
 #
@@ -86,7 +101,7 @@ simsat_create_ops_screen
 #
 # 6. Inject a fault
 #
-# 7. Simulate a ground pass
+# 7. Simulate a ground pass after a fault
 #
 
 wait # Click <Go> when done reading the scenario
@@ -117,7 +132,8 @@ simsat_isim_pwr_on
 # that was created when the example started.  The thread is sending
 # commands to File Manager(FM) and Data Storage(DS) to send telemetry
 # packets that are sent only in response to commands. This could be
-# automated in a stored command if needed by a mission.
+# automated in a stored command if needed by a mission whene there's
+# no uplink. 
 #
 # What to observe:
 # 1. The ISIM app generates a new science file every minute. ISIM

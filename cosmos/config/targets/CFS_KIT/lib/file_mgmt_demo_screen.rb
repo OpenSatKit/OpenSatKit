@@ -114,7 +114,7 @@ FMD_INFO_3 = Osk::DEMO_STEP_NO_INFO
 FMD_INSTRUCT_4 = ["Demonstrate writing a directory to a file and transferring the file to the ground.",
                   "",
                   "<Demo> Send FM's WRITE_DIR_TO_FILE cmd to write directory listing of #{Osk::FLT_SRV_DIR}",
-                  "               to the file #{FMD_FLT_PUT_FILE}",
+                  "               to the file #{Osk::TMP_BIN_FILE}",
                   "<Demo> Send TFTP get cmd to transfer the file from the cFS and write it to the ",
                   "               ground file #{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}",
                   ""]
@@ -231,7 +231,7 @@ def file_mgmt_demo(screen, button)
          # 4 - Write directory listing to file and transfer to the ground
          when 4
             if ($fmd_demo == 0)
-               Osk::flight.send_cmd("FM","WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{FMD_FLT_TEMP_DIR}/#{Osk::TMP_BIN_FILE}")
+               Osk::flight.send_cmd("FM","WRITE_DIR_TO_FILE with DIRECTORY #{Osk::FLT_SRV_DIR}, FILENAME #{FMD_FLT_TEMP_DIR}/#{Osk::TMP_BIN_FILE}, SIZE_TIME_MODE 1")
                wait (2)
                Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{FMD_FLT_TEMP_DIR}, DIR_LIST_OFFSET 0")
                $fmd_demo += 1

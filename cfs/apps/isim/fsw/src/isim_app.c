@@ -1,12 +1,12 @@
 /* 
-** Purpose: Implement a Isim application.
+** Purpose: Implement the Instrument Simulator App
 **
 ** Notes:
 **   None
 **
 ** License:
-**   Template written by David McComas and licensed under the GNU
-**   Lesser General Public License (LGPL).
+**   Written by David McComas, licensed under the copyleft GNU
+**   General Public License (GPL). 
 **
 ** References:
 **   1. OpenSatKit Object-based Application Developer's Guide.
@@ -28,13 +28,14 @@
 
 static int32 InitApp(void);
 static void ProcessCommandPipe(void);
+static void SendHousekeepingPkt(void);
 
 /*
 ** Global Data
 */
 
 ISIM_APP_Class  IsimApp;
-ISIM_HkPkt      IsimHkPkt;
+
 
 /*
 ** Convenience Macros
@@ -44,6 +45,7 @@ ISIM_HkPkt      IsimHkPkt;
 #define  TBLMGR_OBJ (&(IsimApp.TblMgr))
 #define  ISIM       (&(IsimApp.Isim))
 #define  ISIM_TBL   (&(IsimApp.IsimTbl))
+
 
 /******************************************************************************
 ** Function: ISIM_AppMain
@@ -145,10 +147,10 @@ boolean ISIM_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 
 /******************************************************************************
-** Function: ISIM_SendHousekeepingPkt
+** Function: SendHousekeepingPkt
 **
 */
-void ISIM_SendHousekeepingPkt(void)
+static void SendHousekeepingPkt(void)
 {
 
    /* Good design practice in case app expands to more than on etable */
@@ -159,8 +161,8 @@ void ISIM_SendHousekeepingPkt(void)
    ** CMDMGR Data
    */
 
-   IsimHkPkt.ValidCmdCnt   = IsimApp.CmdMgr.ValidCmdCnt;
-   IsimHkPkt.InvalidCmdCnt = IsimApp.CmdMgr.InvalidCmdCnt;
+   IsimApp.HkPkt.ValidCmdCnt   = IsimApp.CmdMgr.ValidCmdCnt;
+   IsimApp.HkPkt.InvalidCmdCnt = IsimApp.CmdMgr.InvalidCmdCnt;
 
    
    /*
@@ -168,22 +170,22 @@ void ISIM_SendHousekeepingPkt(void)
    ** - At a minimum all OBJECT variables effected by a reset must be included
    */
 
-   IsimHkPkt.LastAction       = LastTbl->LastAction;
-   IsimHkPkt.LastActionStatus = LastTbl->LastActionStatus;
+   IsimApp.HkPkt.LastAction       = LastTbl->LastAction;
+   IsimApp.HkPkt.LastActionStatus = LastTbl->LastActionStatus;
 
-   IsimHkPkt.IsimInstrState   = (uint8)ISIM->Instr.State;
-   IsimHkPkt.IsimSciState     = (uint8)ISIM->Sci.State;
-   IsimHkPkt.Fault            = ISIM->Fault;
+   IsimApp.HkPkt.IsimInstrState   = (uint8)ISIM->Instr.State;
+   IsimApp.HkPkt.IsimSciState     = (uint8)ISIM->Sci.State;
+   IsimApp.HkPkt.Fault            = ISIM->Fault;
    
-   IsimHkPkt.InitCycleCnt     = ISIM->Instr.InitCycleCnt;
-   IsimHkPkt.SciFileCycleCnt  = ISIM->Sci.FileCycleCnt;
+   IsimApp.HkPkt.InitCycleCnt     = ISIM->Instr.InitCycleCnt;
+   IsimApp.HkPkt.SciFileCycleCnt  = ISIM->Sci.FileCycleCnt;
 
-   strncpy(IsimHkPkt.Filename, ISIM->Sci.Filename, OS_MAX_PATH_LEN);
+   strncpy(IsimApp.HkPkt.Filename, ISIM->Sci.Filename, OS_MAX_PATH_LEN);
    
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &IsimHkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &IsimHkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &IsimApp.HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &IsimApp.HkPkt);
 
-} /* End ISIM_SendHousekeepingPkt() */
+} /* End SendHousekeepingPkt() */
 
 
 /******************************************************************************
@@ -192,56 +194,56 @@ void ISIM_SendHousekeepingPkt(void)
 */
 static int32 InitApp(void)
 {
-    int32 Status = CFE_SUCCESS;
+   
+   int32 Status = CFE_SUCCESS;
+ 
+   /*
+   ** Initialize 'entity' objects
+   */
 
+   ISIMTBL_Constructor(ISIM_TBL, ISIM_GetTblPtr, ISIM_LoadTbl, ISIM_LoadTblEntry);
+   ISIM_Constructor(ISIM);
+
+   /*
+   ** Initialize cFE interfaces 
+   */
+
+   CFE_SB_CreatePipe(&IsimApp.CmdPipe, ISIM_CMD_PIPE_DEPTH, ISIM_CMD_PIPE_NAME);
+   CFE_SB_Subscribe(ISIM_CMD_MID, IsimApp.CmdPipe);
+   CFE_SB_Subscribe(ISIM_EXECUTE_MID, IsimApp.CmdPipe);
+   CFE_SB_Subscribe(ISIM_SEND_HK_MID, IsimApp.CmdPipe);
+
+   /*
+   ** Initialize App Framework Components 
+   */
+
+   CMDMGR_Constructor(CMDMGR_OBJ);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, ISIM_NoOpCmd,     0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, ISIM_ResetAppCmd, 0);
     
-    /*
-    ** Initialize 'entity' objects
-    */
-
-    ISIMTBL_Constructor(ISIM_TBL, ISIM_GetTblPtr, ISIM_LoadTbl, ISIM_LoadTblEntry);
-    ISIM_Constructor(ISIM);
-
-    /*
-    ** Initialize cFE interfaces 
-    */
-
-    CFE_SB_CreatePipe(&IsimApp.CmdPipe, ISIM_CMD_PIPE_DEPTH, ISIM_CMD_PIPE_NAME);
-    CFE_SB_Subscribe(ISIM_CMD_MID, IsimApp.CmdPipe);
-    CFE_SB_Subscribe(ISIM_EXECUTE_MID, IsimApp.CmdPipe);
-    CFE_SB_Subscribe(ISIM_SEND_HK_MID, IsimApp.CmdPipe);
-
-    /*
-    ** Initialize App Framework Components 
-    */
-
-    CMDMGR_Constructor(CMDMGR_OBJ);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, ISIM_NoOpCmd,     0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, ISIM_ResetAppCmd, 0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
     
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_ON_CMD_FC,    ISIM,  ISIM_PwrOnSciCmd,  ISIM_PWR_ON_SCI_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_OFF_CMD_FC,   ISIM,  ISIM_PwrOffSciCmd, ISIM_PWR_OFF_SCI_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_START_SCI_CMD_FC, ISIM,  ISIM_StartSciCmd,  ISIM_START_SCI_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_STOP_SCI_CMD_FC,  ISIM,  ISIM_StopSciCmd,   ISIM_STOP_SCI_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_CFG_FAULT_CMD_FC, ISIM,  ISIM_CfgFaultCmd,  ISIM_CFG_FAULT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_ON_CMD_FC,    ISIM,  ISIM_PwrOnSciCmd,  ISIM_PWR_ON_SCI_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_OFF_CMD_FC,   ISIM,  ISIM_PwrOffSciCmd, ISIM_PWR_OFF_SCI_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_START_SCI_CMD_FC, ISIM,  ISIM_StartSciCmd,  ISIM_START_SCI_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_STOP_SCI_CMD_FC,  ISIM,  ISIM_StopSciCmd,   ISIM_STOP_SCI_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_CFG_FAULT_CMD_FC, ISIM,  ISIM_CfgFaultCmd,  ISIM_CFG_FAULT_CMD_DATA_LEN);
 
-    TBLMGR_Constructor(TBLMGR_OBJ);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, ISIMTBL_LoadCmd, ISIMTBL_DumpCmd, ISIMTBL_DEF_LOAD_FILE);
+   TBLMGR_Constructor(TBLMGR_OBJ);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, ISIMTBL_LoadCmd, ISIMTBL_DumpCmd, ISIMTBL_DEF_LOAD_FILE);
                          
-    CFE_SB_InitMsg(&IsimHkPkt, ISIM_TLM_HK_MID, ISIM_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&IsimApp.HkPkt, ISIM_TLM_HK_MID, ISIM_APP_HK_PKT_LEN, TRUE);
 
                         
-    /*
-    ** Application startup event message
-    */
+   /*
+   ** Application startup event message
+   */
    Status = CFE_EVS_SendEvent(ISIM_APP_INIT_EID, CFE_EVS_INFORMATION,
                               "ISIM App Initialized. Version %d.%d.%d",
                               ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_LOCAL_REV);
 
-    return(Status);
+   return(Status);
 
 } /* End of InitApp() */
 
@@ -274,7 +276,7 @@ static void ProcessCommandPipe(void)
             break;
 
          case ISIM_SEND_HK_MID:
-            ISIM_SendHousekeepingPkt();
+            SendHousekeepingPkt();
             break;
 
          default:

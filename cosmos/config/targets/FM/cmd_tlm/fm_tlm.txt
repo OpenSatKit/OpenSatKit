@@ -55,7 +55,7 @@ TELEMETRY FM DIR_LIST_PKT <%= Osk::Cfg.processor_endian %> "Get Directory Listin
   APPEND_ITEM TOTALFILES 32 UINT "Number of files in the directory"
      # These are defined for SimSat ops example. A more sophisticated approach would
      # be required for multiple limit sets if directory sizes are important
-     LIMITS DEFAULT 3 DISABLED 0 0 40 50
+     LIMITS DEFAULT 3 DISABLED 0 0 10 15
   APPEND_ITEM PACKETFILES 32 UINT "Number of files in this packet"
   APPEND_ITEM FIRSTFILE 32 UINT "Index into directory files of first packet file"
 

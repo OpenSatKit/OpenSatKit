@@ -278,7 +278,7 @@
          "dec-id": 2183,
          "priority": 0,
          "reliability": 0,
-         "buf-limit": 8
+         "buf-limit": 4
          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
       },
 
@@ -494,6 +494,16 @@
       },
   
       "packet": {
+         "name": "TFTP_TRANSFER_REQ_MID",
+         "stream-id": "\u0901",
+         "dec-id": 2305,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+
+      "packet": {
          "name": "CF_HK_TLM_MID",
          "stream-id": "\u08B0",
          "dec-id": 2224,
@@ -614,7 +624,7 @@
       },
 
       "packet": {
-         "name": "F42_CTRL_GAINS_MID",
+         "name": "F42_CTRL_GAINS_TLM_MID",
          "stream-id": "\u09D2",
          "dec-id": 2514,
          "priority": 0,
