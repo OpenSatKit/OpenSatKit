@@ -1,0 +1,153 @@
+{
+   "app":      "File Manager",
+   "fsw_name": "FM",
+   "description": "",
+   "requirement": 
+   [
+      { 
+         "id": 1000,
+         "text": "Upon receipt of a No-Op command, FM shall increment the Valid Command Counter and generate an event message."
+         "rationale": "Checkout command to verify application is integrated into the system and running"
+      },
+      { 
+         "id": 1001,
+         "text": "Upon receipt of a Reset Counters command, FM shall reset the following housekeeping variables to a value of zero:"
+         "sub-text": 
+         [
+            "a) Valid Command Counter",
+            "b) Command Rejected Counter"
+         ],
+         "rationale": "Important for testing and on-orbit in order to start with a “clean slate”"
+      },
+      { 
+         "id": 1002,
+         "text": "If the computed length of any FM command is not equal to the length contained in the message header, FM shall reject the command.",
+         "rationale": "Protect app from operating on incorrect data"
+      },
+      { 
+         "id": 1003,
+         "text": "If FM accepts any command as valid, FM shall execute the command, increment the FM Valid Command Counter and issue an event message",
+         "rationale": "Operators require positive feedback from successful commands"
+      },
+      { 
+         "id": 1004,
+         "text": "If FM rejects any command, FM shall abort the command execution, increment the FM Command Rejected Counter and issue an error event message",
+         "rationale": "Operators require notification of command failures"
+      },
+      { 
+         "id": 1005,
+         "text": "If the filename specified in any FM command is not valid, FM shall reject the command",
+         "rationale": "FM can only operate on a valid path and filename"
+      },
+      { 
+         "id": 1006,
+         "text": "If the directory specified in any FM command is not valid, FM shall reject the command",
+         "rationale": "FM can only operate on valid directories"
+      },
+      { 
+         "id": 1008,
+         "text": "The cFS FM FSW shall utilize full path specifications having a maximum length of <PLATFORM_DEFINED> characters for all command input arguments requiring a file or pathname.",
+         "rationale": "Fully qualified filenames or paths help ensure the correct files/directories are being manipulated.  This requirement is intended to prevent “assumed” pathnames from being used by cFS FM."
+      },
+      { 
+         "id": 1009,
+         "text": "todo",
+         "rationale": ""
+      },
+      { 
+         "id": 3000,
+         "text": "Upon receipt of a Create Directory command, FM shall create the command-specified directory on the command-specified file system.",
+         "rationale": "Basic functional need"
+      },
+      { 
+         "id": 3001,
+         "text": "Upon receipt of a Delete Directory command, FM shall remove the command-specified directory from the command-specified file system.",
+         "rationale": "Basic functional need"
+      },
+      { 
+         "id": 3001.1,
+         "text": "If the specified directory contains at least one file or subdirectory, the command shall be rejected",
+         "rationale": "Require operators to explicitly remove all files before deleting the directory.  Protection against accidentally deleting of a non-empty directory."
+      },
+      { 
+         "id": 3002,
+         "text": "Upon receipt of a Directory Listing To File command, FM shall write the contents of the command-specified directory on any of the on-board file systems to the command-specified file. The following shall be written:",
+         "sub-text": 
+         [
+            "a) Directory name",
+            "b) File size in bytes of each file",
+            "c) Last modification time of each file",
+            "d) Filename of each file",
+            "e) Mode (permissions), as a 4-byte value, of each file"
+         ],
+         "note": "The modification time format is specified by a cFE configuration parameter (TAI or UTC)",
+         "rationale": "Telemetry allows for quick display versus a processing a directory file."
+      },
+      { 
+         "id": 3002.1,
+         "text": "FM shall issue an event message that reports:",
+         "sub-text": 
+         [
+            "a) The number of filenames written to the specified file",
+            "b) The total number of files in the directory",
+            "c) The command-specified file’s filename"
+         ],
+         "rationale": ""
+      },
+      { 
+         "id": 3002.2,
+         "text": "FM shall use the <PLATFORM_DEFINED> default filename if a file is not specified",
+         "rationale": "cFS standard.  Want to provide flexibility to either use the same filename every time you get a directory listing or specify a new filename."
+      },
+      { 
+         "id": 3002.3,
+         "text": "If the command-specified GetSizeTimeMode flag is set to FALSE, FM shall initialize following values to Zero:",
+         "sub-text": 
+         [
+            "b) File size in bytes of each file",
+            "c) Last modification time of each file",
+            "e) Mode (permissions), as a 4-byte value, of each file"
+         ],
+         "note": "The lettering of the listed values is kept in sync with parent requirement"
+         "rationale": "Obtaining file size, time, and permissions may be CPU intensive"
+      },
+      { 
+         "id": 3003,
+         "text": "Upon receipt of a Directory Listing command, FM shall generate a message containing the following for up to <PLATFORM_DEFINED> consecutive files starting at the command specified offset:",
+         "sub-text": 
+         [
+            "a) Directory name",
+            "b) File size in bytes of each file",
+            "c) Last modification time of each file",
+            "d) Filename of each file",
+            "e) Mode (permissions), as a 4-byte value, of each file"
+         ],
+         "note": "The modification time format is specified by a cFE configuration parameter (TAI or UTC)",
+         "rationale": "Similar to FM3002 command, however, the directory listing is output in a message instead of a file.  May make it easier for the ground to view (one step process). In addition, if there is a problem with the file system, writing to a file (as FM3002 does) is not reliable. The command specified offset is used since there is a maximum number of files that can be downlinked (offset into the file list). "
+      },
+      { 
+         "id": 3003.1,
+         "text": "If the command-specified GetSizeTimeMode flag is set to FALSE, FM shall initialize the following values to Zero:",
+         "sub-text": 
+         [
+            "b) File size in bytes of each file",
+            "c) Last modification time of each file",
+            "e) Mode (permissions), as a 4-byte value, of each file"
+         ],
+         "note": "The lettering of the listed values is kept in sync with parent requirement",
+         "rationale": "Obtaining file size, time, and permissions may be CPU intensive"
+      },
+      { 
+         "id": 9999,
+         "text": "",
+         "sub-text": 
+         [
+            "",
+            ""
+         ],
+         "note": "",
+         "rationale": ""
+      }
+        
+   ]
+}

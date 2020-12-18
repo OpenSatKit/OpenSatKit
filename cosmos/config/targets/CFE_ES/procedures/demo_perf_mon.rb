@@ -7,7 +7,14 @@
 #   2. The performance monitor feature has been equated to a Logic 
 #      Analyzer (LA) so LA is in the command names and in the code.
 #   3. Debug events are enabled for the apps used during the demo.
-# 
+#
+# Demo Steps:
+#   1. Configure the filter masks
+#   2. Configure the trigger masks
+#   3. Collect the data
+#   4. Transfer file from flight to ground & display in cFS Performance
+#      Monitor (CPM)
+#
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
 #   License (GPL).
@@ -115,7 +122,7 @@ end
 
 
 ###################################################################
-## Step 3 - Transfer file from flight to ground & display in CPM ##
+## Step 4 - Transfer file from flight to ground & display in CPM ##
 ###################################################################
 
 wait  # Step 4

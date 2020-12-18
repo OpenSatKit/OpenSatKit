@@ -473,6 +473,53 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, const char* K
 
 
 /******************************************************************************
+** Function: JSON_GetValUint32
+**
+** Notes:
+**   1. This is a quick cut, paste and edit of JSON_GetValShortInt() that still
+**      has some issues to be resolved.
+** 
+*/
+boolean JSON_GetValUint32(JSON_Class* Json, int ContainTokenIdx, const char* Key, uint32* Uint32Val) {
+
+   int    i;
+   char   *TokenStr, *ErrCheck, *StrEndPtr;
+   jsmntok_t  *ContainToken;
+   
+   ContainToken = &(Json->FileTokens[ContainTokenIdx]);
+   if (DBG_JSON) OS_printf("JSON_GetValUint32() for token %d with size %d\n",ContainTokenIdx,ContainToken->size);
+   
+   for (i=(ContainTokenIdx+1); i <= (ContainTokenIdx+ContainToken->size); i++) {
+      
+      if (JSON_TokenStrEq(Json->FileBuf, &Json->FileTokens[i], Key)) {
+ 
+         TokenStr = JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[i+1]);
+         if (Json->FileTokens[i+1].type == JSMN_PRIMITIVE) {
+			   *Uint32Val = (uint32)strtoul(TokenStr, &StrEndPtr, 10);
+			   if (ErrCheck == TokenStr) {
+               CFE_EVS_SendEvent(JSON_INT_CONV_ERR_EID,CFE_EVS_ERROR,"JSON short int conversion error for key %s token %s at container token index %d.",
+                                 Key, TokenStr, ContainTokenIdx);
+               break;
+            }
+            return TRUE;
+
+         } /* End if primitive */
+         else {
+            CFE_EVS_SendEvent(JSON_INVLD_INT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid short int type %s for key %s at container token index %d. Must be a primitive.",
+                              JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
+            break;
+         }
+     
+      } /* End if found key */
+
+   } /* End container token loop */
+
+   return FALSE;
+
+} /* End JSON_GetValUint32() */
+
+
+/******************************************************************************
 ** Function: JSON_GetValStr
 **
 ** Notes:

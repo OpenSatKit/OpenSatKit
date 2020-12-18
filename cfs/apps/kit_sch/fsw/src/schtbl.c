@@ -580,7 +580,7 @@ static boolean ActivityCallback (int TokenIdx)
                      JSON_GetContainerSize(JSON, TokenIdx));
    
    /*
-   ** If current slot is invalid an event message shoudl have been sent and the
+   ** If current slot is invalid an event message should have been sent and the
    ** activity array can be ignored.   
    */
    if (SchTbl->CurSlotIdx != SCHTBL_UNDEF_SLOT) {

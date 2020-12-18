@@ -136,7 +136,7 @@
 **       The FM application limits this value to be no less than 100 and
 **       no greater than 10000.
 */
-#define FM_DIR_LIST_FILE_ENTRIES        3000
+#define FM_DIR_LIST_FILE_ENTRIES       200 //osk
 
 
 /** \fmcfg Directory List Output File Header Sub-Type

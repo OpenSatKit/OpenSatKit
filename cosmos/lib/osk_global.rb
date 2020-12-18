@@ -2,7 +2,7 @@
 # OSK Global
 #
 # Notes:
-#   1. SimSat definitions are in config/targets/SIMSAT/lib/simsat_global.rb
+#   1. SimSat definitions are in config/targets/SIMSAT/lib/simsat_const.rb
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -118,11 +118,6 @@ module Osk
 
    SIMSAT_OVERVIEW_FILE = "OSK-Simple-Sat.pdf"
    
-   # Tutorial file format types
-   TUTORIAL_HTML   = "HTML"
-   TUTORIAL_PDF    = "PDF"
-   TUTORIAL_SCRIPT = "SCRIPT"
-
    CFE_UG_FILE      = "index.html"
    CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
    CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
@@ -236,6 +231,9 @@ module Osk
    GND_SRV_TBL_DIR = "#{Cosmos::USERPATH}/#{REL_SRV_TBL_DIR}"
 
    FLT_SRV_DIR = "/cf"
+   FLT_SRV_DIR_SEP = FLT_SRV_DIR + "/"
+   FLT_DEMO_DIR    = File.join(Osk::FLT_SRV_DIR,"demo")
+   FLT_TEST_DIR    = File.join(Osk::FLT_SRV_DIR,"test")
    GND_TO_FLT_SRV_DIR = File.join(OSK_CFS_DIR,'build','exe','cpu1','cf')
    
    CFS_KIT_LIB_DIR = Osk::cfg_target_dir("CFS_KIT","lib")
@@ -296,19 +294,4 @@ module Osk
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
     
-    
-   #####################
-   ## YouTube Channel ## 
-   #####################
-   
-   YOUTUBE_TRAINING_CFE_EVS  = "https://www.youtube.com/watch?v=-MR67hA1m0E"
-   YOUTUBE_TRAINING_CFE_SB   = "https://youtu.be/QO6C3DUbGF8"
-   YOUTUBE_TRAINING_CFE_TBL  = "https://youtu.be/He9WE8rJcCg"
- 
-   YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD   = "https://www.youtube.com/watch?v=LspTUdIKAZY&t=1s"
-   YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD  = "https://www.youtube.com/watch?v=0BSMXeq8B5c&t=4s"
-
-   YOUTUBE_TRAINING_COMMUNITY_APPS_RUNTIME   = "https://youtu.be/7upUnU63YFc"
-   YOUTUBE_TRAINING_COMMUNITY_APPS_DATAFILE  = "https://youtu.be/Y-oxWg8rNB0"
-   
 end # Module Osk

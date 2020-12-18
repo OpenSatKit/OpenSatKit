@@ -125,10 +125,10 @@ VERTICAL # With 2 rows
          MATRIXBYCOLUMNS 2 5 2
     
             BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DEMO")'
-            NAMED_WIDGET demo COMBOBOX "File Manager" "Data Storage" "Data-File Mgmt"
+            NAMED_WIDGET demo COMBOBOX "Data-File Mgmt Screen" "Data-File Mgmt Script" "DS Feature Screen" "FM Playback Script" "FM Feature Screen" "FM Feature Script" 
 
             BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TUTORIAL")'
-            NAMED_WIDGET tutorial COMBOBOX "Training Video" "Training Slides"
+            NAMED_WIDGET tutorial COMBOBOX  "Data-File Slides" "Data-File Intro Video" "FM App Video" "Comm App Intro Video"
 
          END # Matrix
          END # Learn VerticalBox

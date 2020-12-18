@@ -1,15 +1,35 @@
 {
 
 "description": [
-   "This file is named cfs_kit.json as opposed to something like",
-   "app_targets.json to follow OSK naming convention. It may also",
-   "contain definitions beyond the target apps",    
-   "Defines the FSW app targets to be available when OSK is runnning.",
+   "This file defines the components installed in OSK. The cfe versions are also",
+   "defned in cosmos/lib/user_version.rb. This duplication will be removed in a",
+   "future release. The cFE apps do not have a JSON definition file.",
+   "Targets defines the FSW app targets to be available when OSK is runnning.",
    "load-on-init determines whether app is loaded when OSK starts. Each",
    "app has a json file that provides app details so this file simply",
-   "identifies apps and should not duplicate any information about an app."
+   "identifies apps and should not duplicate any information about an app.",
+   "This file is named cfs_kit.json as opposed to something like",
+   "app_targets.json to follow the OSK naming convention."
    ],
-   
+
+"cfe": {
+   "version": "6.7.1.0",
+   "owner": "NASA/Goddard",
+   "url": "https://github.com/nasa/cFE"
+},
+
+"osal": {
+   "version": "5.0.1.0",
+   "owner": "NASA/Goddard",
+   "url": "https://github.com/nasa/osal"
+},
+
+"psp": {
+   "version": "1.4.0.0",
+   "owner": "NASA/Goddard",
+   "url": "https://github.com/nasa/psp"
+},
+
 "targets": [
 
    { "CF":  { "load-on-init": false }},
@@ -25,6 +45,7 @@
 
    { "BM":           { "load-on-init": false }},
    { "F42":          { "load-on-init": true  }},
+   { "FILEMGR":      { "load-on-init": false }},
    { "HC":           { "load-on-init": false }},
    { "HSIM":         { "load-on-init": false }},
    { "I42":          { "load-on-init": true  }},

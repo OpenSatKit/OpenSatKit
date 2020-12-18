@@ -19,7 +19,7 @@ class IsimFuncTest < Cosmos::Test
    
    def initialize
       super()
-      app_func_test_init("ISIM", Fsw::MsgId::ISIM_CMD_MID)
+      @app = app_func_test_init("ISIM")
    end
 
    def setup

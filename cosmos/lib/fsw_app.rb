@@ -127,10 +127,10 @@ class FswApp
             @exception_action  = app["exception-action"]
             @tables = []
             app["tables"].each do |tbl|
-               #puts tbl["name"]
+               ##puts tbl["name"]
                @tables << Table.new(tbl["name"],tbl["id"],tbl["filename"])
             end
-            #puts "Tables length = " + tables.length.to_s + "\n"
+            ##puts "Tables length = " + tables.length.to_s + "\n"
             @cmd_mid = Fsw::MsgId.get_val(app["cmd-mid"])
          
          end # If JSON
@@ -151,6 +151,15 @@ class FswApp
       @target_hk_str = "#{@target} #{@hk_pkt}"
      
    end
+
+   # This should only be used by the cFE apps since they're JSON definitions are managed 
+   # differently than user apps
+   def set_version(version)
+   
+      @version = version
+      
+   end
+   
 
    # Check if receiving telemetry packet without stopping the script, i.e. don't
    # use COSMOS wait/check methods.
@@ -186,7 +195,7 @@ class FswApp
       cmd_valid_cnt = tlm("#{@target_hk_str} #{Osk::TLM_STR_CMD_VLD}")
       cmd_error_cnt = tlm("#{@target_hk_str} #{Osk::TLM_STR_CMD_ERR}")
       seq_cnt = tlm("#{@target_hk_str} #{Ccsds::PRI_HDR_SEQUENCE}")
-      ##puts cmd_valid_cnt
+      ##puts "FswApp.send_cmd #{@target} before cmd(): cmd_valid_cnt=#{cmd_valid_cnt}\n"
       cmd("#{@target} #{cmd_str}")
       
       # The logic below doesn't work for the app reset cmd. For now ignore the check if it's a reset cmd

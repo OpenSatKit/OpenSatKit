@@ -263,6 +263,15 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, const char* K
 
 
 /******************************************************************************
+** Function: JSON_GetValUint32
+**
+** Notes:
+**    
+*/
+boolean JSON_GetValUint32(JSON_Class* Json, int ContainTokenIdx, const char* Key, uint32* Uint32Val);
+
+
+/******************************************************************************
 ** Function: JSON_GetValStr
 **
 ** Notes:

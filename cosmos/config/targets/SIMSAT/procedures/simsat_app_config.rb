@@ -18,6 +18,10 @@
 #   2. The ISIM app uses more event messages than a typical flight app. The
 #      events are used for illustrative purposes.  
 #
+# Preconditions
+#   1. Background thread periodically requesting DS FILE_INFO_PKT packets is
+#      running
+#
 # Global Script Variables:
 #   simsat_ops_enable - Boolean indicating whether ops example is active
 #   simsat_ops_status - Text string displayed on ops example screen
@@ -35,7 +39,7 @@ require 'ccsds'
 
 require 'fsw_const'
 
-require 'simsat_global'
+require 'simsat_const'
 
 def verify_noop (target,noop_fc=0)
   
@@ -74,7 +78,7 @@ verify_noop("KIT_CI")
 
 simsat_ops_status = "Load SimSat Scheduler Table: Transfer #{$SIMSAT_SCH_TBL_GND_FILENAME} and load #{SimSat::SCH_TBL_FILENAME}"
 if (Osk::Ops.put_flt_file($SIMSAT_SCH_TBL_GND_FILENAME,$SIMSAT_SCH_TBL_FLT_FILENAME)) 
-   Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{Osk::CPU1_PKT_TBL_FILE.sub!("cpu1_", "")}")  
+   Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{$SIMSAT_SCH_TBL_FLT_FILENAME}")  
 else
    message_box("Failed to load SimSat scheduler table #{SimSat::SCH_TBL_FILENAME}",false)
 end
@@ -101,7 +105,7 @@ Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 0, FILE_STATE 1") # 
 wait 1
 Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 6, FILE_STATE 1") # Enable Science Auxiliary file
 
-wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 6)
+wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 6)  # Assumes background thread requesting DS INFO packet has been started
 wait("DS FILE_INFO_PKT FILE7_ENABLE == 1", 6)
 
 
@@ -117,7 +121,8 @@ simsat_ops_status = "Verifying Trivial File Transfer Protocol (TFTP) app noop co
 verify_noop("TFTP")
 
 simsat_ops_status = "Review Data/File Management app configurations"
-wait  # Review Data/File Management app configurations
+status_bar("Review Data/File Management app configurations")
+wait  # <Go> to continue
  
 ##############
 ## Autonomy ##
@@ -140,7 +145,8 @@ Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 1")
 wait("LC HK_TLM_PKT AP_2_STATE == 'ACTIVE'", 10)
 
 simsat_ops_status = "Review autonomy app configurations"
-wait  # Review autonomy app configurations
+status_bar("Review autonomy app configurations")
+wait  # <Go> to continue
 
 ########################################
 ## Attitude Determination and Control ##

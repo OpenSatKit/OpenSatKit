@@ -71,7 +71,7 @@ module Osk
  
          
          # cFE Apps      
-         @cfe_es   = FswApp.new("CFE_ES","CFE_ES",   Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_ES_CMD_MID)
+         @cfe_es   = FswApp.new("CFE_ES",  "CFE_ES",   Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_ES_CMD_MID)
          @cfe_evs  = FswApp.new("CFE_EVS", "CFE_EVS",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_EVS_CMD_MID)
          @cfe_sb   = FswApp.new("CFE_SB",  "CFE_SB",   Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_SB_CMD_MID)
          @cfe_tbl  = FswApp.new("CFE_TBL", "CFE_TBL",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::CFE_TBL_CMD_MID)
@@ -84,6 +84,7 @@ module Osk
          @app["CFE_TBL"]  = @cfe_tbl
          @app["CFE_TIME"] = @cfe_time
 
+         
          # cFS Apps
          #~@cs = FswApp.new("CS","CS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::CS_CMD_MID)
          #~@ds = FswApp.new("DS","DS",Osk::TLM_STR_HK_PKT,Fsw::MsgId::DS_CMD_MID)
@@ -117,6 +118,13 @@ module Osk
 
          end
 
+         cfe_ver = osk["cfe"]["version"]
+         @cfe_es.set_version(cfe_ver)
+         @cfe_evs.set_version(cfe_ver)
+         @cfe_sb.set_version(cfe_ver)
+         @cfe_tbl.set_version(cfe_ver)
+         @cfe_time.set_version(cfe_ver)
+                  
          # Kit Apps
          #~@f42  = FswApp.new("F42",  "F42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::F42_CMD_MID)
          #~@i42  = FswApp.new("I42",  "I42",  Osk::TLM_STR_HK_PKT, Fsw::MsgId::I42_CMD_MID)

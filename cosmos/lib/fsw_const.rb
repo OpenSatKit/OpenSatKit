@@ -29,12 +29,39 @@ module Fsw
       CFE_ES_PERF_TRIGGER_END     = 2
       CFE_ES_PERF_MAX_MODES       = 3
 
-      ########################
-      ## LC - Limit Checker ##
-      ########################
+      #########################
+      ## CFE - Event Service ##
+      #########################
 
-      FM_IGNORE_CRC     = 0 
-      FM_COMPUTE_CRC_16 = 2  # Not explicitly defined in the FSW but it should be
+      CFE_EVS_DEBUG        = 1
+      CFE_EVS_INFORMATION  = 2
+      CFE_EVS_ERROR        = 3
+      CFE_EVS_CRITICAL     = 4
+
+
+      #########################
+      ## CFE - Table Service ##
+      #########################
+
+      CFE_TBL_BufferSelect_INACTIVE = 0
+      CFE_TBL_BufferSelect_ACTIVE   = 1
+
+      #######################
+      ## FM - File Manager ##
+      #######################
+
+      FM_IGNORE_CRC           = 0 
+      FM_COMPUTE_CRC_16       = 2  # Not explicitly defined in the FSW but it should be
+
+      FM_NAME_IS_INVALID      = 0
+      FM_NAME_IS_NOT_IN_USE   = 1
+      FM_NAME_IS_FILE_OPEN    = 2
+      FM_NAME_IS_FILE_CLOSED  = 3
+      FM_NAME_IS_DIRECTORY    = 4
+
+      FM_TABLE_ENTRY_DISABLED = 0
+      FM_TABLE_ENTRY_ENABLED  = 1
+      FM_TABLE_ENTRY_UNUSED   = 2
       
       ########################
       ## LC - Limit Checker ##

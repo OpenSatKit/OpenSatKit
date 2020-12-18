@@ -19,19 +19,18 @@ class CfeEsFuncTest < Cosmos::Test
    
    def initialize
       super()
-      app_func_test_init("CFE_ES", Fsw::MsgId::CFE_ES_CMD_MID)
+      @app = app_func_test_init("CFE_ES")
    end
 
    def setup
       status_bar("#{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - setup")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
-      wait(2)
+      puts "@app.version = #{@app.version}\n"
    end
 
    def teardown
       status_bar("teardown")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
-      wait(2)
    end
 
    def helper_method

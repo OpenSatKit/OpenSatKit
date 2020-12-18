@@ -671,7 +671,57 @@
          "reliability": 0,
          "buf-limit": 4
          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "FILEMGR_HK_TLM_MID",
+         "stream-id": "\u098A",
+         "dec-id": 2442,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "FILEMGR_FILE_INFO_TLM_MID",
+         "stream-id": "\u098B",
+         "dec-id": 2443,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "FILEMGR_DIR_LIST_TLM_MID",
+         "stream-id": "\u098C",
+         "dec-id": 2444,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "FILEMGR_OPEN_FILES_TLM_MID",
+         "stream-id": "\u098D",
+         "dec-id": 2445,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "FILEMGR_FILESYS_TLM_MID",
+         "stream-id": "\u098E",
+         "dec-id": 2446,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
       }
-
+      
    ]
 }

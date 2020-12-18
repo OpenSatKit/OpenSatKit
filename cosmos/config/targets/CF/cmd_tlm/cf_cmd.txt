@@ -1,7 +1,7 @@
 <% 
   require 'osk_config' 
   require 'osk_global'
-  require 'simsat_global'
+  require 'simsat_const'
   
   @APP_PREFIX_STR  = "CF"
   @CMD_MID_STR     = "CF_CMD_MID"

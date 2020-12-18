@@ -3,7 +3,7 @@
 #
 # Notes:
 #   1. This doesn't follow the pattern of one ruby script for each screen
-#      convention since all of the SimSat screen are designed to be 
+#      convention since all of the SimSat screens are designed to be 
 #      aggregated as a whole. 
 #
 # License:
@@ -13,7 +13,10 @@
 ################################################################################
 
 require 'osk_ops'
-require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/tutorial_screen.rb"
+require 'osk_education'
+require 'fsw_const'
+require 'fsw_config_param'
+require 'fm_const'
 
 ################################################################################
 ## GUI Send Commands
@@ -53,15 +56,14 @@ def simsat_adc(screen, cmd)
    when "F42_CMD" 
       Osk::Ops::send_flt_cmd("F42", "#{screen.get_named_widget("f42_cmd").text}")
    when "F42_TLM"
-      # Set default name to first combo option to simplify logic and no error checking
-      scr_name = "ACTUATOR_CMD_PKT"
+      scr_name = "HK_TLM_PKT"
       case screen.get_named_widget("f42_tlm").text
-      when "CONTROLLER"
+      when "Controller"
          scr_name = "CONTROL_PKT"
-      when "HOUSEKEEPING" 
+      when "Controller Gains"
+         scr_name = "CONTROL_GAINS_PKT"
+      when "Housekeeping" 
          scr_name = "HK_TLM_PKT"
-      when "SENSOR_DATA"
-         scr_name = "SENSOR_DATA_PKT"
       end
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'F42 #{scr_name}'")
    when "F42_DOC"
@@ -69,8 +71,15 @@ def simsat_adc(screen, cmd)
    when "I42_CMD" 
       Osk::Ops::send_flt_cmd("I42", "#{screen.get_named_widget("I42_cmd").text}")
    when "I42_TLM"
-      # Only one option
       scr_name = "HK_TLM_PKT"
+      case screen.get_named_widget("i42_tlm").text
+      when "Actuator Cmd Data"  
+         scr_name = "ACTUATOR_CMD_DATA_PKT"
+      when "Housekeeping" 
+         scr_name = "HK_TLM_PKT"
+      when "Sensor Data"
+         scr_name = "SENSOR_DATA_PKT"
+      end
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'I42 #{scr_name}'")
    when "I42_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
@@ -145,14 +154,14 @@ def simsat_data_file(screen, cmd)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'DS #{scr_name}'")
    when "DS_TBL"
       # Set default name to first combo option to simplify logic and no error checking
-      bin_filename = FswConfigParam::DS_DEF_DEST_FILENAME
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_DS_FILE_TBL
+      # Use default temporary binary table file names in flight and ground default table server directories
+      tbl_name = FswConfigParam::DS_DESTINATION_TBL_NAME
+      tbl_mgr_def_filename = Osk::TBL_MGR_DEF_DS_FILE_TBL
       if screen.get_named_widget("ds_tbl").text == "FILTER"
-         bin_filename = FswConfigParam::DS_DEF_FILTER_FILENAME
-         tbl_mgr_filename = Osk::TBL_MGR_DEF_DS_FILTER_TBL
+         tbl_name = FswConfigParam::DS_FILTER_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_DS_FILTER_TBL
       end
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
-      
+      Osk::Ops::send_cfe_dump_tbl_cmd("DS.#{tbl_name}", tbl_mgr_def_filename)
    when "DS_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/ds/docs/users_guide/html/index.html")   
    when "FM_CMD" 
@@ -171,9 +180,9 @@ def simsat_data_file(screen, cmd)
       end
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'FM #{scr_name}'")
    when "FM_TBL"
-      bin_filename = FswConfigParam::FM_TABLE_FILENAME
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_FM_FREESPACE
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      # FM only has one table
+      # Use default temporary binary table file names in flight and ground default table server directories
+      Osk::Ops::send_cfe_dump_tbl_cmd("FM.#{FswConfigParam::FM_TABLE_CFE_NAME}", Osk::TBL_MGR_DEF_FM_FREESPACE)
    when "FM_FILE"
       bin_filename = FswConfigParam::FM_DIR_LIST_FILE_DEFNAME
       tbl_mgr_filename = Osk::TBL_MGR_DEF_FM_DIR
@@ -187,9 +196,9 @@ def simsat_data_file(screen, cmd)
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'HK #{scr_name}'")
    when "HK_TBL"
-      bin_filename = FswConfigParam::HK_COPY_TABLE_FILENAME
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_HK_COPY
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      # HK only has one table
+      # Use default temporary binary table file names in flight and ground default table server directories
+      Osk::Ops::send_cfe_dump_tbl_cmd("HK.#{FswConfigParam::HK_COPY_TBL_NAME}", Osk::TBL_MGR_DEF_HK_COPY)
    when "HK_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/hk/docs/users_guide/html/index.html")   
    when "TFTP_CMD" 
@@ -209,21 +218,40 @@ def simsat_data_file(screen, cmd)
    when "CREATE_KIT_TO_TBL"
       display("SIMSAT GEN_TLM_TBL_SCREEN",1500,50)
    when "DEMO"
-      display_scr = nil
-      case screen.get_named_widget("demo").text
-      when "File Manager"
-         display_scr = "CFS_KIT FILE_MGMT_DEMO_SCREEN"
-      when "Data Storage"
-         display_scr = "CFS_KIT RECORDER_MGMT_DEMO_SCREEN"
-      when "Data-File Mgmt"
-         display_scr = "SIMSAT DEMO_DATA_FILE_MGMT_SCREEN"
-      end
-      display(display_scr,500,50) unless display_scr.nil?
+
+      if (Osk::System.check_n_start_cfs)
+      
+         # Demo scripts manage screens & PacketViewer
+         case screen.get_named_widget("demo").text
+         when "Data-File Mgmt Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_datafile_mgmt.rb")         
+         when "FM Playback Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_playback.rb")
+         when "FM Feature Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_features.rb")
+         else
+            display_scr = nil
+            case screen.get_named_widget("demo").text
+            when "Data-File Mgmt Screen"
+               display_scr = "SIMSAT DEMO_DATA_FILE_MGMT_SCREEN"
+            when "DS Feature Screen"
+               display_scr = "CFS_KIT RECORDER_MGMT_DEMO_SCREEN"
+            when "FM Feature Screen"
+               display_scr = "CFS_KIT FILE_MGMT_DEMO_SCREEN"
+            end
+            display(display_scr,500,50) unless display_scr.nil?
+         end 
+      end # If cFS running
+      
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "#{Osk::TXT_TRAINING_VIDEO}"
-         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_COMMUNITY_APPS_DATAFILE}")      
-      when "#{Osk::TXT_TRAINING_SLIDES}"
+      when "Data-File Intro Video"
+         Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_DATAFILE)    
+      when "FM App Video"
+         Osk::education_video(FM_YOUTUBE_OVERVIEW)
+      when "Comm App Intro Video"
+         Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_INTRO)
+      when "Data-File Slides"
          spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_DATAFILE_FILE}")
       end
 
@@ -371,8 +399,8 @@ def simsat_runtime(screen, cmd)
       end
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "#{Osk::TXT_TRAINING_VIDEO}"
-         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_COMMUNITY_APPS_RUNTIME}")      
+      when "Intro Video"
+         Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_RUNTIME)    
       when "#{Osk::TXT_TRAINING_SLIDES}"
          spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_RUNTIME_FILE}")
       end

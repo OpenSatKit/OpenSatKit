@@ -85,11 +85,15 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 
 # Each target board can have its own HW arch selection and set of included apps
 SET(TGT1_NAME cpu1) 
-# Matches what is loaded by default startup script except for HC & HSIM which is not loaded but needed to build LC & SC defaults
+
 # Release: 
-SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim bm hc hsim osk_c_demo osk_cpp_demo)
+#   Not all of the apps built are loaded by cfe_es_startup.scr  
+#      HC & HSIM are needed to build LC & SC default tables
+#      Other apps such as osk_c_demo are used for the "app store" example and their object files need to be built 
+SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim bm hc hsim filemgr osk_c_demo osk_cpp_demo)
 # Development:
-#   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib kit_ci kit_sch kit_to osk_c_demo osk_cpp_demo filemgr i42 f42 cf tftp isim)
+#   Comment out Release TGT1_APPLIST and modify one of these for your your needs.
+#   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib kit_ci kit_sch kit_to osk_c_demo osk_cpp_demo filemgr)
 #   SET(TGT1_STATIC_APPLIST cfs_lib osk_c_fw osk_c_demo osk_cpp_fw osk_cpp_demo)
 #   SET(TGT1_APPLIST cfs_lib osk_c_fw osk_cpp_fw osk_c_demo osk_cpp_demo)
 #   Other OSK apps available to build: bm osk_demo_app hs cf sbn cpp_demo_app

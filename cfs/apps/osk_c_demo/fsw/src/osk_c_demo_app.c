@@ -225,59 +225,59 @@ static int32 InitApp(void)
    ** Initialize 'entity' objects
    */
  
-    DEMOBJ_Constructor(DEMOBJ_OBJ);
-    DEMOFR_Constructor(DEMOFR_OBJ, FAULTREP_OBJ);
+   DEMOBJ_Constructor(DEMOBJ_OBJ);
+   DEMOFR_Constructor(DEMOFR_OBJ, FAULTREP_OBJ);
 
-    /*
-    ** Initialize application managers
-    */
+   /*
+   ** Initialize application managers
+   */
 
-    CFE_SB_CreatePipe(&OskCDemo.CmdPipe, OSK_C_DEMO_CMD_PIPE_DEPTH, OSK_C_DEMO_CMD_PIPE_NAME);
-    CFE_SB_Subscribe(OSK_C_DEMO_CMD_MID, OskCDemo.CmdPipe);
-    CFE_SB_Subscribe(OSK_C_DEMO_SEND_HK_MID, OskCDemo.CmdPipe);
+   CFE_SB_CreatePipe(&OskCDemo.CmdPipe, OSK_C_DEMO_CMD_PIPE_DEPTH, OSK_C_DEMO_CMD_PIPE_NAME);
+   CFE_SB_Subscribe(OSK_C_DEMO_CMD_MID, OskCDemo.CmdPipe);
+   CFE_SB_Subscribe(OSK_C_DEMO_SEND_HK_MID, OskCDemo.CmdPipe);
 
-    CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "OSK_C_DEMO_InitApp() Before CMDMGR calls\n");
-    CMDMGR_Constructor(CMDMGR_OBJ);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, OSK_C_DEMO_NoOpCmd,     0);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, OSK_C_DEMO_ResetAppCmd, 0);
+   CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "OSK_C_DEMO_InitApp() Before CMDMGR calls\n");
+   CMDMGR_Constructor(CMDMGR_OBJ);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, OSK_C_DEMO_NoOpCmd,     0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, OSK_C_DEMO_ResetAppCmd, 0);
     
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_LOAD_CMD_FC,     TBLMGR_OBJ,   TBLMGR_LoadTblCmd,          TBLMGR_LOAD_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_DUMP_CMD_FC,     TBLMGR_OBJ,   TBLMGR_DumpTblCmd,          TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_ENA_TBL_DATA_CMD_FC,        DEMOBJ_OBJ,   DEMOBJ_EnableTblDataCmd,    DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_SET_ACTIVE_TBL_CMD_FC,      DEMOBJ_OBJ,   DEMOBJ_SetActiveTblCmd,     DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CFG_CMD_FC,        FAULTREP_OBJ, FaultRep_ConfigFaultDetCmd, FAULTREP_CFG_FAULT_DET_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CLR_CMD_FC,        FAULTREP_OBJ, FaultRep_ClearFaultDetCmd,  FAULTREP_CLR_FAULT_DET_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC, DEMOFR_OBJ,   DEMOFR_SetTlmModeCmd,       DEMOFR_SET_TLM_MODE_CMD_DATA_LEN);
-    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SIM_FAULT_CMD_FC,    DEMOFR_OBJ,   DEMOFR_SimFaultCmd,         DEMOFR_SIM_FAULT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_LOAD_CMD_FC,     TBLMGR_OBJ,   TBLMGR_LoadTblCmd,          TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_DUMP_CMD_FC,     TBLMGR_OBJ,   TBLMGR_DumpTblCmd,          TBLMGR_DUMP_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_ENA_TBL_DATA_CMD_FC,        DEMOBJ_OBJ,   DEMOBJ_EnableTblDataCmd,    DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_SET_ACTIVE_TBL_CMD_FC,      DEMOBJ_OBJ,   DEMOBJ_SetActiveTblCmd,     DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CFG_CMD_FC,        FAULTREP_OBJ, FaultRep_ConfigFaultDetCmd, FAULTREP_CFG_FAULT_DET_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CLR_CMD_FC,        FAULTREP_OBJ, FaultRep_ClearFaultDetCmd,  FAULTREP_CLR_FAULT_DET_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC, DEMOFR_OBJ,   DEMOFR_SetTlmModeCmd,       DEMOFR_SET_TLM_MODE_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SIM_FAULT_CMD_FC,    DEMOFR_OBJ,   DEMOFR_SimFaultCmd,         DEMOFR_SIM_FAULT_CMD_DATA_LEN);
 
-    CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "OSK_C_DEMO_InitApp() Before TBLMGR calls\n");
+   CFE_EVS_SendEvent(OSK_C_DEMO_INIT_DEBUG_EID, OSK_C_DEMO_INIT_EVS_TYPE, "OSK_C_DEMO_InitApp() Before TBLMGR calls\n");
     
-    /*
-    ** Table IDs are assigned during registration so the order is important. COSMOS cmd/tlm definitions assume
-    ** 0=XML, 1=SCANF, 2=JSON.
-    */
-    TBLMGR_Constructor(TBLMGR_OBJ);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, XMLTBL_LoadCmd,   XMLTBL_DumpCmd,   OSK_C_DEMO_XML_TBL_DEF_LOAD_FILE);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCANFTBL_LoadCmd, SCANFTBL_DumpCmd, OSK_C_DEMO_SCANF_TBL_DEF_LOAD_FILE);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, JSONTBL_LoadCmd,  JSONTBL_DumpCmd,  OSK_C_DEMO_JSON_TBL_DEF_LOAD_FILE);
+   /*
+   ** Table IDs are assigned during registration so the order is important. COSMOS cmd/tlm definitions assume
+   ** 0=XML, 1=SCANF, 2=JSON.
+   */
+   TBLMGR_Constructor(TBLMGR_OBJ);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, XMLTBL_LoadCmd,   XMLTBL_DumpCmd,   OSK_C_DEMO_XML_TBL_DEF_LOAD_FILE);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCANFTBL_LoadCmd, SCANFTBL_DumpCmd, OSK_C_DEMO_SCANF_TBL_DEF_LOAD_FILE);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, JSONTBL_LoadCmd,  JSONTBL_DumpCmd,  OSK_C_DEMO_JSON_TBL_DEF_LOAD_FILE);
 
-    FaultRep_Constructor(FAULTREP_OBJ, OSK_C_DEMO_FAULT_ID_MAX);
+   FaultRep_Constructor(FAULTREP_OBJ, OSK_C_DEMO_FAULT_ID_MAX);
     
-    CFE_SB_InitMsg(&OskCDemoFrPkt, OSK_C_DEMO_TLM_FR_MID, FAULTREP_FAULT_REP_PKT_LEN, TRUE);
+   CFE_SB_InitMsg(&OskCDemoFrPkt, OSK_C_DEMO_TLM_FR_MID, FAULTREP_FAULT_REP_PKT_LEN, TRUE);
                                           
-    CFE_SB_InitMsg(&OskCDemoHkPkt, OSK_C_DEMO_TLM_HK_MID, OSK_C_DEMO_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&OskCDemoHkPkt, OSK_C_DEMO_TLM_HK_MID, OSK_C_DEMO_TLM_HK_LEN, TRUE);
 
-    /*
-    ** Application startup event message
-    */
-    Status = CFE_EVS_SendEvent(OSK_C_DEMO_INIT_INFO_EID,
-                               CFE_EVS_INFORMATION,
-                               "OSK_C_DEMO Initialized. Version %d.%d.%d",
-                               OSK_C_DEMO_MAJOR_VER,
-                               OSK_C_DEMO_MINOR_VER,
-                               OSK_C_DEMO_LOCAL_REV);
+   /*
+   ** Application startup event message
+   */
+   Status = CFE_EVS_SendEvent(OSK_C_DEMO_INIT_INFO_EID,
+                              CFE_EVS_INFORMATION,
+                              "OSK_C_DEMO Initialized. Version %d.%d.%d",
+                              OSK_C_DEMO_MAJOR_VER,
+                              OSK_C_DEMO_MINOR_VER,
+                              OSK_C_DEMO_LOCAL_REV);
 
-    return(Status);
+   return(Status);
 
 } /* End of InitApp() */
 
@@ -307,7 +307,7 @@ static void ProcessCommands(void)
             break;
 
          case OSK_C_DEMO_SEND_HK_MID:
-            CFETBL_Manage();
+            // DR-142: CFE_TBL_Manage();
             OSK_C_DEMO_SendHousekeepingPkt();
             break;
 

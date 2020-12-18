@@ -28,34 +28,22 @@
 
 #define FILEMGR_INI_FILE_NAME  "/cf/filemgr_ini.json"
 
+
 /******************************************************************************
-** These will be moved to a JSON INI file 
+** These are frustrating. They're only needed staticlly because of the table
+** decsriptor build process. 
 */
 
-#define FILEMGR_INI_APP_NAME          "FILEMGR"
-#define FILEMGR_INI_TBL_CFE_NAME      "FileSys"
-#define FILEMGR_INI_TBL_FILENAME      "filesys_tbl.tbl"
-#define FILEMGR_INI_TBL_DEF_NAME      ("/cf/" FILEMGR_INI_TBL_FILENAME)
-#define FILEMGR_INI_TBL_DEF_DESC      "File System Free Space"
-
-#define FILEMGR_INI_TBL_ERR           (0xCF000080L)
-
-#define FILEMGR_INI_CMD_PIPE_DEPTH     10
-#define FILEMGR_INI_CMD_PIPE_NAME     "FILEMGR_CMD_PIPE"
- 
-#define FILEMGR_INI_CHILD_SEM_NAME    "FILEMGR_CHILD_SEM"
-#define FILEMGR_INI_CHILD_NAME        "FILEMGR_CHILD"
-#define FILEMGR_INI_CHILD_STACK_SIZE  20480
-#define FILEMGR_INI_CHILD_PRIORITY    205
-
+#define FILEMGR_APP_CFE_NAME   "FILEMGR"
+#define FILEMGR_TBL_CFE_NAME   "FileSys"
 
 /******************************************************************************
 ** These will be in a spec file and the toolchain will create these
 ** definitions.
 */
 
-#define FILEMGR_DIR_LIST_PKT_ENTRIES   20
-#define FILEMGR_FILESYS_TBL_VOL_CNT     8
-
+#define FILEMGR_DIR_LIST_PKT_ENTRIES     20
+#define FILEMGR_FILESYS_TBL_VOL_CNT       8
+#define FILEMGR_TASK_FILE_BLOCK_SIZE   2048  /* Chunk of file to work with for one iteration of a task like computing a CRC */
 
 #endif /* _filemgr_platform_cfg_ */

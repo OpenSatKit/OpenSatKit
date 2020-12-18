@@ -68,7 +68,7 @@ VERTICALBOX "Data/File Management"
     LABEL "   "
     LABEL "   "
 
-    LABEL "<b>/cf/simsat files</b>"
+    LABEL "<b>/cf/simsat/rec files</b>"
     VALUE FM DIR_LIST_PKT TOTALFILES FORMATTED 4
     LIMITSBAR FM DIR_LIST_PKT TOTALFILES
     LABEL "   "

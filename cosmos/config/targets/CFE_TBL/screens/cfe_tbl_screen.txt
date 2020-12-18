@@ -45,7 +45,7 @@ VERTICALBOX "Functions"
   END # Matrix
 END # Vertical
 
-VERTICALBOX "Learn"
+VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 

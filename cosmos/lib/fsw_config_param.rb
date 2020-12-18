@@ -111,6 +111,8 @@ module FswConfigParam
   FM_DIR_FILE_HDR_LEN  = 72 # Not a config parameter but FM definition
   FM_DIR_FILE_REC_LEN  = 76 # Not a config parameter but FM definition
   
+  FM_DIR_LIST_FILE_ENTRIES = 200
+  
   #########################
   ## App - House Keeping ##
   #########################

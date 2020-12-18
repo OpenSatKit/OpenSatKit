@@ -17,7 +17,7 @@ require 'cosmos/script'
 require 'osk_global'
 require 'osk_system'
 
-require 'simsat_global'
+require 'simsat_const'
 require 'tbl_tools/tlm/gen_kit_to_tbl'
 
 ################################################################################

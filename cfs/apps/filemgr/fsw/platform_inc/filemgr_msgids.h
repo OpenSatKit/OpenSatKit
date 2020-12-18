@@ -21,17 +21,17 @@
 ** Command Message IDs
 */
 
-#define FILEMGR_CMD_MID              0x188C
-#define FILEMGR_SEND_HK_MID          0x188D
+#define FILEMGR_CMD_MID              0x198C
+#define FILEMGR_SEND_HK_MID          0x198D
 
 /*
 ** Telemetry Message IDs
 */
 
-#define FILEMGR_HK_TLM_MID           0x088A 
-#define FILEMGR_FILE_INFO_TLM_MID    0x088B
-#define FILEMGR_DIR_LIST_TLM_MID     0x088C
-#define FILEMGR_OPEN_FILES_TLM_MID   0x088D
-#define FILEMGR_FILESYS_TLM_MID      0x088E
+#define FILEMGR_HK_TLM_MID           0x098A 
+#define FILEMGR_FILE_INFO_TLM_MID    0x098B
+#define FILEMGR_DIR_LIST_TLM_MID     0x098C
+#define FILEMGR_OPEN_FILES_TLM_MID   0x098D
+#define FILEMGR_FILESYS_TLM_MID      0x098E
 
 #endif /* _filemgr_msgids_ */

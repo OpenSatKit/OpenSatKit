@@ -41,6 +41,21 @@
 typedef boolean (*CMDMGR_CmdFuncPtr) (void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 /*
+** Alternate command counters allow an individual command to have its own 
+** counters. The class counters are not incremented for the command. This
+** is useful when commands are issued from onboard apps and incrementing 
+** the class command counters may be confusing to ground operations. 
+*/
+typedef struct
+{
+
+   boolean  Enabled;  /* Use alternate cmd counters */            
+   uint16   Valid;    /* Number of valid messages received since init or reset */
+   uint16   Invalid;  /* Number of invalid messages received since init or reset */
+
+} CMDMGR_AltCnt;
+
+/*
 ** Objects register their command functions so each command structure
 ** contains a pointer to the object's data and to the command function.
 */
@@ -48,9 +63,11 @@ typedef boolean (*CMDMGR_CmdFuncPtr) (void* ObjDataPtr, const CFE_SB_MsgPtr_t Ms
 typedef struct
 {
 
-   uint16             UserDataLen;    /* User data length in bytes */
+   uint16             UserDataLen;    /* User data length in bytes  */
    void*              DataPtr;
    CMDMGR_CmdFuncPtr  FuncPtr; 
+
+   CMDMGR_AltCnt      AltCnt;
 
 } CMDMGR_Cmd;
 
@@ -81,8 +98,18 @@ void CMDMGR_Constructor(CMDMGR_Class* CmdMgr);
 ** Function: CMDMGR_RegisterFunc
 **
 */
-void CMDMGR_RegisterFunc(CMDMGR_Class* CmdMgr, uint16 FuncCode, void* ObjDataPtr, 
-                         CMDMGR_CmdFuncPtr ObjFuncPtr, uint16 UserDataLen);
+boolean CMDMGR_RegisterFunc(CMDMGR_Class* CmdMgr, uint16 FuncCode, void* ObjDataPtr, 
+                            CMDMGR_CmdFuncPtr ObjFuncPtr, uint16 UserDataLen);
+
+
+/******************************************************************************
+** Function: CMDMGR_RegisterFuncAltCnt
+**
+** Register a command function that will increment its own private the alternate
+** command counters.
+*/
+boolean CMDMGR_RegisterFuncAltCnt(CMDMGR_Class* CmdMgr, uint16 FuncCode, void* ObjDataPtr, 
+                                  CMDMGR_CmdFuncPtr ObjFuncPtr, uint16 UserDataLen);
 
 
 /******************************************************************************

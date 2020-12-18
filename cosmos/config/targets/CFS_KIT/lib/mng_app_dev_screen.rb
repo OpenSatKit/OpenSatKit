@@ -16,6 +16,8 @@ Cosmos.catch_fatal_exception do
 end
 require 'osk_global'
 require 'osk_system'
+require 'osk_education'
+require 'cfs_kit_const'
 require 'create_app_screen'
 require 'app_template'
 
@@ -52,9 +54,9 @@ def mng_app_dev(screen, cmd)
 
       case screen.get_named_widget("training_video").text
       when "Create 'Hello World' App"
-         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD}")   
+         Osk::education_video(CFS_KIT_YOUTUBE_CREATE_APP_HELLO_WORLD)
       when "Inspect 'Hello World' Code"
-         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_INSPECT_HELLO_WORLD}")   
+         Osk::education_video(CFS_KIT_YOUTUBE_INSPECT_APP_HELLO_WORLD)
       end
 
   else

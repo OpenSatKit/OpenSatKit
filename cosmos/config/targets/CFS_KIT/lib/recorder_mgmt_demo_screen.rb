@@ -16,7 +16,7 @@
 require 'osk_global'
 require 'osk_system'
 require 'osk_flight'
-require 'simsat_global'
+require 'simsat_const'
 
 RMD_EVENT_FILTER_TBL_IDX = 6
 RMD_EVENT_FILE_TBL_IDX   = 0

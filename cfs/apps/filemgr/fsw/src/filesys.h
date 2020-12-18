@@ -5,7 +5,11 @@
 ** Notes:
 **   1. Refactored from NASA's FM FreeSpace table. I renamed to FileSys 
 **      because "free space" is an attrbute of a file system volume.
-**   2. Use the Singleton design pattern. A pointer to the table object
+**   2. The original design doesn't have concepts such as File and Dir
+**      objects but it did separate table from non-table functions. This
+**      design includes file system functions like "OpenFileListToPkt"
+**      because it is not operating on a File object. 
+**   3. Use the Singleton design pattern. A pointer to the table object
 **      is passed to the constructor and saved for all other operations.
 **      Note the cFE's buffers are used to store the actual data itself.
 **      This is a table-specific file so it doesn't need to be re-entrant.
@@ -47,6 +51,8 @@
 #define FILESYS_SET_TBL_STATE_ARG_ERR_EID    (FILESYS_BASE_EID + 5)
 #define FILESYS_SET_TBL_STATE_UNUSED_ERR_EID (FILESYS_BASE_EID + 6)
 #define FILESYS_SET_TBL_STATE_CMD_EID        (FILESYS_BASE_EID + 7)
+#define FILESYS_SEND_OPEN_FILES_CMD_EID      (FILESYS_BASE_EID + 8)
+
 
 /**********************/
 /** Type Definitions **/
@@ -62,8 +68,8 @@ typedef struct {
 
     uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
 
-} FILESYS_SendTblPktCmd_t;
-#define FILESYS_SEND_TBL_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendTblPktCmd_t) - CFE_SB_CMD_HDR_SIZE)
+} FILESYS_SendTblPktCmdType;
+#define FILESYS_SEND_TBL_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendTblPktCmdType) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -72,8 +78,17 @@ typedef struct {
     uint32  TblVolumeIndex;
     uint32  TblVolumeState;
 
-} FILESYS_SetTblStateCmd_t;
-#define FILESYS_SET_TBL_STATE_CMD_DATA_LEN  (sizeof(FILESYS_SetTblStateCmd_t) - CFE_SB_CMD_HDR_SIZE)
+} FILESYS_SetTblStateCmdType;
+#define FILESYS_SET_TBL_STATE_CMD_DATA_LEN  (sizeof(FILESYS_SetTblStateCmdType) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+
+} FILESYS_SendOpenFilesPktCmdType;
+#define FILESYS_SEND_OPEN_FILES_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendOpenFilesPktCmdType) - CFE_SB_CMD_HDR_SIZE)
+
 
 
 /******************************************************************************
@@ -99,6 +114,22 @@ typedef struct {
     FILESYS_PktVolume  Volume[FILEMGR_FILESYS_TBL_VOL_CNT];
                                                  
 } FILESYS_TblPkt;
+
+
+/*
+** Packet sent in response to FILESYS_SendOpenFilesPktCmd 
+** - Little risky basing telemetry packet structure on a utility's
+**   structure definition but regression testing should catch it if the
+**   structure changes. 
+*/
+
+typedef struct {
+
+   uint8   TlmHeader[CFE_SB_TLM_HDR_SIZE];
+
+   FileUtil_OpenFileList  List;
+   
+} FILESYS_OpenFilesPkt;
 
 
 /******************************************************************************
@@ -135,8 +166,25 @@ typedef struct {
 
 typedef struct {
 
+   /*
+   ** App Framework
+   */
+   
+   const char* CfeTblName;
+   FileUtil_OpenFileList OpenFileList;
+   
+   /*
+   ** Tables
+   */
+   
    FILESYS_CfeTbl  CfeTbl;
-   FILESYS_TblPkt  TblPkt;
+
+   /*
+   ** Telemetry
+   */
+   
+   FILESYS_TblPkt        TblPkt;
+   FILESYS_OpenFilesPkt  OpenFilesPkt;
 
 } FILESYS_Class;
 
@@ -174,6 +222,15 @@ void FILESYS_ResetStatus(void);
 ** Manage the cFE table interface for table loads and validation. 
 */
 void FILESYS_ManageTbl(void);
+
+
+/******************************************************************************
+** Function: FILESYS_SendOpenFilesPktCmd
+**
+** Note:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+*/
+boolean FILESYS_SendOpenFilesPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************

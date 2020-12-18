@@ -1,5 +1,6 @@
 <% 
   require 'fsw_config_param'
+  require 'fsw_const'
   require 'osk_config' 
   require 'osk_global'
 
@@ -36,8 +37,12 @@ TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.process
 TELEMETRY FM FILE_INFO_PKT <%= Osk::Cfg.processor_endian %> "Get File Info telemetry packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @FILE_INFO_TLM_MID_STR) %>
   APPEND_ITEM OPEN_STATUS    8 UINT "Status indicating whether the file is open or closed"
-    STATE FALSE   0
-    STATE TRUE    1
+    STATE INVALID FswConst::FM_NAME_IS_INVALID
+    STATE UNUSED  FswConst::FM_NAME_IS_NOT_IN_USE
+    STATE OPEN    FswConst::FM_NAME_IS_FILE_OPEN
+    STATE CLOSED  FswConst::FM_NAME_IS_FILE_CLOSED
+    STATE DIR     FswConst::FM_NAME_IS_DIRECTORY
+
   APPEND_ITEM COMPUTE_CRC    8 UINT "Boolean flag indictaing whether to compute a CRC"
     STATE FALSE   0
     STATE TRUE    1

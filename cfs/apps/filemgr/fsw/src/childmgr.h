@@ -48,7 +48,7 @@
 #define CHILDMGR_TAKE_SEM_FAILED_EID             (CHILDMGR_BASE_EID + 5)
 #define CHILDMGR_INVOKE_CHILD_ERR_EID            (CHILDMGR_BASE_EID + 6)
 #define CHILDMGR_DISPATCH_UNUSED_FUNC_CODE_EID   (CHILDMGR_BASE_EID + 7)
-
+#define CHILDMGR_DEBUG_EID                       (CHILDMGR_BASE_EID + 8)
 
 /**********************/
 /** Type Definitions **/
@@ -146,11 +146,24 @@ void CHILDMGR_ResetStatus(void);
 */
 boolean CHILDMGR_InvokeChildCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t  MsgPtr);
 
+
 /******************************************************************************
 ** Function: CHILDMGR_Task
 **
 */
 void CHILDMGR_Task(void);
+
+
+/******************************************************************************
+** Function: CHILDMGR_PauseTask
+** 
+** Notes:
+**   1. TaskBlockCnt is the count of "task blocks" performed. A task block is 
+**      is group of instructions that is CPU intensive and may need to be 
+**      periodically suspended to prevent CPU hogging.
+**
+*/
+boolean CHILDMGR_PauseTask(uint16* TaskBlockCnt, uint16 TaskBlockLim, uint32 TaskBlockDelayMs);
 
 
 #endif /* _childmgr_ */

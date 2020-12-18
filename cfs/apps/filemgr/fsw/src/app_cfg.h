@@ -27,7 +27,7 @@
 
 #include "filemgr_platform_cfg.h"
 #include "osk_c_fw.h"
-
+#include "inilib.h"
 
 /******************************************************************************
 ** Application Macros
@@ -43,39 +43,103 @@
 #define  FILEMGR_MINOR_VER      0
 #define  FILEMGR_LOCAL_REV      0
 
-/*
-** INI File
+/******************************************************************************
+**  INI File
 */
 
 #define  FILEMGR_INI_MAX_STRINGS 20
 
 /******************************************************************************
-** Command Macros
+** Init File declarations create:
+**
+**  typedef enum {
+**     CMD_PIPE_DEPTH,
+**     CMD_PIPE_NAME
+**  } INITBL_ConfigEnum;
+**    
+**  typedef struct {
+**     CMD_PIPE_DEPTH,
+**     CMD_PIPE_NAME
+**  } INITBL_ConfigStruct;
+**
+**   const char *GetConfigStr(value);
+**   ConfigEnum GetConfigVal(const char *str);
+**
+** XX(name,type)
 */
 
-#define FILEMGR_TBL_LOAD_CMD_FC             (CMDMGR_APP_START_FC +  0)
-#define FILEMGR_TBL_DUMP_CMD_FC             (CMDMGR_APP_START_FC +  1)
+#define CFG_APP_CFE_NAME           APP_CFE_NAME
 
-#define FILECMD_COPY_CMD_FC                 (CMDMGR_APP_START_FC +  2)
-#define FILECMD_MOVE_CMD_FC                 (CMDMGR_APP_START_FC +  3) 
-#define FILECMD_RENAME_CMD_FC               (CMDMGR_APP_START_FC +  4)
-#define FILECMD_DELETE_CMD_FC               (CMDMGR_APP_START_FC +  5)
-#define FILECMD_DECOMPRESS_CMD_FC           (CMDMGR_APP_START_FC +  6)
-#define FILECMD_CONCAT_CMD_FC               (CMDMGR_APP_START_FC +  7)
-#define FILECMD_DELETE_INT_CMD_FC           (CMDMGR_APP_START_FC +  8)
-#define FILECMD_SET_PERMISSIONS_CMD_FC      (CMDMGR_APP_START_FC +  9)
-#define FILECMD_SEND_INFO_CMD_FC            (CMDMGR_APP_START_FC + 10)
-#define FILECMD_SEND_OPEN_FILES_PKT_CMD_FC  (CMDMGR_APP_START_FC + 11)
+#define CFG_CMD_PIPE_DEPTH         CMD_PIPE_DEPTH
+#define CFG_CMD_PIPE_NAME          CMD_PIPE_NAME
+      
+#define CFG_TBL_CFE_NAME           TBL_CFE_NAME
+#define CFG_TBL_DEF_FILENAME       TBL_DEF_FILENAME
+#define CFG_TBL_ERR_CODE           TBL_ERR_CODE
+      
+#define CFG_DIR_LIST_FILE_DEFNAME  DIR_LIST_FILE_DEFNAME
+#define CFG_DIR_LIST_FILE_SUBTYPE  DIR_LIST_FILE_SUBTYPE
+#define CFG_DIR_LIST_FILE_ENTRIES  DIR_LIST_FILE_ENTRIES
+      
+#define CFG_CHILD_SEM_NAME         CHILD_SEM_NAME
+#define CFG_CHILD_NAME             CHILD_NAME
+#define CFG_CHILD_STACK_SIZE       CHILD_STACK_SIZE
+#define CFG_CHILD_PRIORITY         CHILD_PRIORITY
+      
+#define CFG_TASK_FILE_BLOCK_CNT    TASK_FILE_BLOCK_CNT
+#define CFG_TASK_FILE_BLOCK_DELAY  TASK_FILE_BLOCK_DELAY
+#define CFG_TASK_FILE_STAT_CNT     TASK_FILE_STAT_CNT
+#define CFG_TASK_FILE_STAT_DELAY   TASK_FILE_STAT_DELAY
 
-#define DIRCMD_CREATE_CMD_FC                (CMDMGR_APP_START_FC + 12)
-#define DIRCMD_DELETE_CMD_FC                (CMDMGR_APP_START_FC + 13)
-#define DIRCMD_DELETE_ALL_CMD_FC            (CMDMGR_APP_START_FC + 14)
-#define DIRCMD_WRITE_DIR_FILE_CMD_FC        (CMDMGR_APP_START_FC + 15)
-#define DIRCMD_SEND_DIR_PKT_CMD_FC          (CMDMGR_APP_START_FC + 16)
 
-#define FILESYS_SEND_TBL_PKT_CMD_FC         (CMDMGR_APP_START_FC + 17)
-#define FILESYS_SET_TBL_STATE_CMD_FC        (CMDMGR_APP_START_FC + 18)
+#define APP_CONFIG(XX) \
+   XX(APP_CFE_NAME,char*) \
+   XX(CMD_PIPE_DEPTH,uint32) \
+   XX(CMD_PIPE_NAME,char*) \
+   XX(TBL_CFE_NAME,char*) \
+   XX(TBL_DEF_FILENAME,char*) \
+   XX(TBL_ERR_CODE,uint32) \
+   XX(DIR_LIST_FILE_DEFNAME,char*) \
+   XX(DIR_LIST_FILE_SUBTYPE,uint32) \
+   XX(DIR_LIST_FILE_ENTRIES,uint32) \
+   XX(CHILD_SEM_NAME,char*) \
+   XX(CHILD_NAME,char*) \
+   XX(CHILD_STACK_SIZE,uint32) \
+   XX(CHILD_PRIORITY,uint32) \
+   XX(TASK_FILE_BLOCK_CNT,uint32) \
+   XX(TASK_FILE_BLOCK_DELAY,uint32) \
+   XX(TASK_FILE_STAT_CNT,uint32) \
+   XX(TASK_FILE_STAT_DELAY,uint32) \
 
+
+/******************************************************************************
+** Command Macros
+** - Commands implmented by child task are annotated with a comment
+** - Load/dump table definitions are placeholders for JSON table
+*/
+
+#define FILEMGR_TBL_LOAD_CMD_FC            (CMDMGR_APP_START_FC +  0)
+#define FILEMGR_TBL_DUMP_CMD_FC            (CMDMGR_APP_START_FC +  1)
+
+#define FILE_COPY_CMD_FC                   (CMDMGR_APP_START_FC +  2) /* Child */
+#define FILE_MOVE_CMD_FC                   (CMDMGR_APP_START_FC +  3) /* Child */
+#define FILE_RENAME_CMD_FC                 (CMDMGR_APP_START_FC +  4) /* Child */
+#define FILE_DELETE_CMD_FC                 (CMDMGR_APP_START_FC +  5) /* Child */
+#define FILE_DECOMPRESS_CMD_FC             (CMDMGR_APP_START_FC +  6) /* Child */
+#define FILE_CONCAT_CMD_FC                 (CMDMGR_APP_START_FC +  7) /* Child */
+#define FILE_DELETE_ALT_CMD_FC             (CMDMGR_APP_START_FC +  8) /* Child */
+#define FILE_SET_PERMISSIONS_CMD_FC        (CMDMGR_APP_START_FC +  9) /* Child */
+#define FILE_SEND_INFO_CMD_FC              (CMDMGR_APP_START_FC + 10) /* Child */
+
+#define DIR_CREATE_CMD_FC                  (CMDMGR_APP_START_FC + 11) /* Child */
+#define DIR_DELETE_CMD_FC                  (CMDMGR_APP_START_FC + 12) /* Child */
+#define DIR_DELETE_ALL_CMD_FC              (CMDMGR_APP_START_FC + 13) /* Child */
+#define DIR_WRITE_LIST_FILE_CMD_FC         (CMDMGR_APP_START_FC + 14) /* Child */
+#define DIR_SEND_LIST_PKT_CMD_FC           (CMDMGR_APP_START_FC + 15) /* Child */
+
+#define FILESYS_SEND_OPEN_FILES_PKT_CMD_FC (CMDMGR_APP_START_FC + 16)
+#define FILESYS_SEND_TBL_PKT_CMD_FC        (CMDMGR_APP_START_FC + 17)
+#define FILESYS_SET_TBL_STATE_CMD_FC       (CMDMGR_APP_START_FC + 18)
 
 /******************************************************************************
 ** Event Macros
@@ -86,11 +150,11 @@
 */
 
 #define FILEMGR_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
-#define CHILDMGR_BASE_EID (OSK_C_FW_APP_BASE_EID + 10)
-#define DIRCMD_BASE_EID   (OSK_C_FW_APP_BASE_EID + 20)
-#define FILECMD_BASE_EID  (OSK_C_FW_APP_BASE_EID + 30)
-#define FILESYS_BASE_EID  (OSK_C_FW_APP_BASE_EID + 40)
-
+#define CHILDMGR_BASE_EID (OSK_C_FW_APP_BASE_EID + 20)
+#define DIR_BASE_EID      (OSK_C_FW_APP_BASE_EID + 40)
+#define FILE_BASE_EID     (OSK_C_FW_APP_BASE_EID + 60)
+#define FILESYS_BASE_EID  (OSK_C_FW_APP_BASE_EID + 80)
+#define INILIB_BASE_EID   (OSK_C_FW_APP_BASE_EID + 90)
 
 /******************************************************************************
 ** Child Manager

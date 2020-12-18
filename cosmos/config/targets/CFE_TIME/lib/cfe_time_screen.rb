@@ -11,7 +11,8 @@
 ################################################################################
 
 require 'osk_ops'
-require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/tutorial_screen.rb"
+require 'osk_education'
+require 'cfe_time_const'
 
 ################################################################################
 ## GUI Send Commands
@@ -35,7 +36,7 @@ def cfe_time_scr_cmd(screen, cmd)
       when "cFE Training Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
       when "Time Exercise Script"
-         launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "TIME")
+         Osk::education_tutorial(Osk::TUTORIAL_SCRIPT, "cfe", "TIME")
       when "cFE Exercise Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
       end

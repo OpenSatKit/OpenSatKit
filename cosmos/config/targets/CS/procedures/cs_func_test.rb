@@ -19,7 +19,7 @@ class CsFuncTest < Cosmos::Test
    
    def initialize
       super()
-      app_func_test_init("CS", Fsw::MsgId::CS_CMD_MID)
+      @app = app_func_test_init("CS")
    end
 
    def setup
