@@ -31,7 +31,7 @@
 #define FILEUTIL_DIR_SEP_CHAR '/'
 #define FILEUTIL_DIR_SEP_STR  "/"
 
-#define FILEUTIL_THIS_DIR     "."
+#define FILEUTIL_CURRENT_DIR  "."
 #define FILEUTIL_PARENT_DIR   ".."
 
 /*
@@ -64,15 +64,19 @@ typedef enum {
 
 #define FILEUTIL_FILE_EXISTS(state) ((state==FILEUTIL_FILE_OPEN) || (state==FILEUTIL_FILE_CLOSED))
 
+/*
+** File Information
+*/
+
 typedef struct {
 
    boolean IncludeSizeTime;
    uint32  Size;
    uint32  Time;
+   uint32  Mode;
    FileUtil_FileState State;
 
 } FileUtil_FileInfo;
-
 
 typedef struct {
 
@@ -82,10 +86,16 @@ typedef struct {
 } FileUtil_CheckFileState;
 
 
+/* 
+** Contains file information from the cFE's perspective which means 
+** the information is based on app's that have used the cFE's file
+** API.
+*/
 typedef struct {
 
    char    Filename[OS_MAX_PATH_LEN];
    char    AppName[OS_MAX_API_NAME];
+
 
 } FileUtil_OpenFileEntry;
 
@@ -106,7 +116,8 @@ typedef struct {
 /******************************************************************************
 ** Function: FileUtil_AppendPathSep
 **
-** Append a path separator to a directory path. 
+** Append a path separator to a directory path. If DirName already ends in a 
+** path separator it doesn't modify DirName.
 ** 
 ** Returns FALSE if invalid string length or appending the separator would
 ** exceed the BufferLen.
@@ -118,23 +129,23 @@ boolean FileUtil_AppendPathSep(char *DirName, uint16 BufferLen);
 /******************************************************************************
 ** Function: FileUtil_GetFileInfo
 **
-** First verifies the filename string itself nad determines the file state and
+** First verifies the filename string itself and determines the file state and
 ** returns file state (FileUtil_FileState) and optionally includes the file size
 ** and time for existing files.
 */
-FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, boolean IncludeSizeTime);
+FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint16 FilenameBufLen, boolean IncludeSizeTime);
 
 
 /******************************************************************************
 ** Function: FileUtil_GetOpenFileList
 **
-** Loads the caller suppliedd OpenFileList data structure with the number of
+** Loads the caller supplied OpenFileList data structure with the number of
 ** open files and details about each. 
 **
-** Returns teh number of open files as a convenience even though it's contained
+** Returns the number of open files as a convenience even though it's contained
 ** in the OpenFileList data struture.
 */
-uint16 FileUtil_LoadOpenFileList(FileUtil_OpenFileList *OpenFileList);
+uint16 FileUtil_GetOpenFileList(FileUtil_OpenFileList *OpenFileList);
 
 
 /******************************************************************************

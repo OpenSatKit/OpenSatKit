@@ -165,6 +165,15 @@ module Fsw
       F42_CTRL_TLM_MID       = "0x09D1"
       F42_CTRL_GAINS_TLM_MID = "0x09D2"
       
+      # File Manager
+
+      FILEMGR_CMD_MID            = "0x198C"
+      FILEMGR_HK_TLM_MID         = "0x098A"
+      FILEMGR_FILE_INFO_TLM_MID  = "0x098B"
+      FILEMGR_DIR_LIST_TLM_MID   = "0x098C"
+      FILEMGR_OPEN_FILES_TLM_MID = "0x098D"
+      FILEMGR_FILESYS_TLM_MID    = "0x098E"
+
       # Heater Control
   
       HC_CMD_MID       = "0x19A0"

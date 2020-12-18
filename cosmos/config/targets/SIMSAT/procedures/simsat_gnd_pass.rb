@@ -40,7 +40,7 @@ require 'osk_ops'
 #
 
 simsat_ops_status = "Ground Pass: Downlink event message log"
-#Osk::Ops::send_flt_bin_file_cmd("CFE_EVS", "WRITE_LOG_TO_FILE with ", Osk::TBL_MGR_DEF_CFE_EVS_LOG)
+Osk::Ops::send_flt_bin_file_cmd("CFE_EVS", "WRITE_LOG_TO_FILE with ", Osk::TBL_MGR_DEF_CFE_EVS_LOG)
 
 if (tlm("CFE_EVS HK_TLM_PKT LOG_FULL_FLAG") == 1) 
    wait # TODO - close and downlink DS event log
@@ -61,7 +61,8 @@ message_box("Housekeeping missed auxiliary packets. This unexpectedly occurs and
 message_box("An error occurred with a stored command relatve time sequence",false) unless (tlm("SC HK_TLM_PKT RTS_ACTIVE_ERR_CTR") == 0)
 
 simsat_ops_status = "Review event log file displayed in Table Manager"
-wait # Review event log file displayed in Table Manager
+status_bar("Review event log file displayed in Table Manager")
+wait  # <Go> to continue
 
 # Establish known state to simplify error checks on next pass
 

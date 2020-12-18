@@ -25,7 +25,7 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_ops'
 
-require 'simsat_global'
+require 'simsat_const'
 
 #
 # Configure global variables and utility functions
@@ -104,7 +104,8 @@ simsat_create_ops_screen
 # 7. Simulate a ground pass after a fault
 #
 
-wait # Click <Go> when done reading the scenario
+status_bar("Review scenario")
+wait  # <Go> to continue
 
 
 #######################################
@@ -175,7 +176,8 @@ simsat_ops_status = "Ground pass"
 start("simsat_gnd_pass.rb")
 
 simsat_ops_status = "Completed a ground pass. No errors and successful recorder mgmt. Review flt/gnd simsat dir"
-wait # Review flight/ground simsat directories
+status_bar("Completed a ground pass. Review flight/ground simsat directories")
+wait  # <Go> to continue
 
 ################################################################
 ## 5. Continue science ops without downlink then inject a fault
@@ -184,7 +186,9 @@ wait # Review flight/ground simsat directories
 
 simsat_ops_status = "Simulating an instrument fault. LC/SC will respond."
 simsat_isim_set_fault
-wait # Observe automated response
+
+status_bar("Observe response to ISIM fault")
+wait  # <Go> to continue
 
 ###############################
 ## 7. Simulate a ground pass
@@ -196,7 +200,8 @@ wait # Observe automated response
 start("simsat_gnd_pass.rb")
 
 simsat_ops_status = "Completed a ground pass with errors. Review current flight software state"
-wait # Review current flight software state
+status_bar("Completed a ground pass with errors; review current flight software state")
+wait  # <Go> to continue
 
 ###############################
 ## 8. Clean up

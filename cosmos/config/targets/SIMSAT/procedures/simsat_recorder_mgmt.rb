@@ -26,7 +26,7 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_flight'
 require 'osk_ops'
-require 'simsat_global'
+require 'simsat_const'
 
 #
 # 1. Create and downlink a directory listing of the onboard 'recorder'

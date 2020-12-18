@@ -32,8 +32,9 @@ require 'osk_system'
 require 'osk_flight'
 require 'osk_ops'
 
-require 'simsat_global'
+require 'simsat_const'
 require 'simsat_isim_mgmt'
+require 'simsat_req_tlm'
 
 require 'thread'
 
@@ -93,7 +94,7 @@ def simsat_ops_example_setup(start_cfs)
 
    # Background thread works within TlmViewer scripting context and not
    # ScriptRunner so it will keep executing.
-   $request_tlm = ReqTlmThread.new
+   $request_tlm = SimSatReqTlm.new
    
    Osk::flight.cfe_time.send_cmd("SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0")
    Osk::flight.cfe_time.send_cmd("SET_CLOCK with SECONDS 0, MICROSECONDS 0") 
@@ -154,37 +155,3 @@ def simsat_ops_example_teardown
    Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{$SIMSAT_SCH_TBL_FLT_FILENAME}")  
 
 end # simsat_ops_example_teardown()
-
-
-#
-# Generating the local screen creates warnings that can be ignored
-#
-class ReqTlmThread < Thread
-
-   def initialize
-      @ops_active = true
-    
-      super do
-    
-         while (@ops_active)
-         
-            Osk::flight.send_cmd("DS","SEND_FILE_INFO")
-            wait 2
-         
-            Osk::flight.send_cmd("FM","SEND_DIR_PKT with DIRECTORY #{SimSat::FLT_REC_DIR}, DIR_LIST_OFFSET 0")
-            wait 2
-
-            @ops_active = !File.exist?(SimSat::GND2FSW_STOP_OPS_FILE)
-
-         end # while simsat_ops_enable
-    
-      end # super
-      
-   end # initialize () 
-    
-   def stop
-      @op_active = false
-   end
-    
-end # Class ReqTlmThread
-

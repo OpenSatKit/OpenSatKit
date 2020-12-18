@@ -18,6 +18,11 @@
 #define _ini_lib_
 
 
+
+#define INILIB_TYPE_INT  "uint32"
+#define INILIB_TYPE_STR  "char*"
+
+
 /******************************************************************************
 ** Enumeration Macros
 **
@@ -35,13 +40,18 @@
 /* expansion macro for enum to string conversion */
 #define ENUM_CASE(name,type) case name: return #name;
 
+/* expansion macro for enum to type string conversion */
+#define ENUM_TYPE_CASE(name,type) case name: return #type;
+
 /* expansion macro for string to enum conversion */
 #define ENUM_STRCMP(name,type) if (!strcmp(str,#name)) return name;
 
 /* declare the access function and define enum values */
 #define DECLARE_ENUM(TypeName,ENUM_DEF) \
   typedef enum { \
+    CFG_ENUM_START = 0, \
     ENUM_DEF(ENUM_VALUE) \
+    CFG_ENUM_END \
   } INITBL_##TypeName##Enum; \
   typedef struct { \
     ENUM_DEF(STRUCT_VALUE) \
@@ -52,6 +62,7 @@
 #define DEFINE_ENUM(TypeName,ENUM_DEF) \
   static const char *Get##TypeName##Str(INITBL_##TypeName##Enum value); \
   static INITBL_##TypeName##Enum Get##TypeName##Val(const char *string); \
+  static const char *Get##TypeName##Type(INITBL_##TypeName##Enum value); \
   static const char *Get##TypeName##Str(INITBL_##TypeName##Enum value) \
   { \
     switch(value) \
@@ -64,6 +75,14 @@
   { \
     ENUM_DEF(ENUM_STRCMP) \
     return (INITBL_##TypeName##Enum)0; /* handle input error */ \
+  } \
+  static const char *Get##TypeName##Type(INITBL_##TypeName##Enum value) \
+  { \
+    switch(value) \
+    { \
+      ENUM_DEF(ENUM_TYPE_CASE) \
+      default: return ""; /* handle input error */ \
+    } \
   } \
   
   

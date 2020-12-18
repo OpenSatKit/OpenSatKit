@@ -22,11 +22,12 @@ require 'ccsds'
 require 'osk_global'
 require 'osk_system'
 require 'osk_flight'
+require 'osk_education'
 require 'fsw_app'
 require 'simsat_ops_example_utils' 
 require 'simsat_recorder_mgmt' 
 require 'user_version'
-
+require 'cfs_kit_const'
 require 'fileutils'
 
 ################################################################################
@@ -73,15 +74,15 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
       if user_selection == "About"
          about_str = ["Quick access to common commands used to configure the system:", 
                       "                                                 ",
-                      "<b>Enable Telemetry</b> - Command telemetry output app to enable sending telemetry to COSMOS.",
-                      "<b>Reset Time</b> - Set cFS time to 0.",
-                      "<b>Ena/Dis Gnd Cmd Validation</b> - Enable/Disable ground verification of command counters using telemetry. Command verification slows system response.",
-                      "<b>Config App Events</b> - Enable/Disable event types for an application. Typically used for debugging."]
+                      "<pre><b>Enable Telemetry</b>       - Command telemetry output app to enable sending telemetry to COSMOS.</pre>",
+                      "<pre><b>Reset Time</b>             - Set cFS time to 0.</pre>",
+                      "<pre><b>Ena/Dis Gnd Cmd Verify</b> - Enable/Disable ground verification of command counters using telemetry. Command verification slows system response.</pre>",
+                      "<pre><b>Config App Events</b>      - Enable/Disable event types for an application. Typically used for debugging.</pre>"]
          cfs_kit_create_about_screen("Configure System",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
          case user_selection
-         when "Enable Tlm"
+         when "Enable Telemetry"
             # Don't use Osk::flight because cmd validation would fail
             cmd("KIT_TO ENABLE_TELEMETRY")
          when "Reset Time"
@@ -109,10 +110,10 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
                       "<pre>   <b>cFE Services</b>   - Access to resources for each of the cFE services</pre>",
                       "      ",
                       "<b>This Drop Down Menu</b>",
-                      "<pre>   <b>SimSat Overview</b> - Describe Simple Sat reference architecture and operational contect.</pre>",
-                      "<pre>   <b>OSK Quick Start</b> - Highlights OSK features to allow a user to start experimenting.</pre>",
-                      "<pre>   <b>OSK Users Guide</b> - Indepth description of all of the OSKs features with some design descriptions.</pre>",            
-                      "<pre>   <b>OSK Version IDs</b> - Display version identifiers for all OSK components.</pre>"]
+                      "<pre>   <b>OSK Overview Video</b> - Introduces OSK and its goals.</pre>",
+                      "<pre>   <b>OSK Quick Start</b>    - Highlights OSK features to allow a user to start experimenting.</pre>",
+                      "<pre>   <b>OSK Users Guide</b>    - Indepth description of all of the OSKs features with some design descriptions.</pre>",            
+                      "<pre>   <b>OSK Version IDs</b>    - Display version identifiers for all OSK components.</pre>"]
          cfs_kit_create_about_screen("Learn OSK",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       when "OSK Version IDs"
@@ -129,45 +130,51 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          #             " "]
          #cfs_kit_create_about_screen("Version: #{USER_VERSION}",about_str)
          #display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      when "OSK Overview Video"
+         Osk::education_video(CFS_KIT_YOUTUBE_OSK_OVERVIEW)
       else 
          # Displaying a document
-         # Default to first choice - "SimpleSat Overview"
-         doc_dir_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
+         doc_filename = nil
          case user_selection
          when "OSK Quick Start"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QUICK_START_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QUICK_START_FILE}"
          when "OSK Users Guide"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_USERS_GUIDE_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_USERS_GUIDE_FILE}"
          end
-         spawn("evince #{doc_dir_filename}")
+         spawn("evince #{doc_filename}") unless doc_filename.nil?
       end
       
    when "LEARN_CFS"
       user_selection = screen.get_named_widget("learn_cfs").text
       if user_selection == "About"
-         about_str = ["<b>cFS Training Intro</b> - Overview of cFS program, business model and architecture.",
-                      "<b>cFE Service Training</b> - Describes Core Flight Executive five services.",
-                      "<b>OSK cFE Exercises</b> - Exercises for the cFE Service Training module.",
-                      "<b>cFE App Training</b> - Describes cFE application development and runtime environment.",
-                      "<b>OSK cFE Exercises</b> - Exercises for the cFE Application Training module."]        
+         about_str = ["<pre><b>cFS Overview Video</b>   - Overview of the core Flight System (cFS) architecture.</pre>",
+                      "<pre><b>cFS Build Video</b>      - How to compile/link the core Flight System (cFS)</pre>",
+                      "<pre><b>cFS Training Intro</b>   - Overview of cFS program, business model and architecture.</pre>",
+                      "<pre><b>cFE Service Training</b> - Describes Core Flight Executive five services.</pre>",
+                      "<pre><b>OSK cFE Exercises</b>    - Exercises for the cFE Service Training module.</pre>",
+                      "<pre><b>cFE App Training</b>     - Describes cFE application development and runtime environment.</pre>",
+                      "<pre><b>OSK cFE Exercises</b>    - Exercises for the cFE Application Training module.</pre>"]        
          cfs_kit_create_about_screen("Learn cFS",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
-         # Default to first choice - SimpleSat_Overview
-         doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_INTRO_FILE}"
+         doc_filename = nil
          case user_selection
+         when "cFS Overview Video"
+            Osk::education_video(CFS_KIT_YOUTUBE_CFS_OVERVIEW)
+         when "cFS Build Video"
+            Osk::education_video(CFS_KIT_YOUTUBE_CFS_BUILD_OVERVIEW)
          when "cFS Training Intro"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFS_INTRO_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFS_INTRO_FILE}"
          when "cFE Service Training"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_SERVICE_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_SERVICE_FILE}"
          when "OSK cFE Exercises"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_SERVICE_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_SERVICE_FILE}"
          when "cFE App Training"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_APP_DEV_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_APP_DEV_FILE}"
          when "OSK cFE App Exercises"
-            doc_dir_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_APP_DEV_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_APP_DEV_FILE}"
          end
-         spawn("evince #{doc_dir_filename}")
+         spawn("evince #{doc_filename}") unless doc_filename.nil?
       end
       
    when "SIMPLE_SAT"
@@ -176,27 +183,35 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          about_str = ["Run scripts that work with the SimpleSat reference mission. Refer to <i>'SimpleSat Overview'</i> doc accessed",
                       "using the <i>'Learn OpenSatKit'</i> drop down menu.",
                       "                                             " ,                     
-                      "<b>Functional Test</b> - Verify requirements. Uses Test Runner with 3 test suites: cFS, OSK, Mission.",
-                      "<b>Integration Test</b> - Verify basic app functionality as a part of the SimSat system. Uses Script Runner.",
-                      "<b>Ops Example</b> - Configures SimSat and performs a single operational contact. Uses Script Runner."]            
+                      "<pre><b>SimSat Overview</b>  - Describe Simple Sat reference architecture and operational contect.</pre>",
+                      "<pre><b>Functional Test</b>  - Verify requirements. Uses Test Runner with 3 test suites: cFS, OSK, Mission.</pre>",
+                      "<pre><b>Integration Test</b> - Verify basic app functionality as a part of the SimSat system. Uses Script Runner.</pre>",
+                      "<pre><b>Ops Example</b>      - Configures SimSat and performs a single operational contact. Uses Script Runner.</pre>"]            
          cfs_kit_create_about_screen("Simple Sat",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
-         cfs_started = Osk::System.check_n_start_cfs
          case user_selection
-         when "Functional Test"
-            # Test suite file defined in  ~\cosmos\config\tools\test_runner\test_runner.txt
-            spawn("ruby #{Osk::COSMOS_TST_RUNNER}")
-         when "Integration Test"
-            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")
-            display("SIMSAT CFS_APP_SCREEN",50,50)
-            display("SIMSAT OSK_MISS_APP_SCREEN",1500,50)
-         when "Ops Example"
-            # No need to display a screen because a local screen is created by simsat_ops_example
-            status_bar("Preparing for ops example. This could take several seconds.")
-            simsat_ops_example_setup(!cfs_started) # If cFS wasn't just restarted then force a restart 
-            status_bar("Spawning Script Runner to run the ops example script.")
-            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
+         when "SimpleSat Overview"
+            doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
+            spawn("evince #{doc_filename}")
+         else
+            # Running a script
+            cfs_started = Osk::System.check_n_start_cfs
+            case user_selection         
+            when "Functional Test"
+               # Test suite file defined in  ~\cosmos\config\tools\test_runner\test_runner.txt
+               spawn("ruby #{Osk::COSMOS_TST_RUNNER}")
+            when "Integration Test"
+               spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")
+               display("SIMSAT CFS_APP_SCREEN",50,50)
+               display("SIMSAT OSK_MISS_APP_SCREEN",1500,50)
+            when "Ops Example"
+               # No need to display a screen because a local screen is created by simsat_ops_example
+               status_bar("Preparing for ops example. This could take several seconds.")
+               simsat_ops_example_setup(!cfs_started) # If cFS wasn't just restarted then force a restart 
+               status_bar("Spawning Script Runner to run the ops example script.")
+               spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
+            end
          end
       end
 

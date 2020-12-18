@@ -83,8 +83,8 @@ FILESYS_TblData FILESYS_Tbl =
 */
 static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 {
-    "FILESYS_Tbl", FILEMGR_INI_APP_NAME "." FILEMGR_INI_TBL_CFE_NAME,
-    FILEMGR_INI_TBL_DEF_DESC, FILEMGR_INI_TBL_FILENAME, sizeof(FILESYS_TblData)
+    "FILESYS_Tbl", FILEMGR_APP_CFE_NAME "." FILEMGR_TBL_CFE_NAME,
+    "File System Free Space", "filesys_tbl.tbl", sizeof(FILESYS_TblData)
 };
 
 /* TODO - Macro chokes on FILESYS_* macro lengths 

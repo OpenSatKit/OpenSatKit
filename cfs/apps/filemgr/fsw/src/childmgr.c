@@ -19,8 +19,11 @@
 ** Include Files:
 */
 
-#include "childmgr.h"
 #include <string.h>
+
+#include "childmgr.h"
+#include "initbl.h"
+
 
 /***********************/
 /** Macro Definitions **/
@@ -58,7 +61,7 @@ int32 CHILDMGR_Constructor(CHILDMGR_Class* ChildMgrPtr)
    int i;
 
    int32 RetStatus;
-   char  FailedFuncStr[32];
+   char  FailedFuncStr[32] = "\0";
    
    ChildMgr = ChildMgrPtr;
    
@@ -69,7 +72,7 @@ int32 CHILDMGR_Constructor(CHILDMGR_Class* ChildMgrPtr)
    }
 
    /* Create counting semaphore (given by parent to wake-up child) */
-   RetStatus = OS_CountSemCreate(&ChildMgr->WakeUpSemaphore, FILEMGR_INI_CHILD_SEM_NAME, 0, 0);
+   RetStatus = OS_CountSemCreate(&ChildMgr->WakeUpSemaphore, INITBL_GetStrConfig(CFG_CHILD_SEM_NAME), 0, 0);
    
    if (RetStatus == CFE_SUCCESS) {
       
@@ -78,10 +81,10 @@ int32 CHILDMGR_Constructor(CHILDMGR_Class* ChildMgrPtr)
       if (RetStatus == CFE_SUCCESS) {      
 
          RetStatus = CFE_ES_CreateChildTask(&ChildMgr->TaskId,
-                                            FILEMGR_INI_CHILD_NAME,
+                                            INITBL_GetStrConfig(CFG_CHILD_NAME),
                                             CHILDMGR_Task, 0,
-                                            FILEMGR_INI_CHILD_STACK_SIZE,
-                                            FILEMGR_INI_CHILD_PRIORITY, 0);
+                                            INITBL_GetIntConfig(CFG_CHILD_STACK_SIZE),
+                                            INITBL_GetIntConfig(CFG_CHILD_PRIORITY), 0);
          if (RetStatus != CFE_SUCCESS) { 
             strcpy(FailedFuncStr, "CFE_ES_CreateChildTask()");
          }
@@ -117,7 +120,6 @@ void CHILDMGR_RegisterFunc(uint16 FuncCode, void* ObjDataPtr, CHILDMGR_CmdFuncPt
 
    if (FuncCode < CHILDMGR_CMD_FUNC_TOTAL) {
 
-      if (DBG_CHILDMGR) OS_printf("CHILDMGR_RegisterFunc(): FuncCode %d\n", FuncCode);
       ChildMgr->Cmd[FuncCode].DataPtr = ObjDataPtr;
       ChildMgr->Cmd[FuncCode].FuncPtr = ObjFuncPtr;
    
@@ -169,10 +171,9 @@ void CHILDMGR_Task(void)
       while (Status == CFE_SUCCESS) {
          
          CFE_ES_PerfLogExit(FILEMGR_CHILD_TASK_PERF_ID); 
-         OS_printf("CHILDMGR_Task() Before OS_CountSemTake(ChildMgr->WakeUpSemaphore=%d)\n",ChildMgr->WakeUpSemaphore);         
+         //~~OS_printf("CHILDMGR_Task() Before OS_CountSemTake(ChildMgr->WakeUpSemaphore=%d)\n",ChildMgr->WakeUpSemaphore);         
          Status = OS_CountSemTake(ChildMgr->WakeUpSemaphore); /* Pend until parent app gives semaphore */
-         OS_printf("CHILDMGR_Task() After OS_CountSemTake(ChildMgr->WakeUpSemaphore=%d), Status = 0x%4X\n",
-                  ChildMgr->WakeUpSemaphore, Status);         
+         //~~OS_printf("CHILDMGR_Task() After OS_CountSemTake(ChildMgr->WakeUpSemaphore=%d), Status = 0x%4X\n", ChildMgr->WakeUpSemaphore, Status);         
          CFE_ES_PerfLogEntry(FILEMGR_CHILD_TASK_PERF_ID); 
 
          if (Status == CFE_SUCCESS) {
@@ -238,7 +239,7 @@ boolean CHILDMGR_InvokeChildCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t  MsgPtr)
 {
 
    boolean RetStatus = FALSE;
-   char EventErrStr[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+   char EventErrStr[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH] = "\0";
    uint16 MsgLen;
    
    uint8 LocalQueueCount = ChildMgr->CmdQ.Count; /* Use local instance during checks */
@@ -246,8 +247,9 @@ boolean CHILDMGR_InvokeChildCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t  MsgPtr)
    
    sprintf(EventErrStr, "Error dispatching commmand function %d. Undefined error", CmdCode);
    
-   OS_printf("CHILDMGR_InvokeChildCmd() Entry: fc=%d, ChildMgr->WakeUpSemaphore=%d,WriteIdx=%d,ReadIdx=%d,Count=%d\n",
-             CmdCode,ChildMgr->WakeUpSemaphore,ChildMgr->CmdQ.WriteIndex,ChildMgr->CmdQ.ReadIndex,ChildMgr->CmdQ.Count);
+   CFE_EVS_SendEvent(CHILDMGR_DEBUG_EID, CFE_EVS_DEBUG,
+      "CHILDMGR_InvokeChildCmd() Entry: fc=%d, ChildMgr->WakeUpSemaphore=%d,WriteIdx=%d,ReadIdx=%d,Count=%d\n",
+      CmdCode,ChildMgr->WakeUpSemaphore,ChildMgr->CmdQ.WriteIndex,ChildMgr->CmdQ.ReadIndex,ChildMgr->CmdQ.Count);
 
    /*
    ** Verify child task is active and queue interface is healthy
@@ -293,7 +295,7 @@ boolean CHILDMGR_InvokeChildCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t  MsgPtr)
          /* Does the child task still have a semaphore? */
          if (ChildMgr->WakeUpSemaphore != CHILDMGR_SEM_INVALID) {
             
-           OS_printf("CHILDMGR_InvokeChildCmd() Before OS_CountSemGive(ChildMgr->WakeUpSemaphore=%d)\n",ChildMgr->WakeUpSemaphore);
+           //~~OS_printf("CHILDMGR_InvokeChildCmd() Before OS_CountSemGive(ChildMgr->WakeUpSemaphore=%d)\n",ChildMgr->WakeUpSemaphore);
            OS_CountSemGive(ChildMgr->WakeUpSemaphore); /* Signal child task to call command handler */
          
          }
@@ -320,6 +322,32 @@ boolean CHILDMGR_InvokeChildCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t  MsgPtr)
 
 } /* End CHILDMGR_InvokeChildCmd() */
 
+
+/******************************************************************************
+** Function: CHILDMGR_PauseTask
+** 
+*/
+boolean CHILDMGR_PauseTask(uint16* TaskBlockCnt, uint16 TaskBlockLim, uint32 TaskBlockDelayMs) 
+{
+   
+   boolean TaskPaused = FALSE;
+   
+   (*TaskBlockCnt)++;
+   if (*TaskBlockCnt >= TaskBlockLim) {
+                    
+      CFE_ES_PerfLogExit(FILEMGR_CHILD_TASK_PERF_ID);
+      OS_TaskDelay(TaskBlockDelayMs);
+      CFE_ES_PerfLogEntry(FILEMGR_CHILD_TASK_PERF_ID);
+      
+      *TaskBlockCnt = 0;
+  
+      TaskPaused = TRUE;
+  
+   }
+ 
+   return TaskPaused; 
+   
+} /* End CHILDMGR_PauseTask() */
 
 
 /******************************************************************************
@@ -364,8 +392,9 @@ static void DispatchCmdFunc(void)
    --ChildMgr->CmdQ.Count;
    OS_MutSemGive(ChildMgr->CmdQ.Mutex);
 
-   OS_printf("DispatchCmdFunc() Exit: ChildMgr->WakeUpSemaphore=%d,WriteIdx=%d,ReadIdx=%d,Count=%d\n",
-             ChildMgr->WakeUpSemaphore,ChildMgr->CmdQ.WriteIndex,ChildMgr->CmdQ.ReadIndex,ChildMgr->CmdQ.Count);
+   CFE_EVS_SendEvent (CHILDMGR_DEBUG_EID, CFE_EVS_DEBUG,
+      "DispatchCmdFunc() Exit: ChildMgr->WakeUpSemaphore=%d,WriteIdx=%d,ReadIdx=%d,Count=%d\n",
+      ChildMgr->WakeUpSemaphore,ChildMgr->CmdQ.WriteIndex,ChildMgr->CmdQ.ReadIndex,ChildMgr->CmdQ.Count);
 
 } /* End DispatchCmdFunc() */
 

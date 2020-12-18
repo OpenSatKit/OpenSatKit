@@ -24,8 +24,8 @@
 
 #include "app_cfg.h"
 #include "childmgr.h"
-#include "dircmd.h"
-#include "filecmd.h"
+#include "dir.h"
+#include "file.h"
 #include "filesys.h"
 #include "initbl.h"
 
@@ -93,27 +93,31 @@ typedef struct {
 
    /* 
    ** App Framework
-   */   
-   INITBL_Class     IniTbl; 
-   CFE_SB_PipeId_t  CmdPipe;
-   CMDMGR_Class     CmdMgr;
-   TBLMGR_Class     TblMgr;
+   */ 
    
-   CHILDMGR_Class   ChildMgr;
+   INITBL_Class    IniTbl; 
+   CFE_SB_PipeId_t CmdPipe;
+   CMDMGR_Class    CmdMgr;
+   TBLMGR_Class    TblMgr;
+   
+   CHILDMGR_Class  ChildMgr;
+   
+   FileUtil_OpenFileList OpenFileList;
    
    /*
    ** Telemetry Packets
    */
-
-
+   
+   FILEMGR_HkPkt  HkPkt;
+   
    /*
    ** App Objects
    */ 
        
-   DIRCMD_Class     DirCmd;
-   FILECMD_Class    FileCmd;
-   FILESYS_Class    FileSys;
-
+   DIR_Class      Dir;
+   FILE_Class     File;
+   FILESYS_Class  FileSys;
+ 
 } FILEMGR_Class;
 
 

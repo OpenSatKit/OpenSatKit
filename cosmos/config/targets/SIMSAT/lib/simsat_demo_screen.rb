@@ -15,7 +15,7 @@
 require 'osk_ops'
 require 'fsw_const'
 
-require 'simsat_global'
+require 'simsat_const'
 require 'simsat_ops_example_utils'
 require 'simsat_isim_mgmt'
 require 'simsat_recorder_mgmt'
@@ -91,7 +91,7 @@ def simsat_demo_data_file(screen, cmd)
       return unless Osk::System.check_n_start_cfs
       
       #
-      # 1. Create simsat recorder directory, can't assuem it exists
+      # 1. Create simsat recorder directory, can't assumes it exists
       # 2. Configure ISIM to science mode
       # 3. Enable DS to create files
       # 4. Start background script to request FM and DS status packets
@@ -100,12 +100,7 @@ def simsat_demo_data_file(screen, cmd)
       Thread.new {
       
          # 1.  Create simsat recorder directory
-         seq_count = tlm("FM FILE_INFO_PKT CCSDS_SEQUENCE")
-         Osk::flight.send_cmd("FM","SEND_FILE_INFO with FILENAME #{SimSat::FLT_REC_DIR}")
-         wait("FM FILE_INFO_PKT CCSDS_SEQUENCE != #{seq_count}", 5)
-         if (tlm("FM FILE_INFO_PKT SIZE") == 0)
-            Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{SimSat::FLT_REC_DIR}")
-         end
+         Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)
          
          # 2. Configure ISIM to science mode
          simsat_isim_pwr_on
@@ -116,11 +111,9 @@ def simsat_demo_data_file(screen, cmd)
          Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 0, FILE_STATE 1") # Enable Event file
          wait 1
          Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 6, FILE_STATE 1") # Enable Science Auxiliary file
-         wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 6)
-         wait("DS FILE_INFO_PKT FILE7_ENABLE == 1", 6)
 
          # 4. Start background script to request FM and DS status packets
-         $request_tlm = ReqTlmThread.new
+         $request_tlm = SimSatReqTlm.new
       
       } # End thread
       

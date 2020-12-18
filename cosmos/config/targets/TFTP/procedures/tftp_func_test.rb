@@ -19,7 +19,7 @@ class TftpFuncTest < Cosmos::Test
    
    def initialize
       super()
-      app_func_test_init("TFTP", Fsw::MsgId::TFTP_CMD_MID)
+      @app = app_func_test_init("TFTP")
    end
 
    def setup

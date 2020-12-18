@@ -28,42 +28,8 @@
 /** Local Functions **/
 /*********************/
 
-/******************************************************************************
-** Function: CheckFileOpenState
-**
-** Callback function for OS_ForEachObject() to check whether a file is open.
-** This function is tightly coupledd with FileUtil_GetFileInfo() so only set
-** File->IsOpen if a file is verified as open otherwise preserve the state.  
-**
-*/
-static void CheckFileOpenState(uint32 ObjId, void* CallbackArg)
-{
-   
-   FileUtil_CheckFileState* FileState = (FileUtil_CheckFileState *)CallbackArg;
-   OS_file_prop_t FileProp;
-
-   if(FileState == (FileUtil_CheckFileState *)NULL) {
-      return;
-   }
-   else if (FileState->Name == (char *)NULL) {
-      return;
-   }
-   
-   /*
-   ** Get system info for stream objects and compare names
-   */
-   if(OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
-      
-      if (OS_FDGetInfo(ObjId, &FileProp) == OS_FS_SUCCESS) {
-         
-         if (strcmp(FileState->Name, FileProp.Path) == 0) {
-            
-            FileState->IsOpen = TRUE;
-         }
-      }
-   }
-
-} /* End CheckFileOpenState() */
+static void CheckFileOpenState(uint32 ObjId, void* CallbackArg);
+static void LoadOpenFileData(uint32 ObjId, void* CallbackArg);
 
 
 /************************/
@@ -99,6 +65,10 @@ boolean FileUtil_AppendPathSep(char *DirName, uint16 BufferLen)
    
          }      
       } /* End if no path separator */
+      else {
+          RetStatus = TRUE;
+      }
+      
    } /* End if valid string length */
 
    return RetStatus;
@@ -112,7 +82,7 @@ boolean FileUtil_AppendPathSep(char *DirName, uint16 BufferLen)
 ** Return file state (FileUtil_FileState) and optionally include the file size
 ** and time for existing files.
 */
-FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, boolean IncludeSizeTime)
+FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint16 FilenameBufLen, boolean IncludeSizeTime)
 {
    
    os_fstat_t               FileStatus;
@@ -122,6 +92,7 @@ FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, bo
    FileInfo.IncludeSizeTime = IncludeSizeTime;
    FileInfo.Size  = 0;
    FileInfo.Time  = 0;
+   FileInfo.Mode  = 0;
    FileInfo.State = FILEUTIL_FILE_NAME_INVALID;
 
    /* TODO - Fix all file utilities to accept a length parameter with a OS_MAX_PATH_LEN check */
@@ -133,8 +104,10 @@ FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint32 FilenameBufLen, bo
 
    if (FileUtil_VerifyFilenameStr(Filename)) {
       
-      /* Check to see if Filename is in use */
+      /* Check to see if Filename is exists */
       if (OS_stat(Filename, &FileStatus) == OS_SUCCESS) {
+         
+         FileInfo.Mode = OS_FILESTAT_MODE(FileStatus);
          
          if (OS_FILESTAT_ISDIR(FileStatus)) {
             
@@ -204,40 +177,13 @@ const char* FileUtil_FileStateStr(FileUtil_FileState  FileState)
 } /* End FileUtil_FileStateStr() */
 
 
-static void LoadOpenFileData(uint32 ObjId, void* CallbackArg)
-{
-   FileUtil_OpenFileList *OpenFileList = (FileUtil_OpenFileList*)CallbackArg;
-   CFE_ES_TaskInfo_t      TaskInfo;
-   OS_file_prop_t         FdProp;
+/******************************************************************************
+** Function: FileUtil_GetOpenFileList
+**
+** Type checking should enforce valid parameter but check just to be safe.
+*/
 
-   if(OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
-      
-      if(OpenFileList != (FileUtil_OpenFileList*) NULL) {
-         
-         if(OS_FDGetInfo(ObjId, &FdProp) == OS_SUCCESS) {
-            
-            strncpy(OpenFileList->Entry[OpenFileList->OpenCount].Filename,
-                    FdProp.Path, OS_MAX_PATH_LEN);
-
-            /* Get the name of the application that opened the file */
-            memset(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
-
-            if(CFE_ES_GetTaskInfo(&TaskInfo, FdProp.User) == CFE_SUCCESS) {
-               
-               strncpy(OpenFileList->Entry[OpenFileList->OpenCount].AppName,
-                       (char*)TaskInfo.AppName, OS_MAX_API_NAME);
-            }
-         }
-      } 
-
-      ++OpenFileList->OpenCount;
-   }
-
-} /* End LoadOpenFileData() */
-
-
-
-uint16 FileUtil_LoadOpenFileList(FileUtil_OpenFileList *OpenFileList)
+uint16 FileUtil_GetOpenFileList(FileUtil_OpenFileList *OpenFileList)
 {
     OpenFileList->OpenCount = 0;
     
@@ -392,4 +338,81 @@ boolean FileUtil_VerifyDirForWrite(const char* Filename)
   return RetStatus;
 
 } /* End FileUtil_VerifyDirForWrite() */
+
+
+/******************************************************************************
+** Function: CheckFileOpenState
+**
+** Callback function for OS_ForEachObject() to check whether a file is open.
+** This function is tightly coupledd with FileUtil_GetFileInfo() so only set
+** File->IsOpen if a file is verified as open otherwise preserve the state.  
+**
+*/
+static void CheckFileOpenState(uint32 ObjId, void* CallbackArg)
+{
+   
+   FileUtil_CheckFileState* FileState = (FileUtil_CheckFileState *)CallbackArg;
+   OS_file_prop_t FileProp;
+
+   if(FileState == (FileUtil_CheckFileState *)NULL) {
+      return;
+   }
+   else if (FileState->Name == (char *)NULL) {
+      return;
+   }
+   
+   /*
+   ** Get system info for stream objects and compare names
+   */
+   if(OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
+      
+      if (OS_FDGetInfo(ObjId, &FileProp) == OS_FS_SUCCESS) {
+         
+         if (strcmp(FileState->Name, FileProp.Path) == 0) {
+            
+            FileState->IsOpen = TRUE;
+         }
+      }
+   }
+
+} /* End CheckFileOpenState() */
+
+
+/******************************************************************************
+** Function: LoadOpenFileData
+**
+** Notes:
+**  1. Callback function for OS_ForEachObject()
+*/
+static void LoadOpenFileData(uint32 ObjId, void* CallbackArg)
+{
+   FileUtil_OpenFileList *OpenFileList = (FileUtil_OpenFileList*)CallbackArg;
+   CFE_ES_TaskInfo_t      TaskInfo;
+   OS_file_prop_t         FdProp;
+
+   if(OS_IdentifyObject(ObjId) == OS_OBJECT_TYPE_OS_STREAM) {
+      
+      if(OpenFileList != (FileUtil_OpenFileList*) NULL) {
+         
+         if(OS_FDGetInfo(ObjId, &FdProp) == OS_SUCCESS) {
+            
+            strncpy(OpenFileList->Entry[OpenFileList->OpenCount].Filename,
+                    FdProp.Path, OS_MAX_PATH_LEN);
+
+            /* Get the name of the application that opened the file */
+            memset(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+
+            if(CFE_ES_GetTaskInfo(&TaskInfo, FdProp.User) == CFE_SUCCESS) {
+               
+               strncpy(OpenFileList->Entry[OpenFileList->OpenCount].AppName,
+                       (char*)TaskInfo.AppName, OS_MAX_API_NAME);
+            }
+         }
+      } 
+
+      ++OpenFileList->OpenCount;
+   }
+
+} /* End LoadOpenFileData() */
+
 

@@ -106,6 +106,50 @@ module Ops
    end # load_app()
 
    ############################################################################
+   ##  File & Directory Management
+   ############################################################################
+
+   #
+   # Create a directory 
+   # - Note size can be 0 for an empty directory when checking if it exists so
+   #   also check mod time. 
+   #
+   def self.create_flt_dir(dir_name)
+
+      seq_count = tlm("FM FILE_INFO_PKT CCSDS_SEQUENCE")
+      Osk::flight.send_cmd("FM","SEND_FILE_INFO with FILENAME #{dir_name}")
+      wait("FM FILE_INFO_PKT CCSDS_SEQUENCE != #{seq_count}", 5)
+      if (tlm("FM FILE_INFO_PKT SIZE") == 0 and tlm("FM FILE_INFO_PKT LAST_MOD_TIME") == 0)
+         Osk::flight.send_cmd("FM","CREATE_DIR with DIRECTORY #{dir_name}")
+      end
+
+   end # create_flt_dir()
+   
+   
+   def self.delete_flt_file(filename)
+
+      seq_count = tlm("FM FILE_INFO_PKT CCSDS_SEQUENCE")
+      Osk::flight.send_cmd("FM","SEND_FILE_INFO with FILENAME #{filename}")
+      wait("FM FILE_INFO_PKT CCSDS_SEQUENCE != #{seq_count}", 5)
+      if (tlm("FM FILE_INFO_PKT SIZE") != 0 or tlm("FM FILE_INFO_PKT LAST_MOD_TIME") != 0)
+         Osk::flight.send_cmd("FM","DELETE_FILE with FILENAME #{filename}")
+      end
+
+   end # create_flt_file()
+
+   def self.delete_flt_dir(dir_name)
+
+      seq_count = tlm("FM FILE_INFO_PKT CCSDS_SEQUENCE")
+      Osk::flight.send_cmd("FM","SEND_FILE_INFO with FILENAME #{dir_name}")
+      wait("FM FILE_INFO_PKT CCSDS_SEQUENCE != #{seq_count}", 5)
+      if (tlm("FM FILE_INFO_PKT SIZE") != 0 or tlm("FM FILE_INFO_PKT LAST_MOD_TIME") != 0)
+         Osk::flight.send_cmd("FM","DELETE_DIR with DIRECTORY #{dir_name}")
+      end
+
+   end # create_flt_dir()
+
+
+   ############################################################################
    ##  File Transfer
    ############################################################################
 
@@ -212,7 +256,7 @@ module Ops
       if (Osk::flight.app[app_name].send_cmd(cmd_str, Osk::OVERRIDE_TO_TRUE))  # Force validation because some file writes take a while
          
          if (prompt)
-            get_file = combo_box("Transfer file from flight to ground and display it?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+            get_file = message_box("#{app_name} created #{flt_path_filename}.\n\nWould you like to transfer the file from flight to ground and display it in Table Manager?\n", Osk::MSG_BUTTON_YES, Osk::MSG_BUTTON_NO,false)
          else
             get_file = Osk::MSG_BUTTON_YES
          end
@@ -224,7 +268,23 @@ module Ops
          raise_exception "osk_ops.send_flt_bin_file_cmd() - #{app_name} command '#{cmd_str}' failed"
       end
    end # send_flt_bin_file_cmd()
-   
+ 
+   #
+   # Uses generic send_flt_bin_file_cmd() to do the heavy listing but simplifies the user interface for the common
+   # task of dumping and displaying cFE tables.
+   #
+   # Initial version intentionally kept simple. The interface should only be made more complex if the needed arises.
+   # 1. Always dump the active table
+   # 2. Always use the ground table server location   
+   #
+   def self.send_cfe_dump_tbl_cmd(tbl_name, tbl_mgr_def_filename, flt_tbl_path_filename: Osk::TMP_FLT_TBL_PATH_FILE, prompt: true)
+
+      send_flt_bin_file_cmd("CFE_TBL", 
+         "DUMP_TBL with ACTIVE_TBL_FLAG #{Fsw::Const::CFE_TBL_BufferSelect_ACTIVE}, TABLE_NAME #{tbl_name}, ", 
+         tbl_mgr_def_filename, flt_path_filename: flt_tbl_path_filename, gnd_rel_path: REL_SRV_TBL_DIR, prompt: true)
+
+   end # send_flt_bin_file_cmd()
+ 
    #
    # 1. Transfer a binary file from flight to ground 
    # 2. Launch COSMOS Table Manager tool to display the file if 

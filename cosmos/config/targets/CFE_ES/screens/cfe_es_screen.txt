@@ -45,7 +45,7 @@ VERTICALBOX "Functions"
   END # Matrix
 END # Vertical
 
-VERTICALBOX "Learn"
+VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 
@@ -54,7 +54,7 @@ VERTICALBOX "Learn"
     LABEL "    "
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX "cFE Training Slides" "ES Exercise Script" "cFE Exercise Slides"
+    NAMED_WIDGET tutorial COMBOBOX "cFE Training Slides" "cFE Exercise Slides" "ES Exercise Script" "Perf Mon Training Video"
     LABEL "    "
 
   END # Matrix

@@ -19,7 +19,7 @@ class KitSchFuncTest < Cosmos::Test
     
    def initialize
       super()
-      app_func_test_init("KIT_SCH", Fsw::MsgId::KIT_SCH_CMD_MID)
+      @app = app_func_test_init("KIT_SCH")
    end
 
    def setup

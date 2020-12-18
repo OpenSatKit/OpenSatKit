@@ -35,7 +35,7 @@ VERTICALBOX "Ground Interface"
 END # Vertical
   
   
-VERTICALBOX "Learn"
+VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 

@@ -291,6 +291,17 @@
                "offset":  0,
                "msg-idx": 43
             }},
+            
+            {"activity": {
+               "name":    "FILEMGR Housekeeping",
+               "descr":   "",
+               "index":   7,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 47
+            }},
+
 
             {"activity": {
                "name":    "HC Housekeeping",

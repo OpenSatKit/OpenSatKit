@@ -28,8 +28,8 @@
 #define  CMDMGR_OBJ   (&(FileMgr.CmdMgr))
 #define  TBLMGR_OBJ   (&(FileMgr.TblMgr))    
 #define  CHILDMGR_OBJ (&(FileMgr.ChildMgr))
-#define  DIRCMD_OBJ   (&(FileMgr.DirCmd))
-#define  FILECMD_OBJ  (&(FileMgr.FileCmd))
+#define  DIR_OBJ      (&(FileMgr.Dir))
+#define  FILE_OBJ     (&(FileMgr.File))
 #define  FILESYS_OBJ  (&(FileMgr.FileSys))
 
 
@@ -45,8 +45,6 @@ static int32 InitApp(void);
 /*****************/
 
 FILEMGR_Class   FileMgr;
-FILEMGR_HkPkt   FileMgrHkPkt;
-
 
 /******************************************************************************
 ** Function: FILEMGR_AppMain
@@ -90,12 +88,12 @@ void FILEMGR_AppMain(void)
          switch (MsgId) {
             
             case FILEMGR_CMD_MID:
-               OS_printf("FILEMGR_AppMain:: Calling CMDMGR_DispatchFunc fc=%d\n",CFE_SB_GetCmdCode(CmdMsgPtr));
+               //~~OS_printf("FILEMGR_AppMain:: Calling CMDMGR_DispatchFunc fc=%d\n",CFE_SB_GetCmdCode(CmdMsgPtr));
                CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
                break;
 
             case FILEMGR_SEND_HK_MID:
-               //OS_printf("FILEMGR_AppMain:: FILESYS_ManageTbl() and FILEMGR_SendHousekeepingPkt()\n");
+               //~~OS_printf("FILEMGR_AppMain:: FILESYS_ManageTbl() and FILEMGR_SendHousekeepingPkt()\n");
                FILESYS_ManageTbl();
                FILEMGR_SendHousekeepingPkt();
                break;
@@ -155,8 +153,8 @@ boolean FILEMGR_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    CMDMGR_ResetStatus(CMDMGR_OBJ);
    TBLMGR_ResetStatus(TBLMGR_OBJ);
 
-   DIRCMD_ResetStatus();
-   FILECMD_ResetStatus();
+   DIR_ResetStatus();
+   FILE_ResetStatus();
    FILESYS_ResetStatus();
 	  
    return TRUE;
@@ -170,23 +168,23 @@ boolean FILEMGR_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 */
 void FILEMGR_SendHousekeepingPkt(void)
 {
+   
+   FileMgr.HkPkt.CommandCounter    = FileMgr.CmdMgr.ValidCmdCnt;
+   FileMgr.HkPkt.CommandErrCounter = FileMgr.CmdMgr.InvalidCmdCnt;
 
-   FileMgrHkPkt.CommandCounter    = FileMgr.CmdMgr.ValidCmdCnt;
-   FileMgrHkPkt.CommandErrCounter = FileMgr.CmdMgr.InvalidCmdCnt;
+   FileMgr.HkPkt.NumOpenFiles = FileUtil_GetOpenFileList(&FileMgr.OpenFileList);
 
-   FileMgrHkPkt.NumOpenFiles = FileUtil_LoadOpenFileList(&FileMgr.FileCmd.OpenFileList);
-
-   FileMgrHkPkt.ChildCmdCounter     = FileMgr.ChildMgr.ValidCmdCnt;
-   FileMgrHkPkt.ChildCmdErrCounter  = FileMgr.ChildMgr.InvalidCmdCnt;
-   FileMgrHkPkt.ChildCmdWarnCounter = FileMgr.FileCmd.WarnCmdCnt + FileMgr.DirCmd.WarnCmdCnt;
+   FileMgr.HkPkt.ChildCmdCounter     = FileMgr.ChildMgr.ValidCmdCnt;
+   FileMgr.HkPkt.ChildCmdErrCounter  = FileMgr.ChildMgr.InvalidCmdCnt;
+   FileMgr.HkPkt.ChildCmdWarnCounter = FileMgr.File.CmdWarningCnt + FileMgr.Dir.CmdWarningCnt;
  
-   FileMgrHkPkt.ChildQueueCount = FileMgr.ChildMgr.CmdQ.Count;
+   FileMgr.HkPkt.ChildQueueCount = FileMgr.ChildMgr.CmdQ.Count;
 
-   FileMgrHkPkt.ChildCurrentCC  = FileMgr.ChildMgr.CurrCmdCode;
-   FileMgrHkPkt.ChildPreviousCC = FileMgr.ChildMgr.PrevCmdCode;
+   FileMgr.HkPkt.ChildCurrentCC  = FileMgr.ChildMgr.CurrCmdCode;
+   FileMgr.HkPkt.ChildPreviousCC = FileMgr.ChildMgr.PrevCmdCode;
 
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FileMgrHkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &FileMgrHkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FileMgr.HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &FileMgr.HkPkt);
 
 } /* End FILEMGR_SendHousekeepingPkt() */
 
@@ -195,7 +193,7 @@ void FILEMGR_SendHousekeepingPkt(void)
 ** Function: InitApp
 **
 */
-#define CFG_APP_STRUCT(item)   FileMgr.IniTbl.Config.Item.item
+//~~#define CFG_APP_STRUCT(item)   FileMgr.IniTbl.Config.Item.item
 
 static int32 InitApp(void)
 {
@@ -206,22 +204,22 @@ static int32 InitApp(void)
    ** Initialize objects 
    */
 
-   INITBL_Constructor(&FileMgr.IniTbl);
+   INITBL_Constructor(&FileMgr.IniTbl, FILEMGR_INI_FILE_NAME);
    
    Status = CHILDMGR_Constructor(CHILDMGR_OBJ); /* Constructor sends error events */
    
    if (Status == CFE_SUCCESS) {
 
-      DIRCMD_Constructor(DIRCMD_OBJ);
-      FILECMD_Constructor(FILECMD_OBJ);
+      DIR_Constructor(DIR_OBJ);
+      FILE_Constructor(FILE_OBJ);
       FILESYS_Constructor(FILESYS_OBJ);
 
 
       /*
       ** Initialize app level interfaces
       */
-
-      CFE_SB_CreatePipe(&FileMgr.CmdPipe, CFG_APP_STRUCT(CFG_CMD_PIPE_DEPTH), CFG_APP_STRUCT(CFG_CMD_PIPE_NAME));
+      
+      CFE_SB_CreatePipe(&FileMgr.CmdPipe, INITBL_GetIntConfig(CFG_CMD_PIPE_DEPTH), INITBL_GetStrConfig(CFG_CMD_PIPE_NAME));  
       CFE_SB_Subscribe(FILEMGR_CMD_MID, FileMgr.CmdPipe);
       CFE_SB_Subscribe(FILEMGR_SEND_HK_MID, FileMgr.CmdPipe);
 
@@ -229,28 +227,47 @@ static int32 InitApp(void)
       CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,   NULL, FILEMGR_NoOpCmd,     0);
       CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC,  NULL, FILEMGR_ResetAppCmd, 0);
 
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIRCMD_CREATE_CMD_FC,     DIRCMD_OBJ, CHILDMGR_InvokeChildCmd, DIRCMD_CREATE_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIRCMD_DELETE_CMD_FC,     DIRCMD_OBJ, CHILDMGR_InvokeChildCmd, DIRCMD_DELETE_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIRCMD_DELETE_ALL_CMD_FC, DIRCMD_OBJ, CHILDMGR_InvokeChildCmd, DIRCMD_DELETE_ALL_CMD_DATA_LEN);
-      CHILDMGR_RegisterFunc(DIRCMD_CREATE_CMD_FC,     DIRCMD_OBJ, DIRCMD_Create);
-      CHILDMGR_RegisterFunc(DIRCMD_DELETE_CMD_FC,     DIRCMD_OBJ, DIRCMD_Delete);
-      CHILDMGR_RegisterFunc(DIRCMD_DELETE_ALL_CMD_FC, DIRCMD_OBJ, DIRCMD_DeleteAll);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIR_CREATE_CMD_FC,          DIR_OBJ, CHILDMGR_InvokeChildCmd, DIR_CREATE_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIR_DELETE_CMD_FC,          DIR_OBJ, CHILDMGR_InvokeChildCmd, DIR_DELETE_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIR_DELETE_ALL_CMD_FC,      DIR_OBJ, CHILDMGR_InvokeChildCmd, DIR_DELETE_ALL_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIR_SEND_LIST_PKT_CMD_FC,   DIR_OBJ, CHILDMGR_InvokeChildCmd, DIR_SEND_LIST_PKT_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, DIR_WRITE_LIST_FILE_CMD_FC, DIR_OBJ, CHILDMGR_InvokeChildCmd, DIR_WRITE_LIST_FILE_CMD_DATA_LEN);
+      CHILDMGR_RegisterFunc(DIR_CREATE_CMD_FC,          DIR_OBJ, DIR_CreateCmd);
+      CHILDMGR_RegisterFunc(DIR_DELETE_CMD_FC,          DIR_OBJ, DIR_DeleteCmd);
+      CHILDMGR_RegisterFunc(DIR_DELETE_ALL_CMD_FC,      DIR_OBJ, DIR_DeleteAllCmd);
+      CHILDMGR_RegisterFunc(DIR_SEND_LIST_PKT_CMD_FC,   DIR_OBJ, DIR_SendListPktCmd);
+      CHILDMGR_RegisterFunc(DIR_WRITE_LIST_FILE_CMD_FC, DIR_OBJ, DIR_WriteListFileCmd);
 
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILECMD_COPY_CMD_FC,   FILECMD_OBJ, CHILDMGR_InvokeChildCmd, FILECMD_COPY_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILECMD_DELETE_CMD_FC, FILECMD_OBJ, CHILDMGR_InvokeChildCmd, FILECMD_DELETE_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILECMD_MOVE_CMD_FC,   FILECMD_OBJ, CHILDMGR_InvokeChildCmd, FILECMD_MOVE_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILECMD_RENAME_CMD_FC, FILECMD_OBJ, CHILDMGR_InvokeChildCmd, FILECMD_RENAME_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILECMD_SET_PERMISSIONS_CMD_FC, FILECMD_OBJ, CHILDMGR_InvokeChildCmd, FILECMD_SET_PERMISSIONS_CMD_DATA_LEN);
-      CHILDMGR_RegisterFunc(FILECMD_COPY_CMD_FC,   FILECMD_OBJ, FILECMD_Copy);
-      CHILDMGR_RegisterFunc(FILECMD_DELETE_CMD_FC, FILECMD_OBJ, FILECMD_Delete);
-      CHILDMGR_RegisterFunc(FILECMD_MOVE_CMD_FC,   FILECMD_OBJ, FILECMD_Move);
-      CHILDMGR_RegisterFunc(FILECMD_RENAME_CMD_FC, FILECMD_OBJ, FILECMD_Rename);
-      CHILDMGR_RegisterFunc(FILECMD_SET_PERMISSIONS_CMD_FC, FILECMD_OBJ, FILECMD_SetPermissions);
 
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILESYS_SEND_TBL_PKT_CMD_FC,  FILESYS_OBJ, FILESYS_SendTblPktCmd,  FILESYS_SEND_TBL_PKT_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILESYS_SET_TBL_STATE_CMD_FC, FILESYS_OBJ, FILESYS_SetTblStateCmd, FILESYS_SET_TBL_STATE_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_CONCAT_CMD_FC,    FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_CONCATENATE_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_COPY_CMD_FC,      FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_COPY_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_DECOMPRESS_CMD_FC,FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_DECOMPRESS_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_DELETE_CMD_FC,    FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_DELETE_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_MOVE_CMD_FC,      FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_MOVE_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_RENAME_CMD_FC,    FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_RENAME_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_SEND_INFO_CMD_FC, FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_SEND_INFO_PKT_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILE_SET_PERMISSIONS_CMD_FC, FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_SET_PERMISSIONS_CMD_DATA_LEN);
+      CHILDMGR_RegisterFunc(FILE_CONCAT_CMD_FC,    FILE_OBJ, FILE_ConcatenateCmd);
+      CHILDMGR_RegisterFunc(FILE_COPY_CMD_FC,      FILE_OBJ, FILE_CopyCmd);
+      CHILDMGR_RegisterFunc(FILE_DECOMPRESS_CMD_FC,FILE_OBJ, FILE_DecompressCmd);
+      CHILDMGR_RegisterFunc(FILE_DELETE_CMD_FC,    FILE_OBJ, FILE_DeleteCmd);
+      CHILDMGR_RegisterFunc(FILE_MOVE_CMD_FC,      FILE_OBJ, FILE_MoveCmd);
+      CHILDMGR_RegisterFunc(FILE_RENAME_CMD_FC,    FILE_OBJ, FILE_RenameCmd);
+      CHILDMGR_RegisterFunc(FILE_SEND_INFO_CMD_FC, FILE_OBJ, FILE_SendInfoPktCmd);
+      CHILDMGR_RegisterFunc(FILE_SET_PERMISSIONS_CMD_FC, FILE_OBJ, FILE_SetPermissionsCmd);
 
-      CFE_SB_InitMsg(&FileMgrHkPkt, FILEMGR_HK_TLM_MID, FILEMGR_TLM_HK_LEN, TRUE);
+      /* 
+      ** Alternative commands don't increment the main command counters. They do increment the child command counters which mimics
+      ** the original FM app behavior, but I'm not sure that's desirable since the child counters are also used by ground ops.
+      */
+      CMDMGR_RegisterFuncAltCnt(CMDMGR_OBJ, FILE_DELETE_ALT_CMD_FC, FILE_OBJ, CHILDMGR_InvokeChildCmd, FILE_DELETE_CMD_DATA_LEN);
+      CHILDMGR_RegisterFunc(FILE_DELETE_ALT_CMD_FC, FILE_OBJ, FILE_DeleteCmd);
+ 
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILESYS_SEND_OPEN_FILES_PKT_CMD_FC,  FILESYS_OBJ, FILESYS_SendOpenFilesPktCmd,  FILESYS_SEND_OPEN_FILES_PKT_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILESYS_SEND_TBL_PKT_CMD_FC,         FILESYS_OBJ, FILESYS_SendTblPktCmd,        FILESYS_SEND_TBL_PKT_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, FILESYS_SET_TBL_STATE_CMD_FC,        FILESYS_OBJ, FILESYS_SetTblStateCmd,       FILESYS_SET_TBL_STATE_CMD_DATA_LEN);
+
+      CFE_SB_InitMsg(&FileMgr.HkPkt, FILEMGR_HK_TLM_MID, FILEMGR_TLM_HK_LEN, TRUE);
 
 	   TBLMGR_Constructor(TBLMGR_OBJ);
    

@@ -1,2 +1,0 @@
-Slot Activity Enabled Frequency Offset MsgTblIdx StreamId
-  0     0      false  

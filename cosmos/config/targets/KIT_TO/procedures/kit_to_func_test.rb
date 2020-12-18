@@ -37,7 +37,7 @@ class KitToFuncTest < Cosmos::Test
    
    def initialize
       super()
-      @kit_to = app_func_test_init("#{@@app_name}", Fsw::MsgId::KIT_TO_CMD_MID)
+      @app = app_func_test_init("#{@@app_name}")
       FswApp.validate_cmd(true)
    end
 
@@ -58,10 +58,14 @@ class KitToFuncTest < Cosmos::Test
       status_bar("Default Table Test")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
 
-      @kit_to.send_cmd("DUMP_TBL with ID #{FswConfigParam::KIT_TO_PKTTBL_ID}, FILENAME #{@@tbl_dmp_file}")
-
-      @kit_to.send_cmd("LOAD_TBL with ID #{FswConfigParam::KIT_TO_PKTTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{@@tbl_dmp_file}")
+      #TODO - Add event message verification
       
+      cmd_str = "DUMP_TBL with ID #{FswConfigParam::KIT_TO_PKTTBL_ID}, FILENAME #{@@tbl_dmp_file}"
+      AppFuncTest.send_cmd(@app,cmd_str, expect_event: false)
+
+      cmd_str = "LOAD_TBL with ID #{FswConfigParam::KIT_TO_PKTTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{@@tbl_dmp_file}"
+      AppFuncTest.send_cmd(@app,cmd_str, expect_event: false)
+
       return ( (tlm("#{@@hk_str} LAST_TBL_LOAD_STATUS")    == Fsw::Const::OSK_TBLMGR_STATUS_VALID) &&
                (tlm("#{@@hk_str} LAST_TBL_LOAD_ATTR_ERRS") == 0) )
       

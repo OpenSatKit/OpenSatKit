@@ -11,7 +11,8 @@
 ################################################################################
 
 require 'osk_ops'
-require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/tutorial_screen.rb"
+require 'osk_education'
+require 'cfe_sb_const'
 
 ################################################################################
 ## GUI Send Commands
@@ -58,11 +59,11 @@ def cfe_sb_scr_cmd(screen, cmd)
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
       when "SB Training Video"
-         Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_CFE_SB}")   
+         Osk::education_video(CFE_SB_YOUTUBE_OVERVIEW)
       when "SB Training Slides"
          spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::SB_TRAINING_SLIDES_FILE}")
       when "SB Exercise Script"
-         launch_tutorial(self, "cfe", Osk::TUTORIAL_SCRIPT, "SB")
+         Osk::education_tutorial(Osk::TUTORIAL_SCRIPT, "cfe", "SB")
       end
    
    else

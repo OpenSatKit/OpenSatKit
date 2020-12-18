@@ -19,7 +19,7 @@ class F42FuncTest < Cosmos::Test
    
    def initialize
       super()
-      app_func_test_init("F42", Fsw::MsgId::F42_CMD_MID)
+      @app = app_func_test_init("F42")
    end
 
    def setup

@@ -5,6 +5,7 @@
 ** Notes:
 **   1. The enumeration macro design is from 
 **      https://stackoverflow.com/questions/147267/easy-way-to-use-variables-of-enum-types-as-string-in-c/202511 
+**   2. 
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -21,7 +22,6 @@
 ** Include Files
 */
 #include "app_cfg.h"
-#include "inilib.h"
 
 /*
 ** Table Structure Objects 
@@ -31,6 +31,12 @@
 #define  INITBL_OBJ_CNT       1
 
 #define  INITBL_OBJ_CONFIG_NAME  "config"
+
+#define INILIB_LOAD_CONFIG_EID       (INILIB_BASE_EID + 0)
+#define INILIB_LOAD_CONFIG_ERR_EID   (INILIB_BASE_EID + 1)
+#define INILIB_JSON_PARSE_EID        (INILIB_BASE_EID + 2)
+#define INILIB_JSON_PARSE_ERR_EID    (INILIB_BASE_EID + 3)
+#define INILIB_CFG_PARAM_ERR_EID     (INILIB_BASE_EID + 4)
 
 /******************************************************************************
 ** Init File declarations create:
@@ -51,36 +57,33 @@
 ** XX(name,type)
 */
 
-#define CFG_CMD_PIPE_DEPTH  CMD_PIPE_DEPTH
-#define CFG_CMD_PIPE_NAME   CMD_PIPE_NAME
- 
-#define APP_CONFIG(XX) \
-    XX(CMD_PIPE_DEPTH,uint16) \
-    XX(CMD_PIPE_NAME,char*) \
-
-
 DECLARE_ENUM(Config,APP_CONFIG)
 
-typedef struct {
-   boolean Initialized;
-   char    Buf[OS_MAX_PATH_LEN];
-} INITBL_ConfigStr;
-
-typedef struct {
-
-   uint16 StrIndex;
-
-   INITBL_ConfigStruct Item;
-   INITBL_ConfigStr    Str[FILEMGR_INI_MAX_STRINGS];
+typedef enum {
    
-} INITBL_Config;
+   INITBL_UNDEF  = 0,
+   INITBL_UINT32 = 1,
+   INITBL_STR    = 2
+   
+} INITBL_Type;
+
+
+typedef struct {
+   
+   boolean     Initialized;
+   INITBL_Type Type;
+   uint32      Int;
+   char        Str[OS_MAX_PATH_LEN];
+
+} INITBL_CfgItem;
+
 
 typedef struct {
 
    uint16   AttrErrCnt;
    uint16   JsonVarCnt;
    
-   INITBL_Config Config;
+   INITBL_CfgItem  CfgItem[CFG_ENUM_END];
 
    JSON_Class Json;
    JSON_Obj   JsonObj[INITBL_OBJ_CNT];
@@ -97,6 +100,37 @@ typedef struct {
 **    1. This must be called prior to any other functions
 **
 */
-boolean INITBL_Constructor(INITBL_Class* IniTblPtr);
+boolean INITBL_Constructor(INITBL_Class* IniTblPtr, const char* IniFile);
+
+
+/******************************************************************************
+** Function: INITBL_GetIntConfig
+**
+** Notes:
+**    1. This does not return a status as to whether the configuration 
+**       parameter was successfully retrieved. The logic for retreiving
+**       parameters should be simple and any issues should be resolved during
+**       testing.
+**    2. If the parameter is out of range or of the wrong type, a zero is
+**       returned and an event message is sent.
+**
+*/
+uint32 INITBL_GetIntConfig(uint16 Param);
+
+
+/******************************************************************************
+** Function: INITBL_GetStrConfig
+**
+** Notes:
+**    1. This does not return a status as to whether the configuration 
+**       parameter was successfully retrieved. The logic for retreiving
+**       parameters should be simple and any issues should be resolved during
+**       testing.
+**    2. If the parameter is out of range or of the wrong type, a null string 
+**       is returned and an event message is sent.
+**
+*/
+const char* INITBL_GetStrConfig(uint16 Param);
+
 
 #endif /* _ini_tbl_ */
