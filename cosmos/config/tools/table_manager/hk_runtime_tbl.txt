@@ -1,0 +1,24 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR          = "HK"
+  @COPY_TABLE_ENTRIES_STR  = "HK_COPY_TABLE_ENTRIES"
+  @RUNTIME_TABLE_NAME_STR  = "HK_RUNTIME_TABLE_NAME"
+  
+%>
+TABLE "HK Runtime" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Dump-only runtime MID subscription and data info"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @RUNTIME_TABLE_NAME_STR) %>
+
+  <% 
+    # Array of hk_runtime_tbl_entry_t structures
+    max_tbl_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @COPY_TABLE_ENTRIES_STR)
+    append_items = ""
+    for i in 0..(max_tbl_entries-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_OUTPUT_MSG_ADDR\"   32 UINT 0 MAX_UINT16 0  \"Output Message Address\"" << "\n"
+      append_items << "FORMAT_STRING \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_INPUT_MID_SUBSCR\"   8 UINT 0 MAX_UINT8  0  \"Has copy tabel entry MID been scribed to? 0=No, 1=Yes\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_DATA_PRESENT\"       8 UINT 0 MAX_UINT8  0  \"Has data been received? 0=No, 1=Yes\"" << "\n"
+    end # entries
+  %>
+  <%= append_items %>

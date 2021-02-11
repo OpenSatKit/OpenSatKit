@@ -1,0 +1,27 @@
+<% 
+  require 'fsw_config_param'
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR     = "MQTT"
+  @HK_TLM_MID_STR     = "MQTT_HK_TLM_MID"
+  @STR32_TLM_MID_STR  = "MQTT_STR32_TLM_MID"
+  
+  # Configuration parameter assumptions
+  #   None
+  
+%>
+
+
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 16 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 16 UINT "Application command error counter"
+  APPEND_ITEM CHILD_CMD_CTR      16 UINT "Child task command counter"
+  APPEND_ITEM CHILD_CMD_ERR_CTR  16 UINT "Child task command error counter"
+
+
+TELEMETRY <%= @APP_PREFIX_STR %> STR32_PKT <%= Osk::Cfg.processor_endian %> "Generic 32 character string payload"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @STR32_TLM_MID_STR) %>
+  APPEND_ITEM Payload  256 STRING "32 character payload"
+

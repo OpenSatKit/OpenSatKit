@@ -119,7 +119,7 @@ boolean ISIM_NoOpCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (ISIM_APP_CMD_NOOP_EID, CFE_EVS_INFORMATION,
                       "No operation command received for ISIM version %d.%d.%d",
-                      ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_LOCAL_REV);
+                      ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_PLATFORM_REV);
 
    return TRUE;
 
@@ -241,7 +241,7 @@ static int32 InitApp(void)
    */
    Status = CFE_EVS_SendEvent(ISIM_APP_INIT_EID, CFE_EVS_INFORMATION,
                               "ISIM App Initialized. Version %d.%d.%d",
-                              ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_LOCAL_REV);
+                              ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_PLATFORM_REV);
 
    return(Status);
 

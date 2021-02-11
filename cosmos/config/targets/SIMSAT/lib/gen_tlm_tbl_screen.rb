@@ -45,7 +45,7 @@ def gen_tlm_tbl(screen, cmd)
       template_dir = open_directory_dialog(Osk::TBL_TLM_TEMPLATE_DIR,"Select template directory")
       screen.get_named_widget("template_dir").text = template_dir
    elsif (cmd == "CREATE_TABLES")
-      # TODO - Add snaity & error checks
+      # TODO - Add sanity & error checks
       # Get user inputs and format for use below
       csv_path_filename = screen.get_named_widget("csv_input_file").text
       csv_filename = File.basename(csv_path_filename)

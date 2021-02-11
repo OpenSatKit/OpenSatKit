@@ -113,7 +113,7 @@ boolean KIT_CI_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (KIT_CI_APP_NOOP_EID, CFE_EVS_INFORMATION,
                       "Kit Command Ingest (KIT_CI) version %d.%d.%d received a no operation command",
-                      KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_LOCAL_REV);
+                      KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_PLATFORM_REV);
 
    return TRUE;
 
@@ -207,7 +207,7 @@ static int32 InitApp(void)
    */
    Status = CFE_EVS_SendEvent(KIT_CI_APP_INIT_EID, CFE_EVS_INFORMATION,
                               "KIT_CI Initialized. Version %d.%d.%d",
-                              KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_LOCAL_REV);
+                              KIT_CI_MAJOR_VER, KIT_CI_MINOR_VER, KIT_CI_PLATFORM_REV);
 
    return(Status);
 

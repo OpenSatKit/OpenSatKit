@@ -34,26 +34,28 @@ static FILESYS_Class*  FileSys = NULL;
 ** Local Function Prototypes
 */
 
-static int32 Validate(void* TblPtr);
+static int32 ValidateTbl(void* TblPtr);
 
 
 /******************************************************************************
 ** Function: FILESYS_Constructor
 **
 */
-void FILESYS_Constructor(FILESYS_Class*  FileSysPtr)
+void FILESYS_Constructor(FILESYS_Class*  FileSysPtr, INITBL_Class* IniTbl)
 {
  
    FileSys = FileSysPtr;
-   const char* DefTblFilename = INITBL_GetStrConfig(CFG_TBL_DEF_FILENAME);
+   const char* DefTblFilename = INITBL_GetStrConfig(IniTbl, CFG_TBL_DEF_FILENAME);
 
    CFE_PSP_MemSet((void*)FileSys, 0, sizeof(FILESYS_Class));
+   
+   FileSys->IniTbl         = IniTbl;
    FileSys->CfeTbl.DataPtr = (FILESYS_TblData *) NULL;
-   FileSys->CfeTblName     = INITBL_GetStrConfig(CFG_TBL_CFE_NAME);
+   FileSys->CfeTblName     = INITBL_GetStrConfig(FileSys->IniTbl, CFG_TBL_CFE_NAME);
 
    FileSys->CfeTbl.Status = CFE_TBL_Register(&FileSys->CfeTbl.Handle, FileSys->CfeTblName,
                                              sizeof(FILESYS_TblData), CFE_TBL_OPT_DEFAULT, 
-                                             (CFE_TBL_CallbackFuncPtr_t)Validate);
+                                             (CFE_TBL_CallbackFuncPtr_t)ValidateTbl);
     
    FileSys->CfeTbl.Registered = (FileSys->CfeTbl.Status == CFE_SUCCESS);
    
@@ -72,9 +74,11 @@ void FILESYS_Constructor(FILESYS_Class*  FileSysPtr)
                         DefTblFilename, FileSys->CfeTbl.Status);                        
    }
 
-   CFE_SB_InitMsg(&FileSys->TblPkt, FILEMGR_FILESYS_TLM_MID, sizeof(FILESYS_TblPkt), TRUE);
+   CFE_SB_InitMsg(&FileSys->TblPkt, (CFE_SB_MsgId_t)INITBL_GetIntConfig(FileSys->IniTbl, CFG_FILESYS_TLM_MID), 
+                  sizeof(FILESYS_TblPkt), TRUE);
    
-   CFE_SB_InitMsg(&FileSys->OpenFilesPkt, FILEMGR_OPEN_FILES_TLM_MID, sizeof(FILESYS_OpenFilesPkt), TRUE);
+   CFE_SB_InitMsg(&FileSys->OpenFilesPkt, (CFE_SB_MsgId_t)INITBL_GetIntConfig(FileSys->IniTbl, CFG_OPEN_FILES_TLM_MID),
+                  sizeof(FILESYS_OpenFilesPkt), TRUE);
 
 } /* End FILESYS_Constructor() */
 
@@ -119,7 +123,7 @@ void FILESYS_ManageTbl(void)
 
 
 /******************************************************************************
-** Function: Validate
+** Function: ValidateTbl
 **
 ** Callback function used by CFE Table service to allow a table to be validated
 ** prior to being committed.
@@ -127,12 +131,12 @@ void FILESYS_ManageTbl(void)
 ** Function signature must match CFE_TBL_CallbackFuncPtr_t
 **
 */
-static int32 Validate(void* VoidTblPtr) 
+static int32 ValidateTbl(void* VoidTblPtr) 
 {
    
    FILESYS_TblData* Tbl = (FILESYS_TblData *) VoidTblPtr;
 
-   int32   RetStatus = INITBL_GetIntConfig(CFG_TBL_ERR_CODE);
+   int32   RetStatus = INITBL_GetIntConfig(FileSys->IniTbl, CFG_TBL_ERR_CODE);
    uint16  NameLength;
    uint16  i;
 
@@ -244,7 +248,7 @@ static int32 Validate(void* VoidTblPtr)
    return RetStatus;
 
   
-} /* End Validate() */
+} /* End ValidateTbl() */
 
 
 /******************************************************************************
@@ -338,7 +342,7 @@ boolean FILESYS_SetTblStateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
    boolean RetStatus = FALSE;
    
-   const FILESYS_SetTblStateCmdType *CmdParam = (const FILESYS_SetTblStateCmdType *) MsgPtr;
+   const FILESYS_SetTblStateCmdMsg *CmdMsg = (const FILESYS_SetTblStateCmdMsg *) MsgPtr;
 
    if (FileSys->CfeTbl.DataPtr == (FILESYS_TblData *) NULL) {
 
@@ -347,37 +351,37 @@ boolean FILESYS_SetTblStateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
          FileSys->CfeTblName);
    
    }
-   else if (CmdParam->TblVolumeIndex >= FILEMGR_FILESYS_TBL_VOL_CNT) {
+   else if (CmdMsg->TblVolumeIndex >= FILEMGR_FILESYS_TBL_VOL_CNT) {
       
       CFE_EVS_SendEvent(FILESYS_SET_TBL_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
          "Set %s Table State Command Error: Commanded index %d is not in valid range of 0..%d",
-         FileSys->CfeTblName, CmdParam->TblVolumeIndex, (FILEMGR_FILESYS_TBL_VOL_CNT-1));
+         FileSys->CfeTblName, CmdMsg->TblVolumeIndex, (FILEMGR_FILESYS_TBL_VOL_CNT-1));
         
    }
-   else if ((CmdParam->TblVolumeState != FILESYS_TBL_ENTRY_ENABLED) &&
-            (CmdParam->TblVolumeState != FILESYS_TBL_ENTRY_DISABLED)) {
+   else if ((CmdMsg->TblVolumeState != FILESYS_TBL_ENTRY_ENABLED) &&
+            (CmdMsg->TblVolumeState != FILESYS_TBL_ENTRY_DISABLED)) {
                
       CFE_EVS_SendEvent(FILESYS_SET_TBL_STATE_ARG_ERR_EID, CFE_EVS_ERROR,
          "Set %s Table State Command Error: Commanded state %d is not in (%d=Enabled, %d=Disabled)",
-         FileSys->CfeTblName, CmdParam->TblVolumeState, FILESYS_TBL_ENTRY_ENABLED, FILESYS_TBL_ENTRY_DISABLED);
+         FileSys->CfeTblName, CmdMsg->TblVolumeState, FILESYS_TBL_ENTRY_ENABLED, FILESYS_TBL_ENTRY_DISABLED);
 
    }
-   else if (FileSys->CfeTbl.DataPtr->Volume[CmdParam->TblVolumeIndex].State == FILESYS_TBL_ENTRY_UNUSED) {
+   else if (FileSys->CfeTbl.DataPtr->Volume[CmdMsg->TblVolumeIndex].State == FILESYS_TBL_ENTRY_UNUSED) {
       
       CFE_EVS_SendEvent(FILESYS_SET_TBL_STATE_UNUSED_ERR_EID, CFE_EVS_ERROR,
          "Set %s Table State Command Error: Attempt to change state of unused table entry at index %d",
-         FileSys->CfeTblName, CmdParam->TblVolumeIndex);
+         FileSys->CfeTblName, CmdMsg->TblVolumeIndex);
         
    }
    else {
       
-      FileSys->CfeTbl.DataPtr->Volume[CmdParam->TblVolumeIndex].State = CmdParam->TblVolumeState;
+      FileSys->CfeTbl.DataPtr->Volume[CmdMsg->TblVolumeIndex].State = CmdMsg->TblVolumeState;
 
       CFE_TBL_Modified(FileSys->CfeTbl.Handle);
 
       CFE_EVS_SendEvent(FILESYS_SET_TBL_STATE_CMD_EID, CFE_EVS_INFORMATION,
          "Set %s Table State Command: Set table index %d state to %d (%d=Enabled,%d=Disabled)",
-         FileSys->CfeTblName, CmdParam->TblVolumeIndex, CmdParam->TblVolumeState, FILESYS_TBL_ENTRY_ENABLED, FILESYS_TBL_ENTRY_DISABLED);
+         FileSys->CfeTblName, CmdMsg->TblVolumeIndex, CmdMsg->TblVolumeState, FILESYS_TBL_ENTRY_ENABLED, FILESYS_TBL_ENTRY_DISABLED);
    } 
 
    return RetStatus;

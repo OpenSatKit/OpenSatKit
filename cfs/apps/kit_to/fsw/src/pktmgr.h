@@ -68,8 +68,8 @@ typedef struct {
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    char    DestIp[PKTMGR_IP_STR_LEN];
 
-} PKTMGR_EnableOutputCmdParam;
-#define PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN  (sizeof(PKTMGR_EnableOutputCmdParam) - CFE_SB_CMD_HDR_SIZE)
+} PKTMGR_EnableOutputCmdMsg;
+#define PKKTMGR_ENABLE_OUTPUT_CMD_DATA_LEN  (sizeof(PKTMGR_EnableOutputCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -81,8 +81,8 @@ typedef struct {
    uint16               FilterType;
    PktUtil_FilterParam  FilterParam;
 
-}  OS_PACK PKTMGR_AddPktCmdParam;
-#define PKKTMGR_ADD_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_AddPktCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK PKTMGR_AddPktCmdMsg;
+#define PKKTMGR_ADD_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_AddPktCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -90,8 +90,8 @@ typedef struct {
    uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
    CFE_SB_MsgId_t     StreamId;
 
-}  PKTMGR_RemovePktCmdParam;
-#define PKKTMGR_REMOVE_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_RemovePktCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  PKTMGR_RemovePktCmdMsg;
+#define PKKTMGR_REMOVE_PKT_CMD_DATA_LEN  (sizeof(PKTMGR_RemovePktCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -99,8 +99,8 @@ typedef struct {
    uint8              CmdHeader[CFE_SB_CMD_HDR_SIZE];
    CFE_SB_MsgId_t     StreamId;
 
-}  PKTMGR_SendPktTblTlmCmdParam;
-#define PKKTMGR_SEND_PKT_TBL_TLM_CMD_DATA_LEN  (sizeof(PKTMGR_SendPktTblTlmCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  PKTMGR_SendPktTblTlmCmdMsg;
+#define PKKTMGR_SEND_PKT_TBL_TLM_CMD_DATA_LEN  (sizeof(PKTMGR_SendPktTblTlmCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -110,8 +110,8 @@ typedef struct {
    uint16               FilterType;
    PktUtil_FilterParam  FilterParam;
 
-}  OS_PACK PKTMGR_UpdateFilterCmdParam;
-#define PKKTMGR_UPDATE_FILTER_CMD_DATA_LEN  (sizeof(PKTMGR_UpdateFilterCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK PKTMGR_UpdateFilterCmdMsg;
+#define PKKTMGR_UPDATE_FILTER_CMD_DATA_LEN  (sizeof(PKTMGR_UpdateFilterCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************

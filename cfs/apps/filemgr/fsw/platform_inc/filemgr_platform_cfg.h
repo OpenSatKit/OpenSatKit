@@ -1,12 +1,12 @@
 /*
-** Purpose: Define platform configurations for the OSk File Manager application
+** Purpose: Define platform configurations for the OSK MQTT application
 **
 ** Notes:
 **   1. This is part of a refactoring prototype. The definitions in this file 
 **      should come from a EDS or equivalent toolchain
 **
 ** License:
-**   Template written by David McComas and licensed under the GNU
+**   Written by David McComas and licensed under the GNU
 **   Lesser General Public License (LGPL).
 **
 ** References:
@@ -23,14 +23,17 @@
 */
 
 #include "filemgr_mission_cfg.h"
-#include "filemgr_msgids.h"
-#include "filemgr_perfids.h"
 
+/******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define FILEMGR_PLATFORM_REV   0
 #define FILEMGR_INI_FILE_NAME  "/cf/filemgr_ini.json"
 
 
 /******************************************************************************
-** These are frustrating. They're only needed staticlly because of the table
+** These are frustrating. They're only needed statically because of the table
 ** decsriptor build process. 
 */
 

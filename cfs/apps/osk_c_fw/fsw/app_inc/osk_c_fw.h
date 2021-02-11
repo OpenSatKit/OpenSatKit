@@ -23,13 +23,16 @@
 */
 
 #include "osk_c_fw_cfg.h"
+#include "inilib.h"
+#include "initbl.h"
 #include "fileutil.h"
 #include "cmdmgr.h"
 #include "tblmgr_msg.h"
 #include "tblmgr.h"
 #include "json.h"
-#include "faultrep.h"
+#include "staterep.h"
 #include "pktutil.h"
+#include "childmgr.h"
 
 #endif /* _osk_c_fw_ */
 

@@ -1,0 +1,20 @@
+{
+  "hk-tbl-tool": {
+    "description": [
+      "Template for HK copy table generation tool configuration file",
+      "@undefined@ indicates the field needs to be defined before the tables are generated"
+    ],
+    "verbose": true,
+    "input-path": "/mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/",
+    "output-path": "/mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/",
+    "template-path": "/mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/templates/",
+    "housekeeping": {
+      "json-hk-file": "hk_cpy_tbl.json",
+      "log-file": "hk_cpy_tbl.log",
+      "header-file": "hk_cpy_tbl_header.c",
+      "footer-file": "hk_cpy_tbl_footer.c",
+      "output-file": "hk_cpy_tbl.c",
+      "max-entries": 128
+    }
+  }
+}

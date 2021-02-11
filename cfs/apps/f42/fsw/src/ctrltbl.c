@@ -49,10 +49,10 @@ static CTRLTBL_Class* CtrlTbl = NULL;
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-static boolean KpCallback (int TokenIdx);
-static boolean KrCallback (int TokenIdx);
-static boolean KunlCallback (int TokenIdx);
-static boolean HcmdLimCallback (int TokenIdx);
+static boolean KpCallback (void* UserData, int TokenIdx);
+static boolean KrCallback (void* UserData, int TokenIdx);
+static boolean KunlCallback (void* UserData, int TokenIdx);
+static boolean HcmdLimCallback (void* UserData, int TokenIdx);
 
 /******************************************************************************
 ** Function: CTRLTBL_Constructor
@@ -175,7 +175,7 @@ boolean CTRLTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
             for (i=0; i < CTRLTBL_OBJ_CNT; i++) {
 
                if (CtrlTbl->JsonObj[i].Modified) {
-                  if (!(CtrlTbl->LoadTblEntryFunc)(i, CtrlTbl->JsonObj[i].Data))
+                  if (!(CtrlTbl->LoadTblEntryFunc)(i, CtrlTbl->JsonObj[i].UserData))
                      CtrlTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                }
 
@@ -296,8 +296,9 @@ boolean CTRLTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
 */
-static boolean KpCallback (int TokenIdx)
+static boolean KpCallback (void* UserData, int TokenIdx)
 {
 
    int     AxisCnt=0;
@@ -347,8 +348,9 @@ static boolean KpCallback (int TokenIdx)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
 */
-static boolean KrCallback (int TokenIdx)
+static boolean KrCallback (void* UserData, int TokenIdx)
 {
 
    int     AxisCnt=0;
@@ -398,8 +400,9 @@ static boolean KrCallback (int TokenIdx)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
 */
-static boolean KunlCallback (int TokenIdx)
+static boolean KunlCallback (void* UserData, int TokenIdx)
 {
 
    int     EntryCnt=0;
@@ -444,8 +447,9 @@ static boolean KunlCallback (int TokenIdx)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
 */
-boolean HcmdLimCallback (int TokenIdx)
+boolean HcmdLimCallback (void* UserData, int TokenIdx)
 {
 
    int     LimCnt=0;

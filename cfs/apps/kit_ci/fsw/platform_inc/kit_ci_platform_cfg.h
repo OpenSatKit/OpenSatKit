@@ -26,6 +26,14 @@
 #include "kit_ci_perfids.h"
 
 /******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define KIT_CI_PLATFORM_REV   0
+#define KIT_CI_INI_FILE_NAME  "/cf/kit_ci_ini.json"
+
+
+/******************************************************************************
 ** Command Ingest Application Macros
 */
 

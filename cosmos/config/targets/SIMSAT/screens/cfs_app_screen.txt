@@ -2,7 +2,7 @@
 # SimSat cFS App Summary Screen
 #
 # Notes:
-#  1. Displays the counters for the apps included in SimSat. For illusatrative
+#  1. Displays the counters for the apps included in SimSat. For illustrative
 #     purposes rather than practical for a mission.
 #
 # License:

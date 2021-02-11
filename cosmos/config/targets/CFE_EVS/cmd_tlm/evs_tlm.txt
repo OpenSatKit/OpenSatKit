@@ -35,11 +35,11 @@ TELEMETRY CFE_EVS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data
   
 TELEMETRY CFE_EVS EVENT_MSG_PKT <%= Osk::Cfg.processor_endian %> "Event Message Telemetry Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @EVENT_MSG_MID_STR) %>
-  APPEND_ITEM PKT_ID_APP_NAME      160 STRING "Application name"
-  APPEND_ITEM PKT_ID_EVENT_ID       16 UINT   "Numerical event identifier"
-  APPEND_ITEM PKT_ID_EVENT_TYPE     16 UINT   "Numerical event type identifier"
-  APPEND_ITEM PKT_ID_SPACECRAFT_ID  32 UINT   "Spacecraft identifier"
-  APPEND_ITEM PKT_ID_PROCESSOR_ID   32 UINT   "Numerical processor identifier"
+  APPEND_ITEM APP_NAME      160 STRING "Application name"
+  APPEND_ITEM EVENT_ID       16 UINT   "Numerical event identifier"
+  APPEND_ITEM EVENT_TYPE     16 UINT   "Numerical event type identifier"
+  APPEND_ITEM SPACECRAFT_ID  32 UINT   "Spacecraft identifier"
+  APPEND_ITEM PROCESSOR_ID   32 UINT   "Numerical processor identifier"
   APPEND_ITEM MESSAGE 976 STRING "Message text string"
   APPEND_ITEM SPARE1 8 UINT "Structure padding."
   APPEND_ITEM SPARE2 8 UINT "Structure padding."

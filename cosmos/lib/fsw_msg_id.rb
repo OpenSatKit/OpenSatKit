@@ -218,6 +218,12 @@ module Fsw
       KIT_TO_PKT_TBL_TLM_MID   = "0x0F21"
       KIT_TO_DATA_TYPE_TLM_MID = "0x0F22"
 
+      # MQTT 
+  
+      MQTT_CMD_MID       = "0x1F50"
+      MQTT_HK_TLM_MID    = "0x0F50"
+      MQTT_STR32_TLM_MID = "0x0F51"
+
       # OpenSatKit C Demo App 
   
       OSK_C_DEMO_CMD_MID    = "0x1F30"

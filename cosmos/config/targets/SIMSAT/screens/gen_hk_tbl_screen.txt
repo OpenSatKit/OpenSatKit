@@ -1,0 +1,68 @@
+###############################################################################
+# Generate Housekeeping Tables Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Generate Housekeeping Copy Table"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+HORIZONTAL
+
+   CANVAS 440 260
+      CANVASIMAGE "osk_gen_hk_tbl.png" 0 0
+   END
+   SETTING BACKCOLOR 255 255 255
+  
+   VERTICALBOX
+
+      HORIZONTAL
+      MATRIXBYCOLUMNS 1 8 10
+         LABEL "<b>1</b>"
+         LABEL "<b>2</b>"
+         LABEL " "
+         LABEL " "
+         LABEL " "
+         LABEL "<b>3</b>"
+         LABEL " "
+      END
+      LABEL ""
+      MATRIXBYCOLUMNS 2 5 10
+ 
+         BUTTON 'Create JSON File'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/gen_hk_tbl_screen.rb"; gen_hk_tbl(self, "CREATE_JSON")'
+         LABEL "text editor -> HK Copy Table Definition"
+         
+         LABEL 'Select Options:'
+         LABEL "    "         
+      
+         BUTTON 'JSON Def File'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/gen_hk_tbl_screen.rb"; gen_hk_tbl(self, "JSON_INPUT")'
+         NAMED_WIDGET json_input_file TEXTFIELD 128
+
+         BUTTON 'Output Dir'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/gen_hk_tbl_screen.rb"; gen_hk_tbl(self, "OUTPUT_DIR")'
+         NAMED_WIDGET output_dir TEXTFIELD 128
+
+         BUTTON 'Template Dir'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/gen_hk_tbl_screen.rb"; gen_hk_tbl(self, "TEMPLATE_DIR")'
+         NAMED_WIDGET template_dir TEXTFIELD 128
+
+         BUTTON 'Create tables'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/gen_hk_tbl_screen.rb"; gen_hk_tbl(self, "CREATE_TABLE")'
+         LABEL " "
+
+         BUTTON 'Run Training Videos' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/gen_hk_tbl_screen.rb"; gen_hk_tbl(self, "TRAINING_VIDEO")'
+         NAMED_WIDGET training_video COMBOBOX "Coming Soon" 
+
+      END
+      END # Horizontal
+      
+   End # Vertical
+SETTING BACKCOLOR 162 181 205
+END # Horizontal
+
+
+

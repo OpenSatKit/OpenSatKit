@@ -65,7 +65,8 @@ display("CFS_KIT FILE_MGMT_SCREEN",1500,50)
 wait (1)
 Cosmos.run_process("ruby tools/PacketViewer -p \"FM FILE_INFO_PKT\"")
 
-wait  # Confirm setup; A single PacketViewer window can be used to view all FM packets
+status_bar("Confirm setup; A single PacketViewer window can be used to view all FM packets")
+wait  # <Go> to continue
 
 ##############################################################
 ## Step 1 - Display flight server and create demo directory ##

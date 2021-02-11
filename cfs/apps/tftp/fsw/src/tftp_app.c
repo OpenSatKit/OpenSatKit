@@ -111,7 +111,7 @@ boolean TFTP_APP_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (TFTP_APP_NOOP_EID, CFE_EVS_INFORMATION,
                       "No operation command received for TFTP App version %d.%d.%d",
-                      TFTP_MAJOR_VER, TFTP_MINOR_VER, TFTP_LOCAL_REV);
+                      TFTP_MAJOR_VER, TFTP_MINOR_VER, TFTP_PLATFORM_REV);
 
    return TRUE;
 
@@ -215,7 +215,7 @@ static int32 InitApp(void)
    */
    Status = CFE_EVS_SendEvent(TFTP_APP_INIT_EID, CFE_EVS_INFORMATION,
                               "TFTP App Initialized. Version %d.%d.%d",
-                              TFTP_MAJOR_VER, TFTP_MINOR_VER, TFTP_LOCAL_REV);
+                              TFTP_MAJOR_VER, TFTP_MINOR_VER, TFTP_PLATFORM_REV);
 
    return(Status);
 

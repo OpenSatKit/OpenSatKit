@@ -53,6 +53,7 @@
    { "KIT_CI":       { "load-on-init": true  }},
    { "KIT_SCH":      { "load-on-init": true  }},
    { "KIT_TO":       { "load-on-init": true  }},
+   { "MQTT":         { "load-on-init": false }},
    { "OSK_C_DEMO":   { "load-on-init": false }},
    { "OSK_CPP_DEMO": { "load-on-init": false }},
    { "TFTP":         { "load-on-init": true  }}

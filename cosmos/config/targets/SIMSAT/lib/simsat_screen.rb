@@ -198,7 +198,7 @@ def simsat_data_file(screen, cmd)
    when "HK_TBL"
       # HK only has one table
       # Use default temporary binary table file names in flight and ground default table server directories
-      Osk::Ops::send_cfe_dump_tbl_cmd("HK.#{FswConfigParam::HK_COPY_TBL_NAME}", Osk::TBL_MGR_DEF_HK_COPY)
+      Osk::Ops::send_cfe_dump_tbl_cmd("HK.#{FswConfigParam::HK_COPY_TABLE_NAME}", Osk::TBL_MGR_DEF_HK_COPY)
    when "HK_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/hk/docs/users_guide/html/index.html")   
    when "TFTP_CMD" 

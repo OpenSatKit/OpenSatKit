@@ -721,6 +721,26 @@
          "reliability": 0,
          "buf-limit": 4
          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "MQTT_HK_TLM_MID",
+         "stream-id": "\u0F50",
+         "dec-id": 3920,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "MQTT_HK_TLM_MID",
+         "stream-id": "\u0F51",
+         "dec-id": 3921,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
       }
       
    ]

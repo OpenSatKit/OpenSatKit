@@ -12,8 +12,20 @@
       
       "APP_CFE_NAME": "FILEMGR",
       
+      "APP_MAIN_PERF_ID":   39,
+      "CHILD_TASK_PERF_ID": 44,
+      
+      "CMD_MID"     : 6540,
+      "SEND_HK_MID" : 6541,
+
+      "HK_TLM_MID"         : 2442,
+      "FILE_INFO_TLM_MID"  : 2443,
+      "DIR_LIST_TLM_MID"   : 2444,
+      "OPEN_FILES_TLM_MID" : 2445,
+      "FILESYS_TLM_MID"    : 2446,
+      
       "CMD_PIPE_DEPTH": 10,
-      "CMD_PIPE_NAME":  "CMD_PIPE",
+      "CMD_PIPE_NAME":  "FILEMGR_CMD_PIPE",
       
       "TBL_CFE_NAME": "FileSys",
       "TBL_DEF_FILENAME": "/cf/filesys_tbl.tbl",
@@ -23,7 +35,6 @@
       "DIR_LIST_FILE_SUBTYPE":  100,
       "DIR_LIST_FILE_ENTRIES":  200,
       
-      "CHILD_SEM_NAME":    "FILEMGR_CHILD_SEM",
       "CHILD_NAME":        "FILEMGR_CHILD",
       "CHILD_STACK_SIZE":  20480,
       "CHILD_PRIORITY":    205,

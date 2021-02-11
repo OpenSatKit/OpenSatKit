@@ -40,7 +40,6 @@
 
 #define  ISIM_MAJOR_VER      1
 #define  ISIM_MINOR_VER      1
-#define  ISIM_LOCAL_REV      0
 
 /******************************************************************************
 ** Command Macros

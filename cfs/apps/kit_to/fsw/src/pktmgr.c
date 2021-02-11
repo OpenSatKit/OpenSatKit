@@ -294,7 +294,7 @@ boolean PKTMGR_LoadTblEntry(uint16 AppId, PKTTBL_Pkt* PktArray)
 boolean PKTMGR_EnableOutputCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const PKTMGR_EnableOutputCmdParam *EnableOutputCmd = (const PKTMGR_EnableOutputCmdParam *) MsgPtr;
+   const PKTMGR_EnableOutputCmdMsg *EnableOutputCmd = (const PKTMGR_EnableOutputCmdMsg *) MsgPtr;
    boolean  RetStatus = TRUE;
 
    strncpy(PktMgr->TlmDestIp, EnableOutputCmd->DestIp, PKTMGR_IP_STR_LEN);
@@ -339,7 +339,7 @@ boolean PKTMGR_EnableOutputCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean PKTMGR_AddPktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const PKTMGR_AddPktCmdParam *AddPktCmd = (const PKTMGR_AddPktCmdParam *) MsgPtr;
+   const PKTMGR_AddPktCmdMsg *AddPktCmd = (const PKTMGR_AddPktCmdMsg *) MsgPtr;
    PKTTBL_Pkt  NewPkt;
    boolean     RetStatus = TRUE;
    int32       Status;
@@ -453,7 +453,7 @@ boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean PKTMGR_RemovePktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const PKTMGR_RemovePktCmdParam *RemovePktCmd = (const PKTMGR_RemovePktCmdParam *) MsgPtr;
+   const PKTMGR_RemovePktCmdMsg *RemovePktCmd = (const PKTMGR_RemovePktCmdMsg *) MsgPtr;
    uint16   AppId;
    int32    Status;
    boolean  RetStatus = TRUE;
@@ -503,7 +503,7 @@ boolean PKTMGR_RemovePktCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean PKTMGR_SendPktTblTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const PKTMGR_SendPktTblTlmCmdParam *SendPktTblTlmCmd = (const PKTMGR_SendPktTblTlmCmdParam *) MsgPtr;
+   const PKTMGR_SendPktTblTlmCmdMsg *SendPktTblTlmCmd = (const PKTMGR_SendPktTblTlmCmdMsg *) MsgPtr;
    uint16      AppId;
    PKTTBL_Pkt* PktPtr;
    int32    Status;
@@ -538,7 +538,7 @@ boolean PKTMGR_SendPktTblTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean PKTMGR_UpdateFilterCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const PKTMGR_UpdateFilterCmdParam *UpdateFilterCmd = (const PKTMGR_UpdateFilterCmdParam *) MsgPtr;
+   const PKTMGR_UpdateFilterCmdMsg *UpdateFilterCmd = (const PKTMGR_UpdateFilterCmdMsg *) MsgPtr;
    boolean     RetStatus = FALSE;
    uint16      AppId;
 

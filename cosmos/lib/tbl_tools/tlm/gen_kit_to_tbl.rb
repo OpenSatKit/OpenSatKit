@@ -1,5 +1,5 @@
 ###############################################################################
-# Telemetry Output Table Tool
+# Telemetry Output Table Generation Tool
 #
 # Notes:
 #   1. The ground database file is not imported. The spreadsheet that generates

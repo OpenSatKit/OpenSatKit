@@ -3,6 +3,7 @@ CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,    OSK_C_FW,       0,   16384, 0
 CFE_LIB, /cf/osk_cpp_fw.so,   OSK_CPP_FW_LibInit,  OSK_CPP_FW,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,  OSK_42_LIB,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,          EXPAT_LIB,      0,   16384, 0x0, 0;
+CFE_LIB, /cf/mqtt_lib.so,     MQTT_LibInit,        MQTT_LIB,       0,   16384, 0x0, 0;
 CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        20,   32768, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        20,   16384, 0x0, 0;
 CFE_APP, /cf/ds.so,           DS_AppMain,          DS,            70,   16384, 0x0, 0;
@@ -14,11 +15,12 @@ CFE_APP, /cf/cs.so,           CS_AppMain,          CS,            90,   16384, 0
 CFE_APP, /cf/mm.so,           MM_AppMain,          MM,           100,   16384, 0x0, 0;
 CFE_APP, /cf/hk.so,           HK_AppMain,          HK,            90,   16384, 0x0, 0;
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,        TFTP,          60,   16384, 0x0, 0;
-CFE_APP, /cf/cf.so,           CF_AppMain,          CF,           100,   80192, 0x0, 0;
 CFE_APP, /cf/isim.so,         ISIM_AppMain,        ISIM,          90,   16384, 0x0, 0;
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,     KIT_SCH,       10,   32768, 0x0, 0;
 CFE_APP, /cf/f42.so,          F42_AppMain,         F42,           50,   16384, 0x0, 0;
 CFE_APP, /cf/i42.so,          I42_AppMain,         I42,           50,   80192, 0x0, 0;
+CFE_APP, /cf/cf.so,           CF_AppMain,          CF,           100,   80192, 0x0, 0;
+CFE_APP, /cf/hs.so,           HS_AppMain,          HS,           120,   16384, 0x0, 0;
 !
 ! Release Version
 !
@@ -39,24 +41,27 @@ CFE_APP, /cf/i42.so,          I42_AppMain,         I42,           50,   80192, 0
 !
 ! Auto generated "Hello World" app examples 
 !
-!CFE_APP, /cf/example.so,     EXAMPLE_AppMain,  EXAMPLE,       90,   16384, 0x0, 0;
-!CFE_LIB, /cf/sample_lib.so,  SAMPLE_LibInit,   SAMPLE_LIB,     0,       0, 0x0, 0;
-!CFE_APP, /cf/sample_app.so,  SAMPLE_AppMain,   SAMPLE_APP,   150,   16384, 0x0, 0;
+!CFE_APP, /cf/example.so,      EXAMPLE_AppMain,     EXAMPLE,       90,   16384, 0x0, 0;
+!CFE_LIB, /cf/sample_lib.so,   SAMPLE_LibInit,      SAMPLE_LIB,     0,       0, 0x0, 0;
+!CFE_APP, /cf/sample_app.so,   SAMPLE_AppMain,      SAMPLE_APP,   150,   16384, 0x0, 0;
 !
 ! OSK Demo apps
 ! 
-!CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,   OSK_C_DEMO,   120,   16384, 0x0, 0;
-!CFE_APP, /cf/osk_cpp_demo.so, OSK_CPP_DEMO_Main,    OSK_CPP_DEMO, 120,   16384, 0x0, 0;
+!CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,  OSK_C_DEMO,   120,   16384, 0x0, 0;
+!CFE_APP, /cf/osk_cpp_demo.so, OSK_CPP_DEMO_Main,   OSK_CPP_DEMO, 120,   16384, 0x0, 0;
 !
 ! cFS Apps - Available but not installed by default
 !
-!CFE_APP, /cf/hs.so,           HS_AppMain,       HS,           120,   16384, 0x0, 0;
+!CFE_APP, /cf/cf.so,           CF_AppMain,          CF,           100,   80192, 0x0, 0;
+!CFE_APP, /cf/hs.so,           HS_AppMain,          HS,           120,   16384, 0x0, 0;
+!CFE_APP, /cf/sbn.so,          SBN_AppMain,         SBN,           80,   32768, 0x0, 0;
 !
 ! OSK Apps - Available but not installed by default
 !
-!CFE_APP, /cf/hc.so,           HC_AppMain,       HC,            80,   16384, 0x0, 0;
-!CFE_APP, /cf/hsim.so,         SIM_AppMain,      HSIM,          90,   16384, 0x0, 0;
-!CFE_APP, /cf/bm.so,           BM_AppMain,       BM,            80,   16384, 0x0, 0;
+!CFE_APP, /cf/bm.so,           BM_AppMain,          BM,            80,   16384, 0x0, 0;
+!CFE_APP, /cf/hc.so,           HC_AppMain,          HC,            80,   16384, 0x0, 0;
+!CFE_APP, /cf/hsim.so,         SIM_AppMain,         HSIM,          90,   16384, 0x0, 0;
+!CFE_APP, /cf/mqtt_app.so,     MQTT_AppMain,        MQTT,          80,   32768, 0x0, 0;
 !
 ! Startup script fields:
 ! 1. Object Type      -- CFE_APP for an Application, or CFE_LIB for a library.

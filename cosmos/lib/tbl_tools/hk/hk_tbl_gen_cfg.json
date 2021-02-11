@@ -1,0 +1,25 @@
+{
+   "hk-tbl-tool": {
+
+      "description": [
+         "Demo gen_hk_tbl.rb tool using SimSat defaults",
+         "'max-entries' must be <= HK_COPY_TABLE_ENTRIES"
+      ],
+
+      "verbose": true,
+      
+      "input-path":    "./test/input/",
+      "output-path":   "./test/output/",
+      "template-path": "./templates/",
+
+      "housekeeping": {
+         "json-hk-file": "hk_cpy_tbl.json",
+         "log-file":     "hk_tbl_log.txt",
+         "header-file":  "hk_tbl_header.c",
+         "footer-file":  "hk_tbl_footer.c",
+         "output-file":  "hk_cpy_tbl.c",
+         "max-entries":  128
+      }
+      
+   }
+}

@@ -108,8 +108,8 @@ typedef struct {
    uint8     CmdHeader[CFE_SB_CMD_HDR_SIZE];
    boolean   EnableTblData;
 
-} DEMOBJ_EnableTblDataCmdParam;
-#define DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN  (sizeof(DEMOBJ_EnableTblDataCmdParam) - CFE_SB_CMD_HDR_SIZE)
+} DEMOBJ_EnableTblDataCmdMsg;
+#define DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN  (sizeof(DEMOBJ_EnableTblDataCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -118,8 +118,8 @@ typedef struct {
    uint8   TblId;       /* See DEMOBJ_TBL_ID. Enum not used here so storage size could be controlled */
    uint8   TblIndex;  
 
-}  DEMOBJ_SetActiveTblCmdParam;
-#define DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN  (sizeof(DEMOBJ_SetActiveTblCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  DEMOBJ_SetActiveTblCmdMsg;
+#define DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN  (sizeof(DEMOBJ_SetActiveTblCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 /*
 ** Exported Functions

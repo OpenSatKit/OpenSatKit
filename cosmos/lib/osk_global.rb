@@ -113,6 +113,7 @@ module Osk
    CREATE_APP_SCR_FILE      = "create_app_scr.txt"
    TEMPLATE_INFO_SCR_FILE   = "template_info_scr.txt"
 
+   GEN_HK_TBL_JSON_TEMPLATE_FILE = "hk_tbl_template.json"
    GEN_TLM_TBL_XLS_FILE = "kit_to-ds-tbl.xlsx"
    GEN_TLM_TBL_JSON_TEMPLATE_FILE = "kit_to-ds-tbl.json"
 
@@ -248,6 +249,7 @@ module Osk
    OSK_APPS_TRAIN_DIR = "#{Osk::TUTORIAL_DIR}/op_apps"
    
    TBL_TOOLS_DIR  = "#{Cosmos::USERPATH}/lib/tbl_tools"
+   TBL_HK_TEMPLATE_DIR  = "#{TBL_TOOLS_DIR}/HK/templates"
    TBL_TLM_TEMPLATE_DIR = "#{TBL_TOOLS_DIR}/tlm/templates"
    TOOLS_DIR      = "#{Cosmos::USERPATH}/cfs_kit/tools"
    PERF_MON_DIR   = "#{TOOLS_DIR}/perf-monitor"

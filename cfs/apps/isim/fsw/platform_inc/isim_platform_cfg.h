@@ -25,6 +25,15 @@
 #include "isim_msgids.h"
 #include "isim_perfids.h"
 
+
+/******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define ISIM_PLATFORM_REV   0
+#define ISIM_INI_FILE_NAME  "/cf/isim_ini.json"
+
+
 /******************************************************************************
 ** Application Macros
 */

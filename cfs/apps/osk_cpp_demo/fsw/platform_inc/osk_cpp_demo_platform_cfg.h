@@ -26,12 +26,18 @@
 #include "osk_cpp_demo_perfids.h"
 
 /******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define OSK_CPP_DEMO_PLATFORM_REV  0
+#define OSK_CPP_DEMO_FILE_NAME  "/cf/osk_cpp_demo_ini.json"
+
+
+/******************************************************************************
 ** Application Macros
 */
 
 #define  OSK_CPP_DEMO_APP_NAME         "OSK_CPP_DEMO"
-
-#define  OSK_CPP_DEMO_APP_LOCAL_REV    0
 
 #define  OSK_CPP_DEMO_RUNLOOP_DELAY    500  // Delay in milliseconds
 

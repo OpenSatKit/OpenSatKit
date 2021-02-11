@@ -2,7 +2,7 @@
 # SimSat OSK App Summary Screen
 #
 # Notes:
-#  1. Displays the counters for the apps included in SimSat. For illusatrative
+#  1. Displays the counters for the apps included in SimSat. For illustrative
 #     purposes rather than practical for a mission.
 #  2. Considered splitting OSK and Mission apps into separate screens but
 #     wanted to minimize screen proliferation.

@@ -26,6 +26,14 @@
 #include "kit_sch_perfids.h"
 
 /******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define KIT_SCH_PLATFORM_REV   0
+#define KIT_SCH_FILE_NAME  "/cf/kit_sch_ini.json"
+
+
+/******************************************************************************
 ** Scheduler Application Macros
 */
 

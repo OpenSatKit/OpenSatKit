@@ -77,7 +77,7 @@ VERTICALBOX "Data/File Management"
     
   MATRIXBYCOLUMNS 4
     LABEL "<b>House Keeping</b>"
-    LABEL "Aux Pkts"
+    LABEL "Combo Pkts Sent"
     VALUE HK HK_TLM_PKT COMBINE_PKT_SENT_CNT WITH_UNITS 6
     LABEL "   "
     

@@ -1,5 +1,5 @@
 /*
-** Purpose: Define the File Manager application
+** Purpose: Define the File Manager app's file system table
 **
 ** Notes:
 **   1. This is a refactor of NASA's File Manager (FM) app. The refactor includes
@@ -7,13 +7,13 @@
 **      init JSON file. The idea is to rethink whcih configuration paarameters
 **      should be compile time and which should be runtime. 
 **
-** References:
-**   1. OpenSat Object-based Application Developer's Guide.
-**   2. cFS Application Developer's Guide.
-**
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
 **   General Public License (GPL). 
+**
+** References:
+**   1. OpenSat Object-based Application Developer's Guide.
+**   2. cFS Application Developer's Guide.
 */
 
 

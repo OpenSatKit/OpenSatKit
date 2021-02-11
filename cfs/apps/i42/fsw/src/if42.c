@@ -133,7 +133,7 @@ void IF42_Close(void) {
 boolean IF42_ConnectCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const IF42_ConnectCmdParam* CmdParam = (const IF42_ConnectCmdParam *) MsgPtr;
+   const IF42_ConnectCmdMsg* CmdMsg = (const IF42_ConnectCmdMsg *) MsgPtr;
    uint32 AppId;
    int32  CfeStatus;
    CFE_ES_AppInfo_t AppInfo;
@@ -141,8 +141,8 @@ boolean IF42_ConnectCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
    IF42_Close();
 
-   strncpy(If42->IpAddrStr, CmdParam->IpAddrStr, IF42_IP_ADDR_STR_LEN);
-   If42->Port = CmdParam->Port;
+   strncpy(If42->IpAddrStr, CmdMsg->IpAddrStr, IF42_IP_ADDR_STR_LEN);
+   If42->Port = CmdMsg->Port;
    
    /* InitSocket reports errors */
    If42->Connected = InitClientSocket(If42->IpAddrStr, If42->Port, TRUE);    /* FALSE = Non-blocking */
@@ -163,7 +163,7 @@ boolean IF42_ConnectCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
          
                CfeStatus = CFE_ES_CreateChildTask(&If42->ChildTaskId, I42_CHILD_NAME,
                                                   SocketTask, 0, I42_CHILD_STACK_SIZE,
-                                                 I42_CHILD_PRIORITY, 0);      
+                                                  I42_CHILD_PRIORITY, 0);      
                if (CfeStatus != CFE_SUCCESS) {
                   
                   CFE_EVS_SendEvent(IF42_CREATE_CHILD_ERR_EID, CFE_EVS_ERROR,
@@ -455,7 +455,7 @@ static boolean InitClientSocket(const char *HostName, uint16 Port, boolean Allow
 ** Notes:
 **   1. This infinite loop design proved to be the most robust. I tried to 
 **      create/terminate the child task with a socket connect/disconnect and
-**      somethign didn't seem to get cleaned up properly and the system would
+**      something didn't seem to get cleaned up properly and the system would
 **      hang on a second connect cmd. 
 */
 static void SocketTask(void)

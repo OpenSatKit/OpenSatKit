@@ -27,6 +27,14 @@
 #include "kit_to_perfids.h"
 
 /******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define KIT_TO_PLATFORM_REV   0
+#define KIT_TO_FILE_NAME  "/cf/kit_to_ini.json"
+
+
+/******************************************************************************
 ** Telemetry Output KIT_TO Application Macros
 */
 

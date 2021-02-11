@@ -45,7 +45,7 @@ static void ProcessMsgTunnelMap(void);
 boolean UPLINK_ConfigMsgTunnelCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const  UPLINK_ConfigMsgTunnelCmdParam *ConfigMsgTunnel = (const UPLINK_ConfigMsgTunnelCmdParam *) MsgPtr;
+   const  UPLINK_ConfigMsgTunnelCmdMsg *ConfigMsgTunnel = (const UPLINK_ConfigMsgTunnelCmdMsg *) MsgPtr;
 
    boolean RetStatus = TRUE;
    int     Index     = ConfigMsgTunnel->Index;

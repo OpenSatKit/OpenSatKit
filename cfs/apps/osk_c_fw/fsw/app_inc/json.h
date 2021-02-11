@@ -82,13 +82,14 @@ typedef enum {
 /*
 ** Application's function that processes JSON table container objects. 
 */
-typedef boolean (*JSON_ContainerFuncPtr) (int TokenIdx);
+typedef boolean (*JSON_ContainerFuncPtr) (void* UserData, int TokenIdx);
 
 typedef struct {
 
-  char  Name[JSON_MAX_STR_LEN];
+  char   Name[JSON_MAX_STR_LEN];
+  void*  UserData;
   JSON_ContainerFuncPtr FuncPtr;
-
+  
 } JSON_ContainerCallBack;
 
 
@@ -120,7 +121,7 @@ typedef struct
    char                   Name[JSON_MAX_OBJ_NAME_CHAR];
    boolean                Modified;
    JSON_ContainerFuncPtr  Callback;
-   void*                  Data;
+   void*                  UserData;
    
 } JSON_Obj;
 
@@ -136,12 +137,14 @@ typedef struct
 **    1. This must be called prior to any other functions using the JSON_OBJ
 **    2. The object name must be identical (case sensitive) to the name in the
 **       JSON file. 
+**    3. CallerData is a pointer to data that the user wants access to while
+**       processing the JSON object.
 **
 */
 void JSON_ObjConstructor(JSON_Obj*              Obj,
                          char*                  Name,
                          JSON_ContainerFuncPtr  Callback,
-                         void*                  Data);
+                         void*                  UserData);
 
 
 /******************************************************************************
@@ -200,7 +203,7 @@ void JSON_ProcessTokens(JSON_Class* Json);
 
 
 /******************************************************************************
-** Function: JSON_RegContainerCallback
+** Function: JSON_TokenStrEq
 **
 ** Notes:
 **    

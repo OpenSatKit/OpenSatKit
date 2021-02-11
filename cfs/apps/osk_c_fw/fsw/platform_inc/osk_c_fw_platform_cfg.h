@@ -4,7 +4,7 @@
 ** Notes:
 **   1. Resources are statically allocated for each application's
 **      data structures so these configurations must be sized to 
-**      accommodate the 'largest' application.
+**      accommodate the application demanding the most resources.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -32,5 +32,50 @@
 **
 */
 #define OSK_C_FW_MISSION_REV  (0)
+
+/******************************************************************************
+** OSK Framework Error Codes
+**
+** TODO - This needs to be expanded and moved to framework utility
+*/
+
+#define  OSK_C_FW_ERROR      (0x0001)
+#define  OSK_C_FW_CFS_ERROR  ((int32)(CFE_SEVERITY_ERROR | OSK_C_FW_ERROR))
+
+/******************************************************************************
+** Initialization Table (INITBL)
+**
+*/
+
+#define  INITBL_MAX_CFG_ITEMS  30   /* Max number of JSON ini file configuration items */
+
+
+/******************************************************************************
+** Table Manager (TBLMGR)
+*/
+
+#define TBLMGR_MAX_TBL_PER_APP  5
+
+
+/******************************************************************************
+** Child Manager (CHILDMGR)
+**
+** Define child manager object parameters. The command buffer length must big
+** enough to hold the largest command packet of all the apps using this utility.
+*/
+
+#define CHILDMGR_MAX_TASKS  5   /* Max number of child tasks registered for all apps */
+
+
+#define CHILDMGR_CMD_BUFFER_LEN  256   /* Must be greater than largest cmd msg */ 
+#define CHILDMGR_CMD_Q_ENTRIES     3   
+#define CHILDMGR_CMD_FUNC_TOTAL   32
+
+/******************************************************************************
+** State Reporter (STATEREP)
+*/
+
+#define STATEREP_BIT_ID_MAX  32
+
 
 #endif /* _osk_c_fw_platform_cfg_h_ */

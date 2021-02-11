@@ -71,15 +71,15 @@ typedef struct {
    char    IpAddrStr[IF42_IP_ADDR_STR_LEN];
    uint16  Port;
    
-}  OS_PACK IF42_ConnectCmdParam;
-#define IF42_CONNECT_CMD_DATA_LEN  (sizeof(IF42_ConnectCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK IF42_ConnectCmdMsg;
+#define IF42_CONNECT_CMD_DATA_LEN  (sizeof(IF42_ConnectCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 typedef struct {
 
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    
-}  OS_PACK IF42_DisconnectCmdParam;
-#define IF42_DISCONNECT_CMD_DATA_LEN  (sizeof(IF42_DisconnectCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK IF42_DisconnectCmdMsg;
+#define IF42_DISCONNECT_CMD_DATA_LEN  (sizeof(IF42_DisconnectCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************
