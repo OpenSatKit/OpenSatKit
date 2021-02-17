@@ -1,8 +1,8 @@
 ################################################################################
-# SimSat Housekeeping Demo 
+# SimSat Housekeeping Feature Demo 
 #
 # Notes:
-#   1. Developed for the YouTube File Manager training video. This demo
+#   1. Developed for the YouTube Housekeeping app training video. This demo
 #      illustrates housekeeping app features using the SimSat configuration.
 #      
 # Demo Steps:

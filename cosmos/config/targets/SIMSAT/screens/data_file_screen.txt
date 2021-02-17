@@ -69,7 +69,7 @@ VERTICAL # With 2 rows
            BUTTON 'Manage Files' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FUNC_FILE_MGMT")'
            BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "FUNC_TBL_MGMT", "")'
            BUTTON 'Manage Recorder' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "FUNC_RECORDER_MGMT")'
-           BUTTON 'Create KIT_TO Tbl' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "CREATE_KIT_TO_TBL")'
+           BUTTON 'Table Gen Tools' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TABLE_GEN_TOOLS")'
 
          END # Matrix
          END # Function Vertical
@@ -125,10 +125,10 @@ VERTICAL # With 2 rows
          MATRIXBYCOLUMNS 2 5 2
     
             BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "DEMO")'
-            NAMED_WIDGET demo COMBOBOX "Data-File Mgmt Screen" "Data-File Mgmt Script" "DS Feature Screen" "FM Playback Script" "FM Feature Screen" "FM Feature Script" 
+            NAMED_WIDGET demo COMBOBOX "Data-File Mgmt Screen" "Data-File Mgmt Script" "DS Feature Screen" "FM Playback Script" "FM Feature Screen" "FM Feature Script" "HK Feature Script"
 
             BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TUTORIAL")'
-            NAMED_WIDGET tutorial COMBOBOX  "Data-File Slides" "Data-File Intro Video" "FM App Video" "Comm App Intro Video"
+            NAMED_WIDGET tutorial COMBOBOX  "Data-File Slides" "Comm App Intro Video" "Data-File Intro Video" "FM App Video" "HK App Video" 
 
          END # Matrix
          END # Learn VerticalBox

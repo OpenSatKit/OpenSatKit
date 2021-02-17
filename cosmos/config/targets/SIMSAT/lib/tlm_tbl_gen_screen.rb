@@ -18,18 +18,18 @@ require 'osk_global'
 require 'osk_system'
 
 require 'simsat_const'
-require 'tbl_tools/tlm/gen_kit_to_tbl'
+require 'tbl_tools/tlm/kit_to_tbl_gen'
 
 ################################################################################
 ## Screen Commands
 ################################################################################
 
-def gen_tlm_tbl(screen, cmd)
+def tlm_tbl_gen(screen, cmd)
 
    if (cmd == "CREATE_CSV")
       xls_file = open_file_dialog(SimSat::TBL_TOOL_DIR, "Select xlsx file")
       # Launch LibreOffice with template file
-      #xls_template = File.join(Osk::TBL_TOOLS_DIR,"tlm","templates",Osk::GEN_TLM_TBL_XLS_FILE)
+      #xls_template = File.join(Osk::TBL_TOOLS_DIR,"tlm","templates",Osk::TLM_TBL_GEN_INPUT_XLS_FILE)
       spawn("libreoffice --calc #{xls_file}")
    elsif (cmd == "CSV_INPUT")
       csv_file = open_file_dialog(SimSat::TBL_TOOL_DIR)
@@ -45,11 +45,11 @@ def gen_tlm_tbl(screen, cmd)
       template_dir = open_directory_dialog(Osk::TBL_TLM_TEMPLATE_DIR,"Select template directory")
       screen.get_named_widget("template_dir").text = template_dir
    elsif (cmd == "CREATE_TABLES")
-      # TODO - Add sanity & error checks
+      # TODO - Add sanity/error checks
       # Get user inputs and format for use below
       csv_path_filename = screen.get_named_widget("csv_input_file").text
       csv_filename = File.basename(csv_path_filename)
-      json_template_file = File.join(screen.get_named_widget("template_dir").text,Osk::GEN_TLM_TBL_JSON_TEMPLATE_FILE)
+      json_template_file = File.join(screen.get_named_widget("template_dir").text,Osk::TLM_TBL_GEN_CFG_TEMPLATE_FILE)
       output_path = screen.get_named_widget("output_dir").text
       template_path = screen.get_named_widget("template_dir").text
       json_input_file = File.join(output_path,csv_filename.sub(".csv",".json"))
@@ -65,19 +65,21 @@ def gen_tlm_tbl(screen, cmd)
       to["log-file"] = csv_filename.sub(".csv","_log.txt")
       File.open("#{json_input_file}","w") do |f| 
 	      f.write(JSON.pretty_generate(json_hash))
-	      f.write("\n")  # FSW JSMN tokenizer requires a newline after closing bracket
+	      f.write("\n") 
       end
       
       # Create table files
-      gen_to_tbl = GenToTbl.new(json_input_file)
+      kit_to_tbl_gen = KitToTblGen.new(json_input_file)
+   
+      prompt("If no error dialogs appeared then files successfully created in #{output_path}")
    
    elsif (cmd == "TRAINING_VIDEO")
       prompt(Osk::MSG_TBD_FEATURE)
       #Cosmos.open_in_web_browser("#{Osk::YOUTUBE_TRAINING_APP_CREATE_HELLO_WORLD}")   
    
    else
-      prompt("Error in screen definition file. Undefined command sent to gen_tlm_tbl()")
+      prompt("Error in screen definition file. Undefined command sent to tlm_tbl_gen()")
    end
    
-end # gen_tlm_tbl()
+end # tlm_tbl_gen()
 

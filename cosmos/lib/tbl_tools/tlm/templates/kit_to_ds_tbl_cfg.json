@@ -16,8 +16,8 @@
       "telemetry-output": {
          "csv-file": "@undefined@",
          "log-file": "@undefined@",
-         "header-file": "kit_to-tbl-header.json",
-         "footer-file": "kit_to-tbl-footer.json",
+         "header-file": "kit_to_tbl_header.json",
+         "footer-file": "kit_to_tbl_footer.json",
          "output-file": "kit_to_@file_substr@_tbl.json",
          "max-apid": 16384,
          "files": {

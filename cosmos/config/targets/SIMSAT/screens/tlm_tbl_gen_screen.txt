@@ -1,0 +1,83 @@
+###############################################################################
+# Generate Telemetry Tables Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+<% 
+   require 'osk_global'
+   require 'simsat_const'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Generate KIT_TO Packet Filter Table"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICAL
+
+   VERTICALBOX
+      LABEL "This screen manages the process for creating KIT_TO JSON filter table files and Data Storage (DS) table C files"
+      SETTING TEXTCOLOR black
+      LABEL "from a CSV text file that is typically created by a spreadsheet app. The DS tool is not complete."
+      SETTING TEXTCOLOR black
+   END
+
+   HORIZONTALLINE
+   
+   HORIZONTAL
+
+      CANVAS 440 260
+         CANVASIMAGE "osk_tlm_tbl_gen.png" 0 0
+      END
+      SETTING BACKCOLOR 255 255 255
+     
+      VERTICALBOX
+
+         HORIZONTAL
+         MATRIXBYCOLUMNS 1 8 10
+            LABEL "<b>1</b>"
+            LABEL "<b>2</b>"
+            LABEL " "
+            LABEL " "
+            LABEL " "
+            LABEL "<b>3</b>"
+            LABEL " "
+         END
+         LABEL ""
+         MATRIXBYCOLUMNS 2 5 10
+    
+            BUTTON 'Create CSV File'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tlm_tbl_gen_screen.rb"; tlm_tbl_gen(self, "CREATE_CSV")'
+            LABEL "Use LibreOffice to create CSV"
+            
+            LABEL 'Select Options:'
+            LABEL "    "         
+         
+            BUTTON 'CSV Input File'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tlm_tbl_gen_screen.rb"; tlm_tbl_gen(self, "CSV_INPUT")'
+            NAMED_WIDGET csv_input_file TEXTFIELD 175 <%=  File.join(SimSat::TBL_TOOL_DIR,"simsat_kit_to_ds_tbl.csv") %>
+
+            BUTTON 'Output Dir'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tlm_tbl_gen_screen.rb"; tlm_tbl_gen(self, "OUTPUT_DIR")'
+            NAMED_WIDGET output_dir TEXTFIELD 175  <%= "#{SimSat::TBL_DIR}" %>
+
+            BUTTON 'Template Dir'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tlm_tbl_gen_screen.rb"; tlm_tbl_gen(self, "TEMPLATE_DIR")'
+            NAMED_WIDGET template_dir TEXTFIELD 175 <%= "#{Osk::TBL_TLM_TEMPLATE_DIR}" %>
+
+            BUTTON 'Create tables'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tlm_tbl_gen_screen.rb"; tlm_tbl_gen(self, "CREATE_TABLES")'
+            LABEL " "
+
+            BUTTON 'Run Training Videos' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tlm_tbl_gen_screen.rb"; tlm_tbl_gen(self, "TRAINING_VIDEO")'
+            NAMED_WIDGET training_video COMBOBOX "Coming Soon" 
+
+         END
+         END # Horizontal
+         
+      End # Vertical
+   SETTING BACKCOLOR 162 181 205
+   END # Horizontal
+END # Vertical
+

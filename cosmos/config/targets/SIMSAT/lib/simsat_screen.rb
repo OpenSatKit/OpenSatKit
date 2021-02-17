@@ -17,6 +17,7 @@ require 'osk_education'
 require 'fsw_const'
 require 'fsw_config_param'
 require 'fm_const'
+require 'hk_const'
 
 ################################################################################
 ## GUI Send Commands
@@ -215,8 +216,8 @@ def simsat_data_file(screen, cmd)
       display("CFS_KIT RECORDER_MGMT_SCREEN",1500,50)
    when "FUNC_TBL_MGMT"
       display("CFS_KIT TABLE_MGMT_SCREEN",1500,50)
-   when "CREATE_KIT_TO_TBL"
-      display("SIMSAT GEN_TLM_TBL_SCREEN",1500,50)
+   when "TABLE_GEN_TOOLS"
+      display("SIMSAT TBL_TOOL_SCREEN",1500,50)
    when "DEMO"
 
       if (Osk::System.check_n_start_cfs)
@@ -229,6 +230,8 @@ def simsat_data_file(screen, cmd)
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_playback.rb")
          when "FM Feature Script"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_features.rb")
+         when "HK Feature Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_hk_features.rb")
          else
             display_scr = nil
             case screen.get_named_widget("demo").text
@@ -249,6 +252,8 @@ def simsat_data_file(screen, cmd)
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_DATAFILE)    
       when "FM App Video"
          Osk::education_video(FM_YOUTUBE_OVERVIEW)
+      when "HK App Video"
+         Osk::education_video(HK_YOUTUBE_OVERVIEW)
       when "Comm App Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_INTRO)
       when "Data-File Slides"

@@ -22,6 +22,7 @@ require 'csv'
 require 'fileutils'
 require 'json'
 
+
 #
 # Virtual base class for different keyword types. The keyword
 # class manages the conversion between the CSV entry and a 
@@ -118,6 +119,7 @@ end # class NumericKeyword
 #
 class CsvFilterFile
 
+   attr_reader :filename
    attr_reader :keywords
    attr_reader :csv_file_line
    
@@ -148,6 +150,7 @@ class CsvFilterFile
    
    def initialize(csv_file, id)
 
+      @filename        = csv_file
       @key_filter_type = "F#{id}_TYPE"
       @key_filter_n    = "F#{id}_N"
       @key_filter_x    = "F#{id}_X"
@@ -215,13 +218,12 @@ end # class CsvFilterFile
 #
 # This class creates a KIT_TO JSON Table file
 #
-class ToJsonTblFile
+class KitToFswTblFile
 
-   def initialize(csv_filter_file, header_file, footer_file)
+   def initialize(csv_filter_file, verbose)
 
+      @verbose = verbose
       @csv_filter_file = csv_filter_file
-      @header_file = header_file
-      @footer_file = footer_file
       
       @first_pkt = true
       @curr_row  = 0
@@ -243,20 +245,21 @@ class ToJsonTblFile
    #    ]
    # }
    #
-   def create_tbl(tbl_filename, description, verbose)
+   def create_tbl(tbl_filename, header_file, footer_file, description)
    
-      header_str = File.read(@header_file).sub("@description@",description)
-      footer_str = File.read(@footer_file)
+      description << "File generated from #{@csv_filter_file.filename} at #{Time.now.to_s}"
+      header_str = File.read(header_file).sub("@description@",description)
+      footer_str = File.read(footer_file)
       
       File.open(tbl_filename, 'w') do |tbl_file|
 
          tbl_file << header_str
          
-         @csv_filter_file.process_rows(verbose) do |row|
+         @csv_filter_file.process_rows(@verbose) do |row|
            
             @curr_row += 1
             tbl_str = csv_row_to_tbl_str(row) 
-            puts "tbl_str[#{@curr_row}]\n#{tbl_str}" if verbose
+            puts "tbl_str[#{@curr_row}]\n#{tbl_str}" if @verbose
             tbl_file << tbl_str unless tbl_str == ""
 
          end # process_rows
@@ -319,12 +322,12 @@ class ToJsonTblFile
       
    end # csv_row_to_tbl_str()
 
-end # class ToJsonTblFile
+end # class KitToFswTblFile
 
 # irb: test = GenToTbl.new("gen_kit_to_ds_tbl.json")
 # irb: test = GenToTbl.new("simsat-gen_to_ds_tbl.json")
 
-class GenToTbl
+class KitToTblGen
 
    JSON_TBL_TOOL      = "tlm-tbl-tool"
    JSON_VERBOSE       = "verbose"
@@ -352,13 +355,14 @@ class GenToTbl
    def log_msg(msg)
    
       @log_file.write("#{msg}\n")
-      puts ">> #{msg}\n"
+      puts "[log_msg] #{msg}\n" if @verbose
       
    end # log_msg()
    
    def initialize(config_file)
       begin
-
+      
+         @config_file = config_file
          config = read_config_file(config_file)
          
          tool_config = config[JSON_TBL_TOOL]
@@ -386,8 +390,8 @@ class GenToTbl
             footer_file  = File.join(config[JSON_TBL_TOOL][JSON_TEMPLATE_PATH],to_config[JSON_FOOTER_FILE])
 
             tbl_filename = File.join(config[JSON_TBL_TOOL][JSON_OUTPUT_PATH],to_config[JSON_OUTPUT_FILE].sub("@file_substr@",file_substr))
-            tbl_file = ToJsonTblFile.new(@csv_filter_file,header_file,footer_file)
-            tbl_file.create_tbl(tbl_filename, "Test using #{file_substr}", @verbose)
+            tbl_file = KitToFswTblFile.new(@csv_filter_file, @verbose)
+            tbl_file.create_tbl(tbl_filename, header_file, footer_file, "Test using #{file_substr}")
 
             log_msg "Sucessfully created #{tbl_filename} at #{Time.now.to_s}\n"                 
 
@@ -397,7 +401,12 @@ class GenToTbl
          
       rescue Exception => e
 
-         log_msg "Exception at CSV file line #{@csv_filter_file.csv_file_line}" unless @csv_filter_file.nil?
+         if not @log_file.nil?
+            log_msg "Exception while processing #{@config_file}" 
+            log_msg "#{e.message}\n"
+            log_msg "#{e.backtrace}\n"         
+         end
+         puts "Exception while processing #{@config_file}" 
          puts e.message
          puts e.backtrace
 	   
@@ -436,4 +445,4 @@ class GenToTbl
       
    end # read_config_file()
 
-end # class GenToTbl
+end # class KitToTblGen
