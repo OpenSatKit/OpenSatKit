@@ -68,8 +68,8 @@ typedef struct {
 
     uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
 
-} FILESYS_SendTblPktCmdType;
-#define FILESYS_SEND_TBL_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendTblPktCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILESYS_SendTblPktCmdMsg;
+#define FILESYS_SEND_TBL_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendTblPktCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -78,16 +78,16 @@ typedef struct {
     uint32  TblVolumeIndex;
     uint32  TblVolumeState;
 
-} FILESYS_SetTblStateCmdType;
-#define FILESYS_SET_TBL_STATE_CMD_DATA_LEN  (sizeof(FILESYS_SetTblStateCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILESYS_SetTblStateCmdMsg;
+#define FILESYS_SET_TBL_STATE_CMD_DATA_LEN  (sizeof(FILESYS_SetTblStateCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
 
     uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
 
-} FILESYS_SendOpenFilesPktCmdType;
-#define FILESYS_SEND_OPEN_FILES_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendOpenFilesPktCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILESYS_SendOpenFilesPktCmdMsg;
+#define FILESYS_SEND_OPEN_FILES_PKT_CMD_DATA_LEN  (sizeof(FILESYS_SendOpenFilesPktCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 
@@ -170,6 +170,12 @@ typedef struct {
    ** App Framework
    */
    
+   INITBL_Class*  IniTbl;
+
+   /*
+   ** Class State Data
+   */
+
    const char* CfeTblName;
    FileUtil_OpenFileList OpenFileList;
    
@@ -202,7 +208,7 @@ typedef struct {
 ** Notes:
 **   None
 */
-void FILESYS_Constructor(FILESYS_Class* FileSysPtr);
+void FILESYS_Constructor(FILESYS_Class* FileSysPtr, INITBL_Class* IniTbl);
 
 
 /******************************************************************************
@@ -251,4 +257,4 @@ boolean FILESYS_SendTblPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 boolean FILESYS_SetTblStateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
-#endif /* _filesystbl_ */
+#endif /* _filesys_ */

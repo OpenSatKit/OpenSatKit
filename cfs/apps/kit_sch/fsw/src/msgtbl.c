@@ -46,7 +46,7 @@ static MSGTBL_Class* MsgTbl = NULL;
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-static boolean MsgCallback (int TokenIdx);
+static boolean MsgCallback (void* UserData, int TokenIdx);
 
 /******************************************************************************
 ** Function: SplitStr
@@ -400,9 +400,10 @@ boolean MSGTBL_GetMsgPtr(uint16  EntryId, uint16 **MsgPtr)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
-**   2. ObjLoadCnt incremented for every message, valid or invalid.
+**   2. UserData is unused.
+**   3. ObjLoadCnt incremented for every message, valid or invalid.
 */
-static boolean MsgCallback (int TokenIdx)
+static boolean MsgCallback (void* UserData, int TokenIdx)
 {
 
    int    AttributeCnt = 0;

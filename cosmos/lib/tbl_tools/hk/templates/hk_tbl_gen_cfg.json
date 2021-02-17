@@ -1,0 +1,32 @@
+{
+   "hk-tbl-tool": {
+
+      "description": [
+         "Template for HK copy table generation tool configuration file",
+         "@undefined@ indicates the field must be defined before the table is generated",
+         "Other fields can be redefined as needed",
+         "This file was generated from @src-file@",
+         "at @date-time@ "      
+      ],
+ 
+      "verbose": false,
+      
+      "input-path":    "@undefined@",
+      "output-path":   "@undefined@",
+      "template-path": "@undefined@",
+      "log-file":      "@undefined@",
+
+      "cfs": {
+         "json-hk-file": "@undefined@",
+         "header-file":  "hk_cpy_tbl_header.c",
+         "footer-file":  "hk_cpy_tbl_footer.c",
+         "output-file":  "hk_cpy_tbl.c"
+      },
+     
+      "cosmos": {
+         "template-file": "hk_tlm_template.txt",
+         "output-file":   "hk_tlm.txt"
+      }
+      
+   }
+}

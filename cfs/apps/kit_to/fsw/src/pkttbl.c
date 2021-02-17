@@ -49,8 +49,8 @@ static boolean WriteJsonPkt(int32 FileHandle, const PKTTBL_Pkt* Pkt, boolean Fir
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-static boolean PktCallback (int TokenIdx);
-static boolean FilterCallback (int TokenIdx);
+static boolean PktCallback (void* UserData, int TokenIdx);
+static boolean FilterCallback (void* UserData, int TokenIdx);
 
 
 /******************************************************************************
@@ -206,7 +206,7 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
                           
                      if (PktTbl->Tbl.Pkt[AppId].StreamId != PKTTBL_UNUSED_MSG_ID) {
 
-                        if (!(PktTbl->LoadTblEntryFunc)(AppId, (PKTTBL_Pkt*)PktTbl->JsonObj[PKTTBL_OBJ_PKT].Data))
+                        if (!(PktTbl->LoadTblEntryFunc)(AppId, (PKTTBL_Pkt*)PktTbl->JsonObj[PKTTBL_OBJ_PKT].UserData))
                             PktTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                      }     
                   } /* End packet array loop */                
@@ -381,10 +381,11 @@ static boolean WriteJsonPkt(int32 FileHandle, const PKTTBL_Pkt* Pkt, boolean Fir
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
-**   2. ObjLoadCnt incremented for every packet, valid or invalid.
+**   2. UserData is unused.
+**   3. ObjLoadCnt incremented for every packet, valid or invalid.
 **      PktLoadIdx index to stored new pkt and incremented for valid packets
 */
-static boolean PktCallback (int TokenIdx)
+static boolean PktCallback (void* UserData, int TokenIdx)
 {
 
    int  AttributeCnt = 0;
@@ -439,12 +440,13 @@ static boolean PktCallback (int TokenIdx)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
-**   2. ObjLoadCnt incremented for every packet, valid or invalid.
+**   2. UserData is unused.
+**   3. ObjLoadCnt incremented for every packet, valid or invalid.
 **      PktLoadIdx index to stored new pkt and incremented for valid packets
-**   3. Filter must be defined within a packet structure and this code assumes
+**   4. Filter must be defined within a packet structure and this code assumes
 **      the filter corresponds to most recent packet callback
 */
-static boolean FilterCallback (int TokenIdx)
+static boolean FilterCallback (void* UserData, int TokenIdx)
 {
 
    int  AttributeCnt = 0;

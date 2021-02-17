@@ -46,8 +46,8 @@ static SCHTBL_Class* SchTbl = NULL;
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-static boolean SlotCallback (int TokenIdx);
-static boolean ActivityCallback (int TokenIdx);
+static boolean SlotCallback (void* UserData, int TokenIdx);
+static boolean ActivityCallback (void* UserData, int TokenIdx);
 
 
 /******************************************************************************
@@ -483,12 +483,13 @@ boolean SCHTBL_ValidEntry(const char* EventStr, uint16 Enabled, uint16 Period,
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
-**   2. ObjLoadCnt incremented for every message, valid or invalid.
-**   3. Assumes JSON file processed sequentially because this callback sets 
+**   2. UserData is unused.
+**   3. ObjLoadCnt incremented for every message, valid or invalid.
+**   4. Assumes JSON file processed sequentially because this callback sets 
 **      the slot ID and the activity callback assumes it is processing the
 **      current slot. 
 */
-static boolean SlotCallback (int TokenIdx)
+static boolean SlotCallback (void* UserData, int TokenIdx)
 {
 
    int     AttributeCnt = 0;
@@ -558,10 +559,11 @@ static boolean SlotCallback (int TokenIdx)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
-**   2. ObjLoadCnt incremented for every message, valid or invalid.
-**   3. Validation functions send events messages
+**   2. UserData is unused.
+**   3. ObjLoadCnt incremented for every message, valid or invalid.
+**   4. Validation functions send events messages
 */
-static boolean ActivityCallback (int TokenIdx)
+static boolean ActivityCallback (void* UserData, int TokenIdx)
 {
 
    int    AttributeCnt = 0;

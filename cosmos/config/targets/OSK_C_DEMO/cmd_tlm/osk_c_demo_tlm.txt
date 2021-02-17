@@ -24,20 +24,20 @@ TELEMETRY OSK_DEMO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "OpenSatKit Demo 
      STATE UNDEF 0
      STATE VALID 1
      STATE INVLD 2
-  
-  APPEND_ITEM FAULT_REP_TLM_MODE 8 UINT  "Fault Reporter telemetry mode"
-    STATE NEW   1
-    STATE MERGE 2
   APPEND_ITEM SIM_ENABLED 8 UINT  "Fault simulation enabled"
     STATE FALSE 0
     STATE TRUE  1
-  APPEND_ITEM SIM_MODE    8 UINT  "Fault simulation enabled"
+  APPEND_ITEM SIM_MODE    8 UINT  "Fault simulation mode"
     STATE IDLE    0
     STATE TIMED   1
     STATE WALKING 2
-  APPEND_ITEM FAULT_REP_ENABLED 16 UINT "Enabled bits"
-  APPEND_ITEM FAULT_REP_LATCHED 16 UINT "Latched bits"
-  
+  APPEND_ITEM STATE_REP_TLM_MODE 8 UINT  "State Reporter telemetry mode"
+    STATE NEW   1
+    STATE MERGE 2
+  APPEND_ITEM STATE_REP_ENABLED 16 UINT "State Reporter Enabled bits"
+    FORMAT_STRING  "0x%04X"
+  APPEND_ITEM STATE_REP_LATCHED 16 UINT "State Reporter Latched bits"
+    FORMAT_STRING  "0x%04X"  
   APPEND_ITEM TBL_DATA_ENA 8 UINT  "Table Data Enabled: 0=DIsabled, 1=Enabled"
     STATE FALSE 0
     STATE TRUE  1
@@ -52,7 +52,9 @@ TELEMETRY OSK_DEMO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "OpenSatKit Demo 
   APPEND_ITEM DATA_3 16 UINT "Data parameter 3"
 
 
-TELEMETRY OSK_DEMO FR_TLM_PKT <%= Osk::Cfg.processor_endian %> "OpenSatKit Demo App Fault Report"
+TELEMETRY OSK_DEMO FR_TLM_PKT <%= Osk::Cfg.processor_endian %> "OpenSatKit Demo App State/Fault Report"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @FR_TLM_MID_STR) %>
   APPEND_ITEM FAULT_1 16 UINT "Each bit position corresponds to a fault ID"
+    FORMAT_STRING  "0x%04X"
   APPEND_ITEM FAULT_2 16 UINT "Each bit position corresponds to a fault ID"
+    FORMAT_STRING  "0x%04X"

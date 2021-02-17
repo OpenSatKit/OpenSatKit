@@ -33,14 +33,13 @@
 */
 
 /*
-** 1.1.0 - Refactored for OSK 2.2
-** 2.0.0 - Refactored for OSK 3.0, upgrade to 42 version 2042 that includes
-**         standalone AcApp and autocode database I/F
+** 1.1 - Refactored for OSK 2.2
+** 2.0 - Refactored for OSK 3.0, upgrade to 42 version 2042 that includes
+**       standalone AcApp and autocode database I/F
 */
 
 #define  I42_MAJOR_VER     2
 #define  I42_MINOR_VER     0
-#define  I42_LOCAL_REV     0
 
 #define  I42_SB_PIPE_DEPTH    25
 #define  I42_SB_PIPE_NAME     "I42"

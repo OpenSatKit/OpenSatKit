@@ -48,7 +48,7 @@ static JSONTBL_Class* JsonTbl = NULL;
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-boolean EntryCallBack (int TokenIdx);
+boolean EntryCallBack (void* UserData, int TokenIdx);
 
 
 /******************************************************************************
@@ -261,8 +261,9 @@ boolean JSONTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename) {
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
 */
-boolean EntryCallBack (int TokenIdx)
+boolean EntryCallBack (void* UserData, int TokenIdx)
 {
 
    int  Index, Data1, Data2, Data3, EntryCnt=0;

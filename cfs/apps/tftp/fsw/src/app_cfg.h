@@ -39,7 +39,6 @@
 
 #define  TFTP_MAJOR_VER   1
 #define  TFTP_MINOR_VER   1
-#define  TFTP_LOCAL_REV   0
 
 
 #define  TFTP_CMD_PIPE_DEPTH    10

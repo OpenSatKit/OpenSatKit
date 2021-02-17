@@ -43,7 +43,6 @@
 
 #define  KIT_TO_MAJOR_VER     2
 #define  KIT_TO_MINOR_VER     0
-#define  KIT_TO_LOCAL_REV     0
 
 
 #define  KIT_TO_CMD_PIPE_DEPTH    10

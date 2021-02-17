@@ -146,20 +146,20 @@
             
             {"activity": {
                "name":    "HK Combined Pkt 1",
-               "descr":   "Period can be shortened based on what's in combo packet",
+               "descr":   "Period can be adjusted based on input data packet rates",
                "index":   1,
                "enabled": "true",
-               "period":  4,
+               "period":  6,
                "offset":  2,
                "msg-idx": 24
             }},
             
             {"activity": {
                "name":    "HK Combined Pkt 2",
-               "descr":   "Period can be shortened based on what's in combo packet",
+               "descr":   "Period can be adjusted based on input data packet rates",
                "index":   2,
                "enabled": "true",
-               "period":  2,
+               "period":  4,
                "offset":  1,
                "msg-idx": 25
             }},

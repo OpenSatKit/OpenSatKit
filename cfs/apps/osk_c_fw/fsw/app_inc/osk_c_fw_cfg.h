@@ -2,9 +2,11 @@
 ** Purpose: Define configurations for the application framework
 **
 ** Notes:
-**   1. Resources are statically allocated for each application's
-**      data structures so these configurations muct be sized to 
-**      accommodate the application requiring th emost resources.
+**   1. These definitions are intrinsic to the framework and should not
+**      change across platform deployments. They should be fixed between
+**      framework releases but may need to can during framework development
+**      and for a release. See osk_c_fw_platform.h and osk_c_fw_mission.h
+**      for parameters that can be configured for a deployment.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
@@ -39,11 +41,6 @@
 #define CMDMGR_RESET_CMD_FC     1
 #define CMDMGR_APP_START_FC     2  /* First FC available for app */
 
-/******************************************************************************
-** Table Manager (TBLMGR)
-*/
-
-#define TBLMGR_MAX_TBL_PER_APP  5
 
 /******************************************************************************
 ** Event Macros
@@ -54,18 +51,15 @@
 */
 
 #define OSK_C_FW_INIT_INFO_EID     0
-#define CMDMGR_BASE_EID            1 
-#define TBLMGR_BASE_EID           10
-#define JSON_BASE_EID             20
-#define FAULTREP_BASE_EID         40
-#define OSK_C_FW_UTILS_BASE_EID   50
+#define INILIB_BASE_EID            1 
+#define CMDMGR_BASE_EID           10 
+#define TBLMGR_BASE_EID           20
+#define JSON_BASE_EID             30
+#define CHILDMGR_BASE_EID         50
+#define STATEREP_BASE_EID         70
+#define OSK_C_FW_UTILS_BASE_EID   80
 #define OSK_C_FW_APP_BASE_EID    100 /* Starting ID for the App using the framework */
 
-/******************************************************************************
-** Fault Reporter (FAULTREP)
-*/
-
-#define FAULTREP_ID_MAX  32
 
 /******************************************************************************
 ** Debug macros
@@ -74,10 +68,12 @@
 */
 
 
-#define DBG_CMDMGR   0
-#define DBG_TBLMGR   0
-#define DBG_JSON     0
-#define DBG_FAULTREP 0
+#define DBG_INITBL    0
+#define DBG_CMDMGR    0
+#define DBG_TBLMGR    0
+#define DBG_JSON      0
+#define DBG_FAULTREP  0
+#define DBG_CHILDMGR  0
 
 
 #endif /* _osk_c_fw_cfg_ */

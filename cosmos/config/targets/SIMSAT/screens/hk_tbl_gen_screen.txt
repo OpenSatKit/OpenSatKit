@@ -1,0 +1,88 @@
+###############################################################################
+# Generate Housekeeping Tables Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+<% 
+   require 'osk_global'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Generate Housekeeping Copy Table"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICAL
+   VERTICALBOX
+      LABEL "This screen manages the process for creating an HK copy table C file from a JSON text file. Currently you must use a text editor to create"
+      SETTING TEXTCOLOR black
+      LABEL "the JSON file. This will be replaced by a GUI that lets you drag 'n drop telemetry packet items into an HK combo packet definition. The"
+      SETTING TEXTCOLOR black
+      LABEL "number of HK table entries can't exceed the HK_COPY_TABLE_ENTRIES configuration parameter. To use the FSW table you must copy the generated"
+      SETTING TEXTCOLOR black
+      LABEL "table to HK's table directory and rebuild the cFS. To use the table in COMSOS you need to copy the COSMOS telmeetry definition file to HK's"
+      SETTING TEXTCOLOR black
+      LABEL "target cmd_tlm directory and restart the COSMOS Command and Telemetry Server"
+      SETTING TEXTCOLOR black
+   END
+
+   HORIZONTALLINE
+
+   HORIZONTAL
+
+      CANVAS 440 300
+         CANVASIMAGE "osk_hk_tbl_gen.png" 0 0
+      END
+      SETTING BACKCOLOR 255 255 255
+     
+      VERTICALBOX
+
+         HORIZONTAL
+         MATRIXBYCOLUMNS 1 8 10
+            LABEL "<b>1</b>"
+            LABEL "<b>2</b>"
+            LABEL " "
+            LABEL " "
+            LABEL " "
+            LABEL "<b>3</b>"
+            LABEL " "
+         END
+         LABEL ""
+         MATRIXBYCOLUMNS 2 5 10
+    
+            BUTTON 'Create JSON File'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/hk_tbl_gen_screen.rb"; hk_tbl_gen(self, "CREATE_JSON")'
+            LABEL "Open Text Editor to create HK Copy Table Definition"
+            
+            LABEL 'Select Options:'
+            LABEL "    "         
+         
+            BUTTON 'JSON Def File'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/hk_tbl_gen_screen.rb"; hk_tbl_gen(self, "JSON_INPUT")'
+            NAMED_WIDGET json_input_file TEXTFIELD 175 <%=  File.join(Osk::TBL_HK_TEST_DIR,"hk_cpy_tbl_test.json") %>
+
+            BUTTON 'Output Dir'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/hk_tbl_gen_screen.rb"; hk_tbl_gen(self, "OUTPUT_DIR")'
+            NAMED_WIDGET output_dir TEXTFIELD 175  <%= "#{Osk::TBL_HK_TEST_DIR}" %>
+
+            BUTTON 'Template Dir'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/hk_tbl_gen_screen.rb"; hk_tbl_gen(self, "TEMPLATE_DIR")'
+            NAMED_WIDGET template_dir TEXTFIELD 175 <%= "#{Osk::TBL_HK_TEMPLATE_DIR}" %>
+
+            BUTTON 'Create tables'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/hk_tbl_gen_screen.rb"; hk_tbl_gen(self, "CREATE_TABLE")'
+            LABEL " "
+
+            BUTTON 'Run Training Videos' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/hk_tbl_gen_screen.rb"; hk_tbl_gen(self, "TRAINING_VIDEO")'
+            NAMED_WIDGET training_video COMBOBOX "Coming Soon" 
+
+         END
+         END # Horizontal
+         
+      End # Vertical
+   SETTING BACKCOLOR 162 181 205
+   END # Horizontal
+END # Vertical
+
+

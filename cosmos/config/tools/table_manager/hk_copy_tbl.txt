@@ -4,11 +4,11 @@
 
   @APP_PREFIX_STR          = "HK"
   @COPY_TABLE_ENTRIES_STR  = "HK_COPY_TABLE_ENTRIES"
-  @COPY_TBL_NAME_STR       = "HK_COPY_TBL_NAME"
+  @COPY_TABLE_NAME_STR     = "HK_COPY_TABLE_NAME"
   
 %>
 TABLE "HK Copy" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Packet Copy Definitions"
-  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @COPY_TBL_NAME_STR) %>
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @COPY_TABLE_NAME_STR) %>
 
   <% 
     max_tbl_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @COPY_TABLE_ENTRIES_STR)

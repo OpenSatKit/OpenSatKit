@@ -25,6 +25,15 @@
 #include "i42_msgids.h"
 #include "i42_perfids.h"
 
+
+/******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define I42_PLATFORM_REV   0
+#define I42_INI_FILE_NAME  "/cf/i42_ini.json"
+
+
 /******************************************************************************
 ** I42 Application Configurations
 */

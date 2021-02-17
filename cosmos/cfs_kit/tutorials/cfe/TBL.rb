@@ -78,7 +78,7 @@ puts "TBL02 - Review MD functionality"
 wait #TBL02 - Click <Go> to continue to next section
 
 ############################################
-## TBL03 - Perform MD tabel loads & dumps ##
+## TBL03 - Perform MD table loads & dumps ##
 ############################################
 
 wait #TBL03 - Click <Go> to attempt to dump inactive dwell table

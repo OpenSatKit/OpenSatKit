@@ -24,6 +24,15 @@
 #include "f42_msgids.h"
 #include "f42_perfids.h"
 
+
+/******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define F42_PLATFORM_REV   0
+#define F42_INI_FILE_NAME  "/cf/f42_ini.json"
+
+
 /******************************************************************************
 ** F42 Application Macros
 */

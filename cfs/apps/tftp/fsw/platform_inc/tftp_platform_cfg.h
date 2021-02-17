@@ -25,6 +25,15 @@
 #include "tftp_msgids.h"
 #include "tftp_perfids.h"
 
+
+/******************************************************************************
+** Platform Deployment Configurations
+*/
+
+#define TFTP_PLATFORM_REV   0
+#define TFTP_FILE_NAME  "/cf/tftp_ini.json"
+
+
 /******************************************************************************
 ** TFTP Application Macros
 */

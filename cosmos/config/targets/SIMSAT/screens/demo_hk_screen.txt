@@ -1,0 +1,149 @@
+###############################################################################
+# SimSat HK Demo Screen
+#
+# Notes:
+#  1. Displays the counters for the apps included in SimSat. For illustrative
+#     purposes rather than practical for a mission.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% require 'osk_global' %>
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SimSat HK Demo"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICALBOX
+
+   HORIZONTALBOX "Housekeeping App"
+      MATRIXBYCOLUMNS 6
+      
+         LABEL "Combo Pkts Sent"
+         VALUE HK HK_TLM_PKT COMBINE_PKT_SENT_CNT WITH_UNITS 6
+         LABEL " "
+         
+         LABEL "Miss Data Cnt"
+         VALUE HK HK_TLM_PKT MISSING_DATA_CNT WITH_UNITS 6
+         LABEL " "
+         
+      END # Matrix
+   END # HK App
+   
+   HORIZONTALLINE
+   HORIZONTALBOX "Combo Pkt 1"
+  
+      MATRIXBYCOLUMNS 5
+
+         LABEL " "
+         LABEL "Cmd Valid"
+         LABEL "Cmd Invalid"
+         LABEL "cFE Checksum"
+         LABEL " "
+
+         LABEL "<b>ES</b>"
+         VALUE HK COMBO_PKT_1 <%= "ES_#{Osk::TLM_STR_CMD_VLD}" %>
+         VALUE HK COMBO_PKT_1 <%= "ES_#{Osk::TLM_STR_CMD_ERR}" %>
+         VALUE HK COMBO_PKT_1 ES_CFE_CORE_CHECKSUM
+         LABEL " "
+
+         LABEL " "
+         LABEL "Cmd Valid"
+         LABEL "Cmd Invalid"
+         LABEL "Format"
+         LABEL "Trunc Cnt"
+
+         LABEL "<b>EVS</b>"
+         VALUE HK COMBO_PKT_1 <%= "EVS_#{Osk::TLM_STR_CMD_VLD}" %>
+         VALUE HK COMBO_PKT_1 <%= "EVS_#{Osk::TLM_STR_CMD_ERR}" %>
+         VALUE HK COMBO_PKT_1 EVS_MSG_FORMAT_MODE
+         VALUE HK COMBO_PKT_1 EVS_MSG_TRUNC_CNT
+
+         LABEL " "
+         LABEL "Cmd Valid"
+         LABEL "Cmd Invalid"
+         LABEL "No Subscr"
+         LABEL "Msg Send Err"
+
+         LABEL "<b>SB</b>"
+         VALUE HK COMBO_PKT_1 <%= "SB_#{Osk::TLM_STR_CMD_VLD}" %>
+         VALUE HK COMBO_PKT_1 <%= "SB_#{Osk::TLM_STR_CMD_ERR}" %>
+         VALUE HK COMBO_PKT_1 SB_NO_SUBSCRIBERS_CNT
+         VALUE HK COMBO_PKT_1 SB_MSG_SEND_ERR_CNT
+
+         LABEL " "
+         LABEL "Cmd Valid"
+         LABEL "Cmd Invalid"
+         LABEL "Num Reg Tbl"
+         LABEL " "
+
+         LABEL "<b>TBL</b>"
+         VALUE HK COMBO_PKT_1 <%= "TBL_#{Osk::TLM_STR_CMD_VLD}" %>
+         VALUE HK COMBO_PKT_1 <%= "TBL_#{Osk::TLM_STR_CMD_ERR}" %>
+         VALUE HK COMBO_PKT_1 TBL_NUM_REG_TABLES
+         LABEL " "
+
+         LABEL " "
+         LABEL "Cmd Valid"
+         LABEL "Cmd Invalid"
+         LABEL "Time State"
+         LABEL " "
+
+         LABEL "<b>TIME</b>"
+         VALUE HK COMBO_PKT_1 <%= "TIME_#{Osk::TLM_STR_CMD_VLD}" %>
+         VALUE HK COMBO_PKT_1 <%= "TIME_#{Osk::TLM_STR_CMD_ERR}" %>
+         VALUE HK COMBO_PKT_1 TIME_CLK_STATE_FLAGS
+         LABEL " "
+
+      END # Matrix
+   END # HK Combo Pkt 1
+
+   HORIZONTALLINE
+   HORIZONTALBOX "Combo Pkt 2"
+  
+      MATRIXBYCOLUMNS 5
+
+         LABEL " "
+         LABEL "Instr State"
+         LABEL "Sci State"
+         LABEL "Fault Present"
+         LABEL " "
+
+         LABEL "<b>ISIM</b>"
+         VALUE HK COMBO_PKT_2 INSTR_STATE
+         VALUE HK COMBO_PKT_2 SCI_STATE
+         VALUE HK COMBO_PKT_2 FAULT
+         LABEL " "
+
+         LABEL " "
+         LABEL "Rate X"
+         LABEL "Rate Y"
+         LABEL "Rate Z"
+         LABEL " "
+
+         LABEL "<b>F42</b>"
+         VALUE HK COMBO_PKT_2 WBN_1
+         VALUE HK COMBO_PKT_2 WBN_2
+         VALUE HK COMBO_PKT_2 WBN_3
+         LABEL " "
+
+         LABEL " "
+         LABEL "Att Err X"
+         LABEL "Att Err Y"
+         LABEL "Att Err Z"
+         LABEL " "
+
+         LABEL "<b>F42</b>"
+         VALUE HK COMBO_PKT_2 THERR_X
+         VALUE HK COMBO_PKT_2 THERR_Y
+         VALUE HK COMBO_PKT_2 THERR_Z
+         LABEL " "
+
+      END # Matrix
+   END # HK Combo Pkt 2
+
+END # Vertical Box

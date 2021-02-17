@@ -63,8 +63,8 @@ typedef struct {
    int16   ServerPort;
    char    IpAddrStr[NETIF_IP_STR_LEN];
    
-}  OS_PACK NETIF_InitSocketCmdParam;
-#define NETIF_INIT_SOCKET_CMD_DATA_LEN  (sizeof(NETIF_InitSocketCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK NETIF_InitSocketCmdMsg;
+#define NETIF_INIT_SOCKET_CMD_DATA_LEN  (sizeof(NETIF_InitSocketCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************

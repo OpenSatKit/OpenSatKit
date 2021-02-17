@@ -42,13 +42,14 @@ static boolean WriteDirListToFile(const char* DirNameWithSep, os_dirp_t DirPtr, 
 ** Function: DIR_Constructor
 **
 */
-void DIR_Constructor(DIR_Class*  DirPtr)
+void DIR_Constructor(DIR_Class*  DirPtr, INITBL_Class* IniTbl)
 {
  
    Dir = DirPtr;
 
    CFE_PSP_MemSet((void*)Dir, 0, sizeof(DIR_Class));
  
+   Dir->IniTbl = IniTbl;
  
 } /* End DIR_Constructor() */
 
@@ -72,7 +73,7 @@ void DIR_ResetStatus()
 boolean DIR_CreateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   DIR_CreateCmdType* CreateCmd = (DIR_CreateCmdType *) MsgPtr;
+   DIR_CreateCmdMsg* CreateCmd = (DIR_CreateCmdMsg *) MsgPtr;
    boolean RetStatus = FALSE;
    FileUtil_FileInfo FileInfo;
    int32 SysStatus;
@@ -119,7 +120,7 @@ boolean DIR_CreateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean DIR_DeleteCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   DIR_DeleteCmdType* DeleteCmd = (DIR_DeleteCmdType *) MsgPtr;
+   DIR_DeleteCmdMsg* DeleteCmd = (DIR_DeleteCmdMsg *) MsgPtr;
    
 
    int32             SysStatus;
@@ -204,7 +205,7 @@ boolean DIR_DeleteCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean DIR_DeleteAllCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   DIR_DeleteAllCmdType* DeleteAllCmd = (DIR_DeleteAllCmdType *) MsgPtr;
+   DIR_DeleteAllCmdMsg* DeleteAllCmd = (DIR_DeleteAllCmdMsg *) MsgPtr;
    
    FileUtil_FileInfo FileInfo;
    os_dirp_t         DirPtr = NULL;
@@ -354,7 +355,7 @@ boolean DIR_DeleteAllCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean DIR_SendListPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   DIR_SendListPktCmdType* SendListPktCmd = (DIR_SendListPktCmdType *) MsgPtr;
+   DIR_SendListPktCmdMsg* SendListPktCmd = (DIR_SendListPktCmdMsg *) MsgPtr;
    
    os_dirp_t         DirPtr;
    os_dirent_t*      DirEntry;
@@ -374,7 +375,8 @@ boolean DIR_SendListPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    if (FileInfo.State == FILEUTIL_FILE_IS_DIR) {
       
       /* Clears counters and nulls strings */
-      CFE_SB_InitMsg(&Dir->ListPkt, FILEMGR_DIR_LIST_TLM_MID, sizeof(DIR_ListPkt), TRUE);
+      CFE_SB_InitMsg(&Dir->ListPkt, (CFE_SB_MsgId_t)INITBL_GetIntConfig(Dir->IniTbl,CFG_DIR_LIST_TLM_MID),
+                     sizeof(DIR_ListPkt), TRUE);
       
       strcpy(DirWithSep, SendListPktCmd->DirName);
       if (FileUtil_AppendPathSep(DirWithSep, OS_MAX_PATH_LEN)) {
@@ -495,7 +497,7 @@ boolean DIR_SendListPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean DIR_WriteListFileCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   DIR_WriteListFileCmdType* WriteListFileCmd = (DIR_WriteListFileCmdType *) MsgPtr;
+   DIR_WriteListFileCmdMsg* WriteListFileCmd = (DIR_WriteListFileCmdMsg *) MsgPtr;
    boolean RetStatus = FALSE;
       
    int32      FileHandle;
@@ -510,7 +512,7 @@ boolean DIR_WriteListFileCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    if (FileInfo.State == FILEUTIL_FILE_IS_DIR) {
       
       if (WriteListFileCmd->Filename[0] == '\0') {
-         strncpy(Filename, INITBL_GetStrConfig(CFG_DIR_LIST_FILE_DEFNAME), OS_MAX_PATH_LEN - 1);
+         strncpy(Filename, INITBL_GetStrConfig(Dir->IniTbl,CFG_DIR_LIST_FILE_DEFNAME), OS_MAX_PATH_LEN - 1);
          Filename[OS_MAX_PATH_LEN - 1] = '\0';
       }
       else {
@@ -618,7 +620,7 @@ static boolean WriteDirListToFile(const char* DirNameWithSep, os_dirp_t DirPtr, 
    uint16 DirEntryLen   = 0;               /* Length of each directory entry */
    uint16 DirEntryCnt   = 0;
    uint16 FileEntryCnt  = 0;
-   uint16 FileEntryMax  = INITBL_GetIntConfig(CFG_DIR_LIST_FILE_ENTRIES);
+   uint16 FileEntryMax  = INITBL_GetIntConfig(Dir->IniTbl, CFG_DIR_LIST_FILE_ENTRIES);
    uint16 TaskBlockCnt  = 0;               /* See prologue */
    int32  BytesWritten;
    char   PathFilename[OS_MAX_PATH_LEN] = "\0";   /* Combined directory path and entry filename */
@@ -634,7 +636,7 @@ static boolean WriteDirListToFile(const char* DirNameWithSep, os_dirp_t DirPtr, 
    */
    
    CFE_PSP_MemSet(&FileHeader, 0, sizeof(CFE_FS_Header_t));
-   FileHeader.SubType = INITBL_GetIntConfig(CFG_DIR_LIST_FILE_SUBTYPE);
+   FileHeader.SubType = INITBL_GetIntConfig(Dir->IniTbl, CFG_DIR_LIST_FILE_SUBTYPE);
    strncpy(FileHeader.Description, "Directory Listing", sizeof(FileHeader.Description) - 1);
    FileHeader.Description[sizeof(FileHeader.Description) - 1] = '\0';
 
@@ -797,7 +799,9 @@ static void LoadFileEntry(const char* PathFilename, DIR_FileEntry* FileEntry, ui
    
    if (IncludeSizeTime) {
       
-      CHILDMGR_PauseTask(TaskBlockCount, INITBL_GetIntConfig(CFG_TASK_FILE_STAT_CNT), INITBL_GetIntConfig(CFG_TASK_FILE_STAT_DELAY));
+      CHILDMGR_PauseTask(TaskBlockCount, INITBL_GetIntConfig(Dir->IniTbl, CFG_TASK_FILE_STAT_CNT), 
+                         INITBL_GetIntConfig(Dir->IniTbl, CFG_TASK_FILE_STAT_DELAY), 
+                         INITBL_GetIntConfig(Dir->IniTbl, CFG_CHILD_TASK_PERF_ID));
       
       CFE_PSP_MemSet(&FileStatus, 0, sizeof(os_fstat_t));
       SysStatus = OS_stat(PathFilename, &FileStatus);

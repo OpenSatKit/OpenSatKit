@@ -1,10 +1,12 @@
 /*
-** Purpose: Demonstrate the osk_c_fw FaultRep service
+** Purpose: Demonstrate the osk_c_fw StateRep service
 **
 ** Notes:
 **   1. This object is for demonstrative purposes. It 
 **      provides ground commands that can be used to simulate 
-**      fault detection reports.
+**      atate reports.  The state reporter is configured to
+**      report faults so variable names include 'fault' rather
+**      than a generic name like state.
 **
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU General Public
@@ -77,10 +79,10 @@ typedef struct {
 
    boolean              SimEnabled;
    DEMOFR_SimMode       SimMode;
-   DEMOFR_SimFault      SimFault[FAULTREP_ID_MAX];
+   DEMOFR_SimFault      SimFault[STATEREP_BIT_ID_MAX];
    DEMOFR_SimWalkFault  SimWalkFault;
    
-   FaultRep_Class* FaultRep;
+   STATEREP_Class*      StateRep;
 
 } DEMOFR_Class;
 
@@ -94,8 +96,8 @@ typedef struct {
    uint8     CmdHeader[CFE_SB_CMD_HDR_SIZE];
    uint8     Mode;                           /* See FaultRep_TlmMode */
 
-} DEMOFR_SetTlmModeCmdParam;
-#define DEMOFR_SET_TLM_MODE_CMD_DATA_LEN  (sizeof(DEMOFR_SetTlmModeCmdParam) - CFE_SB_CMD_HDR_SIZE)
+} DEMOFR_SetTlmModeCmdMsg;
+#define DEMOFR_SET_TLM_MODE_CMD_DATA_LEN  (sizeof(DEMOFR_SetTlmModeCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 typedef struct {
 
@@ -105,8 +107,8 @@ typedef struct {
    uint16    Id;              /* Ignored for walking sim */
    uint16    Steps;           /* Number of sim steps to sim a fault */
 
-} DEMOFR_SimFaultCmdParam;
-#define DEMOFR_SIM_FAULT_CMD_DATA_LEN  (sizeof(DEMOFR_SimFaultCmdParam) - CFE_SB_CMD_HDR_SIZE)
+} DEMOFR_SimFaultCmdMsg;
+#define DEMOFR_SIM_FAULT_CMD_DATA_LEN  (sizeof(DEMOFR_SimFaultCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /*
@@ -125,7 +127,7 @@ typedef struct {
 **      simply stores a pointer reference.
 **
 */
-void DEMOFR_Constructor(DEMOFR_Class *DemoFrPtr, FaultRep_Class* FaultRepPtr);
+void DEMOFR_Constructor(DEMOFR_Class *DemoFrPtr, STATEREP_Class* StateRepPtr);
 
 
 /******************************************************************************

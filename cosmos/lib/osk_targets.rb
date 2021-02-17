@@ -60,7 +60,9 @@ def self.create_json_table_mgmt_scr(app_list)
    #   License (GPL).
    #
    ###############################################################################
-
+   <% 
+      require 'osk_global'
+   %>
    SCREEN AUTO AUTO 0.5
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
 
@@ -110,12 +112,12 @@ def self.create_json_table_mgmt_scr(app_list)
      END # Matrix
      LABEL 'Ground Working Directory'
            SETTING HEIGHT 20
-     NAMED_WIDGET gnd_work_dir TEXTFIELD 256
+     NAMED_WIDGET gnd_work_dir TEXTFIELD 256 <%= Osk::GND_SRV_DIR %>
            #SETTING WIDTH 100
            SETTING HEIGHT 20
      LABEL 'Flight Working Directory'
            SETTING HEIGHT 20
-     NAMED_WIDGET flt_work_dir TEXTFIELD 256
+     NAMED_WIDGET flt_work_dir TEXTFIELD 256 <%= Osk::FLT_SRV_DIR %>
            #SETTING WIDTH 100
            SETTING HEIGHT 20
    END # Vertical File Transfer

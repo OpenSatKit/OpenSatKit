@@ -1,0 +1,21 @@
+<% 
+  require 'fsw_config_param' 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR = "MQTT"
+  @CMD_MID_STR    = "MQTT_CMD_MID"
+
+  # Configuration parameter assumptions
+  #   None
+  
+%>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an information event message with the app's version identifier"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset app and child task counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+  
+  

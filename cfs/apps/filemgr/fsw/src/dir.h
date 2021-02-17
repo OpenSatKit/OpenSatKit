@@ -54,8 +54,8 @@ typedef struct {
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    char    DirName[OS_MAX_PATH_LEN];
 
-} DIR_CreateCmdType;
-#define DIR_CREATE_CMD_DATA_LEN  (sizeof(DIR_CreateCmdType) - CFE_SB_CMD_HDR_SIZE)
+} DIR_CreateCmdMsg;
+#define DIR_CREATE_CMD_DATA_LEN  (sizeof(DIR_CreateCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 
@@ -64,8 +64,8 @@ typedef struct {
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    char    DirName[OS_MAX_PATH_LEN];
     
-} DIR_DeleteCmdType;
-#define DIR_DELETE_CMD_DATA_LEN  (sizeof(DIR_DeleteCmdType) - CFE_SB_CMD_HDR_SIZE)
+} DIR_DeleteCmdMsg;
+#define DIR_DELETE_CMD_DATA_LEN  (sizeof(DIR_DeleteCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -73,8 +73,8 @@ typedef struct {
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    char    DirName[OS_MAX_PATH_LEN];
 
-} DIR_DeleteAllCmdType;
-#define DIR_DELETE_ALL_CMD_DATA_LEN  (sizeof(DIR_DeleteAllCmdType) - CFE_SB_CMD_HDR_SIZE)
+} DIR_DeleteAllCmdMsg;
+#define DIR_DELETE_ALL_CMD_DATA_LEN  (sizeof(DIR_DeleteAllCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -84,8 +84,8 @@ typedef struct {
    uint16  DirListOffset;          /* Starting offset into directory listing */
    uint16  IncludeSizeTime;
 
-} DIR_SendListPktCmdType;
-#define DIR_SEND_LIST_PKT_CMD_DATA_LEN  (sizeof(DIR_SendListPktCmdType) - CFE_SB_CMD_HDR_SIZE)
+} DIR_SendListPktCmdMsg;
+#define DIR_SEND_LIST_PKT_CMD_DATA_LEN  (sizeof(DIR_SendListPktCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct
@@ -95,8 +95,8 @@ typedef struct
    char    Filename[OS_MAX_PATH_LEN];
    uint16  IncludeSizeTime;
  
-} DIR_WriteListFileCmdType;
-#define DIR_WRITE_LIST_FILE_CMD_DATA_LEN  (sizeof(DIR_WriteListFileCmdType) - CFE_SB_CMD_HDR_SIZE)
+} DIR_WriteListFileCmdMsg;
+#define DIR_WRITE_LIST_FILE_CMD_DATA_LEN  (sizeof(DIR_WriteListFileCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************
@@ -144,6 +144,16 @@ typedef struct {
 
 typedef struct {
 
+   /*
+   ** Framework References
+   */
+   
+   INITBL_Class*  IniTbl;
+
+   /*
+   ** Class State Data
+   */
+
    uint16  CmdWarningCnt;
    
    /*
@@ -174,7 +184,7 @@ typedef struct {
 **   1. This must be called prior to any other function.
 **
 */
-void DIR_Constructor(DIR_Class *DirPtr);
+void DIR_Constructor(DIR_Class *DirPtr, INITBL_Class* IniTbl);
 
 
 /******************************************************************************

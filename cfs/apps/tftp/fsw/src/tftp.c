@@ -191,7 +191,7 @@ static void DestructorCallback(void) {
 */
 boolean TFTP_PutFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
 
-   const TFTP_PutFileCmdParam *PutFileCmd = (const TFTP_PutFileCmdParam *) MsgPtr;
+   const TFTP_PutFileCmdMsg *PutFileCmd = (const TFTP_PutFileCmdMsg *) MsgPtr;
    boolean  RetStatus = TRUE;
 
    Tftp->TransferReqPkt.CmdCode = TFTP_PUT_CMD_CODE;
@@ -223,7 +223,7 @@ boolean TFTP_PutFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
 boolean TFTP_GetFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const TFTP_GetFileCmdParam *GetFileCmd = (const TFTP_GetFileCmdParam *) MsgPtr;
+   const TFTP_GetFileCmdMsg *GetFileCmd = (const TFTP_GetFileCmdMsg *) MsgPtr;
    boolean  RetStatus = TRUE;
 
    Tftp->TransferReqPkt.CmdCode = TFTP_GET_CMD_CODE;

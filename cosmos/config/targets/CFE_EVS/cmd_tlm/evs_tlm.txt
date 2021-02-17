@@ -49,3 +49,4 @@ TELEMETRY CFE_EVS EVENT_MSG_PKT <%= Osk::Cfg.processor_endian %> "Event Message 
   APPEND_ITEM MESSAGE        976 STRING "Message text string"
   APPEND_ITEM SPARE1           8 UINT   "Structure padding"
   APPEND_ITEM SPARE2           8 UINT   "Structure padding"
+

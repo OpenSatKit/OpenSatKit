@@ -1,0 +1,77 @@
+###############################################################################
+## This file was automatically generated
+##   from /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/HK/test/hk_cpy_tbl_test.json
+##   at 2021-02-14 12:18:18 -0800 
+##
+## Template parameters:
+##   <src-file>   JSON file that defines the copy table combo packets
+##   <date-time>  The date and time when the file was generated.
+##   <HK_COMBINED_PKTx_MID> Telemetry item defintions for each combo packet
+###############################################################################
+<% 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR         = "HK"
+  @HK_TLM_MID_STR         = "HK_HK_TLM_MID"
+  @COMBINED_PKT1_MID_STR  = "HK_COMBINED_PKT1_MID"
+  @COMBINED_PKT2_MID_STR  = "HK_COMBINED_PKT2_MID"
+  @COMBINED_PKT3_MID_STR  = "HK_COMBINED_PKT3_MID"
+  
+%>
+
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
+  APPEND_ITEM PADDING_16                 16 UINT "Padding to align to 32-bit"
+  APPEND_ITEM COMBINE_PKT_SENT_CNT       16 UINT "Count of combined tlm pkts sent"
+  APPEND_ITEM MISSING_DATA_CNT           16 UINT "Count of combined tlm pkts sent"
+  APPEND_ITEM MEM_POOL_HANDLE            32 UINT "Memory pool handle used to get mempool diagnostics"
+
+# Reordered alphabetically from default order 
+
+TELEMETRY HK COMBO_PKT_1 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 1"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT1_MID_STR) %>
+    APPEND_ITEM CMD_VALID_COUNT 8 UINT
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT
+  APPEND_ITEM CFE_CORE_CHECKSUM 16 UINT
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT
+  APPEND_ITEM MSG_FMT_MODE 8 UINT
+  APPEND_ITEM MSG_TRUNC_CTR 8 UINT
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT
+  APPEND_ITEM NO_SUBSCRIBE_CNT 8 UINT
+  APPEND_ITEM MSG_SEND_ERR_CNT 8 UINT
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT
+  APPEND_ITEM NUM_TABLES 16 UINT
+  APPEND_ITEM CMD_VALID_COUNT 8 UINT
+  APPEND_ITEM CMD_ERROR_COUNT 8 UINT
+  APPEND_ITEM CLOCK_STATE_FLAGS 16 UINT
+
+  
+TELEMETRY HK COMBO_PKT_2 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT2_MID_STR) %>
+    APPEND_ITEM INSTR_STATE 8 UINT
+  APPEND_ITEM SCI_STATE 8 UINT
+  APPEND_ITEM FAULT 8 UINT
+  APPEND_ITEM SPARE 8 UINT
+  APPEND_ITEM CTRL_MODE 16 UINT
+  APPEND_ITEM WBN_1 32 FLOAT
+  APPEND_ITEM WBN_2 32 FLOAT
+  APPEND_ITEM WBN_3 32 FLOAT
+  APPEND_ITEM QBR_1 32 FLOAT
+  APPEND_ITEM QBR_2 32 FLOAT
+  APPEND_ITEM QBR_3 32 FLOAT
+  APPEND_ITEM QBR_4 32 FLOAT
+  APPEND_ITEM THERR_X 32 FLOAT
+  APPEND_ITEM THERR_Y 32 FLOAT
+  APPEND_ITEM THERR_Z 32 FLOAT
+
+
+TELEMETRY HK COMBO_PKT_3 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT3_MID_STR) %>
+  
+  

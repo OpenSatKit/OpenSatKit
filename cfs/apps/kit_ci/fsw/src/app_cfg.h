@@ -33,13 +33,12 @@
 */
 
 /*
-** 1.0.0 - Intitial release
-** 1.1.0 - Refactored for OSK 2.2
+** 1.0 - Intitial release
+** 1.1 - Refactored for OSK 2.2
 */
 
 #define  KIT_CI_MAJOR_VER    1
 #define  KIT_CI_MINOR_VER    1
-#define  KIT_CI_LOCAL_REV    0
 
 #define CMDMGR_PIPE_DEPTH         10
 #define CMDMGR_PIPE_NAME          "KIT_CI_CMD_PIPE"

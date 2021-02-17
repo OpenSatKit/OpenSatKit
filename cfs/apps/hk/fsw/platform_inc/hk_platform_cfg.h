@@ -75,7 +75,7 @@
 **  \par Limits
 **       This parameter can be set to 0 or 1 only.
 */
-#define HK_DISCARD_INCOMPLETE_COMBO          0
+#define HK_DISCARD_INCOMPLETE_COMBO      0
 
 
 /**

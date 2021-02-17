@@ -26,35 +26,28 @@
 #include "demobj.h"
 #include "demofr.h"
 
-/*
-** Macro Definitions
-*/
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
 #define OSK_C_DEMO_INIT_INFO_EID            (OSK_C_DEMO_BASE_EID + 0)
 #define OSK_C_DEMO_EXIT_ERR_EID             (OSK_C_DEMO_BASE_EID + 1)
 #define OSK_C_DEMO_CMD_NOOP_INFO_EID        (OSK_C_DEMO_BASE_EID + 2)
 #define OSK_C_DEMO_CMD_INVALID_MID_ERR_EID  (OSK_C_DEMO_BASE_EID + 3)
 
-/*
-** Type Definitions
+/**********************/
+/** Type Definitions **/
+/**********************/
+
+/******************************************************************************
+** Command Packets
 */
 
-typedef struct
-{
 
-   CMDMGR_Class    CmdMgr;
-   TBLMGR_Class    TblMgr;
-   FaultRep_Class  FaultRep;
-   
-   DEMOBJ_Class   DemObj;
-   DEMOFR_Class   DemoFr;
-   
-   CFE_SB_PipeId_t CmdPipe;
-
-} OSK_C_DEMO_Class;
-
-typedef struct
-{
+/******************************************************************************
+** Telemetry Packets
+*/
+typedef struct {
 
    uint8    Header[CFE_SB_TLM_HDR_SIZE];
 
@@ -74,14 +67,14 @@ typedef struct
    uint8    LastTblActionStatus;
 
    /*
-   ** FaultRep & DEMOFR
+   ** STATEREP & DEMOFR
    */
 
-   uint8   FaultRepTlmMode;
    uint8   SimEnabled;
    uint8   SimMode;
-   uint16  FaultRepEnabled;
-   uint16  FaultRepLatched;
+   uint8   StateRepTlmMode;
+   uint16  StateRepEnabled;
+   uint16  StateRepLatched;
 
    /*
    ** DEMOBJ Data
@@ -93,8 +86,40 @@ typedef struct
    ExTblData_Entry TblData;
 
 } OS_PACK OSK_C_DEMO_HkPkt;
-
 #define OSK_C_DEMO_TLM_HK_LEN sizeof (OSK_C_DEMO_HkPkt)
+
+
+/******************************************************************************
+** KIT_SCH_Class
+*/
+typedef struct {
+
+   /*
+   ** App Frameowrk
+   */
+
+   CFE_SB_PipeId_t CmdPipe;
+   CMDMGR_Class    CmdMgr;
+   TBLMGR_Class    TblMgr;
+   STATEREP_Class  StateRep;
+   
+   /*
+   ** Telemetry Packets
+   */
+   
+   OSK_C_DEMO_HkPkt  HkPkt;
+   STATEREP_TlmMsg   SrPkt;
+   /*
+   ** App Objects
+   */
+
+   DEMOBJ_Class   DemObj;
+   DEMOFR_Class   DemoFr;
+   
+
+} OSK_C_DEMO_Class;
+
+
 
 /*
 ** Exported Data

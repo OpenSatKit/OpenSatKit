@@ -34,14 +34,14 @@ COMMAND OSK_DEMO SET_ACTIVE_TBL <%= Osk::Cfg.processor_endian %> "Set the index 
   APPEND_PARAMETER TBL_ID      8 UINT 0  3 0 "Table ID: 0=XML, 1=SCANF, 2=JSON, 3=cFE"
   APPEND_PARAMETER ENTRY_INDEX 8 UINT 0 31 0 "Index into table for which parameter set to use."
 
-COMMAND OSK_DEMO CONFIG_FAULT_DET <%= Osk::Cfg.processor_endian %> "Enable/disable a fault detector"
+COMMAND OSK_DEMO CONFIG_STATE_BIT <%= Osk::Cfg.processor_endian %> "Enable/disable a state/fault bit"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
-  APPEND_PARAMETER DET_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "Fault detector ID or 0xFFFF for all of them"
-  APPEND_PARAMETER ENABLE 16 UINT MIN_UINT8  MAX_UINT8  1 "Enable fault detector (0=False,1=True)"
+  APPEND_PARAMETER ID     16 UINT MIN_UINT16 MAX_UINT16 0xFFFF "Individual atate/fault ID or 0xFFFF for all IDs"
+  APPEND_PARAMETER ENABLE 16 UINT MIN_UINT8  MAX_UINT8  1       "Enable/disable reporting (0=False,1=True)"
 
-COMMAND OSK_DEMO CLEAR_FAULT_DET <%= Osk::Cfg.processor_endian %> "Clear fault detector latch flag"
+COMMAND OSK_DEMO CLEAR_STATE_BIT <%= Osk::Cfg.processor_endian %> "Clear state/fault latch flag"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 2) %>
-  APPEND_PARAMETER DET_ID   16 UINT MIN_UINT16 MAX_UINT16 0 "Fault detector ID or 0xFFFF for all of them"
+  APPEND_PARAMETER ID   16 UINT MIN_UINT16 MAX_UINT16 0xFFFF "Individual atate/fault ID or 0xFFFF for all IDs"
 
 COMMAND OSK_DEMO SET_TLM_MODE <%= Osk::Cfg.processor_endian %> "Set the fault telemetry report mode"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 1) %>

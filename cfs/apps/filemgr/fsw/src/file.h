@@ -68,16 +68,16 @@ typedef struct {
     char    SourceFilename[OS_MAX_PATH_LEN];
     char    TargetFilename[OS_MAX_PATH_LEN];
 
-} FILE_CopyCmdType;
-#define FILE_COPY_CMD_DATA_LEN  (sizeof(FILE_CopyCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_CopyCmdMsg;
+#define FILE_COPY_CMD_DATA_LEN  (sizeof(FILE_CopyCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
 
     uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
     char    Filename[OS_MAX_PATH_LEN];
-} FILE_DeleteCmdType;
-#define FILE_DELETE_CMD_DATA_LEN  (sizeof(FILE_DeleteCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_DeleteCmdMsg;
+#define FILE_DELETE_CMD_DATA_LEN  (sizeof(FILE_DeleteCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -87,8 +87,8 @@ typedef struct {
     char    SourceFilename[OS_MAX_PATH_LEN];
     char    TargetFilename[OS_MAX_PATH_LEN];
 
-} FILE_MoveCmdType;
-#define FILE_MOVE_CMD_DATA_LEN  (sizeof(FILE_MoveCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_MoveCmdMsg;
+#define FILE_MOVE_CMD_DATA_LEN  (sizeof(FILE_MoveCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -97,8 +97,8 @@ typedef struct {
     char    SourceFilename[OS_MAX_PATH_LEN];
     char    TargetFilename[OS_MAX_PATH_LEN];
 
-} FILE_RenameCmdType;
-#define FILE_RENAME_CMD_DATA_LEN  (sizeof(FILE_RenameCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_RenameCmdMsg;
+#define FILE_RENAME_CMD_DATA_LEN  (sizeof(FILE_RenameCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -107,8 +107,8 @@ typedef struct {
     char    SourceFilename[OS_MAX_PATH_LEN];
     char    TargetFilename[OS_MAX_PATH_LEN];
 
-} FILE_DecompressCmdType;
-#define FILE_DECOMPRESS_CMD_DATA_LEN  (sizeof(FILE_DecompressCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_DecompressCmdMsg;
+#define FILE_DECOMPRESS_CMD_DATA_LEN  (sizeof(FILE_DecompressCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -118,8 +118,8 @@ typedef struct {
     char    Source2Filename[OS_MAX_PATH_LEN];
     char    TargetFilename[OS_MAX_PATH_LEN];
 
-} FILE_ConcatenateCmdType;
-#define FILE_CONCATENATE_CMD_DATA_LEN  (sizeof(FILE_ConcatenateCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_ConcatenateCmdMsg;
+#define FILE_CONCATENATE_CMD_DATA_LEN  (sizeof(FILE_ConcatenateCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -129,8 +129,8 @@ typedef struct {
     uint8   ComputeCrc;                     /* Boolean flag: TRUE = Compute CRC */ 
     uint8   CrcType;                        /* See CFE_ES for CRC definitions   */ 
 
-} FILE_SendInfoPktCmdType;
-#define FILE_SEND_INFO_PKT_CMD_DATA_LEN  (sizeof(FILE_SendInfoPktCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_SendInfoPktCmdMsg;
+#define FILE_SEND_INFO_PKT_CMD_DATA_LEN  (sizeof(FILE_SendInfoPktCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -139,8 +139,8 @@ typedef struct {
     char    Filename[OS_MAX_PATH_LEN];
     uint32  Mode;                           /* Permissions, passed directly to OS_chmod */
 
-} FILE_SetPermissionsCmdType;
-#define FILE_SET_PERMISSIONS_CMD_DATA_LEN  (sizeof(FILE_SetPermissionsCmdType) - CFE_SB_CMD_HDR_SIZE)
+} FILE_SetPermissionsCmdMsg;
+#define FILE_SET_PERMISSIONS_CMD_DATA_LEN  (sizeof(FILE_SetPermissionsCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************
@@ -172,6 +172,16 @@ typedef struct {
 */
 
 typedef struct {
+
+   /*
+   ** Framework References
+   */
+   
+   INITBL_Class*  IniTbl;
+
+   /*
+   ** Class State Data
+   */
 
    uint16  CmdWarningCnt;
 
@@ -205,7 +215,7 @@ typedef struct {
 **   1. This must be called prior to any other function.
 **
 */
-void FILE_Constructor(FILE_Class *FilePtr);
+void FILE_Constructor(FILE_Class *FilePtr, INITBL_Class* IniTbl);
 
 
 /******************************************************************************

@@ -1,0 +1,39 @@
+{ "app": {
+   
+   "title": "MQTT",
+   "version": "1.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "MQTT is a prototype app for providing a bridge between an MQTT broker",
+      "and the Software Bus. This app is based on Alan Cudmore's MQTT app at",
+      "https://github.com/alanc98/mqtt_app"
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": false
+   },
+   
+   "cosmos": {
+      "target": "MQTT"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/mqtt.so",
+      "entry-symbol": "MQTT_AppMain",
+      "name": "MQTT",
+      "priority": 80,
+      "stack": 32768,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [],
+      "cmd-mid": "MQTT_CMD_MID"
+   }
+   
+}}
+
+

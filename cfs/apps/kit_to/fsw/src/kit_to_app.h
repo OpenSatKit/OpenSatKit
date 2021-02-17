@@ -60,8 +60,8 @@ typedef struct {
    uint8    CmdHeader[CFE_SB_CMD_HDR_SIZE];
    uint16   RunLoopDelay;
 
-}  KIT_TO_SetRunLoopDelayCmdParam;
-#define KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN  (sizeof(KIT_TO_SetRunLoopDelayCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  KIT_TO_SetRunLoopDelayCmdMsg;
+#define KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN  (sizeof(KIT_TO_SetRunLoopDelayCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -70,8 +70,8 @@ typedef struct {
    uint16               FilterType;
    PktUtil_FilterParam  FilterParam;
 
-}  KIT_TO_TestFilterCmdParam;
-#define KIT_TO_TEST_FILTER_CMD_DATA_LEN  (sizeof(KIT_TO_TestFilterCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  KIT_TO_TestFilterCmdMsg;
+#define KIT_TO_TEST_FILTER_CMD_DATA_LEN  (sizeof(KIT_TO_TestFilterCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************

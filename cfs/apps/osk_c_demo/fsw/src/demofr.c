@@ -1,5 +1,5 @@
 /*
-** Purpose: Implement the object to demo FaultRep module.
+** Purpose: Implement the object to demo StateRep module.
 **
 ** Notes:
 **   None
@@ -32,10 +32,10 @@ static DEMOFR_Class*  DemoFr = NULL;
 ** Local Function Prototypes
 */
 
-static boolean AddTimedFault(const DEMOFR_SimFaultCmdParam *SimFaultCmd);
+static boolean AddTimedFault(const DEMOFR_SimFaultCmdMsg *SimFaultCmd);
 static void ReportTimedSimFaults(void);
 const char* SimModeStr(DEMOFR_SimMode  SimMode);
-static void StartSim(const DEMOFR_SimFaultCmdParam *SimFaultCmd);
+static void StartSim(const DEMOFR_SimFaultCmdMsg *SimFaultCmd);
 static void StopSim(void);
 static boolean WalkFault(void);
 
@@ -47,14 +47,14 @@ static boolean WalkFault(void);
 **   1. 
 */
 void DEMOFR_Constructor(DEMOFR_Class*   DemoFrPtr,
-                        FaultRep_Class* FaultRepPtr)
+                        STATEREP_Class* StateRepPtr)
 {
  
    DemoFr = DemoFrPtr;
 
    CFE_PSP_MemSet((void*)DemoFr, 0, sizeof(DEMOFR_Class));
 
-   DemoFr->FaultRep = FaultRepPtr; 
+   DemoFr->StateRep = StateRepPtr; 
     
 } /* End DEMOFR_Constructor() */
 
@@ -126,18 +126,18 @@ void DEMOFR_SimStep(void)
 boolean DEMOFR_SetTlmModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const DEMOFR_SetTlmModeCmdParam *SetTlmModeCmd = (const DEMOFR_SetTlmModeCmdParam *) MsgPtr;
+   const DEMOFR_SetTlmModeCmdMsg *SetTlmModeCmd = (const DEMOFR_SetTlmModeCmdMsg *) MsgPtr;
    boolean  RetStatus = TRUE;
 
-   if ( SetTlmModeCmd->Mode == FAULTREP_NEW_REPORT ||
-        SetTlmModeCmd->Mode == FAULTREP_MERGE_REPORT) {
+   if ( SetTlmModeCmd->Mode == STATEREP_NEW_REPORT ||
+        SetTlmModeCmd->Mode == STATEREP_MERGE_REPORT) {
    
       CFE_EVS_SendEvent(DEMOFR_CMD_SET_TLM_MODE_EID, CFE_EVS_INFORMATION, 
-                        "Fault Report telemetry mode changed from %s to %s", 
-                        FaultRep_TlmModeStr(DemoFr->FaultRep->TlmMode),
-                        FaultRep_TlmModeStr(SetTlmModeCmd->Mode) );
+                        "State Report telemetry mode changed from %s to %s", 
+                        STATEREP_TlmModeStr(DemoFr->StateRep->TlmMode),
+                        STATEREP_TlmModeStr(SetTlmModeCmd->Mode) );
                         
-      FaultRep_SetTlmMode(DemoFr->FaultRep, (FaultRep_TlmMode)SetTlmModeCmd->Mode);
+      STATEREP_SetTlmMode(DemoFr->StateRep, (STATEREP_TlmMode)SetTlmModeCmd->Mode);
    
    }
    else {
@@ -164,7 +164,7 @@ boolean DEMOFR_SetTlmModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean DEMOFR_SimFaultCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const DEMOFR_SimFaultCmdParam *SimFaultCmd = (const DEMOFR_SimFaultCmdParam *) MsgPtr;
+   const DEMOFR_SimFaultCmdMsg *SimFaultCmd = (const DEMOFR_SimFaultCmdMsg *) MsgPtr;
    boolean  RetStatus = TRUE;
 
    /* 
@@ -229,16 +229,16 @@ boolean DEMOFR_SimFaultCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 ** Function: AddTimedFault
 **
 */
-static boolean AddTimedFault(const DEMOFR_SimFaultCmdParam *SimFaultCmd)
+static boolean AddTimedFault(const DEMOFR_SimFaultCmdMsg *SimFaultCmd)
 {
    
    int RetStatus = TRUE;
    
-   if (SimFaultCmd->Id >= OSK_C_DEMO_FAULT_ID_MAX) {
+   if (SimFaultCmd->Id >= OSK_C_DEMO_STATEREP_BIT_ID_MAX) {
    
       CFE_EVS_SendEvent(DEMOFR_CMD_INVLD_TIMED_FAULT_ID_EID, CFE_EVS_ERROR, 
                         "Command contains invalid id %d. Must be less than %d",
-                        SimFaultCmd->Id, OSK_C_DEMO_FAULT_ID_MAX);
+                        SimFaultCmd->Id, OSK_C_DEMO_STATEREP_BIT_ID_MAX);
       RetStatus = FALSE;
    
    } /* End invalid ID */
@@ -268,11 +268,11 @@ static void ReportTimedSimFaults(void)
    uint16  i;
    boolean DetFailed = FALSE;
    
-   for (i=0; i < OSK_C_DEMO_FAULT_ID_MAX; i++) {
+   for (i=0; i < OSK_C_DEMO_STATEREP_BIT_ID_MAX; i++) {
    
       if (DemoFr->SimFault[i].Enabled) {
       
-         FaultRep_FaultDetFailed(DemoFr->FaultRep, i);
+         STATEREP_SetBit(DemoFr->StateRep, i);
          DetFailed = TRUE;
          DemoFr->SimFault[i].Step--;
          DemoFr->SimFault[i].Enabled = (DemoFr->SimFault[i].Step > 0);
@@ -316,7 +316,7 @@ const char* SimModeStr(DEMOFR_SimMode  SimMode)
 ** Notes:
 **   1. Can assume the commanded SimMode has been validated.
 */
-static void StartSim(const DEMOFR_SimFaultCmdParam *SimFaultCmd)
+static void StartSim(const DEMOFR_SimFaultCmdMsg *SimFaultCmd)
 {
 
    StopSim();
@@ -366,7 +366,7 @@ static void StopSim(void)
    DemoFr->SimEnabled = FALSE;
 
    /* Clear all state info for each mode */
-   CFE_PSP_MemSet((void*)DemoFr->SimFault,      0, sizeof(DemoFr->SimFault[OSK_C_DEMO_FAULT_ID_MAX]));
+   CFE_PSP_MemSet((void*)DemoFr->SimFault,      0, sizeof(DemoFr->SimFault[OSK_C_DEMO_STATEREP_BIT_ID_MAX]));
    CFE_PSP_MemSet((void*)&DemoFr->SimWalkFault, 0, sizeof(DEMOFR_SimWalkFault)); 
    
 } /* End StopSim() */
@@ -381,7 +381,7 @@ static boolean WalkFault(void)
    
    boolean RetStatus = TRUE;
    
-   FaultRep_FaultDetFailed(DemoFr->FaultRep, DemoFr->SimWalkFault.Id);
+   STATEREP_SetBit(DemoFr->StateRep, DemoFr->SimWalkFault.Id);
 
    DemoFr->SimWalkFault.CurStep--;
    
@@ -389,7 +389,7 @@ static boolean WalkFault(void)
    
       DemoFr->SimWalkFault.Id++;
    
-      if (DemoFr->SimWalkFault.Id >= OSK_C_DEMO_FAULT_ID_MAX) {
+      if (DemoFr->SimWalkFault.Id >= OSK_C_DEMO_STATEREP_BIT_ID_MAX) {
          RetStatus = FALSE;
          CFE_EVS_SendEvent(DEMOFR_WALK_FAULT_COMPLETE_EID, CFE_EVS_INFORMATION, 
                            "Completed walking fault sim after Id %d", 
@@ -405,5 +405,3 @@ static boolean WalkFault(void)
    
 } /* End WalkFault() */
 
-
-/* end of file */

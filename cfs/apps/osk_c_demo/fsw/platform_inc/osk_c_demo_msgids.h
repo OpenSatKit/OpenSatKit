@@ -30,6 +30,6 @@
 */
 
 #define  OSK_C_DEMO_TLM_HK_MID     0x0F30  /* Housekeeping */
-#define  OSK_C_DEMO_TLM_FR_MID     0x0F31  /* FaultRep     */
+#define  OSK_C_DEMO_TLM_SR_MID     0x0F31  /* StateRep     */
 
 #endif /* _osk_c_demo_msgids_ */

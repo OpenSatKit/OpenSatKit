@@ -49,14 +49,17 @@ static boolean ComputeFileCrc(const char* CmdName, const char* Filename, uint32*
 ** Function: FILE_Constructor
 **
 */
-void FILE_Constructor(FILE_Class*  FilePtr)
+void FILE_Constructor(FILE_Class*  FilePtr, INITBL_Class* IniTbl)
 {
  
    File = FilePtr;
 
    CFE_PSP_MemSet((void*)File, 0, sizeof(FILE_Class));
  
-   CFE_SB_InitMsg(&File->InfoPkt, FILEMGR_FILE_INFO_TLM_MID, sizeof(FILE_InfoPkt), TRUE);
+   File->IniTbl = IniTbl;
+   
+   CFE_SB_InitMsg(&File->InfoPkt, (CFE_SB_MsgId_t)INITBL_GetIntConfig(File->IniTbl, CFG_FILE_INFO_TLM_MID), 
+                  sizeof(FILE_InfoPkt), TRUE);
 
 } /* End FILE_Constructor */
 
@@ -83,7 +86,7 @@ void FILE_ResetStatus()
 boolean FILE_ConcatenateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_ConcatenateCmdType* ConcatenateCmd = (FILE_ConcatenateCmdType *) MsgPtr;
+   FILE_ConcatenateCmdMsg* ConcatenateCmd = (FILE_ConcatenateCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    char    EventErrStr[256] = "\0";
    
@@ -164,7 +167,7 @@ boolean FILE_ConcatenateCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_CopyCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_CopyCmdType*   CopyCmd = (FILE_CopyCmdType *) MsgPtr;
+   FILE_CopyCmdMsg*   CopyCmd = (FILE_CopyCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    int32   SysStatus;   
    boolean PerformCopy = FALSE;
@@ -260,7 +263,7 @@ boolean FILE_CopyCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_DecompressCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_DecompressCmdType* DecompressCmd = (FILE_DecompressCmdType *) MsgPtr;
+   FILE_DecompressCmdMsg* DecompressCmd = (FILE_DecompressCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    int32   CfeStatus;
    boolean RetStatus = FALSE;
@@ -324,7 +327,7 @@ boolean FILE_DecompressCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_DeleteCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_DeleteCmdType* DeleteCmd = (FILE_DeleteCmdType *) MsgPtr;
+   FILE_DeleteCmdMsg* DeleteCmd = (FILE_DeleteCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    int32   SysStatus;   
    boolean RetStatus = FALSE;
@@ -373,7 +376,7 @@ boolean FILE_DeleteCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_MoveCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_MoveCmdType*   MoveCmd = (FILE_MoveCmdType *) MsgPtr;
+   FILE_MoveCmdMsg*   MoveCmd = (FILE_MoveCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    int32   SysStatus;   
    boolean PerformMove = FALSE;
@@ -470,7 +473,7 @@ boolean FILE_MoveCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_RenameCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_RenameCmdType* RenameCmd = (FILE_RenameCmdType *) MsgPtr;
+   FILE_RenameCmdMsg* RenameCmd = (FILE_RenameCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    int32   SysStatus;   
    boolean RetStatus = FALSE;
@@ -537,7 +540,7 @@ boolean FILE_RenameCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_SendInfoPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_SendInfoPktCmdType* SendInfoPktCmd = (FILE_SendInfoPktCmdType *) MsgPtr;
+   FILE_SendInfoPktCmdMsg* SendInfoPktCmd = (FILE_SendInfoPktCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    uint32  Crc;
    boolean RetStatus = FALSE;
@@ -620,7 +623,7 @@ boolean FILE_SendInfoPktCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean FILE_SetPermissionsCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   FILE_SetPermissionsCmdType* SetPermissionsCmd = (FILE_SetPermissionsCmdType *) MsgPtr;
+   FILE_SetPermissionsCmdMsg* SetPermissionsCmd = (FILE_SetPermissionsCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
    int32   SysStatus;   
    boolean RetStatus = FALSE;
@@ -730,7 +733,9 @@ static boolean ConcatenateFiles(const char* SrcFile1, const char* SrcFile2, cons
                   
                   }
            
-                  CHILDMGR_PauseTask(&TaskBlockCnt, INITBL_GetIntConfig(CFG_TASK_FILE_BLOCK_CNT), INITBL_GetIntConfig(CFG_TASK_FILE_BLOCK_DELAY));
+                  CHILDMGR_PauseTask(&TaskBlockCnt, INITBL_GetIntConfig(File->IniTbl, CFG_TASK_FILE_BLOCK_CNT), 
+                                     INITBL_GetIntConfig(File->IniTbl, CFG_TASK_FILE_BLOCK_DELAY),
+                                     INITBL_GetIntConfig(File->IniTbl, CFG_CHILD_TASK_PERF_ID));
                
                }
                
@@ -824,7 +829,9 @@ static boolean ComputeFileCrc(const char* CmdName, const char* Filename, uint32*
             CurrentCrc = CFE_ES_CalculateCRC(File->FileTaskBuf, FileBytesRead,
                                              CurrentCrc, CrcType);
          
-            CHILDMGR_PauseTask(&TaskBlockCnt, INITBL_GetIntConfig(CFG_TASK_FILE_BLOCK_CNT), INITBL_GetIntConfig(CFG_TASK_FILE_BLOCK_DELAY));
+            CHILDMGR_PauseTask(&TaskBlockCnt, INITBL_GetIntConfig(File->IniTbl, CFG_TASK_FILE_BLOCK_CNT),
+                               INITBL_GetIntConfig(File->IniTbl, CFG_TASK_FILE_BLOCK_DELAY), 
+                               INITBL_GetIntConfig(File->IniTbl, CFG_CHILD_TASK_PERF_ID));
          
          } /* End if still reading file */
 

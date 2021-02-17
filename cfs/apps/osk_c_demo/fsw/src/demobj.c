@@ -138,9 +138,9 @@ void DEMOBJ_Execute(void)
 boolean DEMOBJ_EnableTblDataCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const DEMOBJ_EnableTblDataCmdParam *CmdParam = (const DEMOBJ_EnableTblDataCmdParam *) MsgPtr;
+   const DEMOBJ_EnableTblDataCmdMsg *CmdMsg = (const DEMOBJ_EnableTblDataCmdMsg *) MsgPtr;
 
-   DemObj->TblDataEnabled = (CmdParam->EnableTblData == TRUE);
+   DemObj->TblDataEnabled = (CmdMsg->EnableTblData == TRUE);
    if (DemObj->TblDataEnabled) {
       CFE_EVS_SendEvent(DEMOBJ_CMD_ENA_TBL_DATA_EID, CFE_EVS_INFORMATION,"Demo object active table data enabled");
    }
@@ -161,17 +161,17 @@ boolean DEMOBJ_EnableTblDataCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean DEMOBJ_SetActiveTblCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const DEMOBJ_SetActiveTblCmdParam *CmdParam = (const DEMOBJ_SetActiveTblCmdParam *) MsgPtr;
+   const DEMOBJ_SetActiveTblCmdMsg *CmdMsg = (const DEMOBJ_SetActiveTblCmdMsg *) MsgPtr;
    boolean  RetStatus = FALSE;
 
    /* ValidateTblId() sends an event of ID is invalid */
-   if (ValidTblId(CmdParam->TblId)) {
+   if (ValidTblId(CmdMsg->TblId)) {
       
-      if (CmdParam->TblIndex < OSK_C_DEMO_TBL_MAX_ENTRY_ID) {
+      if (CmdMsg->TblIndex < OSK_C_DEMO_TBL_MAX_ENTRY_ID) {
       
          RetStatus = TRUE;
-         DemObj->TblId    = CmdParam->TblId;
-         DemObj->TblIndex = CmdParam->TblIndex;
+         DemObj->TblId    = CmdMsg->TblId;
+         DemObj->TblIndex = CmdMsg->TblIndex;
          CFE_EVS_SendEvent(DEMOBJ_CMD_SET_TBL_INDEX_EID, CFE_EVS_INFORMATION,
                            "Active table set to %s at index %d", 
                            TblIdStr(DemObj->TblId), DemObj->TblIndex);
@@ -180,7 +180,7 @@ boolean DEMOBJ_SetActiveTblCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
       {
          CFE_EVS_SendEvent(DEMOBJ_CMD_SET_TBL_INDEX_ERR_EID, CFE_EVS_ERROR,
                            "Commanded table index %d is too big. Max table index is %d", 
-                           CmdParam->TblIndex, (OSK_C_DEMO_TBL_MAX_ENTRY_ID-1));
+                           CmdMsg->TblIndex, (OSK_C_DEMO_TBL_MAX_ENTRY_ID-1));
       }
    }
 

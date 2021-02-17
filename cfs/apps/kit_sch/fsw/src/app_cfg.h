@@ -32,14 +32,13 @@
 */
 
 /*
-** 1.0.0 - Initial release
-** 1.1.0 - Refactored for OSK 2.2
-** 2.0.0 - Added Sch & Msg table commands and diagnostics telemetry
+** 1.0 - Initial release
+** 1.1 - Refactored for OSK 2.2
+** 2.0 - Added Sch & Msg table commands and diagnostics telemetry
 */
 
 #define  KIT_SCH_MAJOR_VER      2
 #define  KIT_SCH_MINOR_VER      0
-#define  KIT_SCH_LOCAL_REV      0
 
 #define  KIT_SCH_PIPE_DEPTH       10
 #define  KIT_SCH_PIPE_NAME        "KIT_SCH_CMD_PIPE"

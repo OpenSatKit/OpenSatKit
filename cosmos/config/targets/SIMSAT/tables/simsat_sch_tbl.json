@@ -134,8 +134,8 @@
                "descr":   "Period matches input HK pkt rates",
                "index":   1,
                "enabled": "true",
-               "period":  4,
-               "offset":  1,
+               "period":  6,
+               "offset":  2,
                "msg-idx": 24
             }},
             
@@ -144,7 +144,7 @@
                "descr":   "Run in slot after I42 and F42 slot",
                "index":   2,
                "enabled": "true",
-               "period":  1,
+               "period":  4,
                "offset":  1,
                "msg-idx": 25
             }},

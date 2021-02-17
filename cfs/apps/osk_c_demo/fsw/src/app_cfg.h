@@ -34,13 +34,14 @@
 */
 
 /*
-** 1.0.0 - Initial release
-** 1.4.0 - Moved table buffers from app to DemoObj
+** 1.0 - Initial release
+** 1.4 - Moved table buffers from app to DemoObj
+** 1.5 - Make updates due to oak_c_fw FaultRep to StateRep refactor
 */
 
 #define  OSK_C_DEMO_MAJOR_VER     1
-#define  OSK_C_DEMO_MINOR_VER     4
-#define  OSK_C_DEMO_LOCAL_REV     0
+#define  OSK_C_DEMO_MINOR_VER     5
+
 
 /******************************************************************************
 ** Command Macros
@@ -50,8 +51,8 @@
 #define OSK_C_DEMO_DEMOBJ_TBL_DUMP_CMD_FC      (CMDMGR_APP_START_FC + 1)
 #define OSK_C_DEMO_ENA_TBL_DATA_CMD_FC         (CMDMGR_APP_START_FC + 2)
 #define OSK_C_DEMO_SET_ACTIVE_TBL_CMD_FC       (CMDMGR_APP_START_FC + 3)
-#define OSK_C_DEMO_FAULTREP_CFG_CMD_FC         (CMDMGR_APP_START_FC + 4)
-#define OSK_C_DEMO_FAULTREP_CLR_CMD_FC         (CMDMGR_APP_START_FC + 5)
+#define OSK_C_DEMO_STATEREP_CFG_CMD_FC         (CMDMGR_APP_START_FC + 4)
+#define OSK_C_DEMO_STATEREP_CLR_CMD_FC         (CMDMGR_APP_START_FC + 5)
 #define OSK_C_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC  (CMDMGR_APP_START_FC + 6)
 #define OSK_C_DEMO_DEMOFR_SIM_FAULT_CMD_FC     (CMDMGR_APP_START_FC + 7)
 
@@ -96,12 +97,12 @@
 #define JSONTBL_MAX_ENTRY_ID     OSK_C_DEMO_TBL_MAX_ENTRY_ID
 
 /******************************************************************************
-** Fault Reporter/Detector 
+** State Reporter/Detector 
 **
 ** Show how app can be lower than osk_c_fw default & keep low for simple screen 
 */
 
-#define OSK_C_DEMO_FAULT_ID_MAX    16  
-#define OSK_C_DEMO_FAULT_ID_WORDS   1
+#define OSK_C_DEMO_STATEREP_BIT_ID_MAX  16  
+#define OSK_C_DEMO_STATEREP_ID_WORDS     1
 
 #endif /* _app_cfg_ */

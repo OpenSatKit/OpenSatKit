@@ -27,7 +27,6 @@
 
 #include "filemgr_platform_cfg.h"
 #include "osk_c_fw.h"
-#include "inilib.h"
 
 /******************************************************************************
 ** Application Macros
@@ -36,12 +35,13 @@
 /*
 ** Versions:
 **
-** 1.0.0 - Initial refactoring of open source FM
+** 1.0 - Initial refactoring of open source FM
+** 1.1 - Moved childmgr utility into osk_c_fw, Moved perf & msg ids to ini file
 */
 
 #define  FILEMGR_MAJOR_VER      1
-#define  FILEMGR_MINOR_VER      0
-#define  FILEMGR_LOCAL_REV      0
+#define  FILEMGR_MINOR_VER      1
+
 
 /******************************************************************************
 **  INI File
@@ -70,6 +70,18 @@
 
 #define CFG_APP_CFE_NAME           APP_CFE_NAME
 
+#define CFG_APP_MAIN_PERF_ID       APP_MAIN_PERF_ID
+#define CFG_CHILD_TASK_PERF_ID     CHILD_TASK_PERF_ID
+
+#define CFG_CMD_MID                CMD_MID
+#define CFG_SEND_HK_MID            SEND_HK_MID
+
+#define CFG_HK_TLM_MID             HK_TLM_MID
+#define CFG_FILE_INFO_TLM_MID      FILE_INFO_TLM_MID
+#define CFG_DIR_LIST_TLM_MID       DIR_LIST_TLM_MID
+#define CFG_OPEN_FILES_TLM_MID     OPEN_FILES_TLM_MID
+#define CFG_FILESYS_TLM_MID        FILESYS_TLM_MID
+      
 #define CFG_CMD_PIPE_DEPTH         CMD_PIPE_DEPTH
 #define CFG_CMD_PIPE_NAME          CMD_PIPE_NAME
       
@@ -81,7 +93,6 @@
 #define CFG_DIR_LIST_FILE_SUBTYPE  DIR_LIST_FILE_SUBTYPE
 #define CFG_DIR_LIST_FILE_ENTRIES  DIR_LIST_FILE_ENTRIES
       
-#define CFG_CHILD_SEM_NAME         CHILD_SEM_NAME
 #define CFG_CHILD_NAME             CHILD_NAME
 #define CFG_CHILD_STACK_SIZE       CHILD_STACK_SIZE
 #define CFG_CHILD_PRIORITY         CHILD_PRIORITY
@@ -94,6 +105,15 @@
 
 #define APP_CONFIG(XX) \
    XX(APP_CFE_NAME,char*) \
+   XX(APP_MAIN_PERF_ID,uint32) \
+   XX(CHILD_TASK_PERF_ID,uint32) \
+   XX(CMD_MID,uint32) \
+   XX(SEND_HK_MID,uint32) \
+   XX(HK_TLM_MID,uint32) \
+   XX(FILE_INFO_TLM_MID,uint32) \
+   XX(DIR_LIST_TLM_MID,uint32) \
+   XX(OPEN_FILES_TLM_MID,uint32) \
+   XX(FILESYS_TLM_MID,uint32) \
    XX(CMD_PIPE_DEPTH,uint32) \
    XX(CMD_PIPE_NAME,char*) \
    XX(TBL_CFE_NAME,char*) \
@@ -102,7 +122,6 @@
    XX(DIR_LIST_FILE_DEFNAME,char*) \
    XX(DIR_LIST_FILE_SUBTYPE,uint32) \
    XX(DIR_LIST_FILE_ENTRIES,uint32) \
-   XX(CHILD_SEM_NAME,char*) \
    XX(CHILD_NAME,char*) \
    XX(CHILD_STACK_SIZE,uint32) \
    XX(CHILD_PRIORITY,uint32) \
@@ -110,6 +129,8 @@
    XX(TASK_FILE_BLOCK_DELAY,uint32) \
    XX(TASK_FILE_STAT_CNT,uint32) \
    XX(TASK_FILE_STAT_DELAY,uint32) \
+
+DECLARE_ENUM(Config,APP_CONFIG)
 
 
 /******************************************************************************
@@ -150,22 +171,9 @@
 */
 
 #define FILEMGR_BASE_EID  (OSK_C_FW_APP_BASE_EID +  0)
-#define CHILDMGR_BASE_EID (OSK_C_FW_APP_BASE_EID + 20)
-#define DIR_BASE_EID      (OSK_C_FW_APP_BASE_EID + 40)
-#define FILE_BASE_EID     (OSK_C_FW_APP_BASE_EID + 60)
-#define FILESYS_BASE_EID  (OSK_C_FW_APP_BASE_EID + 80)
-#define INILIB_BASE_EID   (OSK_C_FW_APP_BASE_EID + 90)
-
-/******************************************************************************
-** Child Manager
-**
-** Define child manager object parameters. The command buffer length must big
-** enough to hold the largest command packet.
-*/
-
-#define CHILDMGR_CMD_BUFFER_LEN  256   /* Must be greater than largest cmd msg */ 
-#define CHILDMGR_CMD_Q_ENTRIES     3   
-#define CHILDMGR_CMD_FUNC_TOTAL   32
+#define DIR_BASE_EID      (OSK_C_FW_APP_BASE_EID + 20)
+#define FILE_BASE_EID     (OSK_C_FW_APP_BASE_EID + 40)
+#define FILESYS_BASE_EID  (OSK_C_FW_APP_BASE_EID + 60)
 
 
 #endif /* _app_cfg_ */

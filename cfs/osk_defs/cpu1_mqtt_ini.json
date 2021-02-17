@@ -1,0 +1,39 @@
+{
+   "title": "MQTT initialization file",
+   "description": [ "Define runtime configurations",
+                    "APP_CFE_NAME, TBL_CFE_NAME: Must match mqtt_platform_cfg.h definitions",
+                    "TBL_ERR_CODE: 3,472,883,840 = 0xCF000080. See cfe_error.h for field descriptions",
+                    "SEND_HK_MID: 8177(0x1FF1) is temporary during development. Change t 0x1F51(8017) of add to startup & scheduler"]
+   "config": {
+      
+      "APP_CFE_NAME": "MQTT",
+      
+      "APP_MAIN_PERF_ID":   91,
+      "CHILD_TASK_PERF_ID": 92,
+      
+      "CMD_MID"     : 8016,
+      "SEND_HK_MID" : 8177,
+
+      "HK_TLM_MID"    : 3920,
+      "STR32_TLM_MID" : 3921,
+      
+      "CMD_PIPE_DEPTH": 10,
+      "CMD_PIPE_NAME":  "MQTT_CMD_PIPE",
+
+      "SERVER_PORT": 1883,
+      "SERVER_ADDRESS": "broker.hivemq.com",
+      "SERVER_USERNAME": "UNDEF",
+      "SERVER_PASSWORD": "UNDEF",
+      
+      "CLIENT_NAME": "osk-client",
+      
+      "TBL_CFE_NAME": "mq2sb",
+      "TBL_DEF_FILENAME": "/cf/mq2sb_tbl.tbl",
+      "TBL_ERR_CODE": 3472883840,
+            
+      "CHILD_NAME":       "MQTT_CHILD",
+      "CHILD_STACK_SIZE": 32768,
+      "CHILD_PRIORITY":   120
+
+   }
+}

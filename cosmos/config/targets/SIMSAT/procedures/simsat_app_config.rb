@@ -102,7 +102,7 @@ wait("DS HK_TLM_PKT APP_ENA_STATE == 'ENA'", 10)
 
 simsat_ops_status = "Enable DS event and auxiliary file generation"
 Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 0, FILE_STATE 1") # Enable Event file
-wait 1
+wait 2
 Osk::flight.send_cmd("DS","SET_FILE_STATE with FILE_TBL_IDX 6, FILE_STATE 1") # Enable Science Auxiliary file
 
 wait("DS FILE_INFO_PKT FILE1_ENABLE == 1", 6)  # Assumes background thread requesting DS INFO packet has been started

@@ -17,6 +17,7 @@ require 'osk_education'
 require 'fsw_const'
 require 'fsw_config_param'
 require 'fm_const'
+require 'hk_const'
 
 ################################################################################
 ## GUI Send Commands
@@ -198,7 +199,7 @@ def simsat_data_file(screen, cmd)
    when "HK_TBL"
       # HK only has one table
       # Use default temporary binary table file names in flight and ground default table server directories
-      Osk::Ops::send_cfe_dump_tbl_cmd("HK.#{FswConfigParam::HK_COPY_TBL_NAME}", Osk::TBL_MGR_DEF_HK_COPY)
+      Osk::Ops::send_cfe_dump_tbl_cmd("HK.#{FswConfigParam::HK_COPY_TABLE_NAME}", Osk::TBL_MGR_DEF_HK_COPY)
    when "HK_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/hk/docs/users_guide/html/index.html")   
    when "TFTP_CMD" 
@@ -215,8 +216,8 @@ def simsat_data_file(screen, cmd)
       display("CFS_KIT RECORDER_MGMT_SCREEN",1500,50)
    when "FUNC_TBL_MGMT"
       display("CFS_KIT TABLE_MGMT_SCREEN",1500,50)
-   when "CREATE_KIT_TO_TBL"
-      display("SIMSAT GEN_TLM_TBL_SCREEN",1500,50)
+   when "TABLE_GEN_TOOLS"
+      display("SIMSAT TBL_TOOL_SCREEN",1500,50)
    when "DEMO"
 
       if (Osk::System.check_n_start_cfs)
@@ -229,6 +230,8 @@ def simsat_data_file(screen, cmd)
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_playback.rb")
          when "FM Feature Script"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_features.rb")
+         when "HK Feature Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_hk_features.rb")
          else
             display_scr = nil
             case screen.get_named_widget("demo").text
@@ -249,6 +252,8 @@ def simsat_data_file(screen, cmd)
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_DATAFILE)    
       when "FM App Video"
          Osk::education_video(FM_YOUTUBE_OVERVIEW)
+      when "HK App Video"
+         Osk::education_video(HK_YOUTUBE_OVERVIEW)
       when "Comm App Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_INTRO)
       when "Data-File Slides"

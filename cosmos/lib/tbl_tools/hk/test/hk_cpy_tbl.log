@@ -1,0 +1,18 @@
+Preparing HK copy table generation using configuration file /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/hk_tbl_gen_cfg.json
+> Input directory:    /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/
+> Output directory:   /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/
+> Template directory: /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/templates/
+
+
+Generating cFS HK copy table using
+> Tbl def file: /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/hk_cpy_tbl_test.json
+> Header file:  /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/templates/hk_cpy_tbl_header.c
+> Footer file:  /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/templates/hk_cpy_tbl_footer.c
+Sucessfully created /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/hk_cpy_tbl.c at 2021-02-14 09:33:01 -0800
+
+
+Generating COSMOS HK telemetry definition file using
+> Tbl def file:  /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/hk_cpy_tbl_test.json
+> Template file: /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/templates/hk_cpy_tbl_header.c
+Sucessfully created /mnt/hgfs/OpenSatKit/cosmos/lib/tbl_tools/hk/test/hk_tlm.txt at 2021-02-14 09:33:01 -0800
+

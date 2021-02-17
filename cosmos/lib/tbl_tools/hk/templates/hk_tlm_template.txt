@@ -1,0 +1,45 @@
+###############################################################################
+## This file was automatically generated
+##   from @src-file@
+##   at @date-time@ 
+##
+## Template parameters:
+##   <src-file>   JSON file that defines the copy table combo packets
+##   <date-time>  The date and time when the file was generated.
+##   <HK_COMBINED_PKTx_MID> Telemetry item defintions for each combo packet
+###############################################################################
+<% 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR         = "HK"
+  @HK_TLM_MID_STR         = "HK_HK_TLM_MID"
+  @COMBINED_PKT1_MID_STR  = "HK_COMBINED_PKT1_MID"
+  @COMBINED_PKT2_MID_STR  = "HK_COMBINED_PKT2_MID"
+  @COMBINED_PKT3_MID_STR  = "HK_COMBINED_PKT3_MID"
+  
+%>
+
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
+  APPEND_ITEM PADDING_16                 16 UINT "Padding to align to 32-bit"
+  APPEND_ITEM COMBINE_PKT_SENT_CNT       16 UINT "Count of combined tlm pkts sent"
+  APPEND_ITEM MISSING_DATA_CNT           16 UINT "Count of combined tlm pkts sent"
+  APPEND_ITEM MEM_POOL_HANDLE            32 UINT "Memory pool handle used to get mempool diagnostics"
+
+# Reordered alphabetically from default order 
+
+TELEMETRY HK COMBO_PKT_1 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 1"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT1_MID_STR) %>
+  @HK_COMBINED_PKT1_MID@
+  
+TELEMETRY HK COMBO_PKT_2 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT2_MID_STR) %>
+  @HK_COMBINED_PKT2_MID@
+
+TELEMETRY HK COMBO_PKT_3 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT3_MID_STR) %>
+  @HK_COMBINED_PKT3_MID@
+  

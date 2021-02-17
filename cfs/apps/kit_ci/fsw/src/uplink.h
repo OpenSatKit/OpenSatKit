@@ -118,8 +118,8 @@ typedef struct
    uint16   OrgMsgId;
    uint16   NewMsgId;
 
-} UPLINK_ConfigMsgTunnelCmdParam;
-#define UPLINK_CONFIG_MSG_TUNNEL_CMD_DATA_LEN  (sizeof(UPLINK_ConfigMsgTunnelCmdParam) - CFE_SB_CMD_HDR_SIZE)
+} UPLINK_ConfigMsgTunnelCmdMsg;
+#define UPLINK_CONFIG_MSG_TUNNEL_CMD_DATA_LEN  (sizeof(UPLINK_ConfigMsgTunnelCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /*

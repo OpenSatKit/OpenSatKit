@@ -36,8 +36,7 @@ static void ProcessCommands(void);
 */
 
 OSK_C_DEMO_Class  OskCDemo;
-OSK_C_DEMO_HkPkt  OskCDemoHkPkt;
-FaultRep_TlmMsg   OskCDemoFrPkt;
+
 
 /*
 ** Convenience Macros
@@ -46,7 +45,7 @@ FaultRep_TlmMsg   OskCDemoFrPkt;
 #define  CMDMGR_OBJ   (&(OskCDemo.CmdMgr))
 #define  TBLMGR_OBJ   (&(OskCDemo.TblMgr))
 #define  DEMOBJ_OBJ   (&(OskCDemo.DemObj))
-#define  FAULTREP_OBJ (&(OskCDemo.FaultRep))
+#define  STATEREP_OBJ (&(OskCDemo.StateRep))
 #define  DEMOFR_OBJ   (&(OskCDemo.DemoFr))
 
 /******************************************************************************
@@ -98,9 +97,9 @@ void OSK_C_DEMO_AppMain(void)
       DEMOBJ_Execute();
       DEMOFR_SimStep();
       
-      FaultRep_GenTlmMsg(FAULTREP_OBJ, &OskCDemoFrPkt);
-      CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskCDemoFrPkt);
-      CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskCDemoFrPkt);
+      STATEREP_GenTlmMsg(STATEREP_OBJ, &OskCDemo.SrPkt);
+      CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskCDemo.SrPkt);
+      CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskCDemo.SrPkt);
 
       ProcessCommands();
 
@@ -130,7 +129,7 @@ boolean OSK_C_DEMO_NoOpCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    CFE_EVS_SendEvent (OSK_C_DEMO_CMD_NOOP_INFO_EID,
                       CFE_EVS_INFORMATION,
                       "No operation command received for OSK_C_DEMO version %d.%d.%d",
-                      OSK_C_DEMO_MAJOR_VER,OSK_C_DEMO_MINOR_VER,OSK_C_DEMO_LOCAL_REV);
+                      OSK_C_DEMO_MAJOR_VER,OSK_C_DEMO_MINOR_VER,OSK_C_DEMO_PLATFORM_REV);
 
    return TRUE;
 
@@ -148,7 +147,7 @@ boolean OSK_C_DEMO_ResetAppCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CMDMGR_ResetStatus(CMDMGR_OBJ);
    TBLMGR_ResetStatus(TBLMGR_OBJ);
-   /* No FaultRep_ResetStatus */
+   /* IBD - SHould StateRep include a reset? */
    
    DEMOBJ_ResetStatus();
    DEMOFR_ResetStatus();
@@ -171,28 +170,28 @@ void OSK_C_DEMO_SendHousekeepingPkt(void)
    ** CMDMGR Data
    */
 
-   OskCDemoHkPkt.ValidCmdCnt   = OskCDemo.CmdMgr.ValidCmdCnt;
-   OskCDemoHkPkt.InvalidCmdCnt = OskCDemo.CmdMgr.InvalidCmdCnt;
+   OskCDemo.HkPkt.ValidCmdCnt   = OskCDemo.CmdMgr.ValidCmdCnt;
+   OskCDemo.HkPkt.InvalidCmdCnt = OskCDemo.CmdMgr.InvalidCmdCnt;
 
    
    /*
    ** EXTBL Data
    */
  
-   OskCDemoHkPkt.LastTblId           = Tbl->Id;
-   OskCDemoHkPkt.LastTblAction       = Tbl->LastAction;
-   OskCDemoHkPkt.LastTblActionStatus = Tbl->LastActionStatus;
+   OskCDemo.HkPkt.LastTblId           = Tbl->Id;
+   OskCDemo.HkPkt.LastTblAction       = Tbl->LastAction;
+   OskCDemo.HkPkt.LastTblActionStatus = Tbl->LastActionStatus;
 
    /*
-   ** DEMOFR & FaultRep Data
+   ** DEMOFR & STATEREP Data
    */
    
-   OskCDemoHkPkt.FaultRepTlmMode  = OskCDemo.FaultRep.TlmMode;
-   OskCDemoHkPkt.SimEnabled       = OskCDemo.DemoFr.SimEnabled;
-   OskCDemoHkPkt.SimMode          = OskCDemo.DemoFr.SimMode;
+   OskCDemo.HkPkt.StateRepTlmMode  = OskCDemo.StateRep.TlmMode;
+   OskCDemo.HkPkt.SimEnabled       = OskCDemo.DemoFr.SimEnabled;
+   OskCDemo.HkPkt.SimMode          = OskCDemo.DemoFr.SimMode;
    
-   OskCDemoHkPkt.FaultRepEnabled  = OskCDemo.FaultRep.FaultDet.Enabled[0];
-   OskCDemoHkPkt.FaultRepLatched  = OskCDemo.FaultRep.FaultDet.Latched[0];
+   OskCDemo.HkPkt.StateRepEnabled  = OskCDemo.StateRep.BitConfig.Enabled[0];
+   OskCDemo.HkPkt.StateRepLatched  = OskCDemo.StateRep.BitConfig.Latched[0];
   
 
    /*
@@ -200,12 +199,12 @@ void OSK_C_DEMO_SendHousekeepingPkt(void)
    ** - At a minimum all OBJECT variables effected by a reset must be included
    */
 
-   OskCDemoHkPkt.TblDataEnabled = DEMOBJ_GetTblData(&OskCDemoHkPkt.TblData);
-   OskCDemoHkPkt.TblId    = OskCDemo.DemObj.TblId;
-   OskCDemoHkPkt.TblIndex = OskCDemo.DemObj.TblIndex;
+   OskCDemo.HkPkt.TblDataEnabled = DEMOBJ_GetTblData(&OskCDemo.HkPkt.TblData);
+   OskCDemo.HkPkt.TblId    = OskCDemo.DemObj.TblId;
+   OskCDemo.HkPkt.TblIndex = OskCDemo.DemObj.TblIndex;
 
-   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskCDemoHkPkt);
-   CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskCDemoHkPkt);
+   CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &OskCDemo.HkPkt);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &OskCDemo.HkPkt);
 
 } /* End OSK_C_DEMO_SendHousekeepingPkt() */
 
@@ -226,7 +225,7 @@ static int32 InitApp(void)
    */
  
    DEMOBJ_Constructor(DEMOBJ_OBJ);
-   DEMOFR_Constructor(DEMOFR_OBJ, FAULTREP_OBJ);
+   DEMOFR_Constructor(DEMOFR_OBJ, STATEREP_OBJ);
 
    /*
    ** Initialize application managers
@@ -245,8 +244,8 @@ static int32 InitApp(void)
    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOBJ_TBL_DUMP_CMD_FC,     TBLMGR_OBJ,   TBLMGR_DumpTblCmd,          TBLMGR_DUMP_TBL_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_ENA_TBL_DATA_CMD_FC,        DEMOBJ_OBJ,   DEMOBJ_EnableTblDataCmd,    DEMOBJ_ENABLE_TBL_DATA_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_SET_ACTIVE_TBL_CMD_FC,      DEMOBJ_OBJ,   DEMOBJ_SetActiveTblCmd,     DEMOBJ_SET_ACTIVE_TBL_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CFG_CMD_FC,        FAULTREP_OBJ, FaultRep_ConfigFaultDetCmd, FAULTREP_CFG_FAULT_DET_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_FAULTREP_CLR_CMD_FC,        FAULTREP_OBJ, FaultRep_ClearFaultDetCmd,  FAULTREP_CLR_FAULT_DET_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_STATEREP_CFG_CMD_FC,        STATEREP_OBJ, STATEREP_ConfigBitCmd,      STATEREP_CONFIG_BIT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_STATEREP_CLR_CMD_FC,        STATEREP_OBJ, STATEREP_ClearBitCmd,       STATEREP_CLEAR_BIT_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SET_TLM_MODE_CMD_FC, DEMOFR_OBJ,   DEMOFR_SetTlmModeCmd,       DEMOFR_SET_TLM_MODE_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, OSK_C_DEMO_DEMOFR_SIM_FAULT_CMD_FC,    DEMOFR_OBJ,   DEMOFR_SimFaultCmd,         DEMOFR_SIM_FAULT_CMD_DATA_LEN);
 
@@ -261,21 +260,18 @@ static int32 InitApp(void)
    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCANFTBL_LoadCmd, SCANFTBL_DumpCmd, OSK_C_DEMO_SCANF_TBL_DEF_LOAD_FILE);
    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, JSONTBL_LoadCmd,  JSONTBL_DumpCmd,  OSK_C_DEMO_JSON_TBL_DEF_LOAD_FILE);
 
-   FaultRep_Constructor(FAULTREP_OBJ, OSK_C_DEMO_FAULT_ID_MAX);
+   STATEREP_Constructor(STATEREP_OBJ, OSK_C_DEMO_STATEREP_BIT_ID_MAX);
     
-   CFE_SB_InitMsg(&OskCDemoFrPkt, OSK_C_DEMO_TLM_FR_MID, FAULTREP_FAULT_REP_PKT_LEN, TRUE);
+   CFE_SB_InitMsg(&OskCDemo.SrPkt, OSK_C_DEMO_TLM_SR_MID, STATEREP_TLM_PKT_LEN, TRUE);
                                           
-   CFE_SB_InitMsg(&OskCDemoHkPkt, OSK_C_DEMO_TLM_HK_MID, OSK_C_DEMO_TLM_HK_LEN, TRUE);
+   CFE_SB_InitMsg(&OskCDemo.HkPkt, OSK_C_DEMO_TLM_HK_MID, OSK_C_DEMO_TLM_HK_LEN, TRUE);
 
    /*
    ** Application startup event message
    */
-   Status = CFE_EVS_SendEvent(OSK_C_DEMO_INIT_INFO_EID,
-                              CFE_EVS_INFORMATION,
+   Status = CFE_EVS_SendEvent(OSK_C_DEMO_INIT_INFO_EID, CFE_EVS_INFORMATION,
                               "OSK_C_DEMO Initialized. Version %d.%d.%d",
-                              OSK_C_DEMO_MAJOR_VER,
-                              OSK_C_DEMO_MINOR_VER,
-                              OSK_C_DEMO_LOCAL_REV);
+                              OSK_C_DEMO_MAJOR_VER, OSK_C_DEMO_MINOR_VER, OSK_C_DEMO_PLATFORM_REV);
 
    return(Status);
 

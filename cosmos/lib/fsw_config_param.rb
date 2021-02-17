@@ -118,8 +118,9 @@ module FswConfigParam
   #########################
 
   HK_COPY_TABLE_ENTRIES  = 128
-  HK_COPY_TBL_NAME       = "CopyTable"
   HK_COPY_TABLE_FILENAME = "hk_cpy_tbl.tbl"
+  HK_COPY_TABLE_NAME     = "CopyTable"
+  HK_RUNTIME_TABLE_NAME  = "RuntimeTable"
   
   #########################
   ## App - Kit Scheduler ##

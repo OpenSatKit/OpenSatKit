@@ -151,7 +151,7 @@ boolean KIT_SCH_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (KIT_SCH_APP_NOOP_EID, CFE_EVS_INFORMATION,
                       "Kit Scheduler (KIT_SCH) version %d.%d.%d received a no operation command",
-                      KIT_SCH_MAJOR_VER, KIT_SCH_MINOR_VER, KIT_SCH_LOCAL_REV);
+                      KIT_SCH_MAJOR_VER, KIT_SCH_MINOR_VER, KIT_SCH_PLATFORM_REV);
 
    return TRUE;
 
@@ -281,7 +281,7 @@ static int32 InitApp(void)
     */
     Status = CFE_EVS_SendEvent(KIT_SCH_APP_INIT_EID, CFE_EVS_INFORMATION,
                                "KIT_SCH Initialized. Version %d.%d.%d",
-                               KIT_SCH_MAJOR_VER, KIT_SCH_MINOR_VER, KIT_SCH_LOCAL_REV);
+                               KIT_SCH_MAJOR_VER, KIT_SCH_MINOR_VER, KIT_SCH_PLATFORM_REV);
 
     return(Status);
 

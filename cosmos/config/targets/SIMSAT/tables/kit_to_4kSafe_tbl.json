@@ -1,6 +1,6 @@
 {
    "name": "KIT_TO Packet Table",
-   "description": "Test using 4kSafe",
+   "description": "Test using 4kSafeFile generated from /mnt/hgfs/OpenSatKit/cosmos/config/targets/SIMSAT/tables/tbl_tool/simsat_kit_to_ds_tbl.csv at 2021-02-14 12:15:41 -0800",
    "packet-array": [
       "packet": {
       "name": "CFE_ES_HK_TLM_MID",

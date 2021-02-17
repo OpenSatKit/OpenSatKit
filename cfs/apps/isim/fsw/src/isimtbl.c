@@ -46,8 +46,8 @@ static ISIMTBL_Class* IsimTbl = NULL;
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-boolean InstrumentCallback (int TokenIdx);
-boolean SciFileCallback (int TokenIdx);
+boolean InstrumentCallback (void* UserData, int TokenIdx);
+boolean SciFileCallback (void* UserData, int TokenIdx);
 
 
 /******************************************************************************
@@ -160,7 +160,7 @@ boolean ISIMTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
             for (i=0; i < ISIMTBL_OBJ_CNT; i++) {
 
                if (IsimTbl->JsonObj[i].Modified) {
-                  if (!(IsimTbl->LoadTblEntryFunc)(i, IsimTbl->JsonObj[i].Data))
+                  if (!(IsimTbl->LoadTblEntryFunc)(i, IsimTbl->JsonObj[i].UserData))
                      IsimTbl->LastLoadStatus = TBLMGR_STATUS_INVALID;
                }
 
@@ -268,8 +268,9 @@ boolean ISIMTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
 */
-boolean InstrumentCallback (int TokenIdx)
+boolean InstrumentCallback (void* UserData, int TokenIdx)
 {
 
    int     AttributeCnt = 0;
@@ -315,9 +316,10 @@ boolean InstrumentCallback (int TokenIdx)
 **
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
-**   2. No error checking done on string lengths.
+**   2. UserData is unused.
+**   3. No error checking done on string lengths.
 */
-boolean SciFileCallback (int TokenIdx)
+boolean SciFileCallback (void* UserData, int TokenIdx)
 {
 
    int     AttributeCnt = 0;

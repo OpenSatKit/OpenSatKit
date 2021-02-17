@@ -1,0 +1,39 @@
+{
+   "tlm-tbl-tool": {
+
+      "description": [
+         "Template KIT_TO and DS table generation tool configuration file",
+         "@undefined@ indicates the field needs to be defined before the tables are generated",
+         "@file_substr@ is replaced by each string in the 'files' object"
+      ],
+      
+      "verbose": false,
+      
+      "input-path":    "@undefined@",
+      "output-path":   "@undefined@",
+      "template-path": "@undefined@",
+      
+      "telemetry-output": {
+         "csv-file": "@undefined@",
+         "log-file": "@undefined@",
+         "header-file": "kit_to_tbl_header.json",
+         "footer-file": "kit_to_tbl_footer.json",
+         "output-file": "kit_to_@file_substr@_tbl.json",
+         "max-apid": 16384,
+         "files": {
+             "1": "32kNom",
+             "2": "4kSafe"
+         }
+      },
+
+      "data-storage": {
+         "csv-file": "@undefined@",
+         "log-file": "@undefined@",
+         "filters-per-entry": 2,
+         "files": {
+            "1": "Nom",
+            "2": "Safe"
+         }
+      }
+   }
+}

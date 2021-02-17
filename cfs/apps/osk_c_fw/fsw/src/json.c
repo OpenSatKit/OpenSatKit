@@ -106,13 +106,13 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId);
 void JSON_ObjConstructor(JSON_Obj*              Obj,
                          char*                  Name,
                          JSON_ContainerFuncPtr  Callback,
-                         void*                  Data)
+                         void*                  UserData)
 {
 	
    strncpy(&(Obj->Name[0]), Name, JSON_MAX_OBJ_NAME_CHAR);
    Obj->Modified = FALSE;
    Obj->Callback = Callback;
-   Obj->Data     = Data;
+   Obj->UserData = UserData;
    
 
 } /* End JSON_ObjConstructor() */
@@ -294,7 +294,8 @@ void JSON_RegContainerCallback(JSON_Class* Json, const JSON_Obj* JsonObj)
    CFE_EVS_SendEvent(JSON_DBG_REG_CALLBACK_EID,CFE_EVS_DEBUG,"JSON: RegContainerCallback() %s at index %d", JsonObj->Name, Json->CallBackIdx);
    if (Json->CallBackIdx < JSON_MAX_CONTAINER_TOKENS) {
       strncpy(Json->ContainerCallBack[Json->CallBackIdx].Name, JsonObj->Name, JSON_MAX_STR_LEN);
-      Json->ContainerCallBack[Json->CallBackIdx].FuncPtr = JsonObj->Callback;
+      Json->ContainerCallBack[Json->CallBackIdx].FuncPtr  = JsonObj->Callback;
+      Json->ContainerCallBack[Json->CallBackIdx].UserData = JsonObj->UserData;
       Json->CallBackIdx++;
    }
    else {
@@ -483,7 +484,7 @@ boolean JSON_GetValShortInt(JSON_Class* Json, int ContainTokenIdx, const char* K
 boolean JSON_GetValUint32(JSON_Class* Json, int ContainTokenIdx, const char* Key, uint32* Uint32Val) {
 
    int    i;
-   char   *TokenStr, *ErrCheck, *StrEndPtr;
+   char   *TokenStr, *StrEndPtr;
    jsmntok_t  *ContainToken;
    
    ContainToken = &(Json->FileTokens[ContainTokenIdx]);
@@ -496,16 +497,18 @@ boolean JSON_GetValUint32(JSON_Class* Json, int ContainTokenIdx, const char* Key
          TokenStr = JSON_TokenToStr(Json->FileBuf, &Json->FileTokens[i+1]);
          if (Json->FileTokens[i+1].type == JSMN_PRIMITIVE) {
 			   *Uint32Val = (uint32)strtoul(TokenStr, &StrEndPtr, 10);
-			   if (ErrCheck == TokenStr) {
-               CFE_EVS_SendEvent(JSON_INT_CONV_ERR_EID,CFE_EVS_ERROR,"JSON short int conversion error for key %s token %s at container token index %d.",
+			   /* NOt sure how to check for error. strtoul() returns 0 for an error and that's a legit value 
+            if (*Uint32Val == 0) {
+               CFE_EVS_SendEvent(JSON_INT_CONV_ERR_EID,CFE_EVS_ERROR,"JSON long int conversion error for key %s token %s at container token index %d.",
                                  Key, TokenStr, ContainTokenIdx);
                break;
             }
+            */
             return TRUE;
 
          } /* End if primitive */
          else {
-            CFE_EVS_SendEvent(JSON_INVLD_INT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid short int type %s for key %s at container token index %d. Must be a primitive.",
+            CFE_EVS_SendEvent(JSON_INVLD_INT_TYPE_ERR_EID,CFE_EVS_ERROR,"JSON invalid long int type %s for key %s at container token index %d. Must be a primitive.",
                               JSON_GetJsmnTypeStr(Json->FileTokens[i+1].type), Key, ContainTokenIdx);
             break;
          }
@@ -751,7 +754,7 @@ static int ProcessContainerToken(JSON_Class* Json, int TokenId) {
             if (DBG_JSON) OS_printf("ProcessContainerToken() Callback loop %d: CallbackName = %s\n",i, Json->ContainerCallBack[i].Name);
             if (JSON_TokenStrEq(Json->FileBuf, KeyToken, Json->ContainerCallBack[i].Name)) {
                
-               (Json->ContainerCallBack[i].FuncPtr)(TokenId);
+               (Json->ContainerCallBack[i].FuncPtr)(Json->ContainerCallBack[i].UserData, TokenId);
                break;
             }
         

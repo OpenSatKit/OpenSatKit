@@ -3,12 +3,14 @@ CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,     OSK_C_FW,       0,   16384, 
 CFE_LIB, /cf/osk_cpp_fw.so,   OSK_CPP_FW_LibInit,   OSK_CPP_FW,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,   OSK_42_LIB,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,           EXPAT_LIB,      0,   16384, 0x0, 0;
+CFE_LIB, /cf/mqtt_lib.so,     MQTT_LibInit,         MQTT_LIB,       0,   16384, 0x0, 0;
 CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,       KIT_TO,        30,   32768, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,       KIT_CI,        20,   16384, 0x0, 0;
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,      KIT_SCH,       10,   32768, 0x0, 0;
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,         TFTP,          60,   16384, 0x0, 0;
 CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,   OSK_C_DEMO,   120,   16384, 0x0, 0;
 CFE_APP, /cf/osk_cpp_demo.so, OSK_CPP_DEMO_Main,    OSK_CPP_DEMO, 120,   16384, 0x0, 0;
+CFE_APP, /cf/mqtt_app.so,     MQTT_AppMain,         MQTT,          80,   32768, 0x0, 0;
 CFE_APP, /cf/filemgr.so,      FILEMGR_AppMain,      FILEMGR,       80,   16384, 0x0, 0;
 !!!! Above load runtime apps and then any apps being developed
 CFE_APP, /cf/fm.so,           FM_AppMain,           FM,            80,   16384, 0x0, 0;

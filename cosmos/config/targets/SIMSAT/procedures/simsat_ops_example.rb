@@ -158,6 +158,7 @@ app_cycle = app_list.cycle
 
    puts "Ops loop #{n}"
    Osk::flight.send_cmd(app_cycle.next,"NOOP") 
+   status_bar("Waiting in ops loop #{n}. Click <Go> shorten wait time")
    wait 15 # You can click Script Runner's <Go> button if you don't want to wait
 
 end

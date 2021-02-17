@@ -132,7 +132,7 @@ boolean KIT_TO_NoOpCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CFE_EVS_SendEvent (KIT_TO_APP_NOOP_EID, CFE_EVS_INFORMATION,
                       "Kit Telemetry Output (KIT_TO) version %d.%d.%d received a no operation command",
-                      KIT_TO_MAJOR_VER,KIT_TO_MINOR_VER,KIT_TO_LOCAL_REV);
+                      KIT_TO_MAJOR_VER,KIT_TO_MINOR_VER,KIT_TO_PLATFORM_REV);
 
    return TRUE;
 
@@ -183,18 +183,18 @@ boolean KIT_TO_SendDataTypeTlmCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const KIT_TO_SetRunLoopDelayCmdParam *CmdParam = (const KIT_TO_SetRunLoopDelayCmdParam *) MsgPtr;
+   const KIT_TO_SetRunLoopDelayCmdMsg *CmdMsg = (const KIT_TO_SetRunLoopDelayCmdMsg *) MsgPtr;
    KIT_TO_Class *KitToPtr = (KIT_TO_Class *)ObjDataPtr;
    boolean RetStatus = FALSE;
    
-   if ((CmdParam->RunLoopDelay >= KIT_TO_MIN_RUN_LOOP_DELAY_MS) &&
-       (CmdParam->RunLoopDelay <= KIT_TO_MAX_RUN_LOOP_DELAY_MS)) {
+   if ((CmdMsg->RunLoopDelay >= KIT_TO_MIN_RUN_LOOP_DELAY_MS) &&
+       (CmdMsg->RunLoopDelay <= KIT_TO_MAX_RUN_LOOP_DELAY_MS)) {
    
       CFE_EVS_SendEvent(KIT_TO_SET_RUN_LOOP_DELAY_EID, CFE_EVS_INFORMATION,
                         "Run loop delay changed from %d to %d", 
-                        KitToPtr->RunLoopDelay, CmdParam->RunLoopDelay);
+                        KitToPtr->RunLoopDelay, CmdMsg->RunLoopDelay);
    
-      KitToPtr->RunLoopDelay = CmdParam->RunLoopDelay;
+      KitToPtr->RunLoopDelay = CmdMsg->RunLoopDelay;
       
       PKTMGR_InitStats(KitToPtr->RunLoopDelay,PKTMGR_STATS_RECONFIG_INIT_MS);
 
@@ -205,7 +205,7 @@ boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
       
       CFE_EVS_SendEvent(KIT_TO_INVALID_RUN_LOOP_DELAY_EID, CFE_EVS_ERROR,
                         "Invalid commanded run loop delay of %d ms. Valid inclusive range: [%d,%d] ms", 
-                        CmdParam->RunLoopDelay,KIT_TO_MIN_RUN_LOOP_DELAY_MS,KIT_TO_MAX_RUN_LOOP_DELAY_MS);
+                        CmdMsg->RunLoopDelay,KIT_TO_MIN_RUN_LOOP_DELAY_MS,KIT_TO_MAX_RUN_LOOP_DELAY_MS);
       
    }
    
@@ -221,7 +221,7 @@ boolean KIT_TO_SetRunLoopDelayCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr
 boolean KIT_TO_TestFilterCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   const KIT_TO_TestFilterCmdParam *CmdPtr = (const KIT_TO_TestFilterCmdParam *) MsgPtr;
+   const KIT_TO_TestFilterCmdMsg *CmdPtr = (const KIT_TO_TestFilterCmdMsg *) MsgPtr;
       
    uint16 SeqCnt;
    uint32 Seconds, Subseconds;
@@ -386,7 +386,7 @@ static int32 InitApp(void)
 
    Status = CFE_EVS_SendEvent(KIT_TO_APP_INIT_EID, CFE_EVS_INFORMATION,
                               "KIT_TO Initialized. Version %d.%d.%d",
-                              KIT_TO_MAJOR_VER, KIT_TO_MINOR_VER, KIT_TO_LOCAL_REV);
+                              KIT_TO_MAJOR_VER, KIT_TO_MINOR_VER, KIT_TO_PLATFORM_REV);
 
    return(Status);
 

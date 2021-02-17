@@ -191,7 +191,7 @@ boolean NETIF_InitSocketCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    boolean  RetStatus;
 
-   const NETIF_InitSocketCmdParam *InitSocketCmd = (const NETIF_InitSocketCmdParam *) MsgPtr;
+   const NETIF_InitSocketCmdMsg *InitSocketCmd = (const NETIF_InitSocketCmdMsg *) MsgPtr;
 
    close(NetIf->SocketId);
    

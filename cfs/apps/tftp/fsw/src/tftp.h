@@ -134,8 +134,8 @@ typedef struct {
    char    SrcFilename[TFTP_FILE_NAME_LEN];
    char    DestFilename[TFTP_FILE_NAME_LEN];
 
-}  OS_PACK TFTP_PutFileCmdParam;
-#define TFTP_PUT_FILE_CMD_DATA_LEN  (sizeof(TFTP_PutFileCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK TFTP_PutFileCmdMsg;
+#define TFTP_PUT_FILE_CMD_DATA_LEN  (sizeof(TFTP_PutFileCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 typedef struct {
@@ -145,8 +145,8 @@ typedef struct {
    char    SrcFilename[TFTP_FILE_NAME_LEN];
    char    DestFilename[TFTP_FILE_NAME_LEN];
 
-}  OS_PACK TFTP_GetFileCmdParam;
-#define TFTP_GET_FILE_CMD_DATA_LEN  (sizeof(TFTP_GetFileCmdParam) - CFE_SB_CMD_HDR_SIZE)
+}  OS_PACK TFTP_GetFileCmdMsg;
+#define TFTP_GET_FILE_CMD_DATA_LEN  (sizeof(TFTP_GetFileCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
 
 /******************************************************************************
