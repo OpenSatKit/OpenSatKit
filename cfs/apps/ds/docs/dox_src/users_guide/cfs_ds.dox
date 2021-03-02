@@ -23,6 +23,9 @@
 
   \verbatim  
   $Log: cfs_ds.dox  $
+  Revision 1.1 2015/07/25 00:44:16EDT rperera 
+  Initial revision
+  Member added to project /CFS-APPs-PROJECT/ds/docs/dox_src/users_guide/project.pj
   Revision 1.5 2015/01/20 17:38:01EST sstrege 
   Updated  CFS Data Storage Table Definitions section
   Revision 1.4 2011/01/06 09:22:02EST wmoleski 

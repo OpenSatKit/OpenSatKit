@@ -1,31 +1,32 @@
 /************************************************************************
-**   $Id: ds_file.h 1.5.1.1 2015/02/28 17:13:56EST sstrege Exp  $
+** File: ds_file.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
-**  CFS Data Storage (DS) file storage header file
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License.
 **
-** $Log: ds_file.h  $
-** Revision 1.5.1.1 2015/02/28 17:13:56EST sstrege 
-** Added copyright information
-** Revision 1.5 2010/11/08 10:26:10EST lwalling 
-** Add definition for DS_FileHeaderGPM_t, modify descriptions of header write and update functions
-** Revision 1.4 2009/08/27 16:32:30EDT lwalling 
-** Updates from source code review
-** Revision 1.3 2009/08/04 14:07:07EDT lwalling 
-** Minor cleanup prior to code review - improve comment
-** Revision 1.2 2009/06/12 11:48:46EDT lwalling 
-** Moved structure definitions to ds_msg.h, added Doxygen comments.
-** Revision 1.1 2009/05/26 14:25:27EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/src/project.pj
+** Purpose:
+**   CFS Data Storage (DS) file storage header file
+**
 *************************************************************************/
 
 #ifndef _ds_file_h_
@@ -42,7 +43,6 @@
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_CFE)
 /*
 ** \brief DS File Header (follows cFE file header at start of file)
 */
@@ -58,24 +58,6 @@ typedef struct
 
 } DS_FileHeader_t;
 
-#elif (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-/*
-** \brief GPM File Header (first record in Data Storage files)
-*/
-typedef struct
-{
-    char    SourceID[4];                                /**< \brief Principal source of file data */
-    char    SequenceID[8];                              /**< \brief File generation counter */
-
-    uint32  StartTime;                                  /**< \brief File creation time (seconds) */
-    uint32  StopTime;                                   /**< \brief File close time (seconds) */
-
-    char    FileSize[8];                                /**< \brief File size in bytes */
-    char    Spare[20];                                  /**< \brief Unused (set to space chars) */
-
-} DS_FileHeaderGPM_t;
-
-#endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */

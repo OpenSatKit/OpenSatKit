@@ -1,53 +1,27 @@
 /************************************************************************
-** File:
-**   $Id: ds_msg.h 1.14.1.1 2015/02/28 17:14:05EST sstrege Exp  $
+** File: ds_msg.h
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
 ** Purpose: 
 **  The CFS Data Storage (DS) Application header file
 **
 ** Notes:
-**
-** $Log: ds_msg.h  $
-** Revision 1.14.1.1 2015/02/28 17:14:05EST sstrege 
-** Added copyright information
-** Revision 1.14 2015/01/20 21:14:27EST sstrege 
-** Updated doxygen description for IgnoredPktCounter
-** Revision 1.13 2014/06/27 14:21:03EDT sjudy 
-** Added DS filter table file name to the DS hkp packet.
-** Revision 1.12 2011/07/12 17:45:12EDT lwalling 
-** Added structure definition for DS_CloseAllCmd_t
-** Revision 1.11 2011/07/04 14:18:10EDT lwalling 
-** Change command counter from 16 to 8 bits
-** Revision 1.10 2011/05/19 11:37:49EDT lwalling 
-** Add new command packet definition for DS_AddMidCmd_t
-** Revision 1.9 2011/05/06 15:02:39EDT lwalling 
-** reate get file info cmd packet, remove file info from hk packet, create file info tlm packet
-** Revision 1.8 2009/08/27 16:32:35EDT lwalling 
-** Updates from source code review
-** Revision 1.7 2009/08/04 14:06:36EDT lwalling 
-** Minor cleanup prior to code review - change dstlm to cfsdstlm
-** Revision 1.6 2009/06/12 11:54:05EDT lwalling 
-** Added application data structures - moved from module specific header files.
-** Revision 1.5 2009/05/26 14:21:07EDT lwalling 
-** Initial version of DS application
-** Revision 1.4 2009/04/18 09:47:27EDT dkobe 
-** Corrected a number of erroneous doxygen references
-** Revision 1.3 2009/04/18 09:36:11EDT dkobe 
-** Corrected doxygen aliases used in code
-** Revision 1.2 2008/12/02 14:46:09EST rmcgraw 
-** DCR4669:1 Abbreviated project name in history
-** Revision 1.1 2008/11/25 11:36:27EST rmcgraw 
-** Initial revision
-** Member added to CFS project
 **
 *************************************************************************/
 #ifndef _ds_msg_h_
@@ -70,7 +44,7 @@
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;     /**< \brief cFE Software Bus command message header */
 
 } DS_NoopCmd_t;
 
@@ -82,7 +56,8 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+
+    CFE_SB_CmdHdr_t   CmdHeader;     /**< \brief cFE Software Bus command message header */
 
 } DS_ResetCmd_t;
 
@@ -94,9 +69,10 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;           /**< \brief cFE Software Bus command message header */
 
-    uint16  EnableState;                        /**< \brief Application enable/disable state */
+    uint16            EnableState;         /**< \brief Application enable/disable state */
+    uint16            Padding;             /**< \brief Structure Padding on 32-bit boundaries */
 
 } DS_AppStateCmd_t;
 
@@ -108,12 +84,13 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;                /**< \brief cFE Software Bus command message header */
 
-    uint16  MessageID;                          /**< \brief Message ID of existing entry in Packet Filter Table
+    uint16            MessageID;                /**< \brief Message ID of existing entry in Packet Filter Table
                                                      \details DS defines Message ID zero to be unused */
-    uint16  FilterParmsIndex;                   /**< \brief Index into Filter Parms Array */
-	uint16  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            FilterParmsIndex;         /**< \brief Index into Filter Parms Array */
+    uint16            FileTableIndex;           /**< \brief Index into Destination File Table */
+    uint16            Padding;                  /**< \brief Structure Padding on 32-bit boundaries */
 
 } DS_FilterFileCmd_t;
 
@@ -125,12 +102,13 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
 
-    uint16  MessageID;                          /**< \brief Message ID of existing entry in Packet Filter Table
+    CFE_SB_CmdHdr_t   CmdHeader;                /**< \brief cFE Software Bus command message header */
+    uint16            MessageID;                /**< \brief Message ID of existing entry in Packet Filter Table
                                                      \details DS defines Message ID zero to be unused */
-    uint16  FilterParmsIndex;                   /**< \brief Index into Filter Parms Array */
-    uint16  FilterType;                         /**< \brief Filter type (packet count or time) */
+    uint16            FilterParmsIndex;         /**< \brief Index into Filter Parms Array */
+    uint16            FilterType;               /**< \brief Filter type (packet count or time) */
+    uint16            Padding;                  /**< \brief Structure Padding on 32-bit boundaries */
 
 } DS_FilterTypeCmd_t;
 
@@ -142,15 +120,15 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
-
-    uint16  MessageID;                          /**< \brief Message ID of existing entry in Packet Filter Table
+    CFE_SB_CmdHdr_t   CmdHeader;                /**< \brief cFE Software Bus command message header */
+    uint16            MessageID;                /**< \brief Message ID of existing entry in Packet Filter Table
                                                      \details DS defines Message ID zero to be unused */
-    uint16  FilterParmsIndex;                   /**< \brief Index into Filter Parms Array */
+    uint16            FilterParmsIndex;         /**< \brief Index into Filter Parms Array */
 
-    uint16  Algorithm_N;                        /**< \brief Algorithm value N (pass this many) */
-    uint16  Algorithm_X;                        /**< \brief Algorithm value X (out of this many) */
-    uint16  Algorithm_O;                        /**< \brief Algorithm value O (at this offset) */
+    uint16            Algorithm_N;              /**< \brief Algorithm value N (pass this many) */
+    uint16            Algorithm_X;              /**< \brief Algorithm value X (out of this many) */
+    uint16            Algorithm_O;              /**< \brief Algorithm value O (at this offset) */
+    uint16            Padding;                  /**< \brief Structure Padding on 32-bit boundaries */
 
 } DS_FilterParmsCmd_t;
 
@@ -162,10 +140,10 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
-
-	uint16  FileTableIndex;                     /**< \brief Index into Destination File Table */
-    uint16  FileNameType;                       /**< \brief Filename type - count vs time */
+    CFE_SB_CmdHdr_t   CmdHeader;                /**< \brief cFE Software Bus command message header */
+	
+    uint16            FileTableIndex;           /**< \brief Index into Destination File Table */
+    uint16            FileNameType;             /**< \brief Filename type - count vs time */
 
 } DS_DestTypeCmd_t;
 
@@ -177,10 +155,10 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;                /**< \brief cFE Software Bus command message header */
 
-	uint16  FileTableIndex;                     /**< \brief Index into Destination File Table */
-    uint16  EnableState;                        /**< \brief File enable/disable state */
+	uint16            FileTableIndex;           /**< \brief Index into Destination File Table */
+    uint16            EnableState;              /**< \brief File enable/disable state */
 
 } DS_DestStateCmd_t;
 
@@ -192,11 +170,13 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    CFE_SB_CmdHdr_t   CmdHeader;                          /**< \brief cFE Software Bus command message header */
 
-    char    Pathname[DS_PATHNAME_BUFSIZE];      /**< \brief Path portion of filename */
+    uint16            FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            Padding;                            /**< \brief Structure Padding on 32-bit boundaries */
+
+    char              Pathname[DS_PATHNAME_BUFSIZE];      /**< \brief Path portion of filename */
 
 } DS_DestPathCmd_t;
 
@@ -208,11 +188,13 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    CFE_SB_CmdHdr_t   CmdHeader;                          /**< \brief cFE Software Bus command message header */
 
-    char    Basename[DS_BASENAME_BUFSIZE];      /**< \brief Base portion of filename */
+    uint16            FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            Padding;                            /**< \brief Structure Padding on 32-bit boundaries */
+
+    char              Basename[DS_BASENAME_BUFSIZE];      /**< \brief Base portion of filename */
 
 } DS_DestBaseCmd_t;
 
@@ -224,11 +206,12 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;                          /**< \brief cFE Software Bus command message header */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            Padding;                            /**< \brief Structure Padding on 32-bit boundaries */
 
-    char    Extension[DS_EXTENSION_BUFSIZE];    /**< \brief Extension portion of filename */
+    char              Extension[DS_EXTENSION_BUFSIZE];    /**< \brief Extension portion of filename */
 
 } DS_DestExtCmd_t;
 
@@ -240,11 +223,12 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
+    
+    uint16            FileTableIndex;         /**< \brief Index into Destination File Table */
+    uint16            Padding;                /**< \brief Structure Padding on 32-bit boundaries */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
-
-    uint32  MaxFileSize;                        /**< \brief Max file size (bytes) before re-open */
+    uint32            MaxFileSize;            /**< \brief Max file size (bytes) before re-open */
 
 } DS_DestSizeCmd_t;
 
@@ -256,11 +240,12 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            FileTableIndex;         /**< \brief Index into Destination File Table */
+    uint16            Padding;                /**< \brief Structure Padding on 32-bit boundaries */
 
-    uint32  MaxFileAge;                         /**< \brief Max file age (seconds) */
+    uint32            MaxFileAge;             /**< \brief Max file age (seconds) */
 
 } DS_DestAgeCmd_t;
 
@@ -272,11 +257,12 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            FileTableIndex;         /**< \brief Index into Destination File Table */
+    uint16            Padding;                /**< \brief Structure Padding on 32-bit boundaries */
 
-    uint32  SequenceCount;                      /**< \brief Sequence count portion of filename */
+    uint32            SequenceCount;          /**< \brief Sequence count portion of filename */
 
 } DS_DestCountCmd_t;
 
@@ -288,9 +274,10 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
 
-	uint32  FileTableIndex;                     /**< \brief Index into Destination File Table */
+    uint16            FileTableIndex;         /**< \brief Index into Destination File Table */
+    uint16            Padding;                /**< \brief Structure Padding on 32-bit boundaries */
 
 } DS_CloseFileCmd_t;
 
@@ -302,7 +289,8 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
 
 } DS_CloseAllCmd_t;
 
@@ -314,7 +302,8 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
 
 } DS_GetFileInfoCmd_t;
 
@@ -326,9 +315,10 @@ typedef struct
 */
 typedef struct
 {
-    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];     /**< \brief cFE Software Bus command message header */
+    CFE_SB_CmdHdr_t   CmdHeader;              /**< \brief cFE Software Bus command message header */
 
-    uint16  MessageID;                          /**< \brief Message ID to add to Packet Filter Table */
+    uint16  MessageID;                        /**< \brief Message ID to add to Packet Filter Table */
+    uint16  Padding;                          /**< \brief Structure Padding on 32-bit boundaries */
 
 } DS_AddMidCmd_t;
 
@@ -344,8 +334,8 @@ typedef struct
 */
 typedef struct
 {
-    uint8   TlmHeader[CFE_SB_TLM_HDR_SIZE];     /**< \brief cFE Software Bus telemetry message header */
- 
+    CFE_SB_TlmHdr_t  TlmHeader;                 /**< \brief cFE Software Bus telemetry message header */
+
     uint8   CmdAcceptedCounter;                 /**< \dstlmmnemonic \DS_CMDPC
                                                      \brief Count of valid commands received */
     uint8   CmdRejectedCounter;                 /**< \dstlmmnemonic \DS_CMDEC
@@ -413,10 +403,10 @@ typedef struct
 */
 typedef struct
 {
-    uint8   TlmHeader[CFE_SB_TLM_HDR_SIZE];     /**< \brief cFE Software Bus telemetry message header */
- 
-    DS_FileInfo_t FileInfo[DS_DEST_FILE_CNT];   /**< \dstlmmnemonic \DS_FILEINFO
-                                                     \brief Current state of destination files */
+    CFE_SB_TlmHdr_t  TlmHeader;                    /**< \brief cFE Software Bus telemetry message header */
+
+    DS_FileInfo_t    FileInfo[DS_DEST_FILE_CNT];   /**< \dstlmmnemonic \DS_FILEINFO
+                                                        \brief Current state of destination files */
 } DS_FileInfoPkt_t;
 
       

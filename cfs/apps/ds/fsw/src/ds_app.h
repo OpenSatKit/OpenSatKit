@@ -1,63 +1,35 @@
 /************************************************************************
-** File:
-**   $Id: ds_app.h 1.16.1.1 2015/02/28 17:13:37EST sstrege Exp  $
+** File: ds_app.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
 ** Purpose: 
 **  The CFS Data Storage (DS) Application header file
 **
 ** Notes:
 **
-** $Log: ds_app.h  $
-** Revision 1.16.1.1 2015/02/28 17:13:37EST sstrege 
-** Added copyright information
-** Revision 1.16 2014/11/14 16:26:24EST lwalling 
-** Increment ignored pkt counter for DS commands only when they are in the filter table
-** Revision 1.15 2011/07/04 14:18:41EDT lwalling 
-** Change command counter from 16 to 8 bits
-** Revision 1.14 2011/05/31 14:54:07EDT lwalling 
-** Add hash table and array of linked list elements to global application data structure
-** Revision 1.13 2011/05/06 14:57:38EDT lwalling 
-** Add file growth rate to global file status data
-** Revision 1.12 2010/11/10 13:53:37EST lwalling 
-** Add fields in global app data for time values used in GPM style file headers
-** Revision 1.11 2009/08/28 16:47:55EDT lwalling 
-** Add support for storing sequence counts in CDS
-** Revision 1.10 2009/08/27 16:32:32EDT lwalling 
-** Updates from source code review
-** Revision 1.9 2009/07/20 14:42:00EDT lwalling 
-** Additional doxygen comments
-** Revision 1.8 2009/07/15 10:11:23EDT lwalling 
-** Moved some definitions in platform cfg file to app hdr file, added more doxygen comments
-** Revision 1.7 2009/06/12 11:50:40EDT lwalling 
-** Moved structure definitions to ds_msg.h, added local function prototypes.
-** Revision 1.6 2009/05/27 16:34:30EDT lwalling 
-** Doxygen updates for ds_app.c and ds_app.h
-** Revision 1.5 2009/05/26 14:21:05EDT lwalling 
-** Initial version of DS application
-** Revision 1.4 2009/04/18 11:22:47EDT dkobe 
-** Corrected doxygen comments
-** Revision 1.3 2008/12/17 15:33:54EST rmcgraw 
-** DCR4669:2 Added utility files
-** Revision 1.2 2008/12/02 14:46:10EST rmcgraw 
-** DCR4669:1 Abbreviated project name in history
-** Revision 1.1 2008/11/25 11:36:25EST rmcgraw 
-** Initial revision
-** Member added to CFS project
-**
 *************************************************************************/
 #ifndef _ds_app_h_
 #define _ds_app_h_
 
 #include "cfe.h"
+
+#include "ds_appdefs.h"
 
 #include "ds_platform_cfg.h"
 
@@ -121,11 +93,6 @@ typedef struct
     uint32  IgnoredPktCounter;                  /**< \brief Count of packets discarded (pkt has no filter) */
     uint32  FilteredPktCounter;                 /**< \brief Count of packets discarded (failed filter test) */
     uint32  PassedPktCounter;                   /**< \brief Count of packets that passed filter test */
-
-#if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-    uint32  CurrentPktTime;                     /**< \brief Seconds from current packet timestamp */
-    uint32  LastPktTime[DS_DEST_FILE_CNT];      /**< \brief Seconds from last packet timestamp */
-#endif
 
     DS_AppFileStatus_t FileStatus[DS_DEST_FILE_CNT]; /**< \brief Current state of destination files */
 

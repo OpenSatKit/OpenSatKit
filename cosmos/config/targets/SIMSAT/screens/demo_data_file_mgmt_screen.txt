@@ -49,13 +49,13 @@ VERTICAL
    HORIZONTAL
       VERTICALBOX "Instrument Sim (ISIM)"
       MATRIXBYCOLUMNS 4 5 5
-         LABEL "Instr State"
+         LABEL "Instr Power"
          LABEL "Sci Data"
-         LABEL "Sci Cycles"
+         LABEL "Sci Images"
          LABEL "        "
-         VALUE ISIM HK_TLM_PKT INSTR_STATE WITH_UNITS 8
-         VALUE ISIM HK_TLM_PKT SCI_STATE WITH_UNITS 6
-         VALUE ISIM HK_TLM_PKT SCI_FILE_CYCLE_CNT WITH_UNITS 8
+         VALUE ISIM HK_TLM_PKT INSTR_PWR_STATE WITH_UNITS 8
+         VALUE ISIM HK_TLM_PKT SCI_STATE       WITH_UNITS 6
+         VALUE ISIM HK_TLM_PKT FILE_IMAGE_CNT  WITH_UNITS 8
          LABEL "        "
       END # Matrix
       END # ISIM

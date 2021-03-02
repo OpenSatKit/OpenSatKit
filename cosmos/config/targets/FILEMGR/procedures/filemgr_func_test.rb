@@ -55,23 +55,23 @@ class FileMgrFuncTest < Cosmos::Test
 
    def test_file
       
-      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Pass test cases"      
-      @file_copy_test.pass
-      @file_copy_test.fail      
+      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Valid file test cases"      
+      @file_copy_test.valid
+      @file_copy_test.invalid
    
    end # test_file()
 
    
    def test_dir
    
-      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Pass test cases"      
+      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Valid directory test cases"      
 
    end # test_dir()
 
 
    def test_file_sys_tbl
    
-      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Pass test cases"      
+      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Valid file system test cases"      
 
    end # test_file_sys_tbl()
    

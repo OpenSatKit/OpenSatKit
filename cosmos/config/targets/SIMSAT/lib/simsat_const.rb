@@ -58,6 +58,7 @@ module SimSat
    YOUTUBE_COMMUNITY_APPS_INTRO     = "https://youtu.be/vA5d9morxZg"
    YOUTUBE_COMMUNITY_APPS_RUNTIME   = "https://www.youtube.com/watch?v=p3RrovUyLOs"
    YOUTUBE_COMMUNITY_APPS_DATAFILE  = "https://youtu.be/Y-oxWg8rNB0"
+   YOUTUBE_COMMUNITY_APPS_MAINT     = "https://youtu.be/pzAkAhBR-Pk"
    
    # These definitions must match the Data Storage app's table ".Basename"
    # definitions

@@ -1,0 +1,424 @@
+        -:    0:Source:../src/md_cmds.c
+        -:    0:Programs:5
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: md_cmds.c.gcov 1.2 2017/07/05 13:00:23EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**  Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6:**  Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**  All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**  This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**  used, distributed and modified only pursuant to the terms of that 
+        -:   12:**  agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   Functions for processing individual CFS Memory Dwell commands
+        -:   16:**
+        -:   17:** 
+        -:   18:*************************************************************************/
+        -:   19:
+        -:   20:/*************************************************************************
+        -:   21:** Includes
+        -:   22:*************************************************************************/
+        -:   23:#include "md_cmds.h"
+        -:   24:#include "md_utils.h"
+        -:   25:/* Need to include md_msg.h for command type definitions */
+        -:   26:#include "md_msg.h"
+        -:   27:#include "md_platform_cfg.h"
+        -:   28:#include <string.h>
+        -:   29:#include "md_app.h"
+        -:   30:#include "md_events.h"
+        -:   31:#include "cfs_utils.h"
+        -:   32:#include "md_dwell_tbl.h"
+        -:   33:
+        -:   34:/* Global Data */
+        -:   35:extern MD_AppData_t MD_AppData;
+        -:   36:
+        -:   37:/******************************************************************************/
+        -:   38:
+        4:   39:void MD_ProcessStartCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:   40:{
+        -:   41:    uint16              TableId;
+        -:   42:    uint16              TableIndex;
+        -:   43:    MD_CmdStartStop_t  *Start;
+        -:   44:    boolean             AnyTablesInMask;
+        -:   45:    
+        4:   46:    AnyTablesInMask         = FALSE;
+        -:   47:    
+        4:   48:    Start = (MD_CmdStartStop_t *  ) MessagePtr;
+        -:   49:
+        -:   50:    /*  Preview tables specified by command:                   */
+        -:   51:    /*  Check that there's at least one valid table specified. */
+       20:   52:    for (TableId=1; TableId <= MD_NUM_DWELL_TABLES; TableId++)
+        -:   53:    {
+       16:   54:        if (MD_TableIsInMask(TableId, Start->TableMask))
+        -:   55:        {
+        -:   56:            /* At least one valid Table Id is in Mask */
+        2:   57:            AnyTablesInMask=TRUE;
+        -:   58:        }
+        -:   59:    }
+        -:   60:    
+        -:   61:    /* 
+        -:   62:    ** Handle specified operation.
+        -:   63:    ** If nominal, start each of the specified tables.
+        -:   64:    ** If error case was encountered, issue error message. 
+        -:   65:    */
+        4:   66:    if (AnyTablesInMask)
+        -:   67:    {  /* Handle Nominal Case */
+        -:   68:            
+       10:   69:        for (TableId=1; TableId <= MD_NUM_DWELL_TABLES; TableId++)
+        -:   70:        {
+        8:   71:           if (MD_TableIsInMask(TableId, Start->TableMask))
+        -:   72:           {
+        -:   73:              /* Setting Countdown to 1 causes a dwell packet to be issued */
+        -:   74:              /* on first wakeup call received. */
+        2:   75:              TableIndex = TableId-1;
+        2:   76:              MD_AppData.MD_DwellTables[ TableIndex ].Enabled = MD_DWELL_STREAM_ENABLED;
+        2:   77:              MD_AppData.MD_DwellTables[ TableIndex ].Countdown = 1;
+        2:   78:              MD_AppData.MD_DwellTables[ TableIndex ].CurrentEntry = 0;
+        2:   79:              MD_AppData.MD_DwellTables[ TableIndex ].PktOffset = 0;
+        -:   80:                          
+        -:   81:              /* Change value in Table Services managed buffer */
+        2:   82:              MD_UpdateTableEnabledField (TableIndex, MD_DWELL_STREAM_ENABLED);
+        -:   83:
+        -:   84:              /* If table contains a rate of zero, report that no processing will occur */
+        2:   85:              if (MD_AppData.MD_DwellTables[ TableIndex ].Rate == 0)
+        -:   86:              {
+        1:   87:                  CFE_EVS_SendEvent(MD_ZERO_RATE_CMD_INF_EID, CFE_EVS_INFORMATION, 
+        -:   88:                  "Dwell Table %d is enabled with a delay of zero so no processing will occur", TableId); 
+        -:   89:              }       
+        -:   90:           }
+        -:   91:        }
+        -:   92:        
+        2:   93:        MD_AppData.CmdCounter++;
+        -:   94:
+        2:   95:        CFE_EVS_SendEvent(MD_START_DWELL_INF_EID,  CFE_EVS_INFORMATION,
+        -:   96:        "Start Dwell Table command processed successfully for table mask 0x%04X",
+        2:   97:                                                      Start->TableMask);
+        -:   98:    }
+        -:   99:    else /* No valid table id's specified in mask */
+        -:  100:    {
+        2:  101:        MD_AppData.ErrCounter++;
+        2:  102:        CFE_EVS_SendEvent(MD_EMPTY_TBLMASK_ERR_EID,  CFE_EVS_ERROR,
+        -:  103:       "%s command rejected because no tables were specified in table mask (0x%04X)",
+        2:  104:        "Start Dwell", Start->TableMask );
+        -:  105:    }
+        4:  106:    return;
+        -:  107:    
+        -:  108:}  /* End of MD_ProcessStartCmd */
+        -:  109: 
+        -:  110:/******************************************************************************/
+        -:  111:
+        3:  112:void MD_ProcessStopCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  113:{
+        -:  114:    MD_CmdStartStop_t  *Stop;
+        -:  115:    uint16              TableId;
+        -:  116:    uint16              TableIndex;
+        -:  117:    boolean             AnyTablesInMask;
+        -:  118:    
+        3:  119:    AnyTablesInMask   =  FALSE;
+        3:  120:    Stop              = (MD_CmdStartStop_t *  ) MessagePtr;
+        -:  121:
+        -:  122:    
+       15:  123:    for (TableId=1; TableId <= MD_NUM_DWELL_TABLES; TableId++)
+        -:  124:    {
+       12:  125:        if (MD_TableIsInMask(TableId, Stop->TableMask))
+        -:  126:        {
+        1:  127:            TableIndex = TableId-1;
+        1:  128:            MD_AppData.MD_DwellTables[ TableIndex ].Enabled = MD_DWELL_STREAM_DISABLED;
+        1:  129:            MD_AppData.MD_DwellTables[ TableIndex ].Countdown = 0;
+        1:  130:            MD_AppData.MD_DwellTables[ TableIndex ].CurrentEntry = 0;
+        1:  131:            MD_AppData.MD_DwellTables[ TableIndex ].PktOffset = 0;
+        -:  132:            
+        1:  133:            AnyTablesInMask=TRUE;
+        -:  134:            
+        -:  135:            /* Change value in Table Services managed buffer */
+        1:  136:            MD_UpdateTableEnabledField (TableIndex, MD_DWELL_STREAM_DISABLED);
+        -:  137:            
+        -:  138:        }
+        -:  139:    }
+        -:  140:    
+        3:  141:    if (AnyTablesInMask)
+        -:  142:    {
+        1:  143:        CFE_EVS_SendEvent(MD_STOP_DWELL_INF_EID,  CFE_EVS_INFORMATION,
+        -:  144:            "Stop Dwell Table command processed successfully for table mask 0x%04X",
+        1:  145:             Stop->TableMask );
+        -:  146:
+        1:  147:        MD_AppData.CmdCounter++;
+        -:  148:    }
+        -:  149:    else
+        -:  150:    {
+        2:  151:        CFE_EVS_SendEvent(MD_EMPTY_TBLMASK_ERR_EID,  CFE_EVS_ERROR,
+        -:  152:       "%s command rejected because no tables were specified in table mask (0x%04X)",
+        2:  153:        "Stop Dwell", Stop->TableMask );
+        2:  154:        MD_AppData.ErrCounter++;
+        -:  155:    }
+        3:  156:    return;
+        -:  157:}  /* End of MD_ProcessStopCmd */
+        -:  158: 
+        -:  159:/******************************************************************************/
+        -:  160:
+       10:  161:void MD_ProcessJamCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  162:{
+        -:  163:    /* Local variables */
+       10:  164:    MD_CmdJam_t            *Jam = 0;
+       10:  165:    boolean                 AllInputsValid = TRUE;
+       10:  166:    cpuaddr                 ResolvedAddr=0;
+       10:  167:    MD_DwellControlEntry_t *DwellEntryPtr = 0; /* points to local task data */
+       10:  168:    uint16                  EntryIndex = 0;
+       10:  169:    uint8                   TableIndex = 0;
+        -:  170:    CFS_SymAddr_t           NewDwellAddress;
+        -:  171:            
+        -:  172:    /*
+        -:  173:    **  Cast message to Jam Command.
+        -:  174:    */
+       10:  175:    Jam         = (MD_CmdJam_t * ) MessagePtr;
+        -:  176:    
+        -:  177:    /* In case Dwell Address sym name isn't null terminated, do it now. */
+       10:  178:    Jam->DwellAddress.SymName[OS_MAX_SYM_LEN - 1] = '\0';
+        -:  179:    
+        -:  180:    /*
+        -:  181:    **  Check that TableId and EntryId command arguments,
+        -:  182:    **  which are used as array indexes, are valid.
+        -:  183:    */
+       10:  184:    if (  !MD_ValidTableId ( Jam->TableId) )
+        -:  185:    {        
+        2:  186:        CFE_EVS_SendEvent(MD_INVALID_JAM_TABLE_ERR_EID, CFE_EVS_ERROR,
+        -:  187:         "Jam Cmd rejected due to invalid Tbl Id arg = %d (Expect 1.. %d)",
+        2:  188:          Jam->TableId, MD_NUM_DWELL_TABLES);
+        -:  189:
+        2:  190:        AllInputsValid = FALSE;
+        -:  191:    }
+        8:  192:    else if ( !MD_ValidEntryId ( Jam->EntryId))
+        -:  193:    {        
+        1:  194:        CFE_EVS_SendEvent(MD_INVALID_ENTRY_ARG_ERR_EID, CFE_EVS_ERROR,
+        -:  195:         "Jam Cmd rejected due to invalid Entry Id arg = %d (Expect 1.. %d)",
+        1:  196:          Jam->EntryId, MD_DWELL_TABLE_SIZE);
+        -:  197:
+        1:  198:        AllInputsValid = FALSE;
+        -:  199:    }
+        -:  200:    
+        -:  201:    /*
+        -:  202:    **  If all inputs checked so far are valid, continue.
+        -:  203:    */    
+       10:  204:    if (AllInputsValid == TRUE)
+        -:  205:    {
+        7:  206:        TableIndex  = Jam->TableId-1;
+        7:  207:        EntryIndex  = Jam->EntryId-1;
+        -:  208:                
+        7:  209:        DwellEntryPtr   = (MD_DwellControlEntry_t *) &MD_AppData.MD_DwellTables[TableIndex].Entry[EntryIndex];
+        -:  210:
+        7:  211:        if (Jam->FieldLength == 0)
+        -:  212:        /*
+        -:  213:        **  Jam a null entry.  Set all entry fields to zero.
+        -:  214:        */    
+        -:  215:        {
+        -:  216:            /* Assign local values */
+        1:  217:            DwellEntryPtr->ResolvedAddress = 0;
+        1:  218:            DwellEntryPtr->Length          = 0;
+        1:  219:            DwellEntryPtr->Delay           = 0;
+        -:  220:            
+        -:  221:            /* Update Table Services buffer */
+        1:  222:            NewDwellAddress.Offset = 0;
+        1:  223:            NewDwellAddress.SymName[0] = '\0';
+        1:  224:            MD_UpdateTableDwellEntry (TableIndex, EntryIndex, 0, 0, NewDwellAddress);
+        -:  225:
+        -:  226:            /* Issue event */
+        2:  227:            CFE_EVS_SendEvent(MD_JAM_NULL_DWELL_INF_EID, CFE_EVS_INFORMATION,
+        -:  228:            "Successful Jam of a Null Dwell Entry to Dwell Tbl#%d Entry #%d", 
+        2:  229:                           Jam->TableId, Jam->EntryId  );
+        -:  230:        } 
+        -:  231:        else
+        -:  232:        /*
+        -:  233:        **  Process non-null entry.
+        -:  234:        */   
+        -:  235:        { 
+        -:  236:            /*
+        -:  237:            **  Check that address and field length arguments pass all validity checks.
+        -:  238:            */    
+        -:  239:
+        -:  240:            /* Resolve and Validate Dwell Address */
+        6:  241:            if (CFS_ResolveSymAddr(&Jam->DwellAddress,&ResolvedAddr) == FALSE)
+        -:  242:            {
+        -:  243:                /* If DwellAddress argument couldn't be resolved, issue error event */
+        1:  244:                CFE_EVS_SendEvent(MD_CANT_RESOLVE_JAM_ADDR_ERR_EID, 
+        -:  245:                                  CFE_EVS_ERROR,
+        -:  246:                                 "Jam Cmd rejected because symbolic address '%s' couldn't be resolved",
+        -:  247:                                  Jam->DwellAddress.SymName);
+        1:  248:                AllInputsValid = FALSE;
+        -:  249:            }
+        5:  250:            else if (!MD_ValidFieldLength(Jam->FieldLength))
+        -:  251:            {        
+        1:  252:                CFE_EVS_SendEvent(MD_INVALID_LEN_ARG_ERR_EID, CFE_EVS_ERROR,
+        -:  253:                                 "Jam Cmd rejected due to invalid Field Length arg = %d (Expect 0,1,2,or 4)",
+        1:  254:                                  Jam->FieldLength);
+        1:  255:                AllInputsValid = FALSE;
+        -:  256:            }
+        4:  257:            else if (!MD_ValidAddrRange(ResolvedAddr, Jam->FieldLength))
+        -:  258:            {
+        -:  259:                /* Issue event message that ResolvedAddr is invalid */
+        1:  260:                CFE_EVS_SendEvent(MD_INVALID_JAM_ADDR_ERR_EID, CFE_EVS_ERROR,
+        -:  261:                                 "Jam Cmd rejected because address 0x%08X is not in a valid range", 
+        -:  262:                                  (unsigned int)ResolvedAddr);
+        1:  263:                AllInputsValid = FALSE;
+        -:  264:            }
+        -:  265:#if MD_ENFORCE_DWORD_ALIGN == 0
+        -:  266:            else  if ((Jam->FieldLength == 4) && 
+        -:  267:                      CFS_Verify16Aligned(ResolvedAddr, (uint32)Jam->FieldLength) != TRUE)
+        -:  268:            {
+        -:  269:                CFE_EVS_SendEvent(MD_JAM_ADDR_NOT_16BIT_ERR_EID, CFE_EVS_ERROR,
+        -:  270:                                 "Jam Cmd rejected because address 0x%08X is not 16-bit aligned", 
+        -:  271:                                  ResolvedAddr);
+        -:  272:                AllInputsValid = FALSE;
+        -:  273:            }
+        -:  274:#else    
+        5:  275:            else  if ((Jam->FieldLength == 4) && 
+        1:  276:                      CFS_Verify32Aligned(ResolvedAddr, (uint32)Jam->FieldLength) != TRUE)
+        -:  277:            {
+        1:  278:                CFE_EVS_SendEvent(MD_JAM_ADDR_NOT_32BIT_ERR_EID, CFE_EVS_ERROR,
+        -:  279:                                 "Jam Cmd rejected because address 0x%08X is not 32-bit aligned", 
+        -:  280:                                  (unsigned int)ResolvedAddr);
+        1:  281:                AllInputsValid = FALSE;
+        -:  282:            }
+        -:  283:#endif
+        2:  284:            else  if ((Jam->FieldLength == 2) && CFS_Verify16Aligned(ResolvedAddr, (uint32)Jam->FieldLength) != TRUE)
+        -:  285:            {
+        1:  286:                CFE_EVS_SendEvent(MD_JAM_ADDR_NOT_16BIT_ERR_EID, CFE_EVS_ERROR,
+        -:  287:                                 "Jam Cmd rejected because address 0x%08X is not 16-bit aligned", 
+        -:  288:                                  (unsigned int)ResolvedAddr);
+        1:  289:                AllInputsValid = FALSE;
+        -:  290:            }
+        -:  291:
+        -:  292:
+        6:  293:            if (AllInputsValid == TRUE)
+        -:  294:            /* 
+        -:  295:            ** Perform Jam Operation : Copy Resolved DwellAddress, Length, and Delay to
+        -:  296:            ** local control structure.
+        -:  297:            */
+        -:  298:            {
+        -:  299:                /* Jam the new values into Application control structure */
+        1:  300:                DwellEntryPtr->ResolvedAddress = ResolvedAddr;
+        1:  301:                DwellEntryPtr->Length          = Jam->FieldLength;
+        1:  302:                DwellEntryPtr->Delay           = Jam->DwellDelay;
+        -:  303:                
+        -:  304:                /* Update values in Table Services buffer */
+        1:  305:                NewDwellAddress.Offset = Jam->DwellAddress.Offset;
+        -:  306:                
+        1:  307:                strncpy (NewDwellAddress.SymName, Jam->DwellAddress.SymName, OS_MAX_SYM_LEN);
+        -:  308:                
+        1:  309:                MD_UpdateTableDwellEntry (TableIndex, EntryIndex, Jam->FieldLength, Jam->DwellDelay, NewDwellAddress);
+        -:  310:            
+        -:  311:                /* Issue event */
+        2:  312:                CFE_EVS_SendEvent(MD_JAM_DWELL_INF_EID, CFE_EVS_INFORMATION,
+        -:  313:                          "Successful Jam to Dwell Tbl#%d Entry #%d", 
+        2:  314:                           Jam->TableId, Jam->EntryId  );
+        -:  315:            }
+        -:  316:            
+        -:  317:        } /* end else Process non-null entry */  
+        -:  318:          
+        -:  319:    } /* end if AllInputsValid */    
+        -:  320:    
+        -:  321:    /*
+        -:  322:    **  Handle bookkeeping.
+        -:  323:    */
+       10:  324:    if (AllInputsValid == TRUE)
+        -:  325:    {
+        2:  326:        MD_AppData.CmdCounter++;   
+        -:  327:                    
+        -:  328:        /* Update Dwell Table Control Info, including rate */
+        2:  329:        MD_UpdateDwellControlInfo(TableIndex);
+        -:  330:
+        -:  331:        /* If table contains a rate of zero, and it enabled report that no processing will occur */
+        4:  332:        if ((MD_AppData.MD_DwellTables[ TableIndex ].Rate == 0) &&
+        2:  333:            (MD_AppData.MD_DwellTables[ TableIndex ].Enabled == MD_DWELL_STREAM_ENABLED))
+        -:  334:        {
+        2:  335:            CFE_EVS_SendEvent(MD_ZERO_RATE_CMD_INF_EID, CFE_EVS_INFORMATION, 
+        2:  336:            "Dwell Table %d is enabled with a delay of zero so no processing will occur", Jam->TableId); 
+        -:  337:        }
+        -:  338:    }
+        -:  339:    else
+        -:  340:    {
+        8:  341:        MD_AppData.ErrCounter++;
+        -:  342:    }
+        -:  343:            
+       10:  344:    return;
+        -:  345:    
+        -:  346:} /* End of MD_ProcessJamCmd */
+        -:  347:
+        -:  348:
+        -:  349:
+        -:  350:/******************************************************************************/
+        -:  351:#if MD_SIGNATURE_OPTION == 1   
+        -:  352:
+        4:  353:void MD_ProcessSignatureCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  354:{
+        -:  355:    MD_CmdSetSignature_t  *SignatureCmd;
+        -:  356:    uint16                 TblId;
+        -:  357:    uint16                 StringLength;
+        -:  358:    
+        -:  359:    /*
+        -:  360:    **  Cast message to Set Signature Command.
+        -:  361:    */
+        4:  362:    SignatureCmd         = (MD_CmdSetSignature_t * ) MessagePtr;
+        -:  363:
+        4:  364:    TblId = SignatureCmd->TableId;
+        -:  365:
+        -:  366:    /*
+        -:  367:    **  Check for Null Termination of string
+        -:  368:    */
+       45:  369:    for(StringLength = 0; StringLength < MD_SIGNATURE_FIELD_LENGTH; StringLength++)
+        -:  370:    {
+       44:  371:       if(SignatureCmd->Signature[StringLength] == '\0')
+        3:  372:          break;
+        -:  373:    }
+        -:  374:
+        4:  375:    if (StringLength >= MD_SIGNATURE_FIELD_LENGTH)
+        -:  376:    {      
+        1:  377:        CFE_EVS_SendEvent(MD_INVALID_SIGNATURE_LENGTH_ERR_EID, CFE_EVS_ERROR,
+        -:  378:         "Set Signature cmd rejected due to invalid Signature length");
+        -:  379:          
+        1:  380:        MD_AppData.ErrCounter++;
+        -:  381:    }
+        -:  382:
+        -:  383:    /*
+        -:  384:    ** Check for valid TableId argument
+        -:  385:    */
+        3:  386:    else if (  !MD_ValidTableId ( TblId) )
+        -:  387:    {      
+        2:  388:        CFE_EVS_SendEvent(MD_INVALID_SIGNATURE_TABLE_ERR_EID, CFE_EVS_ERROR,
+        -:  389:         "Set Signature cmd rejected due to invalid Tbl Id arg = %d (Expect 1.. %d)",
+        -:  390:          TblId, MD_NUM_DWELL_TABLES);
+        -:  391:          
+        2:  392:        MD_AppData.ErrCounter++;
+        -:  393:    }
+        -:  394:
+        -:  395:    else
+        -:  396:    
+        -:  397:    /*
+        -:  398:    **  Handle nominal case.
+        -:  399:    */
+        -:  400:    {
+        -:  401:       /* Copy signature field to local dwell control structure */
+        1:  402:       strncpy(MD_AppData.MD_DwellTables[TblId-1].Signature, 
+        1:  403:             SignatureCmd->Signature, MD_SIGNATURE_FIELD_LENGTH);
+        -:  404:
+        -:  405:       /* Update signature in Table Services buffer */
+        1:  406:       MD_UpdateTableSignature(TblId-1,SignatureCmd->Signature);
+        -:  407:       
+        1:  408:       CFE_EVS_SendEvent(MD_SET_SIGNATURE_INF_EID, CFE_EVS_INFORMATION,
+        -:  409:                          "Successfully set signature for Dwell Tbl#%d to '%s'", 
+        -:  410:                           TblId, SignatureCmd->Signature  );
+        -:  411:
+        1:  412:       MD_AppData.CmdCounter++;
+        -:  413:    }
+        4:  414:    return;
+        -:  415:
+        -:  416:}
+        -:  417:
+        -:  418:#endif
+        -:  419:
+        -:  420:/************************/
+        -:  421:/*  End of File Comment */
+        -:  422:/************************/

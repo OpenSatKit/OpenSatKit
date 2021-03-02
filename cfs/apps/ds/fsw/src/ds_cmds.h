@@ -1,33 +1,25 @@
 /************************************************************************
-**   $Id: ds_cmds.h 1.6.1.1 2015/02/28 17:13:41EST sstrege Exp  $
+** File: ds_cmds.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
-**
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
+** Purpose:
 **  CFS Data Storage (DS) command handler header file
 **
-** $Log: ds_cmds.h  $
-** Revision 1.6.1.1 2015/02/28 17:13:41EST sstrege 
-** Added copyright information
-** Revision 1.6 2011/07/12 17:42:19EDT lwalling 
-** Add function prototype for DS_CmdCloseAll()
-** Revision 1.5 2011/05/19 11:32:58EDT lwalling 
-** Add new command handler - DS_CmdAddMID
-** Revision 1.4 2011/05/06 15:05:16EDT lwalling 
-** Create prototype for get file info packet command handler
-** Revision 1.3 2009/08/27 16:32:26EDT lwalling 
-** Updates from source code review
-** Revision 1.2 2009/06/12 11:43:31EDT lwalling 
-** Added Doxygen comments
-** Revision 1.1 2009/05/26 14:25:26EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/src/project.pj
 *************************************************************************/
 
 #ifndef _ds_cmds_h_

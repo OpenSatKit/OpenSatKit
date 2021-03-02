@@ -86,7 +86,7 @@
          "src-data": [
             {
                "tlm-mid":  "ISIM_HK_TLM_MID",
-               "tlm-item": "ISIM HK_TLM_PKT INSTR_STATE"
+               "tlm-item": "ISIM HK_TLM_PKT INSTR_PWR_STATE"
             },
             {
                "tlm-mid":  "ISIM_HK_TLM_MID",
@@ -94,7 +94,7 @@
             },
             {
                "tlm-mid":  "ISIM_HK_TLM_MID",
-               "tlm-item": "ISIM HK_TLM_PKT FAULT"
+               "tlm-item": "ISIM HK_TLM_PKT FAULT_PRESENT"
             },
             {
                "tlm-mid":  "ISIM_HK_TLM_MID",

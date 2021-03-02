@@ -14,12 +14,14 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND MD START_DWELL <%= Osk::Cfg.processor_endian %> "Set the Enabled flag(s) specified by Table Mask argument"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 4) %>
   APPEND_PARAMETER TABLE_MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "0x0001=TBL1 bit, 0x0002=TBL2 bit,0x0004=TBL3 bit,0x0008=TBL4 enable bit, etc."
+  APPEND_PARAMETER ALIGN_PAD  16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
 
 COMMAND MD STOP_DWELL <%= Osk::Cfg.processor_endian %> "Clear the Enabled flag(s) specified by Table Mask argument."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 2) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 4) %>
   APPEND_PARAMETER TABLE_MASK 16 UINT MIN_UINT16 MAX_UINT16 0 "0x0001=TBL1 bit, 0x0002=TBL2 bit,0x0004=TBL3 bit,0x0008=TBL4 enable bit, etc."
+  APPEND_PARAMETER ALIGN_PAD  16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
 
 COMMAND MD JAM_DWELL <%= Osk::Cfg.processor_endian %> "Inserts dwell parameters (dwell address, dwell field length, and delay count) into specified table, at specified index."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 76) %>

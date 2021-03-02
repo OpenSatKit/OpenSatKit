@@ -1,63 +1,46 @@
-
 /************************************************************************
+** File: ds_file_tbl.c 
 **
-** $Id: ds_file_tbl.c 1.11.1.1 2015/02/28 17:13:55EST sstrege Exp  $
+** File: ds_file_tbl.c 
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
-** CFS Data Storage (DS) sample destination file table
+** Purpose:
+**   CFS Data Storage (DS) sample destination file table
 **
-** Note: This source file creates a sample table that defines several
-**       data storage destination files using a variety of the options
-**       available. None of the file system details (name, size, etc.)
-**       are known at this time for the target platform. Therefore,
-**       the file pathnames are set to "set_by_cmd_b4_enable" which
-**       indicates that pathnames must be set by command before trying
-**       to enable any of the destination files. Max file size values
-**       should also be modified via command before using this table.
+** Note: 
+**   This source file creates a sample table that defines several
+**   data storage destination files using a variety of the options
+**   available. None of the file system details (name, size, etc.)
+**   are known at this time for the target platform. Therefore,
+**   the file pathnames are set to "set_by_cmd_b4_enable" which
+**   indicates that pathnames must be set by command before trying
+**   to enable any of the destination files. Max file size values
+**   should also be modified via command before using this table.
 **
-**       Obviously, a better solution is to replace this sample table
-**       and the sample packet filter table (which references this
-**       table) with mission specific versions that define the data
-**       storage behavior appropriate for the platform.
+**   Obviously, a better solution is to replace this sample table
+**   and the sample packet filter table (which references this
+**   table) with mission specific versions that define the data
+**   storage behavior appropriate for the platform.
 **
-**       But, as long as the target platform has a file system, the
-**       sample data storage tables may be used to demonstrate data
-**       storage.
-**
-** $Log: ds_file_tbl.c  $
-** Revision 1.11.1.1 2015/02/28 17:13:55EST sstrege 
-** Added copyright information
-** Revision 1.11 2012/07/20 16:49:24EDT aschoeni 
-** Restored subobject naming (but now as comments)
-** Revision 1.10 2012/07/20 16:32:23EDT aschoeni 
-** Fixed compiler warnings
-** Revision 1.9 2010/11/09 15:10:40EST lwalling 
-** Added conditional field initializers for Movename
-** Revision 1.8 2010/02/23 11:30:57EST lwalling 
-** Change application name from DS_APP to DS per CFS naming convention
-** Revision 1.7 2009/10/06 10:36:47EDT lwalling 
-** Change filename reference in destination file table header
-** Revision 1.6 2009/09/02 15:29:04EDT lwalling 
-** Member renamed from ds_file.c to ds_file_tbl.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/tables/project.pj.
-** Revision 1.5 2009/09/02 14:29:04ACT lwalling 
-** Make table filenames match source filenames
-** Revision 1.4 2009/08/27 16:32:29EDT lwalling 
-** Member renamed from ds_sample_filetable.c to ds_file.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/tables/project.pj.
-** Revision 1.3 2009/08/27 15:32:29ACT lwalling 
-** Updates from source code review
-** Revision 1.2 2009/07/15 10:16:20EDT lwalling 
-** Include application header file due to changes made to platform configuration header file
-** Revision 1.1 2009/06/16 17:06:58EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/tables/project.pj
+**   But, as long as the target platform has a file system, the
+**   sample data storage tables may be used to demonstrate data
+**   storage.
 **
 *************************************************************************/
 
@@ -77,7 +60,7 @@
 **       when creating ground system database entries that require
 **       file index numbers for command arguments.
 */
-/* Moved definitions to ds_platfororm_cfg.h */
+/* osk: Moved definitions to ds_platfororm_cfg.h */
 
 
 /*

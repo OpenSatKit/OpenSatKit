@@ -69,15 +69,17 @@ typedef struct {
    ** ISIM Data
    */
 
-   uint8    IsimInstrState;
+   uint8    IsimPwrState;
+   uint8    IsimPwrInitCycleCnt;
+   uint8    IsimPwrResetCycleCnt;
    uint8    IsimSciState;
-   boolean  Fault;
-   uint8    Spare;
+   uint16   IsimDetectorImageCnt;
+   uint8    IsimDetectorReadoutRow;
+   boolean  IsimDetectorFault;
+   boolean  IsimSciFileOpen;
+   uint8    CurrFileImageCnt;
    
-   uint16   InitCycleCnt;
-   uint16   SciFileCycleCnt;
-   
-   char Filename[OS_MAX_PATH_LEN];
+   char SciFilename[OS_MAX_PATH_LEN];
    
 } OS_PACK ISIM_APP_HkPkt;
 #define ISIM_APP_HK_PKT_LEN sizeof (ISIM_APP_HkPkt)

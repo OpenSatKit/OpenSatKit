@@ -1,52 +1,37 @@
-
 /************************************************************************
+** File: ds_filter_tbl.c 
 **
-** $Id: ds_filter_tbl.c 1.10.1.1 2015/02/28 17:14:03EST sstrege Exp  $
+** File: ds_filter_tbl.c
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
-** CFS Data Storage (DS) sample packet filter table
+** Purpose:
+**   CFS Data Storage (DS) sample packet filter table
 **
-** Note: This source file creates a sample table that stores packets using
-**       several different destination storage files.  Some packets have
-**       one filter that is set to store every packet in one file and
-**       another filter that will store every other packet in a second
-**       file.  Also, some filters are disabled and thus will not store
-**       any packets.  There is no real purpose to this particular set of
-**       filters other than to provide an example of how various fields
-**       in the table might be used.
-**
-** $Log: ds_filter_tbl.c  $
-** Revision 1.10.1.1 2015/02/28 17:14:03EST sstrege 
-** Added copyright information
-** Revision 1.10 2012/07/20 16:49:36EDT aschoeni 
-** Restored subobject naming (but now as comments)
-** Revision 1.9 2012/07/20 16:32:24EDT aschoeni 
-** Fixed compiler warnings
-** Revision 1.8 2010/02/23 11:30:57EST lwalling 
-** Change application name from DS_APP to DS per CFS naming convention
-** Revision 1.7 2009/09/02 15:29:05EDT lwalling 
-** Member renamed from ds_filter.c to ds_filter_tbl.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/tables/project.pj.
-** Revision 1.6 2009/09/02 14:29:05ACT lwalling 
-** Make table filenames match source filenames
-** Revision 1.5 2009/08/27 16:32:28EDT lwalling 
-** Member renamed from ds_sample_filtertable.c to ds_filter.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/tables/project.pj.
-** Revision 1.4 2009/08/27 15:32:28ACT lwalling 
-** Updates from source code review
-** Revision 1.3 2009/08/13 09:59:48EDT lwalling 
-** Changed DS_ENABLE/DS_DISABLE to DS_BY_COUNT/DS_BY_TIME
-** Revision 1.2 2009/07/15 10:16:21EDT lwalling 
-** Include application header file due to changes made to platform configuration header file
-** Revision 1.1 2009/06/16 17:06:59EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/tables/project.pj
+** Note: 
+**   This source file creates a sample table that stores packets using
+**   several different destination storage files.  Some packets have
+**   one filter that is set to store every packet in one file and
+**   another filter that will store every other packet in a second
+**   file.  Also, some filters are disabled and thus will not store
+**   any packets.  There is no real purpose to this particular set of
+**   filters other than to provide an example of how various fields
+**   in the table might be used.
 **
 *************************************************************************/
 
@@ -56,6 +41,7 @@
 #include "ds_appdefs.h"
 #include "ds_app.h"
 #include "ds_msg.h"
+
 
 /*
 ** Note: Include header files that define the message ID's for the
@@ -70,7 +56,7 @@
 /* #include "cs_msgids.h"  */
 /* #include "ds_msgids.h"  */
 /* #include "fm_msgids.h"  */
-#include "hk_msgids.h"
+#include "hk_msgids.h"  // osk:
 /* #include "hs_msgids.h"  */
 /* #include "lc_msgids.h"  */
 /* #include "md_msgids.h"  */

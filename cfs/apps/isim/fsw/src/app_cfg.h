@@ -36,23 +36,28 @@
 **
 ** 1.0 - Initial release
 ** 1.1 - Main loop control changed from task delay to pend for scheduler wakeup
+** 2.0 - Major enhancements to support Space Systems course student assignments.
+**       Restructured ISIM to have a Detector and SciFile subclasses. When fault
+**       present it manifest itself in the science data.
 */
 
-#define  ISIM_MAJOR_VER      1
-#define  ISIM_MINOR_VER      1
+#define  ISIM_MAJOR_VER      2
+#define  ISIM_MINOR_VER      0
 
 /******************************************************************************
 ** Command Macros
 **
 */
 
-#define ISIMTBL_LOAD_CMD_FC    (CMDMGR_APP_START_FC + 0)
-#define ISIMTBL_DUMP_CMD_FC    (CMDMGR_APP_START_FC + 1)
-#define ISIM_PWR_ON_CMD_FC     (CMDMGR_APP_START_FC + 2)
-#define ISIM_PWR_OFF_CMD_FC    (CMDMGR_APP_START_FC + 3)
-#define ISIM_START_SCI_CMD_FC  (CMDMGR_APP_START_FC + 4)
-#define ISIM_STOP_SCI_CMD_FC   (CMDMGR_APP_START_FC + 5)
-#define ISIM_CFG_FAULT_CMD_FC  (CMDMGR_APP_START_FC + 6)
+#define ISIMTBL_LOAD_CMD_FC         (CMDMGR_APP_START_FC + 0)
+#define ISIMTBL_DUMP_CMD_FC         (CMDMGR_APP_START_FC + 1)
+#define ISIM_PWR_ON_INSTR_CMD_FC    (CMDMGR_APP_START_FC + 2)
+#define ISIM_PWR_OFF_INSTR_CMD_FC   (CMDMGR_APP_START_FC + 3)
+#define ISIM_PWR_RESET_INSTR_CMD_FC (CMDMGR_APP_START_FC + 4)
+#define ISIM_START_SCI_CMD_FC       (CMDMGR_APP_START_FC + 5)
+#define ISIM_STOP_SCI_CMD_FC        (CMDMGR_APP_START_FC + 6)
+#define ISIM_SET_FAULT_CMD_FC       (CMDMGR_APP_START_FC + 7)
+#define ISIM_CLEAR_FAULT_CMD_FC     (CMDMGR_APP_START_FC + 8)
 
 
 /******************************************************************************

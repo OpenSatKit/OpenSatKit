@@ -1,59 +1,27 @@
 /************************************************************************
-** File:
-**   $Id: ds_events.h 1.17.1.1 2015/02/28 17:13:50EST sstrege Exp  $
+** File: ds_events.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
 ** Purpose: 
 **  The CFS Data Storage (DS) Application event id header file
 **
 ** Notes:
-**
-** $Log: ds_events.h  $
-** Revision 1.17.1.1 2015/02/28 17:13:50EST sstrege 
-** Added copyright information
-** Revision 1.17 2014/11/14 14:12:25EST lwalling 
-** Modified Doxygen description for DS_GET_FILE_INFO_CMD_EID
-** Revision 1.16 2012/07/17 15:28:30EDT lwalling 
-** Verify HK request command length
-** Revision 1.15 2011/07/12 14:44:04PDT lwalling 
-** Add event definitions for DS_CLOSE_ALL_CMD_EID and DS_CLOSE_ALL_CMD_ERR_EID
-** Revision 1.14 2011/05/19 11:36:06EDT lwalling 
-** Add event definitions for DS_ADD_MID_CMD_ERR_EID and DS_ADD_MID_CMD_EID
-** Revision 1.13 2011/05/17 11:01:12EDT lwalling 
-** Add event definitions for Get File Info command handler
-** Revision 1.12 2010/11/09 14:59:08EST lwalling 
-** Add event error definitions for failed attempt to move files
-** Revision 1.11 2010/04/09 16:46:55EDT lwalling 
-** Add desc text verify result to status events, precede percent with backslash in doxygen comments
-** Revision 1.10 2010/03/03 14:20:22EST lwalling 
-** Change comment start characters to conform to Doxygen standards
-** Revision 1.9 2009/12/08 10:52:12EST lwalling 
-** Event text cleanup
-** Revision 1.8 2009/10/06 09:56:29EDT lwalling 
-** Delete obsolete table update event ID
-** Revision 1.7 2009/08/28 16:47:54EDT lwalling 
-** Add support for storing sequence counts in CDS
-** Revision 1.6 2009/08/27 16:32:31EDT lwalling 
-** Updates from source code review
-** Revision 1.5 2009/07/21 17:49:26EDT lwalling 
-** Add doxygen comments for event ID macro definitions
-** Revision 1.4 2009/05/26 14:21:06EDT lwalling 
-** Initial version of DS application
-** Revision 1.3 2009/04/18 09:44:21EDT dkobe 
-** Corrected HK_SEND_HK_CMD_MID to be HK_SEND_HK_MID
-** Revision 1.2 2008/12/02 14:46:09EST rmcgraw 
-** DCR4669:1 Abbreviated project name in history
-** Revision 1.1 2008/11/25 11:36:26EST rmcgraw 
-** Initial revision
-** Member added to CFS project
 **
 *************************************************************************/
 #ifndef _ds_events_h_
@@ -1115,7 +1083,7 @@
 /**
 **  \brief <tt> 'Add Message ID to Filter Table command' </tt>
 **
-**  \event <tt> 'ADD MID command: MID = 0x\%04X, index = \%d' </tt>
+**  \event <tt> 'ADD MID command: MID = 0x\%04X, filter index = \%d, hash index = \%d' </tt>
 **
 **  \par Type: DEBUG
 **
@@ -1191,6 +1159,59 @@
 **  The event text will indicate the cause of the failure.
 */
 #define DS_CLOSE_ALL_CMD_ERR_EID 67
+
+/**
+**  \brief <tt> 'FILE NAME error: Path empty. dest = %d, path = '%s'' </tt>
+**  \event <tt> 'FILE NAME error: Path empty. dest = %d, path = '%s'' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event is generated when DS_FileCreateName is invoked with an 
+**  empty path name.
+**
+**  The dest field is the file index.
+**  The path field is the path name.
+*/
+#define DS_FILE_CREATE_EMPTY_PATH_ERR_EID  68
+
+
+/**
+ ** \brief <tt> 'Invalid filter tbl name in DS_AppProcessHK. Name=\%s,
+ Err=0x\%08X' </tt>
+ ** \event <tt> 'Invalid filter tbl name in DS_AppProcessHk. Name=\%s,
+ Err=0x\%08X' </tt>
+ **
+ ** \par Type: ERROR
+ **
+ ** \par Cause:
+ **
+ ** This event is issued when an invalid filter table name is passed to
+ ** the CFE_TBL_GetInfo.  
+ **
+ ** The "Name" field in the event text  is the table name passed to 
+ ** #CFE_TBL_GetInfo.
+ ** The "Err" field in the event text is the error code returned from 
+ ** #CFE_TBL_GetInfo.
+ */
+#define DS_APPHK_FILTER_TBL_ERR_EID 68
+
+/**
+ ** \brief <tt> 'Filter tbl name copy fail in DS_AppProcessHK. Err=\%d' </tt>
+ ** \event <tt> 'Filter tbl name copy fail in DS_AppProcessHk. Err=\%d' </tt>
+ **
+ ** \par Type: ERROR
+ **
+ ** \par Cause:
+ **
+ ** This event is issued when the filter table name is not successfully 
+ ** created (via snprintf) in the DS_AppProcessHK function.
+ **
+ ** The "Err" field in the event text is the value returned from snprintf.
+ */
+#define DS_APPHK_FILTER_TBL_PRINT_ERR_EID 69
+
 
 
 #endif /* _ds_events_h_ */

@@ -1,0 +1,13 @@
+{
+   "name": "ISIM Test Table",
+   "description": "Test table with different values than default table",
+   "sci-instr": {
+      "pwr-init-cycles":  30,
+      "pwr-reset-cycles": 20
+   },
+   "sci-file": {
+      "path-base-filename": "/cf/simsat/rec/isim_test_",
+      "file-extension":     ".txt",
+      "images-per-file":    10
+   }
+}

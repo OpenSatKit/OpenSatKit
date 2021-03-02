@@ -53,8 +53,8 @@ end
 
 simsat_ops_status = "Ground Pass: Real-time telemetry quick health assessment"
 
-message_box("Instrument not in READY state",false)  unless (tlm("ISIM HK_TLM_PKT INSTR_STATE") == "READY")
-message_box("Instrument fault present",false)       unless (tlm("ISIM HK_TLM_PKT FAULT") == "FALSE")
+message_box("Instrument not in READY state",false)  unless (tlm("ISIM HK_TLM_PKT INSTR_PWR_STATE") == "READY")
+message_box("Instrument fault present",false)       unless (tlm("ISIM HK_TLM_PKT FAULT_PRESENT") == "FALSE")
 
 message_box("Housekeeping missed auxiliary packets. This unexpectedly occurs and needs to be debugged. This is not part of the example sim.",false) unless (tlm("HK HK_TLM_PKT MISSING_DATA_CNT") == 0)
 

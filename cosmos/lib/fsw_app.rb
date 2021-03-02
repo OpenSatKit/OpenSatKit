@@ -71,7 +71,8 @@ class FswApp
    attr_reader :target, :hk_pkt   # COSMOS definitions
    attr_reader :cmd_mid
    attr_reader :cmd_valid         # Status of last command sent
-         
+   attr_reader :target_hk_str     # Convenient string that combines target and HK packet name
+
    #
    # fsw_name - Name used in cfe_es_startup.screen
    # target   - COSMOS target name
@@ -98,6 +99,12 @@ class FswApp
       @priority          = nil
       @stack_size        = nil
       @exception_action  = nil
+      
+      # Not pretty but allows CFE apps to be treated similar to user apps
+      if (fsw_name.include? "CFE_")
+         @sys_build  = true
+         @sys_simsat = true
+      end
       
       @target_hk_str = "#{@target} #{@hk_pkt}"
       

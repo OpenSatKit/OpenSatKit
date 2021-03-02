@@ -42,7 +42,7 @@ module FM
          @dest_file = AppFuncTest::FLT_TMP_TEST_FILE
       end
 
-      def pass
+      def valid
          #
          # With debug on
          # 1. Overwrite off, same file system  
@@ -65,9 +65,9 @@ module FM
 
          cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01") # Disable debug events
 
-      end
+      end # valid()
       
-      def fail
+      def invalid
          #
          # 1. Invalid overwrite value
          # 2. Source file invalid name
@@ -100,7 +100,7 @@ module FM
             raise "FM ERROR: Failed event message verification for '#{event_msg}'" unless AppFuncTest.valid_event_msg("FM", EVS_ERROR, "Copy File error: file already exists:")
          end
 
-      end
+      end # invalid()
    end # Class FileCopyTest
    
 end # Module FM

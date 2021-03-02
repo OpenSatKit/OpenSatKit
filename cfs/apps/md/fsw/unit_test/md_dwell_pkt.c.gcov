@@ -1,0 +1,260 @@
+        -:    0:Source:../src/md_dwell_pkt.c
+        -:    0:Programs:5
+        -:    1:/************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: md_dwell_pkt.c.gcov 1.2 2017/07/05 13:00:23EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**  Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6:**  Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**  All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**  This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**  used, distributed and modified only pursuant to the terms of that 
+        -:   12:**  agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   Functions used to populate and send Memory Dwell packets.
+        -:   16:**
+        -:   17:** 
+        -:   18:*************************************************************************/
+        -:   19:
+        -:   20:/*************************************************************************
+        -:   21:** Includes
+        -:   22:*************************************************************************/
+        -:   23:#include "md_dwell_pkt.h"
+        -:   24:#include "md_utils.h"
+        -:   25:#include "md_app.h"
+        -:   26:#include "cfs_utils.h"
+        -:   27:#include <string.h>
+        -:   28:
+        -:   29:extern MD_AppData_t MD_AppData;
+        -:   30:
+        -:   31:
+        -:   32:/******************************************************************************/
+        -:   33:
+        4:   34:void MD_DwellLoop( void )
+        -:   35:{
+        -:   36:    uint16                    TblIndex;
+        -:   37:    uint16                    EntryIndex;
+        -:   38:    uint16                    NumDwellAddresses;
+        -:   39:    MD_DwellPacketControl_t  *TblPtr;
+        -:   40:    
+        -:   41:    /* Check each dwell table */
+       20:   42:    for (TblIndex = 0; TblIndex < MD_NUM_DWELL_TABLES ; TblIndex++)
+        -:   43:    {
+        -:   44:    
+       16:   45:        TblPtr = &MD_AppData.MD_DwellTables[TblIndex];
+       16:   46:        NumDwellAddresses = TblPtr->AddrCount;
+        -:   47:        
+        -:   48:        /* Process enabled dwell tables */
+       16:   49:        if ((TblPtr->Enabled == MD_DWELL_STREAM_ENABLED) &&  (TblPtr->Rate > 0))
+        -:   50:        {
+        -:   51:            
+        -:   52:            /*
+        -:   53:            ** Handle special case that dwell pkt is already full because
+        -:   54:            ** pkt size was shortened after data had been written to the pkt.
+        -:   55:            */
+        -:   56:            
+        9:   57:            if (  TblPtr->CurrentEntry >= NumDwellAddresses)
+        -:   58:            {
+        -:   59:                
+        3:   60:                MD_SendDwellPkt( TblIndex );
+        -:   61:                                    
+        -:   62:                /* Initialize CurrentEntry index */
+        3:   63:                TblPtr->CurrentEntry = 0;
+        3:   64:                TblPtr->PktOffset = 0;
+        3:   65:                TblPtr->Countdown = TblPtr->Entry[NumDwellAddresses - 1 ].Delay;
+        -:   66:
+        -:   67:            }
+        -:   68:            
+        -:   69:            else
+        -:   70:            /*
+        -:   71:            ** Handle nominal processing
+        -:   72:            */
+        -:   73:            {
+        -:   74:                /* Decrement counter */
+        6:   75:                TblPtr->Countdown--;
+        -:   76:
+        -:   77:            
+        -:   78:                /* Check if it's time to collect data */
+       18:   79:                while (TblPtr->Countdown == 0) 
+        -:   80:                {
+        6:   81:                    EntryIndex = TblPtr->CurrentEntry;
+        -:   82:                
+        -:   83:                    /* Read data for next address and write it to dwell pkt */
+        6:   84:                    MD_GetDwellData(TblIndex, EntryIndex);
+        -:   85:                
+        -:   86:                    /* Check if the dwell pkt is now full */
+        6:   87:                    if (EntryIndex == NumDwellAddresses - 1) 
+        -:   88:
+        -:   89:                    /* Case:  Just filled last active entry of dwell table */
+        -:   90:                    {
+        -:   91:                         
+        -:   92:                        /* 
+        -:   93:                        ** Send dwell packet 
+        -:   94:                        */
+        -:   95:                        
+        3:   96:                        MD_SendDwellPkt( TblIndex );
+        -:   97:                        
+        -:   98:                        /*
+        -:   99:                        ** Assign control values to cause dwell processing to 
+        -:  100:                        ** continue at beginning of dwell control structure.
+        -:  101:                        */
+        -:  102:                    
+        -:  103:                        /* Reset countdown timer based on current Delay field */
+        3:  104:                        TblPtr->Countdown = TblPtr->Entry[EntryIndex ].Delay;
+        -:  105:                                
+        -:  106:                        /* Initialize CurrentEntry index */
+        3:  107:                        TblPtr->CurrentEntry = 0;
+        3:  108:                        TblPtr->PktOffset = 0;
+        -:  109:                    }
+        -:  110:                    
+        -:  111:                    else 
+        -:  112:                    /* Case: There are more addresses to read for current pkt.*/
+        -:  113:                    {
+        -:  114:                        /*
+        -:  115:                        ** Assign control values to cause dwell processing to 
+        -:  116:                        ** continue at next entry in dwell control structure.
+        -:  117:                        */
+        -:  118:
+        -:  119:                        /* Reset countdown timer based on current Delay field */
+        3:  120:                        TblPtr->Countdown = TblPtr->Entry[EntryIndex ].Delay;
+        -:  121:                        
+        -:  122:                        /* Increment CurrentEntry index */
+        3:  123:                        TblPtr->CurrentEntry++;
+        -:  124:                    }
+        -:  125:
+        -:  126:                } /* end while Countdown == 0 */
+        -:  127:                
+        -:  128:            } /* end else handle nominal processing */
+        -:  129:            
+        -:  130:        } /* end if current dwell stream enabled */
+        -:  131:        
+        -:  132:    } /* end for each dwell table */
+        -:  133:    
+        4:  134:} /* End of MD_DwellLoop */
+        -:  135:
+        -:  136:/******************************************************************************/
+        -:  137:
+       11:  138:int32 MD_GetDwellData( uint16 TblIndex, uint16 EntryIndex )
+        -:  139:{
+        -:  140:    uint8                    NumBytes;  /* Num of bytes to read */
+        -:  141:    uint32                   MemReadVal; /* 1-, 2-, or 4-byte value */
+        -:  142:    MD_DwellPacketControl_t *TblPtr; /* Points to table struct */
+        -:  143:    cpuaddr                  DwellAddress;    /* dwell address */
+        -:  144:    int32                    Status;
+        -:  145:    
+       11:  146:    Status  = CFE_SUCCESS;
+        -:  147:    
+        -:  148:    /* Initialize pointer to current table */
+       11:  149:    TblPtr = (MD_DwellPacketControl_t *)&MD_AppData.MD_DwellTables[TblIndex];
+        -:  150:    
+        -:  151:    /* How many bytes to read?*/
+       11:  152:    NumBytes = TblPtr->Entry[EntryIndex].Length;
+        -:  153:    
+        -:  154:    /* fetch data pointed to by this address */
+       11:  155:    DwellAddress = TblPtr->Entry[EntryIndex].ResolvedAddress;
+        -:  156:    
+       11:  157:    if (NumBytes == 1)
+        -:  158:    {
+        2:  159:       if (CFE_PSP_MemRead8( DwellAddress, (uint8 *) &MemReadVal ) != CFE_SUCCESS)
+        -:  160:       {
+        1:  161:          Status = -1;
+        -:  162:       }
+        -:  163:    }
+        -:  164:    
+        9:  165:    else if (NumBytes == 2)
+        -:  166:    {
+        1:  167:       if (CFE_PSP_MemRead16( DwellAddress, (uint16 *) &MemReadVal ) != CFE_SUCCESS)
+        -:  168:       {
+        1:  169:          Status = -1;
+        -:  170:       }
+        -:  171:    }
+        -:  172:    
+        8:  173:    else if (NumBytes == 4)
+        -:  174:    {
+        1:  175:       if (CFE_PSP_MemRead32( DwellAddress, &MemReadVal ) != CFE_SUCCESS)
+        -:  176:       {
+        1:  177:          Status = -1;
+        -:  178:       }
+        -:  179:    }
+        -:  180:    
+        -:  181:    else /* Invalid dwell length */
+        -:  182:         /* Shouldn't ever get here unless length value was corrupted. */
+        -:  183:    {
+        7:  184:       Status = -1;
+        -:  185:    }
+        -:  186:    
+        -:  187:    
+        -:  188:    /* If value was read successfully, copy value to dwell packet. */ 
+        -:  189:    /* Wouldn't want to copy, if say, there was an invalid length & we */
+        -:  190:    /* didn't read. */
+       11:  191:    if (Status == CFE_SUCCESS) 
+        -:  192:    {  
+        1:  193:       CFE_PSP_MemCpy( (void*) &MD_AppData.MD_DwellPkt[TblIndex].Data[TblPtr->PktOffset],
+        -:  194:        (void*) &MemReadVal,
+        -:  195:        NumBytes);
+        -:  196:    }
+        -:  197:        
+        -:  198:    /* Update write location in dwell packet */
+       11:  199:    TblPtr->PktOffset += NumBytes;
+        -:  200:    
+       11:  201:    return Status;
+        -:  202:    
+        -:  203:} /* End of MD_GetDwellData */
+        -:  204:
+        -:  205:
+        -:  206:/******************************************************************************/
+        -:  207:
+        7:  208:void MD_SendDwellPkt( uint16 TableIndex )
+        -:  209:{
+        -:  210:    uint16 DwellPktSize;        /* Dwell Packet Size, in bytes */
+        -:  211:    
+        -:  212:    /* Assign pointers to structures */
+        7:  213:    MD_DwellPacketControl_t *TblPtr = &MD_AppData.MD_DwellTables[TableIndex]; 
+        7:  214:    MD_DwellPkt_t           *PktPtr = &MD_AppData.MD_DwellPkt[TableIndex]; 
+        -:  215:
+        -:  216:    /*
+        -:  217:    ** Assign packet fields.
+        -:  218:    */
+        7:  219:    PktPtr->TableId   = TableIndex + 1;
+        7:  220:    PktPtr->AddrCount = TblPtr->AddrCount;
+        7:  221:    PktPtr->Rate      = TblPtr->Rate;
+        -:  222:#if MD_SIGNATURE_OPTION == 1   
+        7:  223:    strncpy(PktPtr->Signature, TblPtr->Signature, MD_SIGNATURE_FIELD_LENGTH - 1);
+        -:  224:    /* Make sure string is null-terminated. */
+        7:  225:    PktPtr->Signature[MD_SIGNATURE_FIELD_LENGTH - 1] = '\0';
+        -:  226:#endif
+        7:  227:    PktPtr->ByteCount = TblPtr->DataSize;
+        -:  228:
+        -:  229:    /*
+        -:  230:    ** Set packet length in header.
+        -:  231:    */
+        -:  232:
+        7:  233:    DwellPktSize = MD_DWELL_PKT_LNGTH - MD_DWELL_TABLE_SIZE * 4 + TblPtr->DataSize;
+        -:  234:        
+        -:  235:
+        7:  236:    CFE_SB_SetTotalMsgLength((CFE_SB_Msg_t *)PktPtr, DwellPktSize);
+        -:  237:    
+        -:  238:    /*
+        -:  239:    ** Send housekeeping telemetry packet.
+        -:  240:    */
+        7:  241:    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) PktPtr);
+        7:  242:    CFE_SB_SendMsg((CFE_SB_Msg_t *) PktPtr);
+        -:  243:    
+        7:  244:} /* End of MD_SendDwellPkt */
+        -:  245:
+        -:  246:/******************************************************************************/
+        -:  247:
+        3:  248:void MD_StartDwellStream (uint16 TableIndex )
+        -:  249:{
+        3:  250:    MD_AppData.MD_DwellTables[ TableIndex ].Countdown = 1;
+        3:  251:    MD_AppData.MD_DwellTables[ TableIndex ].CurrentEntry = 0;
+        3:  252:    MD_AppData.MD_DwellTables[ TableIndex ].PktOffset = 0;
+        -:  253:
+        3:  254:} /* End of MD_StartDwellStream */
+        -:  255:
+        -:  256:/************************/
+        -:  257:/*  End of File Comment */
+        -:  258:/************************/

@@ -1,154 +1,84 @@
 ##############################################################################
-## $Id: README.txt 1.1 2009/12/07 13:43:53EST lwalling Exp  $
+## $Id: README.txt 1.4.1.1 2017/02/06 01:43:33EST mdeschu Exp  $
 ##
-## Purpose: CFS Data Storage (DS) application unit test statistics page
+## Purpose: CFS DS application unit test instructions, results, and code coverage
 ##
-## Author: S. Walling
-##
-## $Log: README.txt  $
-## Revision 1.1 2009/12/07 13:43:53EST lwalling 
-## Initial revision
-## Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/unit_test/project.pj
+## Author: Charles Zogby
 ##
 ##############################################################################
-
-
-These unit test results match source code dated November 22, 2009
------------------------------------------------------------------
 
 
 -------------------------
 DS Unit Test Instructions
 -------------------------
+This unit test was run in a virtual machine running CentOS and uses the ut-assert stubs and default hooks for the 
+cFE, OSAL and PSP. The ut-assert framework, stubs, and hooks are located in the directory cfe/tools/ut-assert and 
+are configuration managed in MKS in the FSW tools repository on server tlserver3.
 
-The host machine is a desktop PC with Windows XP pro
-The unit tests are run in a cygwin session
-GNU bash, version 3.00.16(14)-release (i686-pc-cygwin)
-Install Cygwin with "all" options unless you know better
-
-Change directory to .../ds/fsw/unit_test
-Location depends on installation of CFS build release
-
-Edit the makefile by modifying the search path information shown below
-
-#
-# Search path definitions
-#
-UTF_PATH=/cygdrive/c/sandbox/cfe/tools/utf
-CFE_PATH=/cygdrive/c/sandbox/cfe
-CFS_PATH=/cygdrive/c/sandbox/cfs
-PSP_PATH=/cygdrive/c/sandbox/cfe-psp
-OSAL_PATH=/cygdrive/c/sandbox/cfe-osal
-BUILD_PATH=/cygdrive/c/sandbox/cfe/fsw/build
-#
-
-Enter the following commands at the command prompt:
+To run the unit test enter the following commands at the command line prompt in
+unit test directory.
 
 make clean
-make
-./ds_utest.exe  --- to run the unit tests
+make 
+make run
+make gcov
 
-Inspect the unit test output text file (ds_utest.out)
+NOTE: Some tests are dependent on changing certain values in ./ds_platform_cfg.h.  Because of this, the test suite should be 
+run twice, in the following two configurations: default (DS_FILE_HEADER_TYPE = 1, DS_MOVE_FILES = FALSE) and 
+alternate (DS_FILE_HEADER_TYPE = 2, DS_MOVE_FILES = TRUE).  Expected results for each configuration are shown in 
+./ds_test_log_defaultconfig.txt and ./ds_test_log_altconfig.txt.
 
-Note that the output file contains a great many error events
-and lines of error text. This is to be expected as much of the
-unit test effort is to exercise software error handlers.
+DS 2.5.0.0 Unit Test Results (with default configuration of ds_platform_cfg.h: DS_FILE_HEADER_TYPE = 1, DS_MOVE_FILES = FALSE):
 
-The overall results are near the bottom of the output file:
+Tests Executed:    207
+Assert Pass Count: 645
+Assert Fail Count: 0
 
-*** DS -- Total test count = 191, total test errors = 0
-
-Each section of the output file has intermediate results:
-
-ds_app.c -- test count = 20, test errors = 0
-ds_cmds.c -- test count = 92, test errors = 0
-
-
-
-
-----------------------------------------
-FM Unit Test Overall Coverage Statistics
-----------------------------------------
-
-File `../src/ds_app.c'
-  Lines executed:100.00% of 138
+gcov: '../src/ds_file.c' 100.00%  178
+gcov: '../src/ds_app.c' 100.00%  146
+gcov: '../src/ds_cmds.c' 100.00%  439
+gcov: '../src/ds_table.c' 100.00%  319
 
 
+==========================================================================
+ds_file.c - 100.00% coverage
 
-File `../src/ds_cmds.c'
-  Lines executed:100.00% of 355
+==========================================================================
+ds_app.c - 100.00% coverage
 
+==========================================================================
+ds_cmds.c - 100.00% coverage
 
+==========================================================================
+ds_table.c - 100.00% coverage
 
-File `../src/ds_file.c'
-  Lines executed:98.95% of 191
+==========================================================================
 
-    function DS_FileWriteHeader called 5 returned 100% blocks executed 85%
+DS 2.5.0.0 Unit Test Results (with modified ds_platform_cfg.h: DS_FILE_HEADER_TYPE = 2, DS_MOVE_FILES = TRUE):
 
-        4:  295:        Result = OS_write(FileStatus->FileHandle, &DS_FileHeader, sizeof(DS_FileHeader_t));
-        -:  296:
-        4:  297:        if (Result == sizeof(DS_FileHeader_t))
-        -:  298:        {
-        -:  299:            /*
-        -:  300:            ** Success - update file size and data rate counters...
-        -:  301:            */
-        4:  302:            DS_AppData.FileWriteCounter++;
-        -:  303:
-        4:  304:            FileStatus->FileSize   += sizeof(DS_FileHeader_t);
-        4:  305:            FileStatus->FileGrowth += sizeof(DS_FileHeader_t);
-        -:  306:        }
-        -:  307:        else
-        -:  308:        {
-        -:  309:            /*
-        -:  310:            ** Error - send event, close file and disable destination...
-        -:  311:            */
-    #####:  312:            DS_FileWriteError(FileIndex, sizeof(DS_FileHeader_t), Result);
-        -:  313:        }
+Tests Executed:    206
+Assert Pass Count: 652
+Assert Fail Count: 0
+
+gcov: '../src/ds_file.c' 100.00%  200
+gcov: '../src/ds_app.c' 100.00%  146
+gcov: '../src/ds_cmds.c' 99.54%  439
+gcov: '../src/ds_table.c' 100.00%  319
 
 
-    function DS_FileUpdateHeader called 5 returned 100% blocks executed 89%
+==========================================================================
+ds_file.c - 100.00% coverage
 
-        3:  710:        Result = OS_write(FileStatus->FileHandle, &CurrentTime, sizeof(CFE_TIME_SysTime_t));
-        -:  711:
-        3:  712:        if (Result == sizeof(CFE_TIME_SysTime_t))
-        -:  713:        {
-        3:  714:            DS_AppData.FileUpdateCounter++;
-        -:  715:        }
-        -:  716:        else
-        -:  717:        {
-    #####:  718:            DS_AppData.FileUpdateErrCounter++;
-        -:  719:        }
+==========================================================================
+ds_app.c - 100.00% coverage
 
+==========================================================================
+ds_cmds.c - 99.54% coverage
 
+Note: The section of code not covered in this configuration is covered in the other configuration.
 
-File `../src/ds_table.c'
-  Lines executed:99.33% of 297
+==========================================================================
+ds_table.c - 100.00% coverage
 
-    function DS_TableManageDestFile called 12 returned 100% blocks executed 93%
-
-        7:  263:        Result = CFE_TBL_GetStatus(DS_AppData.DestFileTblHandle);
-        -:  264:
-        7:  265:        if (Result == CFE_TBL_INFO_DUMP_PENDING)
-        -:  266:        {
-        -:  267:            /*
-        -:  268:            ** Dump the current table data...
-        -:  269:            */
-    #####:  270:            CFE_TBL_DumpToBuffer(DS_AppData.DestFileTblHandle);       
-        -:  271:        }
-
-
-    function DS_TableManageFilter called 12 returned 100% blocks executed 91%
-
-        7:  367:        Result = CFE_TBL_GetStatus(DS_AppData.FilterTblHandle);
-        -:  368:
-        7:  369:        if (Result == CFE_TBL_INFO_DUMP_PENDING)
-        -:  370:        {
-        -:  371:            /*
-        -:  372:            ** Dump the current filter table data...
-        -:  373:            */
-    #####:  374:            CFE_TBL_DumpToBuffer(DS_AppData.FilterTblHandle);       
-        -:  375:        }
-
-
-
+==========================================================================
 

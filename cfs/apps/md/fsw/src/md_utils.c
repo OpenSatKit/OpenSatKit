@@ -1,34 +1,26 @@
 /*************************************************************************
-** File:
-**   $Id: md_utils.c 1.7 2015/03/01 17:17:17EST sstrege Exp  $
+** File: md_utils.c
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
 **
 ** Purpose: 
 **   Utility functions used for processing CFS Memory Dwell commands
 **
-**   $Log: md_utils.c  $
-**   Revision 1.7 2015/03/01 17:17:17EST sstrege 
-**   Added copyright information
-**   Revision 1.6 2012/01/09 18:14:23EST aschoeni 
-**   Fixed buffer overflow issue
-**   Revision 1.5 2009/06/18 10:11:53EDT rmcgraw 
-**   DCR8291:1 Changed #defines from OS_MEM_ to CFE_PSP_MEM_
-**   Revision 1.4 2009/06/12 14:19:05EDT rmcgraw 
-**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-**   Revision 1.3 2009/01/12 14:33:35EST nschweis 
-**   Removed debug statements from source code.  CPID 4688:1.
-**   Revision 1.2 2008/07/02 13:53:39EDT nsschweiss 
-**   CFS MD Post Code Review Version
-**   Date: 08/05/09
-**   CPID: 1653:2
 ** 
 *************************************************************************/
 
@@ -44,10 +36,10 @@ extern MD_AppData_t MD_AppData;
 
 /******************************************************************************/
 
-boolean MD_TableIsInMask(int16 TableId, uint16 TableMask)
+bool MD_TableIsInMask(int16 TableId, uint16 TableMask)
 {
    uint16  LocalMask = TableMask;
-   boolean Status;
+   bool Status = false;
    
    /* Shift TableId - 1 times */
    if (TableId - 1)
@@ -58,9 +50,7 @@ boolean MD_TableIsInMask(int16 TableId, uint16 TableMask)
    /* If result is odd, */
    /* then table is in mask. */
    if ( (LocalMask & (uint16) 1) == (uint16) 1)
-      Status = TRUE;
-   else
-      Status = FALSE;
+      Status = true;
     
    return Status;
    
@@ -103,52 +93,41 @@ void MD_UpdateDwellControlInfo (uint16 TableIndex)
 **  Data Validation Functions
 */
 /******************************************************************************/
-boolean MD_ValidEntryId            ( uint16 EntryId )
+bool MD_ValidEntryId            ( uint16 EntryId )
 {
-    boolean IsValid;
+    bool IsValid = false;
     
     if ((EntryId >= 1) && ( EntryId <= MD_DWELL_TABLE_SIZE ))  
     {
         /* validate  value (1..MD_DWELL_TABLE_SIZE ) */
-        IsValid = TRUE;
+        IsValid = true;
     }
-    else
-    {
-        IsValid = FALSE;
-    }
+    
     return IsValid;
 }
 
 
 /******************************************************************************/
 
-boolean MD_ValidAddrRange( uint32 Addr, uint32 Size )
+bool MD_ValidAddrRange( cpuaddr Addr, uint32 Size )
 {
-    boolean IsValid;
+    bool IsValid = false;
 
     if ( CFE_PSP_MemValidateRange (Addr,Size, CFE_PSP_MEM_ANY) == OS_SUCCESS ) 
     {
-        IsValid = TRUE;
+        IsValid = true;
     }
-   else                                         
-    { 
-        IsValid = FALSE;
-    }  
     
     return IsValid;
 }
 /******************************************************************************/
-boolean MD_ValidTableId( uint16 TableId)
+bool MD_ValidTableId( uint16 TableId)
 {
-    boolean IsValid;
+    bool IsValid = false;
     
     if ((TableId >= 1) && (TableId <= MD_NUM_DWELL_TABLES)) 
     {
-       IsValid=TRUE;
-    }
-    else
-    {
-       IsValid=FALSE;
+       IsValid=true;
     }
       
     return IsValid;
@@ -156,21 +135,17 @@ boolean MD_ValidTableId( uint16 TableId)
 
 /******************************************************************************/
 
-boolean MD_ValidFieldLength( uint16 FieldLength)
+bool MD_ValidFieldLength( uint16 FieldLength)
 {
 
-    boolean IsValid;
+    bool IsValid = false;
 
     if ( (FieldLength == 0)  || 
          (FieldLength == 1)  ||
          (FieldLength == 2)  || 
          (FieldLength == 4) )
     {
-        IsValid= TRUE;
-    }
-    else
-    {
-        IsValid= FALSE;
+        IsValid= true;
     }
     
     return IsValid;

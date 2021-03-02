@@ -2,9 +2,12 @@
 #
 # File: CFS Application Table Makefile 
 #
-# $Id: dstables.mak 1.3 2009/12/07 13:40:40EST lwalling Exp  $
+# $Id: dstables.mak 1.1 2015/07/25 00:45:16EDT rperera Exp  $
 #
 # $Log: dstables.mak  $
+# Revision 1.1 2015/07/25 00:45:16EDT rperera 
+# Initial revision
+# Member added to project /CFS-APPs-PROJECT/ds/fsw/for_build/project.pj
 # Revision 1.3 2009/12/07 13:40:40EST lwalling 
 # Update DS unit tests, add unit test results files to MKS
 # Revision 1.2 2009/09/02 15:22:22EDT lwalling 

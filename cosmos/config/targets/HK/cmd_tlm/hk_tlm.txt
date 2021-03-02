@@ -46,18 +46,19 @@ TELEMETRY HK COMBO_PKT_2 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT2_MID_STR) %>
   
   #ISIM HK - Instrument Status
-  APPEND_ITEM INSTR_STATE 8 UINT  ""
-    STATE OFF          0
-    STATE INITIALIZING 1 
-    STATE READY        2 
+  APPEND_ITEM INSTR_PWR_STATE 8 UINT  ""
+    STATE OFF    1
+    STATE INIT   2
+    STATE RESET  3
+    STATE READY  4
 
   APPEND_ITEM SCI_STATE 8 UINT  ""
-    STATE OFF    0
-    STATE START  1
-    STATE STOP   2
-    STATE ON     3
+    STATE OFF    1
+    STATE INIT   2
+    STATE RESET  3
+    STATE READY  4
   
-  APPEND_ITEM FAULT  8 UINT  ""
+  APPEND_ITEM FAULT_PRESENT 8 UINT  ""
     STATE FALSE   0
     STATE TRUE    1 
   

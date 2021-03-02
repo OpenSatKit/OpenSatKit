@@ -93,6 +93,7 @@ SET(TGT1_NAME cpu1)
 SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim bm hc hsim filemgr osk_c_demo osk_cpp_demo mqtt)
 # Development:
 #   Comment out Release TGT1_APPLIST and modify one of these for your your needs.
+#   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to isim)
 #   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to osk_c_demo osk_cpp_demo mqtt filemgr isim f42 i42)
 #   SET(TGT1_STATIC_APPLIST cfs_lib osk_c_fw osk_c_demo osk_cpp_fw osk_cpp_demo)
 #   SET(TGT1_APPLIST cfs_lib osk_c_fw osk_cpp_fw osk_c_demo osk_cpp_demo)

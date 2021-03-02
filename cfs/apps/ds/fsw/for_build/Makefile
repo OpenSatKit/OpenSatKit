@@ -1,22 +1,10 @@
 ###############################################################################
 #
-# $Id: Makefile 1.8 2009/08/28 17:25:47EDT lwalling Exp  $
+# $Id: Makefile 1.2 2017/01/25 12:05:39EST sstrege Exp  $
 #
 # Purpose: Data Storage (DS) makefile
 #
 # Author: S. Walling
-#
-# $Log: Makefile  $
-# Revision 1.8 2009/08/28 17:25:47EDT lwalling 
-# Updates to match sample HS makefile
-# Revision 1.7 2009/07/09 11:41:25EDT rmcgraw 
-# DCR8291:1 Changed CFE_MISSION_INC to CFS_MISSION_INC and added log if needed
-# Revision 1.6 2009/06/11 11:51:37EDT rmcgraw 
-# DCR82191:1 Changed BSP to PSP
-# Revision 1.5 2009/06/03 11:32:58EDT rmcgraw 
-# DCR8291:1 Environment variable changes
-# Revision 1.4 2009/05/26 16:27:55EDT lwalling 
-# Add revision log to makefile
 #
 ###############################################################################
 #

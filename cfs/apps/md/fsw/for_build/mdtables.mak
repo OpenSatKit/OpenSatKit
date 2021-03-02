@@ -16,7 +16,7 @@ PARENTAPP = md
 # 1. The table file name must be the same as the C source file name
 # 2. There must be a single C source file for each table
 #
-TABLES = md_dw1_tbl.tbl  md_dw2_tbl.tbl  md_dw3_tbl.tbl  md_dw4_tbl.tbl 
+TABLES = md_dw01.tbl  md_dw02.tbl  md_dw03.tbl  md_dw04.tbl 
 
 ##################################################################################
 # Normally, nothing has to be changed below this line

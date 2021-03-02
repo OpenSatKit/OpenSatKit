@@ -46,8 +46,8 @@ static ISIMTBL_Class* IsimTbl = NULL;
 **   1. These functions must have the same function signature as 
 **      JSON_ContainerFuncPtr.
 */
-boolean InstrumentCallback (void* UserData, int TokenIdx);
-boolean SciFileCallback (void* UserData, int TokenIdx);
+boolean SciInstrCallback (void* UserData, int TokenIdx);
+boolean SciFileCallback  (void* UserData, int TokenIdx);
 
 
 /******************************************************************************
@@ -73,11 +73,11 @@ void ISIMTBL_Constructor(ISIMTBL_Class* ObjPtr,
 
    JSON_Constructor(JSON, IsimTbl->JsonFileBuf, IsimTbl->JsonFileTokens);
 
-   JSON_ObjConstructor(&(IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT]),
-                       ISIMTBL_OBJ_INSTRMENT_NAME,
-                       InstrumentCallback,
-                       (void *)&(IsimTbl->Data.Instrument));
-   JSON_RegContainerCallback(JSON, &(IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT]));
+   JSON_ObjConstructor(&(IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_INSTR]),
+                       ISIMTBL_OBJ_SCI_INSTR_NAME,
+                       SciInstrCallback,
+                       (void *)&(IsimTbl->Data.SciInstr));
+   JSON_RegContainerCallback(JSON, &(IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_INSTR]));
 
    JSON_ObjConstructor(&(IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE]),
                        ISIMTBL_OBJ_SCI_FILE_NAME,
@@ -227,16 +227,18 @@ boolean ISIMTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       /* Instrument */
-      sprintf(DumpRecord,"\"%s\": {\n",IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Name);
+      sprintf(DumpRecord,"\"%s\": {\n",IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_INSTR].Name);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-      sprintf(DumpRecord,"   \"pwr-init-cycles\": %d\n},\n", IsimTblPtr->Instrument.PwrInitCycles);
+      sprintf(DumpRecord,"   \"pwr-init-cycles\": %d,\n", IsimTblPtr->SciInstr.PwrInitCycles);
+      OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
+      sprintf(DumpRecord,"   \"pwr-reset-cycles\": %d\n},\n", IsimTblPtr->SciInstr.PwrResetCycles);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 			  
       /* Science File */      
       sprintf(DumpRecord,"\"%s\": {\n",IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Name);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
-      sprintf(DumpRecord,"   \"path-base-filename\": \"%s\",\n   \"file-extension\": \"%s\"\n   \"cycles-per-file\": %d\n}\n",
-              IsimTblPtr->SciFile.PathBaseFilename, IsimTblPtr->SciFile.FileExtension, IsimTblPtr->SciFile.CyclesPerFile);
+      sprintf(DumpRecord,"   \"path-base-filename\": \"%s\",\n   \"file-extension\": \"%s\",\n   \"images-per-file\": %d\n}\n",
+              IsimTblPtr->SciFile.PathBaseFilename, IsimTblPtr->SciFile.FileExtension, IsimTblPtr->SciFile.ImagesPerFile);
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
 
       sprintf(DumpRecord,"}\n");
@@ -262,7 +264,7 @@ boolean ISIMTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
 
 /******************************************************************************
-** Function: InstrumentCallback
+** Function: SciInstrCallback
 **
 ** Process Instrument table entry.
 **
@@ -270,42 +272,45 @@ boolean ISIMTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 **   2. UserData is unused.
 */
-boolean InstrumentCallback (void* UserData, int TokenIdx)
+boolean SciInstrCallback (void* UserData, int TokenIdx)
 {
 
    int     AttributeCnt = 0;
    int     PwrInitCycles;
+   int     PwrResetCycles;
    
-   IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Modified = FALSE;   
+   IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_INSTR].Modified = FALSE;   
    
    CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE, 
                      "\nISIMTBL.InstrumentCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      IsimTbl->ObjLoadCnt, IsimTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValShortInt(JSON, TokenIdx, "pwr-init-cycles", &PwrInitCycles)) AttributeCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "pwr-init-cycles",  &PwrInitCycles))  AttributeCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "pwr-reset-cycles", &PwrResetCycles)) AttributeCnt++;
    
-   if (AttributeCnt == 1) {
+   if (AttributeCnt == 2) {
    
-      IsimTbl->Data.Instrument.PwrInitCycles = PwrInitCycles;
+      IsimTbl->Data.SciInstr.PwrInitCycles  = PwrInitCycles;
+      IsimTbl->Data.SciInstr.PwrResetCycles = PwrResetCycles;
 
       IsimTbl->ObjLoadCnt++;
-      IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Modified = TRUE;
+      IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_INSTR].Modified = TRUE;
 	  
-      CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE,  "ISIMTBL.InstrumentCallback: %d\n",
-                        IsimTbl->Data.Instrument.PwrInitCycles);
+      CFE_EVS_SendEvent(ISIM_INIT_DEBUG_EID, ISIM_INIT_EVS_TYPE,  "ISIMTBL.InstrumentCallback: PwrInitCycles = %d, PwrResetCycles = %d\n",
+                        IsimTbl->Data.SciInstr.PwrInitCycles, IsimTbl->Data.SciInstr.PwrResetCycles);
    
    } /* End if valid AttributeCnt */
    else {
 	   
       IsimTbl->AttrErrCnt++;     
-      CFE_EVS_SendEvent(ISIMTBL_LOAD_INSTRUMENT_ERR_EID, CFE_EVS_ERROR, "Invalid number of attributes %d. Should be 1.",
+      CFE_EVS_SendEvent(ISIMTBL_LOAD_SCI_INSTR_ERR_EID, CFE_EVS_ERROR, "Invalid number of attributes %d. Should be 2.",
                         AttributeCnt);
    
    } /* End if invalid AttributeCnt */
       
-   return IsimTbl->JsonObj[ISIMTBL_OBJ_INSTRUMENT].Modified;
+   return IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_INSTR].Modified;
 
-} /* InstrumentCallback() */
+} /* SciInstrCallback() */
 
 
 
@@ -323,7 +328,7 @@ boolean SciFileCallback (void* UserData, int TokenIdx)
 {
 
    int     AttributeCnt = 0;
-   int     CyclesPerFile;
+   int     ImagesPerFile;
    char    PathBaseFilename[OS_MAX_PATH_LEN];
    char    FileExtension[ISIM_FILE_EXT_MAX_CHAR];
    
@@ -333,13 +338,13 @@ boolean SciFileCallback (void* UserData, int TokenIdx)
                      "\nISIMTBL.SciFileCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
                      IsimTbl->ObjLoadCnt, IsimTbl->AttrErrCnt, TokenIdx);
       
-   if (JSON_GetValShortInt(JSON, TokenIdx, "cycles-per-file", &CyclesPerFile))  AttributeCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "images-per-file", &ImagesPerFile)) AttributeCnt++;
    if (JSON_GetValStr(JSON, TokenIdx, "path-base-filename", PathBaseFilename)) AttributeCnt++;
    if (JSON_GetValStr(JSON, TokenIdx, "file-extension", FileExtension))        AttributeCnt++;
    
    if (AttributeCnt == 3) {
 	   
-      IsimTbl->Data.SciFile.CyclesPerFile = CyclesPerFile;
+      IsimTbl->Data.SciFile.ImagesPerFile = ImagesPerFile;
       strncpy(IsimTbl->Data.SciFile.PathBaseFilename,PathBaseFilename,OS_MAX_PATH_LEN);
       strncpy(IsimTbl->Data.SciFile.FileExtension,FileExtension,ISIM_FILE_EXT_MAX_CHAR);
 
@@ -350,7 +355,7 @@ boolean SciFileCallback (void* UserData, int TokenIdx)
                         "ISIMTBL.SciFileCallback: %s, %s, %d\n", 
                         IsimTbl->Data.SciFile.PathBaseFilename,
                         IsimTbl->Data.SciFile.FileExtension,
-                        IsimTbl->Data.SciFile.CyclesPerFile);
+                        IsimTbl->Data.SciFile.ImagesPerFile);
    
    } /* End if valid AttributeCnt */
    else {
@@ -364,4 +369,3 @@ boolean SciFileCallback (void* UserData, int TokenIdx)
    return IsimTbl->JsonObj[ISIMTBL_OBJ_SCI_FILE].Modified;
 
 } /* SciFileCallback() */
-

@@ -2,8 +2,11 @@
 ** Purpose: Implement the instrument simulator.
 **
 ** Notes:
-**   1. Information events are used in order to trace execution
-**      for demonstrations.
+**   1. Information events are used in order to trace execution for
+**      demonstrations.
+**   2. I broke from convention of defining one object per file. The
+**      Detetecor and SciFile were trivial enough that I define them
+**      locally, similar to a child class.
 **
 ** License:
 **   Written by David McComas and licensed under the GNU
@@ -23,56 +26,106 @@
 #include "app_cfg.h"
 #include "isim.h"
 
+
+
 /**********************/
 /** Type Definitions **/
 /**********************/
 
 typedef enum {
 
-   CREATE_FILE = 0,
-   CLOSE_FILE  = 1,
-   ADD_DATA    = 2
+   DETECTOR_READOUT_FALSE = 1,
+   DETECTOR_READOUT_TRUE  = 2,
+   DETECTOR_READOUT_LAST  = 3   /* Last readout in an image */
 
-} SciFileAction_Enum;
+} DetectorReadout_Enum;
+
 
 /**********************/
 /** Global File Data **/
 /**********************/
 
 static ISIM_Class*  Isim = NULL;
+/*
+** Convenience Macros
+*/
+
+#define  ISIM_INSTR    (&(Isim->Instr))
+#define  ISIM_SCI_FILE (&(Isim->SciFile))
+#define  ISIM_DETECTOR (&(Isim->Instr.Detector))
 
 /* 
-** String lookup tables for ISIM_STATE
+** String lookup tables for ISIM_PwrState
 */
-static char* InstrStateStr[] = {
-  "OFF",           /* ISIM_OFF          = 0 */
-  "INITIALIZING",  /* ISIM_INITIALIZING = 1 */
-  "READY"          /* ISIM_READY        = 2 */
+static char* InstrPwrStateStr[] = {
+   
+   "UNDEFINED",     /* 0: Invalid state  */ 
+   "OFF",           /* 1: ISIM_PWR_OFF   */
+   "INITIALIZING",  /* 2: ISIM_PWR_INIT  */
+   "RESETTING",     /* 3: ISIM_PWR_RESET */
+   "READY"          /* 4: ISIM_PWR_READY */
+
 };
 
 /* 
-** Science data samples. 
+** String lookup tables for ISIM_SciState
 */
-static char* DataSample[ISIM_DATA_SAMPLE_MAX] = {
-  "00010203040506070809\n", 
-  "10111213141516171819\n", 
-  "20212223242526272829\n", 
-  "30313233343536373839\n", 
-  "40414243444546474849\n", 
-  "50515253545556575859\n", 
-  "60616263646566676869\n", 
-  "70717273747576777879\n", 
-  "80818283848586878889\n", 
-  "90919293949596979899\n" 
+static char* InstrSciStateStr[] = {
+   
+   "UNDEFINED",  /* 0: Invalid state     */ 
+   "OFF",        /* 1: ISIM_SCI_OFF      */
+   "STARTING",   /* 2: ISIM_SCI_STARTING */
+   "STOPPING",   /* 3: ISIM_SCI_STOPPING */
+   "ON"          /* 4: ISIM_SCI_ENABLED  */
+
 };
+
+
+/* 
+** Detector rows are strings to keep things simple for demonstration
+** purposes. Science files are text.
+*/
+static ISIM_DetectorRow DetectorRowImage[ISIM_DETECTOR_ROWS_PER_IMAGE] = {
+   { "00010203040506070809\n" }, 
+   { "10111213141516171819\n" }, 
+   { "20212223242526272829\n" },
+   { "30313233343536373839\n" }, 
+   { "40414243444546474849\n" },
+   { "50515253545556575859\n" },
+   { "60616263646566676869\n" },
+   { "70717273747576777879\n" },
+   { "80818283848586878889\n" },
+   { "90919293949596979899\n" }
+};
+
+static char DetectorRowInitState[ISIM_DETECTOR_ROW_LEN] = { ',','I','n','i','t','i','a','l',' ','S','t','a','t','e','\n' };
+
+/* Only one character is substituted per sample when a fault is present */ 
+static char FaultCorruptedChar[ISIM_DETECTOR_ROWS_PER_IMAGE] = { 70, 65, 85, 76, 84, 65, 76, 69, 82, 84 };
+
 
 /*******************************/
 /** Local Function Prototypes **/
 /*******************************/
 
-static boolean ManageSciFile(SciFileAction_Enum Action, ISIM_Sci* Sci, SciFile_Struct* SciTbl);
-static void CreateTimeFilename(char* Filename, SciFile_Struct* SciTbl);
-static void CreateCntFilename(ISIM_Sci* Sci, SciFile_Struct* SciTbl);
+/*
+** Detector Object
+*/
+
+static void Detector_Init(ISIM_Detector* Detector, boolean ClearImageCnt);
+static DetectorReadout_Enum Detector_Readout(ISIM_Detector* Detector);
+
+
+/*
+** Science File Object
+*/
+
+static void    SciFile_Init(ISIM_SciFile* SciFile);
+static boolean SciFile_Create(ISIM_SciFile* SciFile, ISIMTBL_SciFile* SciFileTbl, uint16 ImageId);
+static void    SciFile_Close(ISIM_SciFile* SciFile);
+static boolean SciFile_WriteDetectorRow(ISIM_SciFile* SciFile, ISIM_DetectorRow* DetectorRow);
+static void    SciFile_CreateCntFilename(ISIM_SciFile* SciFile, ISIMTBL_SciFile* SciFileTbl, uint16 ImageId);
+
 
 /******************************************************************************
 ** Function: ISIM_Constructor
@@ -85,7 +138,11 @@ void ISIM_Constructor(ISIM_Class*  IsimPtr)
 
    CFE_PSP_MemSet((void*)Isim, 0, sizeof(ISIM_Class));
 
-   strcpy(Isim->Sci.Filename, ISIM_NULL_FILENAME);
+   Isim->Instr.PwrState = ISIM_PWR_OFF;
+   Isim->Instr.SciState = ISIM_SCI_OFF;
+   
+   Detector_Init(ISIM_DETECTOR, TRUE);
+   SciFile_Init(ISIM_SCI_FILE);
 
 } /* End ISIM_Constructor() */
 
@@ -93,83 +150,119 @@ void ISIM_Constructor(ISIM_Class*  IsimPtr)
 /******************************************************************************
 ** Function: ISIM_Execute
 **
-** Execute instrument simulation cycle. Keep all file management logic in 
-** this function so commands set flags for thsi function to act upon.
+** Execute instrument simulation cycle. This method manages the behavior for
+** the power and science state machines. Command functions can set state flags
+** but the resulting behavior will be implemented in this method. 
 **
 */
 void ISIM_Execute(void)
 {
 
    boolean CriticalError = FALSE;
+   DetectorReadout_Enum DetectorReadout;
+   static boolean ResumeSci = FALSE; 
+           
+   switch (Isim->Instr.PwrState) {
    
-   switch (Isim->Instr.State) {
-   
-      case ISIM_OFF:
+      case ISIM_PWR_OFF:
          
-         if (Isim->Sci.State != ISIM_SCI_OFF) {
+         if (Isim->Instr.SciState != ISIM_SCI_OFF) {
             
-            ManageSciFile(CLOSE_FILE, &(Isim->Sci), &(Isim->Tbl.SciFile));
-            Isim->Sci.State = ISIM_SCI_OFF;
-            Isim->Sci.FileCnt = 0;   /* ... or leave last coudn for tlm? */
+            Isim->Instr.SciState = ISIM_SCI_OFF;
+            Detector_Init(ISIM_DETECTOR, TRUE);
+            SciFile_Close(ISIM_SCI_FILE);
+
          }
          break;
    
-      case ISIM_INITIALIZING:
+      case ISIM_PWR_INIT:
          
-         if (++Isim->Instr.InitCycleCnt >= Isim->Tbl.Instrument.PwrInitCycles) {
+         if (++Isim->Instr.PwrInitCycleCnt >= Isim->Tbl.SciInstr.PwrInitCycles) {
             
-            Isim->Instr.State = ISIM_READY;
+            Isim->Instr.PwrState = ISIM_PWR_READY;
             
             CFE_EVS_SendEvent (ISIM_INIT_COMPLETE_EID, CFE_EVS_INFORMATION,
-                               "ISIM completed initialization after power on in %d cycles.",Isim->Instr.InitCycleCnt);
+                               "ISIM completed initialization after power on in %d cycles.",Isim->Instr.PwrInitCycleCnt);
             
-            Isim->Instr.InitCycleCnt = 0;
+            Isim->Instr.PwrInitCycleCnt = 0;
          
          } /* End if init cycle complete */
          break;
          
-      case ISIM_READY:
+      /* Reset clears faults and will resume science if it was in progress when the reset occurred */ 
+      case ISIM_PWR_RESET:
+                 
+         if (Isim->Instr.PwrResetCycleCnt == 0) {
          
-         switch (Isim->Sci.State) {
+            ResumeSci = (Isim->Instr.SciState == ISIM_SCI_ON);
+            Isim->Instr.SciState = ISIM_SCI_OFF;
+            Detector_Init(ISIM_DETECTOR, FALSE);
+            SciFile_Close(ISIM_SCI_FILE);
+         
+         }
+         
+         if (++Isim->Instr.PwrResetCycleCnt >= Isim->Tbl.SciInstr.PwrResetCycles) {
+            
+            Isim->Instr.PwrState = ISIM_PWR_READY;
+            if (ResumeSci) Isim->Instr.SciState = ISIM_SCI_STARTING;
+            Isim->Instr.Detector.FaultPresent = FALSE;
+            
+            CFE_EVS_SendEvent (ISIM_RESET_COMPLETE_EID, CFE_EVS_INFORMATION,
+                               "ISIM completed initialization after power reset in %d cycles. Cleared fault and restored science state to %s",
+                               Isim->Instr.PwrResetCycleCnt, InstrSciStateStr[Isim->Instr.SciState]);
+            
+            Isim->Instr.PwrResetCycleCnt = 0;
+            ResumeSci = FALSE;
+            
+         } /* End if reset cycle complete */    
+         break;
+
+      case ISIM_PWR_READY:
+         
+         switch (Isim->Instr.SciState) {
       
             case ISIM_SCI_OFF:
                break;
          
-            case ISIM_SCI_START:
+            case ISIM_SCI_STARTING:
             
-               Isim->Sci.FileCycleCnt = 0;
-               Isim->Sci.State = ISIM_SCI_ON;
-               ManageSciFile(CREATE_FILE, &(Isim->Sci), &(Isim->Tbl.SciFile));
-               
+               SciFile_Create(ISIM_SCI_FILE, &(Isim->Tbl.SciFile), Isim->Instr.Detector.ImageCnt);
+               Isim->Instr.CurrFileImageCnt = 0;
+               Isim->Instr.SciState = ISIM_SCI_ON;
                break;
             
-            case ISIM_SCI_STOP:
+            case ISIM_SCI_STOPPING:
             
-               ManageSciFile(CLOSE_FILE, &(Isim->Sci), &(Isim->Tbl.SciFile));
-               Isim->Sci.State = ISIM_SCI_OFF;
+               SciFile_Close(ISIM_SCI_FILE);
+               Isim->Instr.SciState = ISIM_SCI_OFF;
                break;
          
             case ISIM_SCI_ON:
 
-               if (Isim->Sci.FileCycleCnt < Isim->Tbl.SciFile.CyclesPerFile) {
+               DetectorReadout = Detector_Readout(ISIM_DETECTOR);
                
-                  ManageSciFile(ADD_DATA, &(Isim->Sci), &(Isim->Tbl.SciFile));
+               if (DetectorReadout == DETECTOR_READOUT_TRUE || DetectorReadout == DETECTOR_READOUT_LAST) {
                
+                  SciFile_WriteDetectorRow(ISIM_SCI_FILE, &(Isim->Instr.Detector.Row));
+                  
+                  if (DetectorReadout == DETECTOR_READOUT_LAST) {
+
+                     ++Isim->Instr.CurrFileImageCnt;
+                     if (Isim->Instr.CurrFileImageCnt >= Isim->Tbl.SciFile.ImagesPerFile) {
+                  
+                        SciFile_Close(ISIM_SCI_FILE);
+                        SciFile_Create(ISIM_SCI_FILE, &(Isim->Tbl.SciFile), Isim->Instr.Detector.ImageCnt);
+                        Isim->Instr.CurrFileImageCnt = 0;
+                     
+                     }
+                  }
                }
-               else {
-            
-                  ManageSciFile(CLOSE_FILE, &(Isim->Sci), &(Isim->Tbl.SciFile));
-                  Isim->Sci.FileCycleCnt = 0;
-                  ManageSciFile(CREATE_FILE, &(Isim->Sci), &(Isim->Tbl.SciFile));
-      
-               }
-               Isim->Sci.FileCycleCnt++;
                break;
             
             default:
          
-               CFE_EVS_SendEvent (ISIM_INVALID_STATE_EID, CFE_EVS_ERROR,
-                                  "Invalid ISIM science data state %d. Powering off instrument.",Isim->Instr.State);
+               CFE_EVS_SendEvent (ISIM_INVALID_STATE_EID, CFE_EVS_CRITICAL,
+                                  "Invalid ISIM science data state %d. Powering off instrument.",Isim->Instr.SciState);
                CriticalError = TRUE;
 
          } /* End sci data state switch */
@@ -178,8 +271,8 @@ void ISIM_Execute(void)
          
       default:
          
-         CFE_EVS_SendEvent (ISIM_INVALID_STATE_EID, CFE_EVS_ERROR,
-                            "Invalid ISIM state %d. Powering off instrument.",Isim->Instr.State);
+         CFE_EVS_SendEvent (ISIM_INVALID_STATE_EID, CFE_EVS_CRITICAL,
+                            "Invalid ISIM power state %d. Powering off instrument.",Isim->Instr.PwrState);
          
          CriticalError = TRUE;
       
@@ -187,10 +280,10 @@ void ISIM_Execute(void)
       
    if (CriticalError) {
       
-      Isim->Instr.State = ISIM_OFF;
-      Isim->Sci.State   = ISIM_SCI_OFF;
+      Isim->Instr.PwrState = ISIM_PWR_OFF;
+      Isim->Instr.SciState = ISIM_SCI_OFF;
 
-      /* TODO - Close file if open */
+      SciFile_Close(ISIM_SCI_FILE);
       
    } /* End if CriticalError */
    
@@ -255,12 +348,12 @@ boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData)
    
    switch (ObjId) {
       
-	  case ISIMTBL_OBJ_INSTRUMENT:
-         CFE_PSP_MemCpy(&(Isim->Tbl.Instrument), ObjData, sizeof(Instrument_Struct));
+	  case ISIMTBL_OBJ_SCI_INSTR:
+         CFE_PSP_MemCpy(&(Isim->Tbl.SciInstr), ObjData, sizeof(ISIMTBL_SciInstr));
          break;
 		 
       case ISIMTBL_OBJ_SCI_FILE:
-         CFE_PSP_MemCpy(&(Isim->Tbl.SciFile), ObjData, sizeof(SciFile_Struct));
+         CFE_PSP_MemCpy(&(Isim->Tbl.SciFile), ObjData, sizeof(ISIMTBL_SciFile));
          break;
 	  
       default:
@@ -268,7 +361,7 @@ boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData)
    
    } /* End ObjId switch */
    
-   CFE_EVS_SendEvent(ISIM_LOAD_TBL_OBJ_EID, CFE_EVS_INFORMATION, "ISIM table JSON object %d looaded.", ObjId);
+   CFE_EVS_SendEvent(ISIM_LOAD_TBL_OBJ_EID, CFE_EVS_INFORMATION, "ISIM table JSON object %d loaded.", ObjId);
    
    return RetStatus;
 
@@ -276,42 +369,42 @@ boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData)
 
 
 /******************************************************************************
-** Functions: ISIM_PwrOnSciCmd
+** Functions: ISIM_PwrOnInstrCmd
 **
 ** Power on the science instrument.
 **
 ** Note:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
 */
-boolean ISIM_PwrOnSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+boolean ISIM_PwrOnInstrCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
    boolean RetStatus = FALSE;
    
-   if (Isim->Instr.State == ISIM_OFF) {
+   if (Isim->Instr.PwrState == ISIM_PWR_OFF) {
       
-      Isim->Instr.State = ISIM_INITIALIZING;
-      Isim->Instr.InitCycleCnt = 0;
-      CFE_EVS_SendEvent (ISIM_PWR_ON_SCI_CMD_EID, CFE_EVS_INFORMATION, 
-                         "Science instrument powered on. Entered initializing state.");
+      Isim->Instr.PwrState = ISIM_PWR_INIT;
+      Isim->Instr.PwrInitCycleCnt = 0;
+      CFE_EVS_SendEvent (ISIM_PWR_ON_CMD_EID, CFE_EVS_INFORMATION, 
+                         "Science instrument powered on. Entered power initializing state.");
       RetStatus = TRUE;
    
    }  
    else { 
    
-      CFE_EVS_SendEvent (ISIM_PWR_ON_SCI_CMD_ERR_EID, CFE_EVS_ERROR, 
-                         "Power on science instrument cmd rejected. Instrument must be in OFF state and it's in the %s state.",
-                         InstrStateStr[Isim->Instr.State]);
+      CFE_EVS_SendEvent (ISIM_PWR_ON_CMD_ERR_EID, CFE_EVS_ERROR, 
+                         "Power on instrument cmd rejected. Instrument must be in OFF state and it's in the %s state.",
+                         InstrPwrStateStr[Isim->Instr.PwrState]);
    
    }
    
    return RetStatus;
 
-} /* End ISIM_PwrOnSciCmd() */
+} /* End ISIM_PwrOnInstrCmd() */
 
 
 /******************************************************************************
-** Functions: ISIM_PwrOffSciCmd
+** Functions: ISIM_PwrOffInstrCmd
 **
 ** Power off science instrument regardless of current state. The science state
 ** is unmodified and the ISIM_Execute() function takes care of any science
@@ -320,19 +413,55 @@ boolean ISIM_PwrOnSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 ** Note:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
 */
-boolean ISIM_PwrOffSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+boolean ISIM_PwrOffInstrCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
 
-   CFE_EVS_SendEvent (ISIM_PWR_OFF_SCI_CMD_EID, CFE_EVS_INFORMATION,        
-                      "Instrument powered off from previous state %s",InstrStateStr[Isim->Instr.State]);
+   CFE_EVS_SendEvent (ISIM_PWR_OFF_CMD_EID, CFE_EVS_INFORMATION,        
+                      "Instrument powered off from previous state %s",InstrPwrStateStr[Isim->Instr.PwrState]);
    
-   Isim->Instr.State = ISIM_OFF;
+   Isim->Instr.PwrState = ISIM_PWR_OFF;
    
    /* See function prologue */
       
    return TRUE;
 
-} /* End ISIM_PwrOffSciCmd() */
+} /* End ISIM_PwrOffInstrCmd() */
+
+
+/******************************************************************************
+** Functions: ISIM_PwrResetInstrCmd
+**
+** Initiate a power reset. The ISIM_Execute() method defines how the simple
+** responds to a reset.
+**
+** Note:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+*/
+boolean ISIM_PwrResetInstrCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   boolean RetStatus = FALSE;
+
+   if (Isim->Instr.PwrState == ISIM_PWR_READY) {
+      
+      Isim->Instr.PwrState = ISIM_PWR_RESET;
+      Isim->Instr.PwrResetCycleCnt = 0;
+      CFE_EVS_SendEvent (ISIM_PWR_RESET_CMD_EID, CFE_EVS_INFORMATION, 
+                         "Science instrument reset initiated.");
+      RetStatus = TRUE;
+   
+   }  
+   else { 
+   
+      CFE_EVS_SendEvent (ISIM_PWR_RESET_CMD_ERR_EID, CFE_EVS_ERROR, 
+                         "Power reset instrument cmd rejected. Instrument must be in READY state and it's in the %s state.",
+                         InstrPwrStateStr[Isim->Instr.PwrState]);
+   
+   }
+   
+   return RetStatus;
+
+} /* End ISIM_PwrResetInstrCmd() */
 
 
 /******************************************************************************
@@ -348,9 +477,9 @@ boolean ISIM_StartSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    boolean RetStatus = FALSE;
    
-   if (Isim->Instr.State == ISIM_READY) {
+   if (Isim->Instr.PwrState == ISIM_PWR_READY) {
       
-      Isim->Sci.State = ISIM_SCI_START;
+      Isim->Instr.SciState = ISIM_SCI_STARTING;
       CFE_EVS_SendEvent (ISIM_START_SCI_CMD_EID, CFE_EVS_INFORMATION, 
                          "Science instrument data started.");
       
@@ -361,7 +490,7 @@ boolean ISIM_StartSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
       CFE_EVS_SendEvent (ISIM_START_SCI_CMD_ERR_EID, CFE_EVS_ERROR, 
                          "Start science instrument data cmd rejected. Instrument must be in READY state and it's in the %s state.",
-                         InstrStateStr[Isim->Instr.State]);
+                         InstrPwrStateStr[Isim->Instr.PwrState]);
    
    }
    
@@ -382,13 +511,13 @@ boolean ISIM_StartSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 boolean ISIM_StopSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   if (Isim->Sci.State == ISIM_SCI_START ||
-       Isim->Sci.State == ISIM_SCI_ON) {
+   if (Isim->Instr.SciState == ISIM_SCI_STARTING ||
+       Isim->Instr.SciState == ISIM_SCI_ON) {
       
       CFE_EVS_SendEvent (ISIM_STOP_SCI_CMD_EID, CFE_EVS_INFORMATION, 
                          "Science instrument data stopped.");
       
-      Isim->Sci.State = ISIM_SCI_STOP;
+      Isim->Instr.SciState = ISIM_SCI_STOPPING;
    
    }  
    else { 
@@ -405,143 +534,308 @@ boolean ISIM_StopSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 
 /******************************************************************************
-** Functions: ISIM_CfgFaultCmd
+** Functions: ISIM_SetFaultCmd
 **
-** Set/clear fault state.
+** Set instrument fault state to TRUE.
 **
 ** Note:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
 */
-boolean ISIM_CfgFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+boolean ISIM_SetFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 {
    
-   const ISIM_CfgFaultCmdMsg* CfgFaultCmd = (const ISIM_CfgFaultCmdMsg *) MsgPtr;
+   Isim->Instr.Detector.FaultPresent = TRUE;
 
-   if (CfgFaultCmd->NewState == TRUE) {
+   CFE_EVS_SendEvent (ISIM_SET_FAULT_CMD_EID, CFE_EVS_INFORMATION, 
+                      "Science instrument fault set to TRUE.");
+               
+   return TRUE;
+
+} /* End ISIM_SetFaultCmd() */
+
+
+/******************************************************************************
+** Functions: ISIM_ClearFaultCmd
+**
+** Set instrument fault state to FALSE.
+**
+** Note:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+*/
+boolean ISIM_ClearFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+   
+   Isim->Instr.Detector.FaultPresent = FALSE;
+
+   CFE_EVS_SendEvent (ISIM_SET_FAULT_CMD_EID, CFE_EVS_INFORMATION, 
+                      "Science instrument fault set to FALSE.");
+               
+   return TRUE;
+
+} /* End ISIM_ClearFaultCmd() */
+
+
+
+/*******************************/
+/*******************************/
+/****                       ****/
+/****    DETECTOR OBJECT    ****/
+/****                       ****/
+/*******************************/
+/*******************************/
+
+
+/******************************************************************************
+** Functions: Detector_Init
+**
+** Initialize the detector to a know state.
+**
+** Notes:
+**   None
+*/
+static void Detector_Init(ISIM_Detector* Detector, boolean ClearImageCnt)
+{
+
+   Detector->ReadoutRow  = 0;
+   Detector->FaultPresent = 0;
+   if (ClearImageCnt) Detector->ImageCnt = 0;
+   
+   strncpy (Detector->Row.Data, DetectorRowInitState, ISIM_DETECTOR_ROW_LEN);
+
+} /* End Detector_Init() */
+
+
+/******************************************************************************
+** Functions: Detector_Readout
+**
+** Load the next instrument detector readout row.
+**
+** Return Values:
+**   DETECTOR_READOUT_FALSE: Detector->Row.Data[] not loaded
+**   DETECTOR_READOUT_TRUE:  Detector->Row.Data[] loaded & its not the last row in an image
+**   DETECTOR_READOUT_LAST:  Detector->Row.Data[] loaded & it is the last row in an image
+**
+*/
+static DetectorReadout_Enum Detector_Readout(ISIM_Detector* Detector)
+{
+
+   DetectorReadout_Enum DetectorReadout = DETECTOR_READOUT_FALSE;
+   
+   if (Detector->ReadoutRow < ISIM_DETECTOR_ROWS_PER_IMAGE) {
+   
+      strncpy (Detector->Row.Data, DetectorRowImage[Detector->ReadoutRow].Data, ISIM_DETECTOR_ROW_LEN);
       
-      CFE_EVS_SendEvent (ISIM_CFG_FAULT_CMD_EID, CFE_EVS_INFORMATION, 
-                         "Science instrument fault set to TRUE.");
-            
-      Isim->Fault = TRUE;
-   
-   }  
-   else { 
-   
-      CFE_EVS_SendEvent (ISIM_CFG_FAULT_CMD_EID, CFE_EVS_INFORMATION, 
-                         "Science instrument fault set to FALSE.");
+      /* Corrupt firt column of data when a fault is present */
+      if (Detector->FaultPresent) {
+         Detector->Row.Data[0] = FaultCorruptedChar[Detector->ReadoutRow];
+      }
+         
+      Detector->ReadoutRow++;
 
-      Isim->Fault = FALSE;
+      if (Detector->ReadoutRow < ISIM_DETECTOR_ROWS_PER_IMAGE) {
+      
+         DetectorReadout = DETECTOR_READOUT_TRUE;
+      
+      }
+      else {
+       
+         Detector->ReadoutRow = 0;
+         Detector->ImageCnt++;
+         
+         DetectorReadout = DETECTOR_READOUT_LAST;
+      
+      }
+      
+   } /* If valid Detector->ReadoutRow */
+   else {
+      
+
+      CFE_EVS_SendEvent (ISIM_DETECTOR_ERR_EID, CFE_EVS_CRITICAL, 
+                         "Invalid detector row %d index exceeds fixed maximum row index of %d.",Detector->ReadoutRow, (ISIM_DETECTOR_ROWS_PER_IMAGE-1));
+
+      Detector->ReadoutRow = 0;
    
    }
    
-   return TRUE;
+   return DetectorReadout;
+   
+} /* Detector_Readout() */
 
-} /* End ISIM_CfgFaultCmd() */
+
+
+
+/*******************************/
+/*******************************/
+/****                       ****/
+/****    SCI FILE OBJECT    ****/
+/****                       ****/
+/*******************************/
+/*******************************/
 
 
 /******************************************************************************
-** Functions: ManageSciFile
+** Functions: SciFile_Init
 **
-** Manage opening science files, adding sample data, and closing files.
+** Initialize the SciFile object to a known state.
 **
-** Note:
+** Notess:
 **   None
 */
-static boolean ManageSciFile(SciFileAction_Enum Action, ISIM_Sci* Sci, SciFile_Struct* SciTbl)
+static void SciFile_Init(ISIM_SciFile* SciFile)
 {
-
-   uint8 i=0;
    
-   switch (Action) {
-      
-      case CREATE_FILE:
-
-         if (Sci->FileOpen) {
-            CFE_EVS_SendEvent (ISIM_CREATE_SCI_FILE_ERROR_EID, CFE_EVS_ERROR, 
-                               "Create science file rejected. Issue stop science to close current file %s",Sci->Filename);         
-         }
-         else {
-         
-            CreateCntFilename(Sci,SciTbl);
-            CFE_EVS_SendEvent (ISIM_CREATE_SCI_FILE_EID, CFE_EVS_INFORMATION, 
-                               "Creating new science file %s",Sci->Filename);         
-            Sci->FileHandle = OS_creat(Sci->Filename, OS_WRITE_ONLY);
-
-            if (Sci->FileHandle >= OS_FS_SUCCESS) {
-            
-               Sci->FileOpen = TRUE;
-            }
-            else {
-               CFE_EVS_SendEvent (ISIM_CREATE_SCI_FILE_ERROR_EID, CFE_EVS_ERROR, 
-                                  "Error creating new science file %s. Return status = 0x%4X",
-                                  Sci->Filename, Sci->FileHandle);         
-            }
-         } /* End if no file currently open */
-         break;
-         
-      case CLOSE_FILE:
-         
-         if (Sci->FileOpen) {
-            CFE_EVS_SendEvent (ISIM_CLOSE_SCI_FILE_EID, CFE_EVS_INFORMATION, 
-                               "Closing current science file %s",Sci->Filename);         
-            OS_close(Sci->FileHandle);
-            Sci->FileOpen = FALSE;
-            Sci->FileCycleCnt = 0;
-            strcpy(Sci->Filename, ISIM_NULL_FILENAME);
-         }
-         break;
-      
-      case ADD_DATA:
-      
-         i = Sci->FileCycleCnt % 10;
-         OS_write(Sci->FileHandle,DataSample[i],strlen(DataSample[i]));
-         break;
-         
-   } /* End Action switch */
-
-   return TRUE;
+   SciFile->Handle = 0;
+   SciFile->IsOpen = FALSE;
+   strcpy(Isim->SciFile.Name, ISIM_NULL_FILENAME);
    
-} /* End ManageSciFile() */
+} /* End SciFile_Init() */
 
 
 /******************************************************************************
-** Functions: CreateCntFilename
+** Functions: SciFile_Create
 **
-** Create a filename using the tabled-defined base path/filename, current file
-** counter, and the table-defined extension. 
+** Create a new science file using the ImageId in the filename
 **
-** Note:
+** Notes:
+**   None
+*/
+static boolean SciFile_Create(ISIM_SciFile* SciFile, ISIMTBL_SciFile* SciFileTbl, uint16 ImageId)
+{
+
+   boolean RetStatus = FALSE;
+   
+   if (SciFile->IsOpen) {
+      
+      CFE_EVS_SendEvent (ISIM_SCI_FILE_CREATE_ERR_EID, CFE_EVS_ERROR, 
+                         "Create science file failed due to a file already being open: %s",SciFile->Name);         
+   
+   }
+   else {
+   
+      SciFile_CreateCntFilename(SciFile, SciFileTbl, ImageId);
+      
+      SciFile->Handle = OS_creat(SciFile->Name, OS_WRITE_ONLY);
+
+      if (SciFile->Handle >= OS_FS_SUCCESS) {
+      
+         RetStatus = TRUE;
+         SciFile->IsOpen = TRUE;
+         CFE_EVS_SendEvent (ISIM_SCI_FILE_CREATE_EID, CFE_EVS_INFORMATION, 
+                            "New science file created: %s",SciFile->Name);         
+
+      }
+      else {
+         
+         CFE_EVS_SendEvent (ISIM_SCI_FILE_CREATE_ERR_EID, CFE_EVS_ERROR, 
+                            "Error creating new science file %s. Return status = 0x%4X",
+                            SciFile->Name, SciFile->Handle);         
+      
+      }
+   } /* End if no file currently open */
+            
+   return RetStatus;
+   
+} /* End SciFile_Create() */
+
+
+/******************************************************************************
+** Functions: SciFile_Close
+**
+** Close the current science file.
+**
+** Notes:
+**   None
+*/
+static void SciFile_Close(ISIM_SciFile* SciFile)
+{
+ 
+   if (SciFile->IsOpen) {
+      
+      OS_close(SciFile->Handle);
+      
+      CFE_EVS_SendEvent (ISIM_SCI_FILE_CLOSE_EID, CFE_EVS_INFORMATION, 
+                         "Closed science file %s",SciFile->Name);         
+      
+      SciFile->IsOpen = FALSE;
+      strcpy(SciFile->Name, ISIM_NULL_FILENAME);
+
+   }
+
+} /* End SciFile_Close() */
+
+
+/******************************************************************************
+** Functions: SciFile_WriteDetectorRow
+**
+** Write a detector row to the current science file
+**
+** Notes:
+**   None
+*/
+static boolean SciFile_WriteDetectorRow(ISIM_SciFile* SciFile, ISIM_DetectorRow* DetectorRow)
+{
+   
+   int32   WriteStatus = 0;
+   boolean RetStatus = FALSE;
+   
+   if (SciFile->IsOpen) {
+     
+      WriteStatus = OS_write(SciFile->Handle, DetectorRow, strlen(DetectorRow->Data));
+      
+      RetStatus = (WriteStatus > 0);
+        
+   } /* End file open */
+
+   if (RetStatus == FALSE) {
+   
+      CFE_EVS_SendEvent (ISIM_SCI_FILE_WRITE_ERR_EID, CFE_EVS_ERROR, 
+                         "Error writing to science file %s. IsOpen=%d, WriteStatus=%d",
+                         SciFile->Name, SciFile->IsOpen, WriteStatus);
+
+   }
+   
+   return RetStatus;
+   
+} /* End SciFile_WriteDetectorRow() */
+
+
+/******************************************************************************
+** Functions: SciFile_CreateCntFilename
+**
+** Create a filename using the table-defined base path/filename, current image
+** ID, and the table-defined extension. 
+**
+** Notes:
 **   1. No string buffer error checking performed
 */
-static void CreateCntFilename(ISIM_Sci* Sci, SciFile_Struct* SciTbl)
+static void SciFile_CreateCntFilename(ISIM_SciFile* SciFile, ISIMTBL_SciFile* SciFileTbl, uint16 ImageId)
 {
    
    int i;
    
-   char FileCntStr[64];
+   char ImageIdStr[64];
 
-   sprintf(FileCntStr,"%02d",Sci->FileCnt);
-   Sci->FileCnt++;
+   sprintf(ImageIdStr,"%03d",ImageId);
 
-   strcpy (Sci->Filename,SciTbl->PathBaseFilename);
+   strcpy (SciFile->Name, SciFileTbl->PathBaseFilename);
 
-   i = strlen(Sci->Filename);  /* Starting position for counter */
-   strcat (&(Sci->Filename[i]), FileCntStr);
+   i = strlen(SciFile->Name);  /* Starting position for image ID */
+   strcat (&(SciFile->Name[i]), ImageIdStr);
    
-   i = strlen(Sci->Filename);  /* Starting position for extension */
-   strcat (&(Sci->Filename[i]), SciTbl->FileExtension);
+   i = strlen(SciFile->Name);  /* Starting position for extension */
+   strcat (&(SciFile->Name[i]), SciFileTbl->FileExtension);
    
 
-} /* End CreateCntFilename() */
+} /* End SciFile_CreateCntFilename() */
 
 
 /******************************************************************************
-** Functions: CreateTimeFilename
+** Functions: SciFile_CreateTimeFilename
 **
 ** Create a filename using the tabled-defined base path/filename, current time,
 ** and the table-defined extension. 
 **
-** Note:
+** Notes:
 **   1. No string buffer error checking performed
 */
 
@@ -565,14 +859,14 @@ static void CreateCntFilename(ISIM_Sci* Sci, SciFile_Struct* SciTbl)
 #define ISIM_SS_OFFSET   11
 #define ISIM_TERM_OFFSET 13
 
-static void CreateTimeFilename(char* Filename, SciFile_Struct* SciTbl)
+static void SciFile_CreateTimeFilename(char* Filename, ISIMTBL_SciFile* SciFileTbl)
 {
 
    uint16  i;
    char    TimeStr[64];
    CFE_TIME_SysTime_t SysTime;
 
-   strcpy (Filename,SciTbl->PathBaseFilename);
+   strcpy (Filename,SciFileTbl->PathBaseFilename);
    
    i = strlen(Filename);  /* Starting position for the time stamp */
    
@@ -599,7 +893,7 @@ static void CreateTimeFilename(char* Filename, SciFile_Struct* SciTbl)
 
    i += ISIM_TERM_OFFSET;
       
-   strcat (&Filename[i], SciTbl->FileExtension);
+   strcat (&Filename[i], SciFileTbl->FileExtension);
 
-} /* End CreateTimeFilename() */
+} /* End SciFile_CreateTimeFilename() */
 

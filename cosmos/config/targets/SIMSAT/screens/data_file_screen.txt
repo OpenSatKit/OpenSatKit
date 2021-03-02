@@ -128,7 +128,7 @@ VERTICAL # With 2 rows
             NAMED_WIDGET demo COMBOBOX "Data-File Mgmt Screen" "Data-File Mgmt Script" "DS Feature Screen" "FM Playback Script" "FM Feature Screen" "FM Feature Script" "HK Feature Script"
 
             BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "DATA_FILE", "TUTORIAL")'
-            NAMED_WIDGET tutorial COMBOBOX  "Data-File Slides" "Comm App Intro Video" "Data-File Intro Video" "FM App Video" "HK App Video" 
+            NAMED_WIDGET tutorial COMBOBOX  "Data-File Intro Slides" "Comm App Intro Video" "Data-File Intro Video" "FM App Video" "HK App Video" 
 
          END # Matrix
          END # Learn VerticalBox

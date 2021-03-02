@@ -1,34 +1,26 @@
 /************************************************************************
-** File:
-**   $Id: md_dwell_pkt.c 1.6 2015/03/01 17:17:51EST sstrege Exp  $
+** File: md_dwell_pkt.c 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   Functions used to populate and send Memory Dwell packets.
 **
-**   $Log: md_dwell_pkt.c  $
-**   Revision 1.6 2015/03/01 17:17:51EST sstrege 
-**   Added copyright information
-**   Revision 1.5 2009/06/12 14:19:06EDT rmcgraw 
-**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-**   Revision 1.4 2009/01/12 14:33:27EST nschweis 
-**   Removed debug statements from source code.  CPID 4688:1.
-**   Revision 1.3 2008/10/21 13:59:02EDT nsschweiss 
-**   Added MD_StartDwellStream to initialize dwell packet processing parameters.
-**   Revision 1.2 2008/08/08 13:38:08EDT nsschweiss 
-**   1) Changed name of include file from cfs_lib.h to cfs_utils.h.
-**   2) Changed the way the length of the dwell packet is computed.
-**   Revision 1.1 2008/07/02 13:48:22EDT nsschweiss 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/md/fsw/src/project.pj
 ** 
 *************************************************************************/
 
@@ -38,6 +30,7 @@
 #include "md_dwell_pkt.h"
 #include "md_utils.h"
 #include "md_app.h"
+#include "md_events.h"
 #include "cfs_utils.h"
 #include <string.h>
 
@@ -48,10 +41,11 @@ extern MD_AppData_t MD_AppData;
 
 void MD_DwellLoop( void )
 {
+    int32                     Result = 0;
     uint16                    TblIndex;
-    uint16                    EntryIndex;
-    uint16                    NumDwellAddresses;
-    MD_DwellPacketControl_t  *TblPtr;
+    uint16                    EntryIndex = 0;
+    uint16                    NumDwellAddresses = 0;
+    MD_DwellPacketControl_t  *TblPtr = NULL;
     
     /* Check each dwell table */
     for (TblIndex = 0; TblIndex < MD_NUM_DWELL_TABLES ; TblIndex++)
@@ -96,8 +90,16 @@ void MD_DwellLoop( void )
                     EntryIndex = TblPtr->CurrentEntry;
                 
                     /* Read data for next address and write it to dwell pkt */
-                    MD_GetDwellData(TblIndex, EntryIndex);
+                    Result = MD_GetDwellData(TblIndex, EntryIndex);
                 
+                    if (Result == -1 )
+                    {
+                        /* Send error event message */
+                        CFE_EVS_SendEvent(MD_DWELL_LOOP_GET_DWELL_DATA_ERR_EID, CFE_EVS_EventType_ERROR, 
+                            "Dwell Table failed to read entry %d in table %d ", EntryIndex, TblIndex); 
+                        /* Don't exit here yet, still need to increment counters or send the packet */
+                    }
+
                     /* Check if the dwell pkt is now full */
                     if (EntryIndex == NumDwellAddresses - 1) 
 
@@ -152,13 +154,11 @@ void MD_DwellLoop( void )
 
 int32 MD_GetDwellData( uint16 TblIndex, uint16 EntryIndex )
 {
-    uint8                    NumBytes;  /* Num of bytes to read */
-    uint32                   MemReadVal; /* 1-, 2-, or 4-byte value */
-    MD_DwellPacketControl_t *TblPtr; /* Points to table struct */
-    uint32                   DwellAddress;    /* dwell address */
-    int32                    Status;
-    
-    Status  = CFE_SUCCESS;
+    uint8                    NumBytes = 0;  /* Num of bytes to read */
+    uint32                   MemReadVal = 0; /* 1-, 2-, or 4-byte value */
+    MD_DwellPacketControl_t *TblPtr = NULL; /* Points to table struct */
+    cpuaddr                  DwellAddress;    /* dwell address */
+    int32                    Status = CFE_SUCCESS;
     
     /* Initialize pointer to current table */
     TblPtr = (MD_DwellPacketControl_t *)&MD_AppData.MD_DwellTables[TblIndex];
@@ -169,33 +169,31 @@ int32 MD_GetDwellData( uint16 TblIndex, uint16 EntryIndex )
     /* fetch data pointed to by this address */
     DwellAddress = TblPtr->Entry[EntryIndex].ResolvedAddress;
     
-    if (NumBytes == 1)
+    switch(NumBytes) 
     {
-       if (CFE_PSP_MemRead8( DwellAddress, (uint8 *) &MemReadVal ) != CFE_SUCCESS)
-       {
-          Status = -1;
-       }
-    }
-    
-    else if (NumBytes == 2)
-    {
-       if (CFE_PSP_MemRead16( DwellAddress, (uint16 *) &MemReadVal ) != CFE_SUCCESS)
-       {
-          Status = -1;
-       }
-    }
-    
-    else if (NumBytes == 4)
-    {
-       if (CFE_PSP_MemRead32( DwellAddress, &MemReadVal ) != CFE_SUCCESS)
-       {
-          Status = -1;
-       }
-    }
-    else /* Invalid dwell length */
-         /* Shouldn't ever get here unless length value was corrupted. */
-    {
-       Status = -1;
+        case 1:
+            if (CFE_PSP_MemRead8( DwellAddress, (uint8 *) &MemReadVal ) != CFE_SUCCESS)
+            {
+                Status = -1;
+            }
+            break;
+        case 2:
+            if (CFE_PSP_MemRead16( DwellAddress, (uint16 *) &MemReadVal ) != CFE_SUCCESS)
+            {
+                Status = -1;
+            }
+            break;
+        case 4:
+            if (CFE_PSP_MemRead32( DwellAddress, &MemReadVal ) != CFE_SUCCESS)
+            {
+                Status = -1;
+            }
+            break;
+        default:
+            /* Invalid dwell length */
+            /* Shouldn't ever get here unless length value was corrupted. */
+           Status = -1;
+           break;
     }
     
     
@@ -204,9 +202,9 @@ int32 MD_GetDwellData( uint16 TblIndex, uint16 EntryIndex )
     /* didn't read. */
     if (Status == CFE_SUCCESS) 
     {  
-       CFE_PSP_MemCpy( (void*) &MD_AppData.MD_DwellPkt[TblIndex].Data[TblPtr->PktOffset],
-        (void*) &MemReadVal,
-        NumBytes);
+        CFE_PSP_MemCpy( (void*) &MD_AppData.MD_DwellPkt[TblIndex].Data[TblPtr->PktOffset],
+                        (void*) &MemReadVal,
+                        NumBytes);
     }
         
     /* Update write location in dwell packet */
@@ -221,7 +219,7 @@ int32 MD_GetDwellData( uint16 TblIndex, uint16 EntryIndex )
 
 void MD_SendDwellPkt( uint16 TableIndex )
 {
-    uint16 DwellPktSize;        /* Dwell Packet Size, in bytes */
+    uint16 DwellPktSize = 0;        /* Dwell Packet Size, in bytes */
     
     /* Assign pointers to structures */
     MD_DwellPacketControl_t *TblPtr = &MD_AppData.MD_DwellTables[TableIndex]; 
@@ -247,13 +245,13 @@ void MD_SendDwellPkt( uint16 TableIndex )
     DwellPktSize = MD_DWELL_PKT_LNGTH - MD_DWELL_TABLE_SIZE * 4 + TblPtr->DataSize;
         
 
-    CFE_SB_SetTotalMsgLength((CFE_SB_Msg_t *)PktPtr, DwellPktSize);
+    CFE_SB_SetTotalMsgLength((CFE_SB_MsgPtr_t)PktPtr, DwellPktSize);
     
     /*
-    ** Send housekeeping telemetry packet.
+    ** Send dwell telemetry packet.
     */
-    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) PktPtr);
-    CFE_SB_SendMsg((CFE_SB_Msg_t *) PktPtr);
+    CFE_SB_TimeStampMsg((CFE_SB_MsgPtr_t)PktPtr);
+    CFE_SB_SendMsg((CFE_SB_MsgPtr_t)PktPtr);
     
 } /* End of MD_SendDwellPkt */
 

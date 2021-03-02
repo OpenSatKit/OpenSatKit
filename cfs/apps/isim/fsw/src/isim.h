@@ -1,5 +1,5 @@
 /*
-** Purpose: Define Instrument Simulator App
+** Purpose: Define Instrument Simulator Object
 **
 ** Notes:
 **   None
@@ -28,7 +28,9 @@
 /***********************/
 
 
-#define ISIM_DATA_SAMPLE_MAX 10
+#define ISIM_DETECTOR_ROW_LEN        32
+#define ISIM_DETECTOR_ROWS_PER_IMAGE 10
+
 #define ISIM_NULL_FILENAME   "null"
 
 /*
@@ -36,19 +38,26 @@
 */
 
 #define ISIM_INIT_COMPLETE_EID         (ISIM_BASE_EID +  0)
-#define ISIM_INVALID_STATE_EID         (ISIM_BASE_EID +  1)
-#define ISIM_PWR_ON_SCI_CMD_EID        (ISIM_BASE_EID +  2)
-#define ISIM_PWR_ON_SCI_CMD_ERR_EID    (ISIM_BASE_EID +  3)
-#define ISIM_PWR_OFF_SCI_CMD_EID       (ISIM_BASE_EID +  4)
-#define ISIM_START_SCI_CMD_EID         (ISIM_BASE_EID +  5)
-#define ISIM_START_SCI_CMD_ERR_EID     (ISIM_BASE_EID +  6)
-#define ISIM_STOP_SCI_CMD_EID          (ISIM_BASE_EID +  7)
-#define ISIM_CFG_FAULT_CMD_EID         (ISIM_BASE_EID +  8)
-#define ISIM_LOAD_TBL_EID              (ISIM_BASE_EID +  9)
-#define ISIM_LOAD_TBL_OBJ_EID          (ISIM_BASE_EID + 10)
-#define ISIM_CREATE_SCI_FILE_EID       (ISIM_BASE_EID + 11)
-#define ISIM_CLOSE_SCI_FILE_EID        (ISIM_BASE_EID + 12)
-#define ISIM_CREATE_SCI_FILE_ERROR_EID (ISIM_BASE_EID + 13)
+#define ISIM_RESET_COMPLETE_EID        (ISIM_BASE_EID +  1)
+#define ISIM_INVALID_STATE_EID         (ISIM_BASE_EID +  2)
+#define ISIM_PWR_ON_CMD_EID            (ISIM_BASE_EID +  3)
+#define ISIM_PWR_ON_CMD_ERR_EID        (ISIM_BASE_EID +  4)
+#define ISIM_PWR_OFF_CMD_EID           (ISIM_BASE_EID +  5)
+#define ISIM_PWR_RESET_CMD_ERR_EID     (ISIM_BASE_EID +  6)
+#define ISIM_PWR_RESET_CMD_EID         (ISIM_BASE_EID +  7)
+#define ISIM_START_SCI_CMD_EID         (ISIM_BASE_EID +  8)
+#define ISIM_START_SCI_CMD_ERR_EID     (ISIM_BASE_EID +  9)
+#define ISIM_STOP_SCI_CMD_EID          (ISIM_BASE_EID + 10)
+#define ISIM_SET_FAULT_CMD_EID         (ISIM_BASE_EID + 11)
+#define ISIM_CLEAR_FAULT_CMD_EID       (ISIM_BASE_EID + 12)
+#define ISIM_LOAD_TBL_EID              (ISIM_BASE_EID + 13)
+#define ISIM_LOAD_TBL_OBJ_EID          (ISIM_BASE_EID + 14)
+#define ISIM_SCI_FILE_CREATE_EID       (ISIM_BASE_EID + 15)
+#define ISIM_SCI_FILE_CREATE_ERR_EID   (ISIM_BASE_EID + 16)
+#define ISIM_SCI_FILE_WRITE_ERR_EID    (ISIM_BASE_EID + 17)
+#define ISIM_SCI_FILE_CLOSE_EID        (ISIM_BASE_EID + 18)
+#define ISIM_DETECTOR_ERR_EID          (ISIM_BASE_EID + 19)
+
 
 /**********************/
 /** Type Definitions **/
@@ -56,11 +65,12 @@
 
 typedef enum {
 
-   ISIM_OFF          = 0,
-   ISIM_INITIALIZING = 1,
-   ISIM_READY        = 2
-
-} ISIM_InstrState;
+   ISIM_PWR_OFF    = 1,
+   ISIM_PWR_INIT   = 2,
+   ISIM_PWR_RESET  = 3,
+   ISIM_PWR_READY  = 4
+   
+} ISIM_PwrState;
 
 /*
 ** This state information is used for communication between the
@@ -69,12 +79,51 @@ typedef enum {
 */
 typedef enum {
 
-   ISIM_SCI_OFF   = 0,
-   ISIM_SCI_START = 1,
-   ISIM_SCI_STOP  = 2,
-   ISIM_SCI_ON    = 3
+   ISIM_SCI_OFF       = 1,
+   ISIM_SCI_STARTING  = 2,
+   ISIM_SCI_STOPPING  = 3,
+   ISIM_SCI_ON        = 4
 
 } ISIM_SciState;
+
+
+typedef struct {
+   
+   char Data[ISIM_DETECTOR_ROW_LEN];
+   
+} ISIM_DetectorRow;
+
+typedef struct {
+
+   uint16   ReadoutRow;   
+   uint16   ImageCnt;
+   boolean  FaultPresent;
+
+   ISIM_DetectorRow Row;
+
+} ISIM_Detector;
+
+typedef struct {
+
+   ISIM_PwrState  PwrState;   
+   uint16         PwrInitCycleCnt;
+   uint16         PwrResetCycleCnt;
+   uint16         CurrFileImageCnt;
+   
+   ISIM_SciState  SciState;
+   ISIM_Detector  Detector;
+        
+} ISIM_Instr;
+
+
+typedef struct {
+
+   int32   Handle;
+   boolean IsOpen;
+   
+   char Name[OS_MAX_PATH_LEN];
+
+} ISIM_SciFile;
 
 
 /******************************************************************************
@@ -92,20 +141,13 @@ typedef struct {
 } ISIM_NoParamCmdMsg;
 #define ISIM_NO_PARAM_CMD_DATA_LEN  (sizeof(ISIM_NoParamCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
-#define ISIM_PWR_ON_SCI_CMD_DATA_LEN  ISIM_NO_PARAM_CMD_DATA_LEN
-#define ISIM_PWR_OFF_SCI_CMD_DATA_LEN ISIM_NO_PARAM_CMD_DATA_LEN
-#define ISIM_START_SCI_CMD_DATA_LEN   ISIM_NO_PARAM_CMD_DATA_LEN
-#define ISIM_STOP_SCI_CMD_DATA_LEN    ISIM_NO_PARAM_CMD_DATA_LEN
-
-
-typedef struct {
-
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-   uint16  NewState;
-
-} ISIM_CfgFaultCmdMsg;
-#define ISIM_CFG_FAULT_CMD_DATA_LEN  (sizeof(ISIM_CfgFaultCmdMsg) - CFE_SB_CMD_HDR_SIZE)
-
+#define ISIM_PWR_ON_INSTR_CMD_DATA_LEN    ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_PWR_OFF_INSTR_CMD_DATA_LEN   ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_PWR_RESET_INSTR_CMD_DATA_LEN ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_START_SCI_CMD_DATA_LEN       ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_STOP_SCI_CMD_DATA_LEN        ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_SET_FAULT_CMD_DATA_LEN       ISIM_NO_PARAM_CMD_DATA_LEN
+#define ISIM_CLEAR_FAULT_CMD_DATA_LEN     ISIM_NO_PARAM_CMD_DATA_LEN
 
 
 /******************************************************************************
@@ -120,31 +162,9 @@ typedef struct {
 
 typedef struct {
 
-   ISIM_InstrState State;
-   uint16          InitCycleCnt;
-
-} ISIM_Instr;
-
-typedef struct {
-
-   ISIM_SciState State;
-
-   int32   FileHandle;  
-   uint16  FileCnt;   
-   uint16  FileCycleCnt;
-   boolean FileOpen;
-   
-   char Filename[OS_MAX_PATH_LEN];
-
-} ISIM_Sci;
-
-typedef struct {
-
-   ISIM_Instr Instr;
-   ISIM_Sci   Sci;
-  
-   boolean  Fault;
-   
+   ISIM_Instr    Instr;
+   ISIM_SciFile  SciFile;
+     
    ISIMTBL_Struct Tbl;
 
 } ISIM_Class;
@@ -227,16 +247,21 @@ boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData);
 
 
 /******************************************************************************
-** Functions: ISIM_PwrOnSciCmd, ISIM_PwrOffSciCmd
+** Functions: ISIM_PwrOnInstrCmd, ISIM_PwrOffInstrCmd, ISIM_PwrResetInstrCmd
 **
-** Power on/off science instrument.
+** Power on/off/reset science instrument.
 **
 ** Note:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-**  2. One function for each command function code.
+^^  2, Use separate command function codes & functions as opposed to one 
+**     command with a parameter that would need validation
+**  3. Reset allows an intermediate level of initialization to be simulated
+**     that allows some system state to persist across the reset. For
+**     science data may be allowed to resume immediately after a reset.
 */
-boolean ISIM_PwrOnSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
-boolean ISIM_PwrOffSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean ISIM_PwrOnInstrCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean ISIM_PwrOffInstrCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean ISIM_PwrResetInstrCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
@@ -246,21 +271,25 @@ boolean ISIM_PwrOffSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 **
 ** Note:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-**  2. One function for each command function code.
+^^  2, Use separate command function codes & functions as opposed to one 
+**     command with a parameter that would need validation
 */
 boolean ISIM_StartSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 boolean ISIM_StopSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 /******************************************************************************
-** Functions: ISIM_CfgFaultCmd
+** Functions: ISIM_SetFaultCmd, ISIM_ClearFaultCmd
 **
 ** Set/clear fault state.
 **
 ** Note:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+^^  2, Use separate command function codes & functions as opposed to one 
+**     command with a parameter that would need validation
 */
-boolean ISIM_CfgFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean ISIM_SetFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+boolean ISIM_ClearFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 #endif /* _isim_ */

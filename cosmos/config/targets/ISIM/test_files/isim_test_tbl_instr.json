@@ -1,0 +1,8 @@
+{
+   "name": "ISIM Test Table",
+   "description": "Test partial table load with sci-instr object",
+   "sci-instr": {
+      "pwr-init-cycles":  30,
+      "pwr-reset-cycles": 20
+   }
+}

@@ -41,18 +41,18 @@
 #define ISIMTBL_CMD_LOAD_OPEN_ERR_EID      (ISIMTBL_BASE_EID + 5)
 #define ISIMTBL_CMD_LOAD_REPLACE_ERR_EID   (ISIMTBL_BASE_EID + 6)
 #define ISIMTBL_CMD_LOAD_UPDATE_ERR_EID    (ISIMTBL_BASE_EID + 7)
-#define ISIMTBL_LOAD_INSTRUMENT_ERR_EID    (ISIMTBL_BASE_EID + 8)
+#define ISIMTBL_LOAD_SCI_INSTR_ERR_EID     (ISIMTBL_BASE_EID + 8)
 #define ISIMTBL_LOAD_SCI_FILE_ERR_EID      (ISIMTBL_BASE_EID + 9)
 
 /*
 ** Table Structure Objects 
 */
 
-#define  ISIMTBL_OBJ_INSTRUMENT  0
-#define  ISIMTBL_OBJ_SCI_FILE    1
-#define  ISIMTBL_OBJ_CNT         2
+#define  ISIMTBL_OBJ_SCI_INSTR  0
+#define  ISIMTBL_OBJ_SCI_FILE   1
+#define  ISIMTBL_OBJ_CNT        2
 
-#define  ISIMTBL_OBJ_INSTRMENT_NAME   "instrument"
+#define  ISIMTBL_OBJ_SCI_INSTR_NAME   "sci-instr"
 #define  ISIMTBL_OBJ_SCI_FILE_NAME    "sci-file"
 
 /*
@@ -67,22 +67,23 @@
 typedef struct {
 
    uint16   PwrInitCycles;
-
-} Instrument_Struct;
+   uint16   PwrResetCycles;
+   
+} ISIMTBL_SciInstr;
 
 typedef struct {
 
    char     PathBaseFilename[OS_MAX_PATH_LEN];
    char     FileExtension[ISIM_FILE_EXT_MAX_CHAR];
-   uint16   CyclesPerFile;
+   uint16   ImagesPerFile;
 
-} SciFile_Struct;
+} ISIMTBL_SciFile;
 
 
 typedef struct {
 
-   Instrument_Struct  Instrument;
-   SciFile_Struct     SciFile;
+   ISIMTBL_SciInstr  SciInstr;
+   ISIMTBL_SciFile   SciFile;
 
 } ISIMTBL_Struct;
 

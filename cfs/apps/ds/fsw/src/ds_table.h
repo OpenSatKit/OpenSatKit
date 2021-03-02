@@ -1,35 +1,25 @@
 /************************************************************************
-**   $Id: ds_table.h 1.7.1.1 2015/02/28 17:13:47EST sstrege Exp  $
+** File: ds_table.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
-**
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
+** Purpose:
 **  CFS Data Storage (DS) table definitions
 **
-** $Log: ds_table.h  $
-** Revision 1.7.1.1 2015/02/28 17:13:47EST sstrege 
-** Added copyright information
-** Revision 1.7 2011/05/31 14:52:47EDT lwalling 
-** Create hash table and linked list definitions, create prototypes for hash table functions
-** Revision 1.6 2010/11/08 14:26:14EST lwalling 
-** Added conditional definition for move files directory name to Destination File Table
-** Revision 1.5 2009/08/31 17:51:37EDT lwalling 
-** Convert calls from DS_TableVerifyString() to CFS_VerifyString() with descriptive arg names
-** Revision 1.4 2009/08/28 16:47:55EDT lwalling 
-** Add support for storing sequence counts in CDS
-** Revision 1.3 2009/08/27 16:32:25EDT lwalling 
-** Updates from source code review
-** Revision 1.2 2009/06/12 11:43:14EDT lwalling 
-** Moved structere definitions to ds_msg.h, added Doxygen comments
-** Revision 1.1 2009/05/26 14:25:27EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/src/project.pj
 *************************************************************************/
 
 #ifndef _ds_table_h_
@@ -102,7 +92,7 @@ typedef struct
      The qualified filename length will be verified at run-time as each filename is created. */
 typedef struct
 {
-#if (DS_MOVE_FILES == TRUE)
+#if (DS_MOVE_FILES == true)
     char                Movename[DS_PATHNAME_BUFSIZE];         /**< \brief Move files to this dir after close */
 #endif
     char                Pathname[DS_PATHNAME_BUFSIZE];         /**< \brief Path portion of filename */
@@ -251,7 +241,7 @@ int32 DS_TableVerifyDestFile(void *TableData);
 **
 **  \sa #DS_DestFileEntry_t, #DS_TableVerifyDestFile
 */
-boolean DS_TableVerifyDestFileEntry(DS_DestFileEntry_t *DestFileEntry,
+bool DS_TableVerifyDestFileEntry(DS_DestFileEntry_t *DestFileEntry,
                                     uint8 TableIndex, int32 ErrorCount);
 
 
@@ -299,7 +289,7 @@ int32 DS_TableVerifyFilter(void *TableData);
 **
 **  \sa #DS_PacketEntry_t, #DS_FilterParms_t, #DS_TableVerifyFilter
 */
-boolean DS_TableVerifyFilterEntry(DS_PacketEntry_t *PacketEntry,
+bool DS_TableVerifyFilterEntry(DS_PacketEntry_t *PacketEntry,
                                   int32 TableIndex, int32 ErrorCount);
 
 
@@ -307,7 +297,7 @@ boolean DS_TableVerifyFilterEntry(DS_PacketEntry_t *PacketEntry,
 /*  \brief Test for unused table entry
 **  
 **  \par Description
-**       This function returns TRUE if a table entry is unused.
+**       This function returns true if a table entry is unused.
 **       Unused is defined as containing nothing but zero's.
 **
 **  \par Called From:
@@ -322,7 +312,7 @@ boolean DS_TableVerifyFilterEntry(DS_PacketEntry_t *PacketEntry,
 **
 **  \sa #DS_PacketEntry_t, #DS_FilterParms_t, #DS_DestFileEntry_t
 */
-boolean DS_TableEntryUnused(void *TableEntry, int32 BufferSize);
+bool DS_TableEntryUnused(void *TableEntry, int32 BufferSize);
 
 
 /*******************************************************************/
@@ -356,7 +346,7 @@ boolean DS_TableEntryUnused(void *TableEntry, int32 BufferSize);
 **
 **  \sa #DS_PacketEntry_t, #DS_FilterParms_t, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifyFileIndex(uint16 FileTableIndex);
+bool DS_TableVerifyFileIndex(uint16 FileTableIndex);
 
 
 /*******************************************************************/
@@ -381,7 +371,7 @@ boolean DS_TableVerifyFileIndex(uint16 FileTableIndex);
 **
 **  \sa #DS_TableVerifyType, #DS_TableVerifyState, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifyParms(uint16 Algorithm_N,
+bool DS_TableVerifyParms(uint16 Algorithm_N,
                             uint16 Algorithm_X,
                             uint16 Algorithm_O);
 
@@ -408,7 +398,7 @@ boolean DS_TableVerifyParms(uint16 Algorithm_N,
 **
 **  \sa #DS_TableVerifyState, #DS_TableVerifySize, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifyType(uint16 TimeVsCount);
+bool DS_TableVerifyType(uint16 TimeVsCount);
 
 
 /*******************************************************************/
@@ -431,7 +421,7 @@ boolean DS_TableVerifyType(uint16 TimeVsCount);
 **
 **  \sa #DS_TableVerifySize, #DS_TableVerifyAge, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifyState(uint16 EnableState);
+bool DS_TableVerifyState(uint16 EnableState);
 
 
 /*******************************************************************/
@@ -453,7 +443,7 @@ boolean DS_TableVerifyState(uint16 EnableState);
 **
 **  \sa #DS_TableVerifyAge, #DS_TableVerifyCount, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifySize(uint32 MaxFileSize);
+bool DS_TableVerifySize(uint32 MaxFileSize);
 
 
 /*******************************************************************/
@@ -475,7 +465,7 @@ boolean DS_TableVerifySize(uint32 MaxFileSize);
 **
 **  \sa #DS_TableVerifySize, #DS_TableVerifyCount, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifyAge(uint32 MaxFileAge);
+bool DS_TableVerifyAge(uint32 MaxFileAge);
 
 
 /*******************************************************************/
@@ -497,7 +487,7 @@ boolean DS_TableVerifyAge(uint32 MaxFileAge);
 **
 **  \sa #DS_TableVerifySize, #DS_TableVerifyAge, #DS_DestFileEntry_t
 */
-boolean DS_TableVerifyCount(uint32 SequenceCount);
+bool DS_TableVerifyCount(uint32 SequenceCount);
 
 
 /*******************************************************************/
@@ -639,6 +629,27 @@ uint32 DS_TableHashFunction(CFE_SB_MsgId_t MessageID);
 */
 void DS_TableCreateHash(void);
 
+
+/*******************************************************************/
+/*  \brief Adds a message ID to the hash table
+**  
+**  \par Description
+**       This function populates the hash table with a new message ID
+**
+**  \par Called From:
+**       - Creation of Hash Table
+**       - Command to add a MID
+**       
+**  \par Assumptions, External Events, and Notes:
+**       (none)
+**       
+**  \param [in]  Software Bus message ID (#CFE_SB_MsgId_t)
+**  \param [in] Filter table index for message ID
+**  \param [out] Hash table index for message ID
+**
+**  \sa #DS_HashLink_t, #DS_TableHashFunction, #DS_TableFindMsgID
+*/
+int32 DS_TableAddMsgID(CFE_SB_MsgId_t MessageID, int32 FilterIndex);
 
 /*******************************************************************/
 /*  \brief Search packet filter table for message ID
