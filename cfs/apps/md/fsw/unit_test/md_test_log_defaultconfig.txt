@@ -1,0 +1,788 @@
+##############################################################################
+## $Id: md_test_log_defaultconfig.txt 1.2 2017/07/05 13:00:21EDT mdeschu Exp  $
+##
+## Purpose: CFS MD application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+## $Log: md_test_log_defaultconfig.txt  $
+## Revision 1.2 2017/07/05 13:00:21EDT mdeschu 
+## Reran default and alt config unit tests, updated gcov results, logs and README for MD 2.3.1
+## Revision 1.1 2017/01/27 18:56:31EST czogby 
+## Initial revision
+## Member added to project /CFS-APPs-PROJECT/md/fsw/unit_test/project.pj
+##############################################################################
+
+MD 2.3.1.0 Unit Test Output (default case of MD_SIGNATURE_OPTION == 1, MD_ENFORCE_DWORD_ALIGN == 1):
+
+./md_testrunner.exe
+
+Running Test: MD_AppMain_Test_RegisterAppError
+SYSTEM LOG: MD_APP: Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+PASS: MD_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MD_APP: Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_AppMain_Test_AppInitError
+SYSTEM LOG: MD_APP:Call to CFE_EVS_Register Failed:RC=0xFFFFFFFF
+
+SYSTEM LOG: MD:Application Init Failed,RC=0xFFFFFFFF
+
+PASS: MD_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MD:Application Init Failed,RC=0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 2
+
+Running Test: MD_AppMain_Test_RcvMsgError
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+ERROR EVENT ID=2 SB Pipe Read Error, App will exit. Pipe Return Status = 0xFFFFFFFF
+PASS: MD_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: SB Pipe Read Error, App will exit. Pipe Return Status = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 0
+
+Running Test: MD_AppMain_Test_WakeupNominal
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+PASS: MD_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_AppMain_Test_WakeupLengthError
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+ERROR EVENT ID=22 Msg with Bad length Rcvd: ID = 0x1892, Exp Len = 8, Len = 1
+PASS: MD_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Msg with Bad length Rcvd: ID = 0x1892, Exp Len = 8, Len = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: MD_AppMain_Test_CmdNominal
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+INFO EVENT ID=10 No-op command, Version 2.3.1.0
+PASS: MD_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: MD_AppMain_Test_SendHkNominal
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+PKT: 08 90 C0 00 00 39 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 
+PASS: MD_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_AppMain_Test_SendHkLengthError
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+ERROR EVENT ID=22 Msg with Bad length Rcvd: ID = 0x1891, Exp Len = 8, Len = 1
+PASS: MD_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Msg with Bad length Rcvd: ID = 0x1891, Exp Len = 8, Len = 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: MD_AppMain_Test_InvalidMessageID
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+ERROR EVENT ID=15 Msg with Invalid message ID Rcvd -- ID = 0xFFFF
+PASS: MD_AppData.RunStatus == CFE_ES_APP_RUN
+PASS: Msg with Invalid message ID Rcvd -- ID = 0xFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: MD_AppInit_Test_Nominal
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 2.3.1.0
+PASS: MD Initialized.  Version 2.3.1.0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_AppInit_Test_EvsRegisterNotSuccess
+SYSTEM LOG: MD_APP:Call to CFE_EVS_Register Failed:RC=0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: MD_APP:Call to CFE_EVS_Register Failed:RC=0xFFFFFFFF
+
+PASS: Result == -1
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_AppInit_Test_InitSoftwareBusServicesNotSuccess
+SYSTEM LOG: MD_APP: Error creating cmd pipe:RC=0xFFFFFFFF
+
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_AppInit_Test_InitTableServicesNotSuccess
+SYSTEM LOG: MD_APP: Error 0xCC000013 received loading tbl#1
+
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: Result == 0xCC000013
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_InitControlStructures_Test
+PASS: MD_AppData.MD_DwellTables[0].Enabled == 0
+PASS: MD_AppData.MD_DwellTables[0].AddrCount == 0
+PASS: MD_AppData.MD_DwellTables[0].Rate == 0
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 1
+PASS: MD_AppData.MD_DwellTables[0].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[0].DataSize == 0
+PASS: MD_AppData.MD_DwellTables[0].Filler == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Enabled == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].AddrCount == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Rate == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Countdown == 1
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].DataSize == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Filler == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Enabled == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].AddrCount == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Rate == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Countdown == 1
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].DataSize == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Filler == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[0].Length == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[0].Delay == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[0].ResolvedAddress == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[MD_DWELL_TABLE_SIZE / 2].Length == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[MD_DWELL_TABLE_SIZE / 2].Delay == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[MD_DWELL_TABLE_SIZE / 2].ResolvedAddress == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[MD_DWELL_TABLE_SIZE - 1].Length == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[MD_DWELL_TABLE_SIZE - 1].Delay == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[MD_DWELL_TABLE_SIZE - 1].ResolvedAddress == 0
+PASS: strncmp(MD_AppData.MD_DwellTables[0].Signature, , MD_SIGNATURE_FIELD_LENGTH) == 0
+PASS: strncmp(MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Signature, , MD_SIGNATURE_FIELD_LENGTH) == 0
+PASS: strncmp(MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Signature, , MD_SIGNATURE_FIELD_LENGTH) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_InitSoftwareBusServices_Test_Nominal
+PASS: MD_AppData.MD_DwellPkt[0].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES/2].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES - 1].Signature[0] == '
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 0
+
+Running Test: MD_InitSoftwareBusServices_Test_CreatePipeError
+SYSTEM LOG: MD_APP: Error creating cmd pipe:RC=0xFFFFFFFF
+
+PASS: MD_AppData.MD_DwellPkt[0].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES/2].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES - 1].Signature[0] == '
+PASS: Result == -1
+PASS: MD_APP: Error creating cmd pipe:RC=0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_InitSoftwareBusServices_Test_SubscribeHkError
+SYSTEM LOG: MD_APP: Error subscribing to HK Request:RC=0xFFFFFFFF
+
+PASS: MD_AppData.MD_DwellPkt[0].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES/2].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES - 1].Signature[0] == '
+PASS: Result == -1
+PASS: MD_APP: Error subscribing to HK Request:RC=0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_InitSoftwareBusServices_Test_SubscribeCmdError
+SYSTEM LOG: MD_APP:Error subscribing to gnd cmds:RC=0xFFFFFFFF
+
+PASS: MD_AppData.MD_DwellPkt[0].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES/2].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES - 1].Signature[0] == '
+PASS: Result == -1
+PASS: MD_APP:Error subscribing to gnd cmds:RC=0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_InitSoftwareBusServices_Test_SubscribeWakeupError
+SYSTEM LOG: MD_APP:Error subscribing to wakeup message:RC=0xFFFFFFFF
+
+PASS: MD_AppData.MD_DwellPkt[0].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES/2].Signature[0] == '
+PASS: MD_AppData.MD_DwellPkt[MD_NUM_DWELL_TABLES - 1].Signature[0] == '
+PASS: Result == -1
+PASS: MD_APP:Error subscribing to wakeup message:RC=0xFFFFFFFF
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_InitTableServices_Test_GetAddressErrorAndLoadError
+ERROR EVENT ID=39 Didn't update MD tbl #1 due to unexpected CFE_TBL_GetAddress return: 0xFFFFFFFF
+SYSTEM LOG: MD_APP: Error 0xFFFFFFFF received loading tbl#1
+
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: Didn't update MD tbl #1 due to unexpected CFE_TBL_GetAddress return: 0xFFFFFFFF
+PASS: MD_AppData.MD_DwellTables[1].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_AppData.MD_DwellTables[2].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_AppData.MD_DwellTables[3].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_APP: Error 0xFFFFFFFF received loading tbl#1
+
+PASS: Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: MD_InitTableServices_Test_TblRecoveredValidThenTblInits
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 0, bad = 0, unused = 25
+INFO EVENT ID=40 Dwell Table is enabled but no processing will occur for table being loaded (rate is zero)
+INFO EVENT ID=3 Recovered Dwell Table #1 is valid and has been copied to the MD App
+INFO EVENT ID=7 Dwell Tables Recovered: 1, Dwell Tables Initialized: 3
+PASS: Recovered Dwell Table #1 is valid and has been copied to the MD App
+PASS: MD_AppData.MD_DwellTables[1].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_AppData.MD_DwellTables[2].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_AppData.MD_DwellTables[3].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: Dwell Tables Recovered: 1, Dwell Tables Initialized: 3
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+
+Running Test: MD_InitTableServices_Test_TblRecoveredNotValid
+ERROR EVENT ID=44 Dwell Table rejected because value of enable flag (99) is invalid
+ERROR EVENT ID=4 MD App will reinitialize Dwell Table #1 because recovered table is not valid
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+PASS: MD App will reinitialize Dwell Table #1 because recovered table is not valid
+PASS: MD_AppData.MD_DwellTables[1].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_AppData.MD_DwellTables[2].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: MD_AppData.MD_DwellTables[3].Enabled == MD_DWELL_STREAM_DISABLED
+PASS: Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+
+Running Test: MD_InitTableServices_Test_TblTooLarge
+CRITICAL EVENT ID=5 Dwell Table(s) are too large to register: 1836 > 16384 bytes, 25 > 227 entries
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: Dwell Table(s) are too large to register: 1836 > 16384 bytes, 25 > 227 entries
+PASS: Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: Result == CFE_TBL_ERR_INVALID_SIZE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_InitTableServices_Test_TblRegisterCriticalError
+CRITICAL EVENT ID=6 CFE_TBL_Register error 0xFFFFFFFF received for tbl#1
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: CFE_TBL_Register error 0xFFFFFFFF received for tbl#1
+PASS: Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_ManageDwellTable_Test_ValidationPendingSucceedThenFail
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ManageDwellTable_Test_UpdatePendingDwellStreamEnabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ManageDwellTable_Test_UpdatePendingTblCopyError
+ERROR EVENT ID=39 Didn't update MD tbl #1 due to unexpected CFE_TBL_GetAddress return: 0xFFFFFFFF
+PASS: Didn't update MD tbl #1 due to unexpected CFE_TBL_GetAddress return: 0xFFFFFFFF
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ManageDwellTable_Test_TblStatusErr
+ERROR EVENT ID=20 Received unexpected error 0xC0000000 from CFE_TBL_GetStatus for tbl #1
+PASS: Received unexpected error 0xC0000000 from CFE_TBL_GetStatus for tbl #1
+PASS: Result == CFE_SEVERITY_BITMASK
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ManageDwellTable_Test_OtherStatus
+PASS: Result == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ExecRequest_Test_SearchCmdHndlrTblError
+ERROR EVENT ID=16 Command Code 0 not found in MD_CmdHandlerTbl structure
+PASS: Command Code 0 not found in MD_CmdHandlerTbl structure
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_CmdLengthError
+ERROR EVENT ID=21 Cmd Msg with Bad length Rcvd: ID = 0x1890, CC = 0, Exp Len = 8, Len = 1
+PASS: Cmd Msg with Bad length Rcvd: ID = 0x1890, CC = 0, Exp Len = 8, Len = 1
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_Noop
+INFO EVENT ID=10 No-op command, Version 2.3.1.0
+PASS: No-op command, Version 2.3.1.0
+PASS: MD_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_ResetCounters
+DEBUG EVENT ID=11 Reset Counters Cmd Received
+PASS: Reset Counters Cmd Received
+PASS: MD_AppData.CmdCounter == 0
+PASS: MD_AppData.ErrCounter == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_StartDwell
+ERROR EVENT ID=14 Start Dwell command rejected because no tables were specified in table mask (0x0000)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_StopDwell
+ERROR EVENT ID=14 Stop Dwell command rejected because no tables were specified in table mask (0x0000)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_JamDwell
+ERROR EVENT ID=32 Jam Cmd rejected due to invalid Tbl Id arg = 0 (Expect 1.. 4)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ExecRequest_Test_SetSignature
+ERROR EVENT ID=47 Set Signature cmd rejected due to invalid Tbl Id arg = 0 (Expect 1.. 4)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_HkStatus_Test
+PKT: 00 00 00 00 00 00 00 
+PASS: MD_AppData.HkPkt.ValidCmdCntr == 1
+PASS: MD_AppData.HkPkt.InvalidCmdCntr == 2
+PASS: MD_AppData.HkPkt.DwellTblAddrCount[0] == 1
+PASS: MD_AppData.HkPkt.NumWaitsPerPkt[0]    == 2
+PASS: MD_AppData.HkPkt.DwellPktOffset[0]    == 3
+PASS: MD_AppData.HkPkt.ByteCount[0]         == 4
+PASS: MD_AppData.HkPkt.DwellTblEntry[0]     == 5
+PASS: MD_AppData.HkPkt.Countdown[0]         == 6
+PASS: MD_AppData.HkPkt.DwellTblAddrCount[MD_NUM_DWELL_TABLES / 2] == 7
+PASS: MD_AppData.HkPkt.NumWaitsPerPkt[MD_NUM_DWELL_TABLES / 2]    == 8
+PASS: MD_AppData.HkPkt.DwellPktOffset[MD_NUM_DWELL_TABLES / 2]    == 9
+PASS: MD_AppData.HkPkt.ByteCount[MD_NUM_DWELL_TABLES / 2]         == 10
+PASS: MD_AppData.HkPkt.DwellTblEntry[MD_NUM_DWELL_TABLES / 2]     == 11
+PASS: MD_AppData.HkPkt.Countdown[MD_NUM_DWELL_TABLES / 2]         == 12
+PASS: MD_AppData.HkPkt.DwellTblAddrCount[MD_NUM_DWELL_TABLES - 1] == 13
+PASS: MD_AppData.HkPkt.NumWaitsPerPkt[MD_NUM_DWELL_TABLES - 1]    == 14
+PASS: MD_AppData.HkPkt.DwellPktOffset[MD_NUM_DWELL_TABLES - 1]    == 15
+PASS: MD_AppData.HkPkt.ByteCount[MD_NUM_DWELL_TABLES - 1]         == 16
+PASS: MD_AppData.HkPkt.DwellTblEntry[MD_NUM_DWELL_TABLES - 1]     == 17
+PASS: MD_AppData.HkPkt.Countdown[MD_NUM_DWELL_TABLES - 1]         == 18
+PASS: MD_AppData.HkPkt.DwellEnabledMask == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_SearchCmdHndlrTbl_Test_FoundMatch1
+PASS: Result == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_SearchCmdHndlrTbl_Test_BadCmdCode
+PASS: Result == MD_BAD_CMD_CODE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_SearchCmdHndlrTbl_Test_BasMsgID
+PASS: Result == MD_BAD_MSG_ID
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ProcessStartCmd_Test_ZeroRate
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0001
+PASS: MD_AppData.MD_DwellTables[0].Enabled == MD_DWELL_STREAM_ENABLED
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 1
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[0].PktOffset == 0
+PASS: Dwell Table 1 is enabled with a delay of zero so no processing will occur
+PASS: MD_AppData.CmdCounter == 1
+PASS: Start Dwell Table command processed successfully for table mask 0x0001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_ProcessStartCmd_Test_Success
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0001
+PASS: MD_AppData.MD_DwellTables[0].Enabled == MD_DWELL_STREAM_ENABLED
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 1
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[0].PktOffset == 0
+PASS: MD_AppData.CmdCounter == 1
+PASS: Start Dwell Table command processed successfully for table mask 0x0001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessStartCmd_Test_EmptyTableMask
+ERROR EVENT ID=14 Start Dwell command rejected because no tables were specified in table mask (0x0000)
+PASS: MD_AppData.ErrCounter == 1
+PASS: Start Dwell command rejected because no tables were specified in table mask (0x0000)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessStopCmd_Test_Success
+INFO EVENT ID=13 Stop Dwell Table command processed successfully for table mask 0x0001
+PASS: MD_AppData.MD_DwellTables[0].Enabled == MD_DWELL_STREAM_ENABLED
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 0
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[0].PktOffset == 0
+PASS: MD_AppData.CmdCounter == 1
+PASS: Stop Dwell Table command processed successfully for table mask 0x0001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessStopCmd_Test_EmptyTableMask
+ERROR EVENT ID=14 Stop Dwell command rejected because no tables were specified in table mask (0x0000)
+PASS: MD_AppData.ErrCounter == 1
+PASS: Stop Dwell command rejected because no tables were specified in table mask (0x0000)
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_InvalidJamTable
+ERROR EVENT ID=32 Jam Cmd rejected due to invalid Tbl Id arg = 99 (Expect 1.. 4)
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected due to invalid Tbl Id arg = 99 (Expect 1.. 4)
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_InvalidEntryArg
+ERROR EVENT ID=33 Jam Cmd rejected due to invalid Entry Id arg = 99 (Expect 1.. 25)
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected due to invalid Entry Id arg = 99 (Expect 1.. 25)
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_SuccessNullZeroRate
+INFO EVENT ID=31 Successful Jam of a Null Dwell Entry to Dwell Tbl#1 Entry #2
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: MD_AppData.MD_DwellTables[0].Entry[1].ResolvedAddress == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[1].Length == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[1].Delay == 0
+PASS: Successful Jam of a Null Dwell Entry to Dwell Tbl#1 Entry #2
+PASS: Dwell Table 1 is enabled with a delay of zero so no processing will occur
+PASS: MD_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_ProcessJamCmd_Test_CantResolveJamAddr
+ERROR EVENT ID=35 Jam Cmd rejected because symbolic address 'address' couldn't be resolved
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected because symbolic address 'address' couldn't be resolved
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_InvalidLenArg
+ERROR EVENT ID=34 Jam Cmd rejected due to invalid Field Length arg = 5 (Expect 0,1,2,or 4)
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected due to invalid Field Length arg = 5 (Expect 0,1,2,or 4)
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_InvalidJamAddr
+ERROR EVENT ID=36 Jam Cmd rejected because address 0x00000000 is not in a valid range
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected because address 0x00000000 is not in a valid range
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_JamAddrNot32Bit
+ERROR EVENT ID=37 Jam Cmd rejected because address 0x00000001 is not 32-bit aligned
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected because address 0x00000001 is not 32-bit aligned
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_JamAddrNot16BitFieldLength2
+ERROR EVENT ID=38 Jam Cmd rejected because address 0x00000001 is not 16-bit aligned
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Jam Cmd rejected because address 0x00000001 is not 16-bit aligned
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessJamCmd_Test_SuccessNonNullZeroRate
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#1 Entry #2
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+PASS: CmdPacket.DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: MD_AppData.MD_DwellTables[0].Entry[1].ResolvedAddress == 0
+PASS: MD_AppData.MD_DwellTables[0].Entry[1].Length == 2
+PASS: MD_AppData.MD_DwellTables[0].Entry[1].Delay  == 3
+PASS: Successful Jam to Dwell Tbl#1 Entry #2
+PASS: MD_AppData.CmdCounter == 1
+PASS: Dwell Table 1 is enabled with a delay of zero so no processing will occur
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_ProcessSignatureCmd_Test_InvalidSignatureLength
+ERROR EVENT ID=49 Set Signature cmd rejected due to invalid Signature length
+PASS: Set Signature cmd rejected due to invalid Signature length
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessSignatureCmd_Test_InvalidSignatureTable
+ERROR EVENT ID=47 Set Signature cmd rejected due to invalid Tbl Id arg = 0 (Expect 1.. 4)
+PASS: Set Signature cmd rejected due to invalid Tbl Id arg = 0 (Expect 1.. 4)
+PASS: MD_AppData.ErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ProcessSignatureCmd_Test_Success
+INFO EVENT ID=46 Successfully set signature for Dwell Tbl#1 to 'signature'
+PASS: strncmp(MD_AppData.MD_DwellTables[0].Signature, 'signature', MD_SIGNATURE_FIELD_LENGTH) == 0
+PASS: Successfully set signature for Dwell Tbl#1 to 'signature'
+PASS: MD_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_DwellLoop_Test_PacketAlreadyFull
+PKT: 00 00 00 00 00 2D 00 00 00 00 00 00 01 01 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PKT: 00 00 00 00 00 2D 00 00 00 00 00 00 03 01 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PKT: 00 00 00 00 00 2D 00 00 00 00 00 00 04 01 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[0].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Countdown == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_DwellLoop_Test_SendDwellPacket
+PKT: 00 00 00 00 00 2D 00 00 00 00 00 00 01 01 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PKT: 00 00 00 00 00 2D 00 00 00 00 00 00 03 01 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PKT: 00 00 00 00 00 2D 00 00 00 00 00 00 04 01 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[0].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].PktOffset == 0
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Countdown == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_DwellLoop_Test_MoreAddressesToRead
+PASS: MD_AppData.MD_DwellTables[0].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].Countdown == 2
+PASS: MD_AppData.MD_DwellTables[0].CurrentEntry == 1
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES / 2].CurrentEntry == 1
+PASS: MD_AppData.MD_DwellTables[MD_NUM_DWELL_TABLES - 1].CurrentEntry == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_GetDwellData_Test_MemRead8Error
+PASS: MD_AppData.MD_DwellTables[TblIndex].PktOffset == 1
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_GetDwellData_Test_MemRead16Error
+PASS: MD_AppData.MD_DwellTables[TblIndex].PktOffset == 2
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_GetDwellData_Test_MemRead32Error
+PASS: MD_AppData.MD_DwellTables[TblIndex].PktOffset == 4
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_GetDwellData_Test_InvalidDwellLength
+PASS: MD_AppData.MD_DwellTables[TblIndex].PktOffset == 5
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_GetDwellData_Test_Success
+PASS: MD_AppData.MD_DwellTables[TblIndex].PktOffset == 1
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_SendDwellPkt_Test
+PKT: 00 00 00 00 00 32 00 00 00 00 00 00 02 03 05 00 04 00 00 00 73 69 67 6E 61 74 75 72 65 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+PASS: MD_AppData.MD_DwellPkt[TableIndex].TableId == 2
+PASS: MD_AppData.MD_DwellPkt[TableIndex].AddrCount == 3
+PASS: MD_AppData.MD_DwellPkt[TableIndex].Rate == 4
+PASS: MD_AppData.MD_DwellTables[TableIndex].Signature, 'signature', MD_SIGNATURE_FIELD_LENGTH - 1) == 0
+PASS: MD_AppData.MD_DwellTables[TableIndex].Signature[MD_SIGNATURE_FIELD_LENGTH - 1] == '
+PASS: MD_AppData.MD_DwellTables[TableIndex].DataSize == 5
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_StartDwellStream_Test
+PASS: MD_AppData.MD_DwellTables[TableIndex].Countdown == 1
+PASS: MD_AppData.MD_DwellTables[TableIndex].CurrentEntry == 0
+PASS: MD_AppData.MD_DwellTables[TableIndex].PktOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_TableValidationFunc_Test_InvalidEnableFlag
+ERROR EVENT ID=44 Dwell Table rejected because value of enable flag (99) is invalid
+PASS: Dwell Table rejected because value of enable flag (99) is invalid
+PASS: Result == MD_TBL_ENA_FLAG_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_TableValidationFunc_Test_InvalidSignatureLength
+ERROR EVENT ID=50 Dwell Table rejected because Signature length was invalid
+PASS: Dwell Table rejected because Signature length was invalid
+PASS: Result == MD_SIG_LEN_TBL_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_TableValidationFunc_Test_ResolveError
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 0, bad = 1, unused = 24
+ERROR EVENT ID=41 Dwell Table rejected because address (sym='symname'/offset=0x00000000) in entry #1 couldn't be resolved
+PASS: Dwell Table rejected because address (sym='symname'/offset=0x00000000) in entry #1 couldn't be resolved
+PASS: Result == MD_RESOLVE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_TableValidationFunc_Test_InvalidAddress
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 0, bad = 1, unused = 24
+ERROR EVENT ID=42 Dwell Table rejected because address (sym='symname'/offset=0x00000000) in entry #1 was out of range
+PASS: Dwell Table rejected because address (sym='symname'/offset=0x00000000) in entry #1 was out of range
+PASS: Result == MD_INVALID_ADDR_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_TableValidationFunc_Test_InvalidLength
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 0, bad = 1, unused = 24
+ERROR EVENT ID=43 Dwell Table rejected because length (5) in entry #1 was invalid
+PASS: Dwell Table rejected because length (5) in entry #1 was invalid
+PASS: Result == MD_INVALID_LEN_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_TableValidationFunc_Test_NotAligned
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 0, bad = 1, unused = 24
+ERROR EVENT ID=45 Dwell Table rejected because address (sym='symname'/offset=0x00000001) in entry #1 not properly aligned for 2-byte dwell
+PASS: Dwell Table rejected because address (sym='symname'/offset=0x00000001) in entry #1 not properly aligned for 2-byte dwell
+PASS: Result == MD_NOT_ALIGNED_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_TableValidationFunc_Test_ZeroRate
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 25, bad = 0, unused = 0
+INFO EVENT ID=40 Dwell Table is enabled but no processing will occur for table being loaded (rate is zero)
+PASS: Dwell Table is enabled but no processing will occur for table being loaded (rate is zero)
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: MD_TableValidationFunc_Test_Success
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 25, bad = 0, unused = 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: MD_ReadDwellTable_Test
+PASS: ActiveAddrCount == MD_DWELL_TABLE_SIZE
+PASS: Size == MD_DWELL_TABLE_SIZE
+PASS: Rate == MD_DWELL_TABLE_SIZE
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_CheckTableEntries_Test_Error
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 0, bad = 1, unused = 24
+PASS: ErrorEntryArg == 0
+PASS: Result == MD_INVALID_LEN_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: MD Dwell Tbl verify results: good = 0, bad = 1, unused = 24
+
+Running Test: MD_CheckTableEntries_Test_Success
+INFO EVENT ID=52 MD Dwell Tbl verify results: good = 24, bad = 0, unused = 1
+PASS: ErrorEntryArg == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: MD Dwell Tbl verify results: good = 24, bad = 0, unused = 1
+
+Running Test: MD_ValidTableEntry_Test_SuccessDwellLengthZero
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableEntry_Test_ResolveError
+PASS: Result == MD_RESOLVE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableEntry_Test_InvalidAddress
+PASS: Result == MD_INVALID_ADDR_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableEntry_Test_InvalidLength
+PASS: Result == MD_INVALID_LEN_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableEntry_Test_NotAligned16DwellLength4
+PASS: Result == MD_NOT_ALIGNED_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableEntry_Test_NotAligned16DwellLength2
+PASS: Result == MD_NOT_ALIGNED_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableEntry_Test_ElseSuccess
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_CopyUpdatedTbl_Test
+PASS: MD_AppData.MD_DwellTables[TblIndex].Enabled == 1
+PASS: strncmp(MD_AppData.MD_DwellTables[TblIndex].Signature, 'signature', MD_SIGNATURE_FIELD_LENGTH) == 0
+PASS: MD_AppData.MD_DwellTables[TblIndex].Signature[MD_SIGNATURE_FIELD_LENGTH - 1] == '
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_UpdateTableEnabledField_Test_DwellStreamEnabled
+PASS: MD_DWELL_TBL_TEST_GlobalLoadTable.Enabled == MD_DWELL_STREAM_ENABLED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_UpdateTableEnabledField_Test_DwellStreamDisabled
+PASS: MD_DWELL_TBL_TEST_GlobalLoadTable.Enabled == MD_DWELL_STREAM_DISABLED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_UpdateTableDwellEntry_Test
+PASS: MD_DWELL_TBL_TEST_GlobalLoadTable.Entry[EntryIndex].Length == 1
+PASS: MD_DWELL_TBL_TEST_GlobalLoadTable.Entry[EntryIndex].Delay == 1
+PASS: MD_DWELL_TBL_TEST_GlobalLoadTable.Entry[EntryIndex].DwellAddress.Offset == 1
+PASS: strncmp(MD_DWELL_TBL_TEST_GlobalLoadTable.Entry[EntryIndex].DwellAddress.SymName, 'symname', 10) == 0
+PASS: MD_DWELL_TBL_TEST_GlobalLoadTable.Entry[EntryIndex].DwellAddress.SymName[OS_MAX_SYM_LEN - 1] == '
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_UpdateTableSignature_Test
+PASS: strncmp(MD_DWELL_TBL_TEST_GlobalLoadTable.Signature, 'newsignature', 15) == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_TableIsInMask_Test_ShiftOddResult
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_TableIsInMask_Test_ShiftEvenResult
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_UpdateDwellControlInfo_Test
+PASS: MD_AppData.MD_DwellTables[TableIndex].AddrCount == 1
+PASS: MD_AppData.MD_DwellTables[TableIndex].DataSize  == 1
+PASS: MD_AppData.MD_DwellTables[TableIndex].Rate      == 2
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidEntryId_Test_Valid
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidEntryId_Test_Invalid
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidAddrRange_Test_Valid
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidAddrRange_Test_Invalid
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableId_Test_Valid
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidTableId_Test_Invalid
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidFieldLength_Test_ValidFieldLength0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidFieldLength_Test_ValidFieldLength1
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidFieldLength_Test_ValidFieldLength2
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidFieldLength_Test_ValidFieldLength4
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: MD_ValidFieldLength_Test_Invalid
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Tests Executed:    105
+Assert Pass Count: 430
+Assert Fail Count: 0
+
+gcov: '../src/md_dwell_tbl.c' 100.00%  123
+gcov: '../src/md_cmds.c' 100.00%  127
+gcov: '../src/md_app.c' 98.73%  236
+gcov: '../src/md_dwell_pkt.c' 100.00%  60
+gcov: '../src/md_utils.c' 100.00%  44
+

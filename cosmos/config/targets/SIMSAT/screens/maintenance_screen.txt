@@ -84,11 +84,11 @@ VERTICAL   # With 2 rows
       MATRIXBYCOLUMNS 3 5 2
 
          BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "DEMO")'
-         NAMED_WIDGET demo COMBOBOX "Memory Mgmt"
+         NAMED_WIDGET demo COMBOBOX "MM-MD Demo Screen" "MM-MD Demo Script"
          LABEL "    "
 
          BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "TUTORIAL")'
-         NAMED_WIDGET tutorial COMBOBOX "Coming Soon"
+         NAMED_WIDGET tutorial COMBOBOX "Maint App Intro Slides" "Maint App Intro Video"
          LABEL "    "
 
       END # Matrix

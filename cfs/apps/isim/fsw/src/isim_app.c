@@ -173,14 +173,17 @@ static void SendHousekeepingPkt(void)
    IsimApp.HkPkt.LastAction       = LastTbl->LastAction;
    IsimApp.HkPkt.LastActionStatus = LastTbl->LastActionStatus;
 
-   IsimApp.HkPkt.IsimInstrState   = (uint8)ISIM->Instr.State;
-   IsimApp.HkPkt.IsimSciState     = (uint8)ISIM->Sci.State;
-   IsimApp.HkPkt.Fault            = ISIM->Fault;
+   IsimApp.HkPkt.IsimPwrState           = (uint8)ISIM->Instr.PwrState;
+   IsimApp.HkPkt.IsimPwrInitCycleCnt    = (uint8)ISIM->Instr.PwrInitCycleCnt;
+   IsimApp.HkPkt.IsimPwrResetCycleCnt   = (uint8)ISIM->Instr.PwrResetCycleCnt;
+   IsimApp.HkPkt.IsimSciState           = (uint8)ISIM->Instr.SciState;
+   IsimApp.HkPkt.IsimDetectorImageCnt   = ISIM->Instr.Detector.ImageCnt;
+   IsimApp.HkPkt.IsimDetectorReadoutRow = (uint8)ISIM->Instr.Detector.ReadoutRow;
+   IsimApp.HkPkt.IsimDetectorFault      = (uint8)ISIM->Instr.Detector.FaultPresent;
+   IsimApp.HkPkt.IsimSciFileOpen        = (uint8)ISIM->SciFile.IsOpen;
+   IsimApp.HkPkt.CurrFileImageCnt       = (uint8)ISIM->Instr.CurrFileImageCnt;
    
-   IsimApp.HkPkt.InitCycleCnt     = ISIM->Instr.InitCycleCnt;
-   IsimApp.HkPkt.SciFileCycleCnt  = ISIM->Sci.FileCycleCnt;
-
-   strncpy(IsimApp.HkPkt.Filename, ISIM->Sci.Filename, OS_MAX_PATH_LEN);
+   strncpy(IsimApp.HkPkt.SciFilename, ISIM->SciFile.Name, OS_MAX_PATH_LEN);
    
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &IsimApp.HkPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &IsimApp.HkPkt);
@@ -224,11 +227,15 @@ static int32 InitApp(void)
    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
     
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_ON_CMD_FC,    ISIM,  ISIM_PwrOnSciCmd,  ISIM_PWR_ON_SCI_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_OFF_CMD_FC,   ISIM,  ISIM_PwrOffSciCmd, ISIM_PWR_OFF_SCI_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_START_SCI_CMD_FC, ISIM,  ISIM_StartSciCmd,  ISIM_START_SCI_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_STOP_SCI_CMD_FC,  ISIM,  ISIM_StopSciCmd,   ISIM_STOP_SCI_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_CFG_FAULT_CMD_FC, ISIM,  ISIM_CfgFaultCmd,  ISIM_CFG_FAULT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_ON_INSTR_CMD_FC,    ISIM,  ISIM_PwrOnInstrCmd,    ISIM_PWR_ON_INSTR_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_OFF_INSTR_CMD_FC,   ISIM,  ISIM_PwrOffInstrCmd,   ISIM_PWR_OFF_INSTR_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_RESET_INSTR_CMD_FC, ISIM,  ISIM_PwrResetInstrCmd, ISIM_PWR_RESET_INSTR_CMD_DATA_LEN);
+   
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_START_SCI_CMD_FC,       ISIM,  ISIM_StartSciCmd,      ISIM_START_SCI_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_STOP_SCI_CMD_FC,        ISIM,  ISIM_StopSciCmd,       ISIM_STOP_SCI_CMD_DATA_LEN);
+  
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_SET_FAULT_CMD_FC,       ISIM,  ISIM_SetFaultCmd,      ISIM_SET_FAULT_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_CLEAR_FAULT_CMD_FC,     ISIM,  ISIM_ClearFaultCmd,    ISIM_CLEAR_FAULT_CMD_DATA_LEN);
 
    TBLMGR_Constructor(TBLMGR_OBJ);
    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, ISIMTBL_LoadCmd, ISIMTBL_DumpCmd, ISIMTBL_DEF_LOAD_FILE);

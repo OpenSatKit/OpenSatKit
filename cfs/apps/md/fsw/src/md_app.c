@@ -1,52 +1,26 @@
 /*************************************************************************
-** File:
-**   $Id: md_app.c 1.11 2015/03/01 17:17:32EST sstrege Exp  $
+** File: md_app.c 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   CFS Memory Dwell Application top-level procedures.
 **
-**   $Log: md_app.c  $
-**   Revision 1.11 2015/03/01 17:17:32EST sstrege 
-**   Added copyright information
-**   Revision 1.10 2009/10/20 17:47:47EDT aschoeni 
-**   Added event on start up to report number of tables initialized and recovered.
-**   Revision 1.9 2009/06/12 14:19:05EDT rmcgraw 
-**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
-**   Revision 1.8 2009/04/18 15:10:26EDT dkobe 
-**   Corrected doxygen comments
-**   Revision 1.7 2009/01/12 14:33:30EST nschweis 
-**   Removed debug statements from source code.  CPID 4688:1.
-**   Revision 1.6 2008/10/21 13:36:21EDT nsschweiss 
-**   Modified MD_ManageDwellTable to call MD_StartDwellStream when a Dwell Table is loaded with its Enabled 
-**   field on.
-**   Modified MD_InitTableServices to call MD_StartDwellStream when a Dwell Table is recovered with its 
-**   Enabled field on.
-**   Modified MD_InitControlStructures to set Countdown parameter to 1.
-**   Revision 1.5 2008/10/01 15:58:57EDT nsschweiss 
-**   Corrected code to increment error counter on receipt of command with invalid function code.
-**   CPID 4203:1.
-**   Revision 1.4 2008/09/12 11:29:38EDT nsschweiss 
-**   Updated to reflect version # in initialization and noop events.
-**   CPID 4289:1.
-**   Revision 1.3 2008/08/08 14:47:15EDT nsschweiss 
-**   1) Adds MD_InitControlStructures().
-**   2) Corrects handling of state information in case of a valid table being restored followed by an 
-**   invalid table restored.
-**   3) Corrects problem in which CFE_TBL_GetAddress was incorrectly called twice on initialization
-**   for each dwell table.
-**   Revision 1.2 2008/07/02 13:44:56EDT nsschweiss 
-**   CFS MD Post Code Review Version
-**   Date: 08/05/09
-**   CPID: 1653:2
 ** 
 *************************************************************************/
 
@@ -63,219 +37,7 @@
 #include "md_perfids.h"
 #include "md_version.h"
 
-
-/* Return values for MD_SearchCmdHndlrTbl routine used to process commands */
-#define MD_BAD_CMD_CODE (-1)
-#define MD_BAD_MSG_ID   (-2)
-
-typedef enum
-{
-    MD_TERM_MSGTYPE=0,   /**< \brief Command Handler Table Terminator Type */
-    MD_MSG_MSGTYPE,      /**< \brief Message Type (requires Message ID match) */
-    MD_CMD_MSGTYPE       /**< \brief Command Type (requires Message ID and Command Code match) */
-} MD_MsgType_t;
-
-/*
-** Data structure of a single record in MD_CmdHandlerTbl
-*/
-typedef struct 
-{
-    uint32        MsgId;           /**< \brief Acceptable Message ID */
-    uint32        CmdCode;         /**< \brief Acceptable Command Code (if necessary) */
-    uint32        ExpectedLength;  /**< \brief Expected Message Length (in bytes) including message header */
-    MD_MsgType_t  MsgTypes;        /**< \brief Message Type (i.e. - with/without Cmd Code)   */
-} MD_CmdHandlerTblRec_t;
-
-
-/*
-**
-**  Memory Dwell Task Globals
-**
-*/
-
-MD_AppData_t MD_AppData;
-
-
-
-/* Forward References */
-
-
-
-/*****************************************************************************/
-/**
-** \brief Memory Dwell Application Initialization
-**
-** \par Description
-**  Initialize all data elements.
-**  If this is a PROCESSOR_RESET, and saving dwell tables to CDS is indicated,
-**  then restore image from CDS.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \return #CFE_SUCCESS  \copydoc CFE_SUCCESS
-** \return Any of the return values from #CFE_ES_RegisterApp
-** \return Any of the return values from #CFE_EVS_Register
-** \return Any of the return values from #CFE_SB_CreatePipe
-** \return Any of the return values from #CFE_SB_Subscribe
-** \return Any of the return values from #CFE_TBL_Register
-** \return Any of the return values from #CFE_TBL_Load
-******************************************************************************/
-int32 MD_AppInit( void );
-
-/*****************************************************************************/
-/**
-** \brief Initialize local control structures
-**
-** \par Description
-**  Initialize control structures for each of the #MD_NUM_DWELL_TABLES dwell streams.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \return None
-******************************************************************************/
-void MD_InitControlStructures(void);
-
-/*****************************************************************************/
-/**
-** \brief Initialize Software Bus Services for the Memory Dwell Task
-**
-** \par Description
-**  Create message pipe.
-**  Subscribe to all input and output messages.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \return #CFE_SUCCESS  \copydoc CFE_SUCCESS
-** \return Any of the return values from #CFE_SB_CreatePipe
-** \return Any of the return values from #CFE_SB_Subscribe
-******************************************************************************/
-int32 MD_InitSoftwareBusServices( void );
-
-/*****************************************************************************/
-/**
-** \brief Initialize Table Services for the Memory Dwell Task
-**
-** \par Description
-**  Register Tables with Table Services.
-**  Check for Recovered Tables.
-**  IF Recovered Tables Found
-**  THEN
-**       Retrieve them.
-**       Validate them.
-**       IF Recovered Tables are Invalid
-**          Initialize Tables
-**       ENDIF
-**  ELSE
-**       Initialize Tables.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \return #CFE_SUCCESS  \copydoc CFE_SUCCESS
-** \return Any of the return values from #CFE_TBL_Register
-** \return Any of the return values from #CFE_TBL_Load
-******************************************************************************/
-int32 MD_InitTableServices( void );
-
-
-                
-                
-/*****************************************************************************/
-/**
-** \brief Check Table Status and take appropriate actions.
-**
-** \par Description
-**       Checks status of Tables, and takes action if
-**       validation requests or update requests are pending.
-** 
-** \par Assumptions, External Events, and Notes:
-**          Assumes that an update is pending for the specified table.
-**
-** \param[in] TblIndex   Dwell table identifier. 
-**                       Internal values [0..MD_NUM_DWELL_TABLES-1] are used.
-**                                      
-** \returns
-** \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS              \endcode
-**  May return any value from CFE_TBL_GetStatus, 
-**  CFE_TBL_Validate, or CFE_TBL_Update.
-** \endreturns
-
-******************************************************************************/
-int32 MD_ManageDwellTable (uint8 TblIndex);
-
-
-
-/*****************************************************************************/
-/**
-** \brief Execute requested Memory Dwell commands
-**
-** \par Description
-**          Processes messages obtained from the command pipe.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \param[in] MessagePtr a pointer to the message received from the command pipe
-**                                      
-** \retval None
-******************************************************************************/
-void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr);
-
-
-
-/*****************************************************************************/
-/**
-** \brief Send Housekeeping Status to Health & Safety task
-**
-** \par Description
-**          For each dwell table the housekeeping data includes:
-**          number of dwell addresses, number of counts for packet formation,
-**          data size in bytes, current entry in data processing, current
-**          offset in packet data field, countdown to next data collection.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \retval None
-******************************************************************************/
-void MD_HkStatus( void );
-
-
-
-
-/* Utility Functions */
-/*****************************************************************************/
-/**
-** \brief Compares message with MD_CmdHandlerTbl to identify the message
-**
-** \par Description
-**          Searches the Command Handler Table for an entry matching the
-**          message ID and, if necessary, the Command Code.  If an entry
-**          is not located, an error code is returned.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \param[in] MessageID message ID of command message received on command pipe
-**
-** \param[in] CommandCode command code from command message received on command pipe
-**                                      
-** \returns
-** \retstmt On success, a non-negative Table Index is returned.   \endcode
-** \retcode #MD_BAD_CMD_CODE \copydoc MD_BAD_CMD_CODE            \endcode
-** \retcode #MD_BAD_MSG_ID   \copydoc MD_BAD_MSG_ID              \endcode
-** \endreturns
-**
-******************************************************************************/
-
-int16 MD_SearchCmdHndlrTbl(CFE_SB_MsgId_t MessageID, uint16 CommandCode);
-
 /* Constant Data */
-
-
 
 const MD_CmdHandlerTblRec_t MD_CmdHandlerTbl[] = {
 /*   Message ID,    Command Code,            Msg Size,     Msg/Cmd/Terminator */
@@ -290,15 +52,14 @@ const MD_CmdHandlerTblRec_t MD_CmdHandlerTbl[] = {
 {             0,                   0,                 0,       MD_TERM_MSGTYPE}
 };
 
-
-/******************************************************************************/
+MD_AppData_t MD_AppData;
 
 void MD_AppMain ( void )
 {
    CFE_SB_MsgId_t     MessageID;
-   int32              Status;
-   uint8              TblIndex;
-   boolean            IsRegistered;
+   int32              Status  = CFE_SUCCESS;
+   uint8              TblIndex = 0;
+   bool               IsRegistered = false;
 
    /* 
    ** Register the Application with Executive Services 
@@ -306,15 +67,15 @@ void MD_AppMain ( void )
    Status = CFE_ES_RegisterApp();
    if(Status != CFE_SUCCESS)
    {
-      IsRegistered = FALSE;
+      IsRegistered = false;
       CFE_ES_WriteToSysLog
-              ("MD_APP: Call to CFE_ES_RegisterApp Failed:RC=0x%08X\n",Status);
-      MD_AppData.RunStatus = CFE_ES_APP_ERROR;
+              ("MD_APP: Call to CFE_ES_RegisterApp Failed:RC=%d\n", Status);
+      MD_AppData.RunStatus = CFE_ES_RunStatus_APP_ERROR;
    }/* end if */
    else
    {  /* Successfully registered */
-      IsRegistered = TRUE;
-      MD_AppData.RunStatus = CFE_ES_APP_RUN;
+      IsRegistered = true;
+      MD_AppData.RunStatus = CFE_ES_RunStatus_APP_RUN;
       
       /* Create the first Performance Log entry */
       CFE_ES_PerfLogEntry(MD_APPMAIN_PERF_ID);  
@@ -324,14 +85,14 @@ void MD_AppMain ( void )
 
       if (Status != CFE_SUCCESS) 
       {
-         CFE_ES_WriteToSysLog("MD:Application Init Failed,RC=0x%08X\n", Status);      
-         MD_AppData.RunStatus = CFE_ES_APP_ERROR;
+         CFE_ES_WriteToSysLog("MD:Application Init Failed,RC=%d\n", Status);      
+         MD_AppData.RunStatus = CFE_ES_RunStatus_APP_ERROR;
       }
    }
    
 
    /* Loop Forever, or until ES exit command, or SB error  */
-   while ( CFE_ES_RunLoop(&MD_AppData.RunStatus) == TRUE) 
+   while ( CFE_ES_RunLoop(&MD_AppData.RunStatus) == true) 
    {
       /* Copy any newly loaded tables */
       for (TblIndex=0; TblIndex < MD_NUM_DWELL_TABLES; TblIndex++)
@@ -351,30 +112,30 @@ void MD_AppMain ( void )
          /* 
          ** Exit on pipe read error
          */
-         CFE_EVS_SendEvent(MD_PIPE_ERR_EID, CFE_EVS_ERROR,
-                    "SB Pipe Read Error, App will exit. Pipe Return Status = 0x%08X", Status);         
+         CFE_EVS_SendEvent(MD_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,
+                    "SB Pipe Read Error, App will exit. Pipe Return Status = %d", Status);         
           
-         MD_AppData.RunStatus = CFE_ES_APP_ERROR;
+         MD_AppData.RunStatus = CFE_ES_RunStatus_APP_ERROR;
           
       }
 
       CFE_ES_PerfLogEntry(MD_APPMAIN_PERF_ID);         
 
       /* Process Executive Request */
-      if(Status == CFE_SUCCESS)
+      if((Status == CFE_SUCCESS) && (MD_AppData.MsgPtr != NULL))
       {
         MessageID = CFE_SB_GetMsgId(MD_AppData.MsgPtr);
-
+                 
         switch(MessageID)
         {
             case MD_WAKEUP_MID:
             
                 if (CFE_SB_GetTotalMsgLength(MD_AppData.MsgPtr) != sizeof(MD_NoArgsCmd_t))
                 {
-                    CFE_EVS_SendEvent( MD_MSG_LEN_ERR_EID, CFE_EVS_ERROR,
-                                      "Msg with Bad length Rcvd: ID = 0x%04X, Exp Len = %d, Len = %d",
+                    CFE_EVS_SendEvent( MD_MSG_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+                                      "Msg with Bad length Rcvd: ID = 0x%04X, Exp Len = %u, Len = %d",
                                        MessageID,  
-                                       sizeof(MD_NoArgsCmd_t), 
+                                       (unsigned int) sizeof(MD_NoArgsCmd_t), 
                                        CFE_SB_GetTotalMsgLength(MD_AppData.MsgPtr));
                 }
                 else
@@ -392,10 +153,10 @@ void MD_AppMain ( void )
             
                 if (CFE_SB_GetTotalMsgLength(MD_AppData.MsgPtr) != sizeof(MD_NoArgsCmd_t))
                 {
-                    CFE_EVS_SendEvent( MD_MSG_LEN_ERR_EID, CFE_EVS_ERROR,
-                                      "Msg with Bad length Rcvd: ID = 0x%04X, Exp Len = %d, Len = %d",
+                    CFE_EVS_SendEvent( MD_MSG_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
+                                      "Msg with Bad length Rcvd: ID = 0x%04X, Exp Len = %u, Len = %d",
                                        MessageID,  
-                                       sizeof(MD_NoArgsCmd_t), 
+                                       (unsigned int)sizeof(MD_NoArgsCmd_t), 
                                        CFE_SB_GetTotalMsgLength(MD_AppData.MsgPtr));
                 }
                 else
@@ -405,7 +166,7 @@ void MD_AppMain ( void )
                 break;
 
             default:
-                CFE_EVS_SendEvent(MD_MID_ERR_EID, CFE_EVS_ERROR, 
+                CFE_EVS_SendEvent(MD_MID_ERR_EID, CFE_EVS_EventType_ERROR, 
                     "Msg with Invalid message ID Rcvd -- ID = 0x%04X",
                      MessageID );
                 break;
@@ -419,7 +180,7 @@ void MD_AppMain ( void )
    /*
    ** Performance Log Exit Stamp.
    */
-   if (IsRegistered == TRUE)
+   if (IsRegistered == true)
    {
       CFE_ES_PerfLogExit(MD_APPMAIN_PERF_ID); 
    }
@@ -440,7 +201,7 @@ int32 MD_AppInit( void )
     /*
     ** Locals
     */
-    int32   Status; 
+    int32   Status = CFE_SUCCESS; 
     
     /* Initialize local control structures */
     MD_InitControlStructures();
@@ -451,7 +212,7 @@ int32 MD_AppInit( void )
     if(Status != CFE_SUCCESS)
     {
         CFE_ES_WriteToSysLog
-                 ("MD_APP:Call to CFE_EVS_Register Failed:RC=0x%08X\n", Status);
+                 ("MD_APP:Call to CFE_EVS_Register Failed:RC=%d\n", Status);
     }/* end if */
 
     /*
@@ -476,7 +237,7 @@ int32 MD_AppInit( void )
     */
     if(Status == CFE_SUCCESS)
     {
-        Status = CFE_EVS_SendEvent (MD_INIT_INF_EID, CFE_EVS_INFORMATION,
+        Status = CFE_EVS_SendEvent (MD_INIT_INF_EID, CFE_EVS_EventType_INFORMATION,
                "MD Initialized.  Version %d.%d.%d.%d",
                 MD_MAJOR_VERSION,
                 MD_MINOR_VERSION, 
@@ -494,32 +255,18 @@ int32 MD_AppInit( void )
 void MD_InitControlStructures(void)
 {
     uint16  TblIndex;
-    uint16  EntryIndex;
-    MD_DwellPacketControl_t *DwellControlPtr;
-    MD_DwellControlEntry_t  *DwellEntryPtr;
+    MD_DwellPacketControl_t *DwellControlPtr = NULL;
     
     for (TblIndex=0; TblIndex < MD_NUM_DWELL_TABLES; TblIndex++)
     {
         DwellControlPtr = &MD_AppData.MD_DwellTables[TblIndex];
-        DwellControlPtr->Enabled = 0;    
-        DwellControlPtr->AddrCount = 0;      
-        DwellControlPtr->Rate = 0; 
+
+        CFE_PSP_MemSet(DwellControlPtr, 0, sizeof(MD_DwellPacketControl_t));
+        
         /* Countdown must be set to 1 since it's decremented at the top of */
         /* the dwell loop. */           
         DwellControlPtr->Countdown = 1;      
-	    DwellControlPtr->PktOffset = 0;    
-	    DwellControlPtr->CurrentEntry = 0; 
-	    DwellControlPtr->DataSize = 0;        
-        DwellControlPtr->Filler = 0;    
-        
-        for (EntryIndex = 0; EntryIndex < MD_DWELL_TABLE_SIZE; EntryIndex++)
-        {
-            DwellEntryPtr = &DwellControlPtr->Entry[EntryIndex];
-            DwellEntryPtr->Length = 0;      
-	        DwellEntryPtr->Delay = 0;          
-            DwellEntryPtr->ResolvedAddress = 0; 
-        } /* end for EntryIndex loop */
-        
+	                  
 #if MD_SIGNATURE_OPTION == 1   
         strncpy(DwellControlPtr->Signature,"", MD_SIGNATURE_FIELD_LENGTH);          
 #endif
@@ -531,13 +278,13 @@ void MD_InitControlStructures(void)
 /******************************************************************************/
 int32 MD_InitSoftwareBusServices( void )
 {
-    int32    Status;
+    int32    Status = CFE_SUCCESS;
     uint16   TblIndex;
 
    /*
    ** Initialize housekeeping telemetry packet (clear user data area) 
    */
-   CFE_SB_InitMsg(&MD_AppData.HkPkt, MD_HK_TLM_MID, MD_HK_TLM_LNGTH, TRUE);
+   CFE_SB_InitMsg(&MD_AppData.HkPkt, MD_HK_TLM_MID, MD_HK_TLM_LNGTH, true);
     
    /*
    ** Initialize dwell packets (clear user data area) 
@@ -547,7 +294,7 @@ int32 MD_InitSoftwareBusServices( void )
        CFE_SB_InitMsg(&MD_AppData.MD_DwellPkt[TblIndex], 
                       (CFE_SB_MsgId_t) MD_DWELL_PKT_MID_BASE + TblIndex, 
                        MD_DWELL_PKT_LNGTH, /* this is max pkt size */
-                       TRUE); /* clear data area and set seq count to zero. */
+                       true); /* clear data area and set seq count to zero. */
                        
 #if MD_SIGNATURE_OPTION == 1   
        MD_AppData.MD_DwellPkt[TblIndex].Signature[0]='\0';
@@ -562,8 +309,8 @@ int32 MD_InitSoftwareBusServices( void )
     
     if(Status != CFE_SUCCESS)
     {
-       CFE_ES_WriteToSysLog("MD_APP: Error creating cmd pipe:RC=0x%08X\n",
-                            Status);
+        CFE_EVS_SendEvent(MD_CREATE_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,
+                          "Failed to create pipe.  RC = %d", Status);
     }/* end if */                                                                
 
 
@@ -577,8 +324,9 @@ int32 MD_InitSoftwareBusServices( void )
             
         if(Status != CFE_SUCCESS)
         {
-            CFE_ES_WriteToSysLog
-               ("MD_APP: Error subscribing to HK Request:RC=0x%08X\n", Status);
+            CFE_EVS_SendEvent(MD_SUB_HK_ERR_EID, CFE_EVS_EventType_ERROR,
+                              "Failed to subscribe to HK requests  RC = %d",
+                              Status);
         }/* end if */
 
     }/* end if */                                                                
@@ -594,8 +342,9 @@ int32 MD_InitSoftwareBusServices( void )
             
         if(Status != CFE_SUCCESS)
         {
-            CFE_ES_WriteToSysLog
-                  ("MD_APP:Error subscribing to gnd cmds:RC=0x%08X\n", Status);
+            CFE_EVS_SendEvent(MD_SUB_CMD_ERR_EID, CFE_EVS_EventType_ERROR,
+                              "Failed to subscribe to commands.  RC = %d",
+                              Status);
         }/* end if */
 
     }/* end if */
@@ -611,8 +360,9 @@ int32 MD_InitSoftwareBusServices( void )
             
         if(Status != CFE_SUCCESS)
         {
-            CFE_ES_WriteToSysLog
-            ("MD_APP:Error subscribing to wakeup message:RC=0x%08X\n", Status);
+            CFE_EVS_SendEvent(MD_SUB_WAKEUP_ERR_EID, CFE_EVS_EventType_ERROR,
+                              "Failed to subscribe to wakeup messages.  RC = %d",
+                              Status);
         }/* end if */
 
     }/* end if */
@@ -626,15 +376,16 @@ int32 MD_InitSoftwareBusServices( void )
 
 int32 MD_InitTableServices( void )
 {
-    int32                   Status; 
-    int32                   GetAddressResult; 
+    int32                   Status = CFE_SUCCESS; 
+    int32                   GetAddressResult = 0; 
     uint8                   TblIndex;
-    boolean                 RecoveredValidTable;        /* for current table */
-    boolean                 TableInitValidFlag = TRUE;  /* for all tables so far*/
+    bool                    RecoveredValidTable = true;  /* for current table */
+    bool                    TableInitValidFlag = true;   /* for all tables so far*/
     MD_DwellTableLoad_t     InitMemDwellTable;
-    MD_DwellTableLoad_t*    MD_LoadTablePtr = 0; 
+    MD_DwellTableLoad_t*    MD_LoadTablePtr = NULL; 
     uint16                  TblRecos = 0; /* Number of Tables Recovered */
     uint16                  TblInits = 0; /* Number of Tables Initialized */
+    char                    TblFileName[OS_MAX_PATH_LEN];
 
     /*  Prepare Data Structure used for loading Initial Table Data    */
     
@@ -646,16 +397,50 @@ int32 MD_InitTableServices( void )
     */
 
     for ( TblIndex = 0; 
-          (TblIndex < MD_NUM_DWELL_TABLES) && (TableInitValidFlag == TRUE); 
+          (TblIndex < MD_NUM_DWELL_TABLES) && (TableInitValidFlag == true); 
           TblIndex++)
     {
-        RecoveredValidTable = FALSE;
+        RecoveredValidTable = false;
         
         /* Prepare Table Name */
-        snprintf(MD_AppData.MD_TableName[TblIndex], 
-                 CFE_TBL_MAX_NAME_LENGTH + 1, /* allows total of CFE_TBL_MAX_NAME_LENGTH characters to be copied */
-                 "%s%d", MD_DWELL_TABLE_BASENAME, TblIndex + 1); 
-                 
+        Status = snprintf(MD_AppData.MD_TableName[TblIndex], 
+                          sizeof(MD_AppData.MD_TableName[TblIndex]),
+                          "%s%d", MD_DWELL_TABLE_BASENAME, TblIndex + 1); 
+        if(Status < 0) 
+        {
+            CFE_EVS_SendEvent(MD_INIT_TBL_NAME_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
+                              "TableName could not be made. Err=0x%08X, Idx=%d",
+                              Status,
+                              TblIndex);
+
+
+            TableInitValidFlag = false;
+
+            /* Advance to the next index */
+            continue;
+        }
+
+
+        /* allows total of CFE_TBL_MAX_NAME_LENGTH characters to be copied */
+        Status = snprintf(TblFileName, 
+                 OS_MAX_PATH_LEN, 
+                 MD_TBL_FILENAME_FORMAT, TblIndex + 1); 
+        
+        if(Status < 0) 
+        {
+            CFE_EVS_SendEvent(MD_INIT_TBL_FILENAME_ERR_EID,
+                              CFE_EVS_EventType_ERROR,
+                              "TblFileName could not be made. Err=0x%08X, Idx=%d",
+                              Status,
+                              TblIndex);
+
+            TableInitValidFlag = false;
+
+            /* Advance to the next index */
+            continue;
+        }
+
         /* Register Dwell Table #tblnum */
         Status = CFE_TBL_Register(
                 &MD_AppData.MD_TableHandle[TblIndex],  /* Table Handle (to be returned) */
@@ -674,9 +459,9 @@ int32 MD_InitTableServices( void )
                     
             if(GetAddressResult != CFE_TBL_INFO_UPDATED)
             {
-                CFE_EVS_SendEvent(MD_NO_TBL_COPY_ERR_EID, CFE_EVS_ERROR, 
+                CFE_EVS_SendEvent(MD_NO_TBL_COPY_ERR_EID, CFE_EVS_EventType_ERROR, 
 "Didn't update MD tbl #%d due to unexpected CFE_TBL_GetAddress return: 0x%08X", 
-                        TblIndex+1, GetAddressResult); 
+                        TblIndex+1, (unsigned int)GetAddressResult); 
             }
 
             else  /* GetAddressResult == CFE_TBL_INFO_UPDATED*/
@@ -691,15 +476,15 @@ int32 MD_InitTableServices( void )
                        MD_StartDwellStream ( (uint16) TblIndex);
                     }
 
-                    RecoveredValidTable=TRUE;
+                    RecoveredValidTable=true;
                     TblRecos++;
-                    CFE_EVS_SendEvent(MD_RECOVERED_TBL_VALID_INF_EID, CFE_EVS_INFORMATION, 
+                    CFE_EVS_SendEvent(MD_RECOVERED_TBL_VALID_INF_EID, CFE_EVS_EventType_INFORMATION, 
                        "Recovered Dwell Table #%d is valid and has been copied to the MD App", 
                         TblIndex+1); 
                 }
                 else
                 {   
-                    CFE_EVS_SendEvent(MD_RECOVERED_TBL_NOT_VALID_ERR_EID, CFE_EVS_ERROR, 
+                    CFE_EVS_SendEvent(MD_RECOVERED_TBL_NOT_VALID_ERR_EID, CFE_EVS_EventType_ERROR, 
                        "MD App will reinitialize Dwell Table #%d because recovered table is not valid", 
                         TblIndex+1); 
                 }
@@ -713,30 +498,35 @@ int32 MD_InitTableServices( void )
 
         else if (Status == CFE_TBL_ERR_INVALID_SIZE)
         {
-            CFE_EVS_SendEvent (MD_DWELL_TBL_TOO_LARGE_CRIT_EID, CFE_EVS_CRITICAL,
-                              "Dwell Table(s) are too large to register: %d > %d bytes, %d > %d entries",
-                               MD_TBL_LOAD_LNGTH, CFE_TBL_MAX_SNGL_TABLE_SIZE,
-                               MD_DWELL_TABLE_SIZE, 
-                              (uint16) ((CFE_TBL_MAX_SNGL_TABLE_SIZE - sizeof(uint32) ) / sizeof (MD_TableLoadEntry_t)));
-            TableInitValidFlag = FALSE;
+            CFE_EVS_SendEvent (MD_DWELL_TBL_TOO_LARGE_CRIT_EID, CFE_EVS_EventType_CRITICAL,
+                               "Dwell Table(s) are too large to register: %u bytes, %d entries",
+                               (unsigned int)MD_TBL_LOAD_LNGTH,
+                               MD_DWELL_TABLE_SIZE);
+            TableInitValidFlag = false;
         }   /* end if */
         
         else if (Status != CFE_SUCCESS)
         {
-            CFE_EVS_SendEvent (MD_TBL_REGISTER_CRIT_EID, CFE_EVS_CRITICAL,
-                              "CFE_TBL_Register error 0x%08X received for tbl#%d",
-                               Status,TblIndex+1);
-            TableInitValidFlag = FALSE;
+            CFE_EVS_SendEvent (MD_TBL_REGISTER_CRIT_EID, CFE_EVS_EventType_CRITICAL,
+                              "CFE_TBL_Register error %d received for tbl#%d",
+                               Status, TblIndex+1);
+            TableInitValidFlag = false;
         }   /* end if */
+        else
+        {
+            /* Table is registered and valid */
+            TableInitValidFlag = true;
+        }
+        
 
         /* 
         ** Load initial values if needed 
         */
-        if((RecoveredValidTable == FALSE) && (TableInitValidFlag == TRUE))
+        if((RecoveredValidTable == false) && (TableInitValidFlag == true))
         {
             Status = CFE_TBL_Load(MD_AppData.MD_TableHandle[TblIndex],  
-            CFE_TBL_SRC_ADDRESS,    /*  following ptr is memory ptr */
-            &InitMemDwellTable);    /* Pointer to data to be loaded */
+            CFE_TBL_SRC_FILE,    /*  following ptr is memory ptr */
+            (const void *) TblFileName);    /* Pointer to data to be loaded */
              
             MD_AppData.MD_DwellTables[TblIndex].Enabled  = MD_DWELL_STREAM_DISABLED;
            
@@ -744,8 +534,8 @@ int32 MD_InitTableServices( void )
             {
                 CFE_ES_WriteToSysLog
                 ("MD_APP: Error 0x%08X received loading tbl#%d\n",
-                              Status,TblIndex+1);
-                TableInitValidFlag = FALSE;
+                              (unsigned int)Status,TblIndex+1);
+                TableInitValidFlag = false;
             }/* end if */
             else
             {
@@ -754,7 +544,7 @@ int32 MD_InitTableServices( void )
 
         }
         
-        if( TableInitValidFlag == TRUE)
+        if( TableInitValidFlag == true)
         {
             /* Update Dwell Table Control Info, including rate */
             MD_UpdateDwellControlInfo(TblIndex);
@@ -763,12 +553,12 @@ int32 MD_InitTableServices( void )
     }  /* end for loop */
 
     /* Output init and recovery event message */
-    CFE_EVS_SendEvent(MD_TBL_INIT_INF_EID, CFE_EVS_INFORMATION, 
+    CFE_EVS_SendEvent(MD_TBL_INIT_INF_EID, CFE_EVS_EventType_INFORMATION, 
       "Dwell Tables Recovered: %d, Dwell Tables Initialized: %d", 
       TblRecos, TblInits); 
 
         
-    if (TableInitValidFlag == TRUE)
+    if (TableInitValidFlag == true)
     {
        return CFE_SUCCESS;
     }
@@ -785,8 +575,8 @@ int32 MD_InitTableServices( void )
 int32 MD_ManageDwellTable (uint8 TblIndex)
 {
     int32                Status = CFE_SUCCESS;
-    int32                GetAddressResult; 
-    boolean              FinishedManaging = FALSE;
+    int32                GetAddressResult = 0; 
+    bool              FinishedManaging = false;
     MD_DwellTableLoad_t *MD_LoadTablePtr = 0; 
 
     while (!FinishedManaging)
@@ -804,7 +594,7 @@ int32 MD_ManageDwellTable (uint8 TblIndex)
             {
                 /* If an error occurred during Validate, */
                 /* then do not perform any more managing */
-                FinishedManaging = TRUE;
+                FinishedManaging = true;
             }
         }
         else if (Status == CFE_TBL_INFO_UPDATE_PENDING)
@@ -828,8 +618,8 @@ int32 MD_ManageDwellTable (uint8 TblIndex)
                }
                else
                {   
-                  CFE_EVS_SendEvent(MD_NO_TBL_COPY_ERR_EID, CFE_EVS_ERROR, 
-"Didn't update MD tbl #%d due to unexpected CFE_TBL_GetAddress return: 0x%08X", 
+                  CFE_EVS_SendEvent(MD_NO_TBL_COPY_ERR_EID, CFE_EVS_EventType_ERROR, 
+                        "Didn't update MD tbl #%d due to unexpected CFE_TBL_GetAddress return: %d", 
                         TblIndex+1, GetAddressResult); 
                }
 
@@ -839,19 +629,19 @@ int32 MD_ManageDwellTable (uint8 TblIndex)
             
             /* After an Update, always assume we are done */
             /* and return Update Status */
-            FinishedManaging = TRUE;
+            FinishedManaging = true;
         }
         else if((Status & CFE_SEVERITY_BITMASK) == CFE_SEVERITY_ERROR)  
         {
-            CFE_EVS_SendEvent(MD_TBL_STATUS_ERR_EID, CFE_EVS_ERROR, 
-                             "Received unexpected error 0x%08X from CFE_TBL_GetStatus for tbl #%d", 
+            CFE_EVS_SendEvent(MD_TBL_STATUS_ERR_EID, CFE_EVS_EventType_ERROR, 
+                             "Received unexpected error %d from CFE_TBL_GetStatus for tbl #%d", 
                               Status, TblIndex+1); 
-            FinishedManaging = TRUE;
+            FinishedManaging = true;
         }
 
         else
         {
-            FinishedManaging = TRUE;
+            FinishedManaging = true;
         }
     }
 
@@ -864,10 +654,10 @@ int32 MD_ManageDwellTable (uint8 TblIndex)
 
 void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
 {
-    uint16          CommandCode;
-    CFE_SB_MsgId_t  MessageID;
-    int16           CmdIndx;
-    uint16          ActualLength;
+    uint16          CommandCode = 0;
+    CFE_SB_MsgId_t  MessageID = (CFE_SB_MsgId_t)0;
+    int16           CmdIndx = 0;
+    uint16          ActualLength = 0;
 
     /* Extract Command Code and Message Id */
     CommandCode = CFE_SB_GetCmdCode(MessagePtr);
@@ -881,7 +671,7 @@ void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
 
         /* If match wasn't found in command info structure,            */
         /* issue an error event, increment error counter, and return.  */
-        CFE_EVS_SendEvent  (MD_CC_NOT_IN_TBL_ERR_EID,  CFE_EVS_ERROR,
+        CFE_EVS_SendEvent  (MD_CC_NOT_IN_TBL_ERR_EID,  CFE_EVS_EventType_ERROR,
                     "Command Code %d not found in MD_CmdHandlerTbl structure", 
                      CommandCode);
         MD_AppData.ErrCounter++;
@@ -895,10 +685,10 @@ void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
     /* send error event, increment error count, and return.  */
     if (ActualLength != MD_CmdHandlerTbl[CmdIndx].ExpectedLength)
     {
-        CFE_EVS_SendEvent( MD_CMD_LEN_ERR_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent( MD_CMD_LEN_ERR_EID, CFE_EVS_EventType_ERROR,
            "Cmd Msg with Bad length Rcvd: ID = 0x%04X, CC = %d, Exp Len = %d, Len = %d",
             MessageID, CommandCode, 
-            MD_CmdHandlerTbl[CmdIndx].ExpectedLength, ActualLength);
+            (int)MD_CmdHandlerTbl[CmdIndx].ExpectedLength, ActualLength);
                         
         MD_AppData.ErrCounter++;
         return;
@@ -910,7 +700,7 @@ void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
     {
         case MD_NOOP_CC:
         
-            CFE_EVS_SendEvent (MD_NOOP_INF_EID, CFE_EVS_INFORMATION,
+            CFE_EVS_SendEvent (MD_NOOP_INF_EID, CFE_EVS_EventType_INFORMATION,
             "No-op command, Version %d.%d.%d.%d",
              MD_MAJOR_VERSION,
              MD_MINOR_VERSION, 
@@ -922,7 +712,7 @@ void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
 
         case MD_RESET_CNTRS_CC:
       
-            CFE_EVS_SendEvent  (MD_RESET_CNTRS_DBG_EID,  CFE_EVS_DEBUG,
+            CFE_EVS_SendEvent  (MD_RESET_CNTRS_DBG_EID,  CFE_EVS_EventType_DEBUG,
                                 "Reset Counters Cmd Received");
             MD_AppData.CmdCounter   = 0;
             MD_AppData.ErrCounter   = 0;
@@ -951,7 +741,7 @@ void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
 
         default:
             /* unknown function code specified - send error event message */
-            CFE_EVS_SendEvent(MD_CC_NOT_IN_LOOP_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(MD_CC_NOT_IN_LOOP_ERR_EID, CFE_EVS_EventType_ERROR,
                "Command Code %d not found in command processing loop",
                 CommandCode);
             MD_AppData.ErrCounter++;
@@ -967,10 +757,10 @@ void MD_ExecRequest(CFE_SB_MsgPtr_t MessagePtr )
 /******************************************************************************/
 void MD_HkStatus()
 {
-    uint8                        TblIndex = 0;
-    uint16                       MemDwellEnableBits;
-    MD_HkTlm_t                  *HkPktPtr;
-    MD_DwellPacketControl_t     *ThisDwellTablePtr;
+    uint8                        TblIndex;
+    uint16                       MemDwellEnableBits = 0;
+    MD_HkTlm_t                  *HkPktPtr = NULL;
+    MD_DwellPacketControl_t     *ThisDwellTablePtr = NULL;
     
     /* Assign pointer used as shorthand to access Housekeeping Packet fields */
     HkPktPtr = &MD_AppData.HkPkt;
@@ -979,8 +769,6 @@ void MD_HkStatus()
     
     HkPktPtr->ValidCmdCntr   = MD_AppData.CmdCounter;
     HkPktPtr->InvalidCmdCntr = MD_AppData.ErrCounter;
-
-    MemDwellEnableBits = 0;
 
     for (TblIndex=0; TblIndex<MD_NUM_DWELL_TABLES; TblIndex++)
     {      
@@ -1014,8 +802,8 @@ void MD_HkStatus()
     /*
     ** Send housekeeping telemetry packet...
     */
-    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) HkPktPtr);
-    CFE_SB_SendMsg((CFE_SB_Msg_t *) HkPktPtr);
+    CFE_SB_TimeStampMsg((CFE_SB_MsgPtr_t)HkPktPtr);
+    CFE_SB_SendMsg((CFE_SB_MsgPtr_t)HkPktPtr);
     
     return;
     
@@ -1027,8 +815,8 @@ void MD_HkStatus()
 int16 MD_SearchCmdHndlrTbl( CFE_SB_MsgId_t MessageID, uint16 CommandCode )
 {
     int16     TblIndx = -1; /* need index to be 0 after it is incremented for 1st time */
-    boolean   MatchedMsgId = FALSE;
-    boolean   FoundMatch = FALSE;
+    bool   MatchedMsgId = false;
+    bool   FoundMatch = false;
 
     do
     {
@@ -1042,7 +830,7 @@ int16 MD_SearchCmdHndlrTbl( CFE_SB_MsgId_t MessageID, uint16 CommandCode )
         
             /* Flag any found message IDs so that if there's an error, we can */
             /* determine if it was a bad message ID or bad command code */
-            MatchedMsgId = TRUE;
+            MatchedMsgId = true;
 
             /* If entry in the Command Handler Table is a command entry, */
             /* then check for a matching command code                    */
@@ -1051,14 +839,14 @@ int16 MD_SearchCmdHndlrTbl( CFE_SB_MsgId_t MessageID, uint16 CommandCode )
                 if (MD_CmdHandlerTbl[TblIndx].CmdCode == CommandCode)
                 {
                     /* Found matching message ID and Command Code */
-                    FoundMatch = TRUE;
+                    FoundMatch = true;
                 }
             }
             else 
             /* Message is not a command message with specific command code */
             {
                 /* Matching Message ID is all that is required      */
-                FoundMatch = TRUE;
+                FoundMatch = true;
             }
         }
                 

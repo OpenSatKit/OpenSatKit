@@ -1,0 +1,170 @@
+        -:    0:Source:../src/md_utils.c
+        -:    0:Programs:5
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: md_utils.c.gcov 1.2 2017/07/05 13:00:24EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**  Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6:**  Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**  All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**  This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**  This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**  used, distributed and modified only pursuant to the terms of that 
+        -:   12:**  agreement.
+        -:   13:**
+        -:   14:** Purpose: 
+        -:   15:**   Utility functions used for processing CFS Memory Dwell commands
+        -:   16:**
+        -:   17:** 
+        -:   18:*************************************************************************/
+        -:   19:
+        -:   20:/*************************************************************************
+        -:   21:** Includes
+        -:   22:*************************************************************************/
+        -:   23:#include "cfe.h"
+        -:   24:#include "md_utils.h"
+        -:   25:#include "md_app.h"
+        -:   26:#include <string.h>
+        -:   27:extern MD_AppData_t MD_AppData;
+        -:   28:
+        -:   29:
+        -:   30:/******************************************************************************/
+        -:   31:
+       38:   32:boolean MD_TableIsInMask(int16 TableId, uint16 TableMask)
+        -:   33:{
+       38:   34:   uint16  LocalMask = TableMask;
+        -:   35:   boolean Status;
+        -:   36:   
+        -:   37:   /* Shift TableId - 1 times */
+       38:   38:   if (TableId - 1)
+        -:   39:   {
+       29:   40:      LocalMask = LocalMask >> (TableId -1);
+        -:   41:   }
+        -:   42:   
+        -:   43:   /* If result is odd, */
+        -:   44:   /* then table is in mask. */
+       38:   45:   if ( (LocalMask & (uint16) 1) == (uint16) 1)
+        6:   46:      Status = TRUE;
+        -:   47:   else
+       32:   48:      Status = FALSE;
+        -:   49:    
+       38:   50:   return Status;
+        -:   51:   
+        -:   52:} /* End MD_TableIsInMask */
+        -:   53:
+        -:   54:/******************************************************************************/
+        -:   55:
+       46:   56:void MD_UpdateDwellControlInfo (uint16 TableIndex)
+        -:   57:{
+        -:   58:    /* Initialize local data */
+       46:   59:    uint16 EntryIndex               = 0;
+       46:   60:    uint16 NumDwellAddresses        = 0;
+       46:   61:    uint16 NumDwellDataBytes        = 0;
+       46:   62:    uint32 NumDwellDelayCounts      = 0;
+       46:   63:    MD_DwellPacketControl_t *TblPtr = &MD_AppData.MD_DwellTables[TableIndex]; 
+        -:   64:    
+        -:   65:    /* 
+        -:   66:    ** Sum Address Count, Data Size, and Rate from Dwell Entries 
+        -:   67:    */
+      142:   68:    while ((EntryIndex <  MD_DWELL_TABLE_SIZE) &&
+       48:   69:            (TblPtr->Entry[EntryIndex].Length != 0))
+        -:   70:    {
+        2:   71:        NumDwellAddresses++;
+        2:   72:        NumDwellDataBytes   += TblPtr->Entry[EntryIndex].Length;
+        2:   73:        NumDwellDelayCounts += TblPtr->Entry[EntryIndex].Delay;
+        2:   74:        EntryIndex++;
+        -:   75:    }
+        -:   76:    
+        -:   77:    /* Copy totals to dwell control structure. */
+       46:   78:    TblPtr->AddrCount = NumDwellAddresses;
+       46:   79:    TblPtr->DataSize  = NumDwellDataBytes;
+       46:   80:    TblPtr->Rate      = NumDwellDelayCounts;
+        -:   81:    
+       46:   82:    return;
+        -:   83:} /* MD_UpdateDwellControlInfo */
+        -:   84:
+        -:   85:/******************************************************************************/
+        -:   86:
+        -:   87:/*
+        -:   88:**  Data Validation Functions
+        -:   89:*/
+        -:   90:/******************************************************************************/
+       10:   91:boolean MD_ValidEntryId            ( uint16 EntryId )
+        -:   92:{
+        -:   93:    boolean IsValid;
+        -:   94:    
+       18:   95:    if ((EntryId >= 1) && ( EntryId <= MD_DWELL_TABLE_SIZE ))  
+        -:   96:    {
+        -:   97:        /* validate  value (1..MD_DWELL_TABLE_SIZE ) */
+        8:   98:        IsValid = TRUE;
+        -:   99:    }
+        -:  100:    else
+        -:  101:    {
+        2:  102:        IsValid = FALSE;
+        -:  103:    }
+       10:  104:    return IsValid;
+        -:  105:}
+        -:  106:
+        -:  107:
+        -:  108:/******************************************************************************/
+        -:  109:
+       89:  110:boolean MD_ValidAddrRange( cpuaddr Addr, uint32 Size )
+        -:  111:{
+        -:  112:    boolean IsValid;
+        -:  113:
+       89:  114:    if ( CFE_PSP_MemValidateRange (Addr,Size, CFE_PSP_MEM_ANY) == OS_SUCCESS ) 
+        -:  115:    {
+       85:  116:        IsValid = TRUE;
+        -:  117:    }
+        -:  118:   else                                         
+        -:  119:    { 
+        4:  120:        IsValid = FALSE;
+        -:  121:    }  
+        -:  122:    
+       89:  123:    return IsValid;
+        -:  124:}
+        -:  125:/******************************************************************************/
+       15:  126:boolean MD_ValidTableId( uint16 TableId)
+        -:  127:{
+        -:  128:    boolean IsValid;
+        -:  129:    
+       25:  130:    if ((TableId >= 1) && (TableId <= MD_NUM_DWELL_TABLES)) 
+        -:  131:    {
+       10:  132:       IsValid=TRUE;
+        -:  133:    }
+        -:  134:    else
+        -:  135:    {
+        5:  136:       IsValid=FALSE;
+        -:  137:    }
+        -:  138:      
+       15:  139:    return IsValid;
+        -:  140:}
+        -:  141:
+        -:  142:/******************************************************************************/
+        -:  143:
+       91:  144:boolean MD_ValidFieldLength( uint16 FieldLength)
+        -:  145:{
+        -:  146:
+        -:  147:    boolean IsValid;
+        -:  148:
+      177:  149:    if ( (FieldLength == 0)  || 
+        -:  150:         (FieldLength == 1)  ||
+        -:  151:         (FieldLength == 2)  || 
+        -:  152:         (FieldLength == 4) )
+        -:  153:    {
+       86:  154:        IsValid= TRUE;
+        -:  155:    }
+        -:  156:    else
+        -:  157:    {
+        5:  158:        IsValid= FALSE;
+        -:  159:    }
+        -:  160:    
+       91:  161:    return IsValid;
+        -:  162:}
+        -:  163:
+        -:  164:/******************************************************************************/
+        -:  165:
+        -:  166:/************************/
+        -:  167:/*  End of File Comment */
+        -:  168:/************************/

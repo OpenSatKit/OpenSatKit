@@ -30,14 +30,17 @@ COMMAND ISIM POWER_ON_INSTR <%= Osk::Cfg.processor_endian %> "Power on the instr
 COMMAND ISIM POWER_OFF_INSTR <%= Osk::Cfg.processor_endian %> "Power off the instruument"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
 
-COMMAND ISIM START_SCI_DATA <%= Osk::Cfg.processor_endian %> "Start science data. Instrument must be in the READY state."
+COMMAND ISIM POWER_RESET_INSTR <%= Osk::Cfg.processor_endian %> "Reset instruument power (clears fault)"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
 
-COMMAND ISIM STOP_SCI_DATA <%= Osk::Cfg.processor_endian %> "Stop science data."
+COMMAND ISIM START_SCI_DATA <%= Osk::Cfg.processor_endian %> "Start science data. Instrument must be in the READY state."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>
 
-COMMAND ISIM CONFIG_FAULT <%= Osk::Cfg.processor_endian %> "Set fault present flag to TRUE/FALSE"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 2) %>
-  APPEND_PARAMETER FAULT_ENA 16 UINT MIN_UINT16 MAX_UINT16 1 "0=No fault, 1=Fault present"
+COMMAND ISIM STOP_SCI_DATA <%= Osk::Cfg.processor_endian %> "Stop science data."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
 
+COMMAND ISIM SET_FAULT <%= Osk::Cfg.processor_endian %> "Set fault present flag (v2.0: Science data corrupted when fault present)"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 0) %>
 
+COMMAND ISIM CLEAR_FAULT <%= Osk::Cfg.processor_endian %> "Clear fault present flag (v2.0: Science data corrupted when fault present)"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>

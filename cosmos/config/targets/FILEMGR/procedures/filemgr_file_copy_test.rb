@@ -30,7 +30,7 @@ module FILEMGR
          @dest_file = AppFuncTest::FLT_TMP_TEST_FILE
       end
 
-      def pass
+      def valid
          #
          # With debug on
          # 1. Overwrite off, same file system  
@@ -55,7 +55,7 @@ module FILEMGR
 
       end
       
-      def fail
+      def invalid
          #
          # 1. Invalid overwrite value
          # 2. Source file invalid name

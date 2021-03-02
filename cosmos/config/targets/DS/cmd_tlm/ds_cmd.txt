@@ -18,28 +18,32 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND DS SET_APP_STATE <%= Osk::Cfg.processor_endian %> "Enable/Disable the DS application packet storing"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 2) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 4) %>
   APPEND_PARAMETER APP_STATE 16 UINT MIN_UINT16 MAX_UINT16 1 "0=Disable, 1=Enable packet storing"
-
+  APPEND_PARAMETER ALIGN_PAD 16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
+  
 COMMAND DS SET_FILTER_FILE <%= Osk::Cfg.processor_endian %> "Modify the Destination File selection for the commanded entry in the Packet Filter Table."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 6) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 8) %>
   APPEND_PARAMETER MSG_ID           16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of existing entry in Packet Filter Table"
   APPEND_PARAMETER FILTER_PARAM_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Filter Parmeter Array"
   APPEND_PARAMETER FILE_TBL_IDX     16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Destination File Table"
+  APPEND_PARAMETER ALIGN_PAD        16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
 
 COMMAND DS SET_FILTER_TYPE <%= Osk::Cfg.processor_endian %> "Modify the Filter Type (pkt count or time) for the commanded entry in the Packet Filter Table."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 6) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 8) %>
   APPEND_PARAMETER MSG_ID           16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of existing entry in Packet Filter Table."
   APPEND_PARAMETER FILTER_PARAM_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Filter Parameter Array"
   APPEND_PARAMETER FILTER_TYPE      16 UINT MIN_UINT16 MAX_UINT16 0 "Filter type (packet sequence count or time)."
+  APPEND_PARAMETER ALIGN_PAD        16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
 
 COMMAND DS SET_FILTER_PARAM <%= Osk::Cfg.processor_endian %> "Modify the Algorithm Parameters for the commanded entry in the Packet Filter Table. N of X messages will be stored starting at offset O"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 10) %>
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 12) %>
   APPEND_PARAMETER MSG_ID           16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID of existing entry in Packet Filter Table."
   APPEND_PARAMETER FILTER_PARAM_IDX 16 UINT MIN_UINT16 MAX_UINT16 0 "Index into Filter Parameter Array"
   APPEND_PARAMETER Algorithm_N      16 UINT MIN_UINT16 MAX_UINT16 0 "Algorithm value N (pass this many)"
   APPEND_PARAMETER Algorithm_X      16 UINT MIN_UINT16 MAX_UINT16 0 "Algorithm value X (out of this many)"
   APPEND_PARAMETER Algorithm_O      16 UINT MIN_UINT16 MAX_UINT16 0 "Algorithm value O (at this offset)"
+  APPEND_PARAMETER ALIGN_PAD        16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
 
 COMMAND DS SET_FILE_TYPE <%= Osk::Cfg.processor_endian %> "Set file name to use sequence count or time in the name for commanded entry in the Destination File Table."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
@@ -89,8 +93,9 @@ COMMAND DS SEND_FILE_INFO <%= Osk::Cfg.processor_endian %> "Send the DS File Inf
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 0) %>
 
 COMMAND DS ADD_FILTER_MID <%= Osk::Cfg.processor_endian %> "Insert the commanded Message ID to an unused Packet Filter Table entry"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 2) %>
-  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID to add to Packet Filter Table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 4) %>
+  APPEND_PARAMETER MSG_ID    16 UINT MIN_UINT16 MAX_UINT16 0 "Message ID to add to Packet Filter Table"
+  APPEND_PARAMETER ALIGN_PAD 16 UINT MIN_UINT16 MAX_UINT16 0 "Pad to 32-bit alignment"
 
 COMMAND DS CLOSE_ALL <%= Osk::Cfg.processor_endian %> "Close all open Destination Files. NOTE: Using this command may incur a performance hit based upon the number and size of the files being closed."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 0) %>

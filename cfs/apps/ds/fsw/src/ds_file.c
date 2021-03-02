@@ -1,45 +1,25 @@
 /************************************************************************
-**   $Id: ds_file.c 1.12.1.1 2015/02/28 17:14:00EST sstrege Exp  $
+** File: ds_file.c 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
-**
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
+** Purpose:
 **  CFS Data Storage (DS) file functions
 **
-** $Log: ds_file.c  $
-** Revision 1.12.1.1 2015/02/28 17:14:00EST sstrege 
-** Added copyright information
-** Revision 1.12 2012/05/31 14:58:11EDT lwalling 
-** Change age limit test from greater than to greater than or equal to max file age
-** Revision 1.11 2011/01/04 12:00:03PST lwalling 
-** Fix errors and warnings when DS_FILE_HEADER_TYPE = DS_FILE_HEADER_GPM
-** Revision 1.10 2010/11/10 15:58:29EST lwalling 
-** Use GPM packet time to create filename and for file header start/stop times
-** Revision 1.9 2010/11/09 15:00:33EST lwalling 
-** Added conditional code to move files after closing them
-** Revision 1.8 2010/11/08 10:28:52EST lwalling 
-** Add utility func DS_FileConvertGPM, create cFE vs GPM support in file header functions
-** Revision 1.7 2009/12/08 10:52:13EST lwalling 
-** Event text cleanup
-** Revision 1.6 2009/08/31 16:47:47EDT lwalling 
-** Remove references to DS_1HZ_MID and process file age tests during housekeeping request
-** Revision 1.5 2009/08/28 16:47:56EDT lwalling 
-** Add support for storing sequence counts in CDS
-** Revision 1.4 2009/08/27 16:32:34EDT lwalling 
-** Updates from source code review
-** Revision 1.3 2009/08/13 09:42:48EDT lwalling 
-** Call to CFE_FS_WriteHeader() returns bytes written, fixed arg order in call to OS_lseek()
-** Revision 1.2 2009/06/12 11:52:18EDT lwalling 
-** Moved function prototypes to header file, modify local vars for file enable state and sequence counters.
-** Revision 1.1 2009/05/26 14:30:40EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/src/project.pj
 *************************************************************************/
 
 #include "cfe.h"
@@ -60,13 +40,6 @@
 
 #include "string.h"
 
-/*
-** Prototype for utility function specific to GPM type file headers
-*/
-#if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-void DS_FileConvertGPM(char *Buffer, uint32 Value);
-#endif
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                 */
 /* DS_FileStorePacket() - store packet in file(s)                  */
@@ -75,13 +48,13 @@ void DS_FileConvertGPM(char *Buffer, uint32 Value);
 
 void DS_FileStorePacket(CFE_SB_MsgId_t MessageID, CFE_SB_MsgPtr_t MessagePtr)
 {
-    DS_PacketEntry_t *PacketEntry;
-    DS_FilterParms_t *FilterParms;
-    boolean PassedFilter;
-    boolean FilterResult;
-    int32 FilterIndex;
-    int32 FileIndex;
-    int32 i;
+    DS_PacketEntry_t *PacketEntry = NULL;
+    DS_FilterParms_t *FilterParms = NULL;
+    bool PassedFilter = false;
+    bool FilterResult = false;
+    int32 FilterIndex = 0;
+    int32 FileIndex = 0;
+    int32 i = 0;
 
     /*
     ** Convert packet MessageID to packet filter table index...
@@ -98,7 +71,7 @@ void DS_FileStorePacket(CFE_SB_MsgId_t MessageID, CFE_SB_MsgPtr_t MessagePtr)
     else
     {
         PacketEntry = &DS_AppData.FilterTblPtr->Packet[FilterIndex];
-        PassedFilter = FALSE;
+        PassedFilter = false;
 
         /*
         ** Each packet has multiple filters for multiple files...
@@ -128,13 +101,13 @@ void DS_FileStorePacket(CFE_SB_MsgId_t MessageID, CFE_SB_MsgPtr_t MessagePtr)
                                                         FilterParms->Algorithm_N,
                                                         FilterParms->Algorithm_X,
                                                         FilterParms->Algorithm_O);
-                    if (FilterResult == FALSE)
+                    if (FilterResult == false)
                     {
                         /*
                         ** Write unfiltered packets to destination file...
                         */
                         DS_FileSetupWrite(FileIndex, MessagePtr);
-                        PassedFilter = TRUE;
+                        PassedFilter = true;
                     }
                 }
             }
@@ -169,16 +142,8 @@ void DS_FileSetupWrite(int32 FileIndex, CFE_SB_MsgPtr_t MessagePtr)
 {
     DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
     DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
-    boolean OpenNewFile = FALSE;
-    uint16 PacketLength;
-
-    #if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-    /*
-    ** Store packet time for GPM style file headers...
-    */
-    CFE_TIME_SysTime_t PacketTime = CFE_SB_GetMsgTime(MessagePtr);
-    DS_AppData.CurrentPktTime = PacketTime.Seconds;
-    #endif
+    bool OpenNewFile = false;
+    uint16 PacketLength = 0;
 
     /*
     ** Create local pointers for array indexed data...
@@ -190,7 +155,7 @@ void DS_FileSetupWrite(int32 FileIndex, CFE_SB_MsgPtr_t MessagePtr)
         /*
         ** 1st packet since destination enabled or file closed...
         */
-        OpenNewFile = TRUE;
+        OpenNewFile = true;
     }
     else
     {
@@ -204,7 +169,7 @@ void DS_FileSetupWrite(int32 FileIndex, CFE_SB_MsgPtr_t MessagePtr)
             */
             DS_FileUpdateHeader(FileIndex);
             DS_FileCloseDest(FileIndex);
-            OpenNewFile = TRUE;
+            OpenNewFile = true;
         }
         else
         {
@@ -252,7 +217,7 @@ void DS_FileSetupWrite(int32 FileIndex, CFE_SB_MsgPtr_t MessagePtr)
 void DS_FileWriteData(int32 FileIndex, void *FileData, uint32 DataLength)
 {
     DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
-    int32 Result;
+    int32 Result = CFE_SUCCESS;
 
     /*
     ** Let cFE manage the file I/O...
@@ -268,13 +233,6 @@ void DS_FileWriteData(int32 FileIndex, void *FileData, uint32 DataLength)
 
         FileStatus->FileSize   += DataLength;
         FileStatus->FileGrowth += DataLength;
-
-        #if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-        /*
-        ** Current pkt time is now last pkt time for this file...
-        */
-        DS_AppData.LastPktTime[FileIndex] = DS_AppData.CurrentPktTime;
-        #endif
     }
     else
     {
@@ -297,13 +255,11 @@ void DS_FileWriteData(int32 FileIndex, void *FileData, uint32 DataLength)
 
 void DS_FileWriteHeader(int32 FileIndex)
 {
-    #if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_CFE)
-
     DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
     DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
     CFE_FS_Header_t CFE_FS_Header;
     DS_FileHeader_t DS_FileHeader;
-    int32 Result;
+    int32 Result = CFE_SUCCESS;
 
     /*
     ** Initialize selected parts of the cFE file header...
@@ -338,7 +294,7 @@ void DS_FileWriteHeader(int32 FileIndex)
         /*
         ** Manually write the secondary header...
         */
-        Result = OS_write(FileStatus->FileHandle, &DS_FileHeader, sizeof(DS_FileHeader_t));
+       Result = OS_write(FileStatus->FileHandle, &DS_FileHeader, sizeof(DS_FileHeader_t));
 
         if (Result == sizeof(DS_FileHeader_t))
         {
@@ -366,50 +322,6 @@ void DS_FileWriteHeader(int32 FileIndex)
         DS_FileWriteError(FileIndex, sizeof(CFE_FS_Header_t), Result);
     }
 
-    #elif (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-
-    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
-    DS_FileHeaderGPM_t DS_FileHeaderGPM;
-    int32 Result;
-
-    /*
-    ** Initialize GPM file header...
-    */
-	CFE_PSP_MemSet(&DS_FileHeaderGPM, ' ', sizeof(DS_FileHeaderGPM_t));
-
-    DS_FileHeaderGPM.SourceID[0] = 'S';
-    DS_FileHeaderGPM.SourceID[1] = 'C';
-    DS_FileHeaderGPM.SourceID[2] = 'H';
-    DS_FileHeaderGPM.SourceID[3] = 'K';
-
-    DS_FileConvertGPM(DS_FileHeaderGPM.SequenceID, FileStatus->FileCount);
-
-    DS_FileHeaderGPM.StartTime = DS_AppData.CurrentPktTime;
-
-    /*
-    ** Write GPM file header to the file...
-    */
-    Result = OS_write(FileStatus->FileHandle, &DS_FileHeaderGPM, sizeof(DS_FileHeaderGPM_t));
-
-    if (Result == sizeof(DS_FileHeaderGPM_t))
-    {
-        /*
-        ** Success - update file size and data rate counters...
-        */
-        DS_AppData.FileWriteCounter++;
-
-        FileStatus->FileSize   += sizeof(DS_FileHeaderGPM_t);
-        FileStatus->FileGrowth += sizeof(DS_FileHeaderGPM_t);
-    }
-    else
-    {
-        /*
-        ** Error - send event, close file and disable destination...
-        */
-        DS_FileWriteError(FileIndex, sizeof(DS_FileHeaderGPM_t), Result);
-    }
-    #endif
-
     return;
 
 } /* End of DS_FileWriteHeader() */
@@ -429,9 +341,9 @@ void DS_FileWriteError(uint32 FileIndex, uint32 DataLength, int32 WriteResult)
     */
     DS_AppData.FileWriteErrCounter++;
 
-    CFE_EVS_SendEvent(DS_WRITE_FILE_ERR_EID, CFE_EVS_ERROR,
+    CFE_EVS_SendEvent(DS_WRITE_FILE_ERR_EID, CFE_EVS_EventType_ERROR,
                      "FILE WRITE error: result = %d, length = %d, dest = %d, name = '%s'",
-                      WriteResult, DataLength, FileIndex, FileStatus->FileName);
+                      (int)WriteResult, (int)DataLength, (int)FileIndex, FileStatus->FileName);
 
     DS_FileCloseDest(FileIndex);
 
@@ -451,7 +363,7 @@ void DS_FileCreateDest(uint32 FileIndex)
 {
     DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
     DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
-    int32 Result;
+    int32 Result = CFE_SUCCESS;
 
     /*
     ** Create filename from "path + base + sequence count + extension"...
@@ -472,9 +384,9 @@ void DS_FileCreateDest(uint32 FileIndex)
             */
             DS_AppData.FileWriteErrCounter++;
 
-            CFE_EVS_SendEvent(DS_CREATE_FILE_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(DS_CREATE_FILE_ERR_EID, CFE_EVS_EventType_ERROR,
                              "FILE CREATE error: result = %d, dest = %d, name = '%s'",
-                              Result, FileIndex, FileStatus->FileName);
+                              (int)Result, (int)FileIndex, FileStatus->FileName);
 
             CFE_PSP_MemSet(FileStatus->FileName, 0, DS_TOTAL_FNAME_BUFSIZE);
 
@@ -506,7 +418,7 @@ void DS_FileCreateDest(uint32 FileIndex)
                 FileStatus->FileCount++;
                 if (FileStatus->FileCount > DS_MAX_SEQUENCE_COUNT)
                 {
-                    FileStatus->FileCount = 0;
+                    FileStatus->FileCount = DestFile->SequenceCount;
                 }
 
                 /*
@@ -531,9 +443,10 @@ void DS_FileCreateName(uint32 FileIndex)
 {
     DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
     DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
-    int32 TotalLength;
+    int32 TotalLength = 0;
+    int32 WorknameLen = 2 * DS_TOTAL_FNAME_BUFSIZE;
 
-    char Workname[2 * DS_TOTAL_FNAME_BUFSIZE];
+    char Workname[WorknameLen];
     char Sequence[DS_TOTAL_FNAME_BUFSIZE];
 
     Workname[0] = DS_STRING_TERMINATOR;
@@ -542,17 +455,35 @@ void DS_FileCreateName(uint32 FileIndex)
     /*
     ** Start with the path portion of the filename...
     */
-    strcpy(Workname, DestFile->Pathname);
+    strncpy(Workname, DestFile->Pathname, WorknameLen);
+    Workname[WorknameLen - 1] = '\0';
     TotalLength = strlen(Workname);
 
     /*
     ** Add a path separator (if needed) before appending the base name...
     */
-
-    if (Workname[TotalLength - 1] != DS_PATH_SEPARATOR)
+    if (TotalLength > 0) 
     {
-        Workname[TotalLength] = DS_PATH_SEPARATOR;
-        Workname[TotalLength + 1] = DS_STRING_TERMINATOR;
+        if (Workname[TotalLength - 1] != DS_PATH_SEPARATOR)
+        {
+            Workname[TotalLength] = DS_PATH_SEPARATOR;
+            Workname[TotalLength + 1] = DS_STRING_TERMINATOR;
+        }
+    }
+    else {
+        /* If path name is empty, start with the path separator.  This should
+         * not happen because the path name is verified as non-empty in 
+         * DS_TableVerifyDestFileEntry */
+        CFE_EVS_SendEvent(DS_FILE_CREATE_EMPTY_PATH_ERR_EID, CFE_EVS_EventType_ERROR,
+           "FILE NAME error: Path empty. dest = %d, path = '%s'",
+                          (int)FileIndex, DestFile->Pathname);
+
+        /*
+        ** Something needs to get fixed before we try again...
+        */
+        DS_AppData.FileStatus[FileIndex].FileState = DS_DISABLED;
+    
+        return;
     }
 
     /*
@@ -617,9 +548,9 @@ void DS_FileCreateName(uint32 FileIndex)
         /*
         ** Error - send event and disable destination...
         */
-        CFE_EVS_SendEvent(DS_FILE_NAME_ERR_EID, CFE_EVS_ERROR,
+        CFE_EVS_SendEvent(DS_FILE_NAME_ERR_EID, CFE_EVS_EventType_ERROR,
            "FILE NAME error: dest = %d, path = '%s', base = '%s', seq = '%s', ext = '%s'",
-                          FileIndex, DestFile->Pathname, DestFile->Basename,
+                          (int)FileIndex, DestFile->Pathname, DestFile->Basename,
                           Sequence, DestFile->Extension);
 
         /*
@@ -642,10 +573,10 @@ void DS_FileCreateSequence(char *Buffer, uint32 Type, uint32 Count)
 {
     CFE_TIME_SysTime_t TimeToPrint;
 
-    uint32 SequenceCount;
-    uint32 NumericDigit;
+    uint32 SequenceCount = 0;
+    uint32 NumericDigit = 0;
 
-    int32 BufferIndex;
+    int32 BufferIndex = 0;
 
     /*
     ** Build the sequence portion of the filename (time or count)...
@@ -681,19 +612,10 @@ void DS_FileCreateSequence(char *Buffer, uint32 Type, uint32 Count)
     }
     else if (Type == DS_BY_TIME)
     {
-
-        #if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-        /*
-        ** Filename is based on seconds from current packet timestamp...
-        */
-        TimeToPrint.Seconds = DS_AppData.CurrentPktTime;
-        TimeToPrint.Subseconds = 0;
-        #else
         /*
         ** Filename is based on seconds from current time...
         */
         TimeToPrint = CFE_TIME_GetTime();
-        #endif
 
         /*
         ** Convert time value to cFE format text string...
@@ -784,14 +706,12 @@ void DS_FileCreateSequence(char *Buffer, uint32 Type, uint32 Count)
 
 void DS_FileUpdateHeader(int32 FileIndex)
 {
-    #if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_CFE)
-
     /*
     ** Update CFE specific header fields...
     */
     DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
     CFE_TIME_SysTime_t CurrentTime = CFE_TIME_GetTime();
-    int32 Result;
+    int32 Result = CFE_SUCCESS;
 
     Result = OS_lseek(FileStatus->FileHandle, sizeof(CFE_FS_Header_t), SEEK_SET);
 
@@ -813,50 +733,6 @@ void DS_FileUpdateHeader(int32 FileIndex)
     {
         DS_AppData.FileUpdateErrCounter++;
     }
-
-    #elif (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-
-    /*
-    ** Update GPM specific header fields...
-    */
-    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
-    char Buf8[8];
-    int32 Result;
-
-    Result = OS_lseek(FileStatus->FileHandle, 16, SEEK_SET);
-
-    if (Result == 16)
-    {
-        /* update last pkt time in file header */
-        Result = OS_write(FileStatus->FileHandle, &DS_AppData.LastPktTime[FileIndex], sizeof(uint32));
-
-        if (Result == sizeof(uint32))
-        {
-            /* update file size in file header */
-            CFE_PSP_MemSet(Buf8, ' ', sizeof(Buf8));
-            DS_FileConvertGPM(Buf8, FileStatus->FileSize);
-            Result = OS_write(FileStatus->FileHandle, Buf8, sizeof(Buf8));
-
-            if (Result == sizeof(Buf8))
-            {
-                DS_AppData.FileUpdateCounter++;
-            }
-            else
-            {
-                DS_AppData.FileUpdateErrCounter++;
-            }
-        }
-        else
-        {
-            DS_AppData.FileUpdateErrCounter++;
-        }
-    }
-    else
-    {
-        DS_AppData.FileUpdateErrCounter++;
-    }
-
-    #endif
 
     return;
 
@@ -928,7 +804,7 @@ void DS_FileCloseDest(int32 FileIndex)
                 /*
                 ** Error - send event but leave destination enabled...
                 */
-                CFE_EVS_SendEvent(DS_MOVE_FILE_ERR_EID, CFE_EVS_ERROR,
+                CFE_EVS_SendEvent(DS_MOVE_FILE_ERR_EID, CFE_EVS_EventType_ERROR,
                    "FILE MOVE error: src = '%s', tgt = '%s', result = %d",
                     FileStatus->FileName, PathName, OS_result);
             }
@@ -938,7 +814,7 @@ void DS_FileCloseDest(int32 FileIndex)
             /*
             ** Error - send event but leave destination enabled...
             */
-            CFE_EVS_SendEvent(DS_MOVE_FILE_ERR_EID, CFE_EVS_ERROR,
+            CFE_EVS_SendEvent(DS_MOVE_FILE_ERR_EID, CFE_EVS_EventType_ERROR,
                "FILE MOVE error: dir name = '%s', filename = '%s'",
                 PathName, FileName);
         }
@@ -974,7 +850,7 @@ void DS_FileCloseDest(int32 FileIndex)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 void DS_FileTestAge(uint32 ElapsedSeconds)
 {
-    uint32 FileIndex;
+    uint32 FileIndex = 0;
 
     /*
     ** Called from HK request command handler (elapsed = platform config)
@@ -1009,42 +885,6 @@ void DS_FileTestAge(uint32 ElapsedSeconds)
     return;
 
 } /* End of DS_FileTestAge() */
-
-
-#if (DS_FILE_HEADER_TYPE == DS_FILE_HEADER_GPM)
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/*                                                                 */
-/* DS_FileConvertGPM() - convert GPM file header value to ASCII    */
-/*                                                                 */
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void DS_FileConvertGPM(char *Buffer, uint32 Value)
-{
-    uint32 LocalValue = Value;
-    int i;
-
-    /* limit value to max of 8 characters */
-    if (LocalValue > 99999999)
-    {
-        LocalValue = 99999999;
-    }
-
-    /* start with low order digits */
-    for (i = 7; i >= 0; i--)
-    {
-        /* save lowest digit as ASCII */
-        Buffer[i] = '0' + (LocalValue % 10);
-
-        /* remove lowest digit from value */
-        LocalValue = LocalValue / 10;
-    }
-
-    return;
-
-} /* End of DS_FileConvertGPM() */
-
-#endif
 
 
 /************************/

@@ -1,30 +1,29 @@
 /*************************************************************************
-** File:
-**   $Id: md_dwell_pkt.h 1.3 2015/03/01 17:17:49EST sstrege Exp  $
+** File: md_dwell_pkt.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   Specification for functions used to populate and send Memory Dwell packets.
 **
 **
 ** Notes:
 **
-**   $Log: md_dwell_pkt.h  $
-**   Revision 1.3 2015/03/01 17:17:49EST sstrege 
-**   Added copyright information
-**   Revision 1.2 2008/10/21 13:59:39EDT nsschweiss 
-**   Added MD_StartDwellStream to initialize dwell packet processing parameters.
-**   Revision 1.1 2008/07/02 13:48:29EDT nsschweiss 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/md/fsw/src/project.pj
 ** 
 *************************************************************************/
 

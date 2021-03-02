@@ -37,7 +37,6 @@ MMD_OFFSET_W2 = 264
 MMD_OFFSET_W3 = 268
 
 MMD_DMP_FILE = "mm_demo_dmp.dat"
-MMD_DMP_DEF_NAME = "mm_dump.txt"  # COSMOS table definition file
 
 MMD_FLT_PATH_FILENAME = "#{Osk::FLT_SRV_DIR}/#{MMD_DMP_FILE}"
 MMD_GND_PATH_FILENAME = "#{Osk::GND_SRV_DIR}/#{MMD_DMP_FILE}"
@@ -122,7 +121,7 @@ MMD_INSTRUCT_5 = ["Display the memory dump file using COSMOS Table Manager tool.
                   "",
                   "   1. On tool menu bar select File->Open->#{Osk::REL_SRV_DIR}",
                   "   2. In open dialog select #{MMD_DMP_FILE} and click 'Open'",
-                  "   3. When prompted for table defintion file select #{MMD_DMP_DEF_NAME}"]
+                  "   3. When prompted for table defintion file select #{Osk::TBL_MGR_DEF_MM_DMP}"]
 MMD_INFO_5 = Osk::DEMO_STEP_NO_INFO
 
 # 6 - Fill memory with pattern from command
@@ -201,10 +200,14 @@ def memory_mgmt_demo(screen, button)
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Enable debug events
             wait (1)
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Enable debug events
+            wait (1)
+            # Stop HS app because it displays dots in the cFS console that make it hard to read some messages
+            Osk::flight.send_cmd("CFE_ES", "STOP_APP with APP_NAME HS") 
          when 2..MMD_LAST_STEP
             # Keep case statement for maintenance
          else
             cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Disable debug events
+            wait(1)
             cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Disable debug events
             $mmd_step = 0
             clear("CFS_KIT MEMORY_MGMT_SCREEN")    
@@ -229,9 +232,13 @@ def memory_mgmt_demo(screen, button)
          when 2
             if ($mmd_demo == 0)
                Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 1, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 2, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 3, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MD","JAM_DWELL with TABLE_ID 1, ENTRY_ID 4, FIELD_LEN 4, DELAY 1, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MD","SET_SIGNATURE with TABLE_ID 1, PAD_16 0, SIGNATURE 'Memory Management Demo'")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
@@ -243,13 +250,18 @@ def memory_mgmt_demo(screen, button)
          when 3
             if ($mmd_demo == 0)
                Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x01020304, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x05060708, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0X090A0B0C, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 32, MEM_TYPE 1, DATA 0x0D0E0F10, ADDR_OFFSET #{MMD_OFFSET_W3}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
                Osk::flight.send_cmd("MM","PEEK_MEM with DATA_SIZE  8, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MM","PEEK_MEM with DATA_SIZE 16, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W1}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
+               wait(1)
                Osk::flight.send_cmd("MM","PEEK_MEM with DATA_SIZE 32, MEM_TYPE 1, ADDR_OFFSET #{MMD_OFFSET_W2}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}")
                $mmd_demo += 1
             elsif ($mmd_demo == 2)
@@ -263,14 +275,14 @@ def memory_mgmt_demo(screen, button)
                Osk::flight.send_cmd("MM","DUMP_MEM_TO_FILE with MEM_TYPE 1, NUM_BYTES 16, ADDR_OFFSET #{MMD_OFFSET_W0}, ADDR_SYMBOL_NAME #{MMD_SYMBOL}, FILENAME #{MMD_FLT_PATH_FILENAME}")
                $mmd_demo += 1
             elsif ($mmd_demo == 1)
-               Osk::system.file_transfer.get(MMD_FLT_PATH_FILENAME,MMD_GND_PATH_FILENAME)
+               Osk::Ops.get_flt_file(MMD_FLT_PATH_FILENAME,MMD_GND_PATH_FILENAME)
                # Don't increment mmd_demo; okay to repeat last command
             end
 
          # 5 - Display memory dump file using COSMOS table manager tool
          when 5
             if ($mmd_demo == 0)
-               Cosmos.run_process("ruby tools/TableManager")
+               Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, MMD_DMP_FILE, Osk::TBL_MGR_DEF_MM_DMP)
                $mmd_demo += 1
             end
 

@@ -1,30 +1,28 @@
 /*************************************************************************
-** File:
-**   $Id: md_utils.h 1.4 2015/03/01 17:18:01EST sstrege Exp  $
+** File: md_utils.h
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   Specification for the CFS Memory Dwell utility functions.
 **
 ** Notes:
 **
-**   $Log: md_utils.h  $
-**   Revision 1.4 2015/03/01 17:18:01EST sstrege 
-**   Added copyright information
-**   Revision 1.3 2009/04/18 15:06:41EDT dkobe 
-**   Corrected parameter description for function prolog
-**   Revision 1.2 2008/07/02 13:54:42EDT nsschweiss 
-**   CFS MD Post Code Review Version
-**   Date: 08/05/09
-**   CPID: 1653:2
 ** 
 *************************************************************************/
 
@@ -59,7 +57,7 @@
 ** \retstmt Returns TRUE or FALSE   
 ** \endreturns
 ******************************************************************************/
-boolean MD_TableIsInMask(int16 TableId, uint16 TableMask);
+bool MD_TableIsInMask(int16 TableId, uint16 TableMask);
 
 /*****************************************************************************/
 /**
@@ -81,26 +79,6 @@ void MD_UpdateDwellControlInfo (uint16 TableIndex);
 
 /*****************************************************************************/
 /**
-** \brief Validate Address count
-**
-** \par Description
-**        Checks for valid value (0..MD_DWELL_TABLE_SIZE) used to 
-**        index internal structure.
-** 
-** \par Assumptions, External Events, and Notes:
-**          None
-**
-** \param[in] Count  Index for internal dwell control structure.
-**                                      
-** \returns
-** \retstmt Returns TRUE or FALSE   
-** \endreturns
-**
-******************************************************************************/
-boolean MD_ValidAddrIndex    ( uint16 Count );
-
-/*****************************************************************************/
-/**
 ** \brief Validate Entry Index
 **
 ** \par Description
@@ -117,7 +95,7 @@ boolean MD_ValidAddrIndex    ( uint16 Count );
 ** \endreturns
 **
 ******************************************************************************/
-boolean MD_ValidEntryId            ( uint16 EntryId );
+bool MD_ValidEntryId            ( uint16 EntryId );
 
 /*****************************************************************************/
 /**
@@ -139,7 +117,7 @@ boolean MD_ValidEntryId            ( uint16 EntryId );
 ** \endreturns
 **
 ******************************************************************************/
-boolean MD_ValidAddrRange( uint32 Addr, uint32 Size );
+bool MD_ValidAddrRange( cpuaddr Addr, uint32 Size );
 
 /*****************************************************************************/
 /**
@@ -161,7 +139,7 @@ boolean MD_ValidAddrRange( uint32 Addr, uint32 Size );
 ** \endreturns
 **
 ******************************************************************************/
-boolean MD_ValidTableId( uint16 TableId );
+bool MD_ValidTableId( uint16 TableId );
 
 /*****************************************************************************/
 /**
@@ -181,7 +159,7 @@ boolean MD_ValidTableId( uint16 TableId );
 ** \endreturns
 **
 ******************************************************************************/
-boolean MD_ValidFieldLength(uint16 FieldLength);
+bool MD_ValidFieldLength(uint16 FieldLength);
 
 
 

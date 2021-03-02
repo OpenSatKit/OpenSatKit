@@ -1,72 +1,34 @@
 /************************************************************************
-** File:
-**   $Id: ds_platform_cfg.h 1.17.1.3 2015/07/28 14:19:49EDT lwalling Exp  $
+** File: ds_platform_cfg.h 
 **
-**  Copyright © 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) application
+** version 2.5.2"
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright Â© 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration.  All Rights Reserved. 
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+**
 **
 ** Purpose: 
 **  The CFS Data Storage (DS) Application platform configuration header file
 **
 ** Notes:
 **
-** $Log: ds_platform_cfg.h  $
-** Revision 1.17.1.3 2015/07/28 14:19:49EDT lwalling 
-** Update restoring task enable/disable state comments
-** Revision 1.17.1.2 2015/07/28 14:14:45EDT lwalling 
-** Add definition for DS_CDS_ENABLE_STATE to allow storage of enable/disable state in CDS
-** Revision 1.17.1.1 2015/02/28 17:13:51EST sstrege 
-** Added copyright information
-** Revision 1.17 2010/11/12 11:33:29EST lwalling 
-** Added platform definition for DS_PER_PACKET_PIPE_LIMIT
-** Revision 1.16 2010/11/08 14:23:10EST lwalling 
-** Add config definition for DS_MOVE_FILES
-** Revision 1.15 2010/10/28 11:27:21EDT lwalling 
-** Added definition for DS_FILE_HEADER_TYPE
-** Revision 1.14 2010/10/26 16:44:37EDT lwalling 
-** Move DS_MISSION_REV from local header to platform config file
-** Revision 1.13 2010/10/26 16:23:42EDT lwalling 
-** Restore default value for DS_DEF_ENABLE_STATE to enabled
-** Revision 1.12 2010/10/26 16:17:49EDT lwalling 
-** Move DS_DEF_ENABLE_STATE from local header to platform config file
-** Revision 1.11 2010/10/26 15:18:48EDT lwalling 
-** Change DS_SECS_PER_HK_CYCLE default value from 5 to 4
-** Revision 1.10 2010/09/20 11:34:12EDT lwalling 
-** Change existing command pipe name from CMD_PIPE to DS_CMD_PIPE
-** Revision 1.9 2010/02/23 11:30:35EST lwalling 
-** Change application name from DS_APP to DS per CFS naming convention
-** Revision 1.8 2009/09/02 15:22:21EDT lwalling 
-** Change source filenames to match table names
-** Revision 1.7 2009/08/27 16:33:11EDT lwalling 
-** Updates from source code review
-** Revision 1.6 2009/08/04 14:08:25EDT lwalling 
-** Minor cleanup prior to code review - change comments starting slash asterisk to slash asterisk asterisk
-** Revision 1.5 2009/07/15 10:11:24EDT lwalling 
-** Moved some definitions in platform cfg file to app hdr file, added more doxygen comments
-** Revision 1.4 2009/05/26 13:46:15EDT lwalling 
-** Initial version of public header files
-** Revision 1.3 2009/04/18 09:36:12EDT dkobe 
-** Corrected doxygen aliases used in code
-** Revision 1.2 2008/12/04 09:41:22EST rmcgraw 
-** DCR4669:1 Changed table names to match second field in table header
-** Revision 1.1 2008/11/25 11:35:05EST rmcgraw 
-** Initial revision
-** Member added to CFS project
-**
 *************************************************************************/
 #ifndef _ds_platform_cfg_h_
 #define _ds_platform_cfg_h_
 
-#include "cfe_platform_cfg.h" //dcm
-
 /*
-** File Table Indices
+** File Table Indices - osk: Moved from ds_file_tbl.c
 */
 
 #define FILE_ALL_EVENTS       0
@@ -75,7 +37,6 @@
 #define FILE_ALL_APP_TLM_PKTS 3
 #define FILE_ALL_HW_TLM_PKTS  4
 #define FILE_CFE_APP_TLM_PKTS 5
-
 
 /**
 **  \dscfg Destination File Table -- logical table name
@@ -123,7 +84,7 @@
 **       The number must be greater than zero but there is no upper
 **       enforced limit for this parameter.
 */
-#define DS_DEST_FILE_CNT               16
+#define DS_DEST_FILE_CNT                16
 
 
 /**
@@ -277,7 +238,7 @@
 **       the filename type to "count".  This value should match
 **       the definition for #DS_MAX_SEQUENCE_COUNT, below.
 */
-#define DS_SEQUENCE_DIGITS              4 //osk
+#define DS_SEQUENCE_DIGITS              4 //osk: default was 8
 
 
 /**
@@ -516,10 +477,10 @@
 **
 **  \par Limits
 **       This parameter must be set to one of the following:
-**       TRUE  = add move pathname field to Destination File Table
-**       FALSE = do not add move pathname to Destination File Table
+**       true  = add move pathname field to Destination File Table
+**       false = do not add move pathname to Destination File Table
 */
-#define DS_MOVE_FILES                   FALSE
+#define DS_MOVE_FILES                   true
 
 
 /**

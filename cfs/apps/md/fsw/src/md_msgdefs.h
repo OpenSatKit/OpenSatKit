@@ -1,16 +1,23 @@
 /************************************************************************
-** File:
-**   $Id: md_msgdefs.h 1.2 2015/03/01 17:17:31EST sstrege Exp  $
+** File: md_msgdefs.h
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   Specification for the CFS Memory Dwell command and telemetry
 **   message constant definitions.
@@ -23,20 +30,6 @@
 **   TYPEDEFS OR STRUCTURE DEFINITIONS IN THIS FILE!
 **   ADD THEM TO md_msg.h IF NEEDED!
 **
-**   $Log: md_msgdefs.h  $
-**   Revision 1.2 2015/03/01 17:17:31EST sstrege 
-**   Added copyright information
-**   Revision 1.1 2009/10/02 19:23:02EDT aschoeni 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/md/fsw/src/project.pj
-**   Revision 1.4 2008/10/06 10:29:49EDT dkobe 
-**   Updated and Corrected Doxygen Comments
-**   Revision 1.3 2008/08/07 16:24:43EDT nsschweiss 
-**   Changed included filename from cfs_lib.h to cfs_utils.h.
-**   Revision 1.2 2008/07/02 13:29:38EDT nsschweiss 
-**   CFS MD Post Code Review Version
-**   Date: 08/05/09
-**   CPID: 1653:2
 ** 
 *************************************************************************/
 

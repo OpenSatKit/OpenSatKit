@@ -100,7 +100,8 @@ module Osk
    TRAIN_OSK_APPS_ADC_FILE      = "OSK-Apps-ADC.pdf"
    TRAIN_OSK_APPS_RUNTIME_FILE  = "OSK-Apps-RunTime.pdf"
    TRAIN_OSK_APPS_DATAFILE_FILE = "OSK-Apps-DataFileMgmt.pdf"
-
+   TRAIN_OSK_APPS_MAINT_FILE    = "OSK-Apps-Maintenance.pdf"
+   
    ABOUT_SCR_FILE   = "about_scr.txt"
    VERSION_SCR_FILE = "version_scr.txt"
    ADD_APP_SCR_FILE = "add_app_scr.txt"

@@ -1,42 +1,27 @@
 /************************************************************************
-** File:
-**   $Id: ds_msgdefs.h 1.8.1.1 2015/02/28 17:13:57EST sstrege Exp  $
+** File: ds_msgdefs.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+**  NASA Docket No. GSC-18448-1, and identified as "cFS Data Storage (DS) 
+**  application version 2.5.2” 
+**  
+**  Copyright © 2019 United States Government as represented by the Administrator 
+**  of the National Aeronautics and Space Administration.  All Rights Reserved. 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+**  Licensed under the Apache License, Version 2.0 (the "License"); 
+**  you may not use this file except in compliance with the License. 
+**  You may obtain a copy of the License at 
+**  http://www.apache.org/licenses/LICENSE-2.0 
+**  Unless required by applicable law or agreed to in writing, software 
+**  distributed under the License is distributed on an "AS IS" BASIS, 
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**  See the License for the specific language governing permissions and 
+**  limitations under the License. 
+**  
 **
 ** Purpose: 
-**  The CFS Data Storage (DS) command codes header file
+**   The CFS Data Storage (DS) command codes header file
 **
 ** Notes:
-**
-** $Log: ds_msgdefs.h  $
-** Revision 1.8.1.1 2015/02/28 17:13:57EST sstrege 
-** Added copyright information
-** Revision 1.8 2011/07/27 10:46:51EDT wmoleski 
-** Added a note to the Close All command description and updated the command mnemonics
-** mapping file for the AddMID and CloseAll commands.
-** Revision 1.7 2011/07/12 17:46:22EDT lwalling 
-** Added command code definition for DS_CLOSE_ALL_CC
-** Revision 1.6 2011/05/19 11:41:10EDT lwalling 
-** Add new command code definition for DS_ADD_MID_CC
-** Revision 1.5 2011/05/06 15:07:22EDT lwalling 
-** Create command code definition and Doxygen description for get file info telemetry packet
-** Revision 1.4 2010/03/03 14:41:12EST lwalling 
-** Modified Doxygen comments to match names used in ASIST database
-** Revision 1.3 2009/10/05 13:33:51EDT lwalling 
-** Change basename string contents from required to optional
-** Revision 1.2 2009/08/04 14:09:15EDT lwalling 
-** Minor cleanup prior to code review - change DS_RESET to DS_RESETCTRS
-** Revision 1.1 2009/05/26 14:28:06EDT lwalling 
-** Initial revision
-** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/src/project.pj
 **
 *************************************************************************/
 

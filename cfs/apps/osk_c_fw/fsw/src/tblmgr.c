@@ -245,9 +245,9 @@ const char* TBLMGR_LoadTypeStr(int8 LoadType)
 {
 
    static char* LoadTypeStr[] = {
-      "Replace",
-      "Update",
-      "Undefined" 
+      "replace",
+      "update",
+      "undefined" 
    };
 
    uint8 i = 2;

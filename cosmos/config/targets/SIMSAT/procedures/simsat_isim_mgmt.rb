@@ -27,7 +27,7 @@ def simsat_isim_pwr_on
 
    Osk::flight.send_cmd("ISIM","POWER_ON_INSTR")
 
-   wait("ISIM HK_TLM_PKT INSTR_STATE == 'READY'", 25) 
+   wait("ISIM HK_TLM_PKT INSTR_PWR_STATE == 'READY'", 25) 
 
    Osk::flight.send_cmd("ISIM","START_SCI_DATA")
 
@@ -39,23 +39,23 @@ def simsat_isim_pwr_off
 
    Osk::flight.send_cmd("ISIM","POWER_OFF_INSTR")
 
-   wait("ISIM HK_TLM_PKT INSTR_STATE == 'OFF'", 10) 
+   wait("ISIM HK_TLM_PKT INSTR_PWR_STATE == 'OFF'", 10) 
 
 end #simsat_isim_pwr_off()
 
 
 def simsat_isim_set_fault
 
-   Osk::flight.send_cmd("ISIM","CONFIG_FAULT with FAULT_ENA 1")
+   Osk::flight.send_cmd("ISIM","SET_FAULT")
 
-   wait("ISIM HK_TLM_PKT FAULT == 'TRUE'", 10) 
+   wait("ISIM HK_TLM_PKT FAULT_PRESENT == 'TRUE'", 10) 
 
 end #simsat_isim_set_fault()
 
 def simsat_isim_clear_fault
 
-   Osk::flight.send_cmd("ISIM","CONFIG_FAULT with FAULT_ENA 0")
+   Osk::flight.send_cmd("ISIM","CLEAR_FAULT")
 
-   wait("ISIM HK_TLM_PKT FAULT == 'FALSE'", 10) 
+   wait("ISIM HK_TLM_PKT FAULT_PRESENT == 'FALSE'", 10) 
 
 end #simsat_isim_clear_fault()

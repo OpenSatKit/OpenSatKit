@@ -1,16 +1,23 @@
 /*************************************************************************
-** File:
-**   $Id: md_msgids.h 1.4 2015/03/01 17:17:50EST sstrege Exp  $
+** File: md_msgids.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   Specification for the CFS Memory Dwell macro constants that can
 **   be configured from one mission to another
@@ -18,18 +25,6 @@
 **
 ** Notes:
 **
-**   $Log: md_msgids.h  $
-**   Revision 1.4 2015/03/01 17:17:50EST sstrege 
-**   Added copyright information
-**   Revision 1.3 2009/09/16 15:30:01EDT aschoeni 
-**   Updated MIDs to development standards document value for cpu1
-**   Revision 1.2 2008/09/12 12:16:11EDT nsschweiss 
-**   Changed Message IDs to those specified in CFS Flight Software Development Standards Document, 
-**   Appendix A.
-**   CPID 4289:1.
-**   Revision 1.1 2008/07/02 13:25:33EDT nsschweiss 
-**   Initial revision
-**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/md/fsw/platform_inc/project.pj
 ** 
 *************************************************************************/
 #ifndef _md_msgids_h_

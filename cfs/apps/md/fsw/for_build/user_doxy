@@ -94,7 +94,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = $(CFS_APP_SRC)/$(APPTARGET)/docs/dox_src/users_guide/cfs_$(APPTARGET).dox
 #INPUT                 += $(CFS_APP_SRC)/$(APPTARGET)/fsw/public_inc 
-#INPUT                 += $(CFS_APP_SRC)/$(APPTARGET)/fsw/src/$(APPTARGET)_msgdefs.h 
+INPUT                 += $(CFS_APP_SRC)/$(APPTARGET)/fsw/src/$(APPTARGET)_msgdefs.h 
 INPUT                 += $(CFS_APP_SRC)/$(APPTARGET)/fsw/src/$(APPTARGET)_msg.h 
 INPUT                 += $(CFS_APP_SRC)/$(APPTARGET)/fsw/src/$(APPTARGET)_tbldefs.h 
 INPUT                 += $(CFS_APP_SRC)/$(APPTARGET)/fsw/src/$(APPTARGET)_events.h 

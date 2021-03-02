@@ -256,7 +256,7 @@ def simsat_data_file(screen, cmd)
          Osk::education_video(HK_YOUTUBE_OVERVIEW)
       when "Comm App Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_INTRO)
-      when "Data-File Slides"
+      when "Data-File Intro Slides"
          spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_DATAFILE_FILE}")
       end
 
@@ -337,8 +337,22 @@ def simsat_maintenance(screen, cmd)
    when "FUNC_MEMORY_MGMT"
       display("CFS_KIT MEMORY_MGMT_SCREEN",1500,50)
    when "DEMO"
-      # Only one option
-      display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
+      if (Osk::System.check_n_start_cfs)
+         # Demo scripts manage screens & PacketViewer
+         case screen.get_named_widget("demo").text
+         when "MM-MD Demo Screen"
+            display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
+         when "MM-MD Demo Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_maint_mem_apps.rb")
+         end 
+      end # If cFS running
+   when "TUTORIAL"
+      case screen.get_named_widget("tutorial").text
+      when "Maint App Intro Slides"
+         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_MAINT_FILE}")
+      when "Maint App Intro Video"
+         Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_MAINT)    
+      end 
    when "TUTORIAL"
       prompt(Osk::MSG_TBD_FEATURE)
    else

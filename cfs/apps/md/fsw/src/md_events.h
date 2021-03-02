@@ -1,41 +1,28 @@
 /************************************************************************
-** File:
-**   $Id: md_events.h 1.10 2015/03/01 17:17:34EST sstrege Exp  $
+** File: md_events.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose:
 **  The CFS Memory Dwell (MD) Application event id header file
 **
 ** Notes:
 **
-** $Log: md_events.h  $
-** Revision 1.10 2015/03/01 17:17:34EST sstrege 
-** Added copyright information
-** Revision 1.9 2009/10/20 17:48:13EDT aschoeni 
-** Added event on start up to report number of tables initialized and recovered.
-** Revision 1.8 2009/10/20 09:42:33EDT aschoeni 
-** Updated to remove doxygen warning
-** Revision 1.7 2009/09/30 15:53:49EDT aschoeni 
-** Updated Enable command to output event if table with a delay of 0 is enabled.
-** Revision 1.5 2009/09/30 14:14:22EDT aschoeni 
-** Added check to make sure signature is null terminated.
-** Revision 1.4 2008/10/06 10:29:50EDT dkobe 
-** Updated and Corrected Doxygen Comments
-** Revision 1.3 2008/09/12 11:32:38EDT nsschweiss 
-** Updated to event wording to reflect added version # in initialization and noop events.
-** CPID 4289:1.
-** Revision 1.2 2008/07/02 13:51:35EDT nsschweiss 
-** CFS MD Post Code Review Version
-** Date: 08/05/09
-** CPID: 1653:2
 **
 *************************************************************************/
 #ifndef _md_events_h_
@@ -519,20 +506,6 @@
 #define MD_INVALID_SIGNATURE_TABLE_ERR_EID 47
 
 
-/** \brief <tt> 'Set Signature cmd rejected because Signature too long (%d chars -- max is %d)' </tt>
-**  \event <tt> 'Set Signature cmd rejected because Signature too long (%d chars -- max is %d)' </tt> 
-**
-**  \par Type: ERROR
-**
-**  \par Cause:
-**
-**  Length of signature argument is too big for dwell packet signature field.
-**  Either the command's signature field was too long, or string was not 
-**  properly terminated with a null character.   
-**/
-#define MD_SIGNATURE_TOO_LONG_ERR_EID 48
-
-
 /** \brief <tt> 'Set Signature cmd rejected due to invalid Signature length' </tt>
 **  \event <tt> 'Set Signature cmd rejected due to invalid Signature length' </tt> 
 **
@@ -578,6 +551,272 @@
 **  event will be sent.
 **/
 #define MD_ZERO_RATE_CMD_INF_EID 51
+
+
+/** \brief <tt> 'MD Dwell Tbl verify results: good = \%d, bad = \%d, unused = \%d' </tt>
+**  \event <tt> 'MD Dwell Tbl verify results: good = \%d, bad = \%d, unused = \%d' </tt> 
+**  
+**  \par Type: INFORMATION
+**
+**  \par Cause:
+**
+**  This event message is issued when a table validation has been 
+**  completed for memory dwell table load 
+**
+**  The \c good field is number of entries that passed, the \c bad field
+**  is number of entries that failed, the \c unused field is the 
+**  number of entries that weren't checked because they were 
+**  marked unused.
+*/
+#define MD_DWELL_TBL_INF_EID 52
+
+/** \brief <tt> 'MD_UpdateTableEnabledField, TableIndex \%d: CFE_TBL_GetAddress Returned 0x\%08x' </tt>
+**  \event <tt> 'MD_UpdateTableEnabledField, TableIndex \%d: CFE_TBL_GetAddress Returned 0x\%08x' </tt>
+**
+**  \par Type: ERROR
+**  
+**  \par Cause:
+**
+**  This event message is issued when the table address cannot be acquired in
+**  the #MD_UpdateTableEnabledField function.  This event is issued when the
+**  #CFE_TBL_GetAddress function returns a value other than CFE_SUCCESS or 
+**  CFE_TBL_INFO_UPDATED.
+**
+**  The \c TableIndex field is the index of the dwell table for which the
+**  failure occurred
+**  The \c Returned field is the value returned from #CFE_Tbl_GetAddress
+*/
+#define MD_UPDATE_TBL_EN_ERR_EID  53
+
+/** \brief <tt> 'MD_UpdateTableDwellEntry, TableIndex %d: CFE_TBL_GetAddress Returned 0x\%08x' </tt>
+**  \event <tt> 'MD_UpdateTableDwellEntry, TableIndex %d: CFE_TBL_GetAddress Returned 0x\%08x' </tt>
+**
+**  \par Type: ERROR
+**  
+**  \par Cause:
+**
+**  This event message is issued when the table address cannot be acquired in
+**  the #MD_UpdateTableDwellEntry function.  This event is issued when the
+**  #CFE_TBL_GetAddress function returns a value other than CFE_SUCCESS or 
+**  CFE_TBL_INFO_UPDATED.
+**
+**  The \c TableIndex field is the index of the dwell table for which the
+**  failure occurred
+**  The \c Returned field is the value returned from #CFE_Tbl_GetAddress
+*/
+#define MD_UPDATE_TBL_DWELL_ERR_EID  54
+
+
+/** \brief <tt> 'MD_UpdateTableSignature, TableIndex %d: CFE_TBL_GetAddress Returned 0x\%08x' </tt>
+**  \event <tt> 'MD_UpdateTableSignature, TableIndex %d: CFE_TBL_GetAddress Returned 0x\%08x' </tt>
+**
+**  \par Type: ERROR
+**  
+**  \par Cause:
+**
+**  This event message is issued when the table address cannot be acquired in
+**  the #MD_UpdateTableSignature function.  This event is issued when the
+**  #CFE_TBL_GetAddress function returns a value other than CFE_SUCCESS or 
+**  CFE_TBL_INFO_UPDATED.
+**
+**  The \c TableIndex field is the index of the dwell table for which the
+**  failure occurred
+**  The \c Returned field is the value returned from #CFE_Tbl_GetAddress
+*/
+#define MD_UPDATE_TBL_SIG_ERR_EID  55
+
+/** \brief <tt> 'Start Dwell Table for mask 0x\%04X failed for \%d of \%d tables' </tt>
+**  \event <tt> 'Start Dwell Table for mask 0x\%04X failed for \%d of \%d tables' </tt>
+**
+**  \par Type: ERROR
+**  
+**  \par Cause:
+**
+**  This event message is issued when the table address cannot be acquired for
+**  one of the tables being started with the #MD_ProcessStartCmd.  In addition
+**  to this summary message, a #MD_UPDATE_TBL_EN_ERR_EID event is issed for each
+**  failure.
+**
+**  The \c mask  field is the mask of tables to start specified in the command.
+**  The \c integer fields "\%d or \%d" states the total number of tables that
+**  could not be started.
+*/
+#define MD_START_DWELL_ERR_EID 56
+
+/** \brief <tt> 'Stop Dwell Table for mask 0x\%04X failed for \%d of \%d tables' </tt>
+**  \event <tt> 'Stop Dwell Table for mask 0x\%04X failed for \%d of \%d tables' </tt>
+**
+**  \par Type: ERROR
+**  
+**  \par Cause:
+**
+**  This event message is issued when the table address cannot be acquired for
+**  one of the tables being started with the #MD_ProcessStopCmd.  In addition
+**  to this summary message, a #MD_UPDATE_TBL_EN_ERR_EID event is issed for each
+**  failure.
+**
+**  The \c mask  field is the mask of tables to start specified in the command.
+**  The \c integer fields "\%d or \%d" states the total number of tables that
+**  could not be started.
+*/
+#define MD_STOP_DWELL_ERR_EID 57
+
+/** \brief <tt> 'Failed to set signature for Dwell Tbl#\%d. Update returned 0x\%08X' </tt>
+**  \event <tt> 'Failed to set signature for Dwell Tbl#\%d. Update returned 0x\%08X' </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued when the table address cannot be acquired
+**  for the table specified in the #MD_ProcessSignatureCmd. 
+**
+**  The \c Tbl field is the index of the dwell table for which the error occurred.
+**  The \c returned field is the value returned from #MD_UpdateTableSignature.
+*/
+#define MD_SET_SIGNATURE_ERR_EID 58
+
+/** \brief <tt> 'Failed Jam to Dwell Tbl#%d Entry #%d' </tt>
+**  \event <tt> 'Failed Jam to Dwell Tbl#%d Entry #%d' </tt> 
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event is issued for a failed jam operation.
+**
+**  The \c Tbl field is the index of the table for which the failure occurred.
+**  The \c Entry field is the index of the entry for which the failure occurred.
+**/
+#define MD_JAM_DWELL_ERR_EID 59
+
+/** \brief <tt> 'Failed Jam of a Null Dwell Entry to Dwell Tbl#%d Entry #%d' </tt>
+**  \event <tt> 'Failed Jam of a Null Dwell Entry to Dwell Tbl#%d Entry #%d' </tt> 
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event is issued for a failed jam operation in which a null dwell entry is 
+**  specified.  A null entry is specified when the input dwell length is zero.
+**  All dwell fields (address, length, and delay) will be set to zero in this case.
+** 
+**  The \c Tbl field is the index of the table for which the failure occurred.
+**  The \c Entry field is the index of the entry for which the failure occurred.
+**/
+#define MD_JAM_NULL_DWELL_ERR_EID 60
+
+/** \brief <tt> 'TableName could not be made. Err=0x\%08X, Idx=\%d" </tt>
+**  \event <tt> 'TableName could not be made. Err=0x\%08X, Idx=\%d" </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued if the snprintf call used to create the 
+**  TableName in #MD_InitTableServices function fails.
+**
+**  The \c Err field in the event text is the value returned from snprintf.
+**  The \c Idx field in the event text is the TblIndex at which the error
+**  occurred.
+*/
+#define MD_INIT_TBL_NAME_ERR_EID 61
+
+/** \brief <tt> 'TblFileName could not be made. Err=0x\%08X, Idx=\%d" </tt>
+**  \event <tt> 'TblFileName could not be made. Err=0x\%08X, Idx=\%d" </tt>
+**
+**  \par Type: ERROR
+**
+**  \par Cause:
+**
+**  This event message is issued if the snprintf call used to create the 
+**  TblFileName in #MD_InitTableServices function fails.
+**
+**  The \c Err field in the event text is the value returned from snprintf.
+**  The \c Idx field in the event text is the TblIndex at which the error
+**  occurred.
+*/
+
+#define MD_INIT_TBL_FILENAME_ERR_EID 62
+
+/** \brief <tt> 'Dwell Table rejected because of null table pointer' </tt>
+**  \event <tt> 'Dwell Table rejected because of null table pointer' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event message is issued when the table pointer passed to
+**  #MD_TableValidationFunc is null.
+*/
+#define MD_TBL_VAL_NULL_PTR_ERR_EID 55
+
+
+/** \brief <tt> 'Dwell Table failed to read entry %d in table %d' </tt>
+**  \event <tt> 'Dwell Table failed to read entry %d in table %d' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event message is issued when the PSP returns an error when attempting
+**  to read the memory address of an entry
+*/
+#define MD_DWELL_LOOP_GET_DWELL_DATA_ERR_EID 70
+
+
+/** \brief <tt> 'Failed to create pipe.  RC = %d' </tt>
+**  \event <tt> 'Failed to create pipe.  RC = %d' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event message is issued when MD cannot create the software bus pipe.
+**  The RC field is the return code from #CFE_SB_CreatePipe.
+*/
+#define MD_CREATE_PIPE_ERR_EID               71
+
+
+/** \brief <tt> 'Failed to subscribe to HK requests.  RC = %d' </tt>
+**  \event <tt> 'Failed to subscribe to HK requests.  RC = %d' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event message is issued when MD cannot subscribe to housekeeping
+**  requests.
+**  The RC field is the return code from #CFE_SB_Subscribe
+*/
+#define MD_SUB_HK_ERR_EID                   72
+
+
+/** \brief <tt> 'Failed to subscribe to commands.  RC = %d' </tt>
+**  \event <tt> 'Failed to subscribe to commands.  RC = %d' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event message is issued when MD cannot subscribe to commands.
+**  The RC field is the return code from #CFE_SB_Subscribe
+*/
+#define MD_SUB_CMD_ERR_EID                  73
+
+
+/** \brief <tt> 'Failed to subscribe to wakeup messages.  RC = %d' </tt>
+**  \event <tt> 'Failed to subscribe to wakeup messages.  RC = %d' </tt>
+**
+**  \par Type: ERROR
+** 
+**  \par Cause:
+**
+**  This event message is issued when MD cannot subscribe to wakeup 
+**  messages.
+**  The RC field is the return code from #CFE_SB_Subscribe
+*/
+#define MD_SUB_WAKEUP_ERR_EID                74
 
 
 #endif

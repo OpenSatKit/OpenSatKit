@@ -1,16 +1,23 @@
 /*************************************************************************
-** File:
-**   $Id: md_verify.h 1.5 2015/03/01 17:17:27EST sstrege Exp  $
+** File: md_verify.h 
 **
-**  Copyright � 2007-2014 United States Government as represented by the 
-**  Administrator of the National Aeronautics and Space Administration. 
-**  All Other Rights Reserved.  
+** NASA Docket No. GSC-18,450-1, identified as “Core Flight Software System (CFS)
+** Memory Dwell Application Version 2.3.3” 
 **
-**  This software was created at NASA's Goddard Space Flight Center.
-**  This software is governed by the NASA Open Source Agreement and may be 
-**  used, distributed and modified only pursuant to the terms of that 
-**  agreement.
+** Copyright © 2019 United States Government as represented by the Administrator of
+** the National Aeronautics and Space Administration. All Rights Reserved. 
 **
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+** http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License. 
+*
 ** Purpose: 
 **   Contains CFS Memory Dwell macros that run preprocessor checks
 **   on mission configurable parameters
@@ -48,7 +55,7 @@
 /*  will be too large for Table Services */
 #if MD_DWELL_TABLE_SIZE  < 1
    #error MD_DWELL_TABLE_SIZE must be at least one.
-#elif MD_NUM_DWELL_TABLES > 65535
+#elif MD_DWELL_TABLE_SIZE > 65535
    #error MD_DWELL_TABLE_SIZE cannot be greater than 65535.
 #endif 
 

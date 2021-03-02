@@ -13,6 +13,7 @@
 ###############################################################################
 
 load 'filemgr_func_test.rb'
+load 'isim_func_test.rb'
 load 'kit_ci_func_test.rb'
 load 'kit_sch_func_test.rb'
 load 'kit_to_func_test.rb'
@@ -23,6 +24,7 @@ class OskFuncTestSuite < Cosmos::TestSuite
    def initialize
       super()
       add_test('FileMgrFuncTest')
+      add_test('IsimFuncTest')
       add_test('KitCiFuncTest')
       add_test('KitSchFuncTest')
       add_test('KitToFuncTest')

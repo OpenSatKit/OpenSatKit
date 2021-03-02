@@ -31,10 +31,11 @@
 ** Calculate checksum for each sample command
 */
 
-#define ISIM_PWR_ON_XSUM      0x0020
-#define ISIM_PWR_OFF_XSUM     0x0021
-#define ISIM_START_SCI_XSUM   0x0022
-#define ISIM_STOP_SCI_XSUM    0x0023
+#define ISIM_PWR_ON_XSUM      0x00E3
+#define ISIM_PWR_OFF_XSUM     0x00E2
+#define ISIM_PWR_RESET_XSUM   0x00E1
+#define ISIM_START_SCI_XSUM   0x00E0
+#define ISIM_STOP_SCI_XSUM    0x00EF
 
 
 /*
@@ -68,8 +69,8 @@ static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 uint16 RTS_Table006[SC_RTS_BUFF_SIZE] =
 {
   /*  cmd time,  <---------------------------- cmd pkt primary header ---------------------------->  <----- cmd pkt 2nd header ---->   <-- opt data ---> */
-      DELAY_0, CFE_MAKE_BIG16(ISIM_CMD_MID), CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(CMD_LEN_NO_PARAM), ((ISIM_STOP_SCI_CMD_FC << 8) | ISIM_STOP_SCI_XSUM),
-      DELAY_4, CFE_MAKE_BIG16(ISIM_CMD_MID), CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(CMD_LEN_NO_PARAM), ((ISIM_PWR_OFF_CMD_FC  << 8) | ISIM_PWR_OFF_XSUM)
+      DELAY_0, CFE_MAKE_BIG16(ISIM_CMD_MID), CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(CMD_LEN_NO_PARAM), ((ISIM_STOP_SCI_CMD_FC      << 8) | ISIM_STOP_SCI_XSUM),
+      DELAY_4, CFE_MAKE_BIG16(ISIM_CMD_MID), CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(CMD_LEN_NO_PARAM), ((ISIM_PWR_OFF_INSTR_CMD_FC << 8) | ISIM_PWR_OFF_XSUM)
 };
 
 /************************/

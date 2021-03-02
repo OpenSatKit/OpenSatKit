@@ -1,0 +1,9 @@
+{
+   "name": "ISIM Test Table",
+   "description": "Test partial table load with sci-file object",
+   "sci-file": {
+      "path-base-filename": "/cf/simsat/rec/isim_test2_",
+      "file-extension":     ".txt",
+      "images-per-file":    2
+   }
+}
