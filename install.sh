@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-OPEN_SAT_KIT_VERSION="2.2.0"
+OPEN_SAT_KIT_VERSION="2.9"
 BASE_DIR="$(pwd)"
 
 # Intentional order: OSK Archive, Dependencies, COSMOS, Build System 
@@ -36,6 +36,13 @@ if [ ! -d $BASE_DIR/OpenSatKit-master ]; then
 else
    echo "Preserving existing OpenSatKit-master. Continuing installation..."
 fi
+
+announce "Installing git, an libqt4-declarative WARNING:  libqt4 is installed from a Personal Package Archive (PPA) repo rock-core:  It is not validated"
+
+sudo apt install git
+sudo add-apt-repository ppa:rock-core/qt4
+sudo apt upgrade
+sudo apt install libqt4-declarative
 
 announce "Installing COSMOS (Includes Ruby). When prompted select Sudo and demo is optional (not needed for OSK)."
 confirm "Continue?" 1
