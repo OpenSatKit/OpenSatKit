@@ -64,7 +64,7 @@ HS_XCTEntry_t      HS_Default_ExeCount_Tbl[HS_MAX_EXEC_CNT_SLOTS] =
 /*   2 */ { "CFE_TIME",                0,       HS_XCT_TYPE_APP_MAIN       },
 /*   3 */ { "CFE_TBL",                 0,       HS_XCT_TYPE_APP_MAIN       },
 /*   4 */ { "CFE_SB",                  0,       HS_XCT_TYPE_APP_MAIN       },
-/*   5 */ { "",                        0,       HS_XCT_TYPE_NOTYPE         },
+/*   5 */ { "F42",                     0,       HS_XCT_TYPE_APP_MAIN       }, //osk
 /*   6 */ { "",                        0,       HS_XCT_TYPE_NOTYPE         },
 /*   7 */ { "",                        0,       HS_XCT_TYPE_NOTYPE         },
 /*   8 */ { "",                        0,       HS_XCT_TYPE_NOTYPE         },

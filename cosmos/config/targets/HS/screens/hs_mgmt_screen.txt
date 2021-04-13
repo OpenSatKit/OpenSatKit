@@ -1,0 +1,142 @@
+###############################################################################
+# Health & Safety App Screen
+#
+# Notes:
+#   1.  Most HS commands don't require parameters and could be sent directly
+#       from this file. However dispatching all of the commands in the same
+#       manner using a script file isolates any futur command related changes
+#       to the script file.  
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'hs_mgmt_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Health & Safety Application"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+   SETTING TEXTCOLOR black
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+
+   VERTICALBOX "Commands"
+      MATRIXBYCOLUMNS 6
+
+         LABEL '         HS App:'
+         BUTTON 'Noop' 'hs_mgmt_send_cmd(self, "NOOP")'
+         BUTTON 'Reset' 'hs_mgmt_send_cmd(self, "RESET")'
+         LABEL ' CPU Resets:'         
+         BUTTON 'Clear Cnt' 'hs_mgmt_send_cmd(self, "CLR_CPU_RESET_CNT")'
+         BUTTON 'Set Max Resets' 'hs_mgmt_send_cmd(self, "SET_MAX_CPU_RESETS")'
+
+         LABEL '     Aliveness:'
+         BUTTON 'Enable' 'hs_mgmt_send_cmd(self, "ENA_ALIVENESS")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Disable' 'hs_mgmt_send_cmd(self, "DIS_ALIVENESS")'
+            SETTING BACKCOLOR 255 70 95
+         LABEL '    App Mon:'
+         BUTTON 'Enable' 'hs_mgmt_send_cmd(self, "ENA_APP_MON")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Disable' 'hs_mgmt_send_cmd(self, "DIS_APP_MON")'
+            SETTING BACKCOLOR 255 70 95
+
+         LABEL '  Event Mon:'
+         BUTTON 'Enable' 'hs_mgmt_send_cmd(self, "ENA_EVENT_MON")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Disable' 'hs_mgmt_send_cmd(self, "DIS_EVENT_MON")'
+            SETTING BACKCOLOR 255 70 95
+         LABEL '    CPU Hog:'
+         BUTTON 'Enable' 'hs_mgmt_send_cmd(self, "ENA_CPU_HOG")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Disable' 'hs_mgmt_send_cmd(self, "DIS_CPU_HOG")'
+            SETTING BACKCOLOR 255 70 95
+
+      END # Matrix
+   END # VerticalBox Commands
+
+   VERTICALBOX "Dump and Display Table"
+      MATRIXBYCOLUMNS 4
+
+         BUTTON 'App Mon' 'hs_mgmt_send_cmd(self, "DUMP_APP_MON_TBL")'
+         BUTTON 'Event Mon' 'hs_mgmt_send_cmd(self, "DUMP_EVENT_MON_TBL")'
+         BUTTON 'Msg Action' 'hs_mgmt_send_cmd(self, "DUMP_MSG_ACT_TBL")'
+         BUTTON 'Exec Ctrs' 'hs_mgmt_send_cmd(self, "DUMP_EXEC_CTR_TBL")'
+         
+      END # Matrix
+   END # VerticalBox Table dumps
+   SETTING BACKCOLOR 162 181 205
+   
+   VERTICALBOX "Telemetry"
+      MATRIXBYCOLUMNS 6
+
+         LABEL 'Cmd Valid'
+         VALUE HS HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+         LABEL '        '
+         LABEL 'Cmd Error'
+         VALUE HS HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'Aliveness'
+         VALUE HS HK_TLM_PKT ALIVENESS_STATE WITH_UNITS 8
+         LABEL '        '
+         LABEL 'CPU Hog'
+         VALUE HS HK_TLM_PKT CPU_HOG_STATE WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'App Mon'
+         VALUE HS HK_TLM_PKT APP_MON_STATE WITH_UNITS 8
+         LABEL '        '
+         LABEL 'App Tbl'
+         VALUE HS HK_TLM_PKT APP_MON_TBL WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'Event Mon'
+         VALUE HS HK_TLM_PKT EVENT_MON_STATE WITH_UNITS 8
+         LABEL '        '
+         LABEL 'Event Tbl'
+         VALUE HS HK_TLM_PKT EVENT_MON_TBL WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'Event Cnt'
+         VALUE HS HK_TLM_PKT EVENT_MON_CNT WITH_UNITS 8
+         LABEL '        '
+         LABEL 'Invld Event'
+         VALUE HS HK_TLM_PKT INVLD_EVENT_MON_CNT WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'Reset Cnt'
+         VALUE HS HK_TLM_PKT CPU_RESET_CNT WITH_UNITS 8
+         LABEL '        '
+         LABEL 'Max Resets'
+         VALUE HS HK_TLM_PKT MAX_RESETS WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'CPU Avg'
+         VALUE HS HK_TLM_PKT CPU_UTIL_AVG WITH_UNITS 8
+         LABEL '        '
+         LABEL 'CPU Peak'
+         VALUE HS HK_TLM_PKT CPU_UTIL_PEAK WITH_UNITS 8
+         LABEL '        '
+
+         LABEL 'Msg Exe Cnt'
+         VALUE HS HK_TLM_PKT MSG_ACT_EXEC_CNT WITH_UNITS 8
+         LABEL '        '
+         LABEL '        '
+         LABEL '        '
+         LABEL '        '
+
+      END # Matrix
+   END # VerticalBox Telemetry
+   SETTING BACKCOLOR 162 181 205
+
+   HORIZONTALLINE
+   LABEL "Flight Event Messages"
+   NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50

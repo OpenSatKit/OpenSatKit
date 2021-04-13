@@ -1,0 +1,133 @@
+###############################################################################
+# 42 Simulator Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "42 Simulation"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX
+  MATRIXBYCOLUMNS 3 5 5
+    BUTTON 'Start 42 Sim'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "START_42_SIM")'
+    SETTING BACKCOLOR 0 200 0
+    BUTTON 'Stop 42 Sim'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "STOP_42_SIM")'
+    SETTING BACKCOLOR 220 50 50
+    BUTTON 'Reconnect 42'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RECONNECT_42")'
+    BUTTON 'Set 42 Exec Rate'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_42_EXEC_RATE")'
+    BUTTON 'Set Contoller Gains' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_CTRL_GAINS")'
+    BUTTON 'Configure SunValid'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONFIG_SUN_VALID")'
+    ##BUTTON 'Set Ctrl Mode'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_CTRL_MODE")'
+    ##BUTTON 'Set Sun Axis'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_SUN_AXIS")'
+    ##SETTING BACKCOLOR 128 128 128
+  END # Matrix
+
+  HORIZONTAL
+    VERTICALBOX "I42 - 42 Interface App"
+      MATRIXBYCOLUMNS 2
+        LABEL 'Cmd Valid' 
+        VALUE I42 HK_TLM_PKT CMD_VALID_COUNT FORMATTED 8
+        LABEL 'Cmd Error' 
+        VALUE I42 HK_TLM_PKT CMD_ERROR_COUNT FORMATTED 8
+        LABEL '42 Connected' 
+        VALUE I42 HK_TLM_PKT CONNECTED FORMATTED 8
+        LABEL '42 Cycles'
+        VALUE I42 HK_TLM_PKT CONNECT_CYCLES FORMATTED 8
+        LABEL 'Sensor Pkts'
+        VALUE I42 HK_TLM_PKT SENSOR_PKT_CNT FORMATTED 8
+        LABEL 'Actuator Pkts'
+        VALUE I42 HK_TLM_PKT ACTUATOR_PKT_CNT FORMATTED 8
+      END # Matrix
+    END # Vertical Box
+    VERTICALBOX "F42 - 42 Standalone Controller App"
+      MATRIXBYCOLUMNS 2
+        LABEL 'Cmd Valid' 
+        VALUE F42 HK_TLM_PKT CMD_VALID_COUNT FORMATTED 12
+        LABEL 'Cmd Error' 
+        VALUE F42 HK_TLM_PKT CMD_ERROR_COUNT FORMATTED 12
+        LABEL 'Control Exec Cnt' 
+        VALUE F42 HK_TLM_PKT CTRL_EXEC_COUNT FORMATTED 12
+        LABEL 'Sun Valid' 
+        VALUE F42 CONTROL_PKT SUN_VALID FORMATTED 12
+        LABEL 'OVR Sun Valid' 
+        VALUE F42 HK_TLM_PKT OVR_SUN_VALID FORMATTED 12
+      END # Matrix
+    END # Vertical Box
+  END # Horizontal
+
+  VERTICALBOX "Attitude Control" 10
+    MATRIXBYCOLUMNS 4 5
+      LABEL '    Att Err X'
+      LABEL '    Att Err Y'
+      LABEL '    Att Err Z'
+      LABEL '             '
+      VALUE F42 CONTROL_PKT THERR_X
+      VALUE F42 CONTROL_PKT THERR_Y
+      VALUE F42 CONTROL_PKT THERR_Z
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_ATT_ERR")'
+      LABEL '   Rate Err X'
+      LABEL '   Rate Err Y'
+      LABEL '   Rate Err Z'
+      LABEL '             '
+      VALUE F42 CONTROL_PKT WERR_X
+      VALUE F42 CONTROL_PKT WERR_Y
+      VALUE F42 CONTROL_PKT WERR_Z
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_RATE_ERR")'
+      LABEL '   Torq Cmd X'
+      LABEL '   Torq Cmd Y'
+      LABEL '   Torq Cmd Z'
+      LABEL '             '
+      VALUE F42 CONTROL_PKT TRQ_CMD_X
+      VALUE F42 CONTROL_PKT TRQ_CMD_Y
+      VALUE F42 CONTROL_PKT TRQ_CMD_Z
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_TORQ_CMD")'
+    END # Matrix
+  END # Vertical Box
+  
+  VERTICALBOX "Momentum Control" 10
+    MATRIXBYCOLUMNS 4 5
+      LABEL '        HvB X'
+      LABEL '        HvB Y'
+      LABEL '        HvB Z'
+      LABEL '             '
+      VALUE F42 CONTROL_PKT HVB_X
+      VALUE F42 CONTROL_PKT HVB_Y
+      VALUE F42 CONTROL_PKT HVB_Z
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_MOM_ERR")'
+      LABEL '    Mom Cmd X'
+      LABEL '    Mom Cmd Y'
+      LABEL '    Mom Cmd Z'
+      LABEL '             '
+      VALUE F42 CONTROL_PKT MOM_CMD_X
+      VALUE F42 CONTROL_PKT MOM_CMD_Y
+      VALUE F42 CONTROL_PKT MOM_CMD_Z
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_MOM_CMD")'
+    END # Matrix
+  END # Vertical Box
+
+  VERTICALBOX "SA Gimbal Commands" 10
+    MATRIXBYCOLUMNS 4 5
+      LABEL '   SA Gimbal'
+      LABEL '            '
+      LABEL '            '
+      LABEL '            '
+      VALUE F42 CONTROL_PKT SA_GIM_CMD
+      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_SA_GIM_CMD")'
+      LABEL '            '
+      LABEL '            '
+    END # Matrix
+  END # Vertical Box
+
+END # Vertical Box
+
+HORIZONTALLINE
+
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

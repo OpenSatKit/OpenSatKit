@@ -1,0 +1,27 @@
+###############################################################################
+# File Management File Info Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "File Manager File Information"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX
+    
+  FORMATVALUE FM FILE_INFO_PKT NAME %-128s FORMATTED 64
+  LABELVALUE  FM FILE_INFO_PKT OPEN_STATUS
+  LABELVALUE  FM FILE_INFO_PKT COMPUTE_CRC
+  LABELVALUE  FM FILE_INFO_PKT CRC            WITH_UNITS 32
+  LABELVALUE  FM FILE_INFO_PKT SIZE           WITH_UNITS 32
+  LABELVALUE  FM FILE_INFO_PKT LAST_MOD_TIME  WITH_UNITS 32
+  LABELVALUE  FM FILE_INFO_PKT MODE           WITH_UNITS 32
+   
+End # Vertical

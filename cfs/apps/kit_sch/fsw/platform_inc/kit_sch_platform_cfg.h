@@ -30,7 +30,7 @@
 */
 
 #define KIT_SCH_PLATFORM_REV   0
-#define KIT_SCH_FILE_NAME  "/cf/kit_sch_ini.json"
+#define KIT_SCH_INI_FILENAME   "/cf/kit_sch_ini.json"
 
 
 /******************************************************************************
@@ -39,8 +39,8 @@
 
 #define  KIT_SCH_STARTUP_SYNCH_TIMEOUT  10000  /* Timeout in milliseconds */
 
-#define  KIT_SCH_DEF_MSG_TBL_FILE_NAME       "/cf/osk_sch_msg_tbl.json"
-#define  KIT_SCH_DEF_SCH_TBL_FILE_NAME       "/cf/osk_sch_sch_tbl.json"
+#define  KIT_SCH_DEF_MSG_TBL_FILENAME   "/cf/osk_sch_msg_tbl.json"
+#define  KIT_SCH_DEF_SCH_TBL_FILENAME   "/cf/osk_sch_sch_tbl.json"
 
 /******************************************************************************
 ** Scheduler Table Configurations

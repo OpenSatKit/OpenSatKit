@@ -1,0 +1,62 @@
+###############################################################################
+# SimSat Table Tool Screen
+#
+# Notes:
+#   1. This screen serves as a top level manager for all of the SimSat table
+#      generation tools.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL). 
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE 'Manage SimSat Table Generation Tools'
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICAL
+
+   VERTICALBOX
+      LABEL "Each button below launches a screen that guides you through the process"
+      SETTING TEXTCOLOR black
+      LABEL "of automatically generating one or more SimSat FSW application tables. For" 
+      SETTING TEXTCOLOR black
+      LABEL "cFS apps with binary tables a C source is generated. For OSK framework-based"
+      SETTING TEXTCOLOR black
+      LABEL "apps a JSON table is created."
+      SETTING TEXTCOLOR black
+      LABEL " "
+   END
+
+
+   HORIZONTALLINE
+     
+   VERTICALBOX "Table Tools"
+      MATRIXBYCOLUMNS 2 10 20
+
+      LABEL " "
+      LABEL " "
+
+      BUTTON 'Telemetry Tables'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tbl_tool_screen.rb"; tbl_tool(self, "TLM")'
+      LABEL "Create Data Storage(DS) and Telemetry Output(KIT_TO) tables"
+
+      BUTTON 'Housekeeping'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tbl_tool_screen.rb"; tbl_tool(self, "HK")'
+      LABEL "Create Housekeeping(HK) copy table"
+
+      BUTTON 'Limit Checker'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tbl_tool_screen.rb"; tbl_tool(self, "LC")'
+      SETTING BACKCOLOR 150 150 150
+      LABEL "Coming Soon..."
+
+      BUTTON 'Stored Commands'  'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/tbl_tool_screen.rb"; tbl_tool(self, "SC")'
+      SETTING BACKCOLOR 150 150 150
+      LABEL "Coming Soon..."
+
+   END
+   SPACER 0 50 FIXED EXPANDING
+
+END # Vertical
+   

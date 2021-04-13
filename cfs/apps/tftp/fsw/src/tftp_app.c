@@ -162,8 +162,8 @@ static void SendHousekeepingPkt(void)
    TftpApp.HkPkt.State      = TftpApp.Tftp.State;
    TftpApp.HkPkt.BlockNum   = TftpApp.Tftp.BlockNum;
 
-   strncpy(TftpApp.HkPkt.SrcFilename,  TftpApp.Tftp.SrcFilename,  TFTP_FILE_NAME_LEN);
-   strncpy(TftpApp.HkPkt.DestFilename, TftpApp.Tftp.DestFilename, TFTP_FILE_NAME_LEN);
+   strncpy(TftpApp.HkPkt.SrcFilename,  TftpApp.Tftp.SrcFilename,  TFTP_FILENAME_LEN);
+   strncpy(TftpApp.HkPkt.DestFilename, TftpApp.Tftp.DestFilename, TFTP_FILENAME_LEN);
 
    /*
    ** Connection Data

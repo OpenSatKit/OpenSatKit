@@ -37,6 +37,9 @@ VERTICAL   # With 2 rows
             BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "MD_TLM")'
             NAMED_WIDGET md_tlm COMBOBOX HOUSEKEEPING
 
+            BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "MD_TBL")'
+            NAMED_WIDGET md_tbl COMBOBOX "Dwell Table 1" "Dwell Table 2" "Dwell Table 3" "Dwell Table 4" # Menu names used in script hash so definitions must match
+
             BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "MD_DOC")'
             SETTING BACKCOLOR 255 255 255
 
@@ -49,7 +52,7 @@ VERTICAL   # With 2 rows
          MATRIXBYCOLUMNS 2 5 2
          
             BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "MM_CMD")'
-            NAMED_WIDGET mm_cmd COMBOBOX NOOP RESET_CTRS PEEK_MEM POKE_MEM LOAD_MEM_WID LOAD_MEM_FROM_FILE DUMP_MEM_TO_FILE DUMP_IN_EVENT MM FILL_MEM LOOKUP_SYMBOL SYMBOLTBL_TO_FILE ENA_EEPROM_WRITE DIS_EEPROM_WRITE 
+            NAMED_WIDGET mm_cmd COMBOBOX NOOP RESET_CTRS PEEK_MEM POKE_MEM LOAD_MEM_WID LOAD_MEM_FROM_FILE DUMP_MEM_TO_FILE DUMP_IN_EVENT FILL_MEM LOOKUP_SYMBOL SYMBOLTBL_TO_FILE ENA_EEPROM_WRITE DIS_EEPROM_WRITE 
 
             BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "MM_TLM")'
             NAMED_WIDGET mm_tlm COMBOBOX HOUSEKEEPING
@@ -88,7 +91,7 @@ VERTICAL   # With 2 rows
          LABEL "    "
 
          BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "MAINTENANCE", "TUTORIAL")'
-         NAMED_WIDGET tutorial COMBOBOX "Maint App Intro Slides" "Maint App Intro Video"
+         NAMED_WIDGET tutorial COMBOBOX "Maint App Group Intro Slides" "Maint App Group Intro Video"
          LABEL "    "
 
       END # Matrix

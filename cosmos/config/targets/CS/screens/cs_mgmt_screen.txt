@@ -1,0 +1,430 @@
+###############################################################################
+# Checksum App Screen
+#
+# Notes:
+#   1.  Most CS commands don't require parameters and could be sent directly
+#       from this file. However dispatching all of the commands in the same
+#       manner using a script file isolates any futur command related changes
+#       to the script file.  
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'cs_mgmt_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Checksum Application"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+  SETTING TEXTCOLOR black
+  GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TABBOOK
+
+#######################################################
+
+   TABITEM "App Mgmt"
+
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+
+            BUTTON 'Noop' 'cs_mgmt_send_cmd(self, "NOOP")'
+            BUTTON 'Reset Counters' 'cs_mgmt_send_cmd(self, "RESET")'
+            LABEL '   '
+
+            BUTTON 'Enable All' 'cs_mgmt_send_cmd(self, "ENA_ALL")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Disable All' 'cs_mgmt_send_cmd(self, "DIS_ALL")'
+            SETTING BACKCOLOR 255 70 95
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+
+            LABEL '    Cmd Valid Cnt'
+            VALUE CS HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+            LABEL '    Cmd Error Cnt'
+            VALUE CS HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+            LABEL '   '
+
+            LABEL '        App State'
+            VALUE CS HK_TLM_PKT APP_STATE WITH_UNITS 8
+            LABEL '       Pass Count'
+            VALUE CS HK_TLM_PKT PASS_CTR WITH_UNITS 8
+            LABEL '   '
+
+            LABEL '       Curr Table'            
+            VALUE CS HK_TLM_PKT CURR_TBL WITH_UNITS 8
+            LABEL '   '
+            LABEL '   '
+            LABEL '   '
+            
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+      #Pastel green: SETTING BACKCOLOR 162 212 204
+   
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END # Tab Item: App Management
+
+#######################################################
+  
+   TABITEM "Oneshot"
+
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+
+            BUTTON 'Start' 'cs_mgmt_send_cmd(self, "START_ONESHOT")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Cancel' 'cs_mgmt_send_cmd(self, "CANCEL_ONESHOT")'
+            SETTING BACKCOLOR 255 70 95
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+
+            LABEL '       In Progess'
+            VALUE CS HK_TLM_PKT ONESHOT_IN_PROGRESS WITH_UNITS 10
+            LABEL '  Bytes Per Cycle'
+            VALUE CS HK_TLM_PKT ONESHOT_BYTES_PER_CYCLE WITH_UNITS 10
+            LABEL '   '
+
+            LABEL '          Address'
+            VALUE CS HK_TLM_PKT ONESHOT_ADDR WITH_UNITS 10
+            LABEL '  Number of Bytes'
+            VALUE CS HK_TLM_PKT ONESHOT_NUM_BYTES WITH_UNITS 10
+            LABEL '   '
+
+            LABEL '         Checksum'               
+            VALUE CS HK_TLM_PKT ONESHOT_CS WITH_UNITS 10
+            LABEL '   '
+            LABEL '   '
+            LABEL '   '
+            
+            END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: Oneshot
+
+#######################################################
+  
+   TABITEM "Apps Tbl"
+  
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+            
+            BUTTON 'Ena Table' 'cs_mgmt_send_cmd(self, "ENA_APP_TBL")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Table' 'cs_mgmt_send_cmd(self, "DIS_APP_TBL")'
+            SETTING BACKCOLOR 255 70 95
+            LABEL '   '
+
+            BUTTON 'Ena App Entry' 'cs_mgmt_send_cmd(self, "ENA_APP_TBL_ENTRY")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis App Entry' 'cs_mgmt_send_cmd(self, "DIS_APP_TBL_ENTRY")'
+            SETTING BACKCOLOR 255 70 95
+            LABEL '   '
+            
+            BUTTON 'Compute Baseline' 'cs_mgmt_send_cmd(self, "COMPUTE_APP_BASELINE")'
+            BUTTON 'Report Baseline' 'cs_mgmt_send_cmd(self, "REPORT_APP_BASELINE")'
+            LABEL '   '
+
+            BUTTON 'Get Definition Tbl' 'cs_mgmt_send_cmd(self, "DUMP_APP_DEF_TBL")'
+            BUTTON 'Get Results Tbl' 'cs_mgmt_send_cmd(self, "DUMP_APP_RES_TBL")'
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+
+            LABEL '  Table State'
+            VALUE CS HK_TLM_PKT APP_TBL_STATE WITH_UNITS 8
+            LABEL '  Error Count'
+            VALUE CS HK_TLM_PKT APP_TBL_ERR_CTR WITH_UNITS 8
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: Apps Tbl
+
+#######################################################
+  
+   TABITEM "Tables Tbl"
+  
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+
+            BUTTON 'Ena Table' 'cs_mgmt_send_cmd(self, "ENA_TABLES_TBL")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Table' 'cs_mgmt_send_cmd(self, "DIS_TABLES_TBL")'
+            LABEL '   '
+
+            BUTTON 'Ena Tbl Entry' 'cs_mgmt_send_cmd(self, "ENA_TABLES_TBL_ENTRY")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Tbl Entry' 'cs_mgmt_send_cmd(self, "DIS_TABLES_TBL_ENTRY")'
+            LABEL '   '
+            
+            BUTTON 'Compute Baseline' 'cs_mgmt_send_cmd(self, "COMPUTE_TBL_BASELINE")'
+            BUTTON 'Report Baseline' 'cs_mgmt_send_cmd(self, "REPORT_TBL_BASELINE")'
+            LABEL '   '
+
+            BUTTON 'Get Definition Tbl' 'cs_mgmt_send_cmd(self, "DUMP_TABLES_DEF_TBL")'
+            BUTTON 'Get Results Tbl' 'cs_mgmt_send_cmd(self, "DUMP_TABLES_RES_TBL")'
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+            
+            LABEL '  Table State'
+            VALUE CS HK_TLM_PKT TABLES_TBL_STATE WITH_UNITS 8
+            LABEL '  Error Count'
+            VALUE CS HK_TLM_PKT TABLES_TBL_ERR_CTR WITH_UNITS 8
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: Tables Tbl
+
+#######################################################
+  
+   TABITEM "Memory Tbl"
+  
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+         
+            BUTTON 'Ena Table' 'cs_mgmt_send_cmd(self, "ENA_MEM_TBL")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Table' 'cs_mgmt_send_cmd(self, "DIS_MEM_TBL")'
+            LABEL '   '
+
+            BUTTON 'Ena Entry Id' 'cs_mgmt_send_cmd(self, "ENA_MEM_TBL_ENTRY")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Entry Id' 'cs_mgmt_send_cmd(self, "DIS_MEM_TBL_ENTRY")'
+            LABEL '   '
+            
+            BUTTON 'Compute Baseline' 'cs_mgmt_send_cmd(self, "COMPUTE_MEM_BASELINE")'
+            BUTTON 'Report Baseline' 'cs_mgmt_send_cmd(self, "REPORT_MEM_BASELINE")'
+            LABEL '   '
+
+            BUTTON 'Get Definition Tbl' 'cs_mgmt_send_cmd(self, "DUMP_MEM_DEF_TBL")'
+            BUTTON 'Get Results Tbl' 'cs_mgmt_send_cmd(self, "DUMP_MEM_RES_TBL")'
+            LABEL '   '
+
+            BUTTON 'Get Entry Id' 'cs_mgmt_send_cmd(self, "GET_MEM_TBL_ENTRY_ID")'
+            LABEL '   '
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+
+            LABEL '  Table State'
+            VALUE CS HK_TLM_PKT MEM_TBL_STATE WITH_UNITS 10
+            LABEL '  Error Count'
+            VALUE CS HK_TLM_PKT MEM_TBL_ERR_CTR WITH_UNITS 10
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: Memory Table
+
+#######################################################
+  
+   TABITEM "EEPROM Tbl"
+  
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+         
+            BUTTON 'Ena Table' 'cs_mgmt_send_cmd(self, "ENA_EEPROM_TBL")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Table' 'cs_mgmt_send_cmd(self, "DIS_EEPROM_TBL")'
+            LABEL '   '
+
+            BUTTON 'Ena Entry Id' 'cs_mgmt_send_cmd(self, "ENA_EEPROM_TBL_ENTRY")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis Entry Id' 'cs_mgmt_send_cmd(self, "DIS_EEPROM_TBL_ENTRY")'
+            LABEL '   '
+            
+            BUTTON 'Compute Baseline' 'cs_mgmt_send_cmd(self, "COMPUTE_EEPROM_BASELINE")'
+            BUTTON 'Report Baseline' 'cs_mgmt_send_cmd(self, "REPORT_EEPROM_BASELINE")'
+            LABEL '   '
+
+            BUTTON 'Get Definition Tbl' 'cs_mgmt_send_cmd(self, "DUMP_EEPROM_DEF_TBL")'
+            BUTTON 'Get Results Tbl' 'cs_mgmt_send_cmd(self, "DUMP_EEPROM_RES_TBL")'
+            LABEL '   '
+
+            BUTTON 'Get Entry Id' 'cs_mgmt_send_cmd(self, "GET_EEPROM_TBL_ENTRY_ID")'
+            LABEL '   '
+            LABEL '   '
+         
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+         
+            LABEL '  Table State'
+            VALUE CS HK_TLM_PKT EEPROM_TBL_STATE WITH_UNITS 10
+            LABEL '  Error Count'
+            VALUE CS HK_TLM_PKT EEPROM_TBL_ERR_CTR WITH_UNITS 10
+            LABEL '   '
+
+            LABEL '  Baseline CS'
+            VALUE CS HK_TLM_PKT EEPROM_BASELINE WITH_UNITS 10
+            LABEL '   '
+            LABEL '   '
+            LABEL '   '
+                     
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: EEPROM Table
+
+#######################################################
+  
+   TABITEM "OS"
+  
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+         
+            BUTTON 'Ena CS' 'cs_mgmt_send_cmd(self, "ENA_OS")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis CS' 'cs_mgmt_send_cmd(self, "DIS_OS")'
+            LABEL '   '
+         
+            BUTTON 'Compute Baseline' 'cs_mgmt_send_cmd(self, "COMPUTE_OS_BASELINE")'
+            BUTTON 'Report Baseline' 'cs_mgmt_send_cmd(self, "REPORT_OS_BASELINE")'
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+      
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+
+            LABEL '  Table State'
+            VALUE CS HK_TLM_PKT OS_STATE WITH_UNITS 10
+            LABEL '  Error Count'
+            VALUE CS HK_TLM_PKT OS_ERR_CTR WITH_UNITS 10
+            LABEL '   '
+
+            LABEL '  Baseline CS'
+            VALUE CS HK_TLM_PKT OS_BASELINE WITH_UNITS 10
+            LABEL '   '
+            LABEL '   '
+            LABEL '   '
+            
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+      
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: Operating System
+
+#######################################################
+  
+   TABITEM "cFE"
+  
+      VERTICALBOX "Commands"
+         MATRIXBYCOLUMNS 3
+
+            BUTTON 'Ena CS' 'cs_mgmt_send_cmd(self, "ENA_CFE_CORE")'
+            SETTING BACKCOLOR 70 255 95
+            BUTTON 'Dis CS' 'cs_mgmt_send_cmd(self, "DIS_CFE_CORE")'
+            LABEL '   '
+
+            BUTTON 'Compute Baseline' 'cs_mgmt_send_cmd(self, "COMPUTE_CFE_CORE_BASELINE")'
+            BUTTON 'Report Baseline' 'cs_mgmt_send_cmd(self, "REPORT_CFE_CORE_BASELINE")'
+            LABEL '   '
+
+         END # Matrix
+      END # VerticalBox Commands
+      SETTING BACKCOLOR 162 181 205
+
+      VERTICALBOX "Telemetry"
+         MATRIXBYCOLUMNS 5
+         
+            LABEL '  Table State'
+            VALUE CS HK_TLM_PKT CFE_CORE_STATE WITH_UNITS 10
+            LABEL '  Error Count'
+            VALUE CS HK_TLM_PKT CFE_CORE_ERR_CTR WITH_UNITS 10
+            LABEL '   '
+
+            LABEL '  Baseline CS'            
+            VALUE CS HK_TLM_PKT CFE_CORE_BASELINE WITH_UNITS 10
+            LABEL '   '
+            LABEL '   '
+            LABEL '   '
+         
+         END # Matrix
+      END # VerticalBox Telemetry
+      SETTING BACKCOLOR 162 181 205
+      
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50
+
+   END #  Tab Item: cFE
+
+#######################################################

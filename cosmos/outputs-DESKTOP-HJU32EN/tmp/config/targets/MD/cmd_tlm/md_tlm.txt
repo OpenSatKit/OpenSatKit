@@ -1,0 +1,85 @@
+  
+
+TELEMETRY MD HK_TLM_PKT LITTLE_ENDIAN "Memory Dwell Housekeeping Telemetry"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0890 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_ERROR_COUNT  8 UINT "Error Command Count"
+  APPEND_ITEM CMD_VALID_COUNT  8 UINT "Valid Command Count"
+  APPEND_ITEM DWELL_ENA_MASK  16 UINT "Each bit in bit mask enables a table 0x0001=TBL1 enable bit,0x0002=TBL2 enable bit, 0x0004=TBL3 enable bit,0x0008=TBL4 enable bit, etc."
+  APPEND_ARRAY_ITEM DWELLTBLADDRCOUNT 16 UINT 64 "Number of dwell addresses in table"
+  APPEND_ARRAY_ITEM NUMWAITSPERPKT 16 UINT 64 "Number of delay counts in table"
+  APPEND_ARRAY_ITEM BYTECOUNT 16 UINT 64 "Number of bytes of data specified by table"
+  APPEND_ARRAY_ITEM DWELLPKTOFFSET 16 UINT 64 "Current write offset within dwell pkt data region"
+  APPEND_ARRAY_ITEM DWELLTBLENTRY 16 UINT 64 "Next dwell table entry to be processed"
+  APPEND_ARRAY_ITEM COUNTDOWN 16 UINT 64 "Current value of countdown timer"
+
+TELEMETRY MD DWELL_PKT LITTLE_ENDIAN "Memory Dwell Telemetry Packet format"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0891 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM TABLE_ID 8 UINT "TableId from 1 to MD_NUM_DWELL_TABLES."
+  APPEND_ITEM ADDR_COUNT 8 UINT "Number of addresses being sent - 1..MD_DWELL_TABLE_SIZE valid."
+  APPEND_ITEM BYTE_COUNT 16 UINT "Number of bytes of dwell data contained in packet."
+  APPEND_ITEM INTERVAL 32 UINT "Number of counts between packet sends."
+  APPEND_ITEM SIGNATURE 256 STRING "Custom string to identify the dwell packet"
+  # MD_DWELL_TABLE_SIZE * 4 : Default table size is 25 
+  APPEND_ITEM DATA_00_0 8 UINT "Dwell data [0] byte [0]"
+  APPEND_ITEM DATA_00_1 8 UINT "Dwell data [0] byte [1]"
+  APPEND_ITEM DATA_00_2 8 UINT "Dwell data [0] byte [2]"
+  APPEND_ITEM DATA_00_3 8 UINT "Dwell data [0] byte [3]"
+  APPEND_ITEM DATA_01_0 8 UINT "Dwell data [1] byte [0]"
+  APPEND_ITEM DATA_01_1 8 UINT "Dwell data [1] byte [1]"
+  APPEND_ITEM DATA_01_2 8 UINT "Dwell data [1] byte [2]"
+  APPEND_ITEM DATA_01_3 8 UINT "Dwell data [1] byte [3]"
+  APPEND_ITEM DATA_02_0 8 UINT "Dwell data [2] byte [0]"
+  APPEND_ITEM DATA_02_1 8 UINT "Dwell data [2] byte [1]"
+  APPEND_ITEM DATA_02_2 8 UINT "Dwell data [2] byte [2]"
+  APPEND_ITEM DATA_02_3 8 UINT "Dwell data [2] byte [3]"
+  APPEND_ITEM DATA_03_0 8 UINT "Dwell data [3] byte [0]"
+  APPEND_ITEM DATA_03_1 8 UINT "Dwell data [3] byte [1]"
+  APPEND_ITEM DATA_03_2 8 UINT "Dwell data [3] byte [2]"
+  APPEND_ITEM DATA_03_3 8 UINT "Dwell data [3] byte [3]"
+
+  # This lengths agrees with the memeory management demo dwell packet length  
+  #APPEND_ITEM DATA_04_0 8 UINT "Dwell data [4] byte [0]"
+  #APPEND_ITEM DATA_04_1 8 UINT "Dwell data [4] byte [1]"
+  #APPEND_ITEM DATA_04_2 8 UINT "Dwell data [4] byte [2]"
+  #APPEND_ITEM DATA_04_3 8 UINT "Dwell data [4] byte [3]"
+  #APPEND_ITEM DATA_05_0 8 UINT "Dwell data [5] byte [0]"
+  #APPEND_ITEM DATA_05_1 8 UINT "Dwell data [5] byte [1]"
+  #APPEND_ITEM DATA_05_2 8 UINT "Dwell data [5] byte [2]"
+  #APPEND_ITEM DATA_05_3 8 UINT "Dwell data [5] byte [3]"
+  #APPEND_ITEM DATA_06_0 8 UINT "Dwell data [6] byte [0]"
+  #APPEND_ITEM DATA_06_1 8 UINT "Dwell data [6] byte [1]"
+  #APPEND_ITEM DATA_06_2 8 UINT "Dwell data [6] byte [2]"
+  #APPEND_ITEM DATA_06_3 8 UINT "Dwell data [6] byte [3]"
+  #APPEND_ITEM DATA_07_0 8 UINT "Dwell data [7] byte [0]"
+  #APPEND_ITEM DATA_07_1 8 UINT "Dwell data [7] byte [1]"
+  #APPEND_ITEM DATA_07_2 8 UINT "Dwell data [7] byte [2]"
+  #APPEND_ITEM DATA_07_3 8 UINT "Dwell data [7] byte [3]"
+  #APPEND_ITEM DATA_08_0 8 UINT "Dwell data [8] byte [0]"
+  #APPEND_ITEM DATA_08_1 8 UINT "Dwell data [8] byte [1]"
+  #APPEND_ITEM DATA_08_2 8 UINT "Dwell data [8] byte [2]"
+  #APPEND_ITEM DATA_08_3 8 UINT "Dwell data [8] byte [3]"
+  #APPEND_ITEM DATA_09_0 8 UINT "Dwell data [9] byte [0]"
+  #APPEND_ITEM DATA_09_1 8 UINT "Dwell data [9] byte [1]"
+  #APPEND_ITEM DATA_09_2 8 UINT "Dwell data [9] byte [2]"
+  #APPEND_ITEM DATA_09_3 8 UINT "Dwell data [9] byte [3]"
+  #Define remaining 15 dwell points as an array
+  #APPEND_ARRAY_ITEM DATA 8 UINT 480 "Dwell data ( number of bytes varies up to MD_DWELL_TABLE_SIZE *4)."
+

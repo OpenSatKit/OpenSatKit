@@ -39,10 +39,61 @@
 ** 2.0 - Major enhancements to support Space Systems course student assignments.
 **       Restructured ISIM to have a Detector and SciFile subclasses. When fault
 **       present it manifest itself in the science data.
+** 2.1 - Create a JSON init file. Moved platform, perfid, and msg defs.
 */
 
 #define  ISIM_MAJOR_VER      2
-#define  ISIM_MINOR_VER      0
+#define  ISIM_MINOR_VER      1
+
+
+/******************************************************************************
+** Init File declarations create:
+**
+**  typedef enum {
+**     CMD_PIPE_DEPTH,
+**     CMD_PIPE_NAME
+**  } INITBL_ConfigEnum;
+**    
+**  typedef struct {
+**     CMD_PIPE_DEPTH,
+**     CMD_PIPE_NAME
+**  } INITBL_ConfigStruct;
+**
+**   const char *GetConfigStr(value);
+**   ConfigEnum GetConfigVal(const char *str);
+**
+** XX(name,type)
+*/
+
+#define CFG_APP_CFE_NAME        APP_CFE_NAME
+#define CFG_APP_MAIN_PERF_ID    APP_MAIN_PERF_ID
+
+#define CFG_CMD_MID             CMD_MID
+#define CFG_EXECUTE_MID         EXECUTE_MID
+#define CFG_SEND_HK_MID         SEND_HK_MID
+#define CFG_HK_TLM_MID          HK_TLM_MID
+      
+#define CFG_CMD_PIPE_DEPTH      CMD_PIPE_DEPTH
+#define CFG_CMD_PIPE_NAME       CMD_PIPE_NAME
+
+#define CFG_TBL_LOAD_FILE       TBL_LOAD_FILE
+#define CFG_TBL_DUMP_FILE       TBL_DUMP_FILE
+
+
+#define APP_CONFIG(XX) \
+   XX(APP_CFE_NAME,char*) \
+   XX(APP_MAIN_PERF_ID,uint32) \
+   XX(CMD_MID,uint32) \
+   XX(EXECUTE_MID,uint32) \
+   XX(SEND_HK_MID,uint32) \
+   XX(HK_TLM_MID,uint32) \
+   XX(CMD_PIPE_DEPTH,uint32) \
+   XX(CMD_PIPE_NAME,char*) \
+   XX(TBL_LOAD_FILE,char*) \
+   XX(TBL_DUMP_FILE,char*) \
+
+DECLARE_ENUM(Config,APP_CONFIG)
+
 
 /******************************************************************************
 ** Command Macros

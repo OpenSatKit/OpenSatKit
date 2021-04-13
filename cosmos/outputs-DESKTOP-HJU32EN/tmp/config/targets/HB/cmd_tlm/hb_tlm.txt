@@ -1,0 +1,34 @@
+  
+
+TELEMETRY HB HK_TLM_PKT LITTLE_ENDIAN "Hardware Bus Housekeeping Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0885 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM    ERROR_COUNT     8 UINT        "Error Count"
+  APPEND_ITEM    COMMAND_COUNT   8 UINT        "Command Count"
+  APPEND_ITEM    TEMP            32 FLOAT      "Temperature"
+    FORMAT_STRING "%0.2f"
+  APPEND_ITEM    PRES            32 FLOAT      "Pressure"
+  APPEND_ITEM    ALT             32 FLOAT      "Altitude"
+    FORMAT_STRING "%0.2f"
+  APPEND_ITEM    SL_PRES         32 FLOAT      "Sea level pressure"
+  APPEND_ITEM    ACCEL_X         32 FLOAT      "Accel X Axis"
+  APPEND_ITEM    ACCEL_Y         32 FLOAT      "Accel Y Axis"
+  APPEND_ITEM    ACCEL_Z         32 FLOAT      "Accel Z Axis"
+  APPEND_ITEM    MAG_X           32 FLOAT      "Mag X Axis"
+  APPEND_ITEM    MAG_Y           32 FLOAT      "Mag Y Axis"
+  APPEND_ITEM    MAG_Z           32 FLOAT      "Mag Z Axis"
+  APPEND_ITEM    GYRO_X          32 FLOAT      "Gyro X Axis"
+    FORMAT_STRING "%0.5f"
+  APPEND_ITEM    GYRO_Y          32 FLOAT      "Gyro Y Axis"
+    FORMAT_STRING "%0.5f"
+  APPEND_ITEM    GYRO_Z          32 FLOAT      "Gyro Z Axis"
+    FORMAT_STRING "%0.5f"
+

@@ -40,16 +40,17 @@
 */
 
 #define F42_ADP_SET_CTRL_MODE_EID        (F42_ADP_BASE_EID +  0)
-#define F42_ADP_INVLD_CTRL_MODE_EID      (F42_ADP_BASE_EID +  1)
-#define F42_ADP_SET_OVR_EID              (F42_ADP_BASE_EID +  2)
-#define F42_ADP_INVLD_OVR_STATE_EID      (F42_ADP_BASE_EID +  3)
-#define F42_ADP_INVLD_OVR_ID_EID         (F42_ADP_BASE_EID +  4)
-#define F42_ADP_SET_TARGET_WHL_MOM_EID   (F42_ADP_BASE_EID +  5)
-#define F42_ADP_INVLD_TARGET_WHL_MOM_EID (F42_ADP_BASE_EID +  6)
-#define F42_ADP_DEBUG_CMD_EID            (F42_ADP_BASE_EID +  7)
-#define F42_ADP_DEBUG_CMD_ERR_EID        (F42_ADP_BASE_EID +  8)
-#define F42_ADP_INIT_CONTROLLER_EID      (F42_ADP_BASE_EID +  9)
-#define F42_ADP_DEBUG_EID                (F42_ADP_BASE_EID + 10)
+#define F42_ADP_DEMO_CTRL_MODE_EID       (F42_ADP_BASE_EID +  1)
+#define F42_ADP_INVLD_CTRL_MODE_EID      (F42_ADP_BASE_EID +  2)
+#define F42_ADP_SET_OVR_EID              (F42_ADP_BASE_EID +  3)
+#define F42_ADP_INVLD_OVR_STATE_EID      (F42_ADP_BASE_EID +  4)
+#define F42_ADP_INVLD_OVR_ID_EID         (F42_ADP_BASE_EID +  5)
+#define F42_ADP_SET_TARGET_WHL_MOM_EID   (F42_ADP_BASE_EID +  6)
+#define F42_ADP_INVLD_TARGET_WHL_MOM_EID (F42_ADP_BASE_EID +  7)
+#define F42_ADP_DEBUG_CMD_EID            (F42_ADP_BASE_EID +  8)
+#define F42_ADP_DEBUG_CMD_ERR_EID        (F42_ADP_BASE_EID +  9)
+#define F42_ADP_INIT_CONTROLLER_EID      (F42_ADP_BASE_EID + 10)
+#define F42_ADP_DEBUG_EID                (F42_ADP_BASE_EID + 11)
 
 
 /*
@@ -69,9 +70,10 @@
 #define F42_ADP_OVR_STATE_MAX  3
 
 
-#define F42_ADP_CTRL_MODE_INIT 1
-#define F42_ADP_CTRL_MODE_TBD  2
-#define F42_ADP_CTRL_MODE_MAX  2
+#define F42_ADP_CTRL_MODE_INIT  1
+#define F42_ADP_CTRL_MODE_TBD   2
+#define F42_ADP_CTRL_MODE_MAX   2
+#define F42_ADP_CTRL_MODE_DEMO  99   /* Special value to demo HS monitoring F42 events */
 
 /**********************/
 /** Type Definitions **/

@@ -8,12 +8,21 @@ CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,       KIT_TO,        30,   32768, 
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,       KIT_CI,        20,   16384, 0x0, 0;
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,      KIT_SCH,       10,   32768, 0x0, 0;
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,         TFTP,          60,   16384, 0x0, 0;
+CFE_APP, /cf/f42.so,          F42_AppMain,      F42,           50,   16384, 0x0, 0;
+CFE_APP, /cf/i42.so,          I42_AppMain,      I42,          100,   80192, 0x0, 0;
+CFE_APP, /cf/cs.so,           CS_AppMain,           CS,            90,   16384, 0x0, 0;
+CFE_APP, /cf/hs.so,           HS_AppMain,       HS,           120,   16384, 0x0, 0;
+CFE_APP, /cf/mm.so,           MM_AppMain,           MM,           100,   16384, 0x0, 0;
+CFE_APP, /cf/fm.so,           FM_AppMain,           FM,            80,   16384, 0x0, 0;
+CFE_APP, /cf/md.so,           MD_AppMain,           MD,            90,   16384, 0x0, 0;
+CFE_APP, /cf/scsim.so,        SCSIM_AppMain,        SCSIM,         90,   16384, 0x0, 0;
+!!!! Above load runtime apps and then any apps being developed
 CFE_APP, /cf/isim.so,         ISIM_AppMain,         ISIM,          90,   16384, 0x0, 0;
 CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,   OSK_C_DEMO,   120,   16384, 0x0, 0;
 CFE_APP, /cf/osk_cpp_demo.so, OSK_CPP_DEMO_Main,    OSK_CPP_DEMO, 120,   16384, 0x0, 0;
 CFE_APP, /cf/mqtt_app.so,     MQTT_AppMain,         MQTT,          80,   32768, 0x0, 0;
 CFE_APP, /cf/filemgr.so,      FILEMGR_AppMain,      FILEMGR,       80,   16384, 0x0, 0;
-!!!! Above load runtime apps and then any apps being developed
+CFE_APP, /cf/scsim.so,        SCSIM_AppMain,        SCSIM,         90,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,           FM,            80,   16384, 0x0, 0;
 CFE_APP, /cf/ds.so,           DS_AppMain,           DS,            70,   16384, 0x0, 0;
 CFE_APP, /cf/isim.so,         ISIM_AppMain,         ISIM,          90,   16384, 0x0, 0;

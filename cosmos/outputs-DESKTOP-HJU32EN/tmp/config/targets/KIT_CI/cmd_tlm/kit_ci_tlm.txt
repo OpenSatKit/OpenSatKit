@@ -1,0 +1,24 @@
+  
+
+TELEMETRY KIT_CI HK_TLM_PKT LITTLE_ENDIAN "Command Ingest Housekeeping Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F00 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_VALID_COUNT      16 UINT "Command Count"
+  APPEND_ITEM CMD_ERROR_COUNT      16 UINT "Error Count"
+  APPEND_ITEM SOCKET_CONNECTED      8 UINT "Boolean: 0=Disconnected, 1=Connected"
+  APPEND_ITEM MSG_TUNNEL_ENA        8 UINT "Boolean: 0=Disabled, 1=Enabled"
+  APPEND_ITEM SOCKET_ID            16 UINT "Socket identifier"
+  APPEND_ITEM RECV_MSG_CNT         32 UINT "Count of messgaes received on socket"
+  APPEND_ITEM RECV_MSG_ERR_CNT     32 UINT "Count of erroneous messgaes received on socket"
+  APPEND_ITEM MAPPING_CNT          16 UINT "Count of mappings performed"
+  APPEND_ITEM LAST_MAPPING_INDEX   16 UINT "Index of the last mapping defined"
+  APPEND_ITEM LAST_MAPPING_ORG_ID  16 UINT "Orginal mapping message ID"
+  APPEND_ITEM LAST_MAPPING_NEW_ID  16 UINT "New mapping message ID"

@@ -93,13 +93,13 @@ SET(TGT1_NAME cpu1)
 SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim bm hc hsim filemgr osk_c_demo osk_cpp_demo mqtt)
 # Development:
 #   Comment out Release TGT1_APPLIST and modify one of these for your your needs.
-#   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to isim)
+#SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to scsim hs cs i42 f42)
 #   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to osk_c_demo osk_cpp_demo mqtt filemgr isim f42 i42)
 #   SET(TGT1_STATIC_APPLIST cfs_lib osk_c_fw osk_c_demo osk_cpp_fw osk_cpp_demo)
 #   SET(TGT1_APPLIST cfs_lib osk_c_fw osk_cpp_fw osk_c_demo osk_cpp_demo)
 #   Other OSK apps available to build: bm osk_demo_app hs cf sbn cpp_demo_app
 
-SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_demo_tbl.json osk_c_demo_tbl.scanf osk_c_demo_tbl.xml osk_cpp_tbl.json f42_ctrl_tbl.json isim_tbl.json filemgr_ini.json mqtt_ini.json)
+SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_demo_tbl.json osk_c_demo_tbl.scanf osk_c_demo_tbl.xml osk_cpp_tbl.json f42_ctrl_tbl.json isim_ini.json isim_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json)
 
 #~set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 

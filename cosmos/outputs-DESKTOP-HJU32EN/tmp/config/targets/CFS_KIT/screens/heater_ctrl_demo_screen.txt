@@ -1,0 +1,91 @@
+SCREEN 500 AUTO 1.0
+
+TITLE "Heater Control Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+  
+VERTICALBOX
+
+  TABBOOK
+    TABITEM "Battery"
+      HORIZONTALBOX
+        LABEL "Battery Heater Control"
+        VALUE HC HK_TLM_PKT HC_STATUS0
+      END
+      MATRIXBYCOLUMNS 5
+        LABEL "HTR0"
+        VALUE HSIM HK_TLM_PKT HSIM_HEATERS00 FORMATTED 5
+        LABEL "Temp(deg C):"
+        VALUE HC HK_TLM_PKT HEATER_00 FORMATTED 10
+        LIMITSBAR HC HK_TLM_PKT HEATER_00
+
+        LABEL "HTR1"
+        VALUE HSIM HK_TLM_PKT HSIM_HEATERS01 FORMATTED 5
+        LABEL "Temp(deg C):"
+        VALUE HC HK_TLM_PKT HEATER_01 FORMATTED 10
+        LIMITSBAR HC HK_TLM_PKT HEATER_01
+
+        LABEL "HTR2"
+        VALUE HSIM HK_TLM_PKT HSIM_HEATERS02 FORMATTED 5
+        LABEL "Temp(deg C):"
+        VALUE HC HK_TLM_PKT HEATER_02 FORMATTED 10
+        LIMITSBAR HC HK_TLM_PKT HEATER_00
+      END
+    END # Battery tab
+
+    TABITEM "Propulsion"
+      HORIZONTALBOX
+        LABEL "Propulsion Heater Control"
+        VALUE HC HK_TLM_PKT HC_STATUS1
+      END
+      MATRIXBYCOLUMNS 5
+        LABEL "HTR0"
+        VALUE HSIM HK_TLM_PKT HSIM_HEATERS10 FORMATTED 5
+        LABEL "Temp(deg C):"
+        VALUE HC HK_TLM_PKT HEATER_10 FORMATTED 10
+        LIMITSBAR HC HK_TLM_PKT HEATER_10
+
+        LABEL "HTR1"
+        VALUE HSIM HK_TLM_PKT HSIM_HEATERS11 FORMATTED 5
+        LABEL "Temp(deg C):"
+        VALUE HC HK_TLM_PKT HEATER_11 FORMATTED 10
+        LIMITSBAR HC HK_TLM_PKT HEATER_11
+      END
+    END # Propulsion tab
+  END # Tab book
+           
+  VERTICALBOX
+    # Note the text in Label1 must match the text defined for LABEL_1 in heater_ctrl_demo_screen.rb  
+    NAMED_WIDGET Label1 LABEL "This demo shows how three apps work together to autonomously"
+    SETTING TEXTCOLOR 0 0 153
+    NAMED_WIDGET Label2 LABEL "control the spacecraft's heaters. The Heater Control(HC) and"
+    SETTING TEXTCOLOR 0 0 153
+    NAMED_WIDGET Label3 LABEL "Heater Sim(HSIM) apps are loaded when demo enabled. Click... "
+    SETTING TEXTCOLOR 0 0 153
+    NAMED_WIDGET Label4 LABEL ""
+    SETTING TEXTCOLOR 0 0 153
+    NAMED_WIDGET Label5 LABEL " <Enable/Disable HC> Start/Stop the demo "
+    SETTING TEXTCOLOR 0 0 153
+    NAMED_WIDGET Label6 LABEL "  <Next> Provides information on each app"
+    SETTING TEXTCOLOR 0 0 153
+    LABEL ""
+    HORIZONTALLINE
+    HORIZONTAL
+      BUTTON "<- Back" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "BACK")'
+      BUTTON "Next ->" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "NEXT")'
+    END 
+    HORIZONTAL
+      BUTTON "Enable HC" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "ENABLE")'
+      BUTTON "Disable HC" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "DISABLE")'
+    END 
+    HORIZONTAL
+      LABEL ""
+      BUTTON "App Diagram" 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/heater_ctrl_demo_screen.rb"; heater_demo(self, "DIAGRAM")'
+      LABEL ""
+    END 
+  END # Vertical box
+
+END
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

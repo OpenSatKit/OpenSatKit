@@ -367,7 +367,7 @@ module Ops
    # Designed to be called from a screen. It provides a lighter weight 
    # method (rather than cmd-tlm-server tool) to get user input for command
    # parameters.
-   # - If command has no parameters, cmd is sent immediatley
+   # - If command has no parameters, cmd is sent immediately
    # - If command has parameters a parameter input screen is created
    #
    def self.send_flt_cmd (target_name, cmd_name)

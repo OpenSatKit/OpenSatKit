@@ -34,6 +34,8 @@ MMD_PAT_A0_STR = "0xA0"
 # MM_AppData+256 is a safe area in MM's global data structure that can be used
 # as a working buffer during the demo
 
+# Can get start address from table results dump
+
 MMD_SYMBOL = "MM_AppData"
 MMD_OFFSET_W0 = 256
 MMD_OFFSET_W1 = 260
@@ -60,8 +62,9 @@ cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Enable debug 
 wait (1)
 cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Enable debug events
 wait (1)
-# Stop HS app because it displays dots in the cFS console that make it hard to read some messages
-Osk::flight.send_cmd("CFE_ES", "STOP_APP with APP_NAME HS") 
+# Ensure HS aliveness indicator is disabled because it displays dots in the cFS console that
+# make it hard to read some messages
+Osk::flight.send_cmd("HS", "DIS_ALIVENESS") 
 
 # Open displays - Done on a per step basis
 

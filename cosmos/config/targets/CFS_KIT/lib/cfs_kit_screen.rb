@@ -77,7 +77,9 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
                       "<pre><b>Enable Telemetry</b>       - Command telemetry output app to enable sending telemetry to COSMOS.</pre>",
                       "<pre><b>Reset Time</b>             - Set cFS time to 0.</pre>",
                       "<pre><b>Ena/Dis Gnd Cmd Verify</b> - Enable/Disable ground verification of command counters using telemetry. Command verification slows system response.</pre>",
-                      "<pre><b>Config App Events</b>      - Enable/Disable event types for an application. Typically used for debugging.</pre>"]
+                      "<pre><b>Config App Events</b>      - Enable/Disable event types for an application. Typically used for debugging.</pre>",
+                      "<pre><b>Ena/Dis Flywheel Event</b> - Enable/Disable cFE TIME's start/stop flywheel events. Occurs freqeuntly since OSK/Linux environment is non-realtime. </pre>",
+                      "<pre><b>Ena/Dis HS Aliveness</b>   - Enable/Disable Health & Safety app's aliveness dot character output in the cFS terminal window.</pre>"]
          cfs_kit_create_about_screen("Configure System",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
@@ -89,11 +91,32 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
             Osk::flight.cfe_time.send_cmd("SET_CLOCK_MET with SECONDS 0, MICROSECONDS 0")
             Osk::flight.cfe_time.send_cmd("SET_CLOCK with SECONDS 0, MICROSECONDS 0") 
          when "Ena/Dis Gnd Cmd Verify"
-            enable = combo_box("Cmd validation verifies command counters in tlm after each\n cmd is sent. The system will run slower. \n\nDo you want to enable validation?", Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO)
+            # COSMOS *_box methods have a bug with the cancel option. The space in Cancel is intentional. Message box displays selections in reverse order with the last selection highlighted. 
+            enable = message_box("Cmd validation verifies command counters in tlm after each\ncmd is sent. The system will run slower. \n\nDo you want to enable validation?", 'Yes', 'No', 'Cancel ', false)
             if (enable == Osk::MSG_BUTTON_YES)
                FswApp.validate_cmd(true)
             elsif (enable == Osk::MSG_BUTTON_NO)
                FswApp.validate_cmd(false)
+            end
+         when "Ena/Dis Flywheel Event"
+            # COSMOS *_box methods have a bug with the cancel option. The space in Cancel is intentional. Message box displays selections in reverse order with the last selection highlighted. 
+            enable = message_box("cFE TIME outputs an event when it starts/stops flywheel\n mode which occurs when time can't synch to the 1Hz pulse.\n\nDo you want to enable the event messages?", 'Cancel ', 'Disable', 'Enable', false)
+            if (enable == 'Enable')
+               cmd("CFE_EVS SET_FILTER_MASK with APP_NAME CFE_TIME, EVENT_ID #{Fsw::Const::CFE_TIME_FLY_ON_EID}, MASK #{Fsw::Const::CFE_EVS_NO_FILTER}")
+               wait(1)
+               cmd("CFE_EVS SET_FILTER_MASK with APP_NAME CFE_TIME, EVENT_ID #{Fsw::Const::CFE_TIME_FLY_OFF_EID}, MASK #{Fsw::Const::CFE_EVS_NO_FILTER}")
+            elsif (enable == 'Disable')
+               cmd("CFE_EVS SET_FILTER_MASK with APP_NAME CFE_TIME, EVENT_ID #{Fsw::Const::CFE_TIME_FLY_ON_EID}, MASK #{Fsw::Const::CFE_EVS_FIRST_ONE_STOP}")
+               wait(1)
+               cmd("CFE_EVS SET_FILTER_MASK with APP_NAME CFE_TIME, EVENT_ID #{Fsw::Const::CFE_TIME_FLY_OFF_EID}, MASK #{Fsw::Const::CFE_EVS_FIRST_ONE_STOP}")
+            end
+         when "Ena/Dis HS Aliveness"
+            # COSMOS *_box methods have a bug with the cancel option. The space in Cancel is intentional.
+            enable = message_box("Health & Safety periodically outputs a dot character to the\ncFS terminal window to indicate it is running.\n\nDo you want to enable the aliveness indicator?", 'Cancel ', 'Disable', 'Enable', false)
+            if (enable == 'Enable')
+               Osk::flight.send_cmd("HS","ENA_ALIVENESS")
+            elsif (enable == 'Disable')
+               Osk::flight.send_cmd("HS","DIS_ALIVENESS")
             end
          when "Config App Events"
             display("CFE_EVS CFG_APP_EVENT_SCREEN",50,50)

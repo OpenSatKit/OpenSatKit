@@ -29,7 +29,7 @@
 */
 
 #define FILEMGR_PLATFORM_REV   0
-#define FILEMGR_INI_FILE_NAME  "/cf/filemgr_ini.json"
+#define FILEMGR_INI_FILENAME   "/cf/filemgr_ini.json"
 
 
 /******************************************************************************

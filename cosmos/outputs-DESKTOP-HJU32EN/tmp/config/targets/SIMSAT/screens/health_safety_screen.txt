@@ -1,0 +1,111 @@
+###############################################################################
+# SimSat Health and Safety Application Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SimSat Health and Safety Applications"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICAL   # With 2 rows
+   HORIZONTAL # Row 1
+
+      CANVAS 570 375
+         CANVASIMAGE "SimSat-Bubble-Health_Safety.png" 20 0
+      END
+      SETTING BACKCOLOR 255 255 255  
+  
+      VERTICALBOX # Apps
+  
+         LABEL "    "
+         LABEL "    "
+
+         VERTICALBOX "Checksum (CS)"
+         MATRIXBYCOLUMNS 2 5 2
+         
+            BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "CS_CMD")'
+            NAMED_WIDGET cs_cmd COMBOBOX NOOP RESET_CTRS ONESHOT CANCEL_ONESHOT ENABLE_ALL_CS DISABLE_ALL_CS ENABLE_CFECORE DISABLE_CFECORE REPORT_BASELINE_CFECORE RECOMPUTE_BASELINE_CFECORE ENABLE_OS DISABLE_OS REPORT_BASELINE_OS RECOMPUTE_BASELINE_OS ENABLE_EEPROM DISABLE_EEPROM REPORT_BASELINE_EEPROM RECOMPUTE_BASELINE_EEPROM ENABLE_ENTRY_EEPROM DISABLE_ENTRY_EEPROM GET_ENTRY_ID_EEPROM ENABLE_MEMORY DISABLE_MEMORY REPORT_BASELINE_MEMORY RECOMPUTE_BASELINE_MEMORY ENABLE_ENTRY_MEMORY DISABLE_ENTRY_MEMORY GET_ENTRY_ID_MEMORY ENABLE_TABLES DISABLE_TABLES REPORT_BASELINE_TABLE RECOMPUTE_BASELINE_TABLE ENABLE_NAME_TABLE DISABLE_NAME_TABLE ENABLE_APPS DISABLE_APPS REPORT_BASELINE_APP RECOMPUTE_BASELINE_APP ENABLE_NAME_APP DISABLE_NAME_APP
+
+            BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "CS_TLM")'
+            NAMED_WIDGET cs_tlm COMBOBOX HOUSEKEEPING
+
+            BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "CS_TBL")'
+            NAMED_WIDGET cs_tbl COMBOBOX "App" "EEPROM" "Memory" "Tables" "App Results" "EEPROM Results" "Memory Results" "Tables Results"
+
+            BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "CS_DOC")'
+            SETTING BACKCOLOR 255 255 255
+
+         END # Matrix
+         END # VerticalBox
+  
+         LABEL "    "
+      
+         VERTICALBOX "Health&Safety (HS)"
+         MATRIXBYCOLUMNS 2 5 2
+
+            BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "HS_CMD")'
+            NAMED_WIDGET hs_cmd COMBOBOX NOOP RESET_CTRS ENABLE_APP_MON DISABLE_APP_MON ENABLE_EVENT_MON DISABLE_EVENT_MON ENABLE_ALIVENESS DISABLE_ALIVENESS RESET_RESETS_PERFORMED SET_MAX_RESETS ENABLE_CPU_HOG DISABLE_CPU_HOG
+
+            BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "HS_TLM")'
+            NAMED_WIDGET hs_tlm COMBOBOX HOUSEKEEPING
+
+            BUTTON 'Display Table' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "HS_TBL")'
+            NAMED_WIDGET hs_tbl COMBOBOX "App Monitor" "Event Monitor" "Msg Action" "Exec Counter"
+
+            BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "HS_DOC")'
+            SETTING BACKCOLOR 255 255 255
+
+         END # Matrix
+         END # HS VerticalBox
+      
+      END # App VerticalBox
+      SETTING BACKCOLOR 162 181 205
+
+   END # Row 1 Horizontal
+    
+   HORIZONTAL # Row 2
+
+      VERTICALBOX "Functional Screens"
+      MATRIXBYCOLUMNS 2 5 2
+
+         BUTTON 'Coming Soon' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "FUNC_TBD")'
+         LABEL "    "
+
+      END # Matrix
+      END # Function VerticalBox
+      SETTING BACKCOLOR 162 181 205
+
+      VERTICALBOX "Learning Resources"
+      MATRIXBYCOLUMNS 3 5 2
+
+         BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "DEMO")'
+         NAMED_WIDGET demo COMBOBOX "Coming Soon"
+         LABEL "    "
+
+         BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "HEALTH_SAFETY", "TUTORIAL")'
+         NAMED_WIDGET tutorial COMBOBOX "Coming Soon"
+         LABEL "    "
+
+      END # Matrix
+      END # Learn VerticalBox
+      SETTING BACKCOLOR 162 181 205  
+
+      VERTICALBOX # Spacer
+      MATRIXBYCOLUMNS 2 5 2
+         LABEL "    "
+         LABEL "    "
+         LABEL "    "
+         LABEL "    "
+      END # Matrix
+      END # Spacer VerticalBox
+      SETTING BACKCOLOR 162 181 205
+ 
+   END # Row 2 Horizontal
+END # Vertical with 2 rows

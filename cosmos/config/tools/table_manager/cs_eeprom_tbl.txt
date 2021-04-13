@@ -1,0 +1,42 @@
+<%
+
+  require 'osk_config' 
+  require 'fsw_const'
+  require 'fsw_config_param'
+  
+  @APP_PREFIX_STR               = "CS"
+  @MAX_NUM_EEPROM_TABLE_ENTRIES = "CS_MAX_NUM_EEPROM_TABLE_ENTRIES"
+  @EEPROM_TBL_NAME_STR          = "CS_EEPROM_TBL_NAME"
+  
+%>
+TABLE "CS EEPROM" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "EEPROM memory blocks being checksummed"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @EEPROM_TBL_NAME_STR) %>
+
+  #
+  # typedef struct {
+  #   uint16                      State;              /**< \brief Uses the CS_STATE_... defines from above */
+  #   uint16                      Filler16;           /** <\brief Padding */
+  #   uint32                      StartAddress;       /**< \brief The Start address to Checksum */
+  #   uint32                      NumBytesToChecksum; /**< \brief The number of Bytes to Checksum */
+  # } CS_Def_EepromMemory_Table_Entry_t;
+  #
+  # CS_Def_EepromMemory_Table_Entry_t  CS_EepromTable[CS_MAX_NUM_EEPROM_TABLE_ENTRIES]
+  #
+  
+  <%
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_EEPROM_TABLE_ENTRIES)
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_STATE\"    16 UINT 0 MAX_UINT16 0    \"Enable/Disable/Unused state\"" << "\n"
+      append_items << "   STATE EMPTY     #{Fsw::Const::CS_STATE_EMPTY}\n"
+      append_items << "   STATE ENABLED   #{Fsw::Const::CS_STATE_ENABLED}\n"
+      append_items << "   STATE DISABLED  #{Fsw::Const::CS_STATE_DISABLED}\n"
+      append_items << "   STATE UNDEFINED #{Fsw::Const::CS_STATE_UNDEFINED}\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_PAD16\"      16 UINT 0 MAX_UINT16 0  \"Padding to for 32-bit alignment\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_START_ADDR\" 32 UINT 0 MAX_UINT32 0  \"Starting address of checksum memory block\"" << "\n"
+      append_items << "   FORMAT_STRING  \"0x%08X\"" << "\n"
+     append_items << "APPEND_PARAMETER \"ENTRY#{i}_NUM_BYTES\"  32 UINT 0 MAX_UINT32 0  \"Number of bytes in the memory block being checksummed\"" << "\n"
+    end # Entry loop
+  %>
+  <%= append_items %>
+  

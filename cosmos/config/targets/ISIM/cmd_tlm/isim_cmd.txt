@@ -12,13 +12,13 @@ COMMAND ISIM NOOP <%= Osk::Cfg.processor_endian %> "Generate an info event messa
 COMMAND ISIM RESET_CTRS <%= Osk::Cfg.processor_endian %> "Reset command counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND ISIM LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load example object table"
+COMMAND ISIM LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load instrument sim parameter table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID. 0 is first table registered"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
   APPEND_PARAMETER FILENAME 512 STRING "/cf/isim_tbl.json" "Full path and file name of table to be loaded"
 
-COMMAND ISIM DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump example object table"
+COMMAND ISIM DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump instrument sim parameter table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID   8 UINT 0 1 0 "Table ID. 0 is first table registered"
   APPEND_PARAMETER TYPE 8 UINT 0 1 0 "Unused"

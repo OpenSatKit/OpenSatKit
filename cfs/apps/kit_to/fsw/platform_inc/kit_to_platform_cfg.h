@@ -31,7 +31,7 @@
 */
 
 #define KIT_TO_PLATFORM_REV   0
-#define KIT_TO_FILE_NAME  "/cf/kit_to_ini.json"
+#define KIT_TO_INI_FILENAME   "/cf/kit_to_ini.json"
 
 
 /******************************************************************************
@@ -44,8 +44,8 @@
 #define  KIT_TO_MIN_RUN_LOOP_DELAY_MS    200  /* Minimum command value */
 #define  KIT_TO_MAX_RUN_LOOP_DELAY_MS  10000  /* Maximum command value */
 
-#define  KIT_TO_TLM_PORT      1235
+#define  KIT_TO_TLM_PORT  1235
 
-#define  KIT_TO_DEF_PKTTBL_FILE_NAME "/cf/osk_to_pkt_tbl.json"
+#define  KIT_TO_DEF_PKTTBL_FILENAME  "/cf/osk_to_pkt_tbl.json"
 
 #endif /* _kit_to_platform_cfg_ */

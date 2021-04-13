@@ -39,10 +39,11 @@
 ** 2.0 - Added packet filtering and dimensioned packet table to accomodate full
 **       11-bit AppId range. Reorder command function codes to group pktmgr and
 **       app level commands
+** 2.1 - Added event log playback
 */
 
 #define  KIT_TO_MAJOR_VER     2
-#define  KIT_TO_MINOR_VER     0
+#define  KIT_TO_MINOR_VER     1
 
 
 #define  KIT_TO_CMD_PIPE_DEPTH    10
@@ -67,6 +68,10 @@
 #define KIT_TO_SET_RUN_LOOP_DELAY_CMD_FC (CMDMGR_APP_START_FC +  9)
 #define KIT_TO_TEST_FILTER_CMD_FC        (CMDMGR_APP_START_FC + 10)
 
+#define KIT_TO_EVT_PLBK_CONFIG_CMD_FC    (CMDMGR_APP_START_FC + 11)
+#define KIT_TO_EVT_PLBK_START_CMD_FC     (CMDMGR_APP_START_FC + 12)
+#define KIT_TO_EVT_PLBK_STOP_CMD_FC      (CMDMGR_APP_START_FC + 13)
+
 /******************************************************************************
 ** Event Macros
 **
@@ -78,6 +83,7 @@
 #define KIT_TO_APP_BASE_EID  (OSK_C_FW_APP_BASE_EID +   0)
 #define PKTTBL_BASE_EID      (OSK_C_FW_APP_BASE_EID + 100)
 #define PKTMGR_BASE_EID      (OSK_C_FW_APP_BASE_EID + 200)
+#define EVT_PLBK_BASE_EID    (OSK_C_FW_APP_BASE_EID + 300)
 
 /*
 ** One event ID is used for all initialization debug messages. Uncomment one of
@@ -111,5 +117,14 @@
 
 #define PKTMGR_COMPUTE_STATS_INTERVAL_MS KIT_TO_MAX_RUN_LOOP_DELAY_MS /* ms between stats updates       */
 
+/******************************************************************************
+** evt_plbk.h Configurations
+*/
+
+#define EVT_PLBK_EVENTS_PER_TLM_MSG   4
+
+#define EVT_PLBK_HK_CYCLE_PERIOD      2   /* Number of HK request cycles between event tlm messages */
+
+#define EVT_PLBK_EVT_LOG_FILENAME     "/cf/kit_to_evt_log.dat"
 
 #endif /* _app_cfg_ */

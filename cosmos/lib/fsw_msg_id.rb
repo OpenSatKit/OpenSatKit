@@ -197,6 +197,7 @@ module Fsw
   
       ISIM_CMD_MID      = "0x19C0"
       ISIM_EXECUTE_MID  = "0x19C1"
+      ISIM_SEND_HK_MID  = "0x19C2"
       ISIM_HK_TLM_MID   = "0x09C0"
       
       # Kit Command Ingest
@@ -217,6 +218,7 @@ module Fsw
       KIT_TO_HK_TLM_MID        = "0x0F20"
       KIT_TO_PKT_TBL_TLM_MID   = "0x0F21"
       KIT_TO_DATA_TYPE_TLM_MID = "0x0F22"
+      KIT_TO_EVT_PLBK_TLM_MID  = "0x0F23"
 
       # MQTT 
   
@@ -241,6 +243,15 @@ module Fsw
       OSK_TEST_SEND_HK_MID  = "0x1FF1"
       OSK_TEST_HK_TLM_MID   = "0x0FF0"
 
+      # SCSIM - Spacecraft Simulator
+  
+      SCSIM_CMD_MID        = "0x1F60"
+      SCSIM_EXECUTE_MID    = "0x19C1"   # Same as ISIM_EXECUTE_MID
+      SCSIM_SEND_HK_MID    = "0x19C2"   # Same as ISIM_SEND_HK_MID
+      SCSIM_HK_TLM_MID     = "0x0F60"
+      SCSIM_MGMT_TLM_MID   = "0x0F61"
+      SCSIM_MODEL_TLM_MID  = "0x0F62"
+      
       # Trivial File Transfer Protocol
   
       TFTP_CMD_MID          = "0x1900"

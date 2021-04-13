@@ -1,0 +1,36 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR       = "HS"
+  @MAX_MONITORED_APPS   = "HS_MAX_MONITORED_APPS"
+  @APP_MON_TBL_NAME_STR = "HS_APP_MON_TBL_NAME"
+  
+%>
+TABLE "HS App Monitors" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "App Monitors"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @APP_MON_TBL_NAME_STR) %>
+
+  #
+  # typedef struct {
+  #   char            AppName[OS_MAX_API_NAME];  /**< \brief Name of application to be monitored */
+  #   uint16          NullTerm;                  /**< \brief Buffer of nulls to terminate string */
+  #   uint16          CycleCount;                /**< \brief Number of cycles before application is missing */
+  #   uint16          ActionType;                /**< \brief Action to take if application is missing */
+  # } HS_AMTEntry_t;
+  #
+  # HS_AMTEntry_t  HS_Default_AppMon_Tbl[HS_MAX_MONITORED_APPS]
+  #
+  
+  <%
+    name_bits = Osk::Cfg.get_fsw_cfg_int_param("OSAL", "OS_MAX_API_NAME") * 8
+    max_monitored_apps = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_MONITORED_APPS)
+    append_items = ""
+    for i in 0..(max_monitored_apps-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_APP_NAME\" #{name_bits} STRING \"UNDEF\"  \"Name of application to be monitored\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_NULL_TERM\"    16 UINT 0 MAX_UINT16 0     \"Buffer of nulls to terminate string\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_CYCLE_CNT\"    16 UINT 0 MAX_UINT16 0     \"Number of cycles before application is missing\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_ACTION_TYPE\"  16 UINT 0 MAX_UINT16 0     \"Action to take if application is missing\"" << "\n"
+    end # apps
+  %>
+  <%= append_items %>
+  

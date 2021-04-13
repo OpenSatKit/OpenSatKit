@@ -1,0 +1,284 @@
+###############################################################################
+# cFS Benchmarking Tool COSMOS Telemetry Screen
+#
+# License:
+#   Written by Ian Wilmoth, updates by David McComas, licensed under the
+#   copyleft GNU General Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+
+VERTICAL
+
+  TITLE "Benchmark Application Interface"
+    SETTING BACKCOLOR 100 100 200
+    SETTING TEXTCOLOR black
+
+  VERTICALBOX
+
+    TITLE "Actions"
+      SETTING BACKCOLOR 100 200 100
+      SETTING TEXTCOLOR black
+
+    HORIZONTAL
+      LABEL '          '
+        #SETTING BORDERCOLOR black
+        SETTING WIDTH 300
+        SETTING HEIGHT 20
+      BUTTON 'Update Parameters' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/bm_utility.rb"; go(self, "send_parameters")'
+      BUTTON 'Run Benchmarks Once' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/bm_utility.rb"; go(self, "run_benchmarks")'
+      BUTTON 'Run && Collect Benchmark Data' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/bm_utility.rb"; go(self, "run_benchmarks_multi")'
+      LABEL '          '
+        #SETTING BORDERCOLOR black
+        SETTING WIDTH 300
+        SETTING HEIGHT 20
+    END
+    
+    HORIZONTAL
+      LABEL '  Benchmark datapoints: '
+        SETTING HEIGHT 20
+      NAMED_WIDGET benchmark_datapoints TEXTFIELD 5
+        SETTING WIDTH 100
+        SETTING HEIGHT 20
+      NAMED_WIDGET benchmark_multi_status LABEL 'No benchmarks running.'
+        SETTING BORDERCOLOR black
+        SETTING WIDTH 300
+        SETTING HEIGHT 20
+      LABEL '  Benchmark save directory: '
+        SETTING HEIGHT 20
+      NAMED_WIDGET benchmark_dir TEXTFIELD 256
+       SETTING WIDTH 600
+       SETTING HEIGHT 20
+    END
+    
+    SETTING BACKCOLOR 163 185 163
+  END # End vertical box
+
+  HORIZONTAL
+    VERTICALBOX
+
+      TITLE "Parameters"
+        SETTING BACKCOLOR 100 100 200
+        SETTING TEXTCOLOR black
+
+      VERTICAL
+
+        #WRITEPARAMS
+        VERTICALBOX
+
+          TITLE "Software Bus Benchmark"
+            SETTING BACKCOLOR 200 100 100
+            SETTING TEXTCOLOR black
+
+          MATRIXBYCOLUMNS 5
+
+            LABEL "Parameter Description and Value"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "New Value"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Lower Limit"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Upper Limit"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Vary"
+
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            NAMED_WIDGET bm_sb_benchmarkenable LABELVALUEDESC BM HK_TLM_PKT BM_SB_BENCHMARKENABLE "Enable Software Bus Benchmark" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_benchmarkenable_text TEXTFIELD
+            LABEL ""
+            LABEL ""
+            LABEL ""
+
+            NAMED_WIDGET bm_sb_zerocopyenable LABELVALUEDESC BM HK_TLM_PKT BM_SB_ZEROCOPYENABLE "Software Bus Benchmark zero copy enable" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_zerocopyenable_text TEXTFIELD
+            NAMED_WIDGET bm_sb_zerocopyenable_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_sb_zerocopyenable_rangetop TEXTFIELD
+            NAMED_WIDGET bm_sb_zerocopyenable_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_sb_numthreads LABELVALUEDESC BM HK_TLM_PKT BM_SB_NUMTHREADS "Software Bus Benchmark thread count" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_numthreads_text TEXTFIELD
+            NAMED_WIDGET bm_sb_numthreads_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_sb_numthreads_rangetop TEXTFIELD
+            NAMED_WIDGET bm_sb_numthreads_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_sb_repetitions LABELVALUEDESC BM HK_TLM_PKT BM_SB_REPETITIONS "Software Bus Benchmark repetitions" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_repetitions_text TEXTFIELD
+            NAMED_WIDGET bm_sb_repetitions_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_sb_repetitions_rangetop TEXTFIELD
+            NAMED_WIDGET bm_sb_repetitions_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_sb_numtestmsgs LABELVALUEDESC BM HK_TLM_PKT BM_SB_NUMTESTMSGS "Software Bus Benchmark test messages" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_numtestmsgs_text TEXTFIELD
+            NAMED_WIDGET bm_sb_numtestmsgs_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_sb_numtestmsgs_rangetop TEXTFIELD
+            NAMED_WIDGET bm_sb_numtestmsgs_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_sb_messagedatasize LABELVALUEDESC BM HK_TLM_PKT BM_SB_MESSAGEDATASIZE "Software Bus Benchmark message data size" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_messagedatasize_text TEXTFIELD
+            NAMED_WIDGET bm_sb_messagedatasize_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_sb_messagedatasize_rangetop TEXTFIELD
+            NAMED_WIDGET bm_sb_messagedatasize_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_sb_msgtimeout LABELVALUEDESC BM HK_TLM_PKT BM_SB_MSGTIMEOUT "Software Bus Benchmark message timeout" WITH_UNITS 20
+            NAMED_WIDGET bm_sb_msgtimeout_text TEXTFIELD
+            NAMED_WIDGET bm_sb_msgtimeout_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_sb_msgtimeout_rangetop TEXTFIELD
+            NAMED_WIDGET bm_sb_msgtimeout_vary CHECKBUTTON ""
+
+          END
+        END
+        VERTICALBOX
+
+          TITLE "File System Sequential Benchmark"
+            SETTING BACKCOLOR 200 100 100
+            SETTING TEXTCOLOR black
+
+          MATRIXBYCOLUMNS 5
+
+            LABEL "Parameter Description and Value"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "New Value"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Lower Limit"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Upper Limit"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Vary"
+
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            NAMED_WIDGET bm_fs_benchmarkenable LABELVALUEDESC BM HK_TLM_PKT BM_FS_BENCHMARKENABLE "Enable File System Sequential Benchmark" WITH_UNITS 20
+            NAMED_WIDGET bm_fs_benchmarkenable_text TEXTFIELD
+            LABEL ""
+            LABEL ""
+            LABEL ""
+
+            NAMED_WIDGET bm_fs_repetitions LABELVALUEDESC BM HK_TLM_PKT BM_FS_REPETITIONS "File System Benchmark repetitions" WITH_UNITS 20
+            NAMED_WIDGET bm_fs_repetitions_text TEXTFIELD
+            NAMED_WIDGET bm_fs_repetitions_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_fs_repetitions_rangetop TEXTFIELD
+            NAMED_WIDGET bm_fs_repetitions_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_fs_sequential_size LABELVALUEDESC BM HK_TLM_PKT BM_FS_SEQUENTIAL_SIZE "File System Benchmark sequential size" WITH_UNITS 20
+            NAMED_WIDGET bm_fs_sequential_size_text TEXTFIELD
+            NAMED_WIDGET bm_fs_sequential_size_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_fs_sequential_size_rangetop TEXTFIELD
+            NAMED_WIDGET bm_fs_sequential_size_vary CHECKBUTTON ""
+
+          END
+        END
+        VERTICALBOX
+
+          TITLE "CPU Benchmark"
+            SETTING BACKCOLOR 200 100 100
+            SETTING TEXTCOLOR black
+
+          MATRIXBYCOLUMNS 5
+
+            LABEL "Parameter Description and Value"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "New Value"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Lower Limit"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Upper Limit"
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            LABEL "Vary"
+
+              SETTING TEXTCOLOR gray
+              SETTING BORDERCOLOR black
+            NAMED_WIDGET bm_cpu_benchmarkenable LABELVALUEDESC BM HK_TLM_PKT BM_CPU_BENCHMARKENABLE "Enable CPU Benchmark" WITH_UNITS 20
+            NAMED_WIDGET bm_cpu_benchmarkenable_text TEXTFIELD
+            LABEL ""
+            LABEL ""
+            LABEL ""
+
+            NAMED_WIDGET bm_cpu_dhrystonerepetitions LABELVALUEDESC BM HK_TLM_PKT BM_CPU_DHRYSTONEREPETITIONS "CPU Benchmark Dhrystone repetitions" WITH_UNITS 20
+            NAMED_WIDGET bm_cpu_dhrystonerepetitions_text TEXTFIELD
+            NAMED_WIDGET bm_cpu_dhrystonerepetitions_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_cpu_dhrystonerepetitions_rangetop TEXTFIELD
+            NAMED_WIDGET bm_cpu_dhrystonerepetitions_vary CHECKBUTTON ""
+
+            NAMED_WIDGET bm_cpu_whetstonerepetitions LABELVALUEDESC BM HK_TLM_PKT BM_CPU_WHETSTONEREPETITIONS "CPU Benchmark Whetstone repetitions" WITH_UNITS 20
+            NAMED_WIDGET bm_cpu_whetstonerepetitions_text TEXTFIELD
+            NAMED_WIDGET bm_cpu_whetstonerepetitions_rangebottom TEXTFIELD
+            NAMED_WIDGET bm_cpu_whetstonerepetitions_rangetop TEXTFIELD
+            NAMED_WIDGET bm_cpu_whetstonerepetitions_vary CHECKBUTTON ""
+
+          END
+        END
+        #END
+
+      END
+    END
+
+    VERTICALBOX
+
+  	  TITLE "Results"
+        SETTING BACKCOLOR 100 100 200
+        SETTING TEXTCOLOR black
+
+      #WRITERESULTS
+      VERTICALBOX
+        TITLE "Software Bus Benchmark"
+          SETTING BACKCOLOR 200 100 100
+          SETTING TEXTCOLOR black
+
+        VERTICAL
+
+        LABELVALUEDESC BM HK_TLM_PKT BM_SB_BESTTIME "Software Bus Benchmark best time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_SB_WORSTTIME "Software Bus Benchmark worst time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_SB_AVERAGETIME "Software Bus Benchmark average time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_SB_MESSAGESPERSECOND "Software Bus Benchmark messages per second" WITH_UNITS 19
+
+        END
+      END
+      VERTICALBOX
+        TITLE "File System Sequential Benchmark"
+          SETTING BACKCOLOR 200 100 100
+          SETTING TEXTCOLOR black
+
+        VERTICAL
+
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_BESTSEQUENTIALREADTIME "File System Benchmark best sequential read time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_WORSTSEQUENTIALREADTIME "File System Benchmark worst sequential read time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_AVERAGESEQUENTIALREADTIME "File System Benchmark average sequential read time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_BESTSEQUENTIALWRITETIME "File System Benchmark best sequential write time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_WORSTSEQUENTIALWRITETIME "File System Benchmark worst sequential write time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_AVERAGESEQUENTIALWRITETIME "File System Benchmark average sequential write time" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_SEQUENTIALREADAVERAGEMEGABYTESPERSECOND "File System Benchmark average sequential read speed" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_FS_SEQUENTIALWRITEAVERAGEMEGABYTESPERSECOND "File System Benchmark average sequential write speed" WITH_UNITS 19
+
+        END
+      END
+      VERTICALBOX
+        TITLE "CPU Benchmark"
+          SETTING BACKCOLOR 200 100 100
+          SETTING TEXTCOLOR black
+
+        VERTICAL
+
+        LABELVALUEDESC BM HK_TLM_PKT BM_CPU_DHRYSTONESPERSECOND "CPU Benchmark Dhrystones per second" WITH_UNITS 19
+        LABELVALUEDESC BM HK_TLM_PKT BM_CPU_WHETSTONESPERSECOND "CPU Benchmark Whetstones per second" WITH_UNITS 19
+
+        END
+      END
+      #END
+
+    END
+  END
+END

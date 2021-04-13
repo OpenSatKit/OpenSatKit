@@ -31,7 +31,7 @@
 */
 
 #define TFTP_PLATFORM_REV   0
-#define TFTP_FILE_NAME  "/cf/tftp_ini.json"
+#define TFTP_INI_FILENAME   "/cf/tftp_ini.json"
 
 
 /******************************************************************************

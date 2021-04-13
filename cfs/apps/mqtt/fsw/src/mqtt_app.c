@@ -219,7 +219,7 @@ static int32 InitApp(uint32* AppMainPerfId)
    ** Initialize objects 
    */
 
-   if (INITBL_Constructor(&Mqtt.IniTbl, MQTT_INI_FILE_NAME, &IniCfgEnum)) {
+   if (INITBL_Constructor(&Mqtt.IniTbl, MQTT_INI_FILENAME, &IniCfgEnum)) {
    
       *AppMainPerfId = INITBL_GetIntConfig(INITBL_OBJ, CFG_APP_MAIN_PERF_ID);
       CFE_ES_PerfLogEntry(*AppMainPerfId);

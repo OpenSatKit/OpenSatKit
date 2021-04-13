@@ -1,7 +1,7 @@
 { "app": {
    
    "title": "OSK Telemetry Output",
-   "version": "2.0.0",
+   "version": "2.1.0",
    "owner": "OpenSatkit",
    "url": "https://github.com/OpenSatKit/OpenSatKit",
 

@@ -2,7 +2,7 @@
 ** Purpose: Define platform configurations for the Instrument Simulator App
 **
 ** Notes:
-**   None
+**   1. See JSON init file for runtime configurations.
 **
 ** License:
 **   Written by David McComas and licensed under the GNU
@@ -31,15 +31,8 @@
 */
 
 #define ISIM_PLATFORM_REV   0
-#define ISIM_INI_FILE_NAME  "/cf/isim_ini.json"
+#define ISIM_INI_FILENAME   "/cf/isim_ini.json"
 
-
-/******************************************************************************
-** Application Macros
-*/
-
-#define  ISIM_CMD_PIPE_DEPTH    10
-#define  ISIM_CMD_PIPE_NAME     "ISIM_CMD_PIPE"
 
 /******************************************************************************
 ** ISIM Table Object Macros

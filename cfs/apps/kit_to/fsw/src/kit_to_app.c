@@ -48,11 +48,11 @@ KIT_TO_Class  KitTo;
 
 
 /* Convenience macros */
-#define  CMDMGR_OBJ  (&(KitTo.CmdMgr))
-#define  TBLMGR_OBJ  (&(KitTo.TblMgr))
-#define  PKTTBL_OBJ  (&(KitTo.PktTbl))
-#define  PKTMGR_OBJ  (&(KitTo.PktMgr))
-
+#define  CMDMGR_OBJ   (&(KitTo.CmdMgr))
+#define  TBLMGR_OBJ   (&(KitTo.TblMgr))
+#define  PKTTBL_OBJ   (&(KitTo.PktTbl))
+#define  PKTMGR_OBJ   (&(KitTo.PktMgr))
+#define  EVTPLBK_OBJ  (&(KitTo.EvtPlbk))
 
 /******************************************************************************
 ** Function: KIT_TO_AppMain
@@ -152,7 +152,8 @@ boolean KIT_TO_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    TBLMGR_ResetStatus(TBLMGR_OBJ);
 
    PKTMGR_ResetStatus();
-
+   EVT_PLBK_ResetStatus();
+   
    return TRUE;
 
 } /* End KIT_TO_ResetAppCmd() */
@@ -321,6 +322,9 @@ static void SendHousekeepingPkt(KIT_TO_HkPkt *HkPkt)
    HkPkt->TlmSockId = (uint16)KitTo.PktMgr.TlmSockId;
    strncpy(HkPkt->TlmDestIp, KitTo.PktMgr.TlmDestIp, PKTMGR_IP_STR_LEN);
 
+   HkPkt->EvtPlbkEna      = KitTo.EvtPlbk.Enabled;
+   HkPkt->EvtPlbkHkPeriod = (uint8)KitTo.EvtPlbk.HkCyclePeriod;
+   
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) HkPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) HkPkt);
 
@@ -346,6 +350,10 @@ static int32 InitApp(void)
    PKTTBL_Constructor(PKTTBL_OBJ, PKTMGR_GetTblPtr, PKTMGR_LoadTbl, PKTMGR_LoadTblEntry);
    PKTMGR_Constructor(PKTMGR_OBJ, PKTMGR_PIPE_NAME, PKTMGR_PIPE_DEPTH);
 
+   EVT_PLBK_Constructor(EVTPLBK_OBJ, KIT_TO_EVS_LOG_TLM_MID, 
+                        EVT_PLBK_HK_CYCLE_PERIOD, EVT_PLBK_EVT_LOG_FILENAME,
+                        CFE_EVS_CMD_MID);
+      
    /*
    ** Initialize application managers
    */
@@ -369,13 +377,17 @@ static int32 InitApp(void)
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_PKT_TBL_TLM_CMD_FC, PKTMGR_OBJ, PKTMGR_SendPktTblTlmCmd,   PKKTMGR_SEND_PKT_TBL_TLM_CMD_DATA_LEN);
    CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_UPDATE_FILTER_CMD_FC,    PKTMGR_OBJ, PKTMGR_UpdateFilterCmd,    PKKTMGR_UPDATE_FILTER_CMD_DATA_LEN);
    
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC,    &KitTo,  KIT_TO_SendDataTypeTlmCmd, 0);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SET_RUN_LOOP_DELAY_CMD_FC, &KitTo,  KIT_TO_SetRunLoopDelayCmd, KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_TEST_FILTER_CMD_FC,        &KitTo,  KIT_TO_TestFilterCmd,      KIT_TO_TEST_FILTER_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SEND_DATA_TYPES_CMD_FC,    &KitTo, KIT_TO_SendDataTypeTlmCmd, 0);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_SET_RUN_LOOP_DELAY_CMD_FC, &KitTo, KIT_TO_SetRunLoopDelayCmd, KIT_TO_SET_RUN_LOOP_DELAY_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_TEST_FILTER_CMD_FC,        &KitTo, KIT_TO_TestFilterCmd,      KIT_TO_TEST_FILTER_CMD_DATA_LEN);
+
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_EVT_PLBK_CONFIG_CMD_FC,  EVTPLBK_OBJ, EVT_PLBK_ConfigCmd, EVT_PLBK_CONFIG_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_EVT_PLBK_START_CMD_FC,   EVTPLBK_OBJ, EVT_PLBK_StartCmd,  EVT_PLBK_START_CMD_DATA_LEN);
+   CMDMGR_RegisterFunc(CMDMGR_OBJ, KIT_TO_EVT_PLBK_STOP_CMD_FC,    EVTPLBK_OBJ, EVT_PLBK_StopCmd,   EVT_PLBK_STOP_CMD_DATA_LEN);
 
    CFE_EVS_SendEvent(KIT_TO_INIT_DEBUG_EID, KIT_TO_INIT_EVS_TYPE, "KIT_TO_InitApp() Before TBLMGR calls\n");
    TBLMGR_Constructor(TBLMGR_OBJ);
-   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, PKTTBL_LoadCmd, PKTTBL_DumpCmd, KIT_TO_DEF_PKTTBL_FILE_NAME);
+   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, PKTTBL_LoadCmd, PKTTBL_DumpCmd, KIT_TO_DEF_PKTTBL_FILENAME);
 
    CFE_SB_InitMsg(&KitTo.HkPkt, KIT_TO_HK_TLM_MID, KIT_TO_TLM_HK_LEN, TRUE);
    InitDataTypePkt(&KitTo.DataTypePkt);
@@ -461,6 +473,7 @@ static void ProcessCommands(void)
 
          case KIT_TO_SEND_HK_MID:
             CFE_EVS_SendEvent(KIT_TO_DEMO_EID, CFE_EVS_DEBUG, "Sending housekeeping packet");
+            EVT_PLBK_Execute();
             SendHousekeepingPkt(&KitTo.HkPkt);
             break;
 

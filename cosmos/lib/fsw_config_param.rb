@@ -2,10 +2,19 @@
 # Flight Software Configuration Parameters
 #
 # Notes:
-#   1. All configuration parameters are contained in this file.
-#   2. The names are identical to the FSW #define
-#   3. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
-#   4. TODO - Not all defintions are config params. See MD
+#   1. All FSW configuration parameters are contained in this file.
+#   2. cFS apps are inconsistent with what's defined in a "_cfg.h" file and
+#      what's defined as a constant in the 'fsw/src' file directory. Some of
+#      these definitions such as a default table filename are contained in this
+#      file because many cFS apps define this type of constant in their 
+#      "_cfg.h" files. fsw_const.rb captures FSW constants that are required
+#      by the ground system. These are typically definitions like command
+#      parameter options and state definitions.  
+#   3. If the parameter is from a "_cfg.h" the name used in this file is 
+#      identical to the FSW #define. If the parameter is from a another
+#      header file the name may not be preserved. 
+#   4. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
+#   5. TODO - Not all defintions are config params. See MD
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -70,8 +79,27 @@ module FswConfigParam
   ####################
   ## App - Checksum ##
   ####################
+  
+  CS_MAX_NUM_APP_TABLE_ENTRIES    = 24
+  CS_MAX_NUM_EEPROM_TABLE_ENTRIES = 16
+  CS_MAX_NUM_MEMORY_TABLE_ENTRIES = 16
+  CS_MAX_NUM_TABLES_TABLE_ENTRIES = 24
+  
+  # Not config parameters, defined in cs_tbldefs.h
+  # res = results
+  
+  CS_APP_TBL_NAME        = "DefAppTbl"
+  CS_APP_RES_TBL_NAME    = "ResAppTbl"
+  
+  CS_EEPROM_TBL_NAME     = "DefEepromTbl"
+  CS_EEPROM_RES_TBL_NAME = "ResEepromTbl"
 
-  CS_USERS_GUIDE_FILE = "CFS HS User Guide Doc No 582-2013-002"
+  CS_MEMORY_TBL_NAME     = "DefMemoryTbl"
+  CS_MEMORY_RES_TBL_NAME = "ResMemoryTbl"
+
+  CS_TABLES_TBL_NAME     = "DefTablesTbl"
+  CS_TABLES_RES_TBL_NAME = "ResTablesTbl"
+
 
   ########################
   ## App - Data Storage ##
@@ -112,7 +140,26 @@ module FswConfigParam
   FM_DIR_FILE_REC_LEN  = 76 # Not a config parameter but FM definition
   
   FM_DIR_LIST_FILE_ENTRIES = 200
+
+  ###########################
+  ## App - Health & Safety ##
+  ###########################
+
+  HS_MAX_MSG_ACT_TYPES    =  8
+  HS_MAX_MSG_ACT_SIZE     = 16
+  HS_MSG_ACT_TBL_NAME     = "MsgActs_Tbl"
   
+  HS_MAX_EXEC_CNT_SLOTS   = 32
+  HS_EXEC_CNT_TBL_NAME    = "ExeCount_Tbl"
+  
+  HS_MAX_MONITORED_APPS   = 32
+  HS_APP_MON_TBL_NAME     = "AppMon_Tbl"
+  
+  HS_MAX_MONITORED_EVENTS = 16
+  HS_EVENT_MON_TBL_NAME   = "EventMon_Tbl"
+  
+  HS_MAX_RESTART_ACTIONS  =  3
+ 
   #########################
   ## App - House Keeping ##
   #########################
@@ -141,11 +188,14 @@ module FswConfigParam
   ################################
     
   KIT_TO_PKTTBL_ID = 0
-  KIT_TO_DEF_PKTTBL_FILENAME = "osk_to_pkt_tbl.json"
+  KIT_TO_DEF_PKTTBL_FILENAME  = "osk_to_pkt_tbl.json"
     
   KIT_TO_PKTMGR_STATS_STARTUP_INIT_MS     = 20000
   KIT_TO_PKTMGR_STATS_RECONFIG_INIT_MS    =  5000
   KIT_TO_PKTMGR_COMPUTE_STATS_INTERVAL_MS = 10000
+  
+  KIT_TO_EVT_PLBK_LOG_FILE            = "kit_to_evt_log.dat"
+  KIT_TO_EVT_PLBK_EVENTS_PER_TLM_MSG  = 4
   
   ##########################
   ## App - Limit Checker  ##
@@ -162,10 +212,15 @@ module FswConfigParam
   ## App - Memory Dwell ##
   ########################
 
-  MD_TABLE1_CFE_NAME        = "DWELL_TABLE1"
   MD_SIGNATURE_OPTION       = true            # Ena/Dis text to describe the table
   MD_SIGNATURE_FIELD_LENGTH = 32              # Number of character's in signature text
   MD_DWELL_TABLE_SIZE       = 25              # Number of dwell entries per table
+
+  # Table names are not in cfg file. They are hardcoded in table source file
+  MD_TABLE1_CFE_NAME = "DWELL_TABLE1"  
+  MD_TABLE2_CFE_NAME = "DWELL_TABLE2"  
+  MD_TABLE3_CFE_NAME = "DWELL_TABLE3"  
+  MD_TABLE4_CFE_NAME = "DWELL_TABLE4"  
 
   ##########################
   ## App - Memory Manager ##

@@ -23,7 +23,8 @@ module ISIM
    
    class TblTest
    
-      DUMP_TBL_FILE = "/cf/isim_tbl~.json"
+      DEFAULT_TBL_FILE = "/cf/isim_tbl.json"   
+      DUMP_TBL_FILE    = "/cf/isim_tbl~.json"
       
       def initialize(app, test_files)
          @app = app
@@ -38,7 +39,7 @@ module ISIM
          
          #
          # These tests verify the table functionality. Other tests verify the table parameters
-         # are propoerly used.
+         # are propoerly used. Default table values must be restored when the test exists.
          #
          # 1. Dump and verify default table
          # 2. Load the default dump table to verify dump format is valid         
@@ -103,6 +104,13 @@ module ISIM
          end
 
          #TODO - Verify default contents
+
+         # Restore defaults
+         
+         cmd_str = "LOAD_TBL with ID 0, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{DEFAULT_TBL_FILE}"
+         test_passed = AppFuncTest.send_cmd(@app,cmd_str) do |app_name, event_type, event_msg|
+            raise "ISIM ERROR: Failed event message verification for '#{event_msg}'" unless AppFuncTest.valid_event_msg("ISIM", EVS_INFORMATION, "Successfully replaced table 0 using file #{DEFAULT_TBL_FILE}")
+         end
 
       end # valid
       

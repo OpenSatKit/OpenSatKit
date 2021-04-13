@@ -1,0 +1,33 @@
+
+
+
+TELEMETRY MQTT HK_TLM_PKT LITTLE_ENDIAN "Housekeeping telemetry packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F50 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_VALID_COUNT 16 UINT "Application command counter"
+  APPEND_ITEM CMD_ERROR_COUNT 16 UINT "Application command error counter"
+  APPEND_ITEM CHILD_CMD_CTR      16 UINT "Child task command counter"
+  APPEND_ITEM CHILD_CMD_ERR_CTR  16 UINT "Child task command error counter"
+
+
+TELEMETRY MQTT STR32_PKT LITTLE_ENDIAN "Generic 32 character string payload"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F51 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM Payload  256 STRING "32 character payload"
+

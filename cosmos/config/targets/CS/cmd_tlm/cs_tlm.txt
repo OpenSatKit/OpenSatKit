@@ -1,41 +1,85 @@
 <% 
+  require 'fsw_config_param'
+  require 'fsw_const'
   require 'osk_config' 
+  require 'osk_global'
 
-  @APP_PREFIX_STR      = "CS"
-  @HK_TLM_MID_STR      = "CS_HK_TLM_MID"
-  
-  #TODO - Add configuration parameters
+  @APP_PREFIX_STR  = "CS"
+  @HK_TLM_MID_STR  = "CS_HK_TLM_MID"
   
 %>  
 
 TELEMETRY CS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet Structure"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
-  APPEND_ITEM CMD_VALID_COUNT 8 UINT "CS Application Command Counter."
-  APPEND_ITEM CMD_ERROR_COUNT 8 UINT "CS Application Command Error Counter."
-  APPEND_ITEM CHECKSUMSTATE 8 UINT "CS Application global checksum state."
-  APPEND_ITEM EEPROMCSSTATE 8 UINT "CS Eeprom table checksum stat e."
-  APPEND_ITEM MEMORYCSSTATE 8 UINT "CS Memory table checksum state."
-  APPEND_ITEM APPCSSTATE 8 UINT "CS App table checksum state."
-  APPEND_ITEM TABLESCSSTATE 8 UINT "CS Tables table checksum stat e."
-  APPEND_ITEM OSCSSTATE 8 UINT "OS code segment checksum state."
-  APPEND_ITEM CFECORECSSTATE 8 UINT "cFE Core code segment checksum stat e"
-  APPEND_ITEM RECOMPUTE_IN_PROGRESS 8 UINT ""
-  APPEND_ITEM ONESHOT_IN_PROGRESS   8 UINT ""
-  APPEND_ITEM FILLER8 8 UINT "8 bit padding"
-  APPEND_ITEM EEPROMCSERRCOUNTER 16 UINT "Eeprom miscompare counte r."
-  APPEND_ITEM MEMORYCSERRCOUNTER 16 UINT "Memory miscompare counter."
-  APPEND_ITEM APPCSERRCOUNTER 16 UINT "App miscompare counter."
-  APPEND_ITEM TABLESCSERRCOUNTER 16 UINT "Tables miscompare counter."
-  APPEND_ITEM CFECORECSERRCOUNTER 16 UINT "cFE core miscompare counter"
-  APPEND_ITEM OSCSERRCOUNTER 16 UINT "OS code segment miscopmare counter."
-  APPEND_ITEM CURRENTCSTABLE 16 UINT "Current table being checksummed."
-  APPEND_ITEM CURRENTENTRYINTABLE 16 UINT "Current entry ID in the table being checksummed."
-  APPEND_ITEM EEPROMBASELINE 32 UINT "Baseline checksum for all of Eeprom."
-  APPEND_ITEM OSBASELINE 32 UINT "Baseline checksum for the OS code segment."
-  APPEND_ITEM CFECOREBASELINE 32 UINT "Basline checksum for the cFE core."
-  APPEND_ITEM LASTONESHOTADDRESS 32 UINT "Address used in last one shot checksum command."
-  APPEND_ITEM LASTONESHOTSIZE 32 UINT "Size used in the last one shot checksum command."
-  APPEND_ITEM LASTONESHOTMAXBYTESPERCYCLE 32 UINT ""
-  APPEND_ITEM LASTONESHOTCHECKSUM 32 UINT "Checksum of the last one shot checksum command."
-  APPEND_ITEM PASSCOUNTER 32 UINT "Number of times CS has passed through all of its tables."
+   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+   APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
+   APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
+   APPEND_ITEM APP_STATE         8 UINT "Application global checksum state"
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM EEPROM_TBL_STATE  8 UINT "EEPROM table checksum state"
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM MEM_TBL_STATE  8 UINT "Memory table checksum state"
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM APP_TBL_STATE     8 UINT "App table checksum state."
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM TABLES_TBL_STATE  8 UINT "Tables table checksum state"
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM OS_STATE          8 UINT "OS code segment checksum state"
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM CFE_CORE_STATE    8 UINT "cFE Core code segment checksum state"
+      STATE EMPTY     <%= Fsw::Const.get_val("CS_STATE_EMPTY") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("CS_STATE_ENABLED") %>  GREEN
+      STATE DISABLED  <%= Fsw::Const.get_val("CS_STATE_DISABLED") %>
+      STATE UNDEFINED <%= Fsw::Const.get_val("CS_STATE_UNDEFINED") %>
+   APPEND_ITEM RECOMPUTE_IN_PROGRESS 8 UINT ""
+      STATE FALSE 0
+      STATE TRUE  1 GREEN
+   APPEND_ITEM ONESHOT_IN_PROGRESS   8 UINT ""
+      STATE FALSE 0
+      STATE TRUE  1 GREEN
+   APPEND_ITEM PAD8                8 UINT "8 bit padding"
+   APPEND_ITEM EEPROM_TBL_ERR_CTR 16 UINT "EEPROM miscompare counter"
+   APPEND_ITEM MEM_TBL_ERR_CTR    16 UINT "Memory miscompare counter"
+   APPEND_ITEM APP_TBL_ERR_CTR    16 UINT "App miscompare counter"
+   APPEND_ITEM TABLES_TBL_ERR_CTR 16 UINT "Tables miscompare counter"
+   APPEND_ITEM CFE_CORE_ERR_CTR   16 UINT "cFE core miscompare counter"
+   APPEND_ITEM OS_ERR_CTR         16 UINT "OS code segment miscopmare counter"
+   APPEND_ITEM CURR_TBL           16 UINT "Current table being checksumme"
+      STATE CFE_CORE  <%= Fsw::Const.get_val("CS_CFECORE") %>
+      STATE OS_CORE   <%= Fsw::Const.get_val("CS_OSCORE") %>
+      STATE EEPROM    <%= Fsw::Const.get_val("CS_EEPROM_TABLE") %>
+      STATE MEMORY    <%= Fsw::Const.get_val("CS_MEMORY_TABLE") %>
+      STATE TABLES    <%= Fsw::Const.get_val("CS_TABLES_TABLE") %>
+      STATE APP       <%= Fsw::Const.get_val("CS_APP_TABLE") %>
+   APPEND_ITEM CURR_TBL_ENTRY    16 UINT "Current entry ID in the table being checksummed"
+   APPEND_ITEM EEPROM_BASELINE   32 UINT "Baseline checksum for all of EEPROM"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM OS_BASELINE       32 UINT "Baseline checksum for the OS code segment"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM CFE_CORE_BASELINE 32 UINT "Basline checksum for the cFE core"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM ONESHOT_ADDR      32 UINT "Address used in last one shot checksum command"
+      FORMAT_STRING  "0x%08X" 
+   APPEND_ITEM ONESHOT_NUM_BYTES 32 UINT "Length in bytes used in the last one shot checksum command" 
+   APPEND_ITEM ONESHOT_BYTES_PER_CYCLE 32 UINT "Maximum number of bytes processed per CS execution cycle"
+   APPEND_ITEM ONESHOT_CS        32 UINT "Checksum of the last one shot checksum command"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM PASS_CTR          32 UINT "Number of times CS has passed through all of its tables"
 

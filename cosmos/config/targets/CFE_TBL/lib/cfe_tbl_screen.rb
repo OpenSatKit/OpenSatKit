@@ -34,9 +34,14 @@ def cfe_tbl_scr_cmd(screen, cmd)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_TBL #{scr_name}'")
  
    when "FILE"
-      cmd_name = "WRITE_REG_TO_FILE"
-      bin_filename = FswConfigParam::CFE_TBL_DEFAULT_REG_DUMP_FILE
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_TBL_REG
+      file_selection = screen.get_named_widget("file").text
+      if file_selection == "Registry"
+         cmd_name = "WRITE_REG_TO_FILE"
+         bin_filename = FswConfigParam::CFE_TBL_DEFAULT_REG_DUMP_FILE
+         tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_TBL_REG
+      else
+         raise "Error in Display File options. Drop down selection '#{file_selection}' is not defined in cfe_tbl_scr_cmd()"
+      end
       Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
 
    when "FUNC_TBL_MGMT"

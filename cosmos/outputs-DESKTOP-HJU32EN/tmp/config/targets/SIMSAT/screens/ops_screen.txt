@@ -1,0 +1,214 @@
+###############################################################################
+# SimSat Ops Screen
+#
+# Notes:
+#   1. A balance was was made to include enough telemetry to follow the example
+#      ops procedure, but not too much data that it makes its difficult to
+#      digest.
+#   2. The screen is designed so it can be used standalone or as a local screen
+#      to an ops script. The keyword/comment "#local#" local is used for lines
+#      that are only relevant to an inline script usage. The advantage of inline
+#      is that script variables can be displayed on the page.
+#
+# Global Script Variables:
+#   simsat_ops_status - Text string displayed on ops example screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU
+#   General Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SimSat Operations"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+#local#HORIZONTALBOX "Ops Example Script Status"
+  #local#LABELVALUE LOCAL LOCAL simsat_ops_status WITH_UNITS 50
+  #local#SETTING BACKCOLOR 255 255 100
+#local#END # Horizontal ISIM
+
+VERTICALBOX "Instrument Sim (ISIM)"
+
+  MATRIXBYCOLUMNS 6 1
+
+    BUTTON 'Doc' 'spawn("evince #{Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)}")'
+    SETTING BACKCOLOR 255 255 255
+    LABEL "   "
+    LABEL "Instr State"
+    VALUE ISIM HK_TLM_PKT INSTR_PWR_STATE WITH_UNITS 8
+    LABEL "Fault"
+    VALUE ISIM HK_TLM_PKT FAULT_PRESENT WITH_UNITS 6
+
+    LABEL "Sci Data"
+    VALUE ISIM HK_TLM_PKT SCI_STATE WITH_UNITS 6
+    LABEL "Sci Images"
+    VALUE ISIM HK_TLM_PKT FILE_IMAGE_CNT WITH_UNITS 8
+    LABEL "   "
+    LABEL "   "
+
+  END # Matrix
+  
+  HORIZONTAL
+    LABEL "Currrent science file: "
+    VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
+  END
+  
+END # Vertical ISIM
+
+  
+VERTICALBOX "Data/File Management"
+  MATRIXBYCOLUMNS 4
+
+    LABEL "<b>Data Storage</b>"
+    VALUE DS HK_TLM_PKT APP_ENA_STATE WITH_UNITS 4
+    LABEL "   "
+    LABEL "   "
+
+    LABEL "<b>/cf/simsat/rec files</b>"
+    VALUE FM DIR_LIST_PKT TOTALFILES FORMATTED 4
+    LIMITSBAR FM DIR_LIST_PKT TOTALFILES
+    LABEL "   "
+
+  END
+    
+  MATRIXBYCOLUMNS 4
+    LABEL "<b>House Keeping</b>"
+    LABEL "Combo Pkts Sent"
+    VALUE HK HK_TLM_PKT COMBINE_PKT_SENT_CNT WITH_UNITS 6
+    LABEL "   "
+    
+    LABEL "   "
+    LABEL "Miss Data Cnt"
+    VALUE HK HK_TLM_PKT MISSING_DATA_CNT WITH_UNITS 6
+    LABEL "   "
+  END # Matrix
+  
+  MATRIXBYCOLUMNS 7
+  
+    LABEL "   "    
+    LABEL "  Enabled"
+    LABEL "   Open"
+    LABEL "  Seq Cnt"
+    LABEL "     Age"
+    LABEL "    Size"
+    LABEL "   "    
+    
+    LABEL "Event Msg File"
+    VALUE DS FILE_INFO_PKT FILE1_ENABLE  WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE1_OPEN    WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE1_SEQ_CNT WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE1_AGE     WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE1_SIZE    WITH_UNITS 6
+    LABEL "   "    
+
+    LABEL "Aux Pkt File"
+    VALUE DS FILE_INFO_PKT FILE7_ENABLE  WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE7_OPEN    WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE7_SEQ_CNT WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE7_AGE     WITH_UNITS 6
+    VALUE DS FILE_INFO_PKT FILE7_SIZE    WITH_UNITS 6
+    LABEL "   "    
+
+  END # Matrix
+
+  HORIZONTAL
+    LABEL "Current event file name: "
+    VALUE DS FILE_INFO_PKT FILE1_NAME WITH_UNITS 30
+  END
+
+  HORIZONTAL
+    LABEL "Current auxiliary file name: "
+    VALUE DS FILE_INFO_PKT FILE7_NAME WITH_UNITS 30
+  END
+
+  MATRIXBYCOLUMNS 6
+    LABEL "Open Files"
+    VALUE FM HK_TLM_PKT NUM_OPEN_FILES WITH_UNITS 5
+    LABEL "TFTP Files Sent"
+    VALUE TFTP HK_TLM_PKT PUT_FILE_COUNT WITH_UNITS 5
+    LABEL "TFTP Files Recv"
+    VALUE TFTP HK_TLM_PKT GET_FILE_COUNT WITH_UNITS 5
+  END
+  #LABEL "Rec Files
+  #VALUE FM DIR_LIST_PKT TOTALFILES WITH_UNITS 5
+  
+  
+END # Vertical Data/File Management
+
+VERTICALBOX "Autonomy"
+
+  MATRIXBYCOLUMNS 4
+    
+    LABEL "<b>Limit Checker</b>"
+    VALUE LC HK_TLM_PKT APP_STATE WITH_UNITS 8
+    LABEL "RTS EXE Cnt"
+    VALUE LC HK_TLM_PKT RTS_EXE_CNT WITH_UNITS 6
+
+    LABEL "<b>ISIM Fault Mon</b>"
+    LABEL "Watch Point 12"
+    VALUE LC HK_TLM_PKT WP_12_RESULT WITH_UNITS 6
+    LABEL "   "
+    
+    LABEL "   "
+    LABEL "Action Point 2"
+    VALUE LC HK_TLM_PKT AP_2_STATE WITH_UNITS  6
+    VALUE LC HK_TLM_PKT AP_2_RESULT WITH_UNITS 6
+
+    LABEL "<b>Stored Cmd</b>"
+    LABEL "Pwr Off ISIM (RTS 6)"
+    VALUE SC HK_TLM_PKT RTS_6_DIS WITH_UNITS 6
+    VALUE SC HK_TLM_PKT RTS_6_EXE WITH_UNITS 6
+    #LABEL "RTS Dis 16..1"
+    #FORMATVALUE SC HK_TLM_PKT RTS_W1_DIS_STATUS %04X FORMATTED 6
+    #LABEL "RTS Exe 16..1"
+    #FORMATVALUE SC HK_TLM_PKT RTS_W1_EXE_STATUS %04X FORMATTED 6
+
+
+  END
+  
+  #HORIZONTAL
+  #   LABEL "  Watch Points (2-bits per WP)"
+  #   ARRAY LC HK_TLM_PKT WP_RESULTS 300 50 "%x" 8 FORMATTED
+  #END
+  #HORIZONTAL
+  #   LABEL "  Action Point (4-bits per AP)"
+  #   ARRAY LC HK_TLM_PKT AP_RESULTS 300 50 "%x" 8 FORMATTED
+  #END
+
+END # Autonomy
+
+
+VERTICALBOX "Attitude Determination and Control"
+
+  MATRIXBYCOLUMNS 4
+    LABEL '42 Connected' 
+    VALUE I42 HK_TLM_PKT CONNECTED FORMATTED 10
+    LABEL '42 Cycles'
+    VALUE I42 HK_TLM_PKT CONNECT_CYCLES FORMATTED 10
+    LABEL 'Sun Valid' 
+    VALUE F42 CONTROL_PKT SUN_VALID FORMATTED 10
+    LABEL 'OVR Sun Valid' 
+    VALUE F42 HK_TLM_PKT OVR_SUN_VALID FORMATTED 10
+  END
+
+  MATRIXBYCOLUMNS 4 5
+    LABEL '    Att Err X'
+    LABEL '    Att Err Y'
+    LABEL '    Att Err Z'
+    LABEL '             '
+    VALUE F42 CONTROL_PKT THERR_X WITH_UNITS 8
+    VALUE F42 CONTROL_PKT THERR_Y WITH_UNITS 8
+    VALUE F42 CONTROL_PKT THERR_Z WITH_UNITS 8
+    BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_ATT_ERR")'
+  END # Matrix
+  
+END # Attitude Determination and Control
+
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 40

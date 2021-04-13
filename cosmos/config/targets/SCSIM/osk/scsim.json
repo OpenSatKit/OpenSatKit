@@ -1,0 +1,45 @@
+{  "app": {
+   
+   "title": "Spacecraft Simulator",
+   "version": "1.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "SCSIM provides a basic simulation environment that can be configured",
+      "for different operational scenarios. The initial goal is for STEM",
+      "educational purposes to allow the user get a feel for spacecraft operations."
+   ],
+
+   "system": {
+      "build": true,
+      "simsat": true
+   },
+   
+   "cosmos": {
+      "target": "SCSIM"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/scsim.so",
+      "entry-symbol": "SCSIM_AppMain",
+      "name": "SCSIM",
+      "priority": 90,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [
+         { 
+                "name": "Parameter Table",
+                  "id": 0,
+            "filename": "scsim_tbl.json"
+         }
+      ],
+      "cmd-mid": "SCSIM_CMD_MID"
+   }
+   
+}}
+
+

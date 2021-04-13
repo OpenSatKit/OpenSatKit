@@ -17,6 +17,7 @@
 require 'cosmos'
 require 'file_transfer'
 require 'osk_flight'
+require 'fsw_const'
 
 module Osk
    
@@ -110,7 +111,11 @@ module Osk
             core = `pgrep core`
             if (core.length > 1)
                wait(2)
-               cmd("KIT_TO ENABLE_TELEMETRY")
+               cmd("KIT_TO ENABLE_TELEMETRY with IP_ADDR #{COSMOS_IP_ADDR}")
+               wait(1)
+               cmd("CFE_EVS ADD_EVENT_FILTER with APP_NAME CFE_TIME, EVENT_ID #{Fsw::Const::CFE_TIME_FLY_ON_EID}, MASK #{Fsw::Const::CFE_EVS_FIRST_ONE_STOP}")
+               wait(1)
+               cmd("CFE_EVS ADD_EVENT_FILTER with APP_NAME CFE_TIME, EVENT_ID #{Fsw::Const::CFE_TIME_FLY_OFF_EID}, MASK #{Fsw::Const::CFE_EVS_FIRST_ONE_STOP}")
                done = true
                #puts core + " len = #{core.length}"
             else

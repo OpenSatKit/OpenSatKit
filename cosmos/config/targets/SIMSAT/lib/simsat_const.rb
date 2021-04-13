@@ -55,10 +55,12 @@ module SimSat
    KIT_TO_4K_GND_FILE  = Osk::cfg_target_dir_file(SIMSAT_DIR,'tables',KIT_TO_4K_TBL)
    KIT_TO_32K_GND_FILE = Osk::cfg_target_dir_file(SIMSAT_DIR,'tables',KIT_TO_32K_TBL)
 
-   YOUTUBE_COMMUNITY_APPS_INTRO     = "https://youtu.be/vA5d9morxZg"
-   YOUTUBE_COMMUNITY_APPS_RUNTIME   = "https://www.youtube.com/watch?v=p3RrovUyLOs"
    YOUTUBE_COMMUNITY_APPS_DATAFILE  = "https://youtu.be/Y-oxWg8rNB0"
+   YOUTUBE_COMMUNITY_APPS_HS        = "https://youtu.be/Nmp9ACvATHY"
+   YOUTUBE_COMMUNITY_APPS_INTRO     = "https://youtu.be/vA5d9morxZg"
    YOUTUBE_COMMUNITY_APPS_MAINT     = "https://youtu.be/pzAkAhBR-Pk"
+   YOUTUBE_COMMUNITY_APPS_RUNTIME   = "https://www.youtube.com/watch?v=p3RrovUyLOs"
+   
    
    # These definitions must match the Data Storage app's table ".Basename"
    # definitions

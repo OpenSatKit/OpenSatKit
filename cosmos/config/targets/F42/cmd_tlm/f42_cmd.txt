@@ -30,7 +30,7 @@ COMMAND F42 SEND_CTRL_GAINS <%= Osk::Cfg.processor_endian %> "Send the controlle
 
 COMMAND F42 SET_CTRL_MODE <%= Osk::Cfg.processor_endian %> "Placeholder to set the 42 Sim FSW control mode"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
-  APPEND_PARAMETER NEW_MODE 16 UINT MIN_UINT16 MAX_UINT16 1 "Current demo supports: 1-Init"
+  APPEND_PARAMETER NEW_MODE 16 UINT MIN_UINT16 MAX_UINT16 1 "Current demo supports: 1-Init, 99-Invalid state for demo purposes"
 
 COMMAND F42 SET_OVR_STATE <%= Osk::Cfg.processor_endian %> "Set the state of an override in 42 Sim FSW "
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 2) %>

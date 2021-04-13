@@ -1,0 +1,63 @@
+###############################################################################
+# F42 App Wheel Target Momentum Command Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Set Controller Gains"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX 
+  MATRIXBYCOLUMNS 3
+    BUTTON 'Get Current Values' 'require "#{Cosmos::USERPATH}/config/targets/F42/lib/f42_screens.rb"; f42_tbl_cmd(self, "GET_CUR_VALUES")'
+    BUTTON 'Load Screen Values' 'require "#{Cosmos::USERPATH}/config/targets/F42/lib/f42_screens.rb"; f42_tbl_cmd(self, "LOAD_SCR_VALUES")'
+    BUTTON 'Restore Defaults'   'require "#{Cosmos::USERPATH}/config/targets/F42/lib/f42_screens.rb"; f42_tbl_cmd(self, "RESTORE_DEFAULTS")'
+  END # Matrix
+
+  LABEL ' '
+
+  VERTICALBOX "Attitude Control Gains"
+    MATRIXBYCOLUMNS 3
+
+      LABEL '                   Kp X' 
+      LABEL '                   Kp Y' 
+      LABEL '                   Kp Z' 
+      NAMED_WIDGET Kp_X TEXTFIELD 12
+      NAMED_WIDGET Kp_Y TEXTFIELD 12
+      NAMED_WIDGET Kp_Z TEXTFIELD 12
+
+      LABEL '                   Kr X' 
+      LABEL '                   Kr Y' 
+      LABEL '                   Kr Z' 
+      NAMED_WIDGET Kr_X TEXTFIELD 12
+      NAMED_WIDGET Kr_Y TEXTFIELD 12
+      NAMED_WIDGET Kr_Z TEXTFIELD 12
+
+    END # Matrix
+  END # Horizontal Box
+
+  HORIZONTALBOX "Momentum Controller Gain"
+    MATRIXBYCOLUMNS 5
+
+      LABEL '   Kunl  ' 
+      NAMED_WIDGET Kunl TEXTFIELD 12
+      LABEL '         ' 
+      LABEL '         ' 
+      LABEL '         ' 
+
+    END # Matrix
+  END # Horizontal Box
+
+END # Vertical Box
+
+HORIZONTALLINE
+
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

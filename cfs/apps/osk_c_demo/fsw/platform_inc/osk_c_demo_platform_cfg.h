@@ -30,7 +30,7 @@
 */
 
 #define OSK_C_DEMO_PLATFORM_REV   0
-#define OSK_C_DEMO_FILE_NAME  "/cf/osk_c_demo_ini.json"
+#define OSK_C_DEMO_INI_FILENAME   "/cf/osk_c_demo_ini.json"
 
 
 /******************************************************************************

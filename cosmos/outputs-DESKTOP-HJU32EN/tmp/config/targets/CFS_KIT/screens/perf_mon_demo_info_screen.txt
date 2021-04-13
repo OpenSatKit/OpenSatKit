@@ -1,0 +1,21 @@
+###############################################################################
+# Performance Monitor Demo More Information Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 1200
+
+TITLE "Performance Monitor Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+ 
+VERTICALBOX
+  NAMED_WIDGET msg_box TEXTBOX CFS_KIT PSEUDO_MSG_PKT TXT_MSG 512 300
+  BUTTON 'More Information' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/perf_mon_demo_screen.rb"; perf_mon_demo_more_info(self)'
+END # Vertical Box
+  

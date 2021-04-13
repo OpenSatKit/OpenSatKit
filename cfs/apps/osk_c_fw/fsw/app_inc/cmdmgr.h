@@ -105,7 +105,7 @@ boolean CMDMGR_RegisterFunc(CMDMGR_Class* CmdMgr, uint16 FuncCode, void* ObjData
 /******************************************************************************
 ** Function: CMDMGR_RegisterFuncAltCnt
 **
-** Register a command function that will increment its own private the alternate
+** Register a command function that will increment its own private alternate
 ** command counters.
 */
 boolean CMDMGR_RegisterFuncAltCnt(CMDMGR_Class* CmdMgr, uint16 FuncCode, void* ObjDataPtr, 
