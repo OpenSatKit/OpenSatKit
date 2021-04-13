@@ -185,9 +185,17 @@ def simsat_data_file(screen, cmd)
       # Use default temporary binary table file names in flight and ground default table server directories
       Osk::Ops::send_cfe_dump_tbl_cmd("FM.#{FswConfigParam::FM_TABLE_CFE_NAME}", Osk::TBL_MGR_DEF_FM_FREESPACE)
    when "FM_FILE"
-      bin_filename = FswConfigParam::FM_DIR_LIST_FILE_DEFNAME
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_FM_DIR
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      # Only one FM command creates a file
+      # Minimize user input to keep it simple & alert them to use the directory list command if they want all options 
+      prompt = "Input directory to be written to a file. For more options\nuse WRITE_DIR_TO_FILE command.\n" 
+      dir = ask_string(prompt, "#{Osk::FLT_SRV_DIR}")
+      # Command string must end with comma because filename will be appended
+      if (!dir.nil? and dir.length > 0) 
+         cmd_str = "WRITE_DIR_TO_FILE with DIRECTORY #{dir}, SIZE_TIME_MODE 0, "
+         bin_filename = Osk::TMP_BIN_FILE
+         tbl_mgr_filename = Osk::TBL_MGR_DEF_FM_DIR
+         Osk::Ops::send_flt_bin_file_cmd("FM", cmd_str , tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
+      end
    when "FM_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/fm/docs/users_guide/html/index.html")   
    when "HK_CMD" 
@@ -279,6 +287,37 @@ def simsat_health_safety(screen, cmd)
       # Only one option
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CS #{scr_name}'")
+   when "CS_TBL"
+      tbl_selection = screen.get_named_widget("cs_tbl").text
+      case tbl_selection
+      when "App"
+         tbl_name = FswConfigParam::CS_APP_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_APP_TBL
+      when "EEPROM"
+         tbl_name = FswConfigParam::CS_EEPROM_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_EEPROM_TBL
+      when "Memory"
+         tbl_name = FswConfigParam::CS_MEMORY_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_MEMORY_TBL
+      when "Tables"
+         tbl_name = FswConfigParam::CS_TABLES_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_TABLES_TBL
+      when "App Results"
+         tbl_name = FswConfigParam::CS_APP_RES_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_APP_RES_TBL
+      when "EEPROM Results"
+         tbl_name = FswConfigParam::CS_EEPROM_RES_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_EEPROM_RES_TBL
+      when "Memory Results"
+         tbl_name = FswConfigParam::CS_MEMORY_RES_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_MEMORY_RES_TBL
+      when "Tables Results"
+         tbl_name = FswConfigParam::CS_TABLES_RES_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_CS_TABLES_RES_TBL
+      else
+         raise "Error in Display Table options. Drop down selection '#{tbl_selection}' is not defined in simsat_health_safety()"
+      end
+      Osk::Ops::send_cfe_dump_tbl_cmd("CS.#{tbl_name}", tbl_mgr_def_filename)
    when "CS_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/cs/docs/users_guide/html/index.html")   
    when "HS_CMD" 
@@ -287,16 +326,47 @@ def simsat_health_safety(screen, cmd)
       # Only one option
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'HS #{scr_name}'")
+   when "HS_TBL"
+      tbl_selection = screen.get_named_widget("hs_tbl").text
+      case tbl_selection
+      when "App Monitor"
+         tbl_name = FswConfigParam::HS_APP_MON_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_HS_AMT_TBL
+      when "Event Monitor"
+         tbl_name = FswConfigParam::HS_EVENT_MON_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_HS_EMT_TBL
+      when "Msg Action"
+         tbl_name = FswConfigParam::HS_MSG_ACT_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_HS_MAT_TBL
+      when "Exec Counter"
+         tbl_name = FswConfigParam::HS_EXEC_CNT_TBL_NAME
+         tbl_mgr_def_filename = Osk::TBL_MGR_DEF_HS_XCT_TBL
+      else
+         raise "Error in Display Table options. Drop down selection '#{tbl_selection}' is not defined in simsat_health_safety()"
+      end
+      Osk::Ops::send_cfe_dump_tbl_cmd("HS.#{tbl_name}", tbl_mgr_def_filename)
    when "HS_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/hs/docs/users_guide/html/index.html")   
-      #ug_path_filename = "#{Osk::OSK_CFS_DIR}/apps/hs/docs/users_guide/#{FswConfigParam::CS_USERS_GUIDE_FILE}"
-      #spawn("evince '#{ug_path_filename}'")
-   when "FUNC_TBD"
-      prompt(Osk::MSG_TBD_FEATURE)
+   when "FUNC_CS_MGMT"
+      display("CS CS_MGMT_SCREEN",1500,50)
+   when "FUNC_HS_MGMT"
+      display("HS HS_MGMT_SCREEN",1500,50)
    when "DEMO"
-      prompt(Osk::MSG_TBD_FEATURE)
+      if (Osk::System.check_n_start_cfs)
+         # Demo scripts manage screens & PacketViewer
+         case screen.get_named_widget("demo").text
+         when "CS-HS Demo Script"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_health_safety.rb")
+         end 
+      end # If cFS running
    when "TUTORIAL"
-      prompt(Osk::MSG_TBD_FEATURE)
+      tutorial = screen.get_named_widget("tutorial").text
+      case tutorial
+      when "HS App Group Intro Slides"
+         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_HS_FILE}")
+      when "HS App Group Intro Video"
+         Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_HS)
+      end 
    else
       raise "Error in screen definition file. Undefined health and safety screen command '#{cmd}' sent to simsat_src_cmd()"
    end
@@ -317,9 +387,17 @@ def simsat_maintenance(screen, cmd)
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'MD #{scr_name}'")
    when "MD_TBL"
-      bin_filename = "md_dw1_tbl.tbl"  #TODO - Let user choose dwell table
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_MD_TBL
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      # Drop down menu label used as hash key
+      tbl_name = { "Dwell Table 1" => FswConfigParam::MD_TABLE1_CFE_NAME,
+                   "Dwell Table 2" => FswConfigParam::MD_TABLE2_CFE_NAME,
+                   "Dwell Table 3" => FswConfigParam::MD_TABLE3_CFE_NAME,
+                   "Dwell Table 4" => FswConfigParam::MD_TABLE4_CFE_NAME }  
+      menu_opt = screen.get_named_widget("md_tbl").text
+      if tbl_name.has_key? menu_opt
+        Osk::Ops::send_cfe_dump_tbl_cmd("MD.#{tbl_name[menu_opt]}", Osk::TBL_MGR_DEF_MD_TBL)   
+      else
+        raise "Error in MD table options. Drop down selection #{menu_opt} is not defined in simsat_maintenance()"
+      end
    when "MD_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/md/docs/users_guide/html/index.html")   
    when "MM_CMD" 
@@ -329,9 +407,22 @@ def simsat_maintenance(screen, cmd)
       scr_name = "HK_TLM_PKT"
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'MM #{scr_name}'")
    when "MM_FILE"
-      bin_filename = "Last-dump-filename"
+      # Only one MM command creates a file
+      # Minimize user input to keep it simple & alert them to use the dump command if they want all options 
+      # A '+' indicates a symbol is present
+      prompt = "Dump 256 bytes of RAM. For more options\nuse DUMP_MEM_TO_FILE command. Offset\nand addresses must be formatted using ruby\nsyntax.\n" 
+      mem_address = ask_string(prompt, "Enter <symbol+offset> or <address>")
+      if mem_address.include? "+"
+         mem_comp = mem_address.split("+")
+         addr_str = "ADDR_OFFSET #{mem_comp[1]}, ADDR_SYMBOL_NAME #{mem_comp[0]}, "
+      else
+         addr_str = "ADDR_OFFSET #{mem_address}, ADDR_SYMBOL_NAME '', "
+      end
+      # Command string must end with comma because filename will be appended
+      cmd_str = "DUMP_MEM_TO_FILE with MEM_TYPE #{Fsw::Const::MM_MEM_TYPE_RAM}, PAD_8 0, PAD_16 0, NUM_BYTES 256, #{addr_str}"
+      bin_filename = Osk::TMP_BIN_FILE
       tbl_mgr_filename = Osk::TBL_MGR_DEF_MM_DMP
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
+      Osk::Ops::send_flt_bin_file_cmd("MM", cmd_str , tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
    when "MM_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/mm/docs/users_guide/html/index.html")   
    when "FUNC_MEMORY_MGMT"
@@ -339,7 +430,8 @@ def simsat_maintenance(screen, cmd)
    when "DEMO"
       if (Osk::System.check_n_start_cfs)
          # Demo scripts manage screens & PacketViewer
-         case screen.get_named_widget("demo").text
+         demo = screen.get_named_widget("demo").text
+         case demo
          when "MM-MD Demo Screen"
             display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
          when "MM-MD Demo Script"
@@ -347,14 +439,13 @@ def simsat_maintenance(screen, cmd)
          end 
       end # If cFS running
    when "TUTORIAL"
-      case screen.get_named_widget("tutorial").text
-      when "Maint App Intro Slides"
+      tutorial = screen.get_named_widget("tutorial").text
+      case tutorial
+      when "Maint App Group Intro Slides"
          spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_MAINT_FILE}")
-      when "Maint App Intro Video"
+      when "Maint App Group Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_MAINT)    
       end 
-   when "TUTORIAL"
-      prompt(Osk::MSG_TBD_FEATURE)
    else
       raise "Error in screen definition file. Undefined maintenance screen command '#{cmd}' sent to simsat_src_cmd()"
    end

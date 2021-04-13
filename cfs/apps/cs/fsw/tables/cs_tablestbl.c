@@ -30,10 +30,10 @@ CS_Def_Tables_Table_Entry_t      CS_TablesTable[CS_MAX_NUM_TABLES_TABLE_ENTRIES]
 {
     /*         State             Name   */
 
-    /*   0 */ { CS_STATE_EMPTY,   ""    },
-    /*   1 */ { CS_STATE_EMPTY,   ""    },
-    /*   2 */ { CS_STATE_EMPTY,   ""    },
-    /*   3 */ { CS_STATE_EMPTY,   ""    },
+    /*   0 */ { CS_STATE_ENABLED,   "HS.AppMon_Tbl"    }, //osk
+    /*   1 */ { CS_STATE_ENABLED,   "HS.EventMon_Tbl"  }, //osk
+    /*   2 */ { CS_STATE_ENABLED,   "HS.MsgActs_Tbl"   }, //osk
+    /*   3 */ { CS_STATE_ENABLED,   "HS.ExeCount_Tbl"  }, //osk
     /*   4 */ { CS_STATE_EMPTY,   ""    },
     /*   5 */ { CS_STATE_EMPTY,   ""    },
     /*   6 */ { CS_STATE_EMPTY,   ""    },

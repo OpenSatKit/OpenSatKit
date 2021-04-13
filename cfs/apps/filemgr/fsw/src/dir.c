@@ -273,7 +273,7 @@ boolean DIR_DeleteAllCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
                            ++DirSkippedCount;
                            break;
          
-                        case FILEUTIL_FILE_NAME_INVALID:
+                        case FILEUTIL_FILENAME_INVALID:
                         case FILEUTIL_FILE_NONEXISTENT:
                         case FILEUTIL_FILE_OPEN:
                         default:

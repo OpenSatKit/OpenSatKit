@@ -42,9 +42,10 @@ static int32 InitApp(void);
 static void ProcessCmdPkt(CFE_SB_MsgPtr_t CmdMsgPtr);
 static void SendHousekeepingPkt(KIT_SCH_HkPkt* HkPkt);
 
-/*
-** Global Data
-*/
+
+/*****************/
+/** Global Data **/
+/*****************/
 
 KIT_SCH_Class   KitSch;
 
@@ -74,7 +75,7 @@ void KIT_SCH_AppMain(void)
     
    Status = CFE_ES_RegisterApp();
 
-   CFE_EVS_Register(NULL,0,CFE_EVS_NO_FILTER);
+   CFE_EVS_Register(NULL, 0, 0);
 
    /*
    ** Perform application specific initialization
@@ -273,8 +274,8 @@ static int32 InitApp(void)
 
     CFE_EVS_SendEvent(KIT_SCH_INIT_DEBUG_EID, KIT_SCH_INIT_EVS_TYPE,"KIT_SCH_InitApp() Before TBLMGR calls\n");
     TBLMGR_Constructor(TBLMGR_OBJ);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, MSGTBL_LoadCmd, MSGTBL_DumpCmd, KIT_SCH_DEF_MSG_TBL_FILE_NAME);
-    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCHTBL_LoadCmd, SCHTBL_DumpCmd, KIT_SCH_DEF_SCH_TBL_FILE_NAME);
+    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, MSGTBL_LoadCmd, MSGTBL_DumpCmd, KIT_SCH_DEF_MSG_TBL_FILENAME);
+    TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCHTBL_LoadCmd, SCHTBL_DumpCmd, KIT_SCH_DEF_SCH_TBL_FILENAME);
 
     /*
     ** Application startup event message

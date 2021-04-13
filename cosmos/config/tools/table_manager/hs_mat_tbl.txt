@@ -1,0 +1,35 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR        = "HS"
+  @MAX_MSG_ACT_TYPES     = "HS_MAX_MSG_ACT_TYPES"
+  @MAX_MSG_ACT_SIZE      = "HS_MAX_MSG_ACT_SIZE"
+  @MSG_ACT_TBL_NAME_STR  = "HS_MSG_ACT_TBL_NAME"
+  
+%>
+TABLE "HS Message Actions" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Message Actions"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @MSG_ACT_TBL_NAME_STR) %>
+
+  #
+  # typedef struct {
+  #    uint16          EnableState;                   /**< \brief If entry contains message */
+  #    uint16          Cooldown;                      /**< \brief Minimum rate at which message can be sent */
+  #    uint8           Message[HS_MAX_MSG_ACT_SIZE];  /**< \brief Message to be sent */
+  # } HS_MATEntry_t;
+  #
+  # HS_MATEntry_t  HS_Default_MsgActs_Tbl[HS_MAX_MSG_ACT_TYPES]
+  #
+  
+  <%
+    msg_bits = Osk::Cfg.get_fsw_cfg_int_param("OSAL", @MAX_MSG_ACT_SIZE) * 8
+    max_action_types = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_MSG_ACT_TYPES)
+    append_items = ""
+    for i in 0..(max_action_types-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_ENA_STATE\"   16 UINT 0 MAX_UINT16 0  \"If entry contains message\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_COOL_DOWN\"   16 UINT 0 MAX_UINT16 0  \"Minimum rate at which message can be sent\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_MESSAGE\"     #{msg_bits} BLOCK    0  \"SB Message to be sent\"" << "\n"
+    end # apps
+  %>
+  <%= append_items %>
+  

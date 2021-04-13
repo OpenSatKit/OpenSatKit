@@ -1,0 +1,75 @@
+  
+
+TELEMETRY CS HK_TLM_PKT LITTLE_ENDIAN "Housekeeping Packet Structure"
+   APPEND_ITEM CMD_VALID_COUNT 8 UINT "Application command counter"
+   APPEND_ITEM CMD_ERROR_COUNT 8 UINT "Application command error counter"
+   APPEND_ITEM APP_STATE         8 UINT "Application global checksum state"
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM EEPROM_STATE      8 UINT "EEPROM table checksum state"
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM MEMORY_STATE      8 UINT "Memory table checksum state"
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM APP_STATE         8 UINT "App table checksum state."
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM TABLES_STATE      8 UINT "Tables table checksum state"
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM OS_STATE          8 UINT "OS code segment checksum state"
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM CFE_CORE_STATE    8 UINT "cFE Core code segment checksum state"
+      STATE EMPTY     Fsw::Const::CS_STATE_EMPTY
+      STATE ENABLED   Fsw::Const::CS_STATE_ENABLED  GREEN
+      STATE DISABLED  Fsw::Const::CS_STATE_DISABLED
+      STATE UNDEFINED Fsw::Const::CS_STATE_UNDEFINED
+   APPEND_ITEM RECOMPUTE_IN_PROGRESS 8 UINT ""
+      STATE FALSE 0
+      STATE TRUE  1 GREEN
+   APPEND_ITEM ONESHOT_IN_PROGRESS   8 UINT ""
+      STATE FALSE 0
+      STATE TRUE  1 GREEN
+   APPEND_ITEM PAD8              8 UINT "8 bit padding"
+   APPEND_ITEM EEPROM_ERR_CTR   16 UINT "EEPROM miscompare counter"
+   APPEND_ITEM MEMORY_ERR_CTR   16 UINT "Memory miscompare counter"
+   APPEND_ITEM APP_ERR_CTR      16 UINT "App miscompare counter"
+   APPEND_ITEM TABLES_ERR_CTR   16 UINT "Tables miscompare counter"
+   APPEND_ITEM CFECORE_ERR_CTR  16 UINT "cFE core miscompare counter"
+   APPEND_ITEM OS_ERR_CTR       16 UINT "OS code segment miscopmare counter"
+   APPEND_ITEM CURR_TBL         16 UINT "Current table being checksumme"
+      STATE CFE_CORE  Fsw::Const::CS_CFECORE
+      STATE OS_CORE   Fsw::CS_OSCORE
+      STATE EEPROM    Fsw::CS_EEPROM_TABLE
+      STATE MEMORY    Fsw::CS_MEMORY_TABLE
+      STATE TABLES    Fsw::CS_TABLES_TABLE
+      STATE APP       Fsw::CS_APP_TABLE
+   APPEND_ITEM CURR_TBL_ENTRY   16 UINT "Current entry ID in the table being checksummed"
+   APPEND_ITEM EEPROM_BASELINE  32 UINT "Baseline checksum for all of EEPROM"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM OS_BASELINE      32 UINT "Baseline checksum for the OS code segment"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM CFECORE_BASELINE 32 UINT "Basline checksum for the cFE core"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM ONESHOT_ADDR     32 UINT "Address used in last one shot checksum command"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM ONESHOT_LEN      32 UINT "Length in bytes used in the last one shot checksum command" 
+   APPEND_ITEM ONESHOT_BYTES_PER_CYCLE 32 UINT "Maximum number of bytes processed per CS execution cycle"
+   APPEND_ITEM ONESHOT_CS       32 UINT "Checksum of the last one shot checksum command"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM PASS_CTR         32 UINT "Number of times CS has passed through all of its tables"
+

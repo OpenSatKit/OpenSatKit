@@ -29,8 +29,8 @@
 ** Platform Deployment Configurations
 */
 
-#define OSK_CPP_DEMO_PLATFORM_REV  0
-#define OSK_CPP_DEMO_FILE_NAME  "/cf/osk_cpp_demo_ini.json"
+#define OSK_CPP_DEMO_PLATFORM_REV   0
+#define OSK_CPP_DEMO_INI_FILENAME   "/cf/osk_cpp_demo_ini.json"
 
 
 /******************************************************************************

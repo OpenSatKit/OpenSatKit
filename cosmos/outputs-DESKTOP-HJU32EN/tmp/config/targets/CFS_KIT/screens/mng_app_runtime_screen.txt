@@ -1,0 +1,151 @@
+###############################################################################
+# Manage Application Runtime (Scheduler and Telemetry Output Interfaces) Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Manage Application Runtime (Scheduler and Telemetry Output Interfaces)"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICAL
+
+  SETTING TEXTCOLOR black
+
+  HORIZONTAL
+    CANVAS 350 225
+      CANVASIMAGE "osk_app_context.png" 20 0
+    END
+    VERTICAL
+    
+      HORIZONTALBOX "KIT_SCH Message Table"
+        MATRIXBYCOLUMNS 7 5
+          LABEL "Index"
+          LABEL "ID"
+          LABEL "SeqCnt"
+          LABEL "Length"
+          LABEL "Data1"
+          LABEL "Data2"
+          LABEL "Data3"
+      
+          # Assume a cmd packet so skip MSG_DATA_WORD_0 which is the funcion code & checksum 
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ENTRY_MSG_TBL_IDX   WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_STREAM_ID    WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_SEQ_CNT      WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_LENGTH       WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_DATA_WORD_1  WITH_UNITS 6 
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_DATA_WORD_2  WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_DATA_WORD_3  WITH_UNITS 6
+        END
+      END
+
+      HORIZONTALBOX "KIT_SCH Scheduler Table"
+        MATRIXBYCOLUMNS 7 5
+
+          LABEL "Slot"
+          LABEL "Activity"
+          LABEL "Enabled"
+          LABEL "Period"
+          LABEL "Offset"
+          LABEL "MsgIdx"
+          LABEL "   "
+          
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_SLOT           WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ACTIVITY       WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ENTRY_ENABLED  WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ENTRY_PERIOD   WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ENTRY_OFFSET   WITH_UNITS 6
+          VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ENTRY_MSG_TBL_IDX WITH_UNITS 6
+          LABEL "   "
+        END
+      END
+      
+      HORIZONTALBOX "KIT_TO Packet Table, Tlm Rates"
+        MATRIXBYCOLUMNS 7 5
+          LABEL "Pkt ID"
+          LABEL "Filter"
+          LABEL "    N    of"
+          LABEL "  X"
+          LABEL "Offset"
+          LABEL "Pkt/s"
+          LABEL "Bytes/s"
+          
+          VALUE KIT_TO PKT_TLM_PKT MSG_ID         WITH_UNITS 6
+          VALUE KIT_TO PKT_TLM_PKT FILTER_TYPE    WITH_UNITS 6
+          VALUE KIT_TO PKT_TLM_PKT FILTER_PARAM_N WITH_UNITS 6
+          VALUE KIT_TO PKT_TLM_PKT FILTER_PARAM_X WITH_UNITS 6
+          VALUE KIT_TO PKT_TLM_PKT FILTER_PARAM_O WITH_UNITS 6
+          VALUE KIT_TO HK_TLM_PKT PKTS_PER_SEC    WITH_UNITS 6
+          VALUE KIT_TO HK_TLM_PKT BYTES_PER_SEC   WITH_UNITS 6
+        END
+      END
+    END
+  END
+    
+#  MATRIXBYCOLUMNS 5 5 5
+
+    ##################
+    ## Button Row 1 ##
+    ##################
+    
+#    LABEL "  "
+
+    HORIZONTALBOX "Scheduler Message Table"
+    MATRIXBYCOLUMNS 4 5 5
+      BUTTON 'Display Messages'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "DISPLAY_MSG")'
+      BUTTON 'Load Entry'        'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "LOAD_MSG_TBL_ENTRY")'
+      BUTTON 'Send Entry Tlm'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "SEND_MSG_TBL_ENTRY")'
+      LABEL  "                "
+    END # Matrix
+    END # Horizontal
+    
+#    LABEL "  "
+    
+    HORIZONTALBOX "Scheduler Table"
+    MATRIXBYCOLUMNS 4 5 5
+      BUTTON 'Display Schedule' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "DISPLAY_SCH")'
+      BUTTON 'Ena/Dis Entry'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "CFG_SCH_TBL_ENTRY")'
+      BUTTON 'Load Entry'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "LOAD_SCH_TBL_ENTRY")'
+      BUTTON 'Send Entry Tlm'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "SEND_SCH_TBL_ENTRY")'
+    END # Matrix
+    END # Horizontal
+
+#    LABEL "  "
+   
+    ##################
+    ## Button Row 2 ##
+    ##################
+
+#    LABEL "  "
+   
+    HORIZONTALBOX "Telemetry Ouput"
+    MATRIXBYCOLUMNS 4 5 5
+      BUTTON 'Add TO Pkt'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_ADD_PKT")'
+      BUTTON 'Remove TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_REMOVE_PKT")'
+      BUTTON 'Send Pkt Tlm'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_SEND_PKT_TLM")'
+      BUTTON 'Update Filter'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_UPDATE_FILTER")'
+    END # Matrix
+    END # Horizontal
+
+#    LABEL "  "
+
+    HORIZONTALBOX "Tools"
+    MATRIXBYCOLUMNS 4 5 5
+      BUTTON 'Manage JSON Tables'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "MANAGE_JSON_TBL")'
+      BUTTON 'KIT_SCH Entry Tlm'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "KIT_SCH_TBL_ENTRY_TLM")'
+      BUTTON 'COSMOS Config Editor' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "CONFIG_EDITOR")'
+      LABEL  "               "
+    END # Matrix
+    END # Horizontal
+    
+ #   LABEL "  "
+ 
+#  END # Matrix
+
+END # Vertical

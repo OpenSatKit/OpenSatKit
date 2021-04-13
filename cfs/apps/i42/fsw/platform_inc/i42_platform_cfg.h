@@ -31,7 +31,7 @@
 */
 
 #define I42_PLATFORM_REV   0
-#define I42_INI_FILE_NAME  "/cf/i42_ini.json"
+#define I42_INI_FILENAME   "/cf/i42_ini.json"
 
 
 /******************************************************************************

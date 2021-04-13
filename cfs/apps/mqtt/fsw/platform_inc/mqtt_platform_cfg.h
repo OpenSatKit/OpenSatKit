@@ -29,7 +29,7 @@
 */
 
 #define MQTT_PLATFORM_REV   0
-#define MQTT_INI_FILE_NAME  "/cf/mqtt_ini.json"
+#define MQTT_INI_FILENAME   "/cf/mqtt_ini.json"
 
 
 /******************************************************************************

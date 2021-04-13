@@ -1,0 +1,9 @@
+AUTO_TARGETS
+
+AUTO_TARGET "CFS_KIT"
+  SCREEN cfs_kit_screen.txt 500 0
+  SHOW_ON_STARTUP
+
+# TARGET "INST"
+#  SCREEN "adcs.txt"
+

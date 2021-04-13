@@ -1,0 +1,213 @@
+###############################################################################
+# Demo Data-File Management Apps Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+VERTICAL
+   TITLE "Demo File and Data Management Apps"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+  
+   HORIZONTAL
+      CANVAS 520 160
+         CANVASIMAGE "osk_apps_file_data_mgmt.png" 0 0
+      END
+      SETTING BACKCOLOR 255 255 255
+    
+      VERTICALBOX
+      MATRIXBYCOLUMNS 2 4 10
+
+         BUTTON '1. Start File Gen' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_demo_screen.rb"; simsat_demo_scr_cmd(self, "DATA_FILE", "START_FILE_GEN")'
+         SETTING BACKCOLOR 0 200 0
+         LABEL 'Wait for files'
+
+         LABEL '2. Select playback'
+         LABEL 'options:'
+
+         LABEL 'File Transfer'
+         LABEL 'Telemetry Rate'
+
+         NAMED_WIDGET file_transfer COMBOBOX CFDP TFTP
+         NAMED_WIDGET to_rate COMBOBOX 4Kbps 32Kbps
+
+         BUTTON '3. Start Playback' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_demo_screen.rb"; simsat_demo_scr_cmd(self, "DATA_FILE", "START_PLAYBACK")'
+         SETTING BACKCOLOR 0 200 0
+         LABEL '             '
+         
+      END  
+      END # End Vertical
+   END # Horizontal 
+   
+   HORIZONTALLINE
+   HORIZONTAL
+      VERTICALBOX "Instrument Sim (ISIM)"
+      MATRIXBYCOLUMNS 4 5 5
+         LABEL "Instr Power"
+         LABEL "Sci Data"
+         LABEL "Sci Images"
+         LABEL "        "
+         VALUE ISIM HK_TLM_PKT INSTR_PWR_STATE WITH_UNITS 8
+         VALUE ISIM HK_TLM_PKT SCI_STATE       WITH_UNITS 6
+         VALUE ISIM HK_TLM_PKT FILE_IMAGE_CNT  WITH_UNITS 8
+         LABEL "        "
+      END # Matrix
+      END # ISIM
+  
+      VERTICALBOX "Housekeeping (HK)"
+      MATRIXBYCOLUMNS 4 5 5
+         LABEL "Aux Pkts"
+         LABEL "Miss Data"
+         LABEL "        "
+         LABEL "        "
+         VALUE HK HK_TLM_PKT COMBINE_PKT_SENT_CNT WITH_UNITS 6
+         VALUE HK HK_TLM_PKT MISSING_DATA_CNT WITH_UNITS 6
+         LABEL "        "
+         LABEL "        "
+      END # Matrix
+      END # HK
+      SETTING BACKCOLOR 173,216,230 END # Vertical Box
+
+   END # Horizontal
+   
+   HORIZONTALLINE
+   
+   VERTICALBOX "Data Storage"
+   MATRIXBYCOLUMNS 10 5 5
+
+      LABEL "STATE"
+      LABEL "Open Files"
+      LABEL "   "
+      LABEL "   "    
+      LABEL "  Enabled"
+      LABEL "   Open"
+      LABEL "  Seq Cnt"
+      LABEL "     Age"
+      LABEL "    Size"
+      LABEL "   "    
+      
+      VALUE DS HK_TLM_PKT APP_ENA_STATE WITH_UNITS 4
+      VALUE FM HK_TLM_PKT NUM_OPEN_FILES WITH_UNITS 5
+      LABEL "   "
+      LABEL "<b>Event Msg File</b>"
+      VALUE DS FILE_INFO_PKT FILE1_ENABLE  WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE1_OPEN    WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE1_SEQ_CNT WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE1_AGE     WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE1_SIZE    WITH_UNITS 6
+      LABEL "   "    
+
+      LABEL "   "    
+      LABEL "   "    
+      LABEL "   "    
+      LABEL "<b>Aux Pkt File</b>"
+      VALUE DS FILE_INFO_PKT FILE7_ENABLE  WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE7_OPEN    WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE7_SEQ_CNT WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE7_AGE     WITH_UNITS 6
+      VALUE DS FILE_INFO_PKT FILE7_SIZE    WITH_UNITS 6
+      LABEL "   "    
+
+   END # Matrix
+
+   HORIZONTALLINE
+
+   VERTICALBOX "File Recorder: /cf/simsat/rec"
+   
+      HORIZONTAL
+       
+         VERTICAL 10
+         MATRIXBYCOLUMNS 3
+            LABEL "<b>File Cnt</b>"
+            LABEL "              "
+            LABEL "              "
+            VALUE FM DIR_LIST_PKT TOTALFILES FORMATTED 4
+            LABEL "              "
+            LABEL "              "
+         END
+         LIMITSBAR FM DIR_LIST_PKT TOTALFILES
+         END
+
+         VERTICAL
+         
+            HORIZONTAL
+               LABEL "Current event file: "
+               VALUE DS FILE_INFO_PKT FILE1_NAME WITH_UNITS 30
+            END
+            HORIZONTAL
+               LABEL "Currrent science file: "
+               VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
+            END
+            HORIZONTAL
+               LABEL "Current science auxiliary file: "
+               VALUE DS FILE_INFO_PKT FILE7_NAME WITH_UNITS 30
+            END
+         END # Vertical
+         
+      END # Horizontal
+   END # Vertical
+  
+   HORIZONTALLINE
+  
+   VERTICALBOX "File Transfer and Downlink"
+   MATRIXBYCOLUMNS 10 5 5
+      
+      # ROW 1
+      LABEL "<b>KIT_TO</b>"
+      LABEL "      "
+      LABEL "      "    # Space column
+
+      LABEL "<b>TFTP</b>"
+      LABEL "          "
+      LABEL "      "    # Space column
+
+      LABEL "<b>CFDP</b>"
+      LABEL "      "
+      LABEL "      "
+      LABEL "      "
+
+      # ROW 2
+      LABEL "  Pkt/s"
+      LABEL "  Bytes/s"
+      LABEL "      "
+
+      LABEL "  Sent"
+      LABEL "  Recv"
+      LABEL "      "
+
+      LABEL "  Sent"
+      LABEL "  Pend"
+      LABEL "  Recv"
+      LABEL "  Total"
+
+      # ROW 3
+      VALUE KIT_TO HK_TLM_PKT PKTS_PER_SEC WITH_UNITS 6
+      VALUE KIT_TO HK_TLM_PKT BYTES_PER_SEC WITH_UNITS 6
+      LABEL "          "     
+
+      VALUE TFTP HK_TLM_PKT GET_FILE_COUNT WITH_UNITS 5
+      VALUE TFTP HK_TLM_PKT PUT_FILE_COUNT WITH_UNITS 5
+      LABEL "          "
+
+      VALUE CF HK_TLM_PKT CH0_FILES_SENT WITH_UNITS 6
+      VALUE CF HK_TLM_PKT CH0_PENDING_Q_FILECNT WITH_UNITS 6
+      VALUE CF HK_TLM_PKT UP_SUCCESSCOUNTER WITH_UNITS 6
+      VALUE CF HK_TLM_PKT APP_TOTALSUCCESSTRANS WITH_UNITS 6
+
+      END # Matrix
+      END # Vertical
+
+   END # Vertical
+
+   HORIZONTALLINE
+   
+   LABEL "Flight Event Messages"
+   NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 700 40
+
+END # Vertical

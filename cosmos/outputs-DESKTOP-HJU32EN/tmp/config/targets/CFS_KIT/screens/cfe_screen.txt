@@ -1,0 +1,252 @@
+###############################################################################
+# cFE Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Core Flight Executive"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+#######################
+## Executive Service ##  
+#######################
+
+HORIZONTALBOX "Executive Service"
+  
+  VERTICAL
+    MATRIXBYCOLUMNS 1
+      NAMED_WIDGET es_cmd COMBOBOX NOOP RESET_CTRS RESET SHELL START_APP STOP_APP RESTART_APP RELOAD_APP SEND_APP_INFO WRITE_APP_INFO_TO_FILE CLEAR_SYSLOG WRITE_SYSLOG_TO_FILE CLEAR_ERLOG WRITE_ERLOG_TO_FILE START_LA_DATA STOP_LA_DATA SET_LA_FILTER_MASK SET_LA_TRIG_MASK OVERWRITE_SYSLOG_MODE RESET_PR_CNT SET_MAX_PR_CNT DELETE_CDS SEND_MEM_POOL_STATS WRITE_CDS_REG_TO_FILE WRITE_TASK_INFO_TO_FILE
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_CMD")'
+      BUTTON 'Perf Mon' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_PERF_MON")'
+      #BUTTON 'App Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "ES_APP_MGMT")'
+    END # Matrix
+  END # Vertical
+  
+  LABEL "        "
+  HORIZONTAL 
+    MATRIXBYCOLUMNS 8
+      
+      LABEL "Rst Type"
+      VALUE CFE_ES HK_TLM_PKT RESET_TYPE
+      LABEL "Rst Subtype"
+      VALUE CFE_ES HK_TLM_PKT RESET_SUBTYPE
+      LABEL "# Proc Rsts"
+      VALUE CFE_ES HK_TLM_PKT PROC_RESETS
+      LABEL "ErLog Entries"
+      VALUE CFE_ES HK_TLM_PKT ERLOG_ENTRIES
+      #LABEL "Max Proc Rsts"
+      #VALUE CFE_ES HK_TLM_PKT MAX_PROC_RESETS
+      
+      LABEL "Heap Free"      
+      VALUE CFE_ES HK_TLM_PKT HEAP_BYTES_FREE
+      LABEL "Heap Blk Free"
+      VALUE CFE_ES HK_TLM_PKT HEAP_BLOCKS_FREE
+      LABEL "Heap Max Blk"
+      VALUE CFE_ES HK_TLM_PKT HEAP_MAX_BLOCKSIZE
+      LABEL "ErLog Index"
+      VALUE CFE_ES HK_TLM_PKT ERLOG_INDEX
+      
+      LABEL "SysLog Used"
+      VALUE CFE_ES HK_TLM_PKT SYSLOG_BYTES_USED
+      LABEL "SysLog Size"
+      VALUE CFE_ES HK_TLM_PKT SYSLOG_SIZE
+      LABEL "SysLog Entries"
+      VALUE CFE_ES HK_TLM_PKT SYSLOG_ENTRIES
+      LABEL "SysLog Mode"
+      VALUE CFE_ES HK_TLM_PKT SYSLOG_MODE
+    End # Matrix
+  END # Horizontal
+END # Horizontal Executive Service
+
+###################
+## Event Service ##  
+###################
+
+HORIZONTALLINE
+HORIZONTALBOX "Event Service"
+  
+  VERTICAL
+    MATRIXBYCOLUMNS 1
+      NAMED_WIDGET evs_cmd COMBOBOX NOOP RESET_CTRS ENA_EVENT_TYPE DIS_EVENT_TYPE SET_EVENT_FMT ENA_APP_EVENT_TYPE DIS_APP_EVENT_TYPE ENA_APP_EVENT_GEN DIS_APP_EVENT_GEN RESET_APP_CTRS SET_FILTER_MASK ENA_PORT DIS_PORT RESET_FILTER_CTR RESET_ALL_FILTERS ADD_EVENT_FILTER DEL_EVENT_FILTER WRITE_APP_INFO_TO_FILE WRITE_LOG_TO_FILE SET_LOG_MODE CLEAR_LOG
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "EVS_CMD")'
+    END # Matrix
+  END # Vertical
+  
+  LABEL "        "
+  HORIZONTAL 
+    MATRIXBYCOLUMNS 8
+      
+      LABEL "Send Count"
+      VALUE CFE_EVS HK_TLM_PKT MSG_SEND_CTR
+      LABEL "Msg Format"
+      VALUE CFE_EVS HK_TLM_PKT MSG_FMT_MODE
+      LABEL "Msg Trunc"
+      VALUE CFE_EVS HK_TLM_PKT MSG_TRUNC_CTR
+      LABEL "Port Mask"
+      VALUE CFE_EVS HK_TLM_PKT OUTPUT_PORT
+      #LABEL "Unreg App"
+      #VALUE CFE_EVS HK_TLM_PKT UNREG_APP_CTR
+      
+      LABEL "Log Ena"
+      VALUE CFE_EVS HK_TLM_PKT LOG_ENA
+      LABEL "Log Mode"
+      VALUE CFE_EVS HK_TLM_PKT LOG_MODE
+      LABEL "Log Full"
+      VALUE CFE_EVS HK_TLM_PKT LOG_FULL_FLAG
+      LABEL "Log OvFl"
+      VALUE CFE_EVS HK_TLM_PKT LOG_OVFL_CTR
+  
+    End # Matrix
+  END # Horizontal
+END # Horizontal Event Service
+
+
+
+##################
+## Software Bus ##  
+##################
+
+HORIZONTALLINE
+HORIZONTALBOX "Software Bus"
+  
+  VERTICAL
+    MATRIXBYCOLUMNS 1
+      NAMED_WIDGET sb_cmd COMBOBOX NOOP RESET_CTRS SEND_STATS WRITE_ROUTING_TO_FILE ENA_ROUTE DIS_ROUTE WRITE_PIPE_TO_FILE WRITE_MAP_TO_FILE ENA_SUB_REPORTING DIS_SUB_REPORTING SEND_PREV_SUBS
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "SB_CMD")'
+    END # Matrix
+  END # Vertical
+  
+  LABEL "        "
+  HORIZONTAL 
+    MATRIXBYCOLUMNS 8
+      
+      LABEL "No Sub"
+      VALUE CFE_SB HK_TLM_PKT NO_SUBSCRIBE_CNT
+      LABEL "Send Err"
+      VALUE CFE_SB HK_TLM_PKT MSG_SEND_ERR_CNT
+      LABEL "Recv Err"
+      VALUE CFE_SB HK_TLM_PKT MSG_RECV_ERR_CNT
+      LABEL "Pipe OvrFlw"
+      VALUE CFE_SB HK_TLM_PKT PIPE_OVFL_ERR_CNT
+
+      LABEL "Msg Lim Err"
+      VALUE CFE_SB HK_TLM_PKT MSG_LIM_ERR_CNT
+      LABEL "Que Err"
+      VALUE CFE_SB HK_TLM_PKT INTERNAL_ERR_CNT
+      LABEL "Mem In Use"
+      VALUE CFE_SB HK_TLM_PKT MEM_IN_USE
+      LABEL "UnUsed Mem"
+      VALUE CFE_SB HK_TLM_PKT UNMARKED_MEM
+      
+      LABEL "Create Pipe Err"
+      VALUE CFE_SB HK_TLM_PKT CREATE_PIPE_ERR_CNT
+      LABEL "Subscribe Err"
+      VALUE CFE_SB HK_TLM_PKT SUBSCRIBE_ERR_CNT
+      LABEL "Dup Subscribe"
+      VALUE CFE_SB HK_TLM_PKT DUP_SUBSCRIBE_CNT
+
+    End # Matrix
+  END # Horizontal
+END # Horizontal Software Bus
+
+
+###################
+## Table Service ##  
+###################
+
+HORIZONTALLINE
+HORIZONTALBOX "Table Service"
+  
+  VERTICAL
+    MATRIXBYCOLUMNS 1
+      NAMED_WIDGET tbl_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL VALIDATE_TBL ACTIVATE_TBL WRITE_REG_TO_FILE SEND_REGISTRY DELETE_CDS ABORT_LOAD
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TBL_CMD")'
+      BUTTON 'Tbl Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TBL_MGMT")'
+    END # Matrix
+  END # Vertical
+  
+  LABEL "        "
+  HORIZONTAL 
+    MATRIXBYCOLUMNS 8
+      
+      LABEL "# Tbl Reg"
+      VALUE CFE_TBL HK_TLM_PKT NUM_TABLES
+      LABEL "Load Pend"
+      VALUE CFE_TBL HK_TLM_PKT NUM_LOAD_PEND
+      LABEL "Free Buf"
+      VALUE CFE_TBL HK_TLM_PKT NUM_FREE_SHARED_BUFS
+      LABEL "Last Update Sec"
+      VALUE CFE_TBL HK_TLM_PKT LAST_UPD_TIME_SECONDS
+      
+      LABEL "Valid Cnt"
+      VALUE CFE_TBL HK_TLM_PKT VALIDATION_CTR
+      LABEL "Valid Status"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_STATUS
+      LABEL "Valid Buf"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_BUFFER
+      LABEL "Valid Tbl"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_TBL_NAME
+      
+      LABEL "Valid Pass"
+      VALUE CFE_TBL HK_TLM_PKT SUCCESS_VAL_CTR
+      LABEL "Valid Fail"
+      VALUE CFE_TBL HK_TLM_PKT FAILED_VAL_CTR
+      LABEL "Valid Req"
+      VALUE CFE_TBL HK_TLM_PKT NUM_VAL_REQUESTS
+      LABEL "Valid CRC"
+      VALUE CFE_TBL HK_TLM_PKT LAST_VAL_CRC
+      
+    End # Matrix
+  END # Horizontal
+END # Horizontal Table Service
+
+
+##################
+## Time Service ##  
+##################
+
+HORIZONTALLINE
+HORIZONTALBOX "Time Service"
+  
+  VERTICAL
+    MATRIXBYCOLUMNS 1
+      NAMED_WIDGET time_cmd COMBOBOX NOOP RESET_CTRS SEND_DIAG SET_SOURCE SET_STATE ADD_CLOCK_LAT SUB_CLOCK_LAT SET_CLOCK SET_CLOCK_MET SET_CLOCK_STCF SET_CLOCK_LEAP ADD_STCF_ADJ SUB_STCF_ADJ ADD_1HZ_STCF_ADJ SUB_1HZ_STCF_ADJ SET_SIGNAL 
+      BUTTON 'Send Command' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfe_screen.rb"; cfe_send_cmd(self, "TIME_CMD")'
+    END # Matrix
+  END # Vertical
+  
+  LABEL "        "
+  HORIZONTAL 
+    MATRIXBYCOLUMNS 8
+      
+      LABEL "Clk State"
+      VALUE CFE_TIME  HK_TLM_PKT CLOCK_STATE_FLAGS
+      LABEL "API State"
+      VALUE CFE_TIME HK_TLM_PKT CLOCK_STATE_API
+      LABEL "Leap Secs"
+      VALUE CFE_TIME HK_TLM_PKT LEAP_SECONDS
+      LABEL "1Hz Adj Secs"
+      VALUE CFE_TIME HK_TLM_PKT 1HZADJ_SECONDS
+
+      LABEL "Pkt Time"
+      VALUE CFE_TIME HK_TLM_PKT CCSDS_SECONDS
+      LABEL "MET Secs"
+      VALUE CFE_TIME HK_TLM_PKT MET_SECONDS
+      LABEL "STCF Secs"
+      VALUE CFE_TIME HK_TLM_PKT STCF_SECONDS
+
+    End # Matrix
+  END # Horizontal
+END # Horizontal Time Service
+
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 1024 50

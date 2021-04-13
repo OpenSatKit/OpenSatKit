@@ -13,75 +13,76 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_e
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Resets the CS housekeeping counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND CS ONESHOT <%= Osk::Cfg.processor_endian %> "Computes a checksum on the given address and size of memory specified in the command. This command spawns a child task to complete the checksum."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 8) %>
-  APPEND_PARAMETER ADDRESS 32 UINT MIN_UINT32 MAX_UINT32 0 "Address to start checksum."
-  APPEND_PARAMETER SIZE    32 UINT MIN_UINT32 MAX_UINT32 0 "Number of bytes to checksum."
+COMMAND CS START_ONESHOT <%= Osk::Cfg.processor_endian %> "Computes a checksum on the given address and size of memory specified in the command. This command spawns a child task to complete the checksum."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 12) %>
+  APPEND_PARAMETER ADDRESS         32 UINT MIN_UINT32 MAX_UINT32 0  "Address to start checksum"
+  APPEND_PARAMETER NUM_BYTES       32 UINT MIN_UINT32 MAX_UINT32 0  "Number of bytes to checksum"
+  APPEND_PARAMETER BYTES_PER_CYCLE 32 UINT MIN_UINT32 MAX_UINT32 0  "Number of bytes to checksum per CS app execution cycle"
 
 COMMAND CS CANCEL_ONESHOT <%= Osk::Cfg.processor_endian %> "Cancels a one shot calculation that is already in progress."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 0) %>
 
-COMMAND CS ENABLE_ALL_CS <%= Osk::Cfg.processor_endian %> "Allows CS to continue background checking"
+COMMAND CS ENA_ALL <%= Osk::Cfg.processor_endian %> "Allows CS to continue background checking"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 0) %>
 
-COMMAND CS DISABLE_ALL_CS <%= Osk::Cfg.processor_endian %> "Disables all background checking"
+COMMAND CS DIS_ALL <%= Osk::Cfg.processor_endian %> "Disables all background checking"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
 
 ##############
 ## cFE Core ##
 ##############
 
-COMMAND CS ENABLE_CFECORE <%= Osk::Cfg.processor_endian %> "Enables background checking on the cFE core code segment"
+COMMAND CS ENA_CFE_CORE <%= Osk::Cfg.processor_endian %> "Enables background checking on the cFE core code segment"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
 
-COMMAND CS DISABLE_CFECORE <%= Osk::Cfg.processor_endian %> "Disables background checking on the cFE core code segment"
+COMMAND CS DIS_CFE_CORE <%= Osk::Cfg.processor_endian %> "Disables background checking on the cFE core code segment"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>
 
-COMMAND CS REPORT_BASELINE_CFECORE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the cFE core that has already been calculated."
+COMMAND CS REPORT_CFE_CORE_BASELINE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the cFE core that has already been calculated."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
 
-COMMAND CS RECOMPUTE_BASELINE_CFECORE <%= Osk::Cfg.processor_endian %> "Recomputesthe baseline checksum of the cFE core and use the new value as the baseline."
+COMMAND CS COMPUTE_CFE_CORE_BASELINE <%= Osk::Cfg.processor_endian %> "Recomputesthe baseline checksum of the cFE core and use the new value as the baseline."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 0) %>
 
-COMMAND CS ENABLE_OS <%= Osk::Cfg.processor_endian %> "Enables background checking on the OS code segment"
+COMMAND CS ENA_OS <%= Osk::Cfg.processor_endian %> "Enables background checking on the OS code segment"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
 
-COMMAND CS DISABLE_OS <%= Osk::Cfg.processor_endian %> "Disables background checking on the OS code segment code segment"
+COMMAND CS DIS_OS <%= Osk::Cfg.processor_endian %> "Disables background checking on the OS code segment code segment"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 0) %>
 
-COMMAND CS REPORT_BASELINE_OS <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the OS code segment that has already been calculated."
+COMMAND CS REPORT_OS_BASELINE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the OS code segment that has already been calculated."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 0) %>
 
-COMMAND CS RECOMPUTE_BASELINE_OS <%= Osk::Cfg.processor_endian %> "Recomputesthe baseline checksum of the OS code segment and use the new value as the baseline."
+COMMAND CS COMPUTE_OS_BASELINE <%= Osk::Cfg.processor_endian %> "Recomputesthe baseline checksum of the OS code segment and use the new value as the baseline."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 0) %>
 
 ############
 ## EEPROM ##
 ############
 
-COMMAND CS ENABLE_EEPROM <%= Osk::Cfg.processor_endian %> "Allow the Eeprom table to checksummed in the background"
+COMMAND CS ENA_EEPROM_TBL <%= Osk::Cfg.processor_endian %> "Allow the Eeprom table to checksummed in the background"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 0) %>
 
-COMMAND CS DISABLE_EEPROM <%= Osk::Cfg.processor_endian %> "Disable the Eeprom table background checksumming"
+COMMAND CS DIS_EEPROM_TBL <%= Osk::Cfg.processor_endian %> "Disable the Eeprom table background checksumming"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 0) %>
 
-COMMAND CS REPORT_BASELINE_EEPROM <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the Eeprom table entry that has already been calculated."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS REPORT_EEPROM_BASELINE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the Eeprom table entry that has already been calculated."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 16, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
 
-COMMAND CS RECOMPUTE_BASELINE_EEPROM <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the Eeprom table entry and use that value as the new baseline. This command spawns a child task to do the recompute."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS COMPUTE_EEPROM_BASELINE <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the Eeprom table entry and use that value as the new baseline. This command spawns a child task to do the recompute."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
 
-COMMAND CS ENABLE_ENTRY_EEPROM <%= Osk::Cfg.processor_endian %> "Allow the Eeprom entry to checksummed in the background"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS ENA_EEPROM_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Allow the Eeprom entry to checksummed in the background"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 18, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
 
-COMMAND CS DISABLE_ENTRY_EEPROM <%= Osk::Cfg.processor_endian %> "Disable the Eeprom entry background checksumming"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS DIS_EEPROM_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Disable the Eeprom entry background checksumming"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 19, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
  
-COMMAND CS GET_ENTRY_ID_EEPROM <%= Osk::Cfg.processor_endian %> "Gets the Entry ID of an Eeprom address to use in subsequent commands."
+COMMAND CS GET_EEPROM_TBL_ENTRY_ID <%= Osk::Cfg.processor_endian %> "Gets the Entry ID of an Eeprom address to use in subsequent commands."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 20, 4) %>
   APPEND_PARAMETER ADDRESS 32 UINT MIN_UINT32 MAX_UINT32 0 "Address to get the ID for."
 
@@ -89,80 +90,80 @@ COMMAND CS GET_ENTRY_ID_EEPROM <%= Osk::Cfg.processor_endian %> "Gets the Entry 
 ## Memory ##
 ############
 
-COMMAND CS ENABLE_MEMORY <%= Osk::Cfg.processor_endian %> "Enable Memory table background checksum verification"
+COMMAND CS ENA_MEM_TBL <%= Osk::Cfg.processor_endian %> "Enable Memory table background checksum verification"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 21, 0) %>
 
-COMMAND CS DISABLE_MEMORY <%= Osk::Cfg.processor_endian %> "Disable Memory table background checksum verification"
+COMMAND CS DIS_MEM_TBL <%= Osk::Cfg.processor_endian %> "Disable Memory table background checksum verification"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 22, 0) %>
 
-COMMAND CS REPORT_BASELINE_MEMORY <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the Memory table entry that has already been calculated."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 23, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "Memory Table to perform a command on."
+COMMAND CS REPORT_MEM_BASELINE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the Memory table entry that has already been calculated."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 23, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "Memory Table to perform a command on."
 
-COMMAND CS RECOMPUTE_BASELINE_MEMORY <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the Memory table entry and use that value as the new baseline. This command spawns a child task to do the recompute."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 24, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS COMPUTE_MEM_BASELINE <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the Memory table entry and use that value as the new baseline. This command spawns a child task to do the recompute."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 24, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
 
-COMMAND CS ENABLE_ENTRY_MEMORY <%= Osk::Cfg.processor_endian %> "Allow the Memory entry to checksummed in the background"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 25, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS ENA_MEM_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Allow the Memory entry to checksummed in the background"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 25, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
 
-COMMAND CS DISABLE_ENTRY_MEMORY <%= Osk::Cfg.processor_endian %> "Disable the Memory entry background checksumming"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 26, 2) %>
-  APPEND_PARAMETER ENTRY_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "EntryID to perform a command on."
+COMMAND CS DIS_MEM_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Disable the Memory entry background checksumming"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 26, 4) %>
+  APPEND_PARAMETER ENTRY_ID 32 UINT MIN_UINT32 MAX_UINT32 0 "EntryID to perform a command on."
 
-COMMAND CS GET_ENTRY_ID_MEMORY <%= Osk::Cfg.processor_endian %> "Retrieve Memory Table Entry ID for a memory address. ID can be used in subsequent commands."
+COMMAND CS GET_MEM_TBL_ENTRY_ID <%= Osk::Cfg.processor_endian %> "Retrieve Memory Table Entry ID for a memory address. ID can be used in subsequent commands."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 27, 4) %>
-  APPEND_PARAMETER ADDRESS 32 UINT MIN_UINT32 MAX_UINT32 0 "Memory address asscoiated with an ID"
+  APPEND_PARAMETER ADDRESS 32 UINT MIN_UINT32 MAX_UINT32 0 "Memory address asscoiated with an index"
 
 ############
 ## Tables ##
 ############
 
-COMMAND CS ENABLE_TABLES <%= Osk::Cfg.processor_endian %> "Allow the Tables table to checksummed in the background"
+COMMAND CS ENA_TABLES_TBL <%= Osk::Cfg.processor_endian %> "Allow the Tables table to checksummed in the background"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 28, 0) %>
 
-COMMAND CS DISABLE_TABLES <%= Osk::Cfg.processor_endian %> "Disable the Tables table background checksumming"
+COMMAND CS DIS_TABLES_TBL <%= Osk::Cfg.processor_endian %> "Disable the Tables table background checksumming"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 29, 0) %>
   
-COMMAND CS REPORT_BASELINE_TABLE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the table that has already been calculated."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 30, 38) %>
-  APPEND_PARAMETER NAME 304 STRING "default" "Table name to perform a command on."
+COMMAND CS REPORT_TBL_BASELINE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the table that has already been calculated."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 30, 40) %>
+  APPEND_PARAMETER TBL_NAME 320 STRING "app.tbl" "Table name to perform a command on."
 
-COMMAND CS RECOMPUTE_BASELINE_TABLE <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the table and use that value as the new baseline. This command spawns a child task to do the recompute."
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 31, 38) %>
-  APPEND_PARAMETER NAME 304 STRING "default" "Table name to perform a command on."
+COMMAND CS COMPUTE_TBL_BASELINE <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the table and use that value as the new baseline. This command spawns a child task to do the recompute."
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 31, 40) %>
+  APPEND_PARAMETER TBL_NAME 320 STRING "app.tbl" "Table name to perform a command on."
 
-COMMAND CS ENABLE_NAME_TABLE <%= Osk::Cfg.processor_endian %> "Allow the table to checksummed in the background"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 32, 38) %>
-  APPEND_PARAMETER NAME 304 STRING "default" "Table name to perform a command on."
+COMMAND CS ENA_TABLES_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Allow the table to checksummed in the background"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 32, 40) %>
+  APPEND_PARAMETER TBL_NAME 320 STRING "app.tbl" "Table name to perform a command on."
 
-COMMAND CS DISABLE_NAME_TABLE <%= Osk::Cfg.processor_endian %> "Disable background checking of the table"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 33, 38) %>
-  APPEND_PARAMETER NAME 304 STRING "default" "Table name to perform a command on."
+COMMAND CS DIS_TABLES_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Disable background checking of the table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 33, 40) %>
+  APPEND_PARAMETER TBL_NAME 320 STRING "app.tbl" "Table name to perform a command on."
 
 ##########
 ## Apps ##
 ##########
 
-COMMAND CS ENABLE_APPS <%= Osk::Cfg.processor_endian %> "Allow the App table to checksummed in the background"
+COMMAND CS ENA_APP_TBL <%= Osk::Cfg.processor_endian %> "Allow the App table to checksummed in the background"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 34, 0) %>
 
-COMMAND CS DISABLE_APPS <%= Osk::Cfg.processor_endian %> "Disable the App table background checksumming"
+COMMAND CS DIS_APP_TBL <%= Osk::Cfg.processor_endian %> "Disable the App table background checksumming"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 35, 0) %>
 
-COMMAND CS REPORT_BASELINE_APP <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the app that has already been calculated."
+COMMAND CS REPORT_APP_BASELINE <%= Osk::Cfg.processor_endian %> "Reports the baseline checksum of the app that has already been calculated."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 36, 20) %>
-  APPEND_PARAMETER NAME 160 STRING "default" "App name to perform a command on."
+  APPEND_PARAMETER APP_NAME 160 STRING "default" "App name to perform a command on."
 
-COMMAND CS RECOMPUTE_BASELINE_APP <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the app and use that value as the new baseline. This command spawns a child task to do the recompute."
+COMMAND CS COMPUTE_APP_BASELINE <%= Osk::Cfg.processor_endian %> "Recompute the baseline checksum of the app and use that value as the new baseline. This command spawns a child task to do the recompute."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 37, 20) %>
-  APPEND_PARAMETER NAME 160 STRING "default" "App name to perform a command on."
+  APPEND_PARAMETER APP_NAME 160 STRING "default" "App name to perform a command on."
 
-COMMAND CS ENABLE_NAME_APP <%= Osk::Cfg.processor_endian %> "Allow the app to checksummed in the background"
+COMMAND CS ENA_APP_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Allow the app to checksummed in the background"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 38, 20) %>
-  APPEND_PARAMETER NAME 160 STRING "default" "App name to perform a command on."
+  APPEND_PARAMETER APP_NAME 160 STRING "app" "App name to perform a command on."
 
-COMMAND CS DISABLE_NAME_APP <%= Osk::Cfg.processor_endian %> "Disable background checking of the app"
+COMMAND CS DIS_APP_TBL_ENTRY <%= Osk::Cfg.processor_endian %> "Disable background checking of the app"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 39, 20) %>
-  APPEND_PARAMETER NAME 160 STRING "default" "App name to perform a command on."
+  APPEND_PARAMETER APP_NAME 160 STRING "app" "App name to perform a command on."

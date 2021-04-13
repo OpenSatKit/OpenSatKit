@@ -39,25 +39,33 @@ def cfe_es_scr_cmd(screen, cmd)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_ES #{scr_name}'")
  
    when "FILE"
-      # Set default name to first combo option to simplify logic and no error checking
-      bin_filename = FswConfigParam::CFE_ES_DEFAULT_APP_LOG_FILE
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_ES_APP_INFO
-      case screen.get_named_widget("file").text
-      when "CDS" 
+      file_selection = screen.get_named_widget("file").text
+      case file_selection
+      when "App Info"
+         cmd_name = "WRITE_APP_INFO_TO_FILE"
+         bin_filename = FswConfigParam::CFE_ES_DEFAULT_APP_LOG_FILE
+         tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_ES_APP_INFO      
+      when "Critical Data Storage Registry" 
+         cmd_name = "WRITE_CDS_REG_TO_FILE"
          bin_filename = FswConfigParam::CFE_ES_DEFAULT_CDS_REG_DUMP_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_ES_CDS_REG
-      when "ER_LOG"
+      when "Exception-Reset Log"
+         cmd_name = "WRITE_ERLOG_TO_FILE"
          bin_filename = FswConfigParam::CFE_ES_DEFAULT_ER_LOG_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_ES_ERLOG
-      when "SYS_LOG"
+      when "System Log"
+         cmd_name = "WRITE_SYSLOG_TO_FILE"
          bin_filename = FswConfigParam::CFE_ES_DEFAULT_SYSLOG_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_ES_SYSLOG
-      when "TASK_INFO"
+      when "Task Info"
+         cmd_name = "WRITE_TASK_INFO_TO_FILE"
          bin_filename = FswConfigParam::CFE_ES_DEFAULT_TASK_LOG_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_ES_TASK_INFO
+      else
+         raise "Error in Display File options. Drop down selection '#{file_selection}' is not defined in cfe_es_scr_cmd()"
       end
-      Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
-
+      Osk::Ops::send_flt_bin_file_cmd("CFE_ES", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
+      
    when "FUNC_APP_MGMT"
       display("CFS_KIT APP_MGMT_SCREEN",1500,10)
    

@@ -74,3 +74,14 @@ COMMAND KIT_TO TEST_FILTER <%= Osk::Cfg.processor_endian %> "Test the packet fil
   APPEND_PARAMETER FILTER_PARAM_N 16 UINT MIN_UINT16 MAX_UINT16 0 "N = Filter will pass this many packets"
   APPEND_PARAMETER FILTER_PARAM_X 16 UINT MIN_UINT16 MAX_UINT16 0 "X = out of every group of this many packets"
   APPEND_PARAMETER FILTER_PARAM_O 16 UINT MIN_UINT16 MAX_UINT16 0 "O = starting at this offset within the group"
+
+COMMAND KIT_TO CONFIG_EVT_PLBK <%= Osk::Cfg.processor_endian %> "Set the event log playback configuration options"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 13, 66) %>
+  APPEND_PARAMETER FILENAME       512 STRING <%= FswConfigParam::BOOT_PATH+"/"+FswConfigParam::KIT_TO_EVT_PLBK_LOG_FILE %> "Full path/filename where CFE_EVS log data is to be written"
+  APPEND_PARAMETER HK_CYC_PER_PKT  16 UINT MIN_UINT16 MAX_UINT16  2 "Number of KIT_TO HK cycles between event log telemetry messages"
+
+COMMAND KIT_TO START_EVT_PLBK <%= Osk::Cfg.processor_endian %> "Write current event log to a file and continually play it back until commanded to stop"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 14, 0) %>
+
+COMMAND KIT_TO STOP_EVT_PLBK <%= Osk::Cfg.processor_endian %> "Stop playing back events"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 15, 0) %>

@@ -1,0 +1,52 @@
+<%
+
+  require 'osk_config' 
+  require 'fsw_const'
+  require 'fsw_config_param'
+  
+  @APP_PREFIX_STR               = "CS"
+  @MAX_NUM_EEPROM_TABLE_ENTRIES = "CS_MAX_NUM_EEPROM_TABLE_ENTRIES"
+  @EEPROM_RES_TBL_NAME_STR      = "CS_EEPROM_RES_TBL_NAME"
+  
+%>
+TABLE "CS EEPROM Results" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "EEPROM checksum Results"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @EEPROM_RES_TBL_NAME_STR) %>
+
+  #
+  # typedef struct {
+  #   uint16                      State;              /**< \brief Uses the CS_STATE_... defines from above */
+  #   uint16                      ComputedYet;        /**< \brief Have we computed an Integrity value yet */
+  #   uint32                      StartAddress;       /**< \brief The Start address to Checksum */
+  #   uint32                      NumBytesToChecksum; /**< \brief The number of Bytes to Checksum */
+  #   uint32                      ComparisonValue;    /**< \brief The Memory Integrity Value */
+  #   uint32                      ByteOffset;         /**< \brief Where a previous unfinished calculation left off */
+  #   uint32                      TempChecksumValue;  /**< \brief The unfinished caluculation */
+  # } CS_Res_EepromMemory_Table_Entry_t;
+  #
+  # No table declaration in the app. cFE_TBL buffer used for reults. 
+  #
+  
+  <%
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_EEPROM_TABLE_ENTRIES)
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_STATE\"    16 UINT 0 MAX_UINT16 0         \"Enable/Disable/Unused state\"" << "\n"
+      append_items << "   STATE EMPTY     #{Fsw::Const::CS_STATE_EMPTY}\n"
+      append_items << "   STATE ENABLED   #{Fsw::Const::CS_STATE_ENABLED}\n"
+      append_items << "   STATE DISABLED  #{Fsw::Const::CS_STATE_DISABLED}\n"
+      append_items << "   STATE UNDEFINED #{Fsw::Const::CS_STATE_UNDEFINED}\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_COMPUTED\"     16 UINT 0 MAX_UINT16 0     \"Has the checksum been computed?\"" << "\n"
+      append_items << "   STATE FALSE 0 \n"
+      append_items << "   STATE TRUE  1 \n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_START_ADDR\"   32 UINT 0 MAX_UINT32 0     \"Starting address of checksum memory block\"" << "\n"
+      append_items << "   FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_NUM_BYTES\"    32 UINT 0 MAX_UINT32 0     \"Number of bytes in the memory block being checksummed\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_CHECKSUM\"     32 UINT 0 MAX_UINT32 0     \"Checksum\"" << "\n"
+      append_items << "   FORMAT_STRING  \"0x%08X\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_BYTE_OFFSET\"  32 UINT 0 MAX_UINT32 0     \"Byte offset where unfinished calcualtion left off\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_TMP_CHECKSUM\" 32 UINT 0 MAX_UINT32 0     \"Current value of checksum that has not finsihed being computed\"" << "\n"
+      append_items << "   FORMAT_STRING  \"0x%08X\"" << "\n"
+    end # Entry loop
+  %>
+  <%= append_items %>
+  

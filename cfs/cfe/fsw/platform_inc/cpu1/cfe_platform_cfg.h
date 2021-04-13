@@ -492,7 +492,7 @@
 **  \par Limits
 **       Not Applicable
 */
-#define CFE_PLATFORM_TIME_CFG_START_FLY   2
+#define CFE_PLATFORM_TIME_CFG_START_FLY  2
 
 
 /**

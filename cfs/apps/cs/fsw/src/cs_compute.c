@@ -376,7 +376,7 @@ int32 CS_ComputeApp (CS_Res_App_Table_Entry_t       * ResultsEntry,
 
     /* set the done flag to false originally */
     * DoneWithEntry = FALSE;
-    
+
     ResultGetAppID = CFE_ES_GetAppIDByName(&AppID, ResultsEntry -> Name);
     Result = ResultGetAppID;
     

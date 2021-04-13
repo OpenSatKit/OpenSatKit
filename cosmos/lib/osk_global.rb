@@ -98,9 +98,10 @@ module Osk
    TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
 
    TRAIN_OSK_APPS_ADC_FILE      = "OSK-Apps-ADC.pdf"
-   TRAIN_OSK_APPS_RUNTIME_FILE  = "OSK-Apps-RunTime.pdf"
    TRAIN_OSK_APPS_DATAFILE_FILE = "OSK-Apps-DataFileMgmt.pdf"
+   TRAIN_OSK_APPS_HS_FILE       = "OSK-Apps-HealthSafety.pdf"
    TRAIN_OSK_APPS_MAINT_FILE    = "OSK-Apps-Maintenance.pdf"
+   TRAIN_OSK_APPS_RUNTIME_FILE  = "OSK-Apps-RunTime.pdf"
    
    ABOUT_SCR_FILE   = "about_scr.txt"
    VERSION_SCR_FILE = "version_scr.txt"
@@ -178,14 +179,31 @@ module Osk
 
    TBL_MGR_DEF_CFE_TBL_REG = "cfe_tbl_reg.txt"
 
+   TBL_MGR_DEF_CS_APP_TBL        = "cs_app_tbl.txt"
+   TBL_MGR_DEF_CS_EEPROM_TBL     = "cs_eeprom_tbl.txt"
+   TBL_MGR_DEF_CS_MEMORY_TBL     = "cs_memory_tbl.txt"
+   TBL_MGR_DEF_CS_TABLES_TBL     = "cs_tables_tbl.txt"
+   TBL_MGR_DEF_CS_APP_RES_TBL    = "cs_app_res_tbl.txt"
+   TBL_MGR_DEF_CS_EEPROM_RES_TBL = "cs_eeprom_res_tbl.txt"
+   TBL_MGR_DEF_CS_MEMORY_RES_TBL = "cs_memory_res_tbl.txt"
+   TBL_MGR_DEF_CS_TABLES_RES_TBL = "cs_tables_res_tbl.txt"
+ 
    TBL_MGR_DEF_DS_FILE_TBL   = "ds_file_tbl.txt"
    TBL_MGR_DEF_DS_FILTER_TBL = "ds_filter_tbl.txt"
    TBL_MGR_DEF_DS_EVENT_LOG  = "ds_event_log.txt"
+   
    TBL_MGR_DEF_FM_DIR        = "fm_dir_list.txt"
    TBL_MGR_DEF_FM_FREESPACE  = "fm_freespace_tbl.txt"
+   
    TBL_MGR_DEF_HK_COPY       = "hk_copy_tbl.txt"
-   TBL_MGR_DEF_MD_TBL        = "md_tbl.txt"
-   TBL_MGR_DEF_MM_DMP        = "mm_dump.txt"
+   
+   TBL_MGR_DEF_HS_AMT_TBL = "hs_amt_tbl.txt"
+   TBL_MGR_DEF_HS_EMT_TBL = "hs_emt_tbl.txt"
+   TBL_MGR_DEF_HS_MAT_TBL = "hs_mat_tbl.txt"
+   TBL_MGR_DEF_HS_XCT_TBL = "hs_xct_tbl.txt"
+   
+   TBL_MGR_DEF_MD_TBL  = "md_tbl.txt"
+   TBL_MGR_DEF_MM_DMP  = "mm_dump.txt"
    
    ############################
    ## COSMOS Directory Paths ##

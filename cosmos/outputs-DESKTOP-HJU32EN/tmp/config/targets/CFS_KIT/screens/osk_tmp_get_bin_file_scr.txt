@@ -1,0 +1,52 @@
+
+   ###############################################################################
+   # Get and Display Binary File Screen
+   #
+   # Temporary screen automatically created to allow the user to get a file from
+   # the FSW, transfer the file, an ddisplay the file using teh COSMOS Table
+   # Manager tool.
+   #
+   # License:
+   #   Written by David McComas, licensed under the copyleft GNU General Public
+   #   License (GPL).
+   #
+   ###############################################################################
+
+   SCREEN AUTO AUTO 0.5
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+   TITLE "Get and Display Binary File"
+      SETTING BACKCOLOR 162 181 205
+      SETTING TEXTCOLOR black
+
+   LABEL " "
+   VERTICALBOX "Get File from Flight"
+      LABEL "1. Enter flight and ground file information below"
+      LABEL "2. Select <Get File> to transfer file to the ground"
+   END # Vertical Box
+   
+   VERTICALBOX "Display File in Table Manager"
+      LABEL "1. Select <Table Manager> to start the Table Manager tool"
+      LABEL "2. Within Table Manager select File->Open->osk_tmp_bin.dat"
+      LABEL "       > When prompted select {tbl_def_filename} definition file"
+      LABEL "       > Ignore 'binary file size does not match definition file size' warning"
+   END # Vertical Box
+   
+   VERTICALBOX "Ground Path/filename" 10
+      NAMED_WIDGET gnd_path_filename TEXTFIELD 256 "/mnt/hgfs/OpenSatKit/cosmos/cfs_kit/file_server/osk_tmp_bin.dat"
+      SETTING HEIGHT 20
+   END # Vertical Box
+
+   VERTICALBOX "Flight Path/filename" 10
+      NAMED_WIDGET flt_path_filename TEXTFIELD 256 "/cf/osk_tmp_bin.dat"
+      SETTING HEIGHT 20
+   END # Vertical Box
+
+   VERTICALBOX
+      MATRIXBYCOLUMNS 3      
+         BUTTON 'Get File'      'require "/mnt/hgfs/OpenSatKit/cosmos/lib/osk_ops.rb"; Osk::Ops::get_flt_file_prompt(Osk::GND_SRV_TBL_DIR)'
+         BUTTON 'Table Manager' 'spawn("ruby /mnt/hgfs/OpenSatKit/cosmos/tools/TableManager")'
+         BUTTON 'Done'          'clear("CFS_KIT OSK_TMP_GET_BIN_FILE_SCR")'
+      End # Matrix
+   END # Vertical Box
+

@@ -1,0 +1,171 @@
+  
+
+TELEMETRY KIT_SCH HK_TLM_PKT LITTLE_ENDIAN "Scheduler Housekeeping Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F10 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_VALID_COUNT 16 UINT        "Command Count"
+  APPEND_ITEM CMD_ERROR_COUNT 16 UINT        "Error Count"
+  APPEND_ITEM MSG_TBL_LOAD_STATUS 8 UINT     "0=Undefined, 1=Invalid, 1=Valid"
+  APPEND_ITEM SCH_TBL_LOAD_STATUS 8 UINT     "0=Undefined, 1=Invalid, 1=Valid"
+  APPEND_ITEM MSG_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last msg table load"
+  APPEND_ITEM SCH_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last msg table load"
+  APPEND_ITEM SLOTS_PROCESSED_CNT      32 UINT "Total # of Schedule Slots (Minor Frames) Processed."
+  APPEND_ITEM SCH_ACTIVITY_SUCCESS_CNT 32 UINT "Number of successfully performed activities."
+  APPEND_ITEM SCH_ACTIVITY_FAILURE_CNT 32 UINT "Number of unsuccessful activities attempted."
+  APPEND_ITEM VALID_MAJOR_FRAME_CNT    32 UINT "Number of valid major frames processed."
+  APPEND_ITEM MISSED_MAJOR_FRAME_CNT   32 UINT "Number of missing Major Frame tones"
+  APPEND_ITEM UNEXPECT_MAJOR_FRAME_CNT 32 UINT "Number of unexpected Major Frame tones"
+  APPEND_ITEM SCH_TBL_PASS_CNT         32 UINT "Number of times Schedule Table has been processed"
+  APPEND_ITEM CONSEC_NOISY_FRAME_CNT   32 UINT "Number of times tone arrives in wrong slot?"
+  APPEND_ITEM SKIPPED_SLOT_CNT         16 UINT "Number of times that slots were skipped."
+  APPEND_ITEM MULTIPLE_SLOTS_CNT       16 UINT "Number of times that multiple slots processed."
+  APPEND_ITEM SAME_SLOT_CNT            16 UINT "Number of times SCH woke up in the same slot as last time"
+  APPEND_ITEM SYNC_ATTEMPTS_LEFT       16 UINT "Remaining attempts to resynch major frame?"
+  APPEND_ITEM LAST_SYNC_MET_SLOT       16 UINT "Slot number where Time Sync last occurred."
+  APPEND_ITEM IGNORE_MAJOR_FRAME        8 UINT "Major Frame too noisy to trust."
+  APPEND_ITEM UNEXPECTED_MAJOR_FRAME    8 UINT ""
+
+TELEMETRY KIT_SCH DIAG_TLM_PKT LITTLE_ENDIAN "Diagnostic Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F11 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM LAST_PROCESS_CNT   32 UINT "TODO"
+  APPEND_ITEM TIMER_ID           32 UINT "TODO"
+  APPEND_ITEM TIME_SEMAPHORE     32 UINT "TODO"
+  APPEND_ITEM CLOCK_ACCURACY     32 UINT "TODO
+  APPEND_ITEM WORST_CASE_SLOTS_PER_MINOR_FRAME 32 UINT "TODO"
+  APPEND_ITEM IGNORE_MAJOR_FRAME  8 UINT "TODO"
+  APPEND_ITEM SYNCH_TO_MET        8 UINT "TODO"
+  APPEND_ITEM MAJOR_FRAME_SOURCE  8 UINT "TODO"
+  APPEND_ITEM SPARE               8 UINT "TODO"
+
+  APPEND_ITEM ACTIVITY_0_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_0_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_0_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_0_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_1_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_1_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_1_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_1_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_2_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_2_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_2_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_2_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_3_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_3_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_3_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_3_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_4_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_4_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_4_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_4_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_5_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_5_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_5_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_5_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_6_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_6_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_6_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_6_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_7_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_7_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_7_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_7_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_8_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_8_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_8_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_8_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM ACTIVITY_9_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM ACTIVITY_9_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM ACTIVITY_9_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM ACTIVITY_9_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  
+  
+TELEMETRY KIT_SCH TBL_ENTRY_TLM_PKT LITTLE_ENDIAN "Table Entry Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F12 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM SCHTBL_SLOT               8 UINT "Scheduler table 1 second time slice"
+  APPEND_ITEM SCHTBL_ACTIVITY           8 UINT "Activity number within the slot"
+  APPEND_ITEM SCHTBL_ENTRY_ENABLED      8 UINT "0=FALSE(Disabled), 1=TRUE(Enabled)"
+     STATE False 0
+     STATE True  1
+  APPEND_ITEM SCHTBL_ENTRY_PERIOD       8 UINT "Number of scheduler cycles between sending the message (duration)"
+  APPEND_ITEM SCHTBL_ENTRY_OFFSET       8 UINT "Offset within the period. Must be less than the period."
+  APPEND_ITEM SCHTBL_ENTRY_MSG_TBL_IDX  8 UINT "Index into the message definition table"
+
+  APPEND_ITEM MSG_STREAM_ID            16 UINT "CCSDS Stream ID"
+     FORMAT_STRING  "0x%04X"
+  APPEND_ITEM MSG_SEQ_CNT              16 UINT "0x3FFF: Seq Cnt, 0xC000: Segmentation Flags: 3 = Complete packet"
+     FORMAT_STRING  "0x%04X"
+  APPEND_ITEM MSG_LENGTH               16 UINT "Index into the message definition table"
+
+
+  APPEND_ITEM MSG_DATA_WORD_0     16 UINT ""
+     FORMAT_STRING  "0x%04X"
+
+  APPEND_ITEM MSG_DATA_WORD_1     16 UINT ""
+     FORMAT_STRING  "0x%04X"
+
+  APPEND_ITEM MSG_DATA_WORD_2     16 UINT ""
+     FORMAT_STRING  "0x%04X"
+
+  APPEND_ITEM MSG_DATA_WORD_3     16 UINT ""
+     FORMAT_STRING  "0x%04X"
+
+  APPEND_ITEM MSG_DATA_WORD_4     16 UINT ""
+     FORMAT_STRING  "0x%04X"
+
+

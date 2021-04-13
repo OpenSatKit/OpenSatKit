@@ -52,8 +52,8 @@
 #define  ISIMTBL_OBJ_SCI_FILE   1
 #define  ISIMTBL_OBJ_CNT        2
 
-#define  ISIMTBL_OBJ_SCI_INSTR_NAME   "sci-instr"
-#define  ISIMTBL_OBJ_SCI_FILE_NAME    "sci-file"
+#define  ISIMTBL_OBJ_SCI_INSTR_NAME  "sci-instr"
+#define  ISIMTBL_OBJ_SCI_FILE_NAME   "sci-file"
 
 /*
 ** Type Definitions

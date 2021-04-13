@@ -1,0 +1,43 @@
+###############################################################################
+# Recorder Management Demo Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+
+TITLE "Recorder Management Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX
+  # These labels contain instructions to the user
+  NAMED_WIDGET Instruct1  LABEL "This demo illustrates some basic recorder management features. This demo concentrates"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct2  LABEL "on the Data Storage(DS) app. Onboard recorder management is much more complicated and"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct3  LABEL "involves multiple apps. Select <More Info> for a brief overview. Click..."
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct7  LABEL ""
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct4  LABEL "  <More Info> to obtain more information about the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct5  LABEL "  <Demo> to issue commands to demonstrate a feature in the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct6  LABEL "  <Next> to move to the next step"
+  SETTING TEXTCOLOR 0 0 153
+  LABEL ""
+  HORIZONTALLINE
+  HORIZONTAL
+    BUTTON "More Info"  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_demo_screen.rb"; recorder_mgmt_demo(self, "INFO")'
+    BUTTON "Demo"       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_demo_screen.rb"; recorder_mgmt_demo(self, "DEMO")'
+    BUTTON "Next ->"    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/recorder_mgmt_demo_screen.rb"; recorder_mgmt_demo(self, "NEXT")'
+  END
+END # Vertical instruction box    
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

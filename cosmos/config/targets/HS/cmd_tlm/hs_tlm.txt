@@ -9,22 +9,58 @@
 %>  
 
 TELEMETRY HS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet Structure"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
-  APPEND_ITEM CMD_VALID_COUNT 8 UINT "HS Application Command Counter."
-  APPEND_ITEM CMD_ERROR_COUNT 8 UINT "HS Application Command Error Counter."
-  APPEND_ITEM CURRENTAPPMONSTATE 8 UINT "Status of HS Critical Application Monitor."
-  APPEND_ITEM CURRENTEVENTMONSTATE 8 UINT "Status of HS Critical Events Monitor."
-  APPEND_ITEM CURRENTALIVENESSSTATE 8 UINT "Status of HS Aliveness Indicator."
-  APPEND_ITEM CURRENTCPUHOGSTATE 8 UINT "Status of HS Hogging Indicator."
-  APPEND_ITEM STATUSFLAGS 8 UINT "Internal HS Error States."
-  APPEND_ITEM SPAREBYTES 8 UINT "Alignment Spares."
-  APPEND_ITEM RESETSPERFORMED 16 UINT "HS Performed Processor Reset Count."
-  APPEND_ITEM MAXRESETS 16 UINT "HS Maximum Processor Reset Count."
-  APPEND_ITEM EVENTSMONITOREDCOUNT 32 UINT "Total count of Event Messages Monitored by the Critical Events Monitor."
-  APPEND_ITEM INVALIDEVENTMONCOUNT 32 UINT "Total count of Invalid Event Monitors Monitored by the Critical Events Monitor."
-  APPEND_ARRAY_ITEM APPMONENABLES 32 UINT 32 "Enable states of App Monitor Entries."
-  APPEND_ITEM MSGACTEXEC 32 UINT "Number of Software Bus Message Actions Executed."
-  APPEND_ITEM UTILCPUAVG 32 UINT "Current CPU Utilization Average."
-  APPEND_ITEM UTILCPUPEAK 32 UINT "Current CPU Utilization Peak."
-  APPEND_ARRAY_ITEM EXECCOUNTS 32 UINT 1024 "Execution Counters"
+   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+   APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 8 UINT "Application command counter"
+   APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 8 UINT "Application command error counter"
+   APPEND_ITEM APP_MON_STATE   8 UINT "Critical Application Monitor operational state"
+      STATE DISABLED  <%= Fsw::Const.get_val("HS_STATE_DISABLED") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("HS_STATE_ENABLED") %>  GREEN
+   APPEND_ITEM EVENT_MON_STATE 8 UINT "Critical Events Monitor operational state"
+      STATE DISABLED  <%= Fsw::Const.get_val("HS_STATE_DISABLED") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("HS_STATE_ENABLED") %>  GREEN
+   APPEND_ITEM ALIVENESS_STATE 8 UINT "Terminal window aliveness indicator operational state"
+      STATE DISABLED  <%= Fsw::Const.get_val("HS_STATE_DISABLED") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("HS_STATE_ENABLED") %>  GREEN
+   APPEND_ITEM CPU_HOG_STATE   8 UINT "HS Hogging Indicator operational state"
+      STATE DISABLED  <%= Fsw::Const.get_val("HS_STATE_DISABLED") %>
+      STATE ENABLED   <%= Fsw::Const.get_val("HS_STATE_ENABLED") %>  GREEN
+   # Byte 19  
+   #   HS_LOADED_XCT = 0x01
+   #   HS_LOADED_MAT = 0x02
+   #   HS_LOADED_AMT = 0x04
+   #   HS_LOADED_EMT = 0x08
+   #   HS_CDS_IN_USE = 0x10   
+   # Cmd & Tlm Server will output the following warning that can be ignored:
+   #   WARN: Bit definition overlap at bit offset 152 for packet HS HK_TLM_PKT items STATE_BITS and EXEC_CNT_TBL
+   APPEND_ITEM STATE_BITS    8 UINT "Operational states."
+      FORMAT_STRING  "0x%04X"
+      ITEM SPARE_BIT_7   144 1 UINT
+      ITEM SPARE_BIT_6   145 1 UINT
+      ITEM SPARE_BIT_5   146 1 UINT
+      ITEM CDS_IN_USE    147 1 UINT
+         STATE FALSE  0
+         STATE TRUE   1 GREEN
+      ITEM EVENT_MON_TBL 148 1 UINT
+         STATE UNDEF  0
+         STATE LOADED 1 GREEN
+      ITEM APP_MON_TBL   149 1 UINT
+         STATE UNDEF  0
+         STATE LOADED 1 GREEN
+      ITEM MSG_ACT_TBL   150 1 UINT
+         STATE UNDEF  0
+         STATE LOADED 1 GREEN
+      ITEM EXEC_CNT_TBL  151 1 UINT
+         STATE UNDEF  0
+         STATE LOADED 1 GREEN
+   APPEND_ITEM PAD8 8 UINT "Alignment Spares."
+   APPEND_ITEM CPU_RESET_CNT       16 UINT "Number of processor resets"
+   APPEND_ITEM MAX_RESETS          16 UINT "Maximum number of processor resets before a power on reset"
+   APPEND_ITEM EVENT_MON_CNT       32 UINT "Count of event messages monitored"
+   APPEND_ITEM INVLD_EVENT_MON_CNT 32 UINT "Count of invalid event monitors"
+   APPEND_ARRAY_ITEM APP_MON_ENA   32 UINT 32 "Enable states of app monitor entries"
+      FORMAT_STRING  "0x%08X"
+   APPEND_ITEM MSG_ACT_EXEC_CNT    32 UINT "Number of Software Bus Message Actions Executed"
+   APPEND_ITEM CPU_UTIL_AVG        32 UINT "Current CPU Utilization Average."
+   APPEND_ITEM CPU_UTIL_PEAK       32 UINT "Current CPU Utilization Peak."
+   APPEND_ARRAY_ITEM EXEC_CNTS     32 UINT 1024 "Execution Counters"
 

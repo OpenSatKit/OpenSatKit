@@ -1,0 +1,8 @@
+
+TELEMETRY CFS_KIT PSEUDO_MSG_PKT LITTLE_ENDIAN "Pseudo Telemetry Packet that defines a text message box that can be used by scripts to display text."
+  APPEND_ID_ITEM CCSDS_STREAMID 16 UINT 0x0000 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SEQUENCE 16 UINT "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM CCSDS_LENGTH 16 UINT "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SECONDS 32 UINT "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM CCSDS_SUBSECS 16 UINT "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM TXT_MSG 2048 STRING "Text message box"

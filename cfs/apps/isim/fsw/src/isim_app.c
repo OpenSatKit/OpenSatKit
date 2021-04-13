@@ -21,30 +21,44 @@
 #include <string.h>
 #include "isim_app.h"
 
+/***********************/
+/** Macro Definitions **/
+/***********************/
 
-/*
-** Local Function Prototypes
-*/
+/* Convenience macros */
+#define  INITBL_OBJ  (&(IsimApp.IniTbl))
+#define  CMDMGR_OBJ  (&(IsimApp.CmdMgr))
+#define  TBLMGR_OBJ  (&(IsimApp.TblMgr))
+#define  ISIM        (&(IsimApp.Isim))
+#define  ISIM_TBL    (&(IsimApp.IsimTbl))
 
-static int32 InitApp(void);
-static void ProcessCommandPipe(void);
+
+/*******************************/
+/** Local Function Prototypes **/
+/*******************************/
+
+static int32 InitApp(uint32* AppMainPerfId);
+static void ProcessCommandPipe(CFE_SB_MsgId_t CmdMid, CFE_SB_MsgId_t ExecuteMid, CFE_SB_MsgId_t SendHkMid);
 static void SendHousekeepingPkt(void);
 
-/*
-** Global Data
+/**********************/
+/** File Global Data **/
+/**********************/
+
+/* 
+** Must match DECLARE ENUM() declaration in app_cfg.h
+** Defines "static INILIB_CfgEnum IniCfgEnum"
 */
+
+DEFINE_ENUM(Config,APP_CONFIG)  
+
+
+/*****************/
+/** Global Data **/
+/*****************/
 
 ISIM_APP_Class  IsimApp;
 
-
-/*
-** Convenience Macros
-*/
-
-#define  CMDMGR_OBJ (&(IsimApp.CmdMgr))
-#define  TBLMGR_OBJ (&(IsimApp.TblMgr))
-#define  ISIM       (&(IsimApp.Isim))
-#define  ISIM_TBL   (&(IsimApp.IsimTbl))
 
 
 /******************************************************************************
@@ -56,19 +70,21 @@ void ISIM_AppMain(void)
 
    int32  Status    = CFE_SEVERITY_ERROR;
    uint32 RunStatus = CFE_ES_APP_ERROR;
-
-
-   CFE_ES_PerfLogEntry(ISIM_MAIN_PERF_ID);
+   uint32 AppMainPerfId;
+   CFE_SB_MsgId_t CmdMid     = CFE_SB_INVALID_MSG_ID;
+   CFE_SB_MsgId_t ExecuteMid = CFE_SB_INVALID_MSG_ID;
+   CFE_SB_MsgId_t SendHkMid  = CFE_SB_INVALID_MSG_ID;
+   
    Status = CFE_ES_RegisterApp();
    CFE_EVS_Register(NULL,0,0);
-
 
    /*
    ** Perform application specific initialization
    */
    if (Status == CFE_SUCCESS) {
       
-       Status = InitApp();
+      Status = InitApp(&AppMainPerfId); /* Performs initial CFE_ES_PerfLogEntry() call */
+   
    }
 
    /*
@@ -77,8 +93,16 @@ void ISIM_AppMain(void)
    ** needed for this simple app.
    */
 
-   if (Status == CFE_SUCCESS) RunStatus = CFE_ES_APP_RUN;
+   if (Status == CFE_SUCCESS) {
+   
+      CmdMid     = (CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_CMD_MID);
+      ExecuteMid = (CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_EXECUTE_MID);
+      SendHkMid  = (CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_SEND_HK_MID);
+   
+      RunStatus = CFE_ES_APP_RUN;
 
+   }
+   
    /*
    ** Main process loop
    */
@@ -89,9 +113,9 @@ void ISIM_AppMain(void)
       ** a message to execute a simulation step.
       */
 	  
-	   CFE_ES_PerfLogExit(ISIM_MAIN_PERF_ID);
-      ProcessCommandPipe();
-      CFE_ES_PerfLogEntry(ISIM_MAIN_PERF_ID);
+      CFE_ES_PerfLogExit(AppMainPerfId);
+      ProcessCommandPipe(CmdMid, ExecuteMid, SendHkMid);
+      CFE_ES_PerfLogEntry(AppMainPerfId);
 
    } /* End CFE_ES_RunLoop */
 
@@ -102,7 +126,7 @@ void ISIM_AppMain(void)
 
    CFE_EVS_SendEvent(ISIM_APP_EXIT_EID, CFE_EVS_CRITICAL, "ISIM Terminating,  RunLoop status = 0x%08X", RunStatus);
 
-   CFE_ES_PerfLogExit(ISIM_MAIN_PERF_ID);
+   CFE_ES_PerfLogExit(AppMainPerfId);
    CFE_ES_ExitApp(RunStatus);  /* Let cFE kill the task (and any child tasks) */
 
 } /* End of ISIM_Main() */
@@ -194,61 +218,70 @@ static void SendHousekeepingPkt(void)
 /******************************************************************************
 ** Function: InitApp
 **
+** TODO - Add additional status checks
 */
-static int32 InitApp(void)
+static int32 InitApp(uint32* AppMainPerfId)
 {
    
-   int32 Status = CFE_SUCCESS;
+   int32 Status = OSK_C_FW_CFS_ERROR;
  
    /*
    ** Initialize 'entity' objects
    */
 
-   ISIMTBL_Constructor(ISIM_TBL, ISIM_GetTblPtr, ISIM_LoadTbl, ISIM_LoadTblEntry);
-   ISIM_Constructor(ISIM);
-
-   /*
-   ** Initialize cFE interfaces 
-   */
-
-   CFE_SB_CreatePipe(&IsimApp.CmdPipe, ISIM_CMD_PIPE_DEPTH, ISIM_CMD_PIPE_NAME);
-   CFE_SB_Subscribe(ISIM_CMD_MID, IsimApp.CmdPipe);
-   CFE_SB_Subscribe(ISIM_EXECUTE_MID, IsimApp.CmdPipe);
-   CFE_SB_Subscribe(ISIM_SEND_HK_MID, IsimApp.CmdPipe);
-
-   /*
-   ** Initialize App Framework Components 
-   */
-
-   CMDMGR_Constructor(CMDMGR_OBJ);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, ISIM_NoOpCmd,     0);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, ISIM_ResetAppCmd, 0);
-    
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
-    
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_ON_INSTR_CMD_FC,    ISIM,  ISIM_PwrOnInstrCmd,    ISIM_PWR_ON_INSTR_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_OFF_INSTR_CMD_FC,   ISIM,  ISIM_PwrOffInstrCmd,   ISIM_PWR_OFF_INSTR_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_RESET_INSTR_CMD_FC, ISIM,  ISIM_PwrResetInstrCmd, ISIM_PWR_RESET_INSTR_CMD_DATA_LEN);
+   if (INITBL_Constructor(INITBL_OBJ, ISIM_INI_FILENAME, &IniCfgEnum)) {
    
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_START_SCI_CMD_FC,       ISIM,  ISIM_StartSciCmd,      ISIM_START_SCI_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_STOP_SCI_CMD_FC,        ISIM,  ISIM_StopSciCmd,       ISIM_STOP_SCI_CMD_DATA_LEN);
-  
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_SET_FAULT_CMD_FC,       ISIM,  ISIM_SetFaultCmd,      ISIM_SET_FAULT_CMD_DATA_LEN);
-   CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_CLEAR_FAULT_CMD_FC,     ISIM,  ISIM_ClearFaultCmd,    ISIM_CLEAR_FAULT_CMD_DATA_LEN);
+      *AppMainPerfId = INITBL_GetIntConfig(INITBL_OBJ, CFG_APP_MAIN_PERF_ID);
+      CFE_ES_PerfLogEntry(*AppMainPerfId);
 
-   TBLMGR_Constructor(TBLMGR_OBJ);
-   TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, ISIMTBL_LoadCmd, ISIMTBL_DumpCmd, ISIMTBL_DEF_LOAD_FILE);
-                         
-   CFE_SB_InitMsg(&IsimApp.HkPkt, ISIM_TLM_HK_MID, ISIM_APP_HK_PKT_LEN, TRUE);
+      ISIMTBL_Constructor(ISIM_TBL, ISIM_GetTblPtr, ISIM_LoadTbl, ISIM_LoadTblEntry);
+      ISIM_Constructor(ISIM);
 
-                        
-   /*
-   ** Application startup event message
-   */
-   Status = CFE_EVS_SendEvent(ISIM_APP_INIT_EID, CFE_EVS_INFORMATION,
-                              "ISIM App Initialized. Version %d.%d.%d",
-                              ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_PLATFORM_REV);
+      /*
+      ** Initialize cFE interfaces 
+      */
+
+      CFE_SB_CreatePipe(&IsimApp.CmdPipe, INITBL_GetIntConfig(INITBL_OBJ, CFG_CMD_PIPE_DEPTH), INITBL_GetStrConfig(INITBL_OBJ, CFG_CMD_PIPE_NAME));
+      CFE_SB_Subscribe((CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_CMD_MID),     IsimApp.CmdPipe);
+      CFE_SB_Subscribe((CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_EXECUTE_MID), IsimApp.CmdPipe);
+      CFE_SB_Subscribe((CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_SEND_HK_MID), IsimApp.CmdPipe);
+
+      /*
+      ** Initialize App Framework Components 
+      */
+
+      CMDMGR_Constructor(CMDMGR_OBJ);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_NOOP_CMD_FC,  NULL, ISIM_NoOpCmd,     0);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, CMDMGR_RESET_CMD_FC, NULL, ISIM_ResetAppCmd, 0);
+       
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIMTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
+       
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_ON_INSTR_CMD_FC,    ISIM,  ISIM_PwrOnInstrCmd,    ISIM_PWR_ON_INSTR_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_OFF_INSTR_CMD_FC,   ISIM,  ISIM_PwrOffInstrCmd,   ISIM_PWR_OFF_INSTR_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_PWR_RESET_INSTR_CMD_FC, ISIM,  ISIM_PwrResetInstrCmd, ISIM_PWR_RESET_INSTR_CMD_DATA_LEN);
+      
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_START_SCI_CMD_FC,       ISIM,  ISIM_StartSciCmd,      ISIM_START_SCI_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_STOP_SCI_CMD_FC,        ISIM,  ISIM_StopSciCmd,       ISIM_STOP_SCI_CMD_DATA_LEN);
+     
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_SET_FAULT_CMD_FC,       ISIM,  ISIM_SetFaultCmd,      ISIM_SET_FAULT_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, ISIM_CLEAR_FAULT_CMD_FC,     ISIM,  ISIM_ClearFaultCmd,    ISIM_CLEAR_FAULT_CMD_DATA_LEN);
+
+      TBLMGR_Constructor(TBLMGR_OBJ);
+      TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, ISIMTBL_LoadCmd, ISIMTBL_DumpCmd, INITBL_GetStrConfig(INITBL_OBJ, CFG_TBL_LOAD_FILE));
+                            
+      CFE_SB_InitMsg(&IsimApp.HkPkt, (CFE_SB_MsgId_t)INITBL_GetIntConfig(INITBL_OBJ, CFG_HK_TLM_MID), ISIM_APP_HK_PKT_LEN, TRUE);
+
+                           
+      /*
+      ** Application startup event message
+      */
+      CFE_EVS_SendEvent(ISIM_APP_INIT_EID, CFE_EVS_INFORMATION, "ISIM App Initialized. Version %d.%d.%d",
+                        ISIM_MAJOR_VER, ISIM_MINOR_VER, ISIM_PLATFORM_REV);
+
+      Status = CFE_SUCCESS;
+
+   } /* End if INITBL constructed */
 
    return(Status);
 
@@ -259,7 +292,7 @@ static int32 InitApp(void)
 ** Function: ProcessCommandPipe
 **
 */
-static void ProcessCommandPipe(void)
+static void ProcessCommandPipe(CFE_SB_MsgId_t CmdMid, CFE_SB_MsgId_t ExecuteMid, CFE_SB_MsgId_t SendHkMid)
 {
 
    int32           Status;
@@ -272,27 +305,26 @@ static void ProcessCommandPipe(void)
       
       MsgId = CFE_SB_GetMsgId(CmdMsgPtr);
 
-      switch (MsgId) {
-         
-         case ISIM_CMD_MID:
-            CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
-            break;
-
-         case ISIM_EXECUTE_MID:
-            ISIM_Execute();
-            break;
-
-         case ISIM_SEND_HK_MID:
-            SendHousekeepingPkt();
-            break;
-
-         default:
-            CFE_EVS_SendEvent(ISIM_APP_CMD_INVALID_MID_EID, CFE_EVS_ERROR,
-                              "Received invalid command packet,MID = 0x%4X",MsgId);
-
-            break;
-
-      } /* End Msgid switch */
+      if (MsgId == CmdMid) {
+      
+         CMDMGR_DispatchFunc(CMDMGR_OBJ, CmdMsgPtr);
+   
+      } 
+      else if (MsgId == ExecuteMid) {
+   
+         ISIM_Execute();
+      
+      }
+      else if (MsgId == SendHkMid) {
+      
+         SendHousekeepingPkt();
+   
+      }
+      else {
+   
+         CFE_EVS_SendEvent(ISIM_APP_CMD_INVALID_MID_EID, CFE_EVS_ERROR,
+                           "Received invalid command packet,MID = 0x%4X",MsgId);
+      }
 
    } /* End if SB received a packet */
 

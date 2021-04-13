@@ -1,0 +1,53 @@
+  
+
+TELEMETRY KIT_TO HK_TLM_PKT LITTLE_ENDIAN "Telemetry Output Housekeeping Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F20 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_VALID_COUNT      16 UINT  "Command Count"
+  APPEND_ITEM CMD_ERROR_COUNT      16 UINT  "Error Count"
+  APPEND_ITEM RUN_LOOP_DELAY       16 UINT  "Task delay(ms) used in main loop"
+  APPEND_ITEM LAST_TBL_LOAD_STATUS  8 UINT  "0=Undefined, 1=No, 1=Yes"
+  APPEND_ITEM SPARE_BYTE_1          8 UINT  ""
+  APPEND_ITEM LAST_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last table load"
+  APPEND_ITEM STATS_VALID          8 UINT  "TRUE: First stat interval complete and stats in steady state"
+    STATE False 0
+    STATE True  1
+  APPEND_ITEM SPARE_BYTE_1          8 UINT  ""
+  APPEND_ITEM PKTS_PER_SEC         16 UINT  "Average packets per second"
+  APPEND_ITEM BYTES_PER_SEC        32 UINT  "Average bytes per second"
+  APPEND_ITEM SOCKET_ID 16 UINT   "Socket identifier"
+  APPEND_ITEM IP_ADDR 128 STRING  "IP Address string"
+
+
+TELEMETRY KIT_TO PKT_TLM_PKT LITTLE_ENDIAN "Packet Table Entry Telemetry Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0F21 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM MSG_ID          16 UINT  "First word of CCSDS primary header(Stream ID)"
+    FORMAT_STRING "0x%04X"
+  APPEND_ITEM QOS_RELIABILITY  8 UINT  "Quality of Service: Reliability"
+  APPEND_ITEM QOS_PRIORITY     8 UINT  "Quality of Service: Priority"
+  APPEND_ITEM BUF_LIM         16 UINT  "TO input buffer limit"
+  APPEND_ITEM FILTER_TYPE     16 UINT  "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
+    STATE Always 1
+    STATE SeqCnt 2
+    STATE Time   3
+    STATE Never  4
+  APPEND_ITEM FILTER_PARAM_N  16 UINT  "N = Filter will pass this many packets"
+  APPEND_ITEM FILTER_PARAM_X  16 UINT  "X = out of every group of this many packets"
+  APPEND_ITEM FILTER_PARAM_O  16 UINT  "O = starting at this offset within the group"

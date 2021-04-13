@@ -45,7 +45,7 @@
 #include "hs_tbl.h"
 #include "hs_tbldefs.h"
 #include "cfe_tbl_filedef.h"
-
+#include "cs_events.h"  //osk
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 {
@@ -59,11 +59,11 @@ HS_EMTEntry_t      HS_Default_EventMon_Tbl[HS_MAX_MONITORED_EVENTS] =
 {
 /*          AppName                    NullTerm EventID        ActionType */
                                                 
-/*   0 */ { "CFE_ES",                  0,       10,            HS_EMT_ACT_NOACT },
-/*   1 */ { "CFE_EVS",                 0,       10,            HS_EMT_ACT_NOACT },
-/*   2 */ { "CFE_TIME",                0,       10,            HS_EMT_ACT_NOACT },
-/*   3 */ { "CFE_TBL",                 0,       10,            HS_EMT_ACT_NOACT },
-/*   4 */ { "CFE_SB",                  0,       10,            HS_EMT_ACT_NOACT },
+/*   0 */ { "CS",                      0,       CS_APP_MISCOMPARE_ERR_EID, HS_EMT_ACT_NOACT },       //osk
+/*   1 */ { "F42",                     0,       121,                       HS_EMT_ACT_APP_RESTART }, //osk - Special demo critical event message
+/*   2 */ { "",                        0,        0,                        HS_EMT_ACT_NOACT },       //osk
+/*   3 */ { "",                        0,        0,                        HS_EMT_ACT_NOACT },       //osk
+/*   4 */ { "",                        0,        0,                        HS_EMT_ACT_NOACT },       //osk
 /*   5 */ { "",                        0,       10,            HS_EMT_ACT_NOACT },
 /*   6 */ { "",                        0,       10,            HS_EMT_ACT_NOACT },
 /*   7 */ { "",                        0,       10,            HS_EMT_ACT_NOACT },

@@ -93,7 +93,7 @@ FileUtil_FileInfo FileUtil_GetFileInfo(char *Filename, uint16 FilenameBufLen, bo
    FileInfo.Size  = 0;
    FileInfo.Time  = 0;
    FileInfo.Mode  = 0;
-   FileInfo.State = FILEUTIL_FILE_NAME_INVALID;
+   FileInfo.State = FILEUTIL_FILENAME_INVALID;
 
    /* TODO - Fix all file utilities to accept a length parameter with a OS_MAX_PATH_LEN check */
    if (FilenameBufLen != OS_MAX_PATH_LEN) {
@@ -156,16 +156,16 @@ const char* FileUtil_FileStateStr(FileUtil_FileState  FileState)
 
    static char* FileStateStr[] = {
       "Undefined", 
-      "Invalid Filename",    /* FILEUTIL_FILE_NAME_INVALID */
-      "Nonexistent File",    /* FILEUTIL_FILE_NONEXISTENT  */
-      "File Open",           /* FILEUTIL_FILE_OPEN         */
-      "File Closed",         /* FILEUTIL_FILE_OPEN         */
-      "File is a Directory"  /* FILEUTIL_FILE_IS_DIR       */
+      "Invalid Filename",    /* FILEUTIL_FILENAME_INVALID */
+      "Nonexistent File",    /* FILEUTIL_FILE_NONEXISTENT */
+      "File Open",           /* FILEUTIL_FILE_OPEN        */
+      "File Closed",         /* FILEUTIL_FILE_OPEN        */
+      "File is a Directory"  /* FILEUTIL_FILE_IS_DIR      */
    };
 
    uint8 i = 0;
    
-   if ( FileState >= FILEUTIL_FILE_NAME_INVALID &&
+   if ( FileState >= FILEUTIL_FILENAME_INVALID &&
         FileState <= FILEUTIL_FILE_IS_DIR) {
    
       i =  FileState;

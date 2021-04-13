@@ -1,0 +1,38 @@
+<%
+
+  require 'osk_config' 
+  require 'fsw_const'
+  require 'fsw_config_param'
+  
+  @APP_PREFIX_STR             = "CS"
+  @MAX_NUM_APP_TABLE_ENTRIES  = "CS_MAX_NUM_APP_TABLE_ENTRIES"
+  @APP_TBL_NAME_STR           = "CS_APP_TBL_NAME"
+  
+%>
+TABLE "CS Apps" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "App code segments being checksummed"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @APP_TBL_NAME_STR) %>
+
+  #
+  # typedef struct {
+  #   uint16                      State;                              /**< \brief Uses the CS_STATE_... defines from above */
+  #   char                        Name[OS_MAX_API_NAME];              /**< \brief name of the app */
+  # } CS_Def_App_Table_Entry_t;
+  #
+  # CS_Def_App_Table_Entry_t  CS_AppTable[CS_MAX_NUM_APP_TABLE_ENTRIES]
+  #
+  
+  <%
+    name_bits = Osk::Cfg.get_fsw_cfg_int_param("OSAL", "OS_MAX_API_NAME") * 8
+    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_NUM_APP_TABLE_ENTRIES)
+    append_items = ""
+    for i in 0..(max_entries-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_STATE\"    16 UINT 0 MAX_UINT16 0         \"Enable/Disable/Unused state\"" << "\n"
+      append_items << "   STATE EMPTY     #{Fsw::Const::CS_STATE_EMPTY}\n"
+      append_items << "   STATE ENABLED   #{Fsw::Const::CS_STATE_ENABLED}\n"
+      append_items << "   STATE DISABLED  #{Fsw::Const::CS_STATE_DISABLED}\n"
+      append_items << "   STATE UNDEFINED #{Fsw::Const::CS_STATE_UNDEFINED}\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_APP_NAME\" #{name_bits} STRING \"UNDEF\"  \"Name of application being checksummed\"" << "\n"
+    end # Entry loop
+  %>
+  <%= append_items %>
+  

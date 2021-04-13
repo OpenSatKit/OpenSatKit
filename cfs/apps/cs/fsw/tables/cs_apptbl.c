@@ -29,7 +29,7 @@
 CS_Def_App_Table_Entry_t      CS_AppTable[CS_MAX_NUM_APP_TABLE_ENTRIES] =
 {
     /*            State             Name   */
-    /*   0 */ { CS_STATE_EMPTY,     ""      },
+    /*   0 */ { CS_STATE_DISABLED,  "F42"   },  //osk - Need to implement POSIX OS_ModuleGetInfo_Impl()
     /*   1 */ { CS_STATE_EMPTY,     ""      },
     /*   2 */ { CS_STATE_EMPTY,     ""      },
     /*   3 */ { CS_STATE_EMPTY,     ""      },

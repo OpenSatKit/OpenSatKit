@@ -1,0 +1,156 @@
+  
+
+TELEMETRY LC HK_TLM_PKT LITTLE_ENDIAN "Housekeeping Packet Structure"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x08A7 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_VALID_COUNT      8 UINT "LC Application Command Counter"
+  APPEND_ITEM CMD_ERROR_COUNT      8 UINT "LC Application Command Error Counter"
+  APPEND_ITEM APP_STATE            8 UINT "Current LC application operating state"
+    STATE UNDEF    0
+    STATE ACTIVE   1
+    STATE PASSIVE  2
+    STATE DISABLED 3
+  APPEND_ITEM PAD8                 8 UINT "8-bit pad"
+  # Byte 16 => Bit 128
+  # Cmd & Tlm Server will output the following warning that can be ignored:
+  #   WARN: Bit definition overlap at bit offset 128 for packet LC HK_TLM_PKT items WP_3_RESULT and WP_RESULTS
+  APPEND_ARRAY_ITEM WP_RESULTS     8 UINT 352 "Packed watchpoint results data, 2 bits per watchpoint."
+    ITEM WP_3_RESULT  128 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_2_RESULT  130 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_1_RESULT  132 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_0_RESULT  134 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_7_RESULT  136 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_6_RESULT  138 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_5_RESULT  140 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_4_RESULT  142 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_11_RESULT 144 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_10_RESULT 146 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_9_RESULT  148 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_8_RESULT  150 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_15_RESULT 152 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_14_RESULT 154 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_13_RESULT 156 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM WP_12_RESULT 158 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+  # Byte 60 => Bit 480
+  # Cmd & Tlm Server will output the following warning that can be ignored:
+  #   WARN: Bit definition overlap at bit offset 480 for packet LC HK_TLM_PKT items AP_1_STATE and AP_RESULTS
+  APPEND_ARRAY_ITEM AP_RESULTS     8 UINT 704 "Packed actionpoint results data, 4 bits per actionpoint."
+    ITEM AP_1_STATE  480 2 UINT
+       STATE UNUSED   0
+       STATE ACTIVE   1
+       STATE PASSIVE  2
+       STATE DISABLED 3
+    ITEM AP_1_RESULT 482 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM AP_0_STATE  484 2 UINT
+       STATE UNUSED   0
+       STATE ACTIVE   1
+       STATE PASSIVE  2
+       STATE DISABLED 3
+    ITEM AP_0_RESULT 486 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM AP_3_STATE  488 2 UINT
+       STATE UNUSED   0
+       STATE ACTIVE   1
+       STATE PASSIVE  2
+       STATE DISABLED 3
+    ITEM AP_3_RESULT 490 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+    ITEM AP_2_STATE  492 2 UINT
+       STATE UNUSED   0
+       STATE ACTIVE   1
+       STATE PASSIVE  2
+       STATE DISABLED 3
+    ITEM AP_2_RESULT 494 2 UINT
+       STATE FALSE 0
+       STATE TRUE  1
+       STATE ERROR 2
+       STATE STALE 3
+  APPEND_ITEM PASSIVE_RTS_EXE_CNT 16 UINT "Total count of RTS sequences not initiated because the LC state is set to LC_STATE_PASSIVE."
+  APPEND_ITEM WPS_IN_USE          16 UINT "How many watchpoints are currently in effect."
+  APPEND_ITEM ACTIVE_APS          16 UINT "How many actionpoints are currently active."
+  APPEND_ITEM PAD16               16 UINT "16 bit pad"
+  APPEND_ITEM AP_SAMPLE_CNT       32 UINT "Total count of Actionpoints sampled."
+  APPEND_ITEM MONITORED_MSG_CNT   32 UINT "Total count of messages monitored for watchpoints."
+  APPEND_ITEM RTS_EXE_CNT         32 UINT "Total count of RTS sequences initiated."

@@ -1,0 +1,67 @@
+  
+
+TELEMETRY CFE_TBL HK_TLM_PKT LITTLE_ENDIAN "Housekeeping data (general status) autonomously sent"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x0804 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM CMD_VALID_COUNT         8 UINT "Count of valid commands received."
+  APPEND_ITEM CMD_ERROR_COUNT         8 UINT "Count of invalid commands received."
+  APPEND_ITEM NUM_TABLES             16 UINT "Number of Tables Registered."
+  APPEND_ITEM NUM_LOAD_PEND          16 UINT "Number of Tables pending on Applications for their update."
+  APPEND_ITEM VALIDATION_CTR         16 UINT "Number of completed table validations."
+  APPEND_ITEM LAST_VAL_CRC           32 UINT "Data Integrity Value computed for last table validated."
+  APPEND_ITEM LAST_VAL_STATUS        32  INT "Returned status from validation function for last table validated."
+  APPEND_ITEM LAST_VAL_BUFFER         8 UINT "Indicator of whether table buffer validated was 0=Inactive, 1=Active."
+    STATE Inactive 0
+    STATE Active   1
+  APPEND_ITEM LAST_VAL_TBL_NAME     320 STRING "Name of last table validated."
+  APPEND_ITEM SUCCESS_VAL_CTR         8 UINT "Total number of successful table validations."
+  APPEND_ITEM FAILED_VAL_CTR          8 UINT "Total number of unsuccessful table validations."
+  APPEND_ITEM NUM_VAL_REQUESTS        8 UINT "Number of times Table Services has requested validations from Apps."
+  APPEND_ITEM NUM_FREE_SHARED_BUFS    8 UINT "Number of free Shared Working Buffers."
+  APPEND_ITEM BYTE_ALIGN_PAD1         8 UINT "Spare byte to ensure longword alignment."
+  APPEND_ITEM MEM_POOL_HANDLE        32 UINT "Handle to TBL's memory pool."
+  APPEND_ITEM SPARE1                 16 UINT "TODO - Somethings off by 16. Could it be 48-bit cpuaddr?"
+  APPEND_ITEM LAST_UPD_TIME_SECONDS  32 UINT "Number of seconds since epoch. (Parent: Time of last table update.)"
+  APPEND_ITEM LAST_UPD_TIME_SUBSECS  32 UINT "Number of subseconds since epoch (LSB = 2^(-32) seconds). (Parent: Time of last table update.)"
+  APPEND_ITEM LAST_UPD_TBL_NAME     320 STRING "Name of the last table updated."
+  APPEND_ITEM LAST_FILE_LOADED      512 STRING "Path and Name of last table image file loaded."
+  APPEND_ITEM LAST_FILE_DUMPED      512 STRING "Path and Name of last file dumped to."
+  APPEND_ITEM LAST_TABLE_LOADED     320 STRING "Name of the last table loaded."
+
+TELEMETRY CFE_TBL TBL_REGISTRY_PKT LITTLE_ENDIAN "Table Registry Info Packet sent in response to a SEND_REGISTRY command"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x080C "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+  APPEND_ITEM SIZE                     32 UINT "Size, in bytes, of Table."
+  APPEND_ITEM CRC                      32 UINT "Most recently calculated CRC of Table."
+  APPEND_ITEM ACTIVE_BUF_ADDR          32 UINT "Address of Active Buffer."
+  APPEND_ITEM INACTIVE_BUF_ADDR        32 UINT "Address of Inactive Buffer."
+  APPEND_ITEM VALIDATION_FUNC_PTR      32 UINT "Ptr to Owner App's function that validates tbl contents."
+  APPEND_ITEM LAST_UPD_TIME_SECONDS    32 UINT "Number of seconds since epoch. (Parent: Time when Table was last updated.)"
+  APPEND_ITEM LAST_UPD_TIME_SUBSECS    32 UINT "Number of subseconds since epoch (LSB = 2^(-32) seconds). (Parent: Time when Table was last updated.)"
+  APPEND_ITEM FILE_CREATE_TIME_SECS    32 UINT "File creation time from last file loaded into table."
+  APPEND_ITEM FILE_CREATE_TIME_SUBSECS 32 UINT "File creation time from last file loaded into table."
+  APPEND_ITEM TABLE_LOADED_ONCE         8 UINT "Flag indicating whether table has been loaded once or not."
+  APPEND_ITEM LOAD_PENDING              8 UINT "Flag indicating an inactive buffer is ready to be copied."
+  APPEND_ITEM DUMP_ONLY                 8 UINT "Flag indicating Table is NOT to be loaded."
+  APPEND_ITEM DBL_BUFFERED              8 UINT "Flag indicating Table has a dedicated inactive buffer."
+  APPEND_ITEM NAME                    320 STRING "Processor specific table name."
+  APPEND_ITEM LAST_FILE_LOADED        512 STRING "Filename of last file loaded into table."
+  APPEND_ITEM OWNER_APP_NAME          176 STRING "Name of owning application."
+  APPEND_ITEM CRITICAL                  8 UINT "Indicates whether table is Critical or not."
+  APPEND_ITEM BYTE_ALIGN_4              8 UINT "Spare byte to maintain byte alignment."

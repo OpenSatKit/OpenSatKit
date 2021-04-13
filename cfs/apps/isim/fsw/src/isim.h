@@ -215,9 +215,10 @@ void ISIM_ResetStatus(void);
 **
 ** Get pointer to Isim's table data
 **
-** Note:
+** Notes:
 **  1. This function must match the ISIMTBL_GetTblPtr definition.
 **  2. Supplied as a callback to IsimTbl.
+**
 */
 const ISIMTBL_Struct* ISIM_GetTblPtr(void);
 
@@ -227,9 +228,10 @@ const ISIMTBL_Struct* ISIM_GetTblPtr(void);
 **
 ** Load data into Isim's table.
 **
-** Note:
+** Notes:
 **  1. This function must match the ISIMTBL_LoadTblFunc definition.
 **  2. Supplied as a callback to IsimTbl.
+**
 */
 boolean ISIM_LoadTbl (ISIMTBL_Struct* NewTbl);
 
@@ -239,9 +241,10 @@ boolean ISIM_LoadTbl (ISIMTBL_Struct* NewTbl);
 **
 ** Load data into Isim's table.
 **
-** Note:
+** Notes:
 **  1. This function must match the ISIMTBL_LoadEntryFunc definition.
 **  2. Supplied as a callback to IsimTbl.
+**
 */
 boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData);
 
@@ -251,13 +254,14 @@ boolean ISIM_LoadTblEntry (uint16 ObjId, void* ObjData);
 **
 ** Power on/off/reset science instrument.
 **
-** Note:
+** Notes:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-^^  2, Use separate command function codes & functions as opposed to one 
+**  2. Use separate command function codes & functions as opposed to one 
 **     command with a parameter that would need validation
 **  3. Reset allows an intermediate level of initialization to be simulated
 **     that allows some system state to persist across the reset. For
 **     science data may be allowed to resume immediately after a reset.
+**
 */
 boolean ISIM_PwrOnInstrCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 boolean ISIM_PwrOffInstrCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
@@ -269,10 +273,11 @@ boolean ISIM_PwrResetInstrCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 **
 ** Start/stop science instrument data.
 **
-** Note:
+** Notes:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-^^  2, Use separate command function codes & functions as opposed to one 
+**  2. Use separate command function codes & functions as opposed to one 
 **     command with a parameter that would need validation
+**
 */
 boolean ISIM_StartSciCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 boolean ISIM_StopSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
@@ -283,10 +288,11 @@ boolean ISIM_StopSciCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 **
 ** Set/clear fault state.
 **
-** Note:
+** Notes:
 **  1. This function must comply with the CMDMGR_CmdFuncPtr definition
-^^  2, Use separate command function codes & functions as opposed to one 
+**  2. Use separate command function codes & functions as opposed to one 
 **     command with a parameter that would need validation
+**
 */
 boolean ISIM_SetFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 boolean ISIM_ClearFaultCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);

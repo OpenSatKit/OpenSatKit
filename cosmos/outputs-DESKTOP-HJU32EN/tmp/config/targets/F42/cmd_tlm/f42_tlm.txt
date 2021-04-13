@@ -1,0 +1,143 @@
+
+    
+TELEMETRY F42 HK_TLM_PKT LITTLE_ENDIAN "F42 Housekeeping Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x09D0 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+
+  APPEND_ITEM CMD_VALID_COUNT 16 UINT "Valid Command Count"
+  APPEND_ITEM CMD_ERROR_COUNT 16 UINT "Error Command Count"
+  APPEND_ITEM LAST_TBL_ACTION  8 UINT "Last table action: 1=Register, 2=Load, 3=Dump"
+  APPEND_ITEM LAST_TBL_STATUS  8 UINT "Last table action status: 0=Undefined, 1=Invalid, 2=Valid"
+
+  APPEND_ITEM CTRL_EXEC_COUNT 32 UINT "Controller Execution Count"
+  APPEND_ITEM CTRL_MODE       16 UINT "Control Mode"
+    STATE Init 1
+    STATE TBD  2
+  APPEND_ITEM OVR_SUN_VALID   16 UINT "SunValid override"
+    STATE USE_42_SIM    1
+    STATE OVR_TO_VALID  2 
+    STATE OVR_TO_INVLD  3 
+
+    
+TELEMETRY F42 CONTROL_PKT LITTLE_ENDIAN "F42 Controller Packet"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x09D1 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+
+  APPEND_ITEM WBN_1       32 FLOAT "wbn[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WBN_2       32 FLOAT "wbn[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WBN_3       32 FLOAT "wbn[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM WLN_1       32 FLOAT "wln[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WLN_2       32 FLOAT "wln[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WLN_3       32 FLOAT "wln[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM QBR_1       32 FLOAT "qbr[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_2       32 FLOAT "qbr[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_3       32 FLOAT "qbr[2]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM QBR_4       32 FLOAT "qbr[3]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM THERR_X   32 FLOAT "CfsCtrl.therr[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM THERR_Y   32 FLOAT "CfsCtrl.therr[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM THERR_Z   32 FLOAT "CfsCtrl.therr[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM WERR_X   32 FLOAT "CfsCtrl.werr[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WERR_Y   32 FLOAT "CfsCtrl.werr[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM WERR_Z   32 FLOAT "CfsCtrl.werr[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM HVB_X       32 FLOAT "Hvb[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM HVB_Y       32 FLOAT "Hvb[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM HVB_Z       32 FLOAT "Hvb[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM SVB_X       32 FLOAT "svb[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM SVB_Y       32 FLOAT "svb[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM SVB_Z       32 FLOAT "svb[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM TRQ_CMD_X   32 FLOAT "Tcmd[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM TRQ_CMD_Y   32 FLOAT "Tcmd[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM TRQ_CMD_Z   32 FLOAT "Tcmd[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM MOM_CMD_X   32 FLOAT "Mcmd[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM MOM_CMD_Y   32 FLOAT "Mcmd[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM MOM_CMD_Z   32 FLOAT "Mcmd[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM SA_GIM_CMD  32 FLOAT "Gimcmd[0].Ang[0]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM GPS_VALID    8 UINT  "Valid GPS measurements"
+  APPEND_ITEM ST_VALID     8 UINT  "Valid star tracker quaternion"
+  APPEND_ITEM SUN_VALID    8 UINT  "Valid CSS/FSS sun measurement"
+  APPEND_ITEM SPARE_8      8 UINT  "Word align pad"
+
+
+TELEMETRY F42 CONTROL_GAINS_PKT LITTLE_ENDIAN "F42 Controller Gains"
+  
+    APPEND_ID_ITEM    CCSDS_STREAMID 16 UINT 0x09D2 "Packet Identification"  BIG_ENDIAN
+      FORMAT_STRING  "0x%04X"
+    APPEND_ITEM       CCSDS_SEQUENCE 16 UINT "Packet Sequence Counter"                    BIG_ENDIAN
+    APPEND_ITEM       CCSDS_LENGTH   16 UINT "Packet Length"                              BIG_ENDIAN
+    APPEND_ITEM       CCSDS_SECONDS  32 UINT "Tlm Secondary Header - Seconds"
+      #FORMAT_STRING "0x%04X"
+    APPEND_ITEM       CCSDS_SUBSECS  16 UINT "Tlm Secondary Header - Subseconds"
+      #FORMAT_STRING "0x%04X"
+  
+
+  APPEND_ITEM KP_X  32 FLOAT "Kp[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM KP_Y  32 FLOAT "Kp[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM KP_Z  32 FLOAT "Kp[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM KR_X  32 FLOAT "Kr[0]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM KR_Y  32 FLOAT "Kr[1]"
+    FORMAT_STRING "%.6f"
+  APPEND_ITEM KR_Z  32 FLOAT "Kr[2]"
+    FORMAT_STRING "%.6f"
+
+  APPEND_ITEM KUNL  32 FLOAT "Kunl"
+    FORMAT_STRING "%.6f"

@@ -93,7 +93,9 @@ typedef struct {
 
    /* 
    ** App Framework
-   */   
+   */ 
+   
+   INITBL_Class    IniTbl;
    CFE_SB_PipeId_t CmdPipe;
    CMDMGR_Class    CmdMgr;
    TBLMGR_Class    TblMgr;

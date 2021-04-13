@@ -32,5 +32,6 @@
 #define  KIT_TO_HK_TLM_MID        (0x0F20)
 #define  KIT_TO_PKT_TBL_TLM_MID   (0x0F21)
 #define  KIT_TO_DATA_TYPE_TLM_MID (0x0F22)
+#define  KIT_TO_EVS_LOG_TLM_MID   (0x0F23)
 
 #endif /*_kit_to_msgids_*/

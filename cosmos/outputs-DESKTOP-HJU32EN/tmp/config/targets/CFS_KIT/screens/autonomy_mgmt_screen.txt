@@ -1,0 +1,177 @@
+###############################################################################
+# Autonomy Management Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Autonomy Management"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+HORIZONTALBOX "Stored Command(SC) App - Relative Time Sequences(RTS) "
+  MATRIXBYCOLUMNS 4
+    BUTTON 'Start RTS'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "START_RTS")'
+    BUTTON 'Stop RTS'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "STOP_RTS")'
+    BUTTON 'Enable RTS'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "ENABLE_RTS")'
+    BUTTON 'Disable RTS'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "DISABLE_RTS")'
+    BUTTON 'Start Group'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "START_GROUP")'
+    BUTTON 'Stop Group'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "STOP_GROUP")'
+    BUTTON 'Enable Group'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "ENABLE_GROUP")'
+    BUTTON 'Disable Group' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "DISABLE_GROUP")'
+    LABEL "   Cmd Valid Cnt"
+    VALUE SC HK_TLM_PKT CMD_VALID_COUNT
+    LABEL "   Cmd Error Cnt"
+    VALUE SC HK_TLM_PKT CMD_ERROR_COUNT
+  END # Matrix
+END # Box      
+
+VERTICALBOX "RTS Status (Enabled,Executing)" 4
+  
+  MATRIXBYCOLUMNS 9 4
+
+    LABEL "     "
+    LABEL "      1"
+    LABEL "      2"
+    LABEL "      3"
+    LABEL "      4"
+    LABEL "      5"
+    LABEL "      6"
+    LABEL "      7"
+    LABEL "      8"
+
+    LABEL "Enabled"
+    VALUE SC HK_TLM_PKT RTS_1_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_2_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_3_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_4_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_5_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_6_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_7_DIS WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_8_DIS WITH_UNITS 5
+
+    LABEL "Run State"
+    VALUE SC HK_TLM_PKT RTS_1_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_2_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_3_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_4_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_5_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_6_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_7_EXE WITH_UNITS 5
+    VALUE SC HK_TLM_PKT RTS_8_EXE WITH_UNITS 5
+  END # Matrix
+
+# Used for 64 RTS
+#  MATRIXBYCOLUMNS 7
+#
+#    LABEL "        "
+#    LABEL "     RTS"
+#    LABEL "  64 .. 49"
+#    LABEL "  48 .. 33"
+#    LABEL "  32 .. 17"
+#    LABEL "  16 .. 1"
+#    LABEL "        "
+#
+#    LABEL "        "
+#    LABEL "EXECUTING"
+#    FORMATVALUE SC HK_TLM_PKT RTS_W4_EXE_STATUS %04X FORMATTED 6
+#    FORMATVALUE SC HK_TLM_PKT RTS_W3_EXE_STATUS %04X FORMATTED 6
+#    FORMATVALUE SC HK_TLM_PKT RTS_W2_EXE_STATUS %04X FORMATTED 6
+#    FORMATVALUE SC HK_TLM_PKT RTS_W1_EXE_STATUS %04X FORMATTED 6
+#    LABEL "        "
+#  
+#    LABEL "        "
+#    LABEL "DISABLED"
+#    FORMATVALUE SC HK_TLM_PKT RTS_W4_DIS_STATUS %04X FORMATTED 6
+#    FORMATVALUE SC HK_TLM_PKT RTS_W3_DIS_STATUS %04X FORMATTED 6
+#    FORMATVALUE SC HK_TLM_PKT RTS_W2_DIS_STATUS %04X FORMATTED 6
+#    FORMATVALUE SC HK_TLM_PKT RTS_W1_DIS_STATUS %04X FORMATTED 6
+#    LABEL "        "
+#
+#  END # Matrix
+ 
+  HORIZONTALLINE
+  
+  MATRIXBYCOLUMNS 6
+ 
+    LABEL " Start Cnt"
+    FORMATVALUE SC HK_TLM_PKT NUM_RTS_ACTIVE %04u FORMATTED 6
+    LABEL " Start Err Cnt"
+    FORMATVALUE SC HK_TLM_PKT RTS_ACTIVE_ERR_CTR %04u FORMATTED 6
+    LABEL "  Next Time"
+    FORMATVALUE SC HK_TLM_PKT NEXT_RTS_TIME %08x FORMATTED 6
+    LABEL " Active Cnt"
+    FORMATVALUE SC HK_TLM_PKT NUM_RTS_ACTIVE %04u FORMATTED 6
+    LABEL " Next RTS Num"
+    FORMATVALUE SC HK_TLM_PKT RTS_NUMBER %04u FORMATTED 6
+    LABEL " RTS CMD Cnt"
+    FORMATVALUE SC HK_TLM_PKT RTS_CMD_CTR %06u FORMATTED 6
+    
+    LABEL " CMD Err Cnt"
+    FORMATVALUE SC HK_TLM_PKT RTS_CMD_ERR_CTR %04u FORMATTED 6
+    LABEL " Err RTS#"
+    FORMATVALUE SC HK_TLM_PKT LAST_RTS_ERR_SEQ %04u FORMATTED 6
+    LABEL " Err RTS Offset"
+    FORMATVALUE SC HK_TLM_PKT LAST_RTS_ERR_CMD %04u FORMATTED 6
+
+  END # Matrix
+END # Vertical Box
+
+VERTICALBOX "Limit Checker(LC) App"
+  MATRIXBYCOLUMNS 4
+    BUTTON 'Reset WP Stats'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "RESET_WP_STATS")'
+    BUTTON 'Reset AP Stats'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "RESET_AP_STATS")'
+    BUTTON 'Set AP State'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "SET_AP_STATE")'
+    BUTTON 'Set AP Prem Off' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "SET_AP_PERM_OFF")'
+    BUTTON 'Set App State'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/autonomy_mgmt_screen.rb"; autonomy_mgmt_send_cmd(self, "SET_APP_STATE")'
+    LABEL "        App State"
+    VALUE LC HK_TLM_PKT APP_STATE
+    LABEL "         "
+    LABEL "Cmd Valid Cnt"
+    VALUE LC HK_TLM_PKT CMD_VALID_COUNT
+    LABEL "Cmd Error Cnt"
+    VALUE LC HK_TLM_PKT CMD_ERROR_COUNT
+  END # Matrix
+
+  VERTICALBOX "Watch Points(WP) & Action Points(AP) Status" 4
+ 
+    HORIZONTAL
+       LABEL "  Watch Points (2-bits per WP)"
+       ARRAY LC HK_TLM_PKT WP_RESULTS 300 50 "%X" 8 FORMATTED
+    END
+    HORIZONTAL
+       LABEL "  Action Point (4-bits per AP)"
+       ARRAY LC HK_TLM_PKT AP_RESULTS 300 50 "%X" 8 FORMATTED
+    END
+
+  HORIZONTALLINE
+  
+  MATRIXBYCOLUMNS 4
+
+    LABEL "PASS RTS EXE Cnt"
+    VALUE LC HK_TLM_PKT PASSIVE_RTS_EXE_CNT
+    LABEL "RTS EXE Cnt"
+    VALUE LC HK_TLM_PKT RTS_EXE_CNT
+
+    LABEL "WPs in Use"
+    VALUE LC HK_TLM_PKT WPS_IN_USE
+    LABEL "WP MSG Mon Cnt"
+    VALUE LC HK_TLM_PKT MONITORED_MSG_CNT
+
+    LABEL "Active APs"
+    VALUE LC HK_TLM_PKT ACTIVE_APS
+    LABEL "AP Sample Cnt"
+    VALUE LC HK_TLM_PKT AP_SAMPLE_CNT
+  END # Matrix
+END # Vertical Box
+END # Vertical Box      
+
+HORIZONTALLINE
+
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

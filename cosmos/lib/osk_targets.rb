@@ -22,9 +22,7 @@ module Osk
 
       #~File.join(Cosmos::USERPATH, 'config', 'targets', target_name.to_s.upcase,'osk')
       folder_name = File.join(Osk::COSMOS_CFG_TARGET_DIR, target_name.to_s.upcase,'osk')
-      unless Dir.exist?(folder_name)
-         raise parser.error("Undefined target folder '#{folder_name}'.")
-      end
+      raise IOError.new("Undefined target folder '#{folder_name}'.") unless Dir.exist?(folder_name)
       path_filename = File.join(folder_name,"#{target_name.to_s.downcase}.json")
 
       begin

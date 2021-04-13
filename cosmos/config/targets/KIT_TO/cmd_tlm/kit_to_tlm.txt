@@ -5,6 +5,7 @@
   @HK_TLM_MID_STR        = "KIT_TO_HK_TLM_MID"
   @PKT_TBL_TLM_MID_STR   = "KIT_TO_PKT_TBL_TLM_MID"
   @DATA_TYPE_TLM_MID_STR = "KIT_TO_DATA_TYPE_TLM_MID"
+  @EVT_PLBK_TLM_MID_STR  = "KIT_TO_EVT_PLBK_TLM_MID"
   
   #TODO - Add data types pkt
   
@@ -26,7 +27,8 @@ TELEMETRY KIT_TO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Telemetry Output H
   APPEND_ITEM BYTES_PER_SEC        32 UINT  "Average bytes per second"
   APPEND_ITEM SOCKET_ID 16 UINT   "Socket identifier"
   APPEND_ITEM IP_ADDR 128 STRING  "IP Address string"
-
+  APPEND_ITEM EVT_PLBK_ENA          8 UINT  "Event message playbakc enabled"
+  APPEND_ITEM EVT_PLBK_HK_PERIOD    8 UINT  "Number of HK cycles between playback updates"
 
 TELEMETRY KIT_TO PKT_TLM_PKT <%= Osk::Cfg.processor_endian %> "Packet Table Entry Telemetry Packet"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @PKT_TBL_TLM_MID_STR) %>
@@ -43,3 +45,24 @@ TELEMETRY KIT_TO PKT_TLM_PKT <%= Osk::Cfg.processor_endian %> "Packet Table Entr
   APPEND_ITEM FILTER_PARAM_N  16 UINT  "N = Filter will pass this many packets"
   APPEND_ITEM FILTER_PARAM_X  16 UINT  "X = out of every group of this many packets"
   APPEND_ITEM FILTER_PARAM_O  16 UINT  "O = starting at this offset within the group"
+
+TELEMETRY KIT_TO EVT_PLBK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Event Log Playback Packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @EVT_PLBK_TLM_MID_STR) %>
+  APPEND_ITEM LOG_FILENAME 512 STRING  "Name of file when event service commanded to write the event log to a file"
+  APPEND_ITEM EVT_COUNT     16 UINT    "Number of events in log file being played back"
+  APPEND_ITEM PLBK_IDX      16 UINT    "Log file index of first event in this telemetry packet (note index loops back)"
+  
+ <% FswConfigParam::KIT_TO_EVT_PLBK_EVENTS_PER_TLM_MSG.times do |n|  %>
+    APPEND_ITEM EVENT<%=n%>_SECONDS    32 UINT   "System time seconds field"
+    APPEND_ITEM EVENT<%=n%>_SUBSECS    32 UINT   "System time subseconds field"
+    APPEND_ITEM EVENT<%=n%>_APP_NAME  160 STRING "Application name"
+    APPEND_ITEM EVENT<%=n%>_ID         16 UINT   "Identifier"
+    APPEND_ITEM EVENT<%=n%>_TYPE       16 UINT   "Message type"
+      STATE DEBUG  <%= Fsw::Const::CFE_EVS_DEBUG %>
+      STATE INFO   <%= Fsw::Const::CFE_EVS_INFORMATION %>
+      STATE ERROR  <%= Fsw::Const::CFE_EVS_ERROR %>      RED
+      STATE CRIT   <%= Fsw::Const::CFE_EVS_CRITICAL %>   RED
+    APPEND_ITEM EVENT<%=n%>_MESSAGE   976 STRING "Message text string"
+    APPEND_ITEM EVENT<%=n%>_PAD16      16 UINT   "32-bit align pad"
+    
+  <% end %>

@@ -186,11 +186,18 @@ boolean F42_ADP_SetCtrlModeCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
    const F42_ADP_SetCtrlModeCmdPkt *SetCtrlModeCmd = (const F42_ADP_SetCtrlModeCmdPkt *) MsgPtr;
    boolean  RetStatus = FALSE;
 
+   if ( SetCtrlModeCmd->NewMode == F42_ADP_CTRL_MODE_DEMO) {
+   
+      RetStatus = TRUE;
+      CFE_EVS_SendEvent(F42_ADP_DEMO_CTRL_MODE_EID, CFE_EVS_CRITICAL,
+                       "HS demo control mode command received. Sending event message %d. Control mode unaffected.", F42_ADP_DEMO_CTRL_MODE_EID);
+   }
+
    if ( SetCtrlModeCmd->NewMode == F42_ADP_CTRL_MODE_INIT) {
      
-     //TODO InitFSW(&(F42Adp->Fsw));
-     RetStatus = TRUE;
-     CFE_EVS_SendEvent(F42_ADP_SET_CTRL_MODE_EID, CFE_EVS_INFORMATION,
+      //TODO InitFSW(&(F42Adp->Fsw));
+      RetStatus = TRUE;
+      CFE_EVS_SendEvent(F42_ADP_SET_CTRL_MODE_EID, CFE_EVS_INFORMATION,
                        "Set control mode to init. Commanded Mode = %d",SetCtrlModeCmd->NewMode);
       CFE_EVS_SendEvent(F42_ADP_SET_CTRL_MODE_EID, CFE_EVS_INFORMATION,
                         "**** OSK v2.3: This command has no effect with the current 42 standalone controller ****"); 

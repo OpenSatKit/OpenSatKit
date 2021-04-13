@@ -34,17 +34,20 @@ def cfe_evs_scr_cmd(screen, cmd)
       spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_EVS #{scr_name}'")
  
    when "FILE"
-      # Set default name to first combo option to simplify logic and no error checking
-      cmd_name = "WRITE_APP_INFO_TO_FILE"
-      bin_filename = FswConfigParam::CFE_EVS_DEFAULT_APP_DATA_FILE
-      tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_EVS_APP_INFO
-      if screen.get_named_widget("file").text == "LOCAL_LOG"
+      file_selection = screen.get_named_widget("file").text
+      case file_selection
+      when "App Event Info"
+         cmd_name = "WRITE_APP_INFO_TO_FILE"
+         bin_filename = FswConfigParam::CFE_EVS_DEFAULT_APP_DATA_FILE
+         tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_EVS_APP_INFO      
+      when "Local Event Log" 
          cmd_name = "WRITE_LOG_TO_FILE"
          bin_filename = FswConfigParam::CFE_EVS_DEFAULT_LOG_FILE
          tbl_mgr_filename = Osk::TBL_MGR_DEF_CFE_EVS_LOG
+      else
+         raise "Error in Display File options. Drop down selection '#{file_selection}' is not defined in cfe_evs_scr_cmd()"
       end
       Osk::Ops::send_flt_bin_file_cmd("CFE_EVS", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
-      #Osk::Ops::launch_tbl_mgr(Osk::REL_SRV_DIR, bin_filename, tbl_mgr_filename)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text

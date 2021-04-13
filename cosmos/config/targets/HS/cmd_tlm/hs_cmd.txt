@@ -13,33 +13,33 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_e
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Resets the HS housekeeping counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
-COMMAND HS ENABLE_APP_MON <%= Osk::Cfg.processor_endian %> "Enables the Critical Applications Monitor"
+COMMAND HS ENA_APP_MON <%= Osk::Cfg.processor_endian %> "Enables the Critical Applications Monitor"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 0) %>
 
-COMMAND HS DISABLE_APP_MON <%= Osk::Cfg.processor_endian %> "Disables the Critical Applications Monitor"
+COMMAND HS DIS_APP_MON <%= Osk::Cfg.processor_endian %> "Disables the Critical Applications Monitor"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 0) %>
 
-COMMAND HS ENABLE_EVENT_MON <%= Osk::Cfg.processor_endian %> "Enables the Critical Events Monitor"
+COMMAND HS ENA_EVENT_MON <%= Osk::Cfg.processor_endian %> "Enables the Critical Events Monitor"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 0) %>
 
-COMMAND HS DISABLE_EVENT_MON <%= Osk::Cfg.processor_endian %> "Disables the Critical Events Monitor"
+COMMAND HS DIS_EVENT_MON <%= Osk::Cfg.processor_endian %> "Disables the Critical Events Monitor"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
 
-COMMAND HS ENABLE_ALIVENESS <%= Osk::Cfg.processor_endian %> "Enables the Aliveness Indicator UART output"
+COMMAND HS ENA_ALIVENESS <%= Osk::Cfg.processor_endian %> "Enables the Aliveness Indicator UART output"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
 
-COMMAND HS DISABLE_ALIVENESS <%= Osk::Cfg.processor_endian %> "Disables the Aliveness Indicator UART output"
+COMMAND HS DIS_ALIVENESS <%= Osk::Cfg.processor_endian %> "Disables the Aliveness Indicator UART output"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>
 
-COMMAND HS RESET_RESETS_PERFORMED <%= Osk::Cfg.processor_endian %> "Resets the count of HS performed resets maintained by HS"
+COMMAND HS CLR_CPU_RESET_CNT <%= Osk::Cfg.processor_endian %> "Resets the count of HS performed resets maintained by HS"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
 
-COMMAND HS SET_MAX_RESETS <%= Osk::Cfg.processor_endian %> "Sets the max allowable count of processor resets to the provided value"
+COMMAND HS SET_MAX_CPU_RESETS <%= Osk::Cfg.processor_endian %> "Sets the max allowable processor resets before watchdog is intentionally not serviced which will cause a watchdog reset"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 9, 2) %>
-  APPEND_PARAMETER MAXRESETS 16 UINT MIN_UINT16 MAX_UINT16 0 " "
+  APPEND_PARAMETER MAX_RESETS 16 UINT MIN_UINT16 MAX_UINT16 0 " "
 
-COMMAND HS ENABLE_CPU_HOG <%= Osk::Cfg.processor_endian %> "Enables the CPU Hogging Indicator Event Message"
+COMMAND HS ENA_CPU_HOG <%= Osk::Cfg.processor_endian %> "Enables the CPU Hogging Indicator Event Message"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 10, 0) %>
 
-COMMAND HS DISABLE_CPU_HOG <%= Osk::Cfg.processor_endian %> "Disables the CPU Hogging Indicator Event Message"
+COMMAND HS DIS_CPU_HOG <%= Osk::Cfg.processor_endian %> "Disables the CPU Hogging Indicator Event Message"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 0) %>

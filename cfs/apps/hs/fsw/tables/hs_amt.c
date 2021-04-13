@@ -64,7 +64,7 @@ HS_AMTEntry_t      HS_Default_AppMon_Tbl[HS_MAX_MONITORED_APPS] =
 /*   2 */ { "CFE_TIME",                0,       10,            HS_AMT_ACT_NOACT },
 /*   3 */ { "CFE_TBL",                 0,       10,            HS_AMT_ACT_NOACT },
 /*   4 */ { "CFE_SB",                  0,       10,            HS_AMT_ACT_NOACT },
-/*   5 */ { "",                        0,       10,            HS_AMT_ACT_NOACT },
+/*   5 */ { "F42",                     0,        8,            HS_AMT_ACT_EVENT }, //osk
 /*   6 */ { "",                        0,       10,            HS_AMT_ACT_NOACT },
 /*   7 */ { "",                        0,       10,            HS_AMT_ACT_NOACT },
 /*   8 */ { "",                        0,       10,            HS_AMT_ACT_NOACT },

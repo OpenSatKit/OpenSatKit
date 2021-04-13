@@ -2,7 +2,7 @@
 ** Purpose: Define cFS performance ID's used by Instrument Simulator App
 **
 ** Notes:
-**   None
+**   1. See JSON init file.
 **
 ** License:
 **   Template written by David McComas and licensed under the GNU
@@ -16,6 +16,5 @@
 #ifndef _isim_perfids_
 #define _isim_perfids_
 
-#define  ISIM_MAIN_PERF_ID   127
 
 #endif /* _isim_perfids_ */

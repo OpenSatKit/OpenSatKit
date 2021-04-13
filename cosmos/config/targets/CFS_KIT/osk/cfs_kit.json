@@ -56,6 +56,7 @@
    { "MQTT":         { "load-on-init": false }},
    { "OSK_C_DEMO":   { "load-on-init": false }},
    { "OSK_CPP_DEMO": { "load-on-init": false }},
+   { "SCSIM":        { "load-on-init": false }},
    { "TFTP":         { "load-on-init": true  }}
    
    ]

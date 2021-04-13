@@ -493,6 +493,8 @@ void HS_MonitorUtilization(void)
 
     HS_AppData.UtilCpuAvg  = (CombinedUtil / HS_UTIL_AVERAGE_NUM_INTERVAL);
     HS_AppData.UtilCpuPeak = PeakUtil;
+    HS_AppData.UtilCpuAvg  = 0x0A0B0C0D; //osk
+    HS_AppData.UtilCpuPeak = 0x01020304; //osk
 
     return;
 

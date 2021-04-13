@@ -64,8 +64,8 @@ typedef struct {
    uint16  PutFileCnt;
    uint16  BlockNum;
 
-   char    SrcFilename[TFTP_FILE_NAME_LEN];
-   char    DestFilename[TFTP_FILE_NAME_LEN];
+   char    SrcFilename[TFTP_FILENAME_LEN];
+   char    DestFilename[TFTP_FILENAME_LEN];
 
    uint8   State;
    uint8   NetIFid; /* Peer for file transfer */

@@ -1,0 +1,34 @@
+<%
+
+  require 'osk_config' 
+
+  @APP_PREFIX_STR        = "HS"
+  @MAX_EXEC_CNT_SLOTS    = "HS_MAX_EXEC_CNT_SLOTS"
+  @EXEC_CNT_TBL_NAME_STR = "HS_EXEC_CNT_TBL_NAME"
+
+%>
+TABLE "HS Execution Counter" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Execution Counters"
+  <%= Osk::Cfg.tbl_hdr(@APP_PREFIX_STR, @EXEC_CNT_TBL_NAME_STR) %>
+
+  #
+  # typedef struct {
+  #   char            ResourceName[OS_MAX_API_NAME];     /**< \brief Name of resource being monitored */
+  #   uint32          NullTerm;                          /**< \brief Buffer of nulls to terminate string */
+  #   uint32          ResourceType;                      /**< \brief Type of execution counter */
+  # } HS_XCTEntry_t;
+  #
+  # HS_XCTEntry_t  HS_Default_ExeCount_Tbl[HS_MAX_EXEC_CNT_SLOTS]
+  #
+  
+  <%
+    name_bits = Osk::Cfg.get_fsw_cfg_int_param("OSAL", "OS_MAX_API_NAME") * 8
+    max_counter_slots = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @MAX_EXEC_CNT_SLOTS)
+    append_items = ""
+    for i in 0..(max_counter_slots-1)
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_RESOURCE_NAME\" #{name_bits} STRING \"UNDEF\"  \"Name of resource being monitored\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_NULL_TERM\"      32 UINT 0 MAX_UINT32 0        \"Buffer of nulls to terminate string\"" << "\n"
+      append_items << "APPEND_PARAMETER \"ENTRY#{i}_RESOURCE_TYPE\"  32 UINT 0 MAX_UINT32 0        \"Type of execution counter\"" << "\n"
+    end # slots
+  %>
+  <%= append_items %>
+  

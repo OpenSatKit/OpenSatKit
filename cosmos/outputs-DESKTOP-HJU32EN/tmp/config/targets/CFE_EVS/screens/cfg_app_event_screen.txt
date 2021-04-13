@@ -1,0 +1,42 @@
+###############################################################################
+# Event Service Configuration Screen
+#
+# Notes:
+#   1. Configuring events during application development is common so make
+#      it easy.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+     
+TITLE "Configure App Event Messages"
+SETTING BACKCOLOR 162 181 205
+SETTING TEXTCOLOR black
+
+VERTICALBOX "Select Events to be enabled/disabled"
+   
+   MATRIXBYCOLUMNS 2
+      LABEL 'App Name'
+      NAMED_WIDGET app_name TEXTFIELD 64 "APP_NAME"
+   END # Matrix
+   
+   NAMED_WIDGET ena_dis COMBOBOX Enable Disable
+   
+   NAMED_WIDGET cfg_debug    CHECKBUTTON 'Debug'
+   NAMED_WIDGET cfg_info     CHECKBUTTON 'Information'
+   NAMED_WIDGET cfg_error    CHECKBUTTON 'Error'
+   NAMED_WIDGET cfg_critical CHECKBUTTON 'Critical'
+   
+END # Vertical
+
+HORIZONTALLINE
+
+MATRIXBYCOLUMNS 2      
+   BUTTON 'Send'   'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfg_app_event_screen.rb"; cfg_app_event_cmd(self, "CONFIG")'
+   BUTTON 'Cancel' 'clear("CFE_EVS CFG_APP_EVENT_SCREEN")'
+End # Matrix

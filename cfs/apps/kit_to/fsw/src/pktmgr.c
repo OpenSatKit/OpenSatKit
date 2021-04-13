@@ -217,11 +217,6 @@ boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl)
          
          ++PktCnt;
          Status = SubscribeNewPkt(&(PktMgr->Tbl.Pkt[AppId])); 
-         /*~~
-         Status = CFE_SB_SubscribeEx(PktMgr->Tbl.Pkt[AppId].StreamId,
-                                     PktMgr->TlmPipe,PktMgr->Tbl.Pkt[AppId].Qos,
-                                     PktMgr->Tbl.Pkt[AppId].BufLim);
-         */
 
          if(Status != CFE_SUCCESS) {
             

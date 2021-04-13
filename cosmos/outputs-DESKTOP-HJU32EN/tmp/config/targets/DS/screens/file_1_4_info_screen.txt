@@ -1,0 +1,101 @@
+###############################################################################
+# Data Storage Files 1..4 Information Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General 
+#   Public License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Data Storage Files 1..4 Information"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+BUTTON 'Send File Info' 'require "#{Cosmos::USERPATH}/lib/osk_flight.rb"; Osk::flight.send_cmd("DS","SEND_FILE_INFO")'
+
+VERTICALBOX "File 1" 10
+  HORIZONTAL 5
+    LABEL "Name"
+    FORMATVALUE DS FILE_INFO_PKT FILE1_NAME %-62s FORMATTED 36
+  END
+  MATRIXBYCOLUMNS 4
+    LABEL "Enabled"
+    VALUE DS FILE_INFO_PKT FILE1_ENABLE 
+    LABEL "Open"
+    VALUE DS FILE_INFO_PKT FILE1_OPEN 
+    LABEL "Seq Count"
+    VALUE DS FILE_INFO_PKT FILE1_SEQ_CNT 
+    LABEL "Age (secs)"
+    VALUE DS FILE_INFO_PKT FILE1_AGE 
+    LABEL "Size (bytes)"
+    VALUE DS FILE_INFO_PKT FILE1_SIZE 
+    LABEL "Rate"
+    VALUE DS FILE_INFO_PKT FILE1_RATE 
+  END # Matrix
+END # Vertical File 1
+
+VERTICALBOX "File 2" 10
+  HORIZONTAL 5
+    LABEL "Name"
+    FORMATVALUE DS FILE_INFO_PKT FILE2_NAME %-62s FORMATTED 36
+  END
+  MATRIXBYCOLUMNS 4
+    LABEL "Enabled"
+    VALUE DS FILE_INFO_PKT FILE2_ENABLE 
+    LABEL "Open"
+    VALUE DS FILE_INFO_PKT FILE2_OPEN 
+    LABEL "Seq Count"
+    VALUE DS FILE_INFO_PKT FILE2_SEQ_CNT 
+    LABEL "Age (secs)"
+    VALUE DS FILE_INFO_PKT FILE2_AGE 
+    LABEL "Size (bytes)"
+    VALUE DS FILE_INFO_PKT FILE2_SIZE 
+    LABEL "Rate"
+    VALUE DS FILE_INFO_PKT FILE2_RATE 
+  END # Matrix
+END # Vertical File 2
+
+VERTICALBOX "File 3" 10
+  HORIZONTAL 5
+    LABEL "Name"
+    FORMATVALUE DS FILE_INFO_PKT FILE3_NAME %-62s FORMATTED 36
+  END
+  MATRIXBYCOLUMNS 4
+    LABEL "Enabled"
+    VALUE DS FILE_INFO_PKT FILE3_ENABLE 
+    LABEL "Open"
+    VALUE DS FILE_INFO_PKT FILE3_OPEN 
+    LABEL "Seq Count"
+    VALUE DS FILE_INFO_PKT FILE3_SEQ_CNT 
+    LABEL "Age (secs)"
+    VALUE DS FILE_INFO_PKT FILE3_AGE 
+    LABEL "Size (bytes)"
+    VALUE DS FILE_INFO_PKT FILE3_SIZE 
+    LABEL "Rate"
+    VALUE DS FILE_INFO_PKT FILE3_RATE 
+  END # Matrix
+END # Vertical File 3
+
+VERTICALBOX "File 4" 10
+  HORIZONTAL 5
+    LABEL "Name"
+    FORMATVALUE DS FILE_INFO_PKT FILE4_NAME %-62s FORMATTED 36
+  END
+  MATRIXBYCOLUMNS 4
+    LABEL "Enabled"
+    VALUE DS FILE_INFO_PKT FILE4_ENABLE 
+    LABEL "Open"
+    VALUE DS FILE_INFO_PKT FILE4_OPEN 
+    LABEL "Seq Count"
+    VALUE DS FILE_INFO_PKT FILE4_SEQ_CNT 
+    LABEL "Age (secs)"
+    VALUE DS FILE_INFO_PKT FILE4_AGE 
+    LABEL "Size (bytes)"
+    VALUE DS FILE_INFO_PKT FILE4_SIZE 
+    LABEL "Rate"
+    VALUE DS FILE_INFO_PKT FILE4_RATE 
+  END # Matrix
+END # Vertical File 4

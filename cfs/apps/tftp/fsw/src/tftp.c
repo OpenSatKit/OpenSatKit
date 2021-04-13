@@ -196,11 +196,11 @@ boolean TFTP_PutFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr) {
 
    Tftp->TransferReqPkt.CmdCode = TFTP_PUT_CMD_CODE;
 
-   strncpy(Tftp->TransferReqPkt.SrcFilename, PutFileCmd->SrcFilename, TFTP_FILE_NAME_LEN);
-   Tftp->TransferReqPkt.SrcFilename[TFTP_FILE_NAME_LEN-1] = '\0';
+   strncpy(Tftp->TransferReqPkt.SrcFilename, PutFileCmd->SrcFilename, TFTP_FILENAME_LEN);
+   Tftp->TransferReqPkt.SrcFilename[TFTP_FILENAME_LEN-1] = '\0';
 
-   strncpy(Tftp->TransferReqPkt.DestFilename, PutFileCmd->DestFilename, TFTP_FILE_NAME_LEN);
-   Tftp->TransferReqPkt.DestFilename[TFTP_FILE_NAME_LEN-1] = '\0';
+   strncpy(Tftp->TransferReqPkt.DestFilename, PutFileCmd->DestFilename, TFTP_FILENAME_LEN);
+   Tftp->TransferReqPkt.DestFilename[TFTP_FILENAME_LEN-1] = '\0';
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
@@ -228,11 +228,11 @@ boolean TFTP_GetFileCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    Tftp->TransferReqPkt.CmdCode = TFTP_GET_CMD_CODE;
 
-   strncpy(Tftp->TransferReqPkt.SrcFilename, GetFileCmd->SrcFilename, TFTP_FILE_NAME_LEN);
-   Tftp->TransferReqPkt.SrcFilename[TFTP_FILE_NAME_LEN-1] = '\0';
+   strncpy(Tftp->TransferReqPkt.SrcFilename, GetFileCmd->SrcFilename, TFTP_FILENAME_LEN);
+   Tftp->TransferReqPkt.SrcFilename[TFTP_FILENAME_LEN-1] = '\0';
 
-   strncpy(Tftp->TransferReqPkt.DestFilename, GetFileCmd->DestFilename, TFTP_FILE_NAME_LEN);
-   Tftp->TransferReqPkt.DestFilename[TFTP_FILE_NAME_LEN-1] = '\0';
+   strncpy(Tftp->TransferReqPkt.DestFilename, GetFileCmd->DestFilename, TFTP_FILENAME_LEN);
+   Tftp->TransferReqPkt.DestFilename[TFTP_FILENAME_LEN-1] = '\0';
 
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &Tftp->TransferReqPkt);
@@ -511,8 +511,8 @@ static boolean DecodeRequestStrings(uint8 *Buf, uint16 BufLen,
    uint16   FilenameLen;
    boolean  DecodedStrings = FALSE;
 
-   strncpy(Filename, FilenameBufPtr, TFTP_FILE_NAME_LEN-1);
-   Filename[TFTP_FILE_NAME_LEN-1] = '\0';
+   strncpy(Filename, FilenameBufPtr, TFTP_FILENAME_LEN-1);
+   Filename[TFTP_FILENAME_LEN-1] = '\0';
    FilenameLen = strlen(Filename);
 
    /* Sanity length check, not a precise check */

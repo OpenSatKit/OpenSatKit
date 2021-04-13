@@ -1,0 +1,100 @@
+###############################################################################
+# Memory Management Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Memory Management"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX "Memory Manager"
+  MATRIXBYCOLUMNS 4
+    BUTTON 'Lookup Symbol'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "LOOKUP_SYMBOL")'
+    BUTTON 'Peek Address'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "PEEK_MEM")'
+    BUTTON 'Poke Address'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "POKE_MEM")'
+    BUTTON 'Dump to Event'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "DUMP_TO_EVENT")'
+    BUTTON 'Fill Block'       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "FILL_BLOCK")'
+    BUTTON 'Load from File'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "LOAD_FROM_FILE")'
+    BUTTON 'Dump to File'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "DUMP_TO_FILE")'
+    BUTTON 'Manage Checksums' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "TODO")'
+    SETTING BACKCOLOR 128 128 128
+  END # Matrix
+END # Vertical Memory Management
+
+HORIZONTAL
+  
+  VERTICAL
+    VERTICALBOX "Memory Dwell"
+      MATRIXBYCOLUMNS 2
+      BUTTON 'Start Dwell'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "START_DWELL")'
+      BUTTON 'Stop Dwell'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "STOP_DWELL")'
+      BUTTON 'Jam Dwell Tbl' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "JAM_DWELL_TBL")'
+      BUTTON 'Dwell Tbl 1 Pkt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "DWELL_TLM_PKT")'
+      END # Matrix
+    End # Vertical Box
+    VERTICALBOX "Memory Dwell Housekeeping"
+      MATRIXBYCOLUMNS 2
+      LABEL "Cmd Valid Cnt"
+      VALUE MD HK_TLM_PKT CMD_VALID_COUNT
+      LABEL "Cmd Error Cnt"
+      VALUE MD HK_TLM_PKT CMD_ERROR_COUNT
+      LABEL "Enable Mask"
+      FORMATVALUE MD HK_TLM_PKT DWELL_ENA_MASK %04X FORMATTED 12
+      END # Matrix
+    End # HK Vertical Box
+  END # Vertical Left
+  
+  VERTICALBOX "Memory Manager Status"
+    MATRIXBYCOLUMNS 2
+      LABEL "Cmd Valid Cnt"
+      VALUE MM HK_TLM_PKT CMD_VALID_COUNT
+      LABEL "Cmd Error Cnt"
+      VALUE MM HK_TLM_PKT CMD_ERROR_COUNT
+      LABEL "Last Action"
+      VALUE MM HK_TLM_PKT LAST_ACTION
+      LABEL "Mem Type"
+      VALUE MM HK_TLM_PKT MEM_TYPE
+      LABEL "Address"
+      FORMATVALUE MM HK_TLM_PKT ADDRESS %08X FORMATTED 12
+      LABEL "Fill Pattern"
+      FORMATVALUE MM HK_TLM_PKT FILL_PATTERN %08X FORMATTED 12
+      LABEL "Bytes Processed"
+      VALUE MM HK_TLM_PKT BYTES_PROCESSED
+    END # Matrix 
+  End # Vertical Right
+
+END # Horizontal
+
+LABEL "Last Memory Manager File"
+FORMATVALUE MM HK_TLM_PKT FILENAME %-128s FORMATTED 64
+ 
+VERTICALBOX "File Transfer"
+  MATRIXBYCOLUMNS 2
+    # Use table_mgmt because table file needs to be manipulated after transferred
+    BUTTON 'Put File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "PUT_FILE")'
+    BUTTON 'Get File' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_screen.rb"; memory_mgmt_send_cmd(self, "GET_FILE")'
+    LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
+    LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
+  END # Matrix
+  LABEL 'Ground Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET gnd_work_dir TEXTFIELD 256 /mnt/hgfs/OpenSatKit/cosmos/cfs_kit/file_server
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+  LABEL 'Flight Working Directory'
+        SETTING HEIGHT 20
+  NAMED_WIDGET flt_work_dir TEXTFIELD 256 /cf
+        #SETTING WIDTH 100
+        SETTING HEIGHT 20
+END # Vertical File Transfer
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

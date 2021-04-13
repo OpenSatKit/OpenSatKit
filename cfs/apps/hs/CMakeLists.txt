@@ -4,6 +4,7 @@ project(CFS_HS C)
 include_directories(fsw/src)
 include_directories(fsw/mission_inc)
 include_directories(fsw/platform_inc)
+include_directories(${cs_MISSION_DIR}/fsw/src)
 
 aux_source_directory(fsw/src APP_SRC_FILES)
 aux_source_directory(fsw/tables APP_TABLE_FILES)

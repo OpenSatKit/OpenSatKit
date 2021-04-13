@@ -15,7 +15,7 @@
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING LABELVALUELIMITSBAR COLORBLIND TRUE
 VERTICAL
-  NAMED_WIDGET heading TITLE "Open Sat Kit"
+  NAMED_WIDGET heading TITLE "OpenSatKit"
   SETTING BACKCOLOR 162 181 205
   SETTING TEXTCOLOR black
   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -85,7 +85,7 @@ VERTICAL
         VERTICALBOX 'Config System'          
         MATRIXBYCOLUMNS 2
           BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
-          NAMED_WIDGET config_sys COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events"
+          NAMED_WIDGET config_sys COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
         END # Matrix
         SETTING BACKCOLOR 162 181 205
         End # Config System Box

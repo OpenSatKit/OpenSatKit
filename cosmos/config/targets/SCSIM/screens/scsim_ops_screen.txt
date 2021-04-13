@@ -1,0 +1,184 @@
+###############################################################################
+# Spacecraft App Screen
+#
+# Notes:
+#   1.  This screen manages a user's interaction with the spacecraft simulation
+#       app. This app is used for STEM educational purposes. It allows a user
+#       to start predefined simulations, experience a comm pass and take action.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'scsim_ops_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Spacecraft Ops Simulator"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+   SETTING TEXTCOLOR black
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+
+   VERTICALBOX "Simulation"
+      MATRIXBYCOLUMNS 8 5
+         
+         BUTTON 'Start Sim' 'scsim_ops_send_cmd(self, "START_SIM")'
+         NAMED_WIDGET sim_id COMBOBOX "Scenaro 1" "Scenario 2"
+         LABEL '                Sim Active'
+         VALUE SCSIM MGMT_TLM_PKT SIM_ACTIVE WITH_UNITS 8
+         LABEL '            Sim Time'
+         VALUE SCSIM MGMT_TLM_PKT SIM_TIME WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+         
+         BUTTON 'Stop Sim' 'scsim_ops_send_cmd(self, "STOP_SIM")'
+         LABEL  '               '         
+         LABEL 'Next Contact Time'
+         VALUE SCSIM MODEL_TLM_PKT CONTACT_TIME_PENDING WITH_UNITS 8
+         LABEL 'Time in Contact'
+         VALUE SCSIM MODEL_TLM_PKT CONTACT_TIME_CONSUMED WITH_UNITS 8
+         LABEL 'Remaining Time'
+         VALUE SCSIM MODEL_TLM_PKT CONTACT_TIME_REMAINING WITH_UNITS 8
+         
+      END # Matrix
+   END # VerticalBox Commands
+
+   VERTICALBOX "Spacecraft"
+      MATRIXBYCOLUMNS 7 10
+         LABEL  '               '
+         BUTTON 'Playback Events' 'scsim_ops_send_cmd(self, "START_EVT_PLBK")'
+         BUTTON 'TBD' 'scsim_ops_send_cmd(self, "TBD")'
+         BUTTON 'TBD' 'scsim_ops_send_cmd(self, "TBD")'
+         BUTTON 'TBD' 'scsim_ops_send_cmd(self, "TBD")'
+         LABEL  '               '
+         LABEL  '               '
+      END # Matrix
+
+      MATRIXBYCOLUMNS 8 5
+         LABEL  '               '
+         LABEL "<b>ADCS</b>"
+         LABEL "Mode"
+         VALUE SCSIM MODEL_TLM_PKT ADCS_MODE WITH_UNITS 8
+         LABEL "Eclipse"
+         VALUE SCSIM MODEL_TLM_PKT ECLIPSE WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+
+         LABEL  '               '
+         LABEL "<b>Power</b>"
+         LABEL "Batt SoC"
+         VALUE SCSIM MODEL_TLM_PKT BATT_SOC WITH_UNITS 8
+         LABEL "SA Current"
+         VALUE SCSIM MODEL_TLM_PKT SA_CURRENT WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+         
+         LABEL  '               '
+         LABEL "<b>Comm</b>"
+         LABEL "TDRS"
+         VALUE SCSIM MODEL_TLM_PKT CONTACT_TDRS_ID WITH_UNITS 8
+         LABEL "Data Rate"
+         VALUE SCSIM MODEL_TLM_PKT CONTACT_DATA_RATE WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+         
+         LABEL  '               '
+         LABEL "<b>FSW</b>"
+         LABEL "Resets"
+         LABEL "TBD"
+         LABEL "Evt Ovrflw"
+         VALUE CFE_EVS HK_TLM_PKT LOG_OVFL_CTR WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+         
+         LABEL  '               '
+         LABEL "<b>C&DH</b>"
+         LABEL "Rec File Cnt"
+         VALUE SCSIM MODEL_TLM_PKT REC_FILE_CNT WITH_UNITS 8
+         LABEL "Rec Pct Used"
+         VALUE SCSIM MODEL_TLM_PKT REC_PCT_USED WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+
+         LABEL  '               '
+         LABEL "<b>Instrument</b>"
+         LABEL "Power"
+         VALUE ISIM HK_TLM_PKT INSTR_PWR_STATE WITH_UNITS 8
+         LABEL "Science"
+         VALUE ISIM HK_TLM_PKT SCI_STATE WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+
+         LABEL  '               '
+         LABEL "<b>Thermal</b>"
+         LABEL "Heater 1"
+         VALUE  SCSIM MODEL_TLM_PKT HEATER_1 WITH_UNITS 8
+         LABEL "Heater 2"
+         VALUE  SCSIM MODEL_TLM_PKT HEATER_2 WITH_UNITS 8
+         LABEL  '               '
+         LABEL  '               '
+      
+      END # Matrix
+      
+   END # VerticalBox Spacecraft
+   SETTING BACKCOLOR 162 181 205
+   
+   VERTICALBOX "Playback Events"
+      
+      HORIZONTAL 5
+
+         LABEL 'File'
+         VALUE KIT_TO EVT_PLBK_TLM_PKT LOG_FILENAME WITH_UNITS 30
+
+         LABEL 'Event Count'
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVT_COUNT WITH_UNITS 5
+
+         LABEL 'Plbk Index'
+         VALUE KIT_TO EVT_PLBK_TLM_PKT PLBK_IDX WITH_UNITS 5
+        
+         LABEL '           '
+            
+      END # Horizontal
+
+      MATRIXBYCOLUMNS 4
+
+         LABEL "<b>Time</b>"
+         LABEL "<b>App</b>"
+         LABEL "<b>Type</b>"
+         LABEL "<b>Message</b>"
+            
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT0_SECONDS  WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT0_APP_NAME WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT0_TYPE     WITH_UNITS 6
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT0_MESSAGE  WITH_UNITS 70
+
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT1_SECONDS  WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT1_APP_NAME WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT1_TYPE     WITH_UNITS 6
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT1_MESSAGE  WITH_UNITS 70
+
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT2_SECONDS  WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT2_APP_NAME WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT2_TYPE     WITH_UNITS 6
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT2_MESSAGE  WITH_UNITS 70
+
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT3_SECONDS  WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT3_APP_NAME WITH_UNITS 7
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT3_TYPE     WITH_UNITS 6
+         VALUE KIT_TO EVT_PLBK_TLM_PKT EVENT3_MESSAGE  WITH_UNITS 70
+
+      END # Matrix
+   END # Vertical
+
+   SETTING BACKCOLOR 162 181 205
+
+   HORIZONTALLINE
+   LABEL "<b>Realtime Flight Event Messages</b>"
+   NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 870 50

@@ -1,0 +1,43 @@
+###############################################################################
+# Memory Management Demo Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+
+SCREEN AUTO AUTO 0.5
+
+TITLE "Memory Management Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICALBOX
+  # These labels contain instructions to the user
+  NAMED_WIDGET Instruct1  LABEL "This demo shows some basic memory management features. It uses the Memory"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct2  LABEL "Management(MM) app to peek/load and poke/dump memory. It uses the Memory"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct3  LABEL "Dwell(MD) app to autonomously monitor and telemeter memory locations. Click..."
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct4  LABEL " "
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct5  LABEL "  <More Info> to obtain more information about the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct6  LABEL "  <Demo> to issue commands to demonstrate a feature in the current step"
+  SETTING TEXTCOLOR 0 0 153
+  NAMED_WIDGET Instruct7  LABEL "  <Next> to move to the next step"
+  SETTING TEXTCOLOR 0 0 153
+  LABEL ""
+  HORIZONTALLINE
+  HORIZONTAL
+    BUTTON "More Info"  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_demo_screen.rb"; memory_mgmt_demo(self, "INFO")'
+    BUTTON "Demo"       'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_demo_screen.rb"; memory_mgmt_demo(self, "DEMO")'
+    BUTTON "Next ->"    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/memory_mgmt_demo_screen.rb"; memory_mgmt_demo(self, "NEXT")'
+  END
+END # Vertical instruction box    
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 512 50

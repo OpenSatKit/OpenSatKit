@@ -329,7 +329,7 @@ boolean FILE_DeleteCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
    FILE_DeleteCmdMsg* DeleteCmd = (FILE_DeleteCmdMsg *) MsgPtr;
    FileUtil_FileInfo FileInfo;
-   int32   SysStatus;   
+   int32   SysStatus;
    boolean RetStatus = FALSE;
    
    FileInfo = FileUtil_GetFileInfo(DeleteCmd->Filename, OS_MAX_PATH_LEN, FALSE);

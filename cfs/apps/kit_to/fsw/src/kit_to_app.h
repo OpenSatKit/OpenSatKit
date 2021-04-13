@@ -23,9 +23,11 @@
 ** Includes
 */
 
+#include "cfe_msgids.h"
 #include "app_cfg.h"
 #include "pkttbl.h"
 #include "pktmgr.h"
+#include "evt_plbk.h"
 
 
 /***********************/
@@ -108,7 +110,14 @@ typedef struct {
    uint32   BytesPerSec;
    uint16   TlmSockId;
    char     TlmDestIp[PKTMGR_IP_STR_LEN];
-
+   
+   /*
+   ** EVT_PLBK Data
+   */
+   
+   uint8    EvtPlbkEna;
+   uint8    EvtPlbkHkPeriod;
+   
 } OS_PACK KIT_TO_HkPkt;
 #define KIT_TO_TLM_HK_LEN sizeof (KIT_TO_HkPkt)
 
@@ -167,9 +176,10 @@ typedef struct {
    /*
    ** App Objects
    */ 
-   PKTTBL_Class PktTbl;
-   PKTMGR_Class PktMgr;
-
+   PKTTBL_Class    PktTbl;
+   PKTMGR_Class    PktMgr;
+   EVT_PLBK_Class  EvtPlbk;
+   
 } KIT_TO_Class;
 
 

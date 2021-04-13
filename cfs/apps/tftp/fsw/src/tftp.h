@@ -80,7 +80,7 @@
 
 #define TFTP_MAX_MODE_LEN    10
 #define TFTP_IP_ADDR_STR_LEN 32
-#define TFTP_FILE_NAME_LEN   64
+#define TFTP_FILENAME_LEN    64
 
 #define TFTP_GET_CMD_CODE  1
 #define TFTP_PUT_CMD_CODE  2
@@ -131,8 +131,8 @@ typedef struct {
 
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    int16   ServerPort;
-   char    SrcFilename[TFTP_FILE_NAME_LEN];
-   char    DestFilename[TFTP_FILE_NAME_LEN];
+   char    SrcFilename[TFTP_FILENAME_LEN];
+   char    DestFilename[TFTP_FILENAME_LEN];
 
 }  OS_PACK TFTP_PutFileCmdMsg;
 #define TFTP_PUT_FILE_CMD_DATA_LEN  (sizeof(TFTP_PutFileCmdMsg) - CFE_SB_CMD_HDR_SIZE)
@@ -142,8 +142,8 @@ typedef struct {
 
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    int16   ServerPort;
-   char    SrcFilename[TFTP_FILE_NAME_LEN];
-   char    DestFilename[TFTP_FILE_NAME_LEN];
+   char    SrcFilename[TFTP_FILENAME_LEN];
+   char    DestFilename[TFTP_FILENAME_LEN];
 
 }  OS_PACK TFTP_GetFileCmdMsg;
 #define TFTP_GET_FILE_CMD_DATA_LEN  (sizeof(TFTP_GetFileCmdMsg) - CFE_SB_CMD_HDR_SIZE)
@@ -159,8 +159,8 @@ typedef struct {
 
    uint16  CmdCode;  /* TFTP_xxx_CMD_CODE  */
 
-   char    SrcFilename[TFTP_FILE_NAME_LEN];
-   char    DestFilename[TFTP_FILE_NAME_LEN];
+   char    SrcFilename[TFTP_FILENAME_LEN];
+   char    DestFilename[TFTP_FILENAME_LEN];
 
 
 } OS_PACK TFTP_TransferReqPkt;
@@ -202,8 +202,8 @@ typedef struct {
    int32    FileHandle;                        /* File OSAL file descriptor       */
    uint16   GetFileCnt;
    uint16   PutFileCnt;
-   char     SrcFilename[TFTP_FILE_NAME_LEN];
-   char     DestFilename[TFTP_FILE_NAME_LEN];
+   char     SrcFilename[TFTP_FILENAME_LEN];
+   char     DestFilename[TFTP_FILENAME_LEN];
 
    /*
    ** TFTP state information
