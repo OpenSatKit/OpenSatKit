@@ -22,13 +22,14 @@ require 'osk_ops'
 ## Setup ##
 ###########
 
+Osk::System.check_n_start_cfs('cfsat')
 
 ###########################################
 ## ES01 - Review cFE startup script file ##
 ###########################################
 
 wait #ES01 - Click <Go> to begin  
-Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_EXE_CF_DIR}/#{Osk::CFE_STARTUP_FILE}'")
+Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CFSAT_CF_DIR}/#{Osk::CFE_STARTUP_FILE}'")
 puts "ES01 - Review startup script file displayed in popup window"
 wait #ES01 - Click <Go> to continue to next section
 

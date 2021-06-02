@@ -1,0 +1,9 @@
+{
+   "name": "OSK C Demo",
+   "description": "Define parameters for demo packet logger",
+   "file": {
+      "path-base-filename": "/cf/demo_",
+      "file-extension":     ".txt",
+      "pkts-per-file":    10
+   }
+}

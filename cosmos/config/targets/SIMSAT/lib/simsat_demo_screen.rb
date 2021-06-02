@@ -88,7 +88,7 @@ def simsat_demo_data_file(screen, cmd)
    case cmd
    when "START_FILE_GEN"
       
-      return unless Osk::System.check_n_start_cfs
+      return unless Osk::System.check_n_start_cfs('simsat')
       
       #
       # 1. Create simsat recorder directory, can't assumes it exists
@@ -100,6 +100,7 @@ def simsat_demo_data_file(screen, cmd)
       Thread.new {
       
          # 1.  Create simsat recorder directory
+         Osk::Ops.create_flt_dir(SimSat::FLT_SRV_DIR)
          Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)
          
          # 2. Configure ISIM to science mode

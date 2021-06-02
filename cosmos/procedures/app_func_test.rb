@@ -13,7 +13,7 @@
 #   4. Command counter verifications do not account for rollover. Apps do not
 #      have a consistent counter size and that the FswApp class does not captured
 #      this information. Test suites are typically run against a recent restart
-#      so this should dnot be a problem. 
+#      so this should not be a problem. 
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -49,7 +49,6 @@ module AppFuncTest
    def app_func_test_init(target_str)
 
       # Configure the system
-      Osk::System.check_n_start_cfs
       FswApp.validate_cmd(false) # This module provides methods that verify valid/invalid command counters for expected errors
       
       @gnd_test_files_dir = Osk::cfg_target_dir(target_str,"test_files")

@@ -33,16 +33,17 @@
 ** Event Message IDs
 */
 
-#define SCSIMTBL_CREATE_FILE_ERR_EID       (SCSIMTBL_BASE_EID + 0)
-#define SCSIMTBL_CMD_LOAD_TYPE_ERR_EID     (SCSIMTBL_BASE_EID + 1)
-#define SCSIMTBL_CMD_LOAD_OPEN_ERR_EID     (SCSIMTBL_BASE_EID + 2)
-#define SCSIMTBL_CMD_LOAD_REPLACE_ERR_EID  (SCSIMTBL_BASE_EID + 3)
-#define SCSIMTBL_CMD_LOAD_UPDATE_ERR_EID   (SCSIMTBL_BASE_EID + 4)
-#define SCSIMTBL_LOAD_ACS_ERR_EID          (SCSIMTBL_BASE_EID + 5)
-#define SCSIMTBL_LOAD_CDH_ERR_EID          (SCSIMTBL_BASE_EID + 6)
-#define SCSIMTBL_LOAD_COMM_ERR_EID         (SCSIMTBL_BASE_EID + 7)
-#define SCSIMTBL_LOAD_PWR_ERR_EID          (SCSIMTBL_BASE_EID + 8)
-#define SCSIMTBL_LOAD_THRM_ERR_EID         (SCSIMTBL_BASE_EID + 9)
+#define SCSIMTBL_CREATE_FILE_ERR_EID       (SCSIMTBL_BASE_EID +  0)
+#define SCSIMTBL_CMD_LOAD_TYPE_ERR_EID     (SCSIMTBL_BASE_EID +  1)
+#define SCSIMTBL_CMD_LOAD_OPEN_ERR_EID     (SCSIMTBL_BASE_EID +  2)
+#define SCSIMTBL_CMD_LOAD_REPLACE_ERR_EID  (SCSIMTBL_BASE_EID +  3)
+#define SCSIMTBL_CMD_LOAD_UPDATE_ERR_EID   (SCSIMTBL_BASE_EID +  4)
+#define SCSIMTBL_LOAD_ACS_ERR_EID          (SCSIMTBL_BASE_EID +  5)
+#define SCSIMTBL_LOAD_CDH_ERR_EID          (SCSIMTBL_BASE_EID +  6)
+#define SCSIMTBL_LOAD_COMM_ERR_EID         (SCSIMTBL_BASE_EID +  7)
+#define SCSIMTBL_LOAD_FSW_ERR_EID          (SCSIMTBL_BASE_EID +  8)
+#define SCSIMTBL_LOAD_PWR_ERR_EID          (SCSIMTBL_BASE_EID +  9)
+#define SCSIMTBL_LOAD_THRM_ERR_EID         (SCSIMTBL_BASE_EID + 10)
 
 
 /*
@@ -52,13 +53,15 @@
 #define  SCSIMTBL_OBJ_ACS   0
 #define  SCSIMTBL_OBJ_CDH   1
 #define  SCSIMTBL_OBJ_COMM  2
-#define  SCSIMTBL_OBJ_PWR   3
-#define  SCSIMTBL_OBJ_THRM  4
-#define  SCSIMTBL_OBJ_CNT   5
+#define  SCSIMTBL_OBJ_FSW   3
+#define  SCSIMTBL_OBJ_PWR   4
+#define  SCSIMTBL_OBJ_THRM  5
+#define  SCSIMTBL_OBJ_CNT   6
 
 #define  SCSIMTBL_OBJ_ACS_NAME   "acs"
 #define  SCSIMTBL_OBJ_CDH_NAME   "cdh"
 #define  SCSIMTBL_OBJ_COMM_NAME  "comm"
+#define  SCSIMTBL_OBJ_FSW_NAME   "fsw"
 #define  SCSIMTBL_OBJ_PWR_NAME   "pwr"
 #define  SCSIMTBL_OBJ_THRM_NAME  "thrm"
 
@@ -100,6 +103,13 @@ typedef struct {
    uint32  Tbd1;
    uint32  Tbd2;
    
+} SCSIMTBL_Fsw;
+
+typedef struct {
+
+   uint32  Tbd1;
+   uint32  Tbd2;
+   
 } SCSIMTBL_Pwr;
 
 typedef struct {
@@ -115,6 +125,7 @@ typedef struct {
    SCSIMTBL_Acs   Acs;
    SCSIMTBL_Acs   Cdh;
    SCSIMTBL_Acs   Comm;
+   SCSIMTBL_Acs   Fsw;
    SCSIMTBL_Acs   Pwr;
    SCSIMTBL_Acs   Thrm;
 

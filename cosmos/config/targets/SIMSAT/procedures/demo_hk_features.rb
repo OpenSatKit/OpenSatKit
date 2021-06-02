@@ -37,7 +37,7 @@ require 'fsw_const'
 
 # Configure system 
 
-Osk::System.check_n_start_cfs
+Osk::System.check_n_start_cfs('simsat')
 
 # Configure apps - Done on a per step basis
 
@@ -54,12 +54,12 @@ status_bar("Observe two packets being defined: HK_COMBINED_PKT1_MID and HK_COMBI
 wait  # <Go> to continue
 
 # 1.2 - SimSat schedule table
-Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::GND_TO_FLT_SRV_DIR}/osk_sch_sch_tbl.json'")
+Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::GND_TO_SIMSAT_SRV_DIR}/osk_sch_sch_tbl.json'")
 status_bar("Search for 'HK Combined Pkt' entries and note frequency and message table entry IDs")
 wait  # <Go> to continue
 
 # 1.3 - SimSat message table
-Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::GND_TO_FLT_SRV_DIR}/osk_sch_msg_tbl.json'")
+Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::GND_TO_SIMSAT_SRV_DIR}/osk_sch_msg_tbl.json'")
 status_bar("Scroll to message table entry IDs noted in previous step or search for HK_COMBINED_PKT1_MID")
 wait  # <Go> to continue
 

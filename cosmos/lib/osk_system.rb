@@ -23,6 +23,7 @@ module Osk
    
    class System
    
+      
       @@instance = nil
       
       # 
@@ -59,7 +60,7 @@ module Osk
       # 
       # Check if cFS is running and start cFS with or without a user prompt
       #      
-      def self.check_n_start_cfs(interactive = true)
+      def self.check_n_start_cfs(target, interactive = true)
          
          return true if Osk::System.cfs_running?
          
@@ -68,7 +69,7 @@ module Osk
             return false unless (continue == Osk::MSG_BUTTON_YES)
          end
          
-         Osk::System.start_cfs  # Enables telemetry
+         Osk::System.start_cfs(target)  # Enables telemetry
          
          return true
 
@@ -78,7 +79,7 @@ module Osk
       # Force a termination of an executing cFS if one exsists. This method
       # is used when user wants a clean system
       #      
-      def self.stop_n_start_cfs(interactive = true)
+      def self.stop_n_start_cfs(target, interactive = true)
          
          #
          # Kill all instances of the cFS before starting a new instance.  The stop
@@ -88,17 +89,17 @@ module Osk
          if (Osk::System.stop_cfs) 
             wait 6
          end
-         Osk::System.start_cfs  # Enables telemetry
+         Osk::System.start_cfs(target)  # Enables telemetry
          
       end # stop_n_start_cfs()
       
       # 
       # Start the cFS and enable telemetry
       #      
-      def self.start_cfs()
+      def self.start_cfs(target)
          
          # Start the cFS
-         spawn("xfce4-terminal --title=\"core Flight System\" --default-working-directory=\"#{Osk::CFS_EXE_DIR}\" --execute sudo ./core-cpu1")
+         spawn("xfce4-terminal --title=\"core Flight System - #{target}\" --default-working-directory=\"#{Osk::CFS_TARGETS[target.intern][:dir]}\" --execute sudo ./#{Osk::CFS_TARGETS[target.intern][:exe]}")
          #spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute echo #{Osk::PASSWORD} | sudo ./core-cpu1""")
          #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
 

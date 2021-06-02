@@ -30,3 +30,9 @@ COMMAND SCSIM START_SIM <%= Osk::Cfg.processor_endian %> "Start spacecraft simul
   
 COMMAND SCSIM STOP_SIM <%= Osk::Cfg.processor_endian %> "Stop spacecraft simulation"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
+
+COMMAND SCSIM START_REC_PLBK <%= Osk::Cfg.processor_endian %> "Start recorder playback"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
+
+COMMAND SCSIM STOP_REC_PLBK <%= Osk::Cfg.processor_endian %> "Stop recorder playback"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>

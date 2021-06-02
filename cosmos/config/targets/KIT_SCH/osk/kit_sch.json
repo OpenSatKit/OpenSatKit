@@ -13,11 +13,6 @@
       "SCH's binary tables."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "KIT_SCH"
    },

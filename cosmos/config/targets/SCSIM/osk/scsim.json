@@ -8,14 +8,11 @@
    "description": [
       "SCSIM provides a basic simulation environment that can be configured",
       "for different operational scenarios. The initial goal is for STEM",
-      "educational purposes to allow the user get a feel for spacecraft operations."
+      "educational purposes. The default simulations include two ground",
+      "contacts, one nominal and one off-nominal, to help users get a feel",
+      "for spacecraft operations."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "SCSIM"
    },

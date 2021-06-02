@@ -88,7 +88,7 @@ void @TEMPLATE@_AppMain(void)
       ** main loop execution flow.
       */
 	  
-	  CFE_ES_PerfLogExit(@TEMPLATE@_MAIN_PERF_ID);
+	   CFE_ES_PerfLogExit(@TEMPLATE@_MAIN_PERF_ID);
       OS_TaskDelay(@TEMPLATE@_RUNLOOP_DELAY);
       CFE_ES_PerfLogEntry(@TEMPLATE@_MAIN_PERF_ID);
 

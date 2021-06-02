@@ -42,7 +42,7 @@ module SimSat
    TBL_DIR      = Osk::cfg_target_dir(SIMSAT_DIR,'tables')   
    TBL_TOOL_DIR = Osk::cfg_target_dir(SIMSAT_DIR,'tables/tbl_tool')
    
-   GND2FSW_REC_DIR = File.join(Osk::CFS_EXE_DIR,SimSat::FLT_REC_DIR)
+   GND2FSW_REC_DIR = File.join(Osk::CFS_SIMSAT_EXE_DIR,SimSat::FLT_REC_DIR)
 
    # Files
    

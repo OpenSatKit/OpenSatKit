@@ -11,11 +11,6 @@
       "https://public.ccsds.org/Pubs/727x0b5.pdf."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": false
-   },
-   
    "cosmos": {
       "target": "CF"
    },

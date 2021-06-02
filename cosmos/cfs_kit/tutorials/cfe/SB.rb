@@ -22,6 +22,8 @@ require 'osk_ops'
 ## Setup ##
 ###########
 
+Osk::System.check_n_start_cfs('cfsat')
+
 
 ###################################
 ## SB01 - Review table registry ##

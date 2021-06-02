@@ -18,13 +18,16 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_ops'
 
-###############
-## Constants ##
-###############
 
+###########
+## Setup ##
+###########
 
 FLT_BIN_FILE = "#{Osk::FLT_SRV_DIR}/#{Osk::TMP_BIN_FILE}"
 GND_BIN_FILE = "#{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}"
+
+Osk::System.check_n_start_cfs('cfsat')
+
 
 ###################################
 ## EVS01 - Review event log file ##
@@ -35,7 +38,7 @@ wait #EVS01 - Click <Go> to write the event log to a file and display it in Tabl
 Osk::Ops::send_flt_bin_file_cmd("CFE_EVS", "WRITE_LOG_TO_FILE with ", Osk::TBL_MGR_DEF_CFE_EVS_LOG)
 puts "EVS01 - Review event log file displayed in Table Manager"
 
-wait #EVS01 - Click <Go> to clear event event log, send events, dumpl & display log
+wait #EVS01 - Click <Go> to clear event event log, send events, dump & display log
 
 display("CFS_KIT CFE_SCREEN",50,50)
 

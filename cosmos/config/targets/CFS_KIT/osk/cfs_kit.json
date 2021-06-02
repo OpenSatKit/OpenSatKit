@@ -2,14 +2,9 @@
 
 "description": [
    "This file defines the components installed in OSK. The cfe versions are also",
-   "defned in cosmos/lib/user_version.rb. This duplication will be removed in a",
+   "defined in cosmos/lib/user_version.rb. This duplication will be removed in a",
    "future release. The cFE apps do not have a JSON definition file.",
-   "Targets defines the FSW app targets to be available when OSK is runnning.",
-   "load-on-init determines whether app is loaded when OSK starts. Each",
-   "app has a json file that provides app details so this file simply",
-   "identifies apps and should not duplicate any information about an app.",
-   "This file is named cfs_kit.json as opposed to something like",
-   "app_targets.json to follow the OSK naming convention."
+   "cfs_targets lists OSK targets that each contain a set of apps"
    ],
 
 "cfe": {
@@ -30,34 +25,6 @@
    "url": "https://github.com/nasa/psp"
 },
 
-"targets": [
+"cfs-targets": ["simsat", "cfsat", "sandbox"]
 
-   { "CF":  { "load-on-init": false }},
-   { "CS":  { "load-on-init": true  }},
-   { "DS":  { "load-on-init": true  }},
-   { "FM":  { "load-on-init": true  }},
-   { "HK":  { "load-on-init": true  }},
-   { "HS":  { "load-on-init": false }},
-   { "LC":  { "load-on-init": true  }},
-   { "MD":  { "load-on-init": true  }},
-   { "MM":  { "load-on-init": true  }},
-   { "SC":  { "load-on-init": true  }},
-
-   { "BM":           { "load-on-init": false }},
-   { "F42":          { "load-on-init": true  }},
-   { "FILEMGR":      { "load-on-init": false }},
-   { "HC":           { "load-on-init": false }},
-   { "HSIM":         { "load-on-init": false }},
-   { "I42":          { "load-on-init": true  }},
-   { "ISIM":         { "load-on-init": true  }},
-   { "KIT_CI":       { "load-on-init": true  }},
-   { "KIT_SCH":      { "load-on-init": true  }},
-   { "KIT_TO":       { "load-on-init": true  }},
-   { "MQTT":         { "load-on-init": false }},
-   { "OSK_C_DEMO":   { "load-on-init": false }},
-   { "OSK_CPP_DEMO": { "load-on-init": false }},
-   { "SCSIM":        { "load-on-init": false }},
-   { "TFTP":         { "load-on-init": true  }}
-   
-   ]
 }

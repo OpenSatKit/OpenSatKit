@@ -12,257 +12,409 @@
 #   License (GPL).
 #
 ################################################################################
+<% 
+   require 'osk_global'
+   require 'cfs_kit_screen'
+%>
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING LABELVALUELIMITSBAR COLORBLIND TRUE
 VERTICAL
-  NAMED_WIDGET heading TITLE "OpenSatKit"
-  SETTING BACKCOLOR 162 181 205
-  SETTING TEXTCOLOR black
-  GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
-  TABBOOK
-    TABITEM "Explore cFS/SimSat"
+
+   NAMED_WIDGET heading TITLE "OpenSatKit"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+   TABBOOK
+
+   #######################################################
+
+   TABITEM "Mission FSW"
+   
+      VERTICALBOX "System - simsat Target"
+         HORIZONTAL
+         MATRIXBYCOLUMNS 3 4 4 
+
+            BUTTON 'Start cFS' 'cfs_kit_scr_simsat(self, "START_CFS")'
+            SETTING BACKCOLOR 0 200 0
+            BUTTON 'Start 42 Sim' 'cfs_kit_scr_common(self, "START_42")'
+            SETTING BACKCOLOR 0 200 0
+            BUTTON 'Start cFS with 42 Sim' 'cfs_kit_scr_simsat(self, "START_CFS_42")'
+            SETTING BACKCOLOR 0 200 0
+
+            BUTTON 'Stop cFS' 'cfs_kit_scr_common(self, "STOP_CFS")'
+            SETTING BACKCOLOR 220 50 50
+            BUTTON 'Stop 42 Sim' 'cfs_kit_scr_common(self, "STOP_42")'
+            SETTING BACKCOLOR 220 50 50
+            LABEL "          "
+
+         END # Matrix
+         MATRIXBYCOLUMNS 2 4 4
+            LABEL "          "
+            LABEL "System Time(secs)"
+            LABEL "          "
+            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
+         END # Matrix
+         END # Horizontal
+         SETTING BACKCOLOR 162 181 205
+     
+         LABEL "          "
+
+         HORIZONTAL
+         VERTICALBOX 'Config System'          
+            MATRIXBYCOLUMNS 2
+               BUTTON 'Send Config Cmd'  'cfs_kit_scr_common(self, "CONFIG_SYS_SIMSAT")'
+               NAMED_WIDGET config_sys_simsat COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Config System Box
+         SETTING BACKCOLOR 162 181 205
+     
+         VERTICALBOX "OSK Docs && Videos"
+            MATRIXBYCOLUMNS 2
+               BUTTON 'Open Resource' 'cfs_kit_scr_common(self, "LEARN_OSK_SIMSAT")'
+               SETTING BACKCOLOR 255 255 255
+               NAMED_WIDGET learn_osk_simsat COMBOBOX "About" "OSK Quick Start Doc" "OSK Overview Video" "OSK Version IDs"
+               #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Learn OpenSatKit Box
+         End # HORIZONTAL
+     
+      END # System Box      
+   
+      VERTICALBOX 'Docs && Videos'          
+         MATRIXBYCOLUMNS 4
+            BUTTON 'Open Resource' 'cfs_kit_scr_simsat(self, "DOCS_VIDEOS")'
+            SETTING BACKCOLOR 255 255 255
+            NAMED_WIDGET simsat_docs_videos COMBOBOX "About" "About Tune, Verify, Validate" "Mission FSW Quick Start Doc" "SimSat Overview Doc"
+            #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
+            LABEL "       "
+            LABEL "       "         
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
+      End # Box
+   
+      VERTICALBOX "Application Groups" 5
+         MATRIXBYCOLUMNS 3
+            BUTTON 'Runtime Environment' 'cfs_kit_scr_simsat(self, "RUNTIME_APPS")'
+            BUTTON 'Data/File Mgmt'      'cfs_kit_scr_simsat(self, "DATA_FILE_APPS")'
+            BUTTON 'Autonomy'            'cfs_kit_scr_simsat(self, "AUTONOMY_APPS")'
+            BUTTON 'Attitude Det/Ctrl'   'cfs_kit_scr_simsat(self, "ADC_APPS")'
+            BUTTON 'Health & Safety'     'cfs_kit_scr_simsat(self, "HEALTH_SAFETY_APPS")'
+            BUTTON 'Maintenance'         'cfs_kit_scr_simsat(self, "MAINTENANCE_APPS")'
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
+      END # BOX
+
+      VERTICALBOX "Tune, Verify, and Validate" 5
+         MATRIXBYCOLUMNS 4
+            
+            BUTTON 'Perf Mon Mgmt'      'cfs_kit_scr_simsat(self, "PERF_MON_MGMT")'
+            BUTTON 'Perf Mon Demo'      'cfs_kit_scr_simsat(self, "PERF_MON_DEMO")'            
+            BUTTON 'Run Unit Tests'     'cfs_kit_scr_simsat(self, "UNIT_TEST")'
+            BUTTON 'Run Intgr Test'     'cfs_kit_scr_simsat(self, "INTG_TEST")'
+
+            BUTTON 'Run App Func Tests'     'cfs_kit_scr_simsat(self, "FUNC_TEST")'
+            NAMED_WIDGET app_func_test COMBOBOX "Manually Select" "cFS Test Suite" "OSK Test Suite"
+            BUTTON 'Run Ex Sys/Ops Scripts' 'cfs_kit_scr_simsat(self, "SYS_OPS_EX")'
+            NAMED_WIDGET sys_ops_ex COMBOBOX "Two Ground Passes"
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
+      END # BOX
+   
+      HORIZONTALLINE
+   
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
+   
+   END # Tab Mission FSW
+
+   #######################################################
+
+   TABITEM "cFS FSW Edu"
+
+      VERTICALBOX "System - cfsat Target"
+         HORIZONTAL
+         MATRIXBYCOLUMNS 3 4 4 
+
+            BUTTON 'Start cFS' 'cfs_kit_scr_cfsat(self, "START_CFS")'
+            SETTING BACKCOLOR 0 200 0
+            LABEL "          "
+            LABEL "          "
+
+            BUTTON 'Stop cFS' 'cfs_kit_scr_common(self, "STOP_CFS")'
+            SETTING BACKCOLOR 220 50 50
+            LABEL "          "
+            LABEL "          "
+
+         END # Matrix
+         MATRIXBYCOLUMNS 2 4 4
+            LABEL "          "
+            LABEL "System Time(secs)"
+            LABEL "          "
+            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
+         END # Matrix
+         END # Horizontal
+         SETTING BACKCOLOR 162 181 205
+     
+         LABEL "          "
+
+         HORIZONTAL
+         VERTICALBOX 'Config System'          
+            MATRIXBYCOLUMNS 2
+               BUTTON 'Send Config Cmd'   'cfs_kit_scr_common(self, "CONFIG_SYS_CFSAT")'
+               NAMED_WIDGET config_sys_cfsat COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Config System Box
+         SETTING BACKCOLOR 162 181 205
+         VERTICALBOX "OSK Docs && Videos"
+            MATRIXBYCOLUMNS 2
+               BUTTON 'Open Resource' 'cfs_kit_scr_common(self, "LEARN_OSK_CFSAT")'
+               SETTING BACKCOLOR 255 255 255
+               NAMED_WIDGET learn_osk_cfsat COMBOBOX "About" "OSK Quick Start Doc" "OSK Overview Video" "OSK Version IDs"
+               #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Learn OpenSatKit Box
+         SETTING BACKCOLOR 162 181 205
+         End # HORIZONTAL
+
+      END # System Box      
+
+      VERTICALBOX 'Docs && Videos'          
+         MATRIXBYCOLUMNS 4
+            BUTTON 'Open Resource' 'cfs_kit_scr_cfsat(self, "DOCS_VIDEOS")'
+            SETTING BACKCOLOR 255 255 255
+            NAMED_WIDGET cfsat_docs_videos COMBOBOX "About" "cFS Overview Video" "cFS Build Video" "cFS Training Intro" "cFE Service Training" "OSK cFE Exercises" "cFE App Training" "OSK cFE App Exercises"
+            #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
+            LABEL "       "
+            LABEL "       "         
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
+      End # Box
+
+      VERTICALBOX "core Flight Executive (cFE)" 5
+         MATRIXBYCOLUMNS 3
+            BUTTON 'Event Service'     'cfs_kit_scr_cfsat(self, "CFE_EVENT_SERVICE")'
+            BUTTON 'Executive Service' 'cfs_kit_scr_cfsat(self, "CFE_EXECUTIVE_SERVICE")'
+            BUTTON 'Software Bus'      'cfs_kit_scr_cfsat(self, "CFE_SOFTWARE_BUS")'
+            BUTTON 'Table Service'     'cfs_kit_scr_cfsat(self, "CFE_TABLE_SERVICE")'
+            BUTTON 'Time Service'      'cfs_kit_scr_cfsat(self, "CFE_TIME_SERVICE")'
+            BUTTON 'cFE Users Guide'   'cfs_kit_scr_cfsat(self, "CFE_USERS_GUIDE")'
+            SETTING BACKCOLOR 255 255 255
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
+      END # BOX
+   
+      VERTICALBOX "Develop cFS Apps"
+         MATRIXBYCOLUMNS 4
+            BUTTON 'cFE App Dev Guide' 'cfs_kit_scr_cfsat(self, "CFE_APP_DEV_GUIDE")'
+            SETTING BACKCOLOR 255 255 255
+            BUTTON 'OSK App Dev Guide' 'cfs_kit_scr_cfsat(self, "OSK_APP_DEV_GUIDE")'
+            SETTING BACKCOLOR 255 255 255
+            LABEL "    "
+            LABEL "    "
+
+            BUTTON 'Create App'  'cfs_kit_scr_cfsat(self, "CREATE_APP")'
+            BUTTON 'Dev cFS App' 'cfs_kit_scr_cfsat(self, "DEV_CFS_APP")'
+            BUTTON 'Dev OSK App' 'cfs_kit_scr_cfsat(self, "DEV_OSK_APP")'
+            LABEL "    "
+
+            BUTTON 'Dev ACS App' 'cfs_kit_scr_cfsat(self, "DEV_ADC_APP")'
+            SETTING BACKCOLOR 150 150 150
+            BUTTON 'Dev ECI App' 'cfs_kit_scr_cfsat(self, "DEV_ECI_APP")'
+            SETTING BACKCOLOR 150 150 150
+            LABEL "    "
+            LABEL "    "
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
+      END # Vertical Box      
+
+   
+      HORIZONTALLINE
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
+   
+   END # Tab cFS FSW Eng
+
+   #######################################################
+
+   TABITEM "PiSat"
+
+      VERTICALBOX "System - Remote PiSat Target"
+         HORIZONTAL
+         MATRIXBYCOLUMNS 3 4 4 
+
+            BUTTON 'Start PiSat cFS' 'cfs_kit_scr_pisat(self, "START_CFS")'
+            SETTING BACKCOLOR 0 200 0
+            BUTTON 'Reboot PiSat'    'cfs_kit_scr_pisat(self, "REBOOT_PI")'
+            LABEL "          "
+            
+            BUTTON 'Stop PiSat cFS'  'cfs_kit_scr_pisat(self, "STOP_CFS")'
+            SETTING BACKCOLOR 220 50 50
+            BUTTON 'Shutdown PiSat'  'cfs_kit_scr_pisat(self, "SHUTDOWN_PI")'
+            LABEL "          "
+
+         END # Matrix
+         MATRIXBYCOLUMNS 2 4 4
+            LABEL "          "
+            LABEL "System Time(secs)"
+            LABEL "          "
+            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
+         END # Matrix
+         END # Horizontal
+         SETTING BACKCOLOR 162 181 205
+     
+         LABEL "          "
+
+         VERTICALBOX 'Config System'          
+            MATRIXBYCOLUMNS 4
+               BUTTON 'Cmd-Tlm Server'  'cfs_kit_scr_pisat(self, "CMD_TLM_SERVER")'
+               NAMED_WIDGET cmd_tlm_server COMBOBOX "PiSat" "Local cFS"
+               LABEL "          "
+               LABEL "          "
+
+               BUTTON 'Enable Tlm'  'cfs_kit_scr_pisat(self, "ENA_TLM")'   
+               LABEL "          "
+               LABEL "          "
+               LABEL "          "
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Config System Box
+         SETTING BACKCOLOR 162 181 205
+     
+     
+      END # System Box      
+
+      VERTICALBOX "PiSat Overview"
+
+         LABEL "        "
+         LABEL "OSK maintains a Raspberry Pi cFS distribution at <i>https://github.com/OpenSatKit/PiSat</i>"
+         LABEL "This distribution contains a small set of apps that provide a runtime environment for the Pi to communicate"
+         LABEL "with the OSK COSMOS platform and for users to add apps that can run within the OSK Pi & COSMOS platform."
+         LABEL "The button below launches a screen for the default Pi configuration. This screen serves as starting point for users"
+         LABEL "that want to expand on the default capabilities."
+         LABEL "        "
+         
+      End # Box
+      SETTING BACKCOLOR 162 181 205
+
+      VERTICALBOX "PiSat Screens"
+         MATRIXBYCOLUMNS 4
+            BUTTON 'Sensor Screen'  'cfs_kit_scr_pisat(self, "SENSOR_SCR")'
+            LABEL "          "
+            LABEL "          "
+            LABEL "          "
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205         
+      End # Box
+      SETTING BACKCOLOR 162 181 205
+
+      HORIZONTALLINE
       
-      VERTICALBOX System
-        HORIZONTAL
-        MATRIXBYCOLUMNS 3 4 4 
+      LABEL "Flight Event Messages"
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
 
-          BUTTON 'Start cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS")'
-          SETTING BACKCOLOR 0 200 0
-          BUTTON 'Start 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_42")'
-          SETTING BACKCOLOR 0 200 0
-          BUTTON 'Start cFS with 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "START_CFS_42")'
-          SETTING BACKCOLOR 0 200 0
+   END # Tab PiSat
 
-          BUTTON 'Stop cFS' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_CFS")'
-          SETTING BACKCOLOR 220 50 50
-          BUTTON 'Stop 42 Sim' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "STOP_42")'
-          SETTING BACKCOLOR 220 50 50
-          LABEL "          "
+   #######################################################
 
-        END # Matrix
-        MATRIXBYCOLUMNS 2 4 4
-          LABEL "          "
-          LABEL "System Time(secs)"
-          LABEL "          "
-          VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
-        END # Matrix
-        END # Horizontal
-        SETTING BACKCOLOR 162 181 205
-        
-        LABEL "          "
+   TABITEM "R&&D"
 
-        HORIZONTAL
-        VERTICALBOX "Learn OpenSatKit"
-        MATRIXBYCOLUMNS 2
-          BUTTON 'Open Resource' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_OSK")'
-          SETTING BACKCOLOR 255 255 255
-          NAMED_WIDGET learn_osk COMBOBOX "About" "OSK Overview Video" "OSK Quick Start" "OSK Users Guide" "OSK Version IDs"
-          #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-        End # Learn OpenSatKit Box
-        VERTICALBOX 'Learn cFS'          
-        MATRIXBYCOLUMNS 2
-          BUTTON 'Open Resource' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "LEARN_CFS")'
-          SETTING BACKCOLOR 255 255 255
-          NAMED_WIDGET learn_cfs COMBOBOX "About" "cFS Overview Video" "cFS Build Video" "cFS Training Intro" "cFE Service Training" "OSK cFE Exercises" "cFE App Training" "OSK cFE App Exercises"
-          #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
-          END # Matrix
-        End # Learn cFS Box
-        SETTING BACKCOLOR 162 181 205
-        End # HORIZONTAL
+      VERTICALBOX "System - sandbox Target"
+         HORIZONTAL
+         MATRIXBYCOLUMNS 3 4 4 
 
-        HORIZONTAL
-        VERTICALBOX 'SimpleSat Ref Mission'
-        MATRIXBYCOLUMNS 2
-          BUTTON 'Run Script'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMPLE_SAT")'
-          NAMED_WIDGET simple_sat COMBOBOX "About" "SimpleSat Overview" "Functional Test" "Integration Test" "Ops Example"
-          #BUTTON 'Run Ops Example' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_OPS_EXAMPLE")'
-          #BUTTON 'Run Integration Test'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "RUN_INTG_TEST")'
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-        End # Scripts Box
-        VERTICALBOX 'Config System'          
-        MATRIXBYCOLUMNS 2
-          BUTTON 'Send Config Cmd'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CONFIG_SYS")'
-          NAMED_WIDGET config_sys COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-        End # Config System Box
-        SETTING BACKCOLOR 162 181 205
-        End # HORIZONTAL
+            BUTTON 'Start cFS' 'cfs_kit_scr_sandbox(self, "START_CFS")'
+            SETTING BACKCOLOR 0 200 0
+            BUTTON 'Start 42 Sim' 'cfs_kit_scr_common(self, "START_42")'
+            SETTING BACKCOLOR 0 200 0
+            BUTTON 'Start cFS with 42 Sim' 'cfs_kit_scr_sandbox(self, "START_CFS_42")'
+            SETTING BACKCOLOR 0 200 0
+
+            BUTTON 'Stop cFS' 'cfs_kit_scr_common(self, "STOP_CFS")'
+            SETTING BACKCOLOR 220 50 50
+            BUTTON 'Stop 42 Sim' 'cfs_kit_scr_common(self, "STOP_42")'
+            SETTING BACKCOLOR 220 50 50
+            LABEL "          "
+
+         END # Matrix
+         MATRIXBYCOLUMNS 2 4 4
+            LABEL "          "
+            LABEL "System Time(secs)"
+            LABEL "          "
+            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
+         END # Matrix
+         END # Horizontal
+         SETTING BACKCOLOR 162 181 205
+     
+         LABEL "          "
+
+         HORIZONTAL
+         VERTICALBOX 'Config System'          
+            MATRIXBYCOLUMNS 2
+               BUTTON 'Send Config Cmd'   'cfs_kit_scr_common(self, "CONFIG_SYS_SANDBOX")'
+               NAMED_WIDGET config_sys_sandbox COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Config System Box
+         SETTING BACKCOLOR 162 181 205
+         VERTICALBOX "OSK Docs && Videos"
+            MATRIXBYCOLUMNS 2
+               BUTTON 'Open Resource' 'cfs_kit_scr_common(self, "LEARN_OSK_SANDBOX")'
+               SETTING BACKCOLOR 255 255 255
+               NAMED_WIDGET learn_osk_sandbox COMBOBOX "About" "OSK Quick Start Doc" "OSK Overview Video" "OSK Version IDs"
+               #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
+            END # Matrix
+            SETTING BACKCOLOR 162 181 205
+         End # Learn OpenSatKit Box
+         SETTING BACKCOLOR 162 181 205
+         End # HORIZONTAL
 
       END # System Box      
       
-      
-      HORIZONTALBOX Applications 5
-        MATRIXBYCOLUMNS 3
-          BUTTON 'Runtime Environment' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_RUNTIME")'
-          BUTTON 'Data/File Mgmt'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_DATA_FILE")'
-          BUTTON 'Autonomy'            'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_AUTONOMY")'
-          BUTTON 'Attitude Det/Ctrl'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_ADC")'
-          BUTTON 'Health & Safety'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_HEALTH_SAFETY")'
-          BUTTON 'Maintenance'         'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "SIMSAT_MAINTENANCE")'
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-      END # BOX
-      HORIZONTALBOX "core Flight Executive (cFE)" 5
-        MATRIXBYCOLUMNS 3
-          BUTTON 'Event Service'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_EVENT_SERVICE")'
-          BUTTON 'Executive Service' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_EXECUTIVE_SERVICE")'
-          BUTTON 'Software Bus'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_SOFTWARE_BUS")'
-          BUTTON 'Table Service'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_TABLE_SERVICE")'
-          BUTTON 'Time Service'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_TIME_SERVICE")'
-          BUTTON 'cFE Users Guide'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_explore_cfs(self, "CFE_USERS_GUIDE")'
-          SETTING BACKCOLOR 255 255 255
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-      END # BOX
-      HORIZONTALLINE
-      LABEL "Flight Event Messages"
-      #SCROLLWINDOW
-        #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
-        #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
-        #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
-        NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
-      #End # Scroll Window
-    END # Tab Item Explore cFS/SimSat
-
-#######################################################
-
-    TABITEM "Develop Apps"
- 
-      VERTICALBOX "Learn App Models"
-        MATRIXBYCOLUMNS 4
-          BUTTON 'cFE App Dev Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "CFE_APP_DEV_GUIDE")'
-          SETTING BACKCOLOR 255 255 255
-          BUTTON 'OSK App Dev Guide' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_APP_DEV_GUIDE")'
-          SETTING BACKCOLOR 255 255 255
-          BUTTON 'App Training Slides' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_APP_TRAIN_SLIDES")'
-          SETTING BACKCOLOR 255 255 255
-          LABEL "    "
-
-          BUTTON 'OSK Demo app' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "OSK_DEMO_APP")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "    "
-          LABEL "    "
-          LABEL "    "
-        END
-        SETTING BACKCOLOR 162 181 205
-      END # Vertical Box      
-
       VERTICALBOX "Manage Apps" 5
-        MATRIXBYCOLUMNS 4
-          BUTTON 'Add App'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "ADD_APP")'
-          BUTTON 'Remove App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "REMOVE_APP")'
-          SETTING BACKCOLOR 150 150 150
-          BUTTON 'Create App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "CREATE_APP")'
-          LABEL "    "
-
-          BUTTON 'Dev ACS App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ADC_APP")'
-          SETTING BACKCOLOR 150 150 150
-          BUTTON 'Dev ECI App' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "DEV_ECI_APP")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "    "
-          LABEL "    "
-
-          BUTTON 'Manage Runtime Apps' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "MANAGE_APP_RUNTIME")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "    "
-          LABEL "    "
-          LABEL "    "
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
+         MATRIXBYCOLUMNS 4
+            BUTTON 'Add App'       'cfs_kit_scr_sandbox(self, "ADD_APP")'
+            BUTTON 'Remove App'    'cfs_kit_scr_sandbox(self, "REMOVE_APP")'
+            BUTTON 'ES App Mgmt'   'cfs_kit_scr_sandbox(self, "ES_APP_MGMT")'
+            BUTTON 'Config SCH/TO' 'cfs_kit_scr_sandbox(self, "CONFIG_SCH_TO")'
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
       END # BOX
 
-     VERTICALBOX "Debug and Verify Apps" 5
-        MATRIXBYCOLUMNS 3
-          BUTTON 'Perf Mon Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_MGMT")'
-          BUTTON 'Perf Mon Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "PERF_MON_DEMO")'
-          LABEL "    "
-
-          BUTTON 'Run Unit Tests'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "UNIT_TEST")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "    "
-          LABEL "    "
-
-          BUTTON 'Run Intgr Tests' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_develop_apps(self, "INTG_TEST")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "    "
-          LABEL "    "
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
+      VERTICALBOX "Prototype Apps" 5
+         MATRIXBYCOLUMNS 4
+            
+            BUTTON 'Run Benchmarks' 'cfs_kit_scr_sandbox(self, "RUN_BENCHMARKS")'
+            BUTTON 'OSK Demo app'   'cfs_kit_scr_sandbox(self, "OSK_DEMO_APP")'
+            SETTING BACKCOLOR 150 150 150
+            LABEL "    "
+            LABEL "    "
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
       END # BOX
-      HORIZONTALLINE
-      LABEL "Flight Event Messages"
-      #SCROLLWINDOW
-        #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
-        #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
-        #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
-        NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
-      #End # Scroll Window
-      
-    END # Tab App Development
-
-#######################################################
-
-    TABITEM "Extend OSK"
- 
-      VERTICALBOX "Remote Targets"
-        MATRIXBYCOLUMNS 4
-          BUTTON 'PiSat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "PISAT")'
-          LABEL "          "
-          LABEL "          "
-          LABEL "          "
-  
-          BUTTON 'Run Benchmarks' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "RUN_BENCHMARKS")'
-          LABEL "          "
-          LABEL "          "
-          LABEL "          "
-
-          BUTTON 'Run Platform Cert' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "RUN_PLATFORM_CERT")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "          "
-          LABEL "          "
-          LABEL "          "
-        END
-        SETTING BACKCOLOR 162 181 205
-      END # Vertical Box      
 
       VERTICALBOX "Bridges" 5
-        MATRIXBYCOLUMNS 4
-          BUTTON 'SBN'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "SBN")'
-          SETTING BACKCOLOR 150 150 150
-          BUTTON 'ROS2'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "ROS2")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "          "
-          LABEL "          "
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
+         MATRIXBYCOLUMNS 4
+            BUTTON 'SBN'     'cfs_kit_scr_sandbox(self, "SBN")'
+            SETTING BACKCOLOR 150 150 150
+            BUTTON 'ROS2'    'cfs_kit_scr_sandbox(self, "ROS2")'
+            SETTING BACKCOLOR 150 150 150
+            LABEL "          "
+            LABEL "          "
+         END # Matrix
+         SETTING BACKCOLOR 162 181 205
       END # BOX
 
-     VERTICALBOX "Maintain Kit" 5
-        MATRIXBYCOLUMNS 4
-          BUTTON 'Update cFE'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "UPDATE_CFE")'
-          SETTING BACKCOLOR 150 150 150
-          BUTTON 'Update App'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/cfs_kit_screen.rb"; cfs_kit_scr_extend_osk(self, "UPDATE_APP")'
-          SETTING BACKCOLOR 150 150 150
-          LABEL "    "
-          LABEL "    "
-        END # Matrix
-        SETTING BACKCOLOR 162 181 205
-      END # BOX
-      
+   
       HORIZONTALLINE
+      
       LABEL "Flight Event Messages"
-      #SCROLLWINDOW
-        #NAMED_WIDGET evs_msg_t_minus_3 TEXTFIELD 512
-        #NAMED_WIDGET evs_msg_t_minus_2 TEXTFIELD 512
-        #NAMED_WIDGET evs_msg_t_minus_1 TEXTFIELD 512
-        NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
-      #End # Scroll Window
+      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
 
-    END # Tab Extend OSK
-
-  END # Tab Book
+   END # Tab R&D
+   END # Tab Book
+   
 END # Vertical

@@ -8,11 +8,6 @@
    "description": [
       "F42 implements the 42 Standalone controllers."
    ],
-
-   "system": {
-      "build": true,
-      "simsat": true
-   },
    
    "cosmos": {
       "target": "F42"

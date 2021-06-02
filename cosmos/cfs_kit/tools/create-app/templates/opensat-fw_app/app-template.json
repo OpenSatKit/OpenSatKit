@@ -12,12 +12,12 @@
       "is not created."
    ],
 
-   "cfsapp-": "CMakeLists.txt",
+   "cfsapp-":                 "CMakeLists.txt",
    "cfsapp-fsw/mission_inc":  "@template@_mission_cfg.h",
    "cfsapp-fsw/platform_inc": "@template@_msgids.h,@template@_perfids.h,@template@_platform_cfg.h",
    "cfsapp-fsw/src":          "@template@_app.c,@template@_app.h,app_cfg.h,exobj.c,exobj.h,extbl.c,extbl.h",
+   "tables-":                 "cfsat_@template@_extbl.json",
    "cosmos-cmd_tlm":          "@template@_cmd.txt,@template@_tlm.txt"
 
-   
 }
 

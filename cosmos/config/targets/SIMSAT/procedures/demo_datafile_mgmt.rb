@@ -26,11 +26,13 @@ require 'simsat_req_tlm'
 ## Setup ##
 ###########
 
-Osk::System.check_n_start_cfs
+Osk::System.check_n_start_cfs('simsat')
 
 display ("SIMSAT DEMO_DATA_FILE_MGMT_SCREEN")
 
-Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)  # Creates simsat recorder directory if needed
+# Creates simsat recorder directory if needed
+Osk::Ops.create_flt_dir(SimSat::FLT_SRV_DIR)  
+Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)  
 
 ################################
 ## Start Data File Generation ##

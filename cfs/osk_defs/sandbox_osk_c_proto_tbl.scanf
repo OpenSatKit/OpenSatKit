@@ -1,0 +1,21 @@
+ 0,  100,  101,  102;
+ 1,  103,  104,  105;
+ 2,  106,  107,  108;
+ 3,  109,  110,  111;
+ 4,  112,  113,  114;
+15,  115,  116,  117;
+16,  118,  119,  120;
+31,  121,  122,  123;
+!
+! Each line contains: Index, Data1, Data2, Data3
+!
+! Lines are processed until the first comment line is reached. Comments
+! start with a '!'. 
+!
+! This is an example 'scanf' table for object-based application proto. See ExObj
+! for table details.  Every index does not have to be defined nor do they need
+! to be in any specific order.
+!
+! This file is used by the unit test so any changes will impact the unit test.
+!
+

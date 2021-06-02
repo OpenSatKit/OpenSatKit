@@ -9,11 +9,6 @@
       "FM provides a ground interface for file and directory management."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "FM"
    },

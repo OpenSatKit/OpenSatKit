@@ -1,4 +1,5 @@
 REQUIRE_UTILITY 'simsat_func_test_suite'
+REQUIRE_UTILITY 'sandbox_func_test_suite'
 LINE_DELAY 0
 ALLOW_DEBUG
 PAUSE_ON_ERROR TRUE

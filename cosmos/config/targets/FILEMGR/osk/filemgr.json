@@ -12,11 +12,6 @@
       "cFS app exchange forum."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": false
-   },
-   
    "cosmos": {
       "target": "FILEMGR"
    },

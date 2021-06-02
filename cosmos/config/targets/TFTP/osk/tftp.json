@@ -10,11 +10,6 @@
       "It does not implement the timer features."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "TFTP"
    },

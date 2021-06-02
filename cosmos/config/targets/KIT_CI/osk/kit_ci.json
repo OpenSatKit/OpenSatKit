@@ -12,11 +12,6 @@
       "app. An OSK version was written so OSK-specific feature could be added."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "KIT_CI"
    },

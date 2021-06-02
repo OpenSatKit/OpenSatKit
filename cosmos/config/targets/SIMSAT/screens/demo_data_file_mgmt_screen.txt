@@ -6,7 +6,9 @@
 #   Public License (GPL).
 # 
 ###############################################################################
-
+<% 
+   require 'simsat_demo_screen'
+%>
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
 
@@ -24,7 +26,7 @@ VERTICAL
       VERTICALBOX
       MATRIXBYCOLUMNS 2 4 10
 
-         BUTTON '1. Start File Gen' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_demo_screen.rb"; simsat_demo_scr_cmd(self, "DATA_FILE", "START_FILE_GEN")'
+         BUTTON '1. Start File Gen' 'simsat_demo_scr_cmd(self, "DATA_FILE", "START_FILE_GEN")'
          SETTING BACKCOLOR 0 200 0
          LABEL 'Wait for files'
 

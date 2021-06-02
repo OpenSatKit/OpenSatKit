@@ -11,11 +11,6 @@
       "Control (HC) app."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": false
-   },
-
    "cosmos": {
       "target": "HSIM"
    },

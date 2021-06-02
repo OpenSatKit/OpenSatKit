@@ -44,7 +44,7 @@ static EXTBL_Class* ExTbl = NULL;
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-boolean EntryCallBack (int TokenIdx);
+boolean EntryCallBack (void* UserData, int TokenIdx);
 
 
 /******************************************************************************
@@ -67,6 +67,8 @@ void EXTBL_Constructor(EXTBL_Class* ObjPtr,
    ExTbl->GetTblPtrFunc    = GetTblPtrFunc;
    ExTbl->LoadTblFunc      = LoadTblFunc;
    ExTbl->LoadTblEntryFunc = LoadTblEntryFunc; 
+
+   JSON_Constructor(JSON, ExTbl->JsonFileBuf, ExTbl->JsonFileTokens);
 
    JSON_ObjConstructor(&(ExTbl->JsonObj), "entry", EntryCallBack, NULL);
    JSON_RegContainerCallback(JSON, &(ExTbl->JsonObj));
@@ -129,14 +131,14 @@ boolean EXTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
       if (ExTbl->DataArrayEntryIdx > 0) {
 
          
-		 if (LoadType == TBLMGR_LOAD_TBL_REPLACE) {
+         if (LoadType == TBLMGR_LOAD_TBL_REPLACE) {
          
             ExTbl->LastLoadStatus = ((ExTbl->LoadTblFunc)(&(ExTbl->Tbl)) == TRUE) ? TBLMGR_STATUS_VALID : TBLMGR_STATUS_INVALID;
 
          } /* End if replace entire table */
          else if (LoadType == TBLMGR_LOAD_TBL_UPDATE) {
          
-		    ExTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
+            ExTbl->LastLoadStatus = TBLMGR_STATUS_VALID;
    
             for (Entry=0; Entry < EXTBL_MAX_ENTRY_ID; Entry++) {
 
@@ -192,8 +194,7 @@ boolean EXTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 
    FileHandle = OS_creat(Filename, OS_WRITE_ONLY);
 
-   if (FileHandle >= OS_FS_SUCCESS)
-   {
+   if (FileHandle >= OS_FS_SUCCESS) {
 
       ExTblPtr = (ExTbl->GetTblPtrFunc)();
 
@@ -256,7 +257,7 @@ boolean EXTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
 ** Notes:
 **   1. This must have the same function signature as JSON_ContainerFuncPtr.
 */
-boolean EntryCallBack (int TokenIdx)
+boolean EntryCallBack (void* UserData, int TokenIdx)
 {
 
    int  Index, Data1, Data2, Data3, EntryCnt=0;

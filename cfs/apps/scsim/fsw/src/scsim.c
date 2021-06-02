@@ -28,6 +28,9 @@
 
 #include <string.h>
 
+#include "cfe_msgids.h"
+#include "cfe_time_msg.h"
+
 #include "app_cfg.h"
 #include "scsim.h"
 
@@ -41,6 +44,8 @@
 #define  ADCS  (&(ScSim->Adcs))
 #define  CDH   (&(ScSim->Cdh))
 #define  COMM  (&(ScSim->Comm))
+#define  FSW   (&(ScSim->Fsw))
+#define  INSTR (&(ScSim->Instr))
 #define  PWR   (&(ScSim->Pwr))
 #define  THRM  (&(ScSim->Thrm))
 
@@ -55,6 +60,13 @@
 /**********************/
 
 static SCSIM_Class*  ScSim = NULL;
+
+
+
+static CFE_TIME_SetTime_t         CfeSetTimeCmd;
+static CFE_TIME_NoArgsCmd_t       CfeClrEvtLogCmd;   /* EVS doesn't have a no args type & anyone will do */
+static CFE_EVS_EnableAppEvents_t  CfeEnaAppEvtsCmd;
+static CFE_EVS_DisableAppEvents_t CfeDisAppEvtsCmd;
 
 /*
 ** Scanf used to load event command parameters
@@ -80,29 +92,35 @@ static SCSIM_EvtCmd SimScenario1[SCSIM_EVT_CMD_MAX] = {
 
   /* SCSIM_PHASE_INIT */
   
-  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_ADCS, ADCS_EVT_SET_MODE,        SCSIM_SCANF_1_INT, "2"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_ADCS, ADCS_EVT_SET_MODE,        SCSIM_SCANF_1_INT, "3"},
   { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_ADCS, ADCS_EVT_ENTER_ECLIPSE,   SCSIM_SCANF_NONE,  NULL},
   
-  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_CDH,  CDH_EVT_SET_REC_FILE_CNT, SCSIM_SCANF_1_INT, "10"},
-  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_CDH,  CDH_EVT_SET_REC_PCT_USED, SCSIM_SCANF_1_FLT, "5"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_FSW,  FSW_EVT_SET_REC_FILE_CNT, SCSIM_SCANF_1_INT, "10"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_FSW,  FSW_EVT_SET_REC_PCT_USED, SCSIM_SCANF_1_FLT, "5"},
 
   { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_COMM, COMM_EVT_SET_DATA_RATE,   SCSIM_SCANF_1_INT, "1024"},
   { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_COMM, COMM_EVT_SET_TDRS_ID,     SCSIM_SCANF_1_FLT,  "1"},
 
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_INSTR, INSTR_EVT_ENA_POWER,     SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_INSTR, INSTR_EVT_ENA_SCIENCE,   SCSIM_SCANF_NONE,  NULL},
+
   { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_PWR,  PWR_EVT_SET_BATT_SOC,     SCSIM_SCANF_1_FLT,  "50"},
-  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_PWR,  PWR_EVT_SET_SA_CURRENT,   SCSIM_SCANF_1_FLT,  "60"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_PWR,  PWR_EVT_SET_SA_CURRENT,   SCSIM_SCANF_1_FLT,  "0"},
 
   { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_THRM, THRM_EVT_ENA_HEATER_1,    SCSIM_SCANF_1_INT,  "1"},
   { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_THRM, THRM_EVT_ENA_HEATER_2,    SCSIM_SCANF_1_INT,  "1"},
 
   /* SCSIM_PHASE_TIME_LAPSE */
 
-  { {0,0}, SCSIM_REALTIME_EPOCH-2100, SCSIM_SUBSYS_ADCS, ADCS_EVT_EXIT_ECLIPSE, SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-3500), SCSIM_SUBSYS_FSW,  FSW_EVT_CLR_EVT_LOG,   SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-2400), SCSIM_SUBSYS_ADCS, ADCS_EVT_EXIT_ECLIPSE, SCSIM_SCANF_NONE,  NULL},
 
   /* SCSIM_PHASE_REALTIME */
   
-  { {0,0}, SCSIM_REALTIME_EPOCH,     SCSIM_SUBSYS_COMM, COMM_EVT_SCH_AOS,  SCSIM_SCANF_3_INT, "30 30 1"},
-  { {0,0}, SCSIM_REALTIME_EPOCH+75,  SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, SCSIM_REALTIME_EPOCH,        SCSIM_SUBSYS_COMM, COMM_EVT_SCH_AOS,       SCSIM_SCANF_3_INT, "30 240 1"},
+  { {0,0}, SCSIM_REALTIME_EPOCH,        SCSIM_SUBSYS_COMM, COMM_EVT_SET_TDRS_ID,   SCSIM_SCANF_1_INT, "1"},  
+  { {0,0}, (SCSIM_REALTIME_EPOCH+120),  SCSIM_SUBSYS_ADCS, ADCS_EVT_ENTER_ECLIPSE, SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH+300),  SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,       SCSIM_SCANF_NONE,  NULL},
 
   /*  events */
 
@@ -120,33 +138,42 @@ static SCSIM_EvtCmd SimScenario2[SCSIM_EVT_CMD_MAX] = {
 
   /* SCSIM_PHASE_INIT */
   
-  { {0,0}, SCSIM_INIT_TIME,       SCSIM_SUBSYS_ADCS, ADCS_EVT_SET_MODE, SCSIM_SCANF_1_INT, "3"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_ADCS, ADCS_EVT_SET_MODE,        SCSIM_SCANF_1_INT, "3"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_ADCS, ADCS_EVT_ENTER_ECLIPSE,   SCSIM_SCANF_NONE,  NULL},
+  
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_FSW,  FSW_EVT_SET_REC_FILE_CNT, SCSIM_SCANF_1_INT, "10"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_FSW,  FSW_EVT_SET_REC_PCT_USED, SCSIM_SCANF_1_FLT, "5"},
+
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_COMM, COMM_EVT_SET_DATA_RATE,   SCSIM_SCANF_1_INT, "1024"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_COMM, COMM_EVT_SET_TDRS_ID,     SCSIM_SCANF_1_FLT,  "2"},
+
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_INSTR, INSTR_EVT_ENA_POWER,     SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_INSTR, INSTR_EVT_ENA_SCIENCE,   SCSIM_SCANF_NONE,  NULL},
+
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_PWR,  PWR_EVT_SET_BATT_SOC,     SCSIM_SCANF_1_FLT,  "50"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_PWR,  PWR_EVT_SET_SA_CURRENT,   SCSIM_SCANF_1_FLT,  "0"},
+
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_THRM, THRM_EVT_ENA_HEATER_1,    SCSIM_SCANF_1_INT,  "1"},
+  { {0,0}, SCSIM_INIT_TIME, SCSIM_SUBSYS_THRM, THRM_EVT_ENA_HEATER_2,    SCSIM_SCANF_1_INT,  "1"},
 
   /* SCSIM_PHASE_TIME_LAPSE */
 
-
+  { {0,0}, (SCSIM_REALTIME_EPOCH-3500), SCSIM_SUBSYS_FSW,   FSW_EVT_CLR_EVT_LOG,   SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-2400), SCSIM_SUBSYS_ADCS,  ADCS_EVT_EXIT_ECLIPSE, SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-1400), SCSIM_SUBSYS_CDH,   CDH_EVT_WATCHDOG_RST,  SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-1398), SCSIM_SUBSYS_ADCS,  ADCS_EVT_SET_MODE,     SCSIM_SCANF_1_INT, "1"},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-1396), SCSIM_SUBSYS_INSTR, INSTR_EVT_DIS_POWER,     SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH-1394), SCSIM_SUBSYS_INSTR, INSTR_EVT_DIS_SCIENCE,   SCSIM_SCANF_NONE,  NULL},
 
   /* SCSIM_PHASE_REALTIME */
   
-  { {0,0}, SCSIM_REALTIME_EPOCH,     SCSIM_SUBSYS_COMM, COMM_EVT_SCH_AOS,  SCSIM_SCANF_3_INT, "10 10 1"},
-  { {0,0}, SCSIM_REALTIME_EPOCH+45,  SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, SCSIM_REALTIME_EPOCH,        SCSIM_SUBSYS_COMM, COMM_EVT_SCH_AOS,       SCSIM_SCANF_3_INT, "30 240 1"},
+  { {0,0}, SCSIM_REALTIME_EPOCH,        SCSIM_SUBSYS_COMM, COMM_EVT_SET_TDRS_ID,   SCSIM_SCANF_1_INT, "1"},  
+  { {0,0}, (SCSIM_REALTIME_EPOCH+120),  SCSIM_SUBSYS_ADCS, ADCS_EVT_ENTER_ECLIPSE, SCSIM_SCANF_NONE,  NULL},
+  { {0,0}, (SCSIM_REALTIME_EPOCH+300),  SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,       SCSIM_SCANF_NONE,  NULL},
 
   /*  events */
 
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
-  { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
   { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
   { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL},
   { {0,0}, SCSIM_REALTIME_END,    SCSIM_SUBSYS_SIM,  SIM_EVT_STOP_SIM,  SCSIM_SCANF_NONE,  NULL}
@@ -156,15 +183,17 @@ static SCSIM_EvtCmd SimScenario2[SCSIM_EVT_CMD_MAX] = {
 /* 
 ** Subsystem strings
 */
-static char* SubSysStr[] = {
+static const char* SubSysStr[] = {
    
-   "UNDEF",  /* SCSIM_SUBSYS_UNDEF  = 0 */
-   "SYS",    /* SCSIM_SUBSYS_SYS    = 1 */
+   "UNDEF",  /* SCSIM_SUBSYS_UNDEF  = 0 */   
+   "SIM",    /* SCSIM_SUBSYS_SYS    = 1 */
    "ADCS",   /* SCSIM_SUBSYS_ADCS   = 2 */
    "CDH",    /* SCSIM_SUBSYS_CDH    = 3 */
    "COMM",   /* SCSIM_SUBSYS_COMM   = 4 */
-   "PWR",    /* SCSIM_SUBSYS_PWR    = 5 */
-   "THRM"    /* SCSIM_SUBSYS_THRM   = 6 */
+   "FSW",    /* SCSIM_SUBSYS_FSW    = 5 */
+   "INSTR",  /* SCSIM_SUBSYS_FSW    = 6 */
+   "PWR",    /* SCSIM_SUBSYS_PWR    = 7 */
+   "THRM"    /* SCSIM_SUBSYS_THRM   = 8 */
 
 };
 
@@ -176,6 +205,7 @@ static char* SubSysStr[] = {
 static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd);
 static void SIM_DumpScenario(uint8 StartIdx, uint8 EndIdx);
 static void SIM_ExecuteEvtCmd(void);
+static void SIM_SetTime(uint32 NewSeconds);
 static void SIM_StopSim(void);
 static boolean SIM_ProcessEvtCmd(SCSIM_EvtCmd* EvtCmd);
 
@@ -190,6 +220,14 @@ static boolean CDH_ProcessEvtCmd(CDH_Model* Cdh, SCSIM_EvtCmd* EvtCmd);
 static void COMM_Init(COMM_Model* Comm);
 static void COMM_Execute(COMM_Model* Comm);
 static boolean COMM_ProcessEvtCmd(COMM_Model* Comm, SCSIM_EvtCmd* EvtCmd);
+
+static void FSW_Init(FSW_Model* Fsw);
+static void FSW_Execute(FSW_Model* Fsw);
+static boolean FSW_ProcessEvtCmd(FSW_Model* Fsw, SCSIM_EvtCmd* EvtCmd);
+
+static void INSTR_Init(INSTR_Model* Instr);
+static void INSTR_Execute(INSTR_Model* Instr);
+static boolean INSTR_ProcessEvtCmd(INSTR_Model* Instr, SCSIM_EvtCmd* EvtCmd);
 
 static void PWR_Init(PWR_Model* Pwr);
 static void PWR_Execute(PWR_Model* Pwr);
@@ -215,7 +253,7 @@ void SCSIM_Constructor(SCSIM_Class *ScSimPtr, CFE_SB_MsgId_t MgmtPktMsgId,
 
    CFE_PSP_MemSet((void*)ScSim, 0, sizeof(SCSIM_Class));
 
-   ScSim->Time  = SCSIM_IDLE_TIME;
+   ScSim->Time.Seconds = SCSIM_IDLE_TIME;
    ScSim->Phase = SCSIM_PHASE_IDLE;
    ScSim->LastEvtCmd = &SimIdleCmd;
    ScSim->NextEvtCmd = &SimIdleCmd;
@@ -223,11 +261,26 @@ void SCSIM_Constructor(SCSIM_Class *ScSimPtr, CFE_SB_MsgId_t MgmtPktMsgId,
    ADCS_Init(ADCS);
    CDH_Init(CDH);
    COMM_Init(COMM);
+   FSW_Init(FSW);
+   INSTR_Init(INSTR);
    PWR_Init(PWR);
    THRM_Init(THRM);
 
    CFE_SB_InitMsg(&ScSim->MgmtPkt,  MgmtPktMsgId,  SCSIM_MGMT_PKT_LEN,  TRUE);
    CFE_SB_InitMsg(&ScSim->ModelPkt, ModelPktMsgId, SCSIM_MODEL_PKT_LEN, TRUE);
+
+   CFE_SB_InitMsg (&CfeSetTimeCmd, CFE_TIME_CMD_MID, sizeof(CFE_TIME_SetTime_t), TRUE);
+   CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CfeSetTimeCmd, CFE_TIME_SET_TIME_CC);
+    
+   CFE_SB_InitMsg (&CfeClrEvtLogCmd, CFE_EVS_CMD_MID, sizeof(CFE_TIME_NoArgsCmd_t), TRUE);
+   CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CfeClrEvtLogCmd, CFE_EVS_CLEAR_LOG_CC);
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeClrEvtLogCmd);
+
+   CFE_SB_InitMsg (&CfeEnaAppEvtsCmd, CFE_EVS_CMD_MID, sizeof(CFE_EVS_EnableAppEvents_t), TRUE);
+   CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CfeEnaAppEvtsCmd, CFE_EVS_ENABLE_APP_EVENTS_CC);
+   
+   CFE_SB_InitMsg (&CfeDisAppEvtsCmd, CFE_EVS_CMD_MID, sizeof(CFE_EVS_DisableAppEvents_t), TRUE);
+   CFE_SB_SetCmdCode((CFE_SB_MsgPtr_t)&CfeDisAppEvtsCmd, CFE_EVS_DISABLE_APP_EVENTS_CC);
 
 } /* End SCSIM_Constructor() */
 
@@ -238,6 +291,11 @@ void SCSIM_Constructor(SCSIM_Class *ScSimPtr, CFE_SB_MsgId_t MgmtPktMsgId,
 ** Execute spacecraft simulation cycle. When to execute the next command is
 ** in this function rather than ExecuteCmd() because time is managed 
 ** differently depending on the sim phase.
+**
+** ScSim time is course with subsecond second accuracy. Since the SCSIM
+** app is driven by the scheduler, it's already synched to the cFS at the
+** seconds level of resolution so when seconds are increment nothing is done
+** WRT to cFE Time. When time jumps occur cFE Time is synchonrized.
 **
 */
 boolean SCSIM_Execute(void)
@@ -268,59 +326,63 @@ boolean SCSIM_Execute(void)
          
             /* Time lapse starts with the first time lapse command */
             ScSim->Phase = SCSIM_PHASE_TIME_LAPSE;
-            ScSim->Time  = ScSim->NextEvtCmd->Time;
+            SIM_SetTime(ScSim->NextEvtCmd->Time);
             
          }
          else {
             
             ScSim->Phase = SCSIM_PHASE_REALTIME;
-            ScSim->Time  = SCSIM_REALTIME_EPOCH;
+            SIM_SetTime(SCSIM_REALTIME_EPOCH);
          
          }
 
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_INIT: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time);
+         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_INIT: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time.Seconds);
          break;   
    
       case SCSIM_PHASE_TIME_LAPSE:
 
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Enter at SimTime %d, Next Cmd Time %d", ScSim->Time, ScSim->NextEvtCmd->Time);
-         while (ScSim->Time < SCSIM_REALTIME_EPOCH && TimeLapseExeCnt < SCSIM_TIME_LAPSE_EXE_CNT) {
+         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Enter at SimTime %d, Next Cmd Time %d", ScSim->Time.Seconds, ScSim->NextEvtCmd->Time);
+         while (ScSim->Time.Seconds < SCSIM_REALTIME_EPOCH && TimeLapseExeCnt < SCSIM_TIME_LAPSE_EXE_CNT) {
          
-            if (ScSim->Time >= (ScSim->NextEvtCmd->Time)) {
+            if (ScSim->Time.Seconds >= (ScSim->NextEvtCmd->Time)) {
                SIM_ExecuteEvtCmd();
             }
             
             ADCS_Execute(ADCS);
             CDH_Execute(CDH);
             COMM_Execute(COMM);
+            FSW_Execute(FSW);
+            INSTR_Execute(INSTR);
             PWR_Execute(PWR);
             THRM_Execute(THRM);    
    
-            ScSim->Time++;
+            ScSim->Time.Seconds++;
             TimeLapseExeCnt++;
          
          } /* End while loop */
 
-         if (ScSim->Time >= SCSIM_REALTIME_EPOCH) ScSim->Phase = SCSIM_PHASE_REALTIME;
-
-          
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time);
+         SIM_SetTime(ScSim->Time.Seconds);
+         if (ScSim->Time.Seconds >= SCSIM_REALTIME_EPOCH) ScSim->Phase = SCSIM_PHASE_REALTIME;
+         
+         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time.Seconds);
          break;   
          
       case SCSIM_PHASE_REALTIME:
 
-         if (ScSim->Time >= (ScSim->NextEvtCmd->Time)) {
+         if (ScSim->Time.Seconds >= (ScSim->NextEvtCmd->Time)) {
             SIM_ExecuteEvtCmd();
          }
 
          ADCS_Execute(ADCS);
          CDH_Execute(CDH);
          COMM_Execute(COMM);
+         FSW_Execute(FSW);
+         INSTR_Execute(INSTR);
          PWR_Execute(PWR);
          THRM_Execute(THRM);
 
-         ScSim->Time++;
-         if (ScSim->Time >= SCSIM_REALTIME_END) SIM_StopSim();
+         ScSim->Time.Seconds++;
+         if (ScSim->Time.Seconds >= SCSIM_REALTIME_END) SIM_StopSim();
             
          break;   
 
@@ -423,6 +485,10 @@ boolean SCSIM_LoadTblEntry (uint16 ObjId, void* ObjData)
          CFE_PSP_MemCpy(&(ScSim->Tbl.Comm), ObjData, sizeof(SCSIMTBL_Comm));
          break;
 		 
+	   case SCSIMTBL_OBJ_FSW:
+         CFE_PSP_MemCpy(&(ScSim->Tbl.Fsw), ObjData, sizeof(SCSIMTBL_Fsw));
+         break;
+		 
 	   case SCSIMTBL_OBJ_PWR:
          CFE_PSP_MemCpy(&(ScSim->Tbl.Pwr), ObjData, sizeof(SCSIMTBL_Pwr));
          break;
@@ -459,10 +525,26 @@ boolean SCSIM_StartSimCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
    SCSIM_StartSimCmdMsg*  StartSimCmd = (SCSIM_StartSimCmdMsg*)MsgPtr;
    
-   ScSim->Time   = SCSIM_INIT_TIME;
+   SIM_SetTime(SCSIM_INIT_TIME);
    ScSim->Active = TRUE;
    ScSim->Phase  = SCSIM_PHASE_INIT;
    
+   /* 
+   ** Only allow first sim set time to generated an event message and then disable time
+   ** events. 
+   */
+   strcpy(CfeDisAppEvtsCmd.Payload.AppName,"CFE_SB");
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeDisAppEvtsCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeDisAppEvtsCmd); 
+
+   strcpy(CfeDisAppEvtsCmd.Payload.AppName,"CFE_TIME");
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeDisAppEvtsCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeDisAppEvtsCmd); 
+   
+   strcpy(CfeDisAppEvtsCmd.Payload.AppName,"KIT_SCH");
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeDisAppEvtsCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeDisAppEvtsCmd); 
+
    if (StartSimCmd->Id == 1) {
       ScSim->Scenario = SimScenario1;
    } 
@@ -477,6 +559,7 @@ boolean SCSIM_StartSimCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
    
       RetStatus = FALSE;
    }
+
    
    if (RetStatus == TRUE) {
       
@@ -534,7 +617,7 @@ boolean SCSIM_StartSimCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
                         StartSimCmd->Id, (SCSIM_EVT_CMD_MAX-ScSim->RunTimeCmdIdx), ScSim->RunTimeCmdIdx);
 
       #if (SCSIM_DEBUG == 1)
-         SIM_DumpScenario(8,14);
+         SIM_DumpScenario(0,14);
       #endif
 
    } /* End if valid command parameters */
@@ -565,6 +648,50 @@ boolean SCSIM_StopSimCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
 
 /******************************************************************************
+** Functions: SCSIM_StartPlbkCmd
+**
+** Stop a recorder playback.
+**
+** Notes:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCSIM_StartPlbkCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   boolean RetStatus = TRUE;
+  
+   ScSim->Fsw.Recorder.PlaybackEna = TRUE;
+   CFE_EVS_SendEvent(SCSIM_START_REC_PLBK_EID, CFE_EVS_INFORMATION,"FSW recorder playback started"); 
+   
+   return RetStatus;
+
+} /* End SCSIM_StartPlbkCmd() */
+
+
+/******************************************************************************
+** Functions: SCSIM_StopPlbkCmd
+**
+** Stop a recorder playback.
+**
+** Notes:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCSIM_StopPlbkCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
+{
+
+   boolean RetStatus = TRUE;
+  
+   ScSim->Fsw.Recorder.PlaybackEna = FALSE;
+   CFE_EVS_SendEvent(SCSIM_STOP_REC_PLBK_EID, CFE_EVS_INFORMATION,"FSW recorder playback stopped"); 
+         
+   return RetStatus;
+
+} /* End SCSIM_StopPlbkCmd() */
+
+
+/******************************************************************************
 ** Function: SCSIM_SendMgmtPkt
 **
 */
@@ -572,9 +699,14 @@ static void SCSIM_SendMgmtPkt(void)
 {
 
 
-   ScSim->MgmtPkt.SimTime    = ScSim->Time;
+   ScSim->MgmtPkt.SimTime    = ScSim->Time.Seconds;
    ScSim->MgmtPkt.SimActive  = ScSim->Active;
    ScSim->MgmtPkt.SimPhase   = ScSim->Phase;
+   
+   ScSim->MgmtPkt.ContactTimePending   = ScSim->Comm.Contact.TimePending;
+   ScSim->MgmtPkt.ContactLength        = ScSim->Comm.Contact.Length;   
+   ScSim->MgmtPkt.ContactTimeConsumed  = ScSim->Comm.Contact.TimeConsumed;
+   ScSim->MgmtPkt.ContactTimeRemaining = ScSim->Comm.Contact.TimeRemaining;
    
    if (ScSim->LastEvtCmd != NULL) {
       ScSim->MgmtPkt.LastEvtSubSysId  = ScSim->LastEvtCmd->SubSys;
@@ -635,14 +767,15 @@ static void SCSIM_SendModelPkt(void)
    ** C&DH
    */
    
-   ScSim->ModelPkt.RecFileCnt = ScSim->Cdh.Recorder.FileCnt;
-   ScSim->ModelPkt.RecPctUsed = ScSim->Cdh.Recorder.PctUsed;
+   ScSim->ModelPkt.SbcRstCnt = ScSim->Cdh.SbcRstCnt;
+   ScSim->ModelPkt.HwCmdCnt  = ScSim->Cdh.HwCmdCnt;
+   ScSim->ModelPkt.LastHwCmd = ScSim->Cdh.LastHwCmd;
 
    /*
    ** Comm
    */
    
-   ScSim->ModelPkt.InContact = ScSim->Comm.InContact;
+   ScSim->ModelPkt.InContact            = ScSim->Comm.InContact;
    ScSim->ModelPkt.ContactTimePending   = ScSim->Comm.Contact.TimePending;
    ScSim->ModelPkt.ContactTimeConsumed  = ScSim->Comm.Contact.TimeConsumed;
    ScSim->ModelPkt.ContactTimeRemaining = ScSim->Comm.Contact.TimeRemaining;
@@ -650,6 +783,25 @@ static void SCSIM_SendModelPkt(void)
    ScSim->ModelPkt.ContactTdrsId        = ScSim->Comm.Contact.TdrsId;
    ScSim->ModelPkt.ContactDataRate      = ScSim->Comm.Contact.DataRate;
    
+   /*
+   ** FSW
+   */
+   
+   ScSim->ModelPkt.RecPctUsed     = ScSim->Fsw.Recorder.PctUsed;
+   ScSim->ModelPkt.RecFileCnt     = ScSim->Fsw.Recorder.FileCnt;
+   ScSim->ModelPkt.RecPlaybackEna = ScSim->Fsw.Recorder.PlaybackEna;
+   ScSim->ModelPkt.FswSpare       = 0;
+
+   /*
+   ** Instrument
+   */
+
+   ScSim->ModelPkt.InstrPwrEna = ScSim->Instr.PwrEna;
+   ScSim->ModelPkt.InstrSciEna = ScSim->Instr.SciEna;
+
+   ScSim->ModelPkt.InstrFileCnt    = ScSim->Instr.FileCnt;
+   ScSim->ModelPkt.InstrFileCycCnt = ScSim->Instr.FileCycCnt;
+
    /*
    ** Power
    */
@@ -708,7 +860,7 @@ static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd)
                            
    if (ScSim->RunTimeCmdIdx == SCSIM_EVT_CMD_NULL_IDX) {
       
-      CFE_EVS_SendEvent(999, CFE_EVS_ERROR, 
+      CFE_EVS_SendEvent(SCSIM_EVT_ERR_EID, CFE_EVS_ERROR, 
                         "Aborting sim due to event cmd buffer overflow while loading new subsystem %d cmd %d",
                         NewRunTimeCmd->SubSys, NewRunTimeCmd->Id);
    
@@ -763,7 +915,7 @@ static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd)
       }
       else {
 
-         CFE_EVS_SendEvent(999, CFE_EVS_ERROR, 
+         CFE_EVS_SendEvent(SCSIM_EVT_ERR_EID, CFE_EVS_ERROR, 
                            "Aborting sim due to failure to insert new runtime cmd for subsystem %d cmd %d at index %d",
                            NewRunTimeCmd->SubSys, NewRunTimeCmd->Id, ScSim->RunTimeCmdIdx);
          SIM_StopSim();        
@@ -857,6 +1009,14 @@ static void SIM_ExecuteEvtCmd(void)
          COMM_ProcessEvtCmd(COMM, ScSim->NextEvtCmd);
          break;
       
+      case SCSIM_SUBSYS_FSW:
+         FSW_ProcessEvtCmd(FSW, ScSim->NextEvtCmd);
+         break;
+      
+      case SCSIM_SUBSYS_INSTR:
+         INSTR_ProcessEvtCmd(INSTR, ScSim->NextEvtCmd);
+         break;
+
       case SCSIM_SUBSYS_PWR:
          PWR_ProcessEvtCmd(PWR, ScSim->NextEvtCmd);
          break;
@@ -880,6 +1040,27 @@ static void SIM_ExecuteEvtCmd(void)
    
 } /* End SIM_ExecuteEvtCmd() */
 
+
+/******************************************************************************
+** Function:  SIM_SetTime
+**
+** Use CFE_TIME command messsage interface rather than CFE_TIME_ExternalTime() 
+** because CFE_TIME_ExternalTime() requires compiling CFE_TIME in a configuration
+** I didn't want to use.  
+*/
+static void SIM_SetTime(uint32 NewSeconds)
+{
+   
+
+   ScSim->Time.Seconds = NewSeconds;
+   
+   CfeSetTimeCmd.Payload.Seconds = NewSeconds;
+   
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeSetTimeCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeSetTimeCmd);
+
+} /* SIM_SetTime() */
+
 /******************************************************************************
 ** Function: SIM_StopSim
 **
@@ -887,14 +1068,26 @@ static void SIM_ExecuteEvtCmd(void)
 static void SIM_StopSim(void)
 {
    
-   CFE_EVS_SendEvent(SCSIM_STOP_SIM_EID, CFE_EVS_INFORMATION, "SCSIM stopped at %d seconds", ScSim->Time);
+   CFE_EVS_SendEvent(SCSIM_STOP_SIM_EID, CFE_EVS_INFORMATION, "SCSIM stopped at %d seconds", ScSim->Time.Seconds);
 
-   ScSim->Time   = 0;
-   ScSim->Active = FALSE;
-   ScSim->Phase  = SCSIM_PHASE_IDLE;
+   ScSim->Time.Seconds = 0;
+   ScSim->Active       = FALSE;
+   ScSim->Phase        = SCSIM_PHASE_IDLE;
    
-   ScSim->LastEvtCmd = &SimIdleCmd;
-   ScSim->NextEvtCmd = &SimIdleCmd;
+   ScSim->LastEvtCmd   = &SimIdleCmd;
+   ScSim->NextEvtCmd   = &SimIdleCmd;
+
+   strcpy(CfeEnaAppEvtsCmd.Payload.AppName,"CFE_SB");
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeEnaAppEvtsCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeEnaAppEvtsCmd); 
+
+   strcpy(CfeEnaAppEvtsCmd.Payload.AppName,"CFE_TIME");
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeEnaAppEvtsCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeEnaAppEvtsCmd); 
+
+   strcpy(CfeEnaAppEvtsCmd.Payload.AppName,"KIT_SCH");
+   CFE_SB_GenerateChecksum((CFE_SB_Msg_t *) &CfeEnaAppEvtsCmd);
+   CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeEnaAppEvtsCmd); 
 
 } /* End SIM_StopSim() */
 
@@ -936,6 +1129,16 @@ static boolean SIM_ProcessEvtCmd(SCSIM_EvtCmd* EvtCmd)
 
 
 static SCSIM_EvtCmd AdcsIdleCmd = { {0,0}, SCSIM_IDLE_TIME, SCSIM_SUBSYS_ADCS,  ADCS_EVT_UNDEF,  SCSIM_SCANF_NONE,  NULL};
+
+static const char* AdcsModeStr[] = {
+   
+   "UNDEF",     /* ADCS_MODE_UNDEF      = 0 */
+   "SAFEHOLD",  /* ADCS_MODE_SAFEHOLD   = 1 */
+   "SUN_POINT", /* ADCS_MODE_SUN_POINT  = 2 */
+   "INTERIAL",  /* ADCS_MODE_INERTIAL   = 3 */
+   "SLEW"       /* ADCS_MODE_SLEW       = 4 */
+
+};
 
 /******************************************************************************
 ** Functions: ADCS_Init
@@ -987,15 +1190,19 @@ static boolean ADCS_ProcessEvtCmd(ADCS_Model* Adcs, SCSIM_EvtCmd* EvtCmd)
    switch ((ADCS_EvtCmd)EvtCmd->Id) {
       
    case ADCS_EVT_SET_MODE:
+      CFE_EVS_SendEvent(ADCS_CHANGE_MODE_EID, CFE_EVS_INFORMATION,"ADCS: Control mode changed from %s to %s",
+      AdcsModeStr[Adcs->Mode], AdcsModeStr[ScSim->EvtCmdParam.OneInt]); 
       Adcs->Mode = ScSim->EvtCmdParam.OneInt;
       break;
 
    case ADCS_EVT_ENTER_ECLIPSE:
       Adcs->Eclipse = TRUE;
+      CFE_EVS_SendEvent(ADCS_ENTER_ECLIPSE_EID, CFE_EVS_INFORMATION,"ADCS: Enter eclipse"); 
       break;
 
    case ADCS_EVT_EXIT_ECLIPSE:
       Adcs->Eclipse = FALSE;
+      CFE_EVS_SendEvent(ADCS_EXIT_ECLIPSE_EID, CFE_EVS_INFORMATION,"ADCS: Exit eclipse"); 
       break;
 
    default:
@@ -1018,6 +1225,16 @@ static boolean ADCS_ProcessEvtCmd(ADCS_Model* Adcs, SCSIM_EvtCmd* EvtCmd)
 /****                  ****/
 /**************************/
 /**************************/
+
+static const char* HwCmdStr[] = {
+
+   "UNDEF",       /* CDH_HW_CMD_UNDEF       = 0 */
+   "RST_SBC",     /* CDH_HW_CMD_RST_SBC     = 1 */
+   "PWR_CYC_SBC", /* CDH_HW_CMD_PWR_CYC_SBC = 2 */
+   "SEL_BOOT_A",  /* CDH_HW_CMD_SEL_BOOT_A  = 3 */
+   "SEL_BOOT_B"   /* CDH_HW_CMD_SEL_BOOT_B  = 4 */
+
+};
 
 /******************************************************************************
 ** Functions: CDH_Init
@@ -1061,16 +1278,36 @@ static boolean CDH_ProcessEvtCmd(CDH_Model* Cdh, SCSIM_EvtCmd* EvtCmd)
 {
    
    boolean RetStatus = TRUE;
+   uint16 HwCmdStrIdx = 0;
    
    switch ((CDH_EvtCmd)EvtCmd->Id) {
    
-   case CDH_EVT_SET_REC_FILE_CNT:
-      Cdh->Recorder.FileCnt = ScSim->EvtCmdParam.OneInt;
+   case CDH_EVT_WATCHDOG_RST:
+      CFE_EVS_SendEvent(CDH_WATCHDOG_RESET_EID, CFE_EVS_ERROR, "C&DH: Watchdog Reset. Call Professor Wildermann for assistance!!!!");       
+      Cdh->SbcRstCnt++;
       break;
 
-   case CDH_EVT_SET_REC_PCT_USED:
-      Cdh->Recorder.PctUsed = ScSim->EvtCmdParam.OneFlt;
+   case CDH_EVT_SEND_HW_CMD:
+      Cdh->HwCmdCnt++;
+      Cdh->LastHwCmd = (CDH_HardwareCmd)ScSim->EvtCmdParam.OneInt;
+      switch (Cdh->LastHwCmd) {
+      case CDH_HW_CMD_RST_SBC:
+         Cdh->SbcRstCnt++;
+         break;
+      case CDH_HW_CMD_PWR_CYC_SBC:
+         break;
+      case CDH_HW_CMD_SEL_BOOT_A:
+         break;
+      case CDH_HW_CMD_SEL_BOOT_B:
+         break;
+      default:
+	      RetStatus = FALSE;
+         break;
+      }
 
+      HwCmdStrIdx = (RetStatus == TRUE)? Cdh->LastHwCmd : 0;
+      CFE_EVS_SendEvent(998, CFE_EVS_INFORMATION, "CDH: Received hardware command %s", HwCmdStr[HwCmdStrIdx]);
+   
    default:
 	   RetStatus = FALSE;
       break;
@@ -1082,6 +1319,7 @@ static boolean CDH_ProcessEvtCmd(CDH_Model* Cdh, SCSIM_EvtCmd* EvtCmd)
    return RetStatus;
    
 } /* CDH_ProcessEvtCmd() */
+
 
 
 /*********************************/
@@ -1111,6 +1349,7 @@ static void COMM_Init(COMM_Model* Comm)
    
    Comm->InContact = FALSE;
    Comm->Contact.Link = COMM_LINK_UNDEF;
+   Comm->Contact.TimePending = -1;
 
 } /* COMM_Init() */
 
@@ -1124,7 +1363,7 @@ static void COMM_EndContact(COMM_Model* Comm)
    Comm->InContact = FALSE;
    Comm->Contact.Link          = COMM_LINK_UNDEF;
    Comm->Contact.Length        = 0;
-   Comm->Contact.TimePending   = 0;
+   Comm->Contact.TimePending   = -1;
    Comm->Contact.TimeConsumed  = 0;
    Comm->Contact.TimeRemaining = 0;
 
@@ -1164,7 +1403,7 @@ static void COMM_Execute(COMM_Model* Comm)
             Comm->Contact.TimeConsumed  = 0;
             Comm->Contact.TimeRemaining = Comm->Contact.Length;
             
-            CFE_EVS_SendEvent(999, CFE_EVS_INFORMATION, "Started contact with length of %d seconds", Comm->Contact.Length);
+            CFE_EVS_SendEvent(COMM_START_CONTACT_EID, CFE_EVS_INFORMATION, "Started contact with length of %d seconds", Comm->Contact.Length);
          }  
       
       } /* End if pending contact */
@@ -1238,6 +1477,198 @@ static boolean COMM_ProcessEvtCmd(COMM_Model* Comm, SCSIM_EvtCmd* EvtCmd)
 } /* COMM_ProcessEvtCmd() */
 
 
+/********************************************/
+/********************************************/
+/****                                    ****/
+/****    FLIGHT SOFTWARE MODEL OBJECT    ****/
+/****                                    ****/
+/********************************************/
+/********************************************/
+
+/******************************************************************************
+** Functions: FSW_Init
+**
+** Initialize the Flight Software model to a known state.
+**
+** Notes:
+**   None
+*/
+static void FSW_Init(FSW_Model* Fsw)
+{
+
+   CFE_PSP_MemSet((void*)Fsw, 0, sizeof(FSW_Model));
+   
+} /* FSW_Init() */
+
+
+/******************************************************************************
+** Functions: FSW_Execute
+**
+** Update Flight Software model state.
+**
+** Notes:
+**   None
+*/
+static void FSW_Execute(FSW_Model* Fsw)
+{
+   
+   /* TODO - Sim CDH & FSW files */
+   //Fsw->Recorder.FileCnt = INSTR->FileCnt;
+
+   if (Fsw->Recorder.PlaybackEna) {
+   
+      if (Fsw->Recorder.FileCnt == 0) Fsw->Recorder.PlaybackEna = FALSE;
+      if (Fsw->Recorder.FileCnt > 0)  Fsw->Recorder.FileCnt--;
+
+   }
+
+} /* FSW_Execute() */
+
+
+/******************************************************************************
+** Functions: FSW_ProcessEvtCmd
+**
+** Notes:
+**   None
+*/
+static boolean FSW_ProcessEvtCmd(FSW_Model* Fsw, SCSIM_EvtCmd* EvtCmd)
+{
+   
+   boolean RetStatus = TRUE;
+   
+   switch ((FSW_EvtCmd)EvtCmd->Id) {
+
+   case FSW_EVT_SET_REC_FILE_CNT:
+      Fsw->Recorder.FileCnt = ScSim->EvtCmdParam.OneInt;
+      break;
+
+   case FSW_EVT_SET_REC_PCT_USED:
+      Fsw->Recorder.PctUsed = ScSim->EvtCmdParam.OneFlt;
+      break;
+      
+   case FSW_EVT_START_REC_PLBK:
+      Fsw->Recorder.PlaybackEna = TRUE;
+      break;
+
+   case FSW_EVT_STOP_REC_PLBK:
+      Fsw->Recorder.PlaybackEna = FALSE;
+      break;
+
+   case FSW_EVT_CLR_EVT_LOG:
+      CFE_SB_SendMsg((CFE_SB_Msg_t *) &CfeClrEvtLogCmd);
+      break;
+
+   default:
+	   RetStatus = FALSE;
+      break;
+      
+   } /* End Cmd Id switch */
+   
+   
+   Fsw->LastEvtCmd = *EvtCmd;
+   
+   return RetStatus;
+   
+} /* FSW_ProcessEvtCmd() */
+
+
+/***************************************/
+/***************************************/
+/****                               ****/
+/****    INSTRUMENT MODEL OBJECT    ****/
+/****                               ****/
+/***************************************/
+/***************************************/
+
+/******************************************************************************
+** Functions: INSTR_Init
+**
+** Initialize the Instrument model to a known state.
+**
+** Notes:
+**   None
+*/
+static void INSTR_Init(INSTR_Model* Instr)
+{
+
+   CFE_PSP_MemSet((void*)Instr, 0, sizeof(INSTR_Model));
+
+} /* INSTR_Init() */
+
+
+/******************************************************************************
+** Functions: INSTR_Execute
+**
+** Update Instrument model state.
+**
+** Notes:
+**   None
+*/
+static void INSTR_Execute(INSTR_Model* Instr)
+{
+
+  if (Instr->PwrEna && Instr->SciEna) {
+  
+     Instr->FileCycCnt++;
+     if (Instr->FileCycCnt >= INSTR_CYCLES_PER_FILE) {
+        
+        //Instr->FileCnt++;
+        FSW->Recorder.FileCnt++;
+        Instr->FileCycCnt = 0;
+     
+     }
+  }
+  else {
+
+     Instr->FileCycCnt = 0;
+
+  }
+   
+} /* INSTR_Execute() */
+
+
+/******************************************************************************
+** Functions: INSTR_ProcessEvtCmd
+**
+** Notes:
+**   None
+*/
+static boolean INSTR_ProcessEvtCmd(INSTR_Model* Instr, SCSIM_EvtCmd* EvtCmd)
+{
+   
+   boolean RetStatus = TRUE;
+   
+   switch ((INSTR_EvtCmd)EvtCmd->Id) {
+   case INSTR_EVT_ENA_POWER:
+      Instr->PwrEna = TRUE;
+      break;
+
+   case INSTR_EVT_DIS_POWER:
+      CFE_EVS_SendEvent(INSTR_DIS_POWER_EID, CFE_EVS_INFORMATION, "INSTR: Science intrument powered off");       
+      Instr->PwrEna = FALSE;
+      break;
+
+   case INSTR_EVT_ENA_SCIENCE:
+      Instr->SciEna = TRUE;
+      break;
+
+   case INSTR_EVT_DIS_SCIENCE:
+      Instr->SciEna = FALSE;
+      break;
+
+   default:
+	   RetStatus = FALSE;
+      break;
+      
+   } /* End Cmd Id switch */
+      
+   Instr->LastEvtCmd = *EvtCmd;
+      
+   return RetStatus;
+   
+} /* INSTR_ProcessEvtCmd() */
+
+
 /**********************************/
 /**********************************/
 /****                          ****/
@@ -1273,8 +1704,28 @@ static void PWR_Init(PWR_Model* Pwr)
 static void PWR_Execute(PWR_Model* Pwr)
 {
 
-   /* TODO - Implement model */
+   /*
+   ** Simple linear model not based on any physics. 
+   ** +/- 1% change for every minute charging/discharging   
+   */
+   
+   if (ADCS->Eclipse == TRUE) {
 
+     Pwr->SaCurrent = 0.0;
+
+     Pwr->BattSoc -= 1.0/50.0;
+     if (Pwr->BattSoc > 100.0) Pwr->BattSoc = 100.0;
+     
+   }
+   else {
+
+     Pwr->SaCurrent = 10.0;
+
+     Pwr->BattSoc += 1.0/50.0;
+     if (Pwr->BattSoc < 0.0) Pwr->BattSoc = 0.0;
+   
+   }
+   
 } /* PWR_Execute() */
 
 
@@ -1289,7 +1740,7 @@ static boolean PWR_ProcessEvtCmd(PWR_Model* Pwr, SCSIM_EvtCmd* EvtCmd)
    
    boolean RetStatus = TRUE;
    
-   switch ((CDH_EvtCmd)EvtCmd->Id) {
+   switch ((PWR_EvtCmd)EvtCmd->Id) {
       
    case PWR_EVT_SET_BATT_SOC:
       Pwr->BattSoc = ScSim->EvtCmdParam.OneFlt;
@@ -1347,8 +1798,19 @@ static void THRM_Init(THRM_Model* Thrm)
 static void THRM_Execute(THRM_Model* Thrm)
 {
    
-   /* TODO - Implement model */
+   if (ADCS->Eclipse == TRUE) {
 
+      Thrm->Heater1Ena = TRUE;
+      Thrm->Heater2Ena = TRUE;
+      
+   }
+   else{
+
+      Thrm->Heater1Ena = FALSE;
+      Thrm->Heater2Ena = FALSE;
+
+   }
+   
 } /* THRM_Execute() */
 
 
@@ -1363,7 +1825,7 @@ static boolean THRM_ProcessEvtCmd(THRM_Model* Thrm, SCSIM_EvtCmd* EvtCmd)
    
    boolean RetStatus = TRUE;
    
-   switch ((CDH_EvtCmd)EvtCmd->Id) {
+   switch ((THRM_EvtCmd)EvtCmd->Id) {
 
    case THRM_EVT_ENA_HEATER_1:
       Thrm->Heater1Ena = ScSim->EvtCmdParam.OneInt;

@@ -11,11 +11,6 @@
       "automate operations and fault responses"
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "SC"
    },

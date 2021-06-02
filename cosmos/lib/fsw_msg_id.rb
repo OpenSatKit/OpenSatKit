@@ -226,16 +226,16 @@ module Fsw
       MQTT_HK_TLM_MID    = "0x0F50"
       MQTT_STR32_TLM_MID = "0x0F51"
 
-      # OpenSatKit C Demo App 
+      # OpenSatKit C Prototype App 
   
-      OSK_C_DEMO_CMD_MID    = "0x1F30"
-      OSK_C_DEMO_HK_TLM_MID = "0x0F30"
-      OSK_C_DEMO_FR_TLM_MID = "0x0F31"
+      OSK_C_PROTO_CMD_MID    = "0x1F30"
+      OSK_C_PROTO_HK_TLM_MID = "0x0F30"
+      OSK_C_PROTO_FR_TLM_MID = "0x0F31"
 
-      # OpenSatKit C++ Demo App 
+      # OpenSatKit C++ Prototype App 
   
-      OSK_CPP_DEMO_CMD_MID    = "0x1F40"
-      OSK_CPP_DEMO_HK_TLM_MID = "0x0F40"
+      OSK_CPP_PROTO_CMD_MID    = "0x1F40"
+      OSK_CPP_PROTO_HK_TLM_MID = "0x0F40"
 
       # Create App and reserved for testing 
   

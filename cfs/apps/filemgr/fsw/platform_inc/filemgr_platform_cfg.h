@@ -1,5 +1,5 @@
 /*
-** Purpose: Define platform configurations for the OSK MQTT application
+** Purpose: Define platform configurations for the OSK File Manager application
 **
 ** Notes:
 **   1. This is part of a refactoring prototype. The definitions in this file 

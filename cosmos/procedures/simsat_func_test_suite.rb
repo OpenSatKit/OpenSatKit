@@ -10,11 +10,15 @@
 #
 ###############################################################################
 
+require 'osk_system'
+
 # Load common utilities first
 load 'fsw_app.rb'
 load 'cosmos/tools/test_runner/test.rb'
 
-load 'cfs_func_test_suite.rb'      # cFS apps used by SimSat
-load 'osk_func_test_suite.rb'      # OSK apps used by SimSat
-load 'mission_func_test_suite.rb'  # SimSat mission-specific apps
+Osk::System.check_n_start_cfs('simsat')
+      
+load 'simsat_func_test_suite_cfs.rb'  # cFS apps used by SimSat
+load 'simsat_func_test_suite_osk.rb'  # OSK apps used by SimSat
+
 

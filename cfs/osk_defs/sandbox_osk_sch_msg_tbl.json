@@ -1,0 +1,414 @@
+{
+   "name": "Scheduler Table Message Table",
+   "description":  [
+        "Maximum of 32 words per CCSDS message. The first three words are",
+        "the primary header that must be big endian:                     ",
+        "uint16  StreamId;     /* packet identifier word (stream ID) */  ",
+        "  /*  bits  shift                description                  */",
+        "  /* 0x07FF    0  : application ID                            */",
+        "  /* 0x0800   11  : secondary header: 0 = absent, 1 = present */",
+        "  /* 0x1000   12  : packet type:      0 = TLM, 1 = CMD        */",
+        "  /* 0xE000   13  : CCSDS version, always set to 0            */",
+        "uint16  Sequence;     /* packet sequence word */                ",
+        "  /*  bits  shift                description                  */",
+        "  /* 0x3FFF    0  : sequence count                            */",
+        "  /* 0xC000   14  : segmentation flags:  3 = complete packet  */",
+        "uint16  Length;       /* packet length word */                  ",
+        "  /*  bits  shift                description                  */",
+        "  /* 0xFFFF    0  : (total packet length) - 7                 */"
+        ],
+   "message-array": [
+
+      {"message": {
+         "name":  "CFE_ES_SEND_HK_MID",
+         "descr": "0x1808(6152), 0xC000(49152), 0x0001",
+         "id": 0,
+         "stream-id": 6152,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CFE_EVS_SEND_HK_MID",
+         "descr": "0x1809(6153), 0xC000(49152), 0x0001",
+         "id": 1,
+         "stream-id": 6153,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CFE_SB_SEND_HK_MID",
+         "descr": "0x180B(6155), 0xC000(49152), 0x0001",
+         "id": 2,
+         "stream-id": 6155,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CFE_TBL_SEND_HK_MID",
+         "descr": "0x180C(6156), 0xC000(49152), 0x0001",
+         "id": 3,
+         "stream-id": 6156,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CFE_TIME_SEND_HK_MID",
+         "descr": "0x180D(6157), 0xC000(49152), 0x0001",
+         "id": 4,
+         "stream-id": 6157,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CS_SEND_HK_MID",
+         "descr": "0x18A0(6304), 0xC000(49152), 0x0001",
+         "id": 10,
+         "stream-id": 6304,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CS_BACKGROUND_CYCLE_MID",
+         "descr": "0x18A1(6305), 0xC000(49152), 0x0001",
+         "id": 11,
+         "stream-id": 6305,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "DS_SEND_HK_MID",
+         "descr": "0x18BC(6332), 0xC000(49152), 0x0001",
+         "id": 12,
+         "stream-id": 6332,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "FM_SEND_HK_MID",
+         "descr": "0x188D(6285), 0xC000(49152), 0x0001",
+         "id": 13,
+         "stream-id": 6285,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "HS_SEND_HK_MID",
+         "descr": "0x18AF(6319), 0xC000(49152), 0x0001",
+         "id": 14,
+         "stream-id": 6319,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "HS_WAKEUP_MID",
+         "descr": "0x18B0(6320), 0xC000(49152), 0x0001",
+         "id": 15,
+         "stream-id": 6320,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "LC_SEND_HK_MID",
+         "descr": "0x18A5(6309), 0xC000(49152), 0x0001",
+         "id": 16,
+         "stream-id": 6309,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "LC_SAMPLE_AP_MID",
+         "descr": "0x18A6(6310), 0xC000(49152), 0x0005, [fc|cs, Start Index, End Index, Update WP age(True/False)]",
+         "id": 17,
+         "stream-id": 6310,
+         "seq-seg": 49152,
+         "length": 7
+         "data-words": "0,0,10,0"
+      }},
+
+      {"message": {
+         "name":  "MD_SEND_HK_MID",
+         "descr": "0x1891(6289), 0xC000(49152), 0x0001",
+         "id": 18,
+         "stream-id": 6289,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "MD_WAKEUP_MID",
+         "descr": "0x1892(6290), 0xC000(49152), 0x0001",
+         "id": 19,
+         "stream-id": 6290,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "MM_SEND_HK_MID",
+         "descr": "0x1889(6281), 0xC000(49152), 0x0001",
+         "id": 20,
+         "stream-id": 6281,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "SC_SEND_HK_MID",
+         "descr": "0x18AA(6314), 0xC000(49152), 0x0001",
+         "id": 21,
+         "stream-id": 6314,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "SC_1HZ_WAKEUP_MID",
+         "descr": "0x18AB(6315), 0xC000(49152), 0x0001",
+         "id": 22,
+         "stream-id": 6315,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "HK_SEND_HK_MID",
+         "descr": "0x189B(6299), 0xC000(49152), 0x0001",
+         "id": 23,
+         "stream-id": 6299,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "HK_SEND_COMBINED_PKT_MID: HK_COMBINED_PKT1_MID",
+         "descr": "0x189C(6300), 0xC000(49152), 0x0003, Data: Cmd secondary header(0), 0x089C (2204)",
+         "id": 24,
+         "stream-id": 6300,
+         "seq-seg": 49152,
+         "length": 3,
+         "data-words": "0,2204"
+      }},
+
+      {"message": {
+         "name":  "HK_SEND_COMBINED_PKT_MID: HK_COMBINED_PKT2_MID",
+         "descr": "0x189C(6300), 0xC000(49152), 0x0003, Data: Cmd secondary header(0), 0x089D (2205) => 0x9D08 (40200)",
+         "id": 25,
+         "stream-id": 6300,
+         "seq-seg": 49152,
+         "length": 3,
+         "data-words": "0,2205"
+      }},
+
+      {"message": {
+         "name":  "CF_SEND_HK_MID",
+         "descr": "0x18B4(6324), 0xC000(49152), 0x0001",
+         "id": 26,
+         "stream-id": 6324,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "CF_WAKE_UP_REQ_CMD_MID",
+         "descr": "0x18B5(6325), 0xC000(49152), 0x0001",
+         "id": 27,
+         "stream-id": 6325,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "BM_SEND_HK_MID",
+         "descr": "0x19F1(6641), 0xC000(49152), 0x0001",
+         "id": 30,
+         "stream-id": 6641,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "BM_WAKEUP_MID",
+         "descr": "0x19F2(6642), 0xC000(49152), 0x0001",
+         "id": 31,
+         "stream-id": 6642,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "HC_SEND_HK_MID",
+         "descr": "0x19A1(6561), 0xC000(49152), 0x0001",
+         "id": 32,
+         "stream-id": 6561,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+  
+      {"message": {
+         "name":  "HC_01HZ_WAKEUP_MID",
+         "descr": "0x19A2(6562), 0xC000(49152), 0x0001",
+         "id": 33,
+         "stream-id": 6562,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+  
+      {"message": {
+         "name":  "HSIM_SEND_HK_MID",
+         "descr": "0x19B2(6578), 0xC000(49152), 0x0001",
+         "id": 34,
+         "stream-id": 6578,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+  
+      {"message": {
+         "name":  "HSIM_SEND_DATA_MID",
+         "descr": "0x19B3(6578), 0xC000(49152), 0x0001",
+         "id": 35,
+         "stream-id": 6578,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+  
+      {"message": {
+         "name":  "KIT_CI_SEND_HK_MID",
+         "descr": "0x1F01(7937), 0xC000(49152), 0x0001",
+         "id": 36,
+         "stream-id": 7937,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "KIT_SCH_SEND_HK_MID",
+         "descr": "0x1F11(7953), 0xC000(49152), 0x0001",
+         "id": 37,
+         "stream-id": 7953,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "KIT_TO_SEND_HK_MID",
+         "descr": "0x1F21(7969), 0xC000(49152), 0x0001",
+         "id": 38,
+         "stream-id": 7969,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "TFTP_SEND_HK_MID",
+         "descr": "0x1901(6401), 0xC000(49152), 0x0001",
+         "id": 39,
+         "stream-id": 6401,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "F42_SEND_HK_MID",
+         "descr": "0x19D1(6609), 0xC000(49152), 0x0001",
+         "id": 40,
+         "stream-id": 6609,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "I42_EXECUTE_MID",
+         "descr": "0x19E1(6625), 0xC000(49152), 0x0001",
+         "id": 41,
+         "stream-id": 6625,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "I42_SEND_HK_MID",
+         "descr": "0x19E2(6626), 0xC000(49152), 0x0001",
+         "id": 42,
+         "stream-id": 6626,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "ISIM_EXECUTE_MID",
+         "descr": "0x19C1(6593), 0xC000(49152), 0x0001",
+         "id": 43,
+         "stream-id": 6593,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+      
+      {"message": {
+         "name":  "ISIM_SEND_HK_MID",
+         "descr": "0x19C2(6594), 0xC000(49152), 0x0001",
+         "id": 44,
+         "stream-id": 6594,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+      
+      {"message": {
+         "name":  "OSK_C_DEMO_SEND_HK_MID",
+         "descr": "0x1F31(7985), 0xC000(49152), 0x0001",
+         "id": 45,
+         "stream-id": 7985,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+      
+      {"message": {
+         "name":  "OSK_CPP_DEMO_SEND_HK_MID",
+         "descr": "0x1F41(8001), 0xC000(49152), 0x0001",
+         "id": 46,
+         "stream-id": 8001,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+      
+      {"message": {
+         "name":  "FILEMGR_SEND_HK_MID",
+         "descr": "0x198D(6541), 0xC000(49152), 0x0001",
+         "id": 47,
+         "stream-id": 6541,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+      
+      {"message": {
+         "name":  "TEST_SEND_HK_MID",
+         "descr": "0x1FF1(8177), 0xC000(49152), 0x0001",
+         "id": 100,
+         "stream-id": 8177,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "Test Packet",
+         "descr": "Test packet 0x17FF(6143). Length of 7 0x0700(1792). Data words include secondary header.",
+         "id": 101,
+         "stream-id": 6143,
+         "seq-seg": 49152,
+         "length": 11,
+         "data-words": "0,1,2,3,4"
+      }}
+   ]
+}
+

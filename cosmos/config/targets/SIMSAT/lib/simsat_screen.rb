@@ -228,7 +228,7 @@ def simsat_data_file(screen, cmd)
       display("SIMSAT TBL_TOOL_SCREEN",1500,50)
    when "DEMO"
 
-      if (Osk::System.check_n_start_cfs)
+      if (Osk::System.check_n_start_cfs('simsat'))
       
          # Demo scripts manage screens & PacketViewer
          case screen.get_named_widget("demo").text
@@ -352,7 +352,7 @@ def simsat_health_safety(screen, cmd)
    when "FUNC_HS_MGMT"
       display("HS HS_MGMT_SCREEN",1500,50)
    when "DEMO"
-      if (Osk::System.check_n_start_cfs)
+      if (Osk::System.check_n_start_cfs('simsat'))
          # Demo scripts manage screens & PacketViewer
          case screen.get_named_widget("demo").text
          when "CS-HS Demo Script"
@@ -428,7 +428,7 @@ def simsat_maintenance(screen, cmd)
    when "FUNC_MEMORY_MGMT"
       display("CFS_KIT MEMORY_MGMT_SCREEN",1500,50)
    when "DEMO"
-      if (Osk::System.check_n_start_cfs)
+      if (Osk::System.check_n_start_cfs('simsat'))
          # Demo scripts manage screens & PacketViewer
          demo = screen.get_named_widget("demo").text
          case demo
@@ -498,7 +498,7 @@ def simsat_runtime(screen, cmd)
    when "FUNC_ES_APP_MGMT"
       display("CFS_KIT APP_MGMT_SCREEN",1500,10)
    when "DEMO"
-      if (Osk::System.check_n_start_cfs)
+      if (Osk::System.check_n_start_cfs('simsat'))
          # Demo scripts manage screens & PacketViewer
          case screen.get_named_widget("demo").text
          when "KIT_TO Stats"

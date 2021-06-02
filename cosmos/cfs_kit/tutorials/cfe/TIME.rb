@@ -18,13 +18,15 @@ require 'osk_global'
 require 'osk_system'
 require 'osk_ops'
 
-###############
-## Constants ##
-###############
-
+###########
+## Setup ##
+###########
 
 FLT_BIN_FILE = "#{Osk::FLT_SRV_DIR}/#{Osk::TMP_BIN_FILE}"
 GND_BIN_FILE = "#{Osk::GND_SRV_DIR}/#{Osk::TMP_BIN_FILE}"
+
+Osk::System.check_n_start_cfs('cfsat')
+
 
 ################################################
 ## TIME01 - Review default time configuration ##
@@ -48,7 +50,7 @@ wait #TIME01 - Click <Go> to continue to next section
 
 wait #TIME02 - Click <Go> to review diagnostic telemetry
   
-spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_TIME DIAG_PKT'")
+spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'CFE_TIME DIAG_TLM_PKT'")
 
 wait #TIME02 - Click <Go> to send diagnostic telemetry packet
 Osk::flight.cfe_time.send_cmd("SEND_DIAG")
@@ -71,7 +73,6 @@ wait #TIME03 - Click <Go> to exit
 #############
 
 Osk::flight.cfe_time.send_cmd("ADD_1HZ_STCF_ADJ with SECONDS 0, SUBSECONDS 0")
-clear("CFE_TIME DIAG_PKT")
 clear("CFS_KIT CFE_SCREEN")
 
  
