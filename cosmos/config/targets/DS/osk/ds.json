@@ -11,11 +11,7 @@
       "file"
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
+
    "cosmos": {
       "target": "DS"
    },

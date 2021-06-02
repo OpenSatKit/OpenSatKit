@@ -60,7 +60,7 @@ def simsat_ops_example_setup(start_cfs)
       # Simplest way to get into a known configuration is to restart the flight software   
       message_box("The flight software will be restarted to establish a known configuration. A terminal window will be created to run the FSW. Enter your user password when prompted.",false)
    
-      Osk::System.stop_n_start_cfs
+      Osk::System.stop_n_start_cfs('simsat')
    
    end # End if start_cfs
    

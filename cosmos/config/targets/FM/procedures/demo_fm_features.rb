@@ -7,6 +7,8 @@
 #   2. Debug events are enabled for the apps used during the demo.
 #      COSMOS cmd() is used instead of OSK App.send_cmd() because speed is
 #      preferred over command verification
+#   3. Starts SimSat target if cFS is not running because the demo depends
+#      on ISIM
 #
 # Demo Steps:
 #   1. Display directories and create OSK directroy if needed
@@ -59,7 +61,7 @@ FMD_GND_DIR_LIST_FILE = File.join(Osk::GND_SRV_DIR,Osk::TMP_BIN_FILE)
 
 # Configure system 
 
-Osk::System.check_n_start_cfs
+Osk::System.check_n_start_cfs('simsat')
 
 # Configure apps 
 

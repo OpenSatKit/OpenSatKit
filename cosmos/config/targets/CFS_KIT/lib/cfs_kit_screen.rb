@@ -11,13 +11,13 @@
 
 require 'cosmos'
 require 'cosmos/script'
-Cosmos.catch_fatal_exception do
-  require 'cosmos/tools/cmd_sender/cmd_sender'
-  require 'cosmos/tools/tlm_viewer/screen'
-  require 'cosmos/tools/tlm_viewer/tlm_viewer'
-  require 'cosmos/tools/table_manager/table_config'
-  require 'cosmos/tools/table_manager/table_manager_core'
-end
+require 'cosmos/tools/table_manager/table_config'
+require 'cosmos/tools/table_manager/table_manager_core'
+#Cosmos.catch_fatal_exception do
+#  require 'cosmos/tools/cmd_sender/cmd_sender'
+#  require 'cosmos/tools/tlm_viewer/screen'
+#  require 'cosmos/tools/tlm_viewer/tlm_viewer'
+#end
 require 'ccsds'
 require 'osk_global'
 require 'osk_system'
@@ -29,6 +29,7 @@ require 'simsat_recorder_mgmt'
 require 'user_version'
 require 'cfs_kit_const'
 require 'fileutils'
+
 
 ################################################################################
 ## Global Variables
@@ -42,21 +43,13 @@ GND_TEST_PUT_FILE = "#{Osk::GND_SRV_DIR}/tf_put_test_src.txt"
 
 
 ################################################################################
-## Explore cFS/SimSat
+## Common Functions
 ################################################################################
 
-def cfs_kit_scr_explore_cfs(screen, cmd)
+def cfs_kit_scr_common(screen, cmd)
 
    case cmd
-   when "START_CFS", "START_CFS_42"
    
-      Osk::System.stop_n_start_cfs
-      
-      if (cmd == "START_CFS_42")
-         wait 3                      # Give cFS chance to start
-         Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
-      end
-      
    when "STOP_CFS"
       # Hopefully ES cleans up resources and does a controlled shutdown
       Osk::flight.cfe_es.send_cmd("RESET with RESTART_TYPE 1")
@@ -68,11 +61,12 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
 
    when "STOP_42"
       Osk::System.stop_42
-            
-   when "CONFIG_SYS"
-      user_selection = screen.get_named_widget("config_sys").text
+
+   when "CONFIG_SYS_SIMSAT", "CONFIG_SYS_CFSAT", "CONFIG_SYS_SANDBOX"
+      target = cmd.sub(/CONFIG_SYS_/,'').downcase
+      user_selection = screen.get_named_widget("config_sys_#{target}").text
       if user_selection == "About"
-         about_str = ["Quick access to common commands used to configure the system:", 
+         about_str = ["Quick access to common commands used to configure the target system:", 
                       "                                                 ",
                       "<pre><b>Enable Telemetry</b>       - Command telemetry output app to enable sending telemetry to COSMOS.</pre>",
                       "<pre><b>Reset Time</b>             - Set cFS time to 0.</pre>",
@@ -121,22 +115,23 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          when "Config App Events"
             display("CFE_EVS CFG_APP_EVENT_SCREEN",50,50)
          end
-      end
+      end # user_selection
       
-   when "LEARN_OSK"
-      user_selection = screen.get_named_widget("learn_osk").text
+   when "LEARN_OSK_SIMSAT", "LEARN_OSK_CFSAT", "LEARN_OSK_SANDBOX"
+      target = cmd.sub(/LEARN_OSK_/,'').downcase
+      user_selection = screen.get_named_widget("learn_osk_#{target}").text
       case user_selection
       when "About"
-         about_str = ["<b>Explore cFS/SimSat Main Page</b>",
-                      "<pre>   <b>System Section</b> - Access to system level documentation and functionality</pre>",
-                      "<pre>   <b>Applications</b>   - Access to resources for groups of apps that work together</pre>",
-                      "<pre>   <b>cFE Services</b>   - Access to resources for each of the cFE services</pre>",
+         about_str = ["<b>OpenSatKit Main Page Tabs</b>",
+                      "<pre>   <b>Mission FSW</b> - Resources for developing Mission FSW using the SimSat reference mission</pre>",
+                      "<pre>   <b>cFS FSW Eng</b> - Educational resources for engineering FSW systems using the cFS</pre>",
+                      "<pre>   <b>PiSat</b>       - Configure a Raspberry Pi with an OSK cFS distribution and connect it to COSMOS</pre>",
+                      "<pre>   <b>R&D</b>         - A collection of research and devlopment apps</pre>",
                       "      ",
                       "<b>This Drop Down Menu</b>",
-                      "<pre>   <b>OSK Overview Video</b> - Introduces OSK and its goals.</pre>",
-                      "<pre>   <b>OSK Quick Start</b>    - Highlights OSK features to allow a user to start experimenting.</pre>",
-                      "<pre>   <b>OSK Users Guide</b>    - Indepth description of all of the OSKs features with some design descriptions.</pre>",            
-                      "<pre>   <b>OSK Version IDs</b>    - Display version identifiers for all OSK components.</pre>"]
+                      "<pre>   <b>OSK Quick Start</b>    - Guides the user for how to best use OSK to meet their needs</pre>",
+                      "<pre>   <b>OSK Overview Video</b> - Introduces OSK and its goals</pre>",
+                      "<pre>   <b>OSK Version IDs</b>    - Display version identifiers for all OSK components</pre>"]
          cfs_kit_create_about_screen("Learn OSK",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       when "OSK Version IDs"
@@ -159,20 +154,163 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          # Displaying a document
          doc_filename = nil
          case user_selection
-         when "OSK Quick Start"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QUICK_START_FILE}"
-         when "OSK Users Guide"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_USERS_GUIDE_FILE}"
+         when "OSK Quick Start Doc"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QS_INTRO_FILE}"
          end
          spawn("evince #{doc_filename}") unless doc_filename.nil?
       end
+
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_common()"
+   end # cmd case   
+
+end # def cfs_kit_scr_common()
+
+
+################################################################################
+## Mission FSW - simsat
+################################################################################
+
+def cfs_kit_scr_simsat(screen, cmd)
+
+   case cmd
+   
+   ## System
+   
+   when "START_CFS", "START_CFS_42"
+   
+      Osk::System.stop_n_start_cfs('simsat')
       
-   when "LEARN_CFS"
-      user_selection = screen.get_named_widget("learn_cfs").text
+      if (cmd == "START_CFS_42")
+         wait 3                      # Give cFS chance to start
+         Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
+      end
+
+   ## Docs & Videos
+
+   when "DOCS_VIDEOS"
+      user_selection = screen.get_named_widget("simsat_docs_videos").text
+      case user_selection
+      when "About"
+         about_str = ["<b>Develop Mission FSW</b>",
+                      "<pre>   <b>System Section</b> - Manage cFS SimSat target and access OSK docs & videos</pre>",
+                      "<pre>   <b>Docs & Videos</b>  - Launch system level docs and videos about mission FSW development with SimSat</pre>",
+                      "<pre>   <b>App Groups</b>     - Access to resources for groups of apps that work together</pre>",
+                      "<pre>   <b>Tune, Ver, Val</b> - Access to resources used to tune and test your system</pre>",
+                      "      ",
+                      "<b>This Drop Down Menu</b>",
+                      "<pre>   <b>Mission Quick Start</b> - Describes OSK SimSat reference mission and how to evolve for your mission FSW</pre>"]
+         cfs_kit_create_about_screen("Develop Mission FSW",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+         doc_filename = nil
+      when "About Tune, Verify, Validate"
+         about_str = ["USe the following resources to tune and test the SimSat target:",
+                      "                                             " ,                     
+                      "<pre><b>Perf Monitor</b>     - Manage & demo the performance monitor tool to help tune your system</pre>",
+                      "<pre><b>Unit Test</b>        - Compile & run individual executables that verify cFE and app components</pre>",
+                      "<pre><b>Functional Test</b>  - Verify requirements. Uses Test Runner with 3 test suites: cFS, OSK, Mission</pre>",
+                      "<pre><b>Integration Test</b> - Verify basic app functionality as a part of the SimSat system. Uses Script Runner</pre>",
+                      "<pre><b>Sys&Ops Examples</b> - System functional test and ops example scripts. Uses Script Runner</pre>"]            
+         cfs_kit_create_about_screen("Tune, Verify, and Validate",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      when "Mission FSW Quick Start Doc"
+         doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QS_MISSION_FSW_FILE}"
+         spawn("evince #{doc_filename}") unless doc_filename.nil?
+      when "SimSat Overview Doc"
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
+         spawn("evince #{doc_filename}")
+      end
+
+   ## App Groups
+
+   when "RUNTIME_APPS"
+      display("SIMSAT RUNTIME_SCREEN",50,50)
+   
+   when "DATA_FILE_APPS"
+      display("SIMSAT DATA_FILE_SCREEN",50,50)
+   
+   when "AUTONOMY_APPS"
+      display("SIMSAT AUTONOMY_SCREEN",50,50)
+   
+   when "ADC_APPS"
+      display("SIMSAT ADC_SCREEN",50,50)
+   
+   when "MAINTENANCE_APPS"
+      display("SIMSAT MAINTENANCE_SCREEN",50,50)
+   
+   when "HEALTH_SAFETY_APPS"
+      display("SIMSAT HEALTH_SAFETY_SCREEN",50,50)
+
+   ## Tune, Verify, and Validate
+
+   when "PERF_MON_MGMT"
+      display("CFS_KIT PERF_MON_SCREEN",50,50)
+   
+   when "PERF_MON_DEMO"
+      display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
+    
+   when "UNIT_TEST"
+      Osk::System.check_n_start_cfs('simsat')
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run unit tests for all installed apps.\nThiswill be added when OSK is updated to cFE 7.0")   
+
+   when "INTG_TEST"
+      Osk::System.check_n_start_cfs('simsat')
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")
+      display("SIMSAT CFS_APP_SCREEN",50,50)
+      display("SIMSAT OSK_APP_SCREEN",1500,50)
+
+   when "FUNC_TEST"
+      # Test suite file defined in  ~\cosmos\config\tools\test_runner\test_runner.txt
+      # Ensure simsat target is running & it's the default state
+      Osk::System.check_n_start_cfs('simsat')
+      user_selection = screen.get_named_widget("app_func_test").text
+      case user_selection
+      when "Manually Select"
+         test_suite = ""
+      when "cFS Test Suite"
+         test_suite = "--suite SimSatFuncTestSuiteCfs"
+      when "OSK Test Suite"
+         test_suite = "--suite SimSatFuncTestSuiteOsk"
+      end # user_selection
+      spawn("ruby #{Osk::COSMOS_TST_RUNNER} #{test_suite}")
+
+   when "SYS_OPS_EX"
+      # v3.0: Only one selection. Need to break down into educational pieces
+      # No need to display a screen because a local screen is created by simsat_ops_example
+      status_bar("Preparing for ops example. This could take several seconds.")
+      simsat_ops_example_setup(true) # true => force a cFS restart 
+      status_bar("Spawning Script Runner to run the ops example script.")
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
+    
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_simsat()"
+   end # cmd case
+
+end # cfs_kit_scr_simsat()
+
+
+################################################################################
+## cFS FSW Engineering - cfsat
+################################################################################
+
+def cfs_kit_scr_cfsat(screen, cmd)
+
+   case cmd
+   
+   ## System
+   
+   when "START_CFS"
+      Osk::System.stop_n_start_cfs('cfsat')
+      
+
+   ## Docs & Videos
+
+   when "DOCS_VIDEOS"
+      user_selection = screen.get_named_widget("cfsat_docs_videos").text
       if user_selection == "About"
          about_str = ["<pre><b>cFS Overview Video</b>   - Overview of the core Flight System (cFS) architecture.</pre>",
                       "<pre><b>cFS Build Video</b>      - How to compile/link the core Flight System (cFS)</pre>",
-                      "<pre><b>cFS Training Intro</b>   - Overview of cFS program, business model and architecture.</pre>",
+                      "<pre><b>cFS Training Intro</b>   - Overview of cFS program, business model, and architecture.</pre>",
                       "<pre><b>cFE Service Training</b> - Describes Core Flight Executive five services.</pre>",
                       "<pre><b>OSK cFE Exercises</b>    - Exercises for the cFE Service Training module.</pre>",
                       "<pre><b>cFE App Training</b>     - Describes cFE application development and runtime environment.</pre>",
@@ -200,62 +338,8 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
          spawn("evince #{doc_filename}") unless doc_filename.nil?
       end
       
-   when "SIMPLE_SAT"
-      user_selection = screen.get_named_widget("simple_sat").text
-      if user_selection == "About"      
-         about_str = ["Run scripts that work with the SimpleSat reference mission. Refer to <i>'SimpleSat Overview'</i> doc accessed",
-                      "using the <i>'Learn OpenSatKit'</i> drop down menu.",
-                      "                                             " ,                     
-                      "<pre><b>SimSat Overview</b>  - Describe Simple Sat reference architecture and operational contect.</pre>",
-                      "<pre><b>Functional Test</b>  - Verify requirements. Uses Test Runner with 3 test suites: cFS, OSK, Mission.</pre>",
-                      "<pre><b>Integration Test</b> - Verify basic app functionality as a part of the SimSat system. Uses Script Runner.</pre>",
-                      "<pre><b>Ops Example</b>      - Configures SimSat and performs a single operational contact. Uses Script Runner.</pre>"]            
-         cfs_kit_create_about_screen("Simple Sat",about_str)
-         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
-      else 
-         case user_selection
-         when "SimpleSat Overview"
-            doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
-            spawn("evince #{doc_filename}")
-         else
-            # Running a script
-            cfs_started = Osk::System.check_n_start_cfs
-            case user_selection         
-            when "Functional Test"
-               # Test suite file defined in  ~\cosmos\config\tools\test_runner\test_runner.txt
-               spawn("ruby #{Osk::COSMOS_TST_RUNNER}")
-            when "Integration Test"
-               spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_intg_test.rb")
-               display("SIMSAT CFS_APP_SCREEN",50,50)
-               display("SIMSAT OSK_MISS_APP_SCREEN",1500,50)
-            when "Ops Example"
-               # No need to display a screen because a local screen is created by simsat_ops_example
-               status_bar("Preparing for ops example. This could take several seconds.")
-               simsat_ops_example_setup(!cfs_started) # If cFS wasn't just restarted then force a restart 
-               status_bar("Spawning Script Runner to run the ops example script.")
-               spawn("ruby #{Osk::COSMOS_SCR_RUNNER} simsat_ops_example.rb")
-            end
-         end
-      end
+   ## core Flight Executive
 
-   when "SIMSAT_RUNTIME"
-      display("SIMSAT RUNTIME_SCREEN",50,50)
-   
-   when "SIMSAT_DATA_FILE"
-      display("SIMSAT DATA_FILE_SCREEN",50,50)
-   
-   when "SIMSAT_AUTONOMY"
-      display("SIMSAT AUTONOMY_SCREEN",50,50)
-   
-   when "SIMSAT_ADC"
-      display("SIMSAT ADC_SCREEN",50,50)
-   
-   when "SIMSAT_MAINTENANCE"
-      display("SIMSAT MAINTENANCE_SCREEN",50,50)
-   
-   when "SIMSAT_HEALTH_SAFETY"
-      display("SIMSAT HEALTH_SAFETY_SCREEN",50,50)
-   
    when "CFE_EVENT_SERVICE"
       display("CFE_EVS CFE_EVS_SCREEN",50,50)
    
@@ -274,32 +358,101 @@ def cfs_kit_scr_explore_cfs(screen, cmd)
    when "CFE_USERS_GUIDE"
       Cosmos.open_in_web_browser("#{Osk::CFE_UG_DIR}/#{Osk::CFE_UG_FILE}")
    
-   else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_explore_cfs()"
-   end # cmd case
+   ## Develop Apps
 
-end # cfs_kit_scr_explore_cfs()
-
-################################################################################
-## Develop Apps
-################################################################################
-
-
-def cfs_kit_scr_develop_apps(screen, cmd)
-
-   case cmd
    when "CFE_APP_DEV_GUIDE"
       # cFE does not deliver PDF file so I generate it in OSK's docs directory
       spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::CFE_APP_DEV_FILE}")
    
    when "OSK_APP_DEV_GUIDE"
-      prompt(Osk::MSG_TBD_FEATURE)
-   
-   when "OSK_APP_TRAIN_SLIDES"
-      prompt(Osk::MSG_TBD_FEATURE)   
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the OSK C framework")   
 
-   when "OSK_DEMO_APP"
-      prompt(Osk::MSG_TBD_FEATURE)   
+   when "CREATE_APP"
+      display("CFSAT CREATE_APP_SCREEN",50,50)
+   
+   when "DEV_CFS_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Hands on tutorial for creating an app using the cFS developers guide style")   
+   
+   when "DEV_OSK_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Hands on tutorial for creating an app using the OSK C framework")   
+   
+   when "DEV_ADC_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app from control algorithms developed in 42 simulator")   
+   
+   when "DEV_ECI_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the External Code Interface")   
+   
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_cfsat()"
+   end # cmd case
+
+end # cfs_kit_scr_cfsat()
+
+
+################################################################################
+## PiSat
+################################################################################
+
+def cfs_kit_scr_pisat(screen, cmd)
+
+   case cmd
+   
+   ## System
+
+   when "START_CFS"
+      cmd("PICONTROL START_CFS")
+   
+   when "STOP_CFS"
+      cmd("PICONTROL STOP_CFS") 
+
+   when "REBOOT_PI"
+      cmd("PICONTROL REBOOT_PI")
+   
+   when "SHUTDOWN_PI"
+      cmd("PICONTROL SHUTDOWN_PI")
+
+   when "CMD_TLM_SERVER"
+      cmd_tlm_server = screen.get_named_widget("cmd_tlm_server").text
+      case cmd_tlm_server
+      when "PiSat"
+         display("PICONTROL PISAT_CONNECT_SCREEN",50,50)
+      when "Local cFS"
+         pisat_connection(screen,"SWITCH_TO_LOCAL");
+      end   
+   
+   when "ENA_TLM"
+      Cosmos.run_process("ruby tools/CmdSender -p \"KIT_TO ENABLE_TELEMETRY\"")
+
+   when "SENSOR_SCR"
+      display("PICONTROL PISAT_SENSOR_DATA_SCREEN",50,50)
+   
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_pisat()"
+   end # cmd case
+
+end # cfs_kit_scr_pisat() 
+
+
+################################################################################
+## R&D - sandbox
+################################################################################
+
+def cfs_kit_scr_sandbox(screen, cmd)
+
+   case cmd
+   
+   ## System
+   
+   when "START_CFS", "START_CFS_42"
+   
+      Osk::System.stop_n_start_cfs('sandbox')
+      
+      if (cmd == "START_CFS_42")
+         wait 3                      # Give cFS chance to start
+         Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
+      end
+
+   ## Manage Apps
    
    when "ADD_APP"
       # 
@@ -317,53 +470,33 @@ def cfs_kit_scr_develop_apps(screen, cmd)
       if (not Osk::System.cfs_running?)
          continue = message_box("This feature allows you to install an app to a running cFS system. Select <Yes> to start the FSW and run the script.  A terminal window will be created to run the FSW. Enter your user password when prompted.",Osk::MSG_BUTTON_YES,Osk::MSG_BUTTON_NO,false) #puts "continue = #{continue}"
          return unless continue == Osk::MSG_BUTTON_YES
-         Osk::System.start_cfs
+         Osk::System.start_cfs('sandbox')
          wait 4  # Give the cFS time to start
       end
-      Osk::flight.cfe_es.send_cmd("WRITE_APP_INFO_TO_FILE with FILENAME #{Osk::TMP_FLT_BIN_PATH_FILE}")
-      wait 1
-      #~if (Osk::system.file_transfer.get(Osk::TMP_FLT_BIN_PATH_FILE,Osk::TMP_GND_BIN_PATH_FILE,10)) # 10 sec timeout
-      # Directly access the FSW file without transferring it to make this more responsive
-         tbl_mgr_core = Cosmos::TableManagerCore.new                 
-         app_info_bin_path_file = File.join(Osk::GND_TO_FLT_SRV_DIR,Osk::TMP_BIN_FILE)
-         app_info_def_path_file = File.join(Osk::COSMOS_CFG_TBL_MGR_DIR,Osk::TBL_MGR_DEF_CFE_ES_APP_INFO)
-         # Expect to get an exception because binary file size will be less than max number of records
-         begin
-            tbl_mgr_core.file_open(app_info_bin_path_file, app_info_def_path_file)
-         rescue Cosmos::TableManagerCore::MismatchError => err
-            #Quietly accept the exception
-            #prompt("Caught MismatchError Exception\n#{err}")
+      fsw_app_list = cfs_kit_create_fsw_app_list
+      total_app_list = Osk::flight.app.keys - fsw_app_list
+      # v3.0 - Used this feature for the sandbox target which is all non-simsat targets. This 
+      #        needs to be cleaned up in a future release
+      app_list = []
+      total_app_list.each do |app|
+         if (Osk::flight.app[app.to_s].cfs_targets.include?("sandbox"))
+            app_list << app.to_s
          end
-         fsw_apps = []
-         tbl_mgr_core.config.tables.each do |table_name, table|
-            #puts "table: Name=#{table.table_name}, rows=#{table.num_rows}, cols=#{table.num_columns}\n"
-            ttable = tbl_mgr_core.config.table(table_name)
-            ttable.sorted_items.each do |item|
-               value = table.read(item.name, :FORMATTED)
-               value = "0x" + value.simple_formatted unless value.is_printable?  # Handle binary strings
-               #puts "ttable: item.name=#{item.name}, value=#{value}\n"
-               # Find the APPxx_NAME entry and exclude the APPxx_MAIN_NAME
-               if (item.name.include? "_NAME" and not item.name.include? "_MAIN_NAME")
-                  fsw_apps << value unless value == ""
-               end 
-            end
-         end
-         app_list = Osk::flight.app.keys - fsw_apps
-         # Remove apps that aren't built by default
-         app_list.each do |app|
-            if (not Osk::flight.app[app.to_s].sys_build)
-               puts "Removing " + Osk::flight.app[app.to_s].fsw_name + "\n"
-               app_list.delete(app)
-            end
-         end
-         #~puts "Osk::flight.app[app].sys_build  = " + Osk::flight.app[app.to_s].sys_build.to_s + "\n"
-         #~puts "fsw_apps: #{fsw_apps}\n"
-         #~puts "Flight.app: #{Osk::flight.app.keys}\n"
-         #~puts "Available Apps: #{app_list}\n"
-      #~end # End if downlinked App Info file
-      cfs_kit_add_app_screen("Add Application from Catalog", app_list)
+      end
+      #~puts "fsw_apps: #{fsw_apps}\n"
+      #~puts "Flight.app: #{Osk::flight.app.keys}\n"
+      #~puts "Available Apps: #{app_list}\n"
+      cfs_kit_add_app_screen("Add App from Compiled Prototypes", app_list)
       display("CFS_KIT #{File.basename(Osk::ADD_APP_SCR_FILE,'.txt')}",1000,10)
-   when "ADD_APP_DESCR"
+   
+   when "ADD_APP_LOAD"
+      app_name = screen.get_named_widget("app_name").text
+      app = Osk::flight.app[app_name]         
+      Osk::flight.cfe_es.send_cmd("START_APP with APP_NAME #{app.fsw_name}, APP_ENTRY_POINT #{app.entry_symbol}, APP_FILENAME #{app.obj_path_filename}, STACK_SIZE #{app.stack_size}, EXCEPTION_ACTION 0, PRIORITY #{app.priority}")
+      prompt("The cFS terminal window should display a #{app_name} initialization message.\nUse the cFS Command and Telmetry Server's window to access the app's Cmd & Tlm Packets")
+      clear("CFS_KIT #{File.basename(Osk::ADD_APP_SCR_FILE,'.txt')}")
+
+   when "ADD_REMOVE_APP_DESCR"
       app_name = screen.get_named_widget("app_name").text
       app_descr_array = Osk::flight.app[app_name].description 
       i = 1
@@ -377,88 +510,93 @@ def cfs_kit_scr_develop_apps(screen, cmd)
          scr_descr.text = "         "
          i += 1
       end
-   when "ADD_APP_LOAD"
-      app_name = screen.get_named_widget("app_name").text
-      app = Osk::flight.app[app_name]         
-      Osk::flight.cfe_es.send_cmd("START_APP with APP_NAME #{app.fsw_name}, APP_ENTRY_POINT #{app.entry_symbol}, APP_FILENAME #{app.obj_path_filename}, STACK_SIZE #{app.stack_size}, EXCEPTION_ACTION 0, PRIORITY #{app.priority}")
-      prompt("The cFS terminal window should display a #{app_name} initialization message.\nUse the cFS Command and Telmetry Server's window to access the app's Cmd & Tlm Packets")
-      clear("CFS_KIT #{File.basename(Osk::ADD_APP_SCR_FILE,'.txt')}")
+   
    when "REMOVE_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Remove an app from cFE startup scr")   
+      if (Osk::System.cfs_running?)
+         fsw_app_list = cfs_kit_create_fsw_app_list
+         app_list = fsw_app_list - ["CFE_ES", "CFE_EVS", "CFE_SB", "CFE_TBL", "CFE_TIME", "KIT_CI", "KIT_SCH", "KIT_TO"]
+         cfs_kit_remove_app_screen("Remove App", app_list)
+         display("CFS_KIT #{File.basename(Osk::REMOVE_APP_SCR_FILE,'.txt')}",1000,10)
+      else
+         prompt("There's no cFS target running to remove apps from")
+      end
    
-   when "CREATE_APP"
-      display("CFS_KIT MNG_APP_DEV_SCREEN",50,50)
+   when "REMOVE_APP_UNLOAD"
+      app_name = screen.get_named_widget("app_name").text
+      Osk::flight.cfe_es.send_cmd("STOP_APP with APP_NAME #{app_name}")
+
+   when "ES_APP_MGMT"
+      display("CFS_KIT APP_MGMT_SCREEN",50,50)
    
-   when "MANAGE_APP_RUNTIME"
-      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",50,50)   
-
-   when "DEV_ADC_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app from control algorithms developed in 42 simulator")   
+   when "CONFIG_SCH_TO"
+      display("CFS_KIT MNG_APP_RUNTIME_SCREEN",50,50)
    
-   when "DEV_ECI_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the External Code Interface")   
    
-   when "PERF_MON_MGMT"
-      display("CFS_KIT PERF_MON_SCREEN",50,50)
+   ## Prototype Apps
    
-   when "PERF_MON_DEMO"
-      display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
-
-   when "UNIT_TEST"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run unit tests for all installed apps")   
-
-   when "INTG_TEST"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run integration test all installed apps")   
-
-   else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_develop_apps()"
-   end # cmd case
-
-end # cfs_kit_scr_develop_apps()
-
-
-################################################################################
-## Extend OSK
-################################################################################
-
-
-def cfs_kit_scr_extend_osk(screen, cmd)
-
-   case cmd
-   when "PISAT"
-	   #prompt("Please ensure you are connected to the PiSat network")
-      #cmd("PICONTROL STARTCFS")
-      #wait(2)
-      #cmd("KIT_TO ENABLE_TELEMETRY")
-      spawn("ruby #{Osk::COSMOS_TLM_GRAPHER}")
-      display("CFS_KIT PISAT_CONTROL_SCREEN", 1000, 0)
-
    when "RUN_BENCHMARKS"
       prompt("This is a prototype app that will be updated for benchmarking\nremote targets. The BM app will be loaded.")
       display("CFS_KIT BENCHMARK_SCREEN",50,50)
       Osk::Ops.load_app("BM") unless Osk::Ops.app_loaded?("BM")
 
-   when "RUN_PLATFORM_CERT"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Run platform certification against a target")   
+   when "OSK_DEMO_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Demonstrate demo app features")   
 
+  
+   ## Bridge Apps
+   
    when "SBN"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Work with Software Bus Netowrk app")   
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Work with Software Bus Network app")   
 
    when "ROS2"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Wrok with the Robotic Operating System")   
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Work with the Robotic Operating System")   
 
-   when "UPDATE_CFE"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Instructions for ugrading to a new cFE version")   
-   
-   when "UPDATE_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Instructions for ugrading an installed open source app")   
-   
    else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_develop_apps()"
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_sandbox()"
    end # cmd case
 
-end # cfs_kit_scr_extend_osk()
+end # cfs_kit_scr_sandbox()
 
+
+################################################################################
+## Create FSW app list
+################################################################################
+
+def cfs_kit_create_fsw_app_list
+
+   Osk::flight.cfe_es.send_cmd("WRITE_APP_INFO_TO_FILE with FILENAME #{Osk::TMP_FLT_BIN_PATH_FILE}")
+   wait 1
+   #~if (Osk::system.file_transfer.get(Osk::TMP_FLT_BIN_PATH_FILE,Osk::TMP_GND_BIN_PATH_FILE,10)) # 10 sec timeout
+   # Directly access the FSW file without transferring it to make this more responsive
+   tbl_mgr_core = Cosmos::TableManagerCore.new                 
+   app_info_bin_path_file = File.join(Osk::GND_TO_SANDBOX_SRV_DIR,Osk::TMP_BIN_FILE)
+   app_info_def_path_file = File.join(Osk::COSMOS_CFG_TBL_MGR_DIR,Osk::TBL_MGR_DEF_CFE_ES_APP_INFO)
+   # Expect to get an exception because binary file size will be less than max number of records
+   begin
+      tbl_mgr_core.file_open(app_info_bin_path_file, app_info_def_path_file)
+   rescue Cosmos::TableManagerCore::MismatchError => err
+      #Quietly accept the exception
+      #prompt("Caught MismatchError Exception\n#{err}")
+   end
+   fsw_apps = []
+   tbl_mgr_core.config.tables.each do |table_name, table|
+      #puts "table: Name=#{table.table_name}, rows=#{table.num_rows}, cols=#{table.num_columns}\n"
+      ttable = tbl_mgr_core.config.table(table_name)
+      ttable.sorted_items.each do |item|
+         value = table.read(item.name, :FORMATTED)
+         value = "0x" + value.simple_formatted unless value.is_printable?  # Handle binary strings
+         #puts "ttable: item.name=#{item.name}, value=#{value}\n"
+         # Find the APPxx_NAME entry and exclude the APPxx_MAIN_NAME
+         if (item.name.include? "_NAME" and not item.name.include? "_MAIN_NAME")
+            fsw_apps << value unless value == ""
+         end 
+      end
+   end
+   #~end # End if downlinked App Info file
+
+   return fsw_apps
+   
+end # cfs_kit_create_fsw_app_list
 
 ################################################################################
 ## Leftovers from OSK 1.7 that need to be migrated
@@ -472,7 +610,7 @@ def cfs_kit_launch_app(screen, app)
       if cfs_kit_create_tutorial_screen
          prompt ("Successfuly created tutorial screen file #{tutorial_scr_file}\nusing #{tutorial_def_file}")
       end
-   elsif (app == "PROTO_APPP")
+   elsif (app == "PROTO_APP")
       #TODO - Investigate generic text table editor or tutorial screen
 	   Cosmos.run_process("ruby lib/OskCfeFileViewer -f '/mnt/hgfs/OpenSatKit/cosmos/cfs_kit/file_server/cfe_es_syslog.dat'")
 	   #Cosmos.run_process("ruby lib/OskTxtFileViewer -f '/mnt/hgfs/OpenSatKit/cosmos/test.json'")
@@ -801,7 +939,7 @@ def cfs_kit_add_app_screen(scr_title, app_list)
    #   License (GPL). 
    #
    ###############################################################################
-
+   <% require 'cfs_kit_screen' %>
    SCREEN AUTO AUTO 0.5
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   
@@ -860,8 +998,8 @@ def cfs_kit_add_app_screen(scr_title, app_list)
    MATRIXBYCOLUMNS 4
      LABEL \"Available Apps\"
      NAMED_WIDGET app_name COMBOBOX #{combo_text} 
-     BUTTON 'Description' 'require \"/mnt/hgfs/OpenSatKit/cosmos/config/targets/CFS_KIT/lib/cfs_kit_screen.rb\"; cfs_kit_scr_develop_apps(self,\"ADD_APP_DESCR\")'
-     BUTTON 'Load App' 'require \"/mnt/hgfs/OpenSatKit/cosmos/config/targets/CFS_KIT/lib/cfs_kit_screen.rb\"; cfs_kit_scr_develop_apps(self,\"ADD_APP_LOAD\")'
+     BUTTON 'Description' 'cfs_kit_scr_sandbox(self,\"ADD_REMOVE_APP_DESCR\")'
+     BUTTON 'Load App'    'cfs_kit_scr_sandbox(self,\"ADD_APP_LOAD\")'
      SETTING BACKCOLOR 0 200 0
    END # Matrix
    "
@@ -878,6 +1016,105 @@ def cfs_kit_add_app_screen(scr_title, app_list)
    end
 
 end # cfs_kit_add_app_screen()
+
+
+################################################################################
+## Create Remove App Screen
+################################################################################
+
+def cfs_kit_remove_app_screen(scr_title, app_list)
+
+   t = Time.new 
+   time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
+
+   scr_header = "
+   ###############################################################################
+   # Remove App Screen
+   #
+   # Notes:
+   #   1. Do not edit this file because it is automatically generated and your
+   #      changes will not be saved.
+   #   2. File created by cfs_kit_remove_app_screen.rb on #{time_stamp}
+   #
+   # License:
+   #   Written by David McComas, licensed under the copyleft GNU General Public
+   #   License (GPL). 
+   #
+   ###############################################################################
+   <% require 'cfs_kit_screen' %>
+   SCREEN AUTO AUTO 0.5
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+   TITLE \"#{scr_title}\"
+     SETTING BACKCOLOR 162 181 205
+     SETTING TEXTCOLOR black
+
+   VERTICAL
+   LABEL \"              \"
+   LABEL \"              \"
+
+   LABEL \"Drop down menu contains apps currently running in cfS target.\"
+   LABEL \"\"
+   LABEL \"\"
+   "
+
+   scr_trailer = "
+   HORIZONTALLINE
+      HORIZONTALLINE
+      LABEL \"App Overview\"
+      SCROLLWINDOW
+      VERTICAL
+        NAMED_WIDGET descr_1 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_2 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_3 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_4 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_5 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_6 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_7 LABEL \"                                                                                                                                                \"
+        NAMED_WIDGET descr_8 LABEL \"                                                                                                                                                \"
+      END # Vertical
+      END # Scroll Window
+
+
+   END # Vertical
+   "
+   
+   scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::REMOVE_APP_SCR_FILE)
+
+   begin
+         
+      # Always overwrite the temp file      
+      File.open(scr_file,"w") do |f| 
+           
+         f.write (scr_header)
+
+         combo_text = ""
+         app_list.each do |app|
+            combo_text << "'" + app + "' "
+         end
+         
+      scr_text = "
+   MATRIXBYCOLUMNS 4
+     LABEL \"Available Apps\"
+     NAMED_WIDGET app_name COMBOBOX #{combo_text} 
+     BUTTON 'Description' 'cfs_kit_scr_sandbox(self,\"ADD_REMOVE_APP_DESCR\")'
+     BUTTON 'Stop App'    'cfs_kit_scr_sandbox(self,\"REMOVE_APP_UNLOAD\")'
+     SETTING BACKCOLOR 0 200 0
+   END # Matrix
+   "
+
+         f.write (scr_text)
+         
+         f.write (scr_trailer)
+
+      end # File
+         
+   rescue Exception => e
+      puts e.message
+      puts e.backtrace.inspect  
+   end
+
+end # cfs_kit_remove_app_screen()
 
 
 ################################################################################

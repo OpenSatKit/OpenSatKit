@@ -15,6 +15,14 @@ require 'cosmos'
 module Osk
 
 
+   ######################
+   ## cFS Target Names ##
+   ######################
+
+   SIMSAT_TARGET  = "simsat"   # Mission FSW 
+   CFSAT_TARGET   = "cfsat"    # cFS Education
+   SANDBOX_TARGET = "sandbox"  # Research & Development
+   
    ###########################
    ## JSON Naming standards ##
    ###########################
@@ -86,8 +94,10 @@ module Osk
    
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_QUICK_START_FILE  = "OSK-Quick-Start-Guide.pdf"
-   DOCS_USERS_GUIDE_FILE  = "OSK-Users-Guide.pdf"
+   DOCS_QS_INTRO_FILE        = "OSK-QS-Intro.pdf"
+   DOCS_QS_MISSION_FSW_FILE  = "OSK-QS-Mission-FSW.pdf"
+   DOCS_QS_CFS_ENG_FILE      = "OSK-QS-cFS-Eng.pdf"
+   DOCS_QS_RND_FILE          = "OSK-QS-RnD.pdf"
 
    TRAIN_OSK_INTRO_FILE       = "OSK-Training-Intro.pdf"
    TRAIN_OSK_CFE_SERVICE_FILE = "OSK-Ex-cFE_02A-cFE-Services.pdf"
@@ -103,9 +113,10 @@ module Osk
    TRAIN_OSK_APPS_MAINT_FILE    = "OSK-Apps-Maintenance.pdf"
    TRAIN_OSK_APPS_RUNTIME_FILE  = "OSK-Apps-RunTime.pdf"
    
-   ABOUT_SCR_FILE   = "about_scr.txt"
-   VERSION_SCR_FILE = "version_scr.txt"
-   ADD_APP_SCR_FILE = "add_app_scr.txt"
+   ABOUT_SCR_FILE      = "about_scr.txt"
+   VERSION_SCR_FILE    = "version_scr.txt"
+   ADD_APP_SCR_FILE    = "add_app_scr.txt"
+   REMOVE_APP_SCR_FILE = "remove_app_scr.txt"
 
    TUTORIAL_DEF_FILE  = "osk_tutorials.json"
    TUTORIAL_SCR_FILE  = "tutorial_scr.txt"
@@ -132,14 +143,10 @@ module Osk
 
    CFE_STARTUP_FILE = "cfe_es_startup.scr"
    
-   CPU1_TARGET_FILE  = "targets.cmake"
-   CPU1_PLT_CFG_FILE = "cpu1_platform_cfg.h"
-   CPU1_MSG_ID_FILE  = "cpu1_msgids.h"
-   CPU1_OS_CFG_FILE  = "cpu1_osconfig.h"
-   CPU1_STARTUP_FILE = "cpu1_cfe_es_startup.scr"
-   CPU1_MSG_TBL_FILE = "cpu1_osk_sch_msg_tbl.json"
-   CPU1_SCH_TBL_FILE = "cpu1_osk_sch_sch_tbl.json"
-   CPU1_PKT_TBL_FILE = "cpu1_osk_to_pkt_tbl.json"
+   OSK_TARGETS_FILE  = "targets.cmake"
+   SIMSAT_STARTUP_FILE  = "#{SIMSAT_TARGET.downcase}_#{CFE_STARTUP_FILE}"
+   CFSAT_STARTUP_FILE   = "#{CFSAT_TARGET.downcase}_#{CFE_STARTUP_FILE}"
+   SANDBOX_STARTUP_FILE = "#{SANDBOX_TARGET.downcase}_#{CFE_STARTUP_FILE}"
    
    JSON_TBL_MGMT_SCR_FILE = "json_table_mgmt_scr.txt"
    
@@ -242,9 +249,13 @@ module Osk
    OSK_CFS_DIR  = File.expand_path(REL_DIR_CFS,Cosmos::USERPATH)
    OSK_DOCS_DIR = File.expand_path(REL_DIR_DOCS,Cosmos::USERPATH)
 
-   CFS_EXE_DIR     = "#{OSK_CFS_DIR}/build/exe/cpu1"
-   CFS_EXE_CF_DIR  = "#{OSK_CFS_DIR}/build/exe/cpu1/cf"
-   CFS_CMAKE_DIR   = "#{OSK_CFS_DIR}/osk_defs"
+   CFS_CMAKE_DIR        = "#{OSK_CFS_DIR}/osk_defs"
+   CFS_SIMSAT_EXE_DIR   = "#{OSK_CFS_DIR}/build/exe/simsat"
+   CFS_SIMSAT_CF_DIR    = "#{OSK_CFS_DIR}/build/exe/simsat/cf"
+   CFS_CFSAT_EXE_DIR    = "#{OSK_CFS_DIR}/build/exe/cfsat"
+   CFS_CFSAT_CF_DIR     = "#{OSK_CFS_DIR}/build/exe/cfsat/cf"
+   CFS_SANDBOX_EXE_DIR  = "#{OSK_CFS_DIR}/build/exe/sandbox"
+   CFS_SANDBOX_CF_DIR   = "#{OSK_CFS_DIR}/build/exe/sandbox/cf"
    
    REL_SRV_DIR     = "cfs_kit/file_server"
    REL_SRV_TBL_DIR = "cfs_kit/file_server/tables"
@@ -255,7 +266,9 @@ module Osk
    FLT_SRV_DIR_SEP = FLT_SRV_DIR + "/"
    FLT_DEMO_DIR    = File.join(Osk::FLT_SRV_DIR,"demo")
    FLT_TEST_DIR    = File.join(Osk::FLT_SRV_DIR,"test")
-   GND_TO_FLT_SRV_DIR = File.join(OSK_CFS_DIR,'build','exe','cpu1','cf')
+   GND_TO_SIMSAT_SRV_DIR  = File.join(OSK_CFS_DIR,'build','exe','simsat','cf')
+   GND_TO_CFSAT_SRV_DIR   = File.join(OSK_CFS_DIR,'build','exe','cfsat','cf')
+   GND_TO_SANDBOX_SRV_DIR = File.join(OSK_CFS_DIR,'build','exe','sandbox','cf')
    
    CFS_KIT_LIB_DIR = Osk::cfg_target_dir("CFS_KIT","lib")
    CFS_KIT_SCR_DIR = Osk::cfg_target_dir("CFS_KIT","screens")
@@ -287,6 +300,7 @@ module Osk
    TMP_FLT_TXT_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_TXT_FILE}"
    TMP_GND_TXT_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_TXT_FILE}"
 
+
    #################################
    ## Demo Standard Text Strings  ## 
    #################################
@@ -316,5 +330,15 @@ module Osk
    TLM_STR_HK_PKT    = "HK_TLM_PKT"
    TLM_STR_CMD_VLD   = "CMD_VALID_COUNT"
    TLM_STR_CMD_ERR   = "CMD_ERROR_COUNT"
-    
+   
+   ############################
+   ## cFS Target Descriptors ##
+   ############################
+   
+   SIMSAT_CFS_TARGET  = { dir: CFS_SIMSAT_EXE_DIR,  exe: "core-#{SIMSAT_TARGET}"  }
+   CFSAT_CFS_TARGET   = { dir: CFS_CFSAT_EXE_DIR,   exe: "core-#{CFSAT_TARGET}"   }
+   SANDBOX_CFS_TARGET = { dir: CFS_SANDBOX_EXE_DIR, exe: "core-#{SANDBOX_TARGET}" }
+
+   CFS_TARGETS = { simsat: SIMSAT_CFS_TARGET, cfsat: CFSAT_CFS_TARGET, sandbox: SANDBOX_CFS_TARGET }
+
 end # Module Osk

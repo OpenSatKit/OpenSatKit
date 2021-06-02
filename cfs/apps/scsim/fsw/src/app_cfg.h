@@ -99,11 +99,12 @@ DECLARE_ENUM(Config,APP_CONFIG)
 **
 */
 
-#define SCSIMTBL_LOAD_CMD_FC    (CMDMGR_APP_START_FC + 0)
-#define SCSIMTBL_DUMP_CMD_FC    (CMDMGR_APP_START_FC + 1)
-#define SCSIM_START_SIM_CMD_FC  (CMDMGR_APP_START_FC + 2)
-#define SCSIM_STOP_SIM_CMD_FC   (CMDMGR_APP_START_FC + 3)
-
+#define SCSIMTBL_LOAD_CMD_FC     (CMDMGR_APP_START_FC + 0)
+#define SCSIMTBL_DUMP_CMD_FC     (CMDMGR_APP_START_FC + 1)
+#define SCSIM_START_SIM_CMD_FC   (CMDMGR_APP_START_FC + 2)
+#define SCSIM_STOP_SIM_CMD_FC    (CMDMGR_APP_START_FC + 3)
+#define SCSIM_START_PLBK_CMD_FC  (CMDMGR_APP_START_FC + 4)
+#define SCSIM_STOP_PLBK_CMD_FC   (CMDMGR_APP_START_FC + 5)
 
 /******************************************************************************
 ** Event Macros

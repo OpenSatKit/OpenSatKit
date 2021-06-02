@@ -1,0 +1,29 @@
+{
+   "name": "SimpleSat (Simsat) Spacecraft Simulator (SCSIM)",
+   "description": "Define parameters used to control the spacecraft simulation",
+   "acs": {
+      "tbd-1": 1,
+      "tbd-2": 2
+   },
+   "cdh": {
+      "tbd-1": 11,
+      "tbd-2": 12
+   },
+   "comm": {
+      "tbd-1": 21,
+      "tbd-2": 22
+   },
+   "fsw": {
+      "tbd-1": 31,
+      "tbd-2": 32
+   },
+   "pwr": {
+      "tbd-1": 31,
+      "tbd-2": 32
+   },
+   "thrm": {
+      "tbd-1": 41,
+      "tbd-2": 42
+   },
+
+}

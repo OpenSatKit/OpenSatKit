@@ -10,12 +10,6 @@
       "HC is a prototype heater control app."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": false
-   },
-   
-
    "cosmos": {
       "target": "HC"
    },

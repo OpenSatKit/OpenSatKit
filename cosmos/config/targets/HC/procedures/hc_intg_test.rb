@@ -9,7 +9,7 @@
 #   Written by David McComas, licensed under the copyleft GNU General Public
 #   License (GPL).
 #
-################################################################################
+###############################################################################
 
 require 'cosmos'
 require 'cosmos/script'

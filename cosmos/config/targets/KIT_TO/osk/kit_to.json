@@ -12,11 +12,6 @@
       "be sent to COSMOS and how often using a packet filtering scheme."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "KIT_TO"
    },

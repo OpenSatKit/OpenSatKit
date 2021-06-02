@@ -34,6 +34,7 @@ class AppTemplate
    JSON_COSMOS           = "cosmos"
    JSON_DESCRIPTION      = "description"
    JSON_CFS_PREFIX       = "cfsapp-"
+   JSON_TABLES_PREFIX    = "tables-"
    JSON_COSMOS_PREFIX    = "cosmos-"
    JSON_PREFIX_SEPERATOR = '-'
 
@@ -102,11 +103,13 @@ class AppTemplate
          end
          
          template.each do |key,value|
-      
+            
             if key.start_with? JSON_CFS_PREFIX
                instantiate_template(key, value, JSON_CFS_PREFIX, template_dir, cfs_dst_dir)
-            elsif key.start_with? JSON_COSMOS_PREFIX 
+            elsif key.start_with? JSON_COSMOS_PREFIX
                instantiate_template(key, value, JSON_COSMOS_PREFIX, template_dir, cosmos_dst_dir)
+            elsif key.start_with? JSON_TABLES_PREFIX
+               instantiate_template(key, value, JSON_TABLES_PREFIX, template_dir, Osk::CFS_CMAKE_DIR)
             end
       
          end # template loop

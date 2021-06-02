@@ -203,7 +203,7 @@ static void SendHousekeepingPkt(void)
 
    ScSimApp.HkPkt.SimActive = ScSimApp.ScSim.Active;
    ScSimApp.HkPkt.SimPhase  = ScSimApp.ScSim.Phase;
-   ScSimApp.HkPkt.SimTime   = ScSimApp.ScSim.Time;
+   ScSimApp.HkPkt.SimTime   = ScSimApp.ScSim.Time.Seconds;
    
       
    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &ScSimApp.HkPkt);
@@ -255,8 +255,10 @@ static int32 InitApp(uint32* AppMainPerfId)
       CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIMTBL_LOAD_CMD_FC,  TBLMGR_OBJ, TBLMGR_LoadTblCmd, TBLMGR_LOAD_TBL_CMD_DATA_LEN);
       CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIMTBL_DUMP_CMD_FC,  TBLMGR_OBJ, TBLMGR_DumpTblCmd, TBLMGR_DUMP_TBL_CMD_DATA_LEN);
        
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIM_START_SIM_CMD_FC, SCSIM, SCSIM_StartSimCmd, SCSIM_START_SIM_CMD_DATA_LEN);
-      CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIM_STOP_SIM_CMD_FC,  SCSIM, SCSIM_StopSimCmd,  SCSIM_STOP_SIM_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIM_START_SIM_CMD_FC,  SCSIM, SCSIM_StartSimCmd,  SCSIM_START_SIM_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIM_STOP_SIM_CMD_FC,   SCSIM, SCSIM_StopSimCmd,   SCSIM_NO_ARGS_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIM_START_PLBK_CMD_FC, SCSIM, SCSIM_StartPlbkCmd, SCSIM_NO_ARGS_CMD_DATA_LEN);
+      CMDMGR_RegisterFunc(CMDMGR_OBJ, SCSIM_STOP_PLBK_CMD_FC,  SCSIM, SCSIM_StopPlbkCmd,  SCSIM_NO_ARGS_CMD_DATA_LEN);
 
       TBLMGR_Constructor(TBLMGR_OBJ);
       TBLMGR_RegisterTblWithDef(TBLMGR_OBJ, SCSIMTBL_LoadCmd, SCSIMTBL_DumpCmd, INITBL_GetStrConfig(INITBL_OBJ, CFG_TBL_LOAD_FILE));

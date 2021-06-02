@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configuration Dependencies
+
+This list captures items that are dependent on configuration parameters that have been hardcoded in
+this file and eventually need to be automatically resolved.
+
+1. Message IDs, CCSDS header lengths
+2. Default table names
+3. Table Index
+4. /ram in default file names (CFE_ES_RAM_DISK_MOUNT_STRING)
+
+-->
+
+<Application>
+   <Name>Proto App</Name>
+   <Prefix>PROTO</Prefix>
+  
+   <Commands>
+      <MsgId>PROTO_CMD_MID</MsgId>
+
+      <CmdPacket>
+         <Name>Reset Counters</Name>
+         <FuncCode>0</FuncCode>
+      </CmdPacket>
+
+      <CmdPacket>
+         <Name>No Op</Name>
+         <FuncCode>1</FuncCode>
+      </CmdPacket>
+
+      <CmdPacket>
+         <Name>Load ExObj Table</Name>
+         <FuncCode>2</FuncCode>
+         <CmdParam type="String" len="64">
+            <Name>ExObj Table File Name</Name>
+            <Default>/ram/ExObjtbl.xml</Default>
+         </CmdParam>
+         <CmdParam type="Integer" len="2">
+            <Name>Load Type (0=Replace Table, 1=Update Records)</Name>
+            <Default>1</Default>
+         </CmdParam>
+      </CmdPacket>
+
+      <CmdPacket>
+         <Name>Dump ExObj Table</Name>
+         <FuncCode>3</FuncCode>
+         <CmdParam type="String" len="64">
+            <Name>ExObj Table File Name</Name>
+            <Default>/ram/ExObjTbl.txt</Default>
+         </CmdParam>
+      </CmdPacket>
+
+      <CmdPacket>
+         <Name>Enable Data Load</Name>
+         <FuncCode>4</FuncCode>
+         <CmdParam type="Integer" len="1">
+            <Name>EnableDataLoad(bool)</Name>
+            <Default>1</Default>
+         </CmdParam>
+      </CmdPacket>
+
+      <CmdPacket>
+         <Name>Set Table Index</Name>
+         <FuncCode>5</FuncCode>
+         <CmdParam type="Integer" len="2">
+            <Name>Table Index (0..31)</Name>
+            <Default>0</Default>
+         </CmdParam>
+      </CmdPacket>
+
+   </Commands>
+
+   <Tables>
+
+      <Table type="xml" load_fc="2" dump_fc="3">
+         <Name>ExObj</Name>
+		 <File>proto.xml</File>
+      </Table>
+
+   </Tables>
+   
+   <Telemetry>
+      <TlmPacket>
+         <Name>Housekeeping</Name>
+         <MsgId>PROTO_HK_TLM_MID</MsgId>
+         <DataPnt type="Uint" len="2">CmdCounter</DataPnt>
+         <DataPnt type="Uint" len="2">CmdErrCounter</DataPnt>
+         <DataPnt type="Uint" len="1">ObjTblLoadActive</DataPnt>
+         <DataPnt type="Uint" len="1">ObjTblLastLoadValid</DataPnt>
+         <DataPnt type="Uint" len="2">ObjTblAttrErrCnt</DataPnt>
+         <DataPnt type="Uint" len="1">EnabledDataLoad</DataPnt>
+         <DataPnt type="Uint" len="1">Spare</DataPnt>
+         <DataPnt type="Uint" len="2">TblIndex</DataPnt>
+         <DataPnt type="Uint" len="2">Data1</DataPnt>
+         <DataPnt type="Uint" len="2">Data2</DataPnt>
+         <DataPnt type="Uint" len="2">Data3</DataPnt>
+      </TlmPacket>
+   </Telemetry>
+
+</Application>

@@ -49,6 +49,7 @@ static SCSIMTBL_Class* ScSimTbl = NULL;
 boolean AcsCallback  (void* UserData, int TokenIdx);
 boolean CdhCallback  (void* UserData, int TokenIdx);
 boolean CommCallback (void* UserData, int TokenIdx);
+boolean FswCallback  (void* UserData, int TokenIdx);
 boolean PwrCallback  (void* UserData, int TokenIdx);
 boolean ThrmCallback (void* UserData, int TokenIdx);
 
@@ -93,6 +94,12 @@ void SCSIMTBL_Constructor(SCSIMTBL_Class* ObjPtr,
                        CommCallback,
                        (void *)&(ScSimTbl->Data.Comm));
    JSON_RegContainerCallback(JSON, &(ScSimTbl->JsonObj[SCSIMTBL_OBJ_COMM]));
+
+   JSON_ObjConstructor(&(ScSimTbl->JsonObj[SCSIMTBL_OBJ_FSW]),
+                       SCSIMTBL_OBJ_FSW_NAME,
+                       FswCallback,
+                       (void *)&(ScSimTbl->Data.Fsw));
+   JSON_RegContainerCallback(JSON, &(ScSimTbl->JsonObj[SCSIMTBL_OBJ_FSW]));
 
    JSON_ObjConstructor(&(ScSimTbl->JsonObj[SCSIMTBL_OBJ_PWR]),
                        SCSIMTBL_OBJ_PWR_NAME,
@@ -464,7 +471,57 @@ boolean CommCallback (void* UserData, int TokenIdx)
 
 
 /******************************************************************************
-** Function: PwCallback
+** Function: FswCallback
+**
+** Process Fsw table entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
+*/
+boolean FswCallback (void* UserData, int TokenIdx)
+{
+
+   int     AttributeCnt = 0;
+   int     Tbd1;
+   int     Tbd2;
+   
+   ScSimTbl->JsonObj[SCSIMTBL_OBJ_FSW].Modified = FALSE;   
+   
+   CFE_EVS_SendEvent(SCSIM_INIT_DEBUG_EID, SCSIM_INIT_EVS_TYPE, 
+                     "\nSCSIMTBL.FswCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     ScSimTbl->ObjLoadCnt, ScSimTbl->AttrErrCnt, TokenIdx);
+      
+   if (JSON_GetValShortInt(JSON, TokenIdx, "tbd-1", &Tbd1)) AttributeCnt++;
+   if (JSON_GetValShortInt(JSON, TokenIdx, "tbd-2", &Tbd2)) AttributeCnt++;
+   
+   if (AttributeCnt == 2) {
+   
+      ScSimTbl->Data.Pwr.Tbd1 = Tbd1;
+      ScSimTbl->Data.Pwr.Tbd2 = Tbd2;
+
+      ScSimTbl->ObjLoadCnt++;
+      ScSimTbl->JsonObj[SCSIMTBL_OBJ_FSW].Modified = TRUE;
+	  
+      CFE_EVS_SendEvent(SCSIM_INIT_DEBUG_EID, SCSIM_INIT_EVS_TYPE,  "SCSIMTBL.FswCallback: Tbd1 = %d, Tbd2 = %d\n",
+                        ScSimTbl->Data.Fsw.Tbd1, ScSimTbl->Data.Fsw.Tbd2);
+   
+   } /* End if valid AttributeCnt */
+   else {
+	   
+      ScSimTbl->AttrErrCnt++;
+      CFE_EVS_SendEvent(SCSIMTBL_LOAD_FSW_ERR_EID, CFE_EVS_ERROR, "Invalid number of attributes %d. Should be 2.",
+                        AttributeCnt);
+   
+   } /* End if invalid AttributeCnt */
+      
+   return ScSimTbl->JsonObj[SCSIMTBL_OBJ_FSW].Modified;
+
+} /* FswCallback() */
+
+
+/******************************************************************************
+** Function: PwrCallback
 **
 ** Process Pwr table entry.
 **

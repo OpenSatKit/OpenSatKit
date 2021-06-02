@@ -83,33 +83,54 @@ SET(UI_INSTALL_SUBDIR "host/ui")
 # be copied during the install process.
 SET(FT_INSTALL_SUBDIR "host/functional-test")
 
-# Each target board can have its own HW arch selection and set of included apps
-SET(TGT1_NAME cpu1) 
-
-# Release: 
-#   Not all of the apps built are loaded by cfe_es_startup.scr  
-#      HC & HSIM are needed to build LC & SC default tables
-#      Other apps such as osk_c_demo are used for the "app store" example and their object files need to be built 
-SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim bm hc hsim filemgr osk_c_demo osk_cpp_demo mqtt)
-# Development:
-#   Comment out Release TGT1_APPLIST and modify one of these for your your needs.
-#SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to scsim hs cs i42 f42)
-#   SET(TGT1_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to osk_c_demo osk_cpp_demo mqtt filemgr isim f42 i42)
-#   SET(TGT1_STATIC_APPLIST cfs_lib osk_c_fw osk_c_demo osk_cpp_fw osk_cpp_demo)
-#   SET(TGT1_APPLIST cfs_lib osk_c_fw osk_cpp_fw osk_c_demo osk_cpp_demo)
-#   Other OSK apps available to build: bm osk_demo_app hs cf sbn cpp_demo_app
-
-SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_demo_tbl.json osk_c_demo_tbl.scanf osk_c_demo_tbl.xml osk_cpp_tbl.json f42_ctrl_tbl.json isim_ini.json isim_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json)
-
 #~set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 
-# CPU2/3 are duplicates of CPU1.  These are not built by default anymore but are
-# commented out to serve as an example of how one would configure multiple cpus.
-#SET(TGT2_NAME cpu2)
-#SET(TGT2_APPLIST sample_app ci_lab to_lab sch_lab)
-#SET(TGT2_FILELIST cfe_es_startup.scr)
+###############################################################################
+# When updating to a new cFE release. Copy from this comment to the end of the
+# file and paste over the default cFE target defintions 
+###############################################################################
 
-#SET(TGT3_NAME cpu3)
-#SET(TGT3_APPLIST sample_app ci_lab to_lab sch_lab)
-#SET(TGT3_FILELIST cfe_es_startup.scr)
+# 
+# A separate target is used for each user goal supported by OSK and these
+# align with the tabs of the main page. PiSat is an exception because it is
+# maintained as a separate repo. 
+# 
+
+################
+## 1 - SIMSAT ##
+################
+
+SET(TGT1_NAME simsat) 
+
+SET(TGT1_APPLIST cfs_lib osk_c_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim hc hsim)
+
+SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json f42_ctrl_tbl.json isim_ini.json isim_tbl.json)
+
+
+###############
+## 2 - CFSAT ##
+###############
+
+# cFE exercises, demos, and tutorials are designed to only depend on a minimal set of cFS community apps
+# and OSK apps that provide a runtime environment & file transfer support
+
+SET(TGT2_NAME cfsat) 
+
+SET(TGT2_APPLIST cfs_lib osk_c_fw kit_ci kit_sch kit_to tftp fm md mm)
+
+SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json)
+
+
+#################
+## 3 - SANDBOX ##
+#################
+
+# The sandbox only depends on OSK apps so all tables are text-based and no external dependencies that have
+# have to be maintained
+
+SET(TGT3_NAME sandbox) 
+
+SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim sbn)
+
+SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json)
 

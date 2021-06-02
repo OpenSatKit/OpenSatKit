@@ -38,6 +38,12 @@ def scsim_ops_send_cmd(screen, cmd)
       Osk::Ops::send_flt_cmd("KIT_TO", "START_EVT_PLBK")
    when "STOP_EVT_PLBK"
       Osk::Ops::send_flt_cmd("KIT_TO", "STOP_EVT_PLBK")
+   when "START_REC_PLBK"
+      Osk::Ops::send_flt_cmd("SCSIM", "START_REC_PLBK")
+   when "STOP_REC_PLBK"
+      Osk::Ops::send_flt_cmd("SCSIM", "STOP_REC_PLBK")
+   when "UPLOAD_ATS"
+      prompt("Upload ATS non implemented")      
    else
       raise "Error in screen definition file. Undefined cmd '#{cmd}' sent to scsim_ops_send_cmd()"
    end

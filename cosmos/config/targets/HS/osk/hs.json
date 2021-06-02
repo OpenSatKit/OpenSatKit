@@ -12,11 +12,6 @@
       "aliveness indication via a UART."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-      
    "cosmos": {
       "target": "HS"
    },

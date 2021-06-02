@@ -10,11 +10,6 @@
       "messages called HK combo packets."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "HK"
    },

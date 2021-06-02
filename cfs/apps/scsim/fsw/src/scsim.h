@@ -47,6 +47,25 @@
 #define SCSIM_STOP_SIM_EID       (SCSIM_BASE_EID +  2)
 #define SCSIM_LOAD_TBL_EID       (SCSIM_BASE_EID +  3)
 #define SCSIM_LOAD_TBL_OBJ_EID   (SCSIM_BASE_EID +  4)
+#define SCSIM_START_REC_PLBK_EID (SCSIM_BASE_EID +  5)
+#define SCSIM_STOP_REC_PLBK_EID  (SCSIM_BASE_EID +  6)
+#define SCSIM_EVT_ERR_EID        (SCSIM_BASE_EID +  7)
+
+#define ADCS_ENTER_ECLIPSE_EID   (SCSIM_BASE_EID + 10)
+#define ADCS_EXIT_ECLIPSE_EID    (SCSIM_BASE_EID + 11)
+#define ADCS_CHANGE_MODE_EID     (SCSIM_BASE_EID + 12)
+
+#define CDH_WATCHDOG_RESET_EID   (SCSIM_BASE_EID + 20)
+
+#define COMM_START_CONTACT_EID   (SCSIM_BASE_EID + 30)
+
+// FSW + 40
+
+#define INSTR_DIS_POWER_EID      (SCSIM_BASE_EID + 50)
+
+// PWR + 60
+
+// THRM + 70
 
 /*
 ** Simulation management 
@@ -76,12 +95,12 @@
 
 #define SCSIM_INIT_TIME             (1)  /* Model initialization */  
 
-#define SCSIM_TIME_LAPSE_EXE_CNT (1000)  /* Number of simulation seconds to perform in one SCSIM execution cycle */
+#define SCSIM_TIME_LAPSE_EXE_CNT (1000)  /* Number of simulation seconds to perform in one SCSIM execution cycle during time lapse phase */
 
 #define SCSIM_REALTIME_EPOCH    (10000)  /* Time when realtime simulation starts */ 
 #define SCSIM_REALTIME_END      (20000)  /* Sim doesn't execute until this time. Thsi time indicates sim is over */ 
 
-#define SCSIM_EVT_CMD_MAX          (20)  /* Maximum number of event commands */
+#define SCSIM_EVT_CMD_MAX          (25)  /* Maximum number of event commands */
 #define SCSIM_EVT_CMD_NULL_IDX     (99)  /* Maximum number of event commands */
 
 /**********************/
@@ -111,9 +130,11 @@ typedef enum {
    SCSIM_SUBSYS_ADCS   = 2,
    SCSIM_SUBSYS_CDH    = 3,
    SCSIM_SUBSYS_COMM   = 4,
-   SCSIM_SUBSYS_PWR    = 5,
-   SCSIM_SUBSYS_THRM   = 6,
-   SCSIM_SUBSYS_COUNT  = 6
+   SCSIM_SUBSYS_FSW    = 5,
+   SCSIM_SUBSYS_INSTR  = 6,
+   SCSIM_SUBSYS_PWR    = 7,
+   SCSIM_SUBSYS_THRM   = 8,
+   SCSIM_SUBSYS_COUNT  = 9
    
 } SCSIM_SubSys;
 
@@ -234,21 +255,26 @@ typedef struct {
 /** CDH **/
 /*********/
 
+
 typedef enum {
 
-   CDH_EVT_UNDEF             = 0,
-   CDH_EVT_SET_REC_FILE_CNT  = 1, /* Percentage of recorder memory used */
-   CDH_EVT_SET_REC_PCT_USED  = 2  /* Number of files in recorder */
+   CDH_EVT_UNDEF        = 0,
+   CDH_EVT_WATCHDOG_RST = 1,
+   CDH_EVT_SEND_HW_CMD  = 2
    
 } CDH_EvtCmd;
 
 
-typedef struct {
+typedef enum {
 
-   uint16  FileCnt;
-   uint32  PctUsed;
+   CDH_HW_CMD_UNDEF       = 0,
+   CDH_HW_CMD_RST_SBC     = 1,
+   CDH_HW_CMD_PWR_CYC_SBC = 2,
+   CDH_HW_CMD_SEL_BOOT_A  = 3,
+   CDH_HW_CMD_SEL_BOOT_B  = 4
    
-} CDH_Recorder;
+} CDH_HardwareCmd;
+
 
 typedef struct {
 
@@ -258,7 +284,10 @@ typedef struct {
 
    /* Model State */
 
-   CDH_Recorder  Recorder;
+   uint16  SbcRstCnt;   /* From either watchdog or hardware command */
+   
+   uint16  HwCmdCnt;
+   CDH_HardwareCmd  LastHwCmd;
    
 } CDH_Model;
 
@@ -322,6 +351,82 @@ typedef struct {
    
 } COMM_Model;
 
+
+/*********/
+/** FSW **/
+/*********/
+
+/* 
+** FSW uses a combination of simulated behavior and actual FSW status. Things like 
+** playback are much easier to manipulate in a simulation. 
+*/
+typedef enum {
+
+   FSW_EVT_UNDEF             = 0,
+   FSW_EVT_SET_REC_FILE_CNT  = 1, /* Percentage of recorder memory used */
+   FSW_EVT_SET_REC_PCT_USED  = 2, /* Number of files in recorder */
+   FSW_EVT_START_REC_PLBK    = 3,
+   FSW_EVT_STOP_REC_PLBK     = 4,
+   FSW_EVT_CLR_EVT_LOG       = 5
+
+} FSW_EvtCmd;
+
+
+typedef struct {
+
+   float    PctUsed;
+   uint16   FileCnt;
+   boolean  PlaybackEna;
+
+} FSW_Recorder;
+
+
+typedef struct {
+
+   /* Model Management */
+
+   SCSIM_EvtCmd  LastEvtCmd;
+
+   /* Model State */
+
+   FSW_Recorder Recorder;
+        
+} FSW_Model;
+
+
+/****************/
+/** Instrument **/
+/****************/
+
+#define INSTR_CYCLES_PER_FILE  30 /* Number of simulation cycles to 'generate' a new file */
+ 
+typedef enum {
+
+   INSTR_EVT_UNDEF       = 0,
+   INSTR_EVT_ENA_POWER   = 1,
+   INSTR_EVT_DIS_POWER   = 2,
+   INSTR_EVT_ENA_SCIENCE = 3,
+   INSTR_EVT_DIS_SCIENCE = 4
+
+} INSTR_EvtCmd;
+
+typedef struct {
+
+   /* Model Management */
+
+   SCSIM_EvtCmd  LastEvtCmd;
+
+   /* Model State */
+
+   boolean   PwrEna;
+   boolean   SciEna;
+   
+   int16     FileCnt;
+   int16     FileCycCnt;
+        
+} INSTR_Model;
+
+
 /***********/
 /** Power **/
 /***********/
@@ -346,6 +451,7 @@ typedef struct {
    float   SaCurrent;
    
 } PWR_Model;
+
 
 /*************/
 /** Thermal **/
@@ -381,18 +487,24 @@ typedef struct {
 typedef struct {
 
    uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
+
+} SCSIM_NoArgsCmdMsg;
+#define SCSIM_NO_ARGS_CMD_DATA_LEN  (sizeof(SCSIM_NoArgsCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+
+
+typedef struct {
+
+   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
    
    uint16  Id;
 
 } SCSIM_StartSimCmdMsg;
 #define SCSIM_START_SIM_CMD_DATA_LEN  (sizeof(SCSIM_StartSimCmdMsg) - CFE_SB_CMD_HDR_SIZE)
 
-typedef struct {
 
-   uint8   CmdHeader[CFE_SB_CMD_HDR_SIZE];
-
-} SCSIM_StopSimCmdMsg;
-#define SCSIM_STOP_SIM_CMD_DATA_LEN  (sizeof(SCSIM_StopSimCmdMsg) - CFE_SB_CMD_HDR_SIZE)
+typedef SCSIM_NoArgsCmdMsg SCSIM_StopSimCmdMsg;
+typedef SCSIM_NoArgsCmdMsg SCSIM_StartPlaybackCmdMsg;
+typedef SCSIM_NoArgsCmdMsg SCSIM_StopPlaybackCmdMsg;
 
 
 /******************************************************************************
@@ -412,11 +524,20 @@ typedef struct {
    uint32   SimTime;
    boolean  SimActive;
    uint8    SimPhase;
+   
+   /* 
+   ** Contact info is in both the management tlm and model telemetry
+   */
+   uint16    ContactTimePending;
+   uint16    ContactLength;
+   uint16    ContactTimeConsumed;
+   uint16    ContactTimeRemaining;
+
    uint8    LastEvtSubSysId;   /* Last event command executed */
    uint8    LastEvtCmdId;
    uint8    NextEvtSubSysId;   /* Next command to be executed */
    uint8    NextEvtCmdId;
-      
+
    SCSIM_EvtCmdTlm  AdcsLastEvtCmd;
    SCSIM_EvtCmdTlm  CdhLastEvtCmd;
    SCSIM_EvtCmdTlm  CommLastEvtCmd;
@@ -444,22 +565,41 @@ typedef struct {
    ** C&DH
    */
 
-   uint16    RecFileCnt;
-   float     RecPctUsed;
+   uint16  SbcRstCnt;
+   uint16  HwCmdCnt;
+   uint16  LastHwCmd;
 
    /*
    ** Comm
    */
    
-   boolean   InContact;
-   uint8     Pad8;
-   uint16    ContactTimePending;
-   uint16    ContactTimeConsumed;
-   uint16    ContactTimeRemaining;
-   uint8     ContactLink;
-   uint8     ContactTdrsId;
-   uint16    ContactDataRate;
+   uint16  InContact;
+   uint16  ContactTimePending;
+   uint16  ContactTimeConsumed;
+   uint16  ContactTimeRemaining;
+   uint8   ContactLink;
+   uint8   ContactTdrsId;
+   uint16  ContactDataRate;
   
+   /*
+   ** FSW
+   */
+
+   float   RecPctUsed;
+   uint16  RecFileCnt;
+   uint8   RecPlaybackEna;
+   uint8   FswSpare;
+   
+   /*
+   ** Instrument
+   */
+
+   uint8   InstrPwrEna; 
+   uint8   InstrSciEna;
+
+   uint16  InstrFileCnt; 
+   uint16  InstrFileCycCnt;
+
    /*
    ** Power
    */
@@ -509,9 +649,9 @@ typedef struct {
 
    /* Sim Management */
    
-   boolean        Active;
-   SCSIM_Phase    Phase;
-   uint32         Time;
+   boolean             Active;
+   SCSIM_Phase         Phase;
+   CFE_TIME_SysTime_t  Time;   /* Subseconds unused */
    
    SCSIM_EvtCmd*  LastEvtCmd;
    SCSIM_EvtCmd*  NextEvtCmd;   
@@ -526,6 +666,8 @@ typedef struct {
    ADCS_Model   Adcs;
    CDH_Model    Cdh;
    COMM_Model   Comm;
+   FSW_Model    Fsw;
+   INSTR_Model  Instr;
    PWR_Model    Pwr;
    THRM_Model   Thrm;
    
@@ -634,6 +776,30 @@ boolean SCSIM_StartSimCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 **
 */
 boolean SCSIM_StopSimCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Functions: SCSIM_StartPlbkCmd
+**
+** Stop a recorder playback.
+**
+** Notes:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCSIM_StartPlbkCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
+
+
+/******************************************************************************
+** Functions: SCSIM_StopPlbkCmd
+**
+** Stop a recorder playback.
+**
+** Notes:
+**  1. This function must comply with the CMDMGR_CmdFuncPtr definition
+**
+*/
+boolean SCSIM_StopPlbkCmd (void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr);
 
 
 #endif /* _scsim_ */

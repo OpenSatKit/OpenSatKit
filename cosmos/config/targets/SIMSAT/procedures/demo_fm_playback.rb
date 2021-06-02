@@ -51,7 +51,7 @@ FMD_GND_DIR_LIST_FILE = File.join(Osk::GND_SRV_DIR,Osk::TMP_BIN_FILE)
 
 # Configure system 
 
-Osk::System.check_n_start_cfs
+Osk::System.check_n_start_cfs('simsat')
 
 # Configure apps 
 

@@ -12,11 +12,6 @@
       "than changing an existing app."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "MD"
    },

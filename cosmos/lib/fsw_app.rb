@@ -52,9 +52,8 @@ class FswApp
    attr_reader :url                  # URL to access the app
    attr_reader :description       # Brief description of application's purpose 
 
-   ### System ###
-   attr_reader :sys_build
-   attr_reader :sys_simsat
+   ### Targets ###
+   attr_reader :cfs_targets
 
    ### cFS/FSW ###
    attr_reader :app_framework     # Application framework: 'cfs', 'osk_c_fw' or 'osk_cpp_fw'
@@ -89,7 +88,8 @@ class FswApp
       @hk_pkt   = hk_pkt
       @cmd_mid  = cmd_mid
       
-      # JSON definitions will override if defined  
+      # JSON definitions will override if defined
+      @cfs_targets = []
       @description = []
       @tables = []
       @app_framework     = nil 
@@ -99,13 +99,7 @@ class FswApp
       @priority          = nil
       @stack_size        = nil
       @exception_action  = nil
-      
-      # Not pretty but allows CFE apps to be treated similar to user apps
-      if (fsw_name.include? "CFE_")
-         @sys_build  = true
-         @sys_simsat = true
-      end
-      
+            
       @target_hk_str = "#{@target} #{@hk_pkt}"
       
       #~puts "FswApp: #{fsw_name}, #{@fsw_name}\n"
@@ -120,8 +114,6 @@ class FswApp
             @description = app_json["app"]["description"]
 
             sys = app_json["app"]["system"]
-            @sys_build  = sys["build"]
-            @sys_simsat = sys["simsat"]
             
             app = app_json["app"]["fsw"]
             @app_framework     = app["app-framework"] 
@@ -167,6 +159,12 @@ class FswApp
       
    end
    
+   # Add a cFS target to the app's target list
+   def add_cfs_target(target)
+   
+      @cfs_targets << target
+      
+   end
 
    # Check if receiving telemetry packet without stopping the script, i.e. don't
    # use COSMOS wait/check methods.

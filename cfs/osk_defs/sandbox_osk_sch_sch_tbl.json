@@ -1,0 +1,490 @@
+{
+   "name": "SimSat Scheduler Activity Table",
+   "description": ["Activities are defined in time slots. There are 4 slots per second", 
+                   "and 15 entries per slot. The goal of this scheduler table is to assist",
+                   "with learning and exploring the cFS. A separate SimSat scheduler table",
+                   "is maintained for the reference mission. The following conventions are",
+                   "used when defining activities similar to the simsat table:",                   
+                   " 1. App execution control flow requests start at Activity 0 in each slot",
+                   " 2. HK requests are in activity indices 10..14",
+                   ],
+   
+   "slot-array": [
+      
+      {"slot": {
+      
+         "index": 0, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "I42_EXECUTE_MID",
+               "descr":   "42 interface synchronization.",
+               "index":   0,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 41
+            }},
+
+            {"activity": {
+               "name":    "SC Execution",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 22
+            }},
+            
+            {"activity": {
+               "name":    "MD Execution",
+               "descr":   "",
+               "index":   2,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 19
+            }},
+            
+            {"activity": {
+               "name":    "CS Execution",
+               "descr":   "",
+               "index":   3,
+               "enabled": "true",
+               "period":  2,
+               "offset":  0,
+               "msg-idx": 11
+            }},
+            
+           {"activity": {
+               "name":    "C DEMO Housekeeping",
+               "descr":   "",
+               "index":   8,
+               "enabled": "true",
+               "period":  4,
+               "offset":  2,
+               "msg-idx": 45
+            }},
+
+            {"activity": {
+               "name":    "HSIM Housekeeping",
+               "descr":   "",
+               "index":   9,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 34
+            }},
+
+            {"activity": {
+               "name":    "cFE ES Housekeeping",
+               "descr":   "",
+               "index":   10,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 0
+            }},
+
+            {"activity": {
+               "name":    "cFE EVS Housekeeping",
+               "descr":   "",
+               "index":   11,
+               "enabled": "true",
+               "period":  4,
+               "offset":  1,
+               "msg-idx": 1
+            }},
+
+            {"activity": {
+               "name":    "cFE SB Housekeeping",
+               "descr":   "",
+               "index":   12,
+               "enabled": "true",
+               "period":  4,
+               "offset":  2,
+               "msg-idx": 2
+            }},
+
+            {"activity": {
+               "name":    "cFE TBL Housekeeping",
+               "descr":   "",
+               "index":   13,
+               "enabled": "true",
+               "period":  4,
+               "offset":  3,
+               "msg-idx": 3
+            }},
+
+            {"activity": {
+               "name":    "Time Housekeeping",
+               "descr":   "",
+               "index":   14,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 4
+            }}
+         ]
+      }},   
+
+   
+      {"slot": {
+      
+         "index": 1, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "LC Execution(Sample AP)",
+               "descr":   "",
+               "index":   0,
+               "enabled": "false",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 17
+            }},
+            
+            {"activity": {
+               "name":    "HK Combined Pkt 1",
+               "descr":   "Period can be adjusted based on input data packet rates",
+               "index":   1,
+               "enabled": "true",
+               "period":  6,
+               "offset":  2,
+               "msg-idx": 24
+            }},
+            
+            {"activity": {
+               "name":    "HK Combined Pkt 2",
+               "descr":   "Period can be adjusted based on input data packet rates",
+               "index":   2,
+               "enabled": "true",
+               "period":  4,
+               "offset":  1,
+               "msg-idx": 25
+            }},
+            
+           {"activity": {
+               "name":    "HC Execution",
+               "descr":   "",
+               "index":   3,
+               "enabled": "true",
+               "period":  10,
+               "offset":  0,
+               "msg-idx": 33
+            }},
+                        
+           {"activity": {
+               "name":    "CF Execution",
+               "descr":   "",
+               "index":   4,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 27
+            }},
+                        
+            {"activity": {
+               "name":    "C++ DEMO Housekeeping",
+               "descr":   "",
+               "index":   8,
+               "enabled": "true",
+               "period":  4,
+               "offset":  2,
+               "msg-idx": 46
+            }},
+
+            {"activity": {
+               "name":    "BM Housekeeping",
+               "descr":   "",
+               "index":   9,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 30
+            }},
+
+            {"activity": {
+               "name":    "KIT_CI Housekeeping",
+               "descr":   "",
+               "index":   10,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 36
+            }},
+
+            {"activity": {
+               "name":    "KIT_SCH Housekeeping",
+               "descr":   "",
+               "index":   11,
+               "enabled": "true",
+               "period":  4,
+               "offset":  1,
+               "msg-idx": 37
+            }},
+
+            {"activity": {
+               "name":    "KIT_TO Housekeeping",
+               "descr":   "",
+               "index":   12,
+               "enabled": "true",
+               "period":  4,
+               "offset":  2,
+               "msg-idx": 38
+            }},
+        
+            {"activity": {
+               "name":    "SC Housekeeping",
+               "descr":   "",
+               "index":   13,
+               "enabled": "true",
+               "period":  4,
+               "offset":  3,
+               "msg-idx": 21
+            }},
+
+            {"activity": {
+               "name":    "CS Housekeeping",
+               "descr":   "",
+               "index":   14,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 10
+            }}
+        
+         ]
+      }},   
+
+      {"slot": {
+   
+         "index": 2, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "I42_EXECUTE_MID",
+               "descr":   "42 interface synchronization.",
+               "index":   0,
+               "enabled": "false",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 41
+            }},
+            
+            {"activity": {
+               "name":    "HS Execution",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  2,
+               "offset":  1,
+               "msg-idx": 15
+            }},
+
+            {"activity": {
+               "name":    "ISIM Execution",
+               "descr":   "",
+               "index":   2,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 43
+            }},
+            
+            {"activity": {
+               "name":    "FILEMGR Housekeeping",
+               "descr":   "",
+               "index":   7,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 47
+            }},
+
+
+            {"activity": {
+               "name":    "HC Housekeeping",
+               "descr":   "",
+               "index":   8,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 32
+            }},
+
+            {"activity": {
+               "name":    "MM Housekeeping",
+               "descr":   "",
+               "index":   9,
+               "enabled": "true",
+               "period":  4,
+               "offset":  1,
+               "msg-idx": 20
+            }},
+
+            {"activity": {
+               "name":    "FM Housekeeping",
+               "descr":   "",
+               "index":   10,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 13
+            }},
+         
+            {"activity": {
+               "name":    "HK Housekeeping",
+               "descr":   "",
+               "index":   11,
+               "enabled": "true",
+               "period":  4,
+               "offset":  2,
+               "msg-idx": 23
+            }},
+            
+
+            {"activity": {
+               "name":    "CF Housekeeping",
+               "descr":   "",
+               "index":   12,
+               "enabled": "true",
+               "period":  3,
+               "offset":  2,
+               "msg-idx": 26
+            }},
+            
+            {"activity": {
+               "name":    "TFTP Housekeeping",
+               "descr":   "Send every cycle for faster file transfer verification",
+               "index":   13,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 39
+            }},
+
+            {"activity": {
+               "name":    "LC Housekeeping",
+               "descr":   "",
+               "index":   14,
+               "enabled": "true",
+               "period":  4,
+               "offset":  2,
+               "msg-idx": 16
+            }}
+                        
+         ]
+      }},   
+   
+      {"slot": {
+      
+         "index": 3, 
+         "activity-array" : [
+         
+            {"activity": {
+               "name":    "HSIM Execution",
+               "descr":   "",
+               "index":   0,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 35
+            }},
+            
+             {"activity": {
+               "name":    "BM Execution",
+               "descr":   "",
+               "index":   1,
+               "enabled": "true",
+               "period":  2,
+               "offset":  0,
+               "msg-idx": 31
+            }},
+            
+            {"activity": {
+               "name":    "CF Execution",
+               "descr":   "",
+               "index":   2,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 27
+            }},
+                        
+           {"activity": {
+               "name":    "TEST",
+               "descr":   "Used by Create App and available for development",
+               "index":   8,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 100
+            }},
+
+            {"activity": {
+               "name":    "F42 Housekeeping",
+               "descr":   "",
+               "index":   9,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 40
+            }},
+
+            {"activity": {
+               "name":    "I42 Housekeeping",
+               "descr":   "",
+               "index":   10,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 42
+            }},
+            
+            {"activity": {
+               "name":    "ISIM Housekeeping",
+               "descr":   "",
+               "index":   11,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0
+               "msg-idx": 44
+            }},
+            
+            {"activity": {
+               "name":    "DS Housekeeping",
+               "descr":   "",
+               "index":   12,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 12
+            }},
+
+            {"activity": {
+               "name":    "MD Housekeeping",
+               "descr":   "",
+               "index":   13,
+               "enabled": "true",
+               "period":  4,
+               "offset":  0,
+               "msg-idx": 18
+            }},
+            
+            {"activity": {
+               "name":    "HS Housekeeping",
+               "descr":   "",
+               "index":   14,
+               "enabled": "true",
+               "period":  4,
+               "offset":  1,
+               "msg-idx": 14
+            }}
+           
+         ]
+      }}
+
+   ]
+}
+

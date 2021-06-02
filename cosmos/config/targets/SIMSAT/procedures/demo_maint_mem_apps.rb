@@ -54,7 +54,7 @@ MMD_GND_PATH_FILENAME = "#{Osk::GND_SRV_DIR}/#{MMD_DMP_FILE}"
 
 # Configure system 
 
-Osk::System.check_n_start_cfs
+Osk::System.check_n_start_cfs('simsat')
 
 # Configure apps
 

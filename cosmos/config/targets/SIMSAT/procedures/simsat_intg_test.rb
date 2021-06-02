@@ -43,6 +43,8 @@ require './config/targets/SC/procedures/sc_intg_test'
 # OSK Kit Apps
 
 require './config/targets/F42/procedures/f42_intg_test'
+require './config/targets/HC/procedures/hc_intg_test'
+require './config/targets/HSIM/procedures/hsim_intg_test'
 require './config/targets/I42/procedures/i42_intg_test'
 require './config/targets/ISIM/procedures/isim_intg_test'
 require './config/targets/KIT_CI/procedures/kit_ci_intg_test'
@@ -77,6 +79,8 @@ sc_test   = ScIntgTest.new(Osk::flight.app["SC"])
 # OSK Kit Apps
 
 f42_test     = F42IntgTest.new(Osk::flight.app["F42"])
+hc_test      = HcIntgTest.new(Osk::flight.app["HC"])
+hsim_test    = HsimIntgTest.new(Osk::flight.app["HSIM"])
 i42_test     = I42IntgTest.new(Osk::flight.app["I42"])
 isim_test    = IsimIntgTest.new(Osk::flight.app["ISIM"])
 kit_ci_test  = KitCiIntgTest.new(Osk::flight.app["KIT_CI"])
@@ -121,7 +125,7 @@ fm_test.run
 puts fm_test.app.target + " " + fm_test.result_str
 
 hk_test.run
-puts hk_test.app.target + " " + hs_test.result_str
+puts hk_test.app.target + " " + hk_test.result_str
 
 hs_test.run
 puts hs_test.app.target + " " + hs_test.result_str
@@ -143,6 +147,12 @@ puts sc_test.app.target + " " + sc_test.result_str
 
 f42_test.run
 puts f42_test.app.target + " " + f42_test.result_str
+
+hc_test.run
+puts hc_test.app.target + " " + hc_test.result_str
+
+hsim_test.run
+puts hsim_test.app.target + " " + hsim_test.result_str
 
 i42_test.run
 puts i42_test.app.target + " " + i42_test.result_str

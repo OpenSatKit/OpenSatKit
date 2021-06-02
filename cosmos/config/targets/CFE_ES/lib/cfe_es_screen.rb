@@ -2,7 +2,8 @@
 # cFE Executive Service Screen
 #
 # Notes:
-#   None 
+#   1. Starts cfsat target if cFS is not running when a demo is selected. cfsat
+#      is minimum app configuration that allows the demo to run
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General 
@@ -73,7 +74,7 @@ def cfe_es_scr_cmd(screen, cmd)
       display("CFS_KIT PERF_MON_SCREEN",1500,10)
 
    when "DEMO"
-      Osk::System.check_n_start_cfs
+      Osk::System.check_n_start_cfs('cfsat')
       case screen.get_named_widget("demo").text
       when "App Management"
          display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)

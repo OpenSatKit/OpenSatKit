@@ -1,0 +1,90 @@
+###############################################################################
+# SimSat OSK App Summary Screen
+#
+# Notes:
+#  1. Displays the counters for the apps included in SimSat. For illustrative
+#     purposes rather than practical for a mission.
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'osk_flight'
+%>
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "Simsat OSK Applications"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICALBOX 
+
+   MATRIXBYCOLUMNS 4
+   
+      LABEL "<b>App Name</b>"
+      LABEL "<b>Seq Cnt</b>"
+      LABEL "<b>Cmd Valid Cnt</b>"
+      LABEL "<b>Cmd Error Cnt</b>"
+    
+      LABEL "<b>F42</b> - 42 Simulator FSW Controller"
+      VALUE F42 HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE F42 HK_TLM_PKT CMD_VALID_COUNT
+      VALUE F42 HK_TLM_PKT CMD_ERROR_COUNT
+    
+      LABEL "<b>HC</b> - Heater Controller"
+      VALUE HC HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE HC HK_TLM_PKT CMD_VALID_COUNT
+      VALUE HC HK_TLM_PKT CMD_ERROR_COUNT
+
+      LABEL "<b>HSIM</b> - Heater Simulator"
+      VALUE HSIM HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE HSIM HK_TLM_PKT CMD_VALID_COUNT
+      VALUE HSIM HK_TLM_PKT CMD_ERROR_COUNT
+
+      LABEL "<b>I42</b> - 42 Simulator Interface"
+      VALUE I42 HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE I42 HK_TLM_PKT CMD_VALID_COUNT
+      VALUE I42 HK_TLM_PKT CMD_ERROR_COUNT
+    
+      LABEL "<b>ISIM</b> - Instrument Simulator"
+      VALUE ISIM HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE ISIM HK_TLM_PKT CMD_VALID_COUNT
+      VALUE ISIM HK_TLM_PKT CMD_ERROR_COUNT
+
+      LABEL "<b>KIT_CI</b> - Command Ingest"
+      VALUE KIT_CI HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE KIT_CI HK_TLM_PKT CMD_VALID_COUNT
+      VALUE KIT_CI HK_TLM_PKT CMD_ERROR_COUNT
+
+      LABEL "<b>KIT_SCH</b> - Scheduler"
+      VALUE KIT_SCH HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE KIT_SCH HK_TLM_PKT CMD_VALID_COUNT
+      VALUE KIT_SCH HK_TLM_PKT CMD_ERROR_COUNT
+
+      LABEL "<b>KIT_TO</b> - Telemetry Output"
+      VALUE KIT_TO HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE KIT_TO HK_TLM_PKT CMD_VALID_COUNT
+      VALUE KIT_TO HK_TLM_PKT CMD_ERROR_COUNT
+
+      LABEL "<b>TFTP</b> - Trivial File Transfer Protocol"
+      VALUE TFTP HK_TLM_PKT CCSDS_SEQUENCE
+      VALUE TFTP HK_TLM_PKT CMD_VALID_COUNT
+      VALUE TFTP HK_TLM_PKT CMD_ERROR_COUNT
+
+   END # Matrix
+   
+   HORIZONTALBOX
+      NAMED_WIDGET mission_app COMBOBOX F42 HC HSIM I42 ISIM KIT_CI KIT_SCH KIT_TO TFTP
+      BUTTON 'Noop'           'Osk::flight.app["#{get_named_widget("mission_app").text}"].send_cmd("#{Osk::CMD_STR_NOOP}")'
+      BUTTON 'Reset Counters' 'Osk::flight.app["#{get_named_widget("mission_app").text}"].send_cmd("#{Osk::CMD_STR_RESET}")'
+   END
+   
+END # VerticalBox
+
+HORIZONTALLINE
+LABEL "Flight Event Messages"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 600 50

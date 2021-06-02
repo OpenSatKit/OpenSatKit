@@ -10,11 +10,6 @@
       "CS computes checksums across user-defined memory regions"
    ],
    
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "CS"
    },

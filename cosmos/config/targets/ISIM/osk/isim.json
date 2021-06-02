@@ -12,11 +12,6 @@
       "and used."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "ISIM"
    },

@@ -25,7 +25,7 @@ require 'fsw_const'
 
 class AppIntgTest
 
-   attr_reader :app
+   attr_reader :app    # fsw_app
    attr_reader :result
 
   
@@ -37,11 +37,11 @@ class AppIntgTest
    end # initialize()
 
    # Method that will be called by function managing the integration tests. Subclasses 
-   # do not override this function. This level of indrection allows this base class to
+   # do not override this function. This level of indirection allows this base class to
    # provide common pre and/or post test functionality.
    def run
    
-      raise "#{@app.target}'s metadata doesn't it as a SimSat app" unless (@app.sys_build == true and @app.sys_simsat == true) 
+      raise "#{@app.target}'s metadata doesn't identify it as a SimSat app" unless @app.cfs_targets.include?("simsat")
       @result = app_test
    
    end # run()

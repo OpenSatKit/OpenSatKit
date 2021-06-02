@@ -34,6 +34,8 @@ MM_OFFSET_W3 = 268
 MD_TBL1_FILE = "md_tbl1.dat"
 MD_TBL_PATH_FILE = "#{Osk::FLT_SRV_DIR}/#{MD_TBL1_FILE}"
 
+Osk::System.check_n_start_cfs('cfsat')
+
 
 ###################################
 ## TBL01 - Review table registry ##

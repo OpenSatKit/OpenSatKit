@@ -11,35 +11,35 @@ TELEMETRY HSIM HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Heater Sim Housekeep
   APPEND_ITEM CMD_VALID_COUNT 8  UINT "HSIM Application Command Counter"
   APPEND_ITEM CMD_ERROR_COUNT 8  UINT "HSIM Application Command Error Counter"
   APPEND_ITEM HSIM_HEATERS00  8  UINT "Status for Battery Heater 0"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS01  8  UINT "Status for Battery Heater 1"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS02  8  UINT "Status for Battery Heater 2"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS03  8  UINT "Status for Battery Heater 3"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS04  8  UINT "Status for Battery Heater 4"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS10  8  UINT "Status for Propulsion Heater 0"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS11  8  UINT "Status for Propulsion Heater 1"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS12  8  UINT "Status for Propulsion Heater 2"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS13  8  UINT "Status for Propulsion Heater 3"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
   APPEND_ITEM HSIM_HEATERS14  8  UINT "Status for Propulsion Heater 4"
-    STATE OFF 0 RED
-    STATE ON 1 GREEN
+    STATE OFF 0
+    STATE ON  1 GREEN
 
 # TODO - Defined as a tlm packet but uses a cmd apid. 
 TELEMETRY HSIM THERM_TLM_PKT <%= Osk::Cfg.processor_endian %> "Heater Sim Thermal Data Packet"

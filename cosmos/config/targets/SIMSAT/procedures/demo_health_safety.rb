@@ -63,7 +63,7 @@ F42_SCH_TBL_HK_ACTIVITY   = 9
 
 # Configure system 
 
-Osk::System.check_n_start_cfs
+Osk::System.check_n_start_cfs('simsat')
 
 # Configure apps - Done on a per step basis
 

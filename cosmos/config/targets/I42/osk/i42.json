@@ -10,11 +10,6 @@
       "processing and actuator command generation."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "I42"
    },

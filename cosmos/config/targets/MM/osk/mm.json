@@ -10,11 +10,6 @@
       "memory."
    ],
 
-   "system": {
-      "build": true,
-      "simsat": true
-   },
-   
    "cosmos": {
       "target": "MM"
    },
