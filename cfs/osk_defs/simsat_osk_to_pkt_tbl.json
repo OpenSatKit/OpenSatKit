@@ -233,7 +233,7 @@
       },
 
       "packet": {
-         "name": "MD_HK_TLM_MID",
+         "name": "MD_DWELL_PKT_MID_BASE",
          "stream-id": "\u0891",
          "dec-id": 2193,
          "priority": 0,
@@ -243,7 +243,7 @@
       },
 
       "packet": {
-         "name": "MD_HK_TLM_MID",
+         "name": "MD_DWELL_PKT_MID_BASE+1",
          "stream-id": "\u0892",
          "dec-id": 2194,
          "priority": 0,
@@ -253,7 +253,7 @@
       },
 
       "packet": {
-         "name": "MD_HK_TLM_MID",
+         "name": "MD_DWELL_PKT_MID_BASE+2",
          "stream-id": "\u0893",
          "dec-id": 2195,
          "priority": 0,
@@ -263,7 +263,7 @@
       },
 
       "packet": {
-         "name": "MD_HK_TLM_MID",
+         "name": "MD_DWELL_PKT_MID_BASE+3",
          "stream-id": "\u0894",
          "dec-id": 2196,
          "priority": 0,
@@ -276,17 +276,6 @@
          "name": "MM_HK_TLM_MID",
          "stream-id": "\u0887",
          "dec-id": 2183,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-
-      "packet": {
-         "name": "TEST_APP_HK_TLM_MID",
-         "descr": "Used by Create App templates and available for general development",
-         "stream-id": "\u0FF0",
-         "dec-id": 4080,
          "priority": 0,
          "reliability": 0,
          "buf-limit": 4
@@ -333,66 +322,6 @@
          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
       },
   
-      "packet": {
-         "name": "BM_HK_TLM_MID",
-         "stream-id": "\u09F0",
-         "dec-id": 2544,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-
-      "packet": {
-         "name": "BM_TST_MID",
-         "stream-id": "\u09F1",
-         "dec-id": 2545,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-              
-      "packet": {
-         "name": "BM_CHLD_MID",
-         "stream-id": "\u09F2",
-         "dec-id": 2546,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-
-      "packet": {
-         "name": "OSK_C_DEMO_HK_TLM_MID",
-         "stream-id": "\u0F30",
-         "dec-id": 3888,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-     },
-
-`      "packet": {
-         "name": "OSK_C_DEMO_FR_TLM_MID",
-         "stream-id": "\u0F31",
-         "dec-id": 3889,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "OSK_CPP_DEMO_HK_TLM_MID",
-         "stream-id": "\u0F40",
-         "dec-id": 3904,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
       "packet": {
          "name": "HC_HK_TLM_MID",
          "stream-id": "\u09A0",
@@ -604,16 +533,6 @@
       },  
 
       "packet": {
-         "name": "TEST",
-         "stream-id": "\u0885",
-         "dec-id": 2181,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-
-      "packet": {
          "name": "F42_HK_TLM_MID",
          "stream-id": "\u09D0",
          "dec-id": 2512,
@@ -683,105 +602,5 @@
          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
       },
       
-      "packet": {
-         "name": "FILEMGR_HK_TLM_MID",
-         "stream-id": "\u098A",
-         "dec-id": 2442,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "FILEMGR_FILE_INFO_TLM_MID",
-         "stream-id": "\u098B",
-         "dec-id": 2443,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "FILEMGR_DIR_LIST_TLM_MID",
-         "stream-id": "\u098C",
-         "dec-id": 2444,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "FILEMGR_OPEN_FILES_TLM_MID",
-         "stream-id": "\u098D",
-         "dec-id": 2445,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "FILEMGR_FILESYS_TLM_MID",
-         "stream-id": "\u098E",
-         "dec-id": 2446,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "MQTT_HK_TLM_MID",
-         "stream-id": "\u0F50",
-         "dec-id": 3920,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "MQTT_HK_TLM_MID",
-         "stream-id": "\u0F51",
-         "dec-id": 3921,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "SCSIM_HK_TLM_MID",
-         "stream-id": "\u0F60",
-         "dec-id": 3936,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-      
-      "packet": {
-         "name": "SCSIM_MGMT_TLM_MID",
-         "stream-id": "\u0F61",
-         "dec-id": 3937,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      },
-
-      "packet": {
-         "name": "SCSIM_MODEL_TLM_MID",
-         "stream-id": "\u0F62",
-         "dec-id": 3938,
-         "priority": 0,
-         "reliability": 0,
-         "buf-limit": 4
-         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
-      }
-
    ]
 }
