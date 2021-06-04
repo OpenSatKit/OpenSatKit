@@ -228,7 +228,7 @@
          "dec-id": 2192,
          "priority": 0,
          "reliability": 0,
-         "buf-limit": 4
+         "buf-limit": 8
          "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
       },
 

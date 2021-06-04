@@ -40,9 +40,9 @@
 
 #define  KIT_TO_STARTUP_SYNCH_TIMEOUT  10000  /* Timeout in milliseconds */
 
-#define  KIT_TO_RUN_LOOP_DELAY_MS        500  /* Default delay in milliseconds */
+#define  KIT_TO_RUN_LOOP_DELAY_MS        250  /* Default delay in milliseconds */
 #define  KIT_TO_MIN_RUN_LOOP_DELAY_MS    200  /* Minimum command value */
-#define  KIT_TO_MAX_RUN_LOOP_DELAY_MS  10000  /* Maximum command value */
+#define  KIT_TO_MAX_RUN_LOOP_DELAY_MS   1000  /* Maximum command value */
 
 #define  KIT_TO_TLM_PORT  1235
 

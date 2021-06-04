@@ -1,25 +1,25 @@
 CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,         CFS_LIB,        0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,    OSK_C_FW,       0,   16384, 0x0, 0;
 CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,  OSK_42_LIB,     0,   16384, 0x0, 0;
-CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        20,   32768, 0x0, 0;
-CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        20,   16384, 0x0, 0;
-CFE_APP, /cf/ds.so,           DS_AppMain,          DS,            70,   16384, 0x0, 0;
-CFE_APP, /cf/fm.so,           FM_AppMain,          FM,            80,   16384, 0x0, 0;
-CFE_APP, /cf/lc.so,           LC_AppMain,          LC,            80,   16384, 0x0, 0;
-CFE_APP, /cf/md.so,           MD_AppMain,          MD,            90,   16384, 0x0, 0;
-CFE_APP, /cf/sc.so,           SC_AppMain,          SC,            80,   16384, 0x0, 0;
-CFE_APP, /cf/cs.so,           CS_AppMain,          CS,            90,   16384, 0x0, 0;
-CFE_APP, /cf/mm.so,           MM_AppMain,          MM,           100,   16384, 0x0, 0;
-CFE_APP, /cf/hk.so,           HK_AppMain,          HK,            90,   16384, 0x0, 0;
-CFE_APP, /cf/tftp.so,         TFTP_AppMain,        TFTP,          60,   16384, 0x0, 0;
-CFE_APP, /cf/hc.so,           HC_AppMain,          HC,            80,   16384, 0x0, 0;
-CFE_APP, /cf/hsim.so,         SIM_AppMain,         HSIM,          90,   16384, 0x0, 0;
-CFE_APP, /cf/isim.so,         ISIM_AppMain,        ISIM,          90,   16384, 0x0, 0;
+CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        10,   32768, 0x0, 0;
+CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        10,   16384, 0x0, 0;
+CFE_APP, /cf/ds.so,           DS_AppMain,          DS,            40,   16384, 0x0, 0;
+CFE_APP, /cf/fm.so,           FM_AppMain,          FM,            70,   16384, 0x0, 0;
+CFE_APP, /cf/lc.so,           LC_AppMain,          LC,            40,   16384, 0x0, 0;
+CFE_APP, /cf/md.so,           MD_AppMain,          MD,            70,   16384, 0x0, 0;
+CFE_APP, /cf/sc.so,           SC_AppMain,          SC,            40,   16384, 0x0, 0;
+CFE_APP, /cf/cs.so,           CS_AppMain,          CS,            70,   16384, 0x0, 0;
+CFE_APP, /cf/mm.so,           MM_AppMain,          MM,            70,   16384, 0x0, 0;
+CFE_APP, /cf/hk.so,           HK_AppMain,          HK,            40,   16384, 0x0, 0;
+CFE_APP, /cf/tftp.so,         TFTP_AppMain,        TFTP,          70,   16384, 0x0, 0;
+CFE_APP, /cf/hc.so,           HC_AppMain,          HC,            30,   16384, 0x0, 0;
+CFE_APP, /cf/hsim.so,         SIM_AppMain,         HSIM,          70,   16384, 0x0, 0;
+CFE_APP, /cf/isim.so,         ISIM_AppMain,        ISIM,          70,   16384, 0x0, 0;
+CFE_APP, /cf/f42.so,          F42_AppMain,         F42,           40,   16384, 0x0, 0;
+CFE_APP, /cf/i42.so,          I42_AppMain,         I42,           40,   80192, 0x0, 0;
+CFE_APP, /cf/cf.so,           CF_AppMain,          CF,            70,   80192, 0x0, 0;
+CFE_APP, /cf/hs.so,           HS_AppMain,          HS,           100,   16384, 0x0, 0;
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,     KIT_SCH,       10,   32768, 0x0, 0;
-CFE_APP, /cf/f42.so,          F42_AppMain,         F42,           50,   16384, 0x0, 0;
-CFE_APP, /cf/i42.so,          I42_AppMain,         I42,           50,   80192, 0x0, 0;
-CFE_APP, /cf/cf.so,           CF_AppMain,          CF,           100,   80192, 0x0, 0;
-CFE_APP, /cf/hs.so,           HS_AppMain,          HS,           120,   16384, 0x0, 0;
 !
 !!!! SimSat Startup Script
 !
@@ -29,8 +29,8 @@ CFE_APP, /cf/hs.so,           HS_AppMain,          HS,           120,   16384, 0
 !   keep up with events during startup and avoid event message overflows. The local
 !   event log buffer can be used to look at started up messages
 !
-! - KIT-SCH loaded near the end minimize 'no subscriber' messages and to keep the 
-!   startup less chaotic. Having scheduler send messages while some apps are 
+! - KIT-SCH loaded near or at the end minimize 'no subscriber' messages and to keep 
+!   the startup less chaotic. Having scheduler send messages while some apps are 
 !   being initialzed causes confusion.
 !
 ! - F42 & I42 should be loaded last to a avoid TO pipe overflows. This was discovered
