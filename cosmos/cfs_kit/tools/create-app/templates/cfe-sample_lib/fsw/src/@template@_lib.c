@@ -32,7 +32,7 @@ int32 @TEMPLATE@_LibInit(void);
 int32 @TEMPLATE@_LibInit(void)
 {
     
-    OS_printf ("@TEMPLATE@ Lib Initialized.  Version %d.%d.%d.%d",
+    OS_printf ("@TEMPLATE@ Lib Initialized.  Version %d.%d.%d.%d\n",
                 @TEMPLATE@_LIB_MAJOR_VERSION,
                 @TEMPLATE@_LIB_MINOR_VERSION, 
                 @TEMPLATE@_LIB_REVISION, 

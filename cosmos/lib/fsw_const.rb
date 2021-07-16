@@ -180,9 +180,9 @@ module Fsw
       MM_MEM_TYPE_EEPROM = 2
 
 
-      ##############################
-      ## OSK_C_FW - Table Manager ##
-      ##############################
+      ###############################
+      ## OSK_C_FW - Packet Utility ##
+      ###############################
 
       OSK_PKTUTIL_FILTER_ALWAYS     = 1
 	   OSK_PKTUTIL_FILTER_BY_SEQ_CNT = 2

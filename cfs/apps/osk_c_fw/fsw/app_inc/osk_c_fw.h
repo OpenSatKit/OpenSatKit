@@ -30,6 +30,7 @@
 #include "tblmgr_msg.h"
 #include "tblmgr.h"
 #include "json.h"
+#include "cjson.h"
 #include "staterep.h"
 #include "pktutil.h"
 #include "childmgr.h"

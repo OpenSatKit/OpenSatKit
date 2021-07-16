@@ -13,6 +13,7 @@
 
 require 'osk_ops'
 require 'osk_education'
+require 'osk_system'
 require 'cfe_es_const'
 
 ################################################################################
@@ -76,23 +77,21 @@ def cfe_es_scr_cmd(screen, cmd)
    when "DEMO"
       Osk::System.check_n_start_cfs('cfsat')
       case screen.get_named_widget("demo").text
-      when "App Management"
+      when "App Management Screen"
          display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
-      when "Performance Monitor"
+      when "Perf Monitor Screen"
          display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
-      when "Performance Mon Script"
+      when "Perf Monitor Script"
          spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_perf_mon.rb")
       end
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "cFE Training Slides"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
-      when "ES Exercise Script"
-         Osk::education_tutorial(Osk::TUTORIAL_SCRIPT, "cfe", "ES")
-      when "cFE Exercise Slides"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
-      when "Perf Mon Training Video"
+      when "Tutorial Slides"
+         Osk::System.display_pdf(Osk::cfg_target_dir_file("CFE_ES", "docs", CFE_ES_TUTORIAL_FILE))
+      when "Exercise Script"
+         Osk::System.start_target_script("CFE_ES",CFE_ES_TUTORIAL_SCRIPT)
+      when "Perf Monitor Video"
          Osk::education_video(CFE_ES_YOUTUBE_PERF_MON)
       end
    

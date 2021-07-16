@@ -30,6 +30,8 @@
 /** Macro Definitions **/
 /***********************/
 
+#define PKTUTIL_MAX_APP_ID    (0x0800)  /* Maximum CCSDS v1 ApId */
+
 #define PKTUTIL_PRI_HDR_BYTES (sizeof(CCSDS_SpacePacket_t))
 #define PKTUTIL_PRI_HDR_WORDS (sizeof(CCSDS_SpacePacket_t)/2)
 
@@ -76,6 +78,20 @@ typedef struct {
    PktUtil_FilterParam  Param;
 
 } PktUtil_Filter;
+
+
+/*
+** Define a generic command without parameters so every app doesn't need to
+** repeat the definition. 
+*/
+
+typedef struct {
+
+    uint8 CmdHeader[CFE_SB_CMD_HDR_SIZE];
+
+} PKTUTIL_NoParamCmdMsg;
+#define PKTUTIL_NO_PARAM_CMD_DATA_LEN  ((sizeof(PKTUTIL_NoParamCmdMsg) - CFE_SB_CMD_HDR_SIZE))
+
 
 /************************/
 /** Exported Functions **/

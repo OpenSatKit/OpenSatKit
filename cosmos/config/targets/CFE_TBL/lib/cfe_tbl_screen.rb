@@ -12,6 +12,7 @@
 
 require 'osk_ops'
 require 'osk_education'
+require 'osk_system'
 require 'cfe_tbl_const'
 
 ################################################################################
@@ -48,17 +49,18 @@ def cfe_tbl_scr_cmd(screen, cmd)
       display("CFS_KIT TABLE_MGMT_SCREEN",1500,10)
    
    when "DEMO"
+      # Only one demo
       screen.get_named_widget("demo").text
       display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",500,50)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "TBL Training Video"
-         Osk::education_video(CFE_TBL_YOUTUBE_OVERVIEW)
-      when "TBL Training Slides"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::TBL_TRAINING_SLIDES_FILE}")
-      when "TBL Exercise Script"
-         Osk::education_tutorial(Osk::TUTORIAL_SCRIPT, "cfe", "TBL")
+      when "Tutorial Slides"
+         Osk::System.display_pdf(Osk::cfg_target_dir_file("CFE_TBL", "docs", CFE_TBL_TUTORIAL_FILE))
+      when "Tutorial Video"
+         Cosmos.open_in_web_browser(CFE_TBL_YOUTUBE_OVERVIEW)
+      when "Exercise Script"
+         Osk::System.start_target_script("CFE_TBL",CFE_TBL_TUTORIAL_SCRIPT)
       end
    
    else

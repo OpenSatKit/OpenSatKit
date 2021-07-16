@@ -6,7 +6,8 @@
 #      serves as a central access point for all OSK configurations and
 #      definitions. Whenever possible it uses existing COSMOS definitions
 #      to prevent multiple definitions
-#   2. System is designed as a Singleton 
+#   2. System is designed as a Singleton
+#
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -41,6 +42,43 @@ module Osk
       def init_variables
          @file_transfer = TftpFileTransfer.new()
       end # End init_variables()
+
+      ####################################################################
+      ##                     Open/Display Files                         ##
+      ####################################################################
+
+      # Cosmos provides the following display/open methods  
+      # - Cosmos.open_in_web_browser(file)      
+      # - Cosmos.open_in_text_editor(file)
+
+      # Web browser was slow and had poor rendering. If OSK goes beyond
+      # Ubuntu will need to evaluate options      
+      def self.display_pdf(file)
+         spawn("evince #{file}")
+      end
+      
+      ####################################################################
+      ##                     Run COSMOS Tool                            ##
+      ####################################################################
+
+      def self.start_target_script(target,script_file)
+      
+         script_pathfile = Osk::cfg_target_dir_file(target, "procedures", script_file)
+
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} -r '#{script_pathfile}'")
+      
+      end
+      
+      ####################################################################
+      ##                     cFS Build Methods                          ##
+      ####################################################################
+
+      def self.build_cfs(title="Build cFS")
+            
+         spawn("xfce4-terminal --title=\"#{title}\" --hold --default-working-directory=\"#{Osk::OSK_CFS_DIR}\" --execute ./cmake.sh")
+      
+      end
+
 
       ####################################################################
       ##                     cFS Management Methods                     ##
@@ -97,9 +135,16 @@ module Osk
       # Start the cFS and enable telemetry
       #      
       def self.start_cfs(target)
+
+         # Start the cFS target
+         # TODO - Centralize target definitions. cfs_kit's json files defines them and osk_global defines target attributes 
+         if (Osk::flight.targets.include? target)
+            cfs_target = target
+         else   
+            cfs_target = combo_box("Select cFS target to start", Osk::flight.targets[0], Osk::flight.targets[1], Osk::flight.targets[2])
+         end
+         spawn("xfce4-terminal --title=\"core Flight System - #{cfs_target}\" --default-working-directory=\"#{Osk::CFS_TARGETS[cfs_target.intern][:dir]}\" --execute sudo ./#{Osk::CFS_TARGETS[cfs_target.intern][:exe]}")
          
-         # Start the cFS
-         spawn("xfce4-terminal --title=\"core Flight System - #{target}\" --default-working-directory=\"#{Osk::CFS_TARGETS[target.intern][:dir]}\" --execute sudo ./#{Osk::CFS_TARGETS[target.intern][:exe]}")
          #spawn("xfce4-terminal --default-working-directory=""#{Osk::CFS_EXE_DIR}"" --execute echo #{Osk::PASSWORD} | sudo ./core-cpu1""")
          #~Osk::system.connect_to_local_cfs  # Sometimes previous session left in a bad state
 
@@ -290,6 +335,7 @@ module Osk
    
    # An instance of system is created outside of the module
    class << self; attr_accessor :system; end
+
 
 end # Module Osk
 

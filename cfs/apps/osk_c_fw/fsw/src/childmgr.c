@@ -148,14 +148,18 @@ int32 CHILDMGR_Constructor(CHILDMGR_Class* ChildMgr,
 ** Function: CHILDMGR_RegisterFunc
 **
 */
-void CHILDMGR_RegisterFunc(CHILDMGR_Class* ChildMgr, uint16 FuncCode, 
-                           void* ObjDataPtr, CHILDMGR_CmdFuncPtr ObjFuncPtr)
+boolean CHILDMGR_RegisterFunc(CHILDMGR_Class* ChildMgr, uint16 FuncCode, 
+                              void* ObjDataPtr, CHILDMGR_CmdFuncPtr ObjFuncPtr)
 {
 
+   boolean RetStatus = FALSE;
+   
    if (FuncCode < CHILDMGR_CMD_FUNC_TOTAL) {
 
       ChildMgr->Cmd[FuncCode].DataPtr = ObjDataPtr;
       ChildMgr->Cmd[FuncCode].FuncPtr = ObjFuncPtr;
+  
+      RetStatus = TRUE;
    
    }
    else {
@@ -165,7 +169,32 @@ void CHILDMGR_RegisterFunc(CHILDMGR_Class* ChildMgr, uint16 FuncCode,
          FuncCode,(CHILDMGR_CMD_FUNC_TOTAL-1));
    }
 
+   return RetStatus;
+   
 } /* End CHILDMGR_RegisterFunc() */
+
+
+/******************************************************************************
+** Function: CHILDMGR_RegisterFuncAltCnt
+**
+*/
+boolean CHILDMGR_RegisterFuncAltCnt(CHILDMGR_Class* ChildMgr, uint16 FuncCode, 
+                                  void* ObjDataPtr, CHILDMGR_CmdFuncPtr ObjFuncPtr)
+{
+
+   boolean RetStatus = FALSE;
+
+   if (CHILDMGR_RegisterFunc(ChildMgr, FuncCode, ObjDataPtr, ObjFuncPtr)) {
+      
+      ChildMgr->Cmd[FuncCode].AltCnt.Enabled = TRUE;      
+
+      RetStatus = TRUE;
+
+   }
+
+   return RetStatus;
+   
+} /* End CHILDMGR_RegisterFuncAltCnt() */
 
 
 /******************************************************************************
@@ -187,7 +216,7 @@ void CHILDMGR_ResetStatus(CHILDMGR_Class* ChildMgr)
 ** Notes:
 **   1. This command function is registered with the app's cmdmgr and each
 **      command processed by the child task must be registered using
-**      CHILDMGR_RegisterFunc() and teh object data pointer must reference
+**      CHILDMGR_RegisterFunc() and the object data pointer must reference
 **      the ChildMgr instance.
 */
 boolean CHILDMGR_InvokeChildCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t  MsgPtr)
@@ -354,6 +383,13 @@ void ChildMgr_TaskMainCallback(void)
          
          if (DBG_CHILDMGR) OS_printf("ChildMgr_TaskMainCallback() - Successful GetChildMgrInstance. PerId=%d\n",ChildMgr->PerfId);
          
+         if (ChildMgr->TaskCallback == NULL) {
+         
+            ChildMgr->RunStatus = CHILDMGR_RUNTIME_ERR;
+            CFE_EVS_SendEvent(CHILDMGR_RUNTIME_ERR_EID, CFE_EVS_ERROR, "Child task exiting due to null callback function ointer");
+         
+         }
+         
          ChildMgr->RunStatus = CFE_SUCCESS;
          
          CFE_EVS_SendEvent(CHILDMGR_INIT_COMPLETE_EID, CFE_EVS_INFORMATION, "Child task initialization complete");
@@ -514,16 +550,18 @@ static void DispatchCmdFunc(CHILDMGR_Class* ChildMgr)
    
    ValidCmd = (ChildMgr->Cmd[ChildMgr->CurrCmdCode].FuncPtr)(ChildMgr->Cmd[ChildMgr->CurrCmdCode].DataPtr, MsgPtr);
 
-   if (ValidCmd == TRUE) {
-      
-      ChildMgr->ValidCmdCnt++;
-      
-   }
+
+   if (ChildMgr->Cmd[ChildMgr->CurrCmdCode].AltCnt.Enabled) {
+   
+      ValidCmd ? ChildMgr->Cmd[ChildMgr->CurrCmdCode].AltCnt.Valid++ : ChildMgr->Cmd[ChildMgr->CurrCmdCode].AltCnt.Invalid++;
+   
+   } 
    else {
-
-      ChildMgr->InvalidCmdCnt++;
-
+   
+      ValidCmd ? ChildMgr->ValidCmdCnt++ : ChildMgr->InvalidCmdCnt++;
+   
    }
+
    
    ChildMgr->PrevCmdCode = ChildMgr->CurrCmdCode;
    ChildMgr->CurrCmdCode = 0;

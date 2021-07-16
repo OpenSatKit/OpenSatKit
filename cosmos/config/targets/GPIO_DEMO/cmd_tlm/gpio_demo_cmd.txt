@@ -1,0 +1,30 @@
+<% 
+  require 'fsw_config_param' 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR = "GPIO_DEMO"
+  @CMD_MID_STR    = "GPIO_DEMO_CMD_MID"
+
+  # Configuration parameter assumptions
+  #   None
+  
+%>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an information event message with the app's version identifier"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset app counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+  
+# FC 2: Table load
+# FC 3: Table dump
+
+COMMAND <%= @APP_PREFIX_STR %> SET_ON_TIME <%= Osk::Cfg.processor_endian %> "Set how long LED remains on"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
+  APPEND_PARAMETER ON_TIME 32 UINT MIN_UINT32  MAX_UINT16  3000 "Time in milliseconds"
+
+COMMAND <%= @APP_PREFIX_STR %> SET_OFF_TIME <%= Osk::Cfg.processor_endian %> "Set how long LED remains off"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
+  APPEND_PARAMETER OFF_TIME 32 UINT MIN_UINT32  MAX_UINT16  3000 "Time in milliseconds"
+

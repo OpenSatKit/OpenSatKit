@@ -18,7 +18,7 @@
 */
 
 #define  @TEMPLATE@_CMD_MID        0x1FF0
-#define  @TEMPLATE@_SEND_HK_MID    0x1FF1
+#define  @TEMPLATE@_SEND_HK_MID    0x1A06   /* Generic 4s scheduled packet */
 
 
 /*

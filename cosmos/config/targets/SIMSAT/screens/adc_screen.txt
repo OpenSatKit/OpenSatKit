@@ -6,6 +6,10 @@
 #   Public License (GPL).
 # 
 ###############################################################################
+<%
+   require 'osk_global'
+   require 'simsat_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -31,13 +35,13 @@ VERTICAL   # With 2 rows
          VERTICALBOX "42 Simulator Flight Software Controller (F42)"
          MATRIXBYCOLUMNS 2 5 2
             
-            BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "F42_CMD")'
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "ADC", "F42_CMD")'
             NAMED_WIDGET f42_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL SEND_CTRL_GAINS SET_CTRL_MODE SET_OVR_STATE SET_TARGET_WHL_MOM CONFIG_DBG
 
-            BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "F42_TLM")'
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "ADC", "F42_TLM")'
             NAMED_WIDGET f42_tlm COMBOBOX "Controller" "Controller Gains" "Housekeeping" 
 
-            BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "F42_DOC")'
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "ADC", "F42_DOC")'
             SETTING BACKCOLOR 255 255 255
 
          END # Matrix
@@ -48,13 +52,13 @@ VERTICAL   # With 2 rows
          VERTICALBOX "42 Simulator Flight Software Interface (I42)"  
          MATRIXBYCOLUMNS 2 5 2
             
-            BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "I42_CMD")'
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "ADC", "I42_CMD")'
             NAMED_WIDGET i42_cmd COMBOBOX NOOP RESET_CTRS CONFIG_EXECUTE CONNECT_42 DISCONNECT_42
 
-            BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "I42_TLM")'
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "ADC", "I42_TLM")'
             NAMED_WIDGET i42_tlm COMBOBOX "Actuator Cmd Data" "Housekeeping" "Sensor Data" 
 
-            BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "I42_DOC")'
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "ADC", "I42_DOC")'
             SETTING BACKCOLOR 255 255 255
 
          END # Matrix
@@ -70,7 +74,7 @@ VERTICAL   # With 2 rows
       VERTICALBOX "Functional Screens"
       MATRIXBYCOLUMNS 2 5 2
 
-         BUTTON 'Manage Controller' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "FUNC_CONTROLLER_MGMT")'
+         BUTTON 'Manage Controller' 'simsat_scr_cmd(self, "ADC", "FUNC_CONTROLLER_MGMT")'
          LABEL "    "
 
       END # Matrix
@@ -80,12 +84,12 @@ VERTICAL   # With 2 rows
       VERTICALBOX "Learning Resources"
       MATRIXBYCOLUMNS 3 5 2
 
-         BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "DEMO")'
-         NAMED_WIDGET demo COMBOBOX "Coming Soon"
+         BUTTON 'Run Demo' 'simsat_scr_cmd(self, "ADC", "DEMO")'
+         NAMED_WIDGET demo COMBOBOX 'Coming Soon'
          LABEL "    "
 
-         BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "ADC", "TUTORIAL")'
-         NAMED_WIDGET tutorial COMBOBOX 'Training Slides'
+         BUTTON 'Run Tutorial' 'simsat_scr_cmd(self, "ADC", "TUTORIAL")'
+         NAMED_WIDGET tutorial COMBOBOX 'Tutorial Slides'
          LABEL "    "
 
       END # Matrix

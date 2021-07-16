@@ -1,0 +1,24 @@
+{
+   "id": 1,
+   
+   "title": "OSK App C Framework Intro",
+   
+   "objective": [
+      "Introduce the OSK App Framework architecture model by",
+      "starting with a <i>Hello World</i> app. Since this is the first",
+      "lesson the <i>lesson</i> and <i>solution</i> files are identical."
+   ],
+   
+   "time-stamp": "Marks last time the lesson was accessed",
+
+   "src-file": { 
+      "app_cfg.h":        {"completed": false, "completed-time": "" },
+      "osk_c_demo_app.h": {"completed": false, "completed-time": "" },
+      "osk_c_demo_app.c": {"completed": false, "completed-time": "" },
+      "msglog.h":         {"completed": true,  "completed-time": "" },
+      "msglog.c":         {"completed": true,  "completed-time": "" },
+      "msglogtbl.h":      {"completed": true,  "completed-time": "" },
+      "msglogtbl.c":      {"completed": true,  "completed-time": "" }
+   }
+
+}

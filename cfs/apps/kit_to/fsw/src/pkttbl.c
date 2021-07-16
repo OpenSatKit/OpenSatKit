@@ -122,7 +122,7 @@ void PKTTBL_SetTblToUnused(PKTTBL_Tbl* TblPtr)
    
    CFE_PSP_MemSet(TblPtr, 0, sizeof(PKTTBL_Tbl));
 
-   for (AppId=0; AppId < PKTTBL_MAX_APP_ID; AppId++) {
+   for (AppId=0; AppId < PKTUTIL_MAX_APP_ID; AppId++) {
       
       TblPtr->Pkt[AppId].StreamId    = PKTTBL_UNUSED_MSG_ID;
       TblPtr->Pkt[AppId].Filter.Type = PKTUTIL_FILTER_ALWAYS;
@@ -202,7 +202,7 @@ boolean PKTTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
    
                if (PktTbl->JsonObj[PKTTBL_OBJ_PKT].Modified) {
                          
-                  for (AppId=0; (AppId < PKTTBL_MAX_APP_ID) && (PktTbl->LastLoadStatus == TBLMGR_STATUS_VALID); AppId++) {
+                  for (AppId=0; (AppId < PKTUTIL_MAX_APP_ID) && (PktTbl->LastLoadStatus == TBLMGR_STATUS_VALID); AppId++) {
                           
                      if (PktTbl->Tbl.Pkt[AppId].StreamId != PKTTBL_UNUSED_MSG_ID) {
 
@@ -308,7 +308,7 @@ boolean PKTTBL_DumpCmd(TBLMGR_Tbl *Tbl, uint8 DumpType, const char* Filename)
       sprintf(DumpRecord,"\"packet-array\": [\n");
       OS_write(FileHandle,DumpRecord,strlen(DumpRecord));
       
-      for (AppId=0; AppId < PKTTBL_MAX_APP_ID; AppId++) {
+      for (AppId=0; AppId < PKTUTIL_MAX_APP_ID; AppId++) {
                
          if (WriteJsonPkt(FileHandle, &(PktTblPtr->Pkt[AppId]), FirstPktWritten)) FirstPktWritten = TRUE;
               

@@ -1,0 +1,80 @@
+###############################################################################
+# OSK C Tutorial Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_c_tutor_scr'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "OSK App Development Tutorial"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICALBOX "Overview"
+   LABEL "Develop an app using the OSK application framework"
+   LABEL "Step-by-step guide from 'Hello World' to OSK_C_DEMO"
+   LABEL "Starting/Resuming session from timestamp"
+END # Overview
+
+VERTICALBOX "References"
+
+   MATRIXBYCOLUMNS 4
+      BUTTON 'Tutorial Guide'    'osk_c_tutor_cmd(self,"REF_TUTORIAL")'
+      BUTTON 'Tutorial Video'    'osk_c_tutor_cmd(self,"REF_VIDEO")'
+      BUTTON 'OSK App Dev Guide' 'osk_c_tutor_cmd(self,"REF_OSK_APP_DEV")'
+      LABEL  '        '
+   END # Matrix
+
+END # References
+
+
+VERTICALBOX "Tutorial"
+
+   MATRIXBYCOLUMNS 3 5 5
+      BUTTON 'Start/Resume' 'osk_c_tutor_cmd(self,"TUTORIAL_START_RESUME")'
+      BUTTON 'Reset'        'osk_c_tutor_cmd(self,"TUTORIAL_RESET")'
+      LABEL  '        '
+   END
+
+END
+
+VERTICALBOX "Lesson Status"
+
+   MATRIXBYCOLUMNS 2 5 5
+   
+      LABEL "os<b>Complete</b>"
+      LABEL '        '
+      
+      NAMED_WIDGET Lesson_1 CHECKBUTTON 'Lesson 1 - blah blah blah'
+      LABEL '        '
+
+      NAMED_WIDGET Lesson_2 CHECKBUTTON 'Lesson 2 - blah blah blah'
+      LABEL '        '
+
+      NAMED_WIDGET Lesson_3 CHECKBUTTON 'Lesson 3 - blah blah blah'
+      LABEL '        '
+      
+      NAMED_WIDGET Lesson_4 CHECKBUTTON 'Lesson 4 - blah blah blah'
+      LABEL '        '
+
+      NAMED_WIDGET Lesson_5 CHECKBUTTON 'Lesson 5 - blah blah blah'
+      LABEL '        '
+
+      NAMED_WIDGET Lesson_6 CHECKBUTTON 'Lesson 6 - blah blah blah'
+      LABEL '        '
+
+      NAMED_WIDGET Lesson_7 CHECKBUTTON 'Lesson 7 - blah blah blah'
+      LABEL '        '
+
+   END # Matrix
+END # Completed
+
+
+

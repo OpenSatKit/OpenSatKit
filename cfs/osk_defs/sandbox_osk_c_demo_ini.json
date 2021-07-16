@@ -1,0 +1,30 @@
+{
+   "title": "OSK C Demo initialization file",
+   "description": [ "Define runtime configurations"]
+   "config": {
+      
+      "APP_CFE_NAME": "OSK_C_DEMO",
+      "APP_PERF_ID":  127,
+     
+      "CHILD_NAME":       "OSK_C_DEMO_CHILD",
+      "CHILD_PERF_ID":    128,
+      "CHILD_STACK_SIZE": 16384,
+      "CHILD_PRIORITY":   80,
+      
+      "CMD_MID":        8048,
+      "EXECUTE_MID":    6593,
+      "SEND_HK_MID":    6594,
+      "HK_TLM_MID":     3952,
+      "PLAYBK_TLM_MID": 3953,
+      
+      "CMD_PIPE_DEPTH": 5,
+      "CMD_PIPE_NAME":  "OSK_C_DEMO_CMD",
+
+      "MSGLOG_PIPE_DEPTH": 5,
+      "MSGLOG_PIPE_NAME":  "OSK_C_DEMO_PKT",
+
+      "TBL_LOAD_FILE": "/cf/osk_c_demo_tbl.json",
+      "TBL_DUMP_FILE": "/cf/osk_c_demo~.json"
+      
+   }
+}

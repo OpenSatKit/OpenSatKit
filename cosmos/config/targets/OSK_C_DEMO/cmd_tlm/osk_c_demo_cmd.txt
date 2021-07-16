@@ -1,0 +1,43 @@
+<% 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR = "OSK_C_DEMO"
+  @CMD_MID_STR    = "OSK_C_DEMO_CMD_MID"
+  
+%>  
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset command counters"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND OSK_C_DEMO LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load packet log table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=Packet Log"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/sandbox_osk_c_demo_tbl.json" "Full path and file name of table to be loaded"
+
+COMMAND OSK_C_DEMO DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump example object table"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
+  APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=Packet Log"
+  APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_c_demo_tbl~.json" "Full path and file name to receive table dump"
+
+COMMAND OSK_C_DEMO START_LOG <%= Osk::Cfg.processor_endian %> "Start logging the command message ID packet headers"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
+  APPEND_PARAMETER MSG_ID 16 UINT MIN_UINT16 MAX_UINT16 0x0801 "Message ID that will be logged. Default to EVS HK packet"
+
+COMMAND OSK_C_DEMO STOP_LOG <%= Osk::Cfg.processor_endian %> "Stop logging packets"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
+
+COMMAND OSK_C_DEMO START_PLAYBK <%= Osk::Cfg.processor_endian %> "Start playing back in telemetry the last log file created"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 0) %>
+
+COMMAND OSK_C_DEMO STOP_PLAYBK <%= Osk::Cfg.processor_endian %> "Stop a play back that is in progress"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>
+
+COMMAND OSK_C_DEMO RUN_CHILD_TASK <%= Osk::Cfg.processor_endian %> "Onboard command used run child task"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
+

@@ -211,7 +211,7 @@ boolean PKTMGR_LoadTbl(PKTTBL_Tbl* NewTbl)
 
    CFE_PSP_MemCpy(&(PktMgr->Tbl), NewTbl, sizeof(PKTTBL_Tbl));
 
-   for (AppId=0; AppId < PKTTBL_MAX_APP_ID; AppId++) {
+   for (AppId=0; AppId < PKTUTIL_MAX_APP_ID; AppId++) {
 
       if (PktMgr->Tbl.Pkt[AppId].StreamId != PKTTBL_UNUSED_MSG_ID) {
          
@@ -398,7 +398,7 @@ boolean PKTMGR_RemoveAllPktsCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
    int32    Status;
    boolean  RetStatus = TRUE;
 
-   for (AppId=0; AppId < PKTTBL_MAX_APP_ID; AppId++) {
+   for (AppId=0; AppId < PKTUTIL_MAX_APP_ID; AppId++) {
       
       if (PktMgr->Tbl.Pkt[AppId].StreamId != PKTTBL_UNUSED_MSG_ID ) {
           

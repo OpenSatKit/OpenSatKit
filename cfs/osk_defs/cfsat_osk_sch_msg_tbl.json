@@ -392,10 +392,64 @@
       }},
       
       {"message": {
-         "name":  "TEST_SEND_HK_MID",
-         "descr": "0x1FF1(8177), 0xC000(49152), 0x0001",
+         "name":  "GENERIC_1HZ_MID",
+         "descr": "0x1A00(6656), 0xC000(49152), 0x0001",
          "id": 100,
-         "stream-id": 8177,
+         "stream-id": 6656,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "GENERIC_2HZ_MID",
+         "descr": "0x1A01(6657), 0xC000(49152), 0x0001",
+         "id": 101,
+         "stream-id": 6657,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "GENERIC_4HZ_MID",
+         "descr": "0x1A02(6658), 0xC000(49152), 0x0001",
+         "id": 102,
+         "stream-id": 6658,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "GENERIC_1S_MID",
+         "descr": "0x1A03(6659), 0xC000(49152), 0x0001",
+         "id": 103,
+         "stream-id": 6659,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "GENERIC_2S_MID",
+         "descr": "0x1A04(6660), 0xC000(49152), 0x0001",
+         "id": 104,
+         "stream-id": 6660,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "GENERIC_3S_MID",
+         "descr": "0x1A05(6661), 0xC000(49152), 0x0001",
+         "id": 105,
+         "stream-id": 6661,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+
+      {"message": {
+         "name":  "GENERIC_4S_MID",
+         "descr": "0x1A06(6662), 0xC000(49152), 0x0001",
+         "id": 106,
+         "stream-id": 6662,
          "seq-seg": 49152,
          "length": 1
       }},
@@ -403,7 +457,7 @@
       {"message": {
          "name":  "Test Packet",
          "descr": "Test packet 0x17FF(6143). Length of 7 0x0700(1792). Data words include secondary header.",
-         "id": 101,
+         "id": 107,
          "stream-id": 6143,
          "seq-seg": 49152,
          "length": 11,

@@ -8,6 +8,6 @@
    "app_targets.json to follow the OSK naming convention."
    ],
 
-"apps": [ "BM", "F42", "FILEMGR", "I42", "KIT_CI", "KIT_SCH", "KIT_TO", "MQTT", "OSK_C_PROTO", "OSK_CPP_PROTO", "TFTP" ]
+"apps": [ "BM", "F42", "FILEMGR", "I42", "KIT_CI", "KIT_SCH", "KIT_TO", "MQTT", "OSK_C_DEMO", "OSK_C_PROTO", "OSK_CPP_PROTO", "TFTP" ]
 
 }

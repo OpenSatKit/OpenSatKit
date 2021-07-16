@@ -21,7 +21,8 @@
 /*
 ** Include Files
 */
-#include "osk_c_fw.h"
+
+#include "osk_c_fw.h" /* Needs JSON with FW config so just include everything */
 
 
 /***********************/
@@ -32,10 +33,10 @@
 ** Table Structure Objects 
 */
 
-#define  INITBL_OBJ_CONFIG    0
-#define  INITBL_OBJ_CNT       1
+#define INITBL_OBJ_CONFIG    0
+#define INITBL_OBJ_CNT       1
 
-#define  INITBL_OBJ_CONFIG_NAME  "config"
+#define INITBL_OBJ_CONFIG_NAME  "config"
 
 #define INITBL_CONFIG_DEF_ERR_EID    (INILIB_BASE_EID + 0)
 #define INITBL_LOAD_CONFIG_EID       (INILIB_BASE_EID + 1)

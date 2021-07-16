@@ -30,8 +30,6 @@
 /** Macro Definitions **/
 /***********************/
 
-
-#define PKTTBL_MAX_APP_ID    (0x0800)  /* Maximum CCSDS v1 ApId */
 #define PKTTBL_APP_ID_MASK   (0x07FF)  /* CCSDS v1 ApId mask    */
 
 #define PKTTBL_UNUSED_MSG_ID (CFE_SB_INVALID_MSG_ID)
@@ -85,7 +83,7 @@ typedef struct {
 
 typedef struct {
    
-   PKTTBL_Pkt Pkt[PKTTBL_MAX_APP_ID];
+   PKTTBL_Pkt Pkt[PKTUTIL_MAX_APP_ID];
 
 } PKTTBL_Tbl;
 

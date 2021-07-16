@@ -13,7 +13,8 @@
 ###############################################################################
 <% 
    require 'osk_global'
-   require 'scsim_ops_screen'
+   require 'osk_c_demo_const'
+   require 'osk_c_demo_ops_screen'
 %>
 
 SCREEN AUTO AUTO 0.5

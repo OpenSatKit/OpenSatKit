@@ -50,11 +50,11 @@ VERTICALBOX "Learning Resources"
   MATRIXBYCOLUMNS 3 5
 
     BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "DEMO")'
-    NAMED_WIDGET demo COMBOBOX "Load and Dumps"
+    NAMED_WIDGET demo COMBOBOX "Load-Dump Screen"
     LABEL "    "
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX "TBL Training Video" "TBL Training Slides" "TBL Exercise Script"
+    NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Tutorial Video" "Exercise Script"
     LABEL "    "
 
   END # Matrix

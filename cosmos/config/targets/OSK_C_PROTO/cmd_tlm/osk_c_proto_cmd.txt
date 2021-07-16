@@ -10,20 +10,20 @@
 COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
 
-COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset commnad counters"
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset command counters"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
 
 COMMAND OSK_C_PROTO LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load example object table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=XML, 1=SCANF, 2=JSON"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
-  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_demo_tbl.json" "Full path and file name of table to be loaded"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_proto_tbl.json" "Full path and file name of table to be loaded"
 
 COMMAND OSK_C_PROTO DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump example object table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 2 "Table ID: 0=XML, 1=SCANF, 2=JSON"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "Unused"
-  APPEND_PARAMETER FILENAME 512 STRING '/cf/osk_c_demo_tbl~.json' "Full path and file name to receive table dump"
+  APPEND_PARAMETER FILENAME 512 STRING '/cf/osk_c_proto_tbl~.json' "Full path and file name to receive table dump"
 
 COMMAND OSK_C_PROTO ENA_TBL_DATA <%= Osk::Cfg.processor_endian %> "Enable/disable use of table data"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 1) %>
@@ -36,12 +36,12 @@ COMMAND OSK_C_PROTO SET_ACTIVE_TBL <%= Osk::Cfg.processor_endian %> "Set the ind
 
 COMMAND OSK_C_PROTO CONFIG_STATE_BIT <%= Osk::Cfg.processor_endian %> "Enable/disable a state/fault bit"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 4) %>
-  APPEND_PARAMETER ID     16 UINT MIN_UINT16 MAX_UINT16 0xFFFF "Individual atate/fault ID or 0xFFFF for all IDs"
+  APPEND_PARAMETER ID     16 UINT MIN_UINT16 MAX_UINT16 0xFFFF "Individual state/fault ID or 0xFFFF for all IDs"
   APPEND_PARAMETER ENABLE 16 UINT MIN_UINT8  MAX_UINT8  1       "Enable/disable reporting (0=False,1=True)"
 
 COMMAND OSK_C_PROTO CLEAR_STATE_BIT <%= Osk::Cfg.processor_endian %> "Clear state/fault latch flag"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 2) %>
-  APPEND_PARAMETER ID   16 UINT MIN_UINT16 MAX_UINT16 0xFFFF "Individual atate/fault ID or 0xFFFF for all IDs"
+  APPEND_PARAMETER ID   16 UINT MIN_UINT16 MAX_UINT16 0xFFFF "Individual state/fault ID or 0xFFFF for all IDs"
 
 COMMAND OSK_C_PROTO SET_TLM_MODE <%= Osk::Cfg.processor_endian %> "Set the fault telemetry report mode"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 1) %>

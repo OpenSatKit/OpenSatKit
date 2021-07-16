@@ -23,7 +23,7 @@
       "obj-path-file": "/cf/bm.so",
       "entry-symbol": "BM_AppMain",
       "name": "BM",
-      "priority": 80,
+      "priority": 70,
       "stack": 16384,
       "load-addr": 0,
       "exception-action": 0,

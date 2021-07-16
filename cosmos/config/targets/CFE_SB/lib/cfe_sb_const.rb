@@ -12,4 +12,7 @@
 
 require 'osk_global'
 
+CFE_SB_TUTORIAL_FILE    = "cFE-SB-Tutorial.pdf"
+CFE_SB_TUTORIAL_SCRIPT  = "cfe_sb_tutorial.rb"
+
 CFE_SB_YOUTUBE_OVERVIEW = "https://youtu.be/QO6C3DUbGF8"

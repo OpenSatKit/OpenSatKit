@@ -1,0 +1,83 @@
+###############################################################################
+# OSK C Tutor Lesson Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_c_lesson_scr'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+NAMED_WIDGET title TITLE "Lesson 1 - OSK C Demo App Intro"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICALBOX "Objective"
+   LABEL "Provide an overview of the <i>OSK_C_DEMO</i> app that will be"
+   LABEL "developed by following the steps in this tutorial."
+END # Objectives
+
+VERTICALBOX "References"
+
+   MATRIXBYCOLUMNS 4
+      BUTTON 'Lesson Slides'  'osk_c_lesson_cmd(self,"REF_SLIDES")'
+      BUTTON 'OSK App Dev'    'osk_c_lesson_cmd(self,"REF_OSK_APP_DEV")'
+      BUTTON 'Tutorial Guide' 'osk_c_lesson_cmd(self,"REF_TUTORIAL")'
+      LABEL  '        '
+   END # Matrix
+
+END # References
+    
+VERTICALBOX "Update Source Files"
+
+   MATRIXBYCOLUMNS 3 5 5
+      BUTTON 'Edit Current' "osk_c_lesson_src(self,'SRC_EDIT_CURRENT')"
+      NAMED_WIDGET current_src_file COMBOBOX 'app_cfg.h' 'osk_c_app_demo.h' 'osk_c_app_demo.c' 'msglog.h' 'msglog.c' 'msglogtbl.h' 'msglogtbl.c'
+      LABEL  '        '
+      
+      BUTTON 'View Lesson'  "osk_c_lesson_src(self,'SRC_VIEW_LESSON')"
+      NAMED_WIDGET lesson_src_file COMBOBOX 'app_cfg.h' 'osk_c_app_demo.h' 'osk_c_app_demo.c' 'msglog.h' 'msglog.c' 'msglogtbl.h' 'msglogtbl.c'
+      LABEL  '        '
+   END
+   
+END
+
+VERTICALBOX "Completed"
+
+   MATRIXBYCOLUMNS 3 5 5
+   
+      NAMED_WIDGET app_cfg_h CHECKBUTTON 'app_cfg.h'
+      LABEL '        '
+      LABEL '        '
+
+      NAMED_WIDGET osk_c_app_demo_h CHECKBUTTON 'osk_c_app_demo.h'
+      NAMED_WIDGET osk_c_app_demo_c CHECKBUTTON 'osk_c_app_demo.c'
+      LABEL '        '
+      
+      NAMED_WIDGET msglog_h CHECKBUTTON 'msglog.h'
+      NAMED_WIDGET msglog_c CHECKBUTTON 'msglog.c'
+      LABEL '        '
+
+      NAMED_WIDGET msglogtbl_h CHECKBUTTON 'msglogtbl.h'
+      NAMED_WIDGET msglogtbl_c CHECKBUTTON 'msglogtbl.c'
+      LABEL '        '
+
+   END # Matrix
+END # Completed
+
+
+VERTICALBOX "Application"
+   MATRIXBYCOLUMNS 4 5
+      
+      BUTTON 'Build'  'osk_c_lesson_cmd(self,"APP_BUILD")'
+      BUTTON 'Run'    'osk_c_lesson_cmd(self,"APP_RUN")'
+      BUTTON 'Screen' 'osk_c_lesson_cmd(self,"APP_SCREEN")'
+      LABEL '        '
+      
+   END
+END # Application

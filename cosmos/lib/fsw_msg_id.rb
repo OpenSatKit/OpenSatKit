@@ -153,6 +153,21 @@ module Fsw
       ## Kit App Message IDs ##
       #########################
  
+      # Kit apps (includes Pi-Sat) use the following base MIDs 
+      #   0x0900
+      #   0x0A00 - Generic messages
+      #   0x0F00
+      
+      # Generic scheduled message
+      
+      GENERIC_1HZ_MID = "0x1A00"
+      GENERIC_2HZ_MID = "0x1A01"
+      GENERIC_4HZ_MID = "0x1A02"
+      GENERIC_1S_MID  = "0x1A03"
+      GENERIC_2S_MID  = "0x1A04"
+      GENERIC_3S_MID  = "0x1A05"
+      GENERIC_4S_MID  = "0x1A06"
+
       # Benchmark
   
       BM_CMD_MID     = "0x19F0"
@@ -226,6 +241,14 @@ module Fsw
       MQTT_HK_TLM_MID    = "0x0F50"
       MQTT_STR32_TLM_MID = "0x0F51"
 
+      # OpenSatKit C Demo App 
+  
+      OSK_C_DEMO_CMD_MID        = "0x1F70"
+      OSK_C_DEMO_EXECUTE_MID    = GENERIC_1HZ_MID
+      OSK_C_DEMO_SEND_HK_MID    = GENERIC_4S_MID
+      OSK_C_DEMO_HK_TLM_MID     = "0x0F70"
+      OSK_C_DEMO_PLAYBK_TLM_MID = "0x0F71"
+
       # OpenSatKit C Prototype App 
   
       OSK_C_PROTO_CMD_MID    = "0x1F30"
@@ -237,10 +260,13 @@ module Fsw
       OSK_CPP_PROTO_CMD_MID    = "0x1F40"
       OSK_CPP_PROTO_HK_TLM_MID = "0x0F40"
 
-      # Create App and reserved for testing 
+      # Create App and reserved for testing
+      # - Generic scheduler messages used 
+      #   used for send HK and other periodic
+      #   needs      
   
       OSK_TEST_CMD_MID      = "0x1FF0"
-      OSK_TEST_SEND_HK_MID  = "0x1FF1"
+      OSK_TEST_SEND_HK_MID  = GENERIC_4S_MID
       OSK_TEST_HK_TLM_MID   = "0x0FF0"
 
       # SCSIM - Spacecraft Simulator
@@ -261,6 +287,12 @@ module Fsw
       ###############
       ## PiSat Kit ##
       ###############
+
+      # Pi-Sat GPIO
+  
+      GPIO_DEMO_CMD_MID     = "0x1910"
+      GPIO_DEMO_SEND_HK_MID = "0x1911"
+      GPIO_DEMO_HK_TLM_MID  = "0x0910" 
 
       # Hardware Bus
   

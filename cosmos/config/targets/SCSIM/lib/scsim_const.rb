@@ -12,4 +12,5 @@
 
 require 'osk_global'
 
-SCSIM_YOUTUBE_OVERVIEW = "TBD"
+SCSIM_YOUTUBE_OVERVIEW = "https://youtu.be/3Cfa5l9FZUI"
+

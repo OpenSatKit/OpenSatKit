@@ -17,13 +17,23 @@ require 'osk_global'
 
 module SimSat
 
+
+   MISSION_FSW_QS_FILE     = "Mission-Fsw-Quick-Start.pdf"
+   MISSION_FSW_SIMSAT_FILE = "Mission-Fsw-Simple-Sat.pdf"   
+   
+   MISSION_FSW_APPS_ADC_FILE      = "Mission-Fsw-Apps-Adc.pdf"
+   MISSION_FSW_APPS_DATAFILE_FILE = "Mission-Fsw-Apps-DataFileMgmt.pdf"
+   MISSION_FSW_APPS_HS_FILE       = "Mission-Fsw-Apps-HealthSafety.pdf"
+   MISSION_FSW_APPS_MAINT_FILE    = "Mission-Fsw-Apps-Maintenance.pdf"
+   MISSION_FSW_APPS_RUNTIME_FILE  = "Mission-Fsw-Apps-RunTime.pdf"
+   
    #####################
    ## Directory Paths ##
    #####################
 
    
    # Directories
-   # - DS and ISIM tables are dependent of recorder path definitions
+   # - DS and ISIM tables are dependent on recorder path definitions
    # - GND2FSW supports "cheating" because scripts can manipulate FSW directories
    #   via ground paths
    

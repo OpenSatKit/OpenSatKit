@@ -20,7 +20,7 @@
       "obj-path-file": "/cf/mqtt.so",
       "entry-symbol": "MQTT_AppMain",
       "name": "MQTT",
-      "priority": 80,
+      "priority": 70,
       "stack": 32768,
       "load_addr": 0,
       "exception-action": 0,

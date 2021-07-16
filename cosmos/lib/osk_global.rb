@@ -22,6 +22,7 @@ module Osk
    SIMSAT_TARGET  = "simsat"   # Mission FSW 
    CFSAT_TARGET   = "cfsat"    # cFS Education
    SANDBOX_TARGET = "sandbox"  # Research & Development
+   PISAT_TARGET   = "pisat"    # Raspberry Pi
    
    ###########################
    ## JSON Naming standards ##
@@ -72,9 +73,9 @@ module Osk
    TFTP_GET_TIMEOUT = 15   # Telemetry get counter verification timeout 
    TFTP_PUT_TIMEOUT = 15   # Telemetry put counter verification timeout 
    
-   ###################
-   ## Text Messages ##
-   ###################
+   #######################
+   ## GUI Text Messages ##
+   #######################
 
    MSG_BUTTON_YES    = "Yes"
    MSG_BUTTON_NO     = "No"
@@ -84,8 +85,14 @@ module Osk
 
    MSG_TBD_FEATURE = "Feature coming soon..."
 
-   TXT_TRAINING_VIDEO  = "Training Video"
-   TXT_TRAINING_SLIDES = "Training Slides"
+   TXT_TUTORIAL_VIDEO  = "Tutorial Video"
+   TXT_TUTORIAL_SLIDES = "Tutorial Slides"
+   
+   
+   def Osk::time_stamp
+      time = Time.new 
+      time_stamp = "#{time.strftime("%m/%d/%Y")} #{time.strftime("%I:%M %p")}"
+   end
    
    
    ################
@@ -94,25 +101,12 @@ module Osk
    
    # Use "_SCR" for automatically generated screen files
    
-   DOCS_QS_INTRO_FILE        = "OSK-QS-Intro.pdf"
-   DOCS_QS_MISSION_FSW_FILE  = "OSK-QS-Mission-FSW.pdf"
-   DOCS_QS_CFS_ENG_FILE      = "OSK-QS-cFS-Eng.pdf"
+   OSK_QS_FILE      = "OSK-Quick-Start.pdf"
+   OSK_APP_DEV_FILE = "OSK-App-Dev-Guide.pdf" 
+                  
    DOCS_QS_RND_FILE          = "OSK-QS-RnD.pdf"
-
-   TRAIN_OSK_INTRO_FILE       = "OSK-Training-Intro.pdf"
-   TRAIN_OSK_CFE_SERVICE_FILE = "OSK-Ex-cFE_02A-cFE-Services.pdf"
-   TRAIN_OSK_CFE_APP_DEV_FILE = "OSK-Ex-cFE_02B-cFE-App-Dev.pdf"
-   
-   TRAIN_CFS_INTRO_FILE    = "cFS_Training_01-Intro.pdf"
-   TRAIN_CFE_SERVICE_FILE  = "cFS_Training_02A-cFE-Overview.pdf"
-   TRAIN_CFE_APP_DEV_FILE  = "cFS_Training_02B-cFE-App-Dev.pdf"
-
-   TRAIN_OSK_APPS_ADC_FILE      = "OSK-Apps-ADC.pdf"
-   TRAIN_OSK_APPS_DATAFILE_FILE = "OSK-Apps-DataFileMgmt.pdf"
-   TRAIN_OSK_APPS_HS_FILE       = "OSK-Apps-HealthSafety.pdf"
-   TRAIN_OSK_APPS_MAINT_FILE    = "OSK-Apps-Maintenance.pdf"
-   TRAIN_OSK_APPS_RUNTIME_FILE  = "OSK-Apps-RunTime.pdf"
-   
+   DOCS_QS_PISAT_FILE        = "OSK-QS-PiSat.pdf"
+    
    ABOUT_SCR_FILE      = "about_scr.txt"
    VERSION_SCR_FILE    = "version_scr.txt"
    ADD_APP_SCR_FILE    = "add_app_scr.txt"
@@ -131,8 +125,7 @@ module Osk
    TLM_TBL_GEN_INPUT_XLS_FILE    = "tlm_tbl_gen_inp.xlsx"
    TLM_TBL_GEN_CFG_TEMPLATE_FILE = "kit_to_ds_tbl_cfg.json"
 
-   SIMSAT_OVERVIEW_FILE = "OSK-Simple-Sat.pdf"
-   
+  
    CFE_UG_FILE      = "index.html"
    CFE_APP_DEV_FILE = "cFE_Application_Developers_Guide.pdf"
    CFE_TRAINING_SLIDES_FILE = "cFS_Training-cFE_Services.pdf"
@@ -249,6 +242,13 @@ module Osk
    OSK_CFS_DIR  = File.expand_path(REL_DIR_CFS,Cosmos::USERPATH)
    OSK_DOCS_DIR = File.expand_path(REL_DIR_DOCS,Cosmos::USERPATH)
 
+   CFS_DOCS_DIR = File.join(OSK_DOCS_DIR,"cfs")
+   CFE_UG_DIR   = File.join(CFS_DOCS_DIR,"cfe_users_guide")
+
+   MISSION_FSW_DOC_DIR  = File.join(OSK_DOCS_DIR,"mission-fsw")
+   PI_SAT_DOC_DIR       = File.join(OSK_DOCS_DIR,"pi-sat")
+   RESEARCH_DEV_DOC_DIR = File.join(OSK_DOCS_DIR,"research-dev")
+
    CFS_CMAKE_DIR        = "#{OSK_CFS_DIR}/osk_defs"
    CFS_SIMSAT_EXE_DIR   = "#{OSK_CFS_DIR}/build/exe/simsat"
    CFS_SIMSAT_CF_DIR    = "#{OSK_CFS_DIR}/build/exe/simsat/cf"
@@ -270,12 +270,13 @@ module Osk
    GND_TO_CFSAT_SRV_DIR   = File.join(OSK_CFS_DIR,'build','exe','cfsat','cf')
    GND_TO_SANDBOX_SRV_DIR = File.join(OSK_CFS_DIR,'build','exe','sandbox','cf')
    
+   def Osk::fsw_app_dir(app)
+      return File.join(Osk::OSK_CFS_DIR,'apps',app)
+   end
+
    CFS_KIT_LIB_DIR = Osk::cfg_target_dir("CFS_KIT","lib")
    CFS_KIT_SCR_DIR = Osk::cfg_target_dir("CFS_KIT","screens")
    
-   CFE_DOCS_DIR   = "#{Cosmos::USERPATH}/cfs_kit/docs"
-   CFE_UG_DIR     = "#{CFE_DOCS_DIR}/cfe_users_guide"
-
    REL_TUTORIAL_DIR   = "cfs_kit/tutorials"
    TUTORIAL_DIR       = "#{Cosmos::USERPATH}/cfs_kit/tutorials"
    CFE_TRAINING_DIR   = "#{Osk::TUTORIAL_DIR}/cfe/training"

@@ -12,6 +12,7 @@
 
 require 'osk_ops'
 require 'osk_education'
+require 'osk_system'
 require 'cfe_time_const'
 
 ################################################################################
@@ -33,12 +34,10 @@ def cfe_time_scr_cmd(screen, cmd)
  
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "cFE Training Slides"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_TRAINING_SLIDES_FILE}")
-      when "Time Exercise Script"
-         Osk::education_tutorial(Osk::TUTORIAL_SCRIPT, "cfe", "TIME")
-      when "cFE Exercise Slides"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::CFE_EXERCISE_SLIDES_FILE}")
+      when "Tutorial Slides"
+         Osk::System.display_pdf(Osk::cfg_target_dir_file("CFE_TIME", "docs", CFE_TIME_TUTORIAL_FILE))
+      when "Exercise Script"
+         Osk::System.start_target_script("CFE_TIME",CFE_TIME_TUTORIAL_SCRIPT)
       end
    
    else

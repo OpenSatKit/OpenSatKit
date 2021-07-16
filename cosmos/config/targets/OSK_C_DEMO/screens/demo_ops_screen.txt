@@ -1,0 +1,93 @@
+###############################################################################
+# OSK C Demo App Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'osk_c_demo_const'
+   require 'osk_c_demo_ops_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "OSK C Demo"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICALBOX "Commands"
+   MATRIXBYCOLUMNS 4
+      BUTTON 'No Op'        'osk_c_demo_ops_cmd(self, "NOOP")'
+      BUTTON 'Reset'        'osk_c_demo_ops_cmd(self, "RESET")'
+      BUTTON 'Load Tbl'     'osk_c_demo_ops_cmd(self, "LOAD_TBL")'
+      BUTTON 'Dump Tbl'     'osk_c_demo_ops_cmd(self, "DUMP_TBL")'
+      
+      BUTTON 'Start Log'    'osk_c_demo_ops_cmd(self, "START_LOG")'
+      BUTTON 'Stop Log'     'osk_c_demo_ops_cmd(self, "STOP_LOG")'
+      BUTTON 'Start PlayBk' 'osk_c_demo_ops_cmd(self, "START_PLAYBK")'
+      BUTTON 'Stop PlayBk'  'osk_c_demo_ops_cmd(self, "STOP_PLAYBK")'
+   END # Matrix
+END # Commands
+    
+VERTICALBOX "Housekeeping Status"
+   MATRIXBYCOLUMNS 6 5
+      LABEL 'Cmd Cnt'
+      VALUE OSK_C_DEMO HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+      LABEL 'Cmd Err'
+      VALUE OSK_C_DEMO HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+      LABEL '          '
+      LABEL '          '
+
+      LABEL 'Child Cmd Cnt'
+      VALUE OSK_C_DEMO HK_TLM_PKT CHILD_CMD_VALID_COUNT WITH_UNITS 8
+      LABEL 'Child Cmd Err'
+      VALUE OSK_C_DEMO HK_TLM_PKT CHILD_CMD_ERROR_COUNT WITH_UNITS 8
+      LABEL '          '
+      LABEL '          '
+
+      LABEL 'Log Ena'
+      VALUE OSK_C_DEMO HK_TLM_PKT MSG_LOG_ENA WITH_UNITS 8
+      LABEL 'Log Count'
+      VALUE OSK_C_DEMO HK_TLM_PKT MSG_LOG_CNT WITH_UNITS 8
+      LABEL 'Playbk Ena'
+      VALUE OSK_C_DEMO HK_TLM_PKT MSG_PLAYBK_ENA WITH_UNITS 8
+   END
+   HORIZONTAL 5
+      LABEL 'Filename'
+      VALUE OSK_C_DEMO HK_TLM_PKT MSGLOG_FILENAME WITH_UNITS 40
+      BUTTON 'Display'  'osk_c_demo_ops_cmd(self, "DISPLAY_FILE")'      
+   END
+END # App Status
+
+VERTICALBOX "Message Log File Playback"
+   MATRIXBYCOLUMNS 6
+      LABEL 'Entry'
+      VALUE OSK_C_DEMO PLAYBK_TLM_PKT LOG_FILE_ENTRY WITH_UNITS 8
+      LABEL '          '
+      LABEL '          '
+      LABEL '          '
+      LABEL '          '
+   END
+   HORIZONTAL 5
+      LABEL 'Pri Header     '
+      VALUE OSK_C_DEMO PLAYBK_TLM_PKT MSG_HDR_HEX_TXT WITH_UNITS 40    
+      LABEL '          '      
+   END
+END
+
+VERTICALBOX "Scripts"
+   MATRIXBYCOLUMNS 3
+      BUTTON 'Functional Test'  'osk_c_demo_ops_cmd(self, "SCRIPT_FUNC_TEST")'
+      BUTTON 'Ops Example'      'osk_c_demo_ops_cmd(self, "SCRIPT_OPS_EXAMPLE")'
+      LABEL '           '     
+   END # Matrix
+END
+
+HORIZONTALLINE
+
+LABEL "<b>Flight Event Messages</b>"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 550 50

@@ -6,8 +6,8 @@
 **      attempts to strike a balance between adding value by supporting app
 **      design patterns that alleviate duplicate "plumbing" code and provide
 **      tested solutions for developers versus over complicating the situation
-**      obscure interfaces and forcing developers to use solutions that don'table
-**      optimizr the solution to their particular problem.
+**      with obscure interfaces and forcing developers to use solutions that
+**      don't optimize the solution to their particular problem.
 **   2. Design rationale:
 **      - Main apps own all app objects and should manage calls to them
 **      - App objects may be aware of their execution environment so the they
@@ -119,10 +119,28 @@ struct CHILDMGR_Struct;
 typedef boolean (*CHILDMGR_TaskCallback) (struct CHILDMGR_Struct* ChildMgr);
 
 
+/*
+** Alternate command counters allow an individual command to have its own 
+** counters. The class counters are not incremented for the command. This
+** is useful when commands are issued from onboard apps and incrementing 
+** the class command counters may be confusing to ground operations. 
+*/
+typedef struct
+{
+
+   boolean  Enabled;  /* Use alternate cmd counters */            
+   uint16   Valid;    /* Number of valid messages received since init or reset */
+   uint16   Invalid;  /* Number of invalid messages received since init or reset */
+
+} CHILDMGR_AltCnt;
+
+
 typedef struct {
 
    void*                DataPtr;
    CHILDMGR_CmdFuncPtr  FuncPtr; 
+   
+   CHILDMGR_AltCnt      AltCnt;
 
 } CHILDMGR_Cmd;
 
@@ -175,11 +193,11 @@ int32 CHILDMGR_Constructor(CHILDMGR_Class* ChildMgr,
 ** Function: CHILDMGR_RegisterFunc
 **
 */
-void CHILDMGR_RegisterFunc(CHILDMGR_Class* ChildMgr,
-                           uint16 FuncCode, void* ObjDataPtr,
-                           CHILDMGR_CmdFuncPtr ObjFuncPtr);
+boolean CHILDMGR_RegisterFunc(CHILDMGR_Class* ChildMgr,
+                              uint16 FuncCode, void* ObjDataPtr,
+                              CHILDMGR_CmdFuncPtr ObjFuncPtr);
 
-
+            
 /******************************************************************************
 ** Function: CHILDMGR_ResetStatus
 **

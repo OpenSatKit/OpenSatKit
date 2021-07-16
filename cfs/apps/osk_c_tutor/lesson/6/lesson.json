@@ -1,0 +1,24 @@
+{
+   "id": 6,
+
+   "title": "Using a Child Task for App Object Functions",
+   
+   "objective": [
+      "Introduce the OSK Framework Child Task Manager and show how",
+      "it can be used to run App Object functions within a child",
+      "task. Note the changes are localized to app_cfg.h and osk_c_demo_app.*"
+   ],
+   
+   "time-stamp": "Marks last time the lesson was accessed",
+   
+   "src-file": { 
+      "app_cfg.h":        {"completed": false, "completed-time": "" },
+      "osk_c_demo_app.h": {"completed": false, "completed-time": "" },
+      "osk_c_demo_app.c": {"completed": false, "completed-time": "" },
+      "msglog.h":         {"completed": true,  "completed-time": "" },
+      "msglog.c":         {"completed": true,  "completed-time": "" },
+      "msglogtbl.h":      {"completed": true,  "completed-time": "" },
+      "msglogtbl.c":      {"completed": true,  "completed-time": "" }
+   }
+
+}

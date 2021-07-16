@@ -180,6 +180,12 @@ typedef struct {
    INITBL_Class*  IniTbl;
 
    /*
+   ** Telemetry Packets
+   */
+   
+   FILE_InfoPkt  InfoPkt;
+
+   /*
    ** Class State Data
    */
 
@@ -187,12 +193,6 @@ typedef struct {
 
    char FileTaskBuf[FILEMGR_TASK_FILE_BLOCK_SIZE];
    
-   /*
-   ** Telemetry Packets
-   */
-   
-   FILE_InfoPkt  InfoPkt;
-
 } FILE_Class;
 
 

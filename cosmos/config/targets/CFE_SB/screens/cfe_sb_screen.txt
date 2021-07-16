@@ -38,7 +38,7 @@ VERTICALBOX "Learning Resources"
   MATRIXBYCOLUMNS 3 5
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_SB/lib/cfe_sb_screen.rb"; cfe_sb_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX "SB Training Video" "SB Training Slides" "SB Exercise Script"
+    NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Tutorial Video" "Exercise Script"
     LABEL "    "
 
   END # Matrix

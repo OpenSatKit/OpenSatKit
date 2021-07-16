@@ -116,9 +116,9 @@ SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json os
 
 SET(TGT2_NAME cfsat) 
 
-SET(TGT2_APPLIST cfs_lib osk_c_fw kit_ci kit_sch kit_to tftp fm md mm)
+SET(TGT2_APPLIST cfs_lib osk_c_fw kit_ci kit_sch kit_to tftp fm md mm osk_c_tutor)
 
-SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json)
+SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json)
 
 
 #################
@@ -130,7 +130,7 @@ SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json os
 
 SET(TGT3_NAME sandbox) 
 
-SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim sbn)
+SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim sbn osk_c_demo)
 
-SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json)
+SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json)
 
