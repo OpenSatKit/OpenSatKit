@@ -22,7 +22,7 @@
       "obj-path-file": "/cf/osk_cpp_proto.so",
       "entry-symbol": "OSK_CPP_PROTO_Main",
       "name": "OSK_CPP_PROTO",
-      "priority": 120,
+      "priority": 70,
       "stack": 16384,
       "load_addr": 0,
       "exception-action": 0,

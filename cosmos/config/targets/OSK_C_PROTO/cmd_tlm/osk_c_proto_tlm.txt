@@ -38,7 +38,7 @@ TELEMETRY OSK_C_PROTO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "OpenSatKit Pr
     FORMAT_STRING  "0x%04X"
   APPEND_ITEM STATE_REP_LATCHED 16 UINT "State Reporter Latched bits"
     FORMAT_STRING  "0x%04X"  
-  APPEND_ITEM TBL_DATA_ENA 8 UINT  "Table Data Enabled: 0=DIsabled, 1=Enabled"
+  APPEND_ITEM TBL_DATA_ENA 8 UINT  "Table Data Enabled: 0=Disabled, 1=Enabled"
     STATE FALSE 0
     STATE TRUE  1
   APPEND_ITEM TBL_ID       8 UINT  "Table ID: 0=XML, 1=SCANF, 2=JSON, 3=cFE"

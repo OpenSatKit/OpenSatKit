@@ -22,7 +22,7 @@
       "obj-path-file": "/cf/scsim.so",
       "entry-symbol": "SCSIM_AppMain",
       "name": "SCSIM",
-      "priority": 90,
+      "priority": 70,
       "stack": 16384,
       "load_addr": 0,
       "exception-action": 0,

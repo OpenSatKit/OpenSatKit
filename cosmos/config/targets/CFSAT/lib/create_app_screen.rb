@@ -17,7 +17,7 @@ require 'cosmos/script'
 require 'osk_global'
 require 'osk_system'
 require 'osk_education'
-require 'cfs_kit_const'
+require 'cfsat_const'
 require 'create_app_scr'
 require 'app_template'
 
@@ -33,13 +33,15 @@ def cfsat_create_app(screen, cmd)
       
       display("CFS_KIT #{File.basename(Osk::CREATE_APP_SCR_FILE,'.txt')}")
    elsif (cmd == "EDIT_CMAKE")
-      Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CMAKE_DIR}/#{Osk::OSK_TARGETS_FILE}'")
+      Cosmos.open_in_text_editor(File.join(Osk::CFS_CMAKE_DIR,Osk::OSK_TARGETS_FILE))
+      #Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CMAKE_DIR}/#{Osk::OSK_TARGETS_FILE}'")
 
    elsif (cmd == "EDIT_STARTUP")
-      Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CMAKE_DIR}/#{Osk::CFSAT_STARTUP_FILE}'")
+      Cosmos.open_in_text_editor(File.join(Osk::CFS_CMAKE_DIR,Osk::CFSAT_STARTUP_FILE))
+      #Cosmos.run_process("ruby lib/OskTxtFileViewer -f '#{Osk::CFS_CMAKE_DIR}/#{Osk::CFSAT_STARTUP_FILE}'")
 
    elsif (cmd == "BUILD_CFS")
-      spawn("xfce4-terminal --title=\"Build cFS\" --hold --default-working-directory=\"#{Osk::OSK_CFS_DIR}\" --execute ./cmake.sh")
+      Osk::System.build_cfs
 
    elsif (cmd == "STOP_CFS_SERVER")   
       Osk::System.stop_cfs
@@ -54,9 +56,9 @@ def cfsat_create_app(screen, cmd)
 
       case screen.get_named_widget("training_video").text
       when "Create 'Hello World' App"
-         Osk::education_video(CFS_KIT_YOUTUBE_CREATE_APP_HELLO_WORLD)
+         Osk::education_video(CfSat::CREATE_APP_HELLO_WORLD_YOUTUBE)
       when "Inspect 'Hello World' Code"
-         Osk::education_video(CFS_KIT_YOUTUBE_INSPECT_APP_HELLO_WORLD)
+         Osk::education_video(CfSat::INSPECT_APP_HELLO_WORLD_YOUTUBE)
       end
 
    else

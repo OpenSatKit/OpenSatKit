@@ -50,11 +50,11 @@ VERTICALBOX "Learning Resources"
   MATRIXBYCOLUMNS 3 5
 
     BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "DEMO")'
-    NAMED_WIDGET demo COMBOBOX "App Management" "Performance Monitor" "Performance Mon Script"
+    NAMED_WIDGET demo COMBOBOX "App Management Screen" "Perf Monitor Screen" "Perf Monitor Script"
     LABEL "    "
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX "cFE Training Slides" "cFE Exercise Slides" "ES Exercise Script" "Perf Mon Training Video"
+    NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Exercise Script" "Perf Monitor Video"
     LABEL "    "
 
   END # Matrix

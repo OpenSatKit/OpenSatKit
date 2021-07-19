@@ -40,7 +40,7 @@ VERTICALBOX "Learning Resources"
   MATRIXBYCOLUMNS 3 5
 
     BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "TUTORIAL")'
-    NAMED_WIDGET tutorial COMBOBOX "EVS Training Video" "EVS Training Slides" "EVS Exercise Script"
+    NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Tutorial Video" "Exercise Script"
     LABEL "    "
 
   END # Matrix

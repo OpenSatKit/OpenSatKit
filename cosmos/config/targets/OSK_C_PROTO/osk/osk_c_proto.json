@@ -21,7 +21,7 @@
       "obj-path-file": "/cf/osk_c_proto.so",
       "entry-symbol": "OSK_C_PROTO_AppMain",
       "name": "OSK_C_PROTO",
-      "priority": 120,
+      "priority": 70,
       "stack": 16384,
       "load_addr": 0,
       "exception-action": 0,

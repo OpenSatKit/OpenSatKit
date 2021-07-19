@@ -1,7 +1,7 @@
 {
    "title": "Spacecraft Simulator(SCSIM) initialization file",
    "description": [ "Define runtime configurations",
-                    "EXECUTE_MID & SEND_HK_MID same as ISMI"]
+                    "EXECUTE_MID & SEND_HK_MID same as ISIM"]
    "config": {
       
       "APP_CFE_NAME": "SCSIM",

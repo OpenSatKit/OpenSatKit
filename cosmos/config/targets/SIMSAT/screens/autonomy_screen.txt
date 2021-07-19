@@ -6,6 +6,10 @@
 #   Public License (GPL).
 # 
 ###############################################################################
+<%
+   require 'osk_global'
+   require 'simsat_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -30,13 +34,13 @@ VERTICAL # With 2 rows
          VERTICALBOX "Limit Checker"
          MATRIXBYCOLUMNS 2 5 2
           
-            BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_CMD")'
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "AUTONOMY", "LC_CMD")'
             NAMED_WIDGET lc_cmd COMBOBOX NOOP RESET_CTRS SET_APP_STATE SET_AP_STATE SET_AP_PERM_OFF RESET_AP_STATS RESET_WP_STATS
 
-            BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_TLM")'
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "AUTONOMY", "LC_TLM")'
             NAMED_WIDGET lc_tlm COMBOBOX HOUSEKEEPING
 
-            BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "LC_DOC")'
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "AUTONOMY", "LC_DOC")'
             SETTING BACKCOLOR 255 255 255
 
          END # Matrix
@@ -47,13 +51,13 @@ VERTICAL # With 2 rows
          VERTICALBOX "Stored Command"
          MATRIXBYCOLUMNS 2 5 2
          
-            BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_CMD")'
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "AUTONOMY", "SC_CMD")'
             NAMED_WIDGET sc_cmd COMBOBOX NOOP RESET_CTRS START_ATS STOP_ATS START_RTS STOP_RTS DISABLE_RTS ENABLE_RTS SWITCH_ATS JUMP_ATS CONT_ATS APPEND_ATS START_RTS_GROUP STOP_RTS_GROUP DISABLE_RTS_GROUP ENABLE_RTS_GROUP
 
-            BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_TLM")'
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "AUTONOMY", "SC_TLM")'
             NAMED_WIDGET sc_tlm COMBOBOX HOUSEKEEPING
 
-            BUTTON "User's Guide" 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "SC_DOC")'
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "AUTONOMY", "SC_DOC")'
             SETTING BACKCOLOR 255 255 255
 
          END # Matrix
@@ -69,10 +73,10 @@ VERTICAL # With 2 rows
       VERTICALBOX "Functional Screens"
       MATRIXBYCOLUMNS 2 5 2
       
-         BUTTON 'Manage Autonomy' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "FUNC_AUTO_MGMT")'
+         BUTTON 'Manage Autonomy' 'simsat_scr_cmd(self, "AUTONOMY", "FUNC_AUTO_MGMT")'
          LABEL "    "
 
-         BUTTON 'Manage Tables' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "FUNC_TBL_MGMT", "")'
+         BUTTON 'Manage Tables' 'simsat_scr_cmd(self, "FUNC_TBL_MGMT", "")'
          LABEL "    "
 
       END # Matrix
@@ -82,11 +86,11 @@ VERTICAL # With 2 rows
       VERTICALBOX "Learning Resources"
       MATRIXBYCOLUMNS 3 5 2
 
-         BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "DEMO")'
+         BUTTON 'Run Demo' 'simsat_scr_cmd(self, "AUTONOMY", "DEMO")'
          NAMED_WIDGET demo COMBOBOX "Heater Sim"
          LABEL "    "
 
-         BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/SIMSAT/lib/simsat_screen.rb"; simsat_scr_cmd(self, "AUTONOMY", "TUTORIAL")'
+         BUTTON 'Run Tutorial' 'simsat_scr_cmd(self, "AUTONOMY", "TUTORIAL")'
          NAMED_WIDGET tutorial COMBOBOX "Coming Soon"
          LABEL "    "
 

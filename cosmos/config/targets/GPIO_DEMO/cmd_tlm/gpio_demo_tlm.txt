@@ -1,0 +1,23 @@
+<% 
+  require 'fsw_config_param'
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR     = "GPIO_DEMO"
+  @HK_TLM_MID_STR     = "GPIO_DEMO_HK_TLM_MID"
+  
+  # Configuration parameter assumptions
+  #   None
+  
+%>
+
+
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 16 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 16 UINT "Application command error counter"
+  APPEND_ITEM GPIO_MAPPED      8 UINT "Boolean indicating whether GPIO successfully memory mapped?"
+  APPEND_ITEM GPIO_OUTPUT_PIN  8 UINT "GPIO output pin being used by LED controller"
+  APPEND_ITEM CTRL_ON_TIME    32 UINT "Time (milliseconds) that LED remains on"
+  APPEND_ITEM CTRL_OFF_TIME   32 UINT "Time (milliseconds) that LED remains off"
+

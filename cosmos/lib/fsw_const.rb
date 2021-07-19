@@ -37,7 +37,12 @@ module Fsw
       CFE_EVS_INFORMATION  = 2
       CFE_EVS_ERROR        = 3
       CFE_EVS_CRITICAL     = 4
-
+      
+      CFE_EVS_DEBUG_MASK       = 0b0001
+      CFE_EVS_INFORMATION_MASK = 0b0010
+      CFE_EVS_ERROR_MASK       = 0b0100
+      CFE_EVS_CRITICAL_MASK    = 0b1000
+      
       CFE_EVS_NO_FILTER        = 0x0000       # Stops any filtering.  All messages are sent.
       CFE_EVS_FIRST_ONE_STOP   = 0xFFFF       # Sends the first event.  All remaining messages are filtered.
       CFE_EVS_FIRST_TWO_STOP   = 0xFFFE       # Sends the first 2 events.  All remaining messages are filtered.
@@ -180,9 +185,9 @@ module Fsw
       MM_MEM_TYPE_EEPROM = 2
 
 
-      ##############################
-      ## OSK_C_FW - Table Manager ##
-      ##############################
+      ###############################
+      ## OSK_C_FW - Packet Utility ##
+      ###############################
 
       OSK_PKTUTIL_FILTER_ALWAYS     = 1
 	   OSK_PKTUTIL_FILTER_BY_SEQ_CNT = 2

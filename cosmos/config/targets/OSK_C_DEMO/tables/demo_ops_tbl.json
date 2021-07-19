@@ -1,0 +1,11 @@
+{
+   "app-name": "OSK_C_DEMO",
+   "tbl-name": "Ops Example Table",
+   "description": "Modify default values for ops example",
+   "file": {
+      "path-base-name": "/cf/ops_msg_",
+      "extension":      ".txt",
+      "entry-cnt":      8
+   },
+   "playbk-delay": 2
+}

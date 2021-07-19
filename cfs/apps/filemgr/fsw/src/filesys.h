@@ -173,13 +173,6 @@ typedef struct {
    INITBL_Class*  IniTbl;
 
    /*
-   ** Class State Data
-   */
-
-   const char* CfeTblName;
-   FileUtil_OpenFileList OpenFileList;
-   
-   /*
    ** Tables
    */
    
@@ -191,6 +184,14 @@ typedef struct {
    
    FILESYS_TblPkt        TblPkt;
    FILESYS_OpenFilesPkt  OpenFilesPkt;
+
+   /*
+   ** Class State Data
+   */
+
+   const char* CfeTblName;
+   FileUtil_OpenFileList OpenFileList;
+   
 
 } FILESYS_Class;
 
@@ -214,7 +215,7 @@ void FILESYS_Constructor(FILESYS_Class* FileSysPtr, INITBL_Class* IniTbl);
 /******************************************************************************
 ** Function: FILESYS_ResetStatus
 **
-** Reset counters and status flags to a known reset state.  The behavour of
+** Reset counters and status flags to a known reset state.  The behavior of
 ** the table manager should not be impacted. The intent is to clear counters
 ** and flags to a known default state for telemetry.
 **

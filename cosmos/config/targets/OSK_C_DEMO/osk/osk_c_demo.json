@@ -1,0 +1,38 @@
+{
+"app": {
+
+   "title": "OSK C Demo",
+   "version": "1.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "OSK_C_DEMO provides an example app that uses the OSK C framework",
+      "library(osk_c_fw). It serves as the end goal of the Code-As-You_go (CAYG)",
+      "tutorials"
+   ],
+
+   "cosmos": {
+      "target": "OSK_C_DEMO"
+   },
+      
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/osk_c_demo.so",
+      "entry-symbol": "OSK_C_DEMO_AppMain",
+      "name": "OSK_C_DEMO",
+      "priority": 70,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk_c_fw",
+      "tables": [
+         { 
+                "name": "Packet Log Table",
+                  "id": 0,
+            "filename": "osk_c_demo_tbl.json"
+         }
+      ]
+   }
+}   
+}

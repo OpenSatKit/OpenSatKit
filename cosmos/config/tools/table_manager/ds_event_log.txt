@@ -1,46 +1,73 @@
 <%
 
-  require 'osk_config' 
+   require 'osk_config' 
 
-  @APP_PREFIX_STR  = "DS"
-  @LOG_MAX         = "CFE_EVS_LOG_MAX"
+   @APP_PREFIX_STR  = "DS"
+   @LOG_MAX         = "CFE_EVS_LOG_MAX"
   
 %>
 TABLE "DS EventLog" <%= Osk::Cfg.processor_endian %> ONE_DIMENSIONAL "Example DS file that only contains events. Use EVS event log max for convenience"
-  <%= Osk::Cfg.file_hdr %>
+   <%= Osk::Cfg.file_hdr %>
 
-  APPEND_PARAMETER "CLOSE_SECONDS"   32  UINT 0 MAX_UINT32 0
-  APPEND_PARAMETER "CLOSE_SUBSECS"   32  UINT 0 MAX_UINT32 0
+   # typedef struct {
+   #   uint32  CloseSeconds;                               /**< \brief Time when file was closed */
+   #   uint32  CloseSubsecs;        
+   #   uint16  FileTableIndex;                             /**< \brief Destination file table index */
+   #   uint16  FileNameType;                               /**< \brief Filename type - count vs time */
+   #   char    FileName[DS_TOTAL_FNAME_BUFSIZE];           /**< \brief On-board filename */
+   # } DS_FileHeader_t;
 
-  APPEND_PARAMETER "FILE_TBL_INDEX"  16  UINT 0 MAX_UINT16 0
-  APPEND_PARAMETER "FILENAME_TYPE"   16  UINT 0 MAX_UINT16 0 
+   APPEND_PARAMETER "CLOSE_SECONDS"   32  UINT 0 MAX_UINT32 0
+   APPEND_PARAMETER "CLOSE_SUBSECS"   32  UINT 0 MAX_UINT32 0 
+
+   APPEND_PARAMETER "FILE_TBL_INDEX"  16  UINT 0 MAX_UINT16 0
+   APPEND_PARAMETER "FILENAME_TYPE"   16  UINT 0 MAX_UINT16 0 
   
-  APPEND_PARAMETER "FILENAME" <%= FswConfigParam::DS_TOTAL_FNAME_BUFSIZE*8 %> STRING "UNDEF"    
-  
-  <% 
-    max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
-    append_items = ""
-    for i in 0..(max_entries-1)
+   APPEND_PARAMETER "FILENAME" <%= FswConfigParam::DS_TOTAL_FNAME_BUFSIZE*8 %> STRING "UNDEF"    
 
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_STREAM_ID\" 16 UINT 0 MAX_UINT16 0  \"CCSDS Header Stream ID\" BIG_ENDIAN" << "\n"
-      append_items << "  FORMAT_STRING  \"0x%04X\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SEQ_CNT\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Header Sequence Count\" BIG_ENDIAN" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_LEN\"       16 UINT 0 MAX_UINT16 0  \"CCSDS Header Packet Length\" BIG_ENDIAN" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SECONDS\"   32 UINT 0 MAX_UINT32 0  \"CCSDS Secondary Header Seconds\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SUBSECS\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Secondary Header Sub Seconds\"" << "\n"
-      
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_APP_NAME\" 160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_ID\"        16 UINT 0 MAX_UINT16 0  \"ID of event sent\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_TYPE\"      16 UINT 0 MAX_UINT16 0  \"1=Debug,2=Info,3=Err,4=Critical\"" << "\n"
-        append_items << "   STATE DEBUG    1" << "\n"
-        append_items << "   STATE INFO     2" << "\n"
-        append_items << "   STATE ERROR    3" << "\n"
-        append_items << "   STATE CRITICAL 4" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_SC_ID\"     32 UINT 0 MAX_UINT32 0  \"Spacecraft ID\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PROC_ID\"   32 UINT 0 MAX_UINT32 0  \"Processor ID\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_MESSAGE\"  976 STRING \"UNDEF\"     \"Text Message\"" << "\n"
-      append_items << "APPEND_PARAMETER \"EVENT#{i}_PAD\"       16 UINT 0 MAX_UINT16 0  \"Alignment pad\"" << "\n"
-    end
-  %>
-  <%= append_items %>
+   #
+   # Each event message has a CCSDS header followed by the following 
+   # event message packet definition:  
+   #  
+   # typedef struct {
+   #    char    AppName[CFE_MISSION_MAX_API_LEN];
+   #    uint16  EventID;
+   #    uint16  EventType;
+   #    uint32  SpacecraftID;
+   #    uint32  ProcessorID;
+   # } CFE_EVS_PacketID_t;
+   #
+   # typedef struct {
+   #    CFE_EVS_PacketID_t  PacketID;
+   #    char                Message[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
+   #    uint8               Spare1;
+   #    uint8               Spare2;
+   # } CFE_EVS_LongEventTlm_Payload_t;
+
+   <% 
+      max_entries = Osk::Cfg.get_fsw_cfg_int_param(@APP_PREFIX_STR, @LOG_MAX)
+      append_items = ""
+      for i in 0..(max_entries-1)
+
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_STREAM_ID\" 16 UINT 0 MAX_UINT16 0  \"CCSDS Header Stream ID\" BIG_ENDIAN" << "\n"
+         append_items << "  FORMAT_STRING  \"0x%04X\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SEQ_CNT\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Header Sequence Count\" BIG_ENDIAN" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_LEN\"       16 UINT 0 MAX_UINT16 0  \"CCSDS Header Packet Length\" BIG_ENDIAN" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SECONDS\"   32 UINT 0 MAX_UINT32 0  \"CCSDS Secondary Header Seconds\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PKT_SUBSECS\"   16 UINT 0 MAX_UINT16 0  \"CCSDS Secondary Header Sub Seconds\"" << "\n"
+         
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_APP_NAME\" 160 STRING \"UNDEF\"     \"Registered app Name\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_ID\"        16 UINT 0 MAX_UINT16 0  \"ID of event sent\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_TYPE\"      16 UINT 0 MAX_UINT16 0  \"1=Debug,2=Info,3=Err,4=Critical\"" << "\n"
+            append_items << "   STATE DEBUG    1" << "\n"
+            append_items << "   STATE INFO     2" << "\n"
+            append_items << "   STATE ERROR    3" << "\n"
+            append_items << "   STATE CRITICAL 4" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_SC_ID\"     32 UINT 0 MAX_UINT32 0  \"Spacecraft ID\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PROC_ID\"   32 UINT 0 MAX_UINT32 0  \"Processor ID\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_MESSAGE\"  976 STRING \"UNDEF\"     \"Text Message\"" << "\n"
+         append_items << "APPEND_PARAMETER \"EVENT#{i}_PAD\"       16 UINT 0 MAX_UINT16 0  \"Alignment pad\"" << "\n"
+      end
+   %>
+   <%= append_items %>
 

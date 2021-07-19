@@ -14,10 +14,12 @@
 
 require 'osk_ops'
 require 'osk_education'
+require 'osk_system'
 require 'fsw_const'
 require 'fsw_config_param'
 require 'fm_const'
 require 'hk_const'
+require 'simsat_const'
 
 ################################################################################
 ## GUI Send Commands
@@ -90,8 +92,9 @@ def simsat_adc(screen, cmd)
       prompt(Osk::MSG_TBD_FEATURE)
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "#{Osk::TXT_TRAINING_SLIDES}"
-         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_ADC_FILE}")
+      when Osk::TXT_TUTORIAL_SLIDES
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",SimSat::MISSION_FSW_APPS_ADC_FILE)
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       end
    else
       raise "Error in screen definition file. Undefined attitude determination and control screen command '#{cmd}' sent to simsat_src_cmd()"
@@ -265,7 +268,8 @@ def simsat_data_file(screen, cmd)
       when "Comm App Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_INTRO)
       when "Data-File Intro Slides"
-         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_DATAFILE_FILE}")
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",SimSat::MISSION_FSW_APPS_DATAFILE_FILE)
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       end
 
    else
@@ -363,7 +367,8 @@ def simsat_health_safety(screen, cmd)
       tutorial = screen.get_named_widget("tutorial").text
       case tutorial
       when "HS App Group Intro Slides"
-         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_HS_FILE}")
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",SimSat::MISSION_FSW_APPS_HS_FILE)
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       when "HS App Group Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_HS)
       end 
@@ -442,7 +447,8 @@ def simsat_maintenance(screen, cmd)
       tutorial = screen.get_named_widget("tutorial").text
       case tutorial
       when "Maint App Group Intro Slides"
-         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_MAINT_FILE}")
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",SimSat::MISSION_FSW_APPS_MAINT_FILE)
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       when "Maint App Group Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_MAINT)    
       end 
@@ -511,8 +517,9 @@ def simsat_runtime(screen, cmd)
       case screen.get_named_widget("tutorial").text
       when "Intro Video"
          Osk::education_video(SimSat::YOUTUBE_COMMUNITY_APPS_RUNTIME)    
-      when "#{Osk::TXT_TRAINING_SLIDES}"
-         spawn("evince #{Osk::OSK_APPS_TRAIN_DIR}/#{Osk::TRAIN_OSK_APPS_RUNTIME_FILE}")
+      when Osk::TXT_TUTORIAL_SLIDES
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",SimSat::MISSION_FSW_APPS_RUNTIME_FILE)
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       end
    else
       raise "Error in screen definition file. Undefined runtime environment screen command '#{cmd}' sent to simsat_src_cmd()"

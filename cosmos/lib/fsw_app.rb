@@ -49,7 +49,7 @@ class FswApp
    attr_reader :title             # Brief app title, not the acronym
    attr_reader :version           # Release version
    attr_reader :owner             # Organization that controls/releases the app
-   attr_reader :url                  # URL to access the app
+   attr_reader :url               # URL to access the app
    attr_reader :description       # Brief description of application's purpose 
 
    ### Targets ###
@@ -236,7 +236,7 @@ class FswApp
          cmd_valid = true
       end # validate_cmd
       
-    return cmd_valid
+      return cmd_valid
     
    end # send_cmd()
    

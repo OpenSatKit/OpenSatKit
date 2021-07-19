@@ -20,7 +20,7 @@
                "name":    "I42_EXECUTE_MID",
                "descr":   "42 interface synchronization.",
                "index":   0,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 41
@@ -30,7 +30,7 @@
                "name":    "SC Execution",
                "descr":   "",
                "index":   1,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 22
@@ -50,7 +50,7 @@
                "name":    "CS Execution",
                "descr":   "",
                "index":   3,
-               "enabled": "true",
+               "enabled": "false",
                "period":  2,
                "offset":  0,
                "msg-idx": 11
@@ -70,7 +70,7 @@
                "name":    "HSIM Housekeeping",
                "descr":   "",
                "index":   9,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 34
@@ -148,7 +148,7 @@
                "name":    "HK Combined Pkt 1",
                "descr":   "Period can be adjusted based on input data packet rates",
                "index":   1,
-               "enabled": "true",
+               "enabled": "false",
                "period":  6,
                "offset":  2,
                "msg-idx": 24
@@ -158,7 +158,7 @@
                "name":    "HK Combined Pkt 2",
                "descr":   "Period can be adjusted based on input data packet rates",
                "index":   2,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  1,
                "msg-idx": 25
@@ -168,7 +168,7 @@
                "name":    "HC Execution",
                "descr":   "",
                "index":   3,
-               "enabled": "true",
+               "enabled": "false",
                "period":  10,
                "offset":  0,
                "msg-idx": 33
@@ -178,12 +178,22 @@
                "name":    "CF Execution",
                "descr":   "",
                "index":   4,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 27
             }},
                         
+            {"activity": {
+               "name":    "Generic 1Hz",
+               "descr":   "",
+               "index":   7,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 100
+            }},
+
             {"activity": {
                "name":    "C++ DEMO Housekeeping",
                "descr":   "",
@@ -198,7 +208,7 @@
                "name":    "BM Housekeeping",
                "descr":   "",
                "index":   9,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 30
@@ -238,7 +248,7 @@
                "name":    "SC Housekeeping",
                "descr":   "",
                "index":   13,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  3,
                "msg-idx": 21
@@ -248,7 +258,7 @@
                "name":    "CS Housekeeping",
                "descr":   "",
                "index":   14,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 10
@@ -276,7 +286,7 @@
                "name":    "HS Execution",
                "descr":   "",
                "index":   1,
-               "enabled": "true",
+               "enabled": "false",
                "period":  2,
                "offset":  1,
                "msg-idx": 15
@@ -286,7 +296,7 @@
                "name":    "ISIM Execution",
                "descr":   "",
                "index":   2,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 43
@@ -296,7 +306,7 @@
                "name":    "FILEMGR Housekeeping",
                "descr":   "",
                "index":   7,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 47
@@ -307,7 +317,7 @@
                "name":    "HC Housekeeping",
                "descr":   "",
                "index":   8,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 32
@@ -337,7 +347,7 @@
                "name":    "HK Housekeeping",
                "descr":   "",
                "index":   11,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  2,
                "msg-idx": 23
@@ -348,7 +358,7 @@
                "name":    "CF Housekeeping",
                "descr":   "",
                "index":   12,
-               "enabled": "true",
+               "enabled": "false",
                "period":  3,
                "offset":  2,
                "msg-idx": 26
@@ -368,7 +378,7 @@
                "name":    "LC Housekeeping",
                "descr":   "",
                "index":   14,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  2,
                "msg-idx": 16
@@ -386,7 +396,7 @@
                "name":    "HSIM Execution",
                "descr":   "",
                "index":   0,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 35
@@ -396,7 +406,7 @@
                "name":    "BM Execution",
                "descr":   "",
                "index":   1,
-               "enabled": "true",
+               "enabled": "false",
                "period":  2,
                "offset":  0,
                "msg-idx": 31
@@ -406,27 +416,27 @@
                "name":    "CF Execution",
                "descr":   "",
                "index":   2,
-               "enabled": "true",
+               "enabled": "false",
                "period":  1,
                "offset":  0,
                "msg-idx": 27
             }},
                         
            {"activity": {
-               "name":    "TEST",
+               "name":    "Generic 4s",
                "descr":   "Used by Create App and available for development",
                "index":   8,
                "enabled": "true",
                "period":  4,
                "offset":  0,
-               "msg-idx": 100
+               "msg-idx": 106
             }},
-
+            
             {"activity": {
                "name":    "F42 Housekeeping",
                "descr":   "",
                "index":   9,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 40
@@ -436,7 +446,7 @@
                "name":    "I42 Housekeeping",
                "descr":   "",
                "index":   10,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 42
@@ -446,7 +456,7 @@
                "name":    "ISIM Housekeeping",
                "descr":   "",
                "index":   11,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0
                "msg-idx": 44
@@ -456,7 +466,7 @@
                "name":    "DS Housekeeping",
                "descr":   "",
                "index":   12,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  0,
                "msg-idx": 12
@@ -476,7 +486,7 @@
                "name":    "HS Housekeeping",
                "descr":   "",
                "index":   14,
-               "enabled": "true",
+               "enabled": "false",
                "period":  4,
                "offset":  1,
                "msg-idx": 14

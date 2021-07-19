@@ -1,0 +1,24 @@
+{
+   "id": 3,
+   
+   "title": "Log Command and File Mgmt Functions",
+   
+   "objective": [
+      "Demonstrate an app object that performs non-trivial functions",
+      "including multiple command handlers and managing a log file using",
+      "the OSAL's file API." 
+   ],
+   
+   "time-stamp": "Marks last time the lesson was accessed",
+   
+   "src-file": { 
+      "app_cfg.h":        {"completed": false, "completed-time": "" },
+      "osk_c_demo_app.h": {"completed": true,  "completed-time": "" },
+      "osk_c_demo_app.c": {"completed": false, "completed-time": "" },
+      "msglog.h":         {"completed": false, "completed-time": "" },
+      "msglog.c":         {"completed": false, "completed-time": "" },
+      "msglogtbl.h":      {"completed": true,  "completed-time": "" },
+      "msglogtbl.c":      {"completed": true,  "completed-time": "" }
+   }
+
+}

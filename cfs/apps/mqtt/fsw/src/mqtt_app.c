@@ -343,8 +343,8 @@ static void SubscribeToMqttClient(void)
 static boolean ChildTaskCallback(CHILDMGR_Class* ChildMgr)
 {
    
-   if (MQ2SB_OBJ->CfeTbl.DataPtr != NULL) {
-   
+   if (MQ2SB_OBJ->CfeTbl.DataPtr != NULL) {     
+      
       MQTT_CLIENT_Yield(1000);
    
    }

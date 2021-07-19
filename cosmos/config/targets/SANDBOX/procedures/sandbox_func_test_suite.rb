@@ -12,12 +12,14 @@
 ###############################################################################
 
 load 'filemgr_func_test.rb'
+load 'osk_c_demo_func_test.rb'
 
-class SandboxFuncTestSuiteOsk < Cosmos::TestSuite
+class SandboxFuncTestSuite < Cosmos::TestSuite
   
    def initialize
       super()
       add_test('FileMgrFuncTest')
+      add_test('OskCDemoFuncTest')
    end
   
 end

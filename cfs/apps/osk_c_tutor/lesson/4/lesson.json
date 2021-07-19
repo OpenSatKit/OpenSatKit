@@ -1,0 +1,24 @@
+{
+   "id": 4,
+   
+   "title": "JSON Table Design and Management",
+   
+   "objective": [
+      "Introduce the OSK App Framework table manager and the",
+      "utilities for working with a JSON table file. The hardcoded",
+      "message log parameters are moved to a table."
+   ],
+   
+   "time-stamp": "Marks last time the lesson was accessed",
+   
+   "src-file": { 
+      "app_cfg.h":        {"completed": false, "completed-time": "" },
+      "osk_c_demo_app.h": {"completed": true,  "completed-time": "" },
+      "osk_c_demo_app.c": {"completed": false, "completed-time": "" },
+      "msglog.h":         {"completed": false, "completed-time": "" },
+      "msglog.c":         {"completed": false, "completed-time": "" },
+      "msglogtbl.h":      {"completed": false, "completed-time": "" },
+      "msglogtbl.c":      {"completed": false, "completed-time": "" }
+   }
+
+}

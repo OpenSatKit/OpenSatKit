@@ -1,0 +1,40 @@
+{
+  "time-stamp": "07/18/2021 09:53 AM",
+  "decription": [
+    "Manages a user's progress through the lessons. Each lesson has",
+    "a JSON file named lesson.json that manages the user's progress",
+    "through a lesson. The following naming conventions are used:",
+    " - Each lesson is in a directory that has a numeric name: 1..N",
+    " - Lesson slides are named osk_c_tutor_lesson_X.pdf where X matches",
+    "   the directory number",
+    "The lesson.json file defines which source files need to be updated",
+    "in the lesson by setting 'src-files-completed' to false"
+  ],
+  "current-lesson": 1,
+  "lesson": [
+    {
+      "completed": false,
+      "completed-time": ""
+    },
+    {
+      "completed": false,
+      "completed-time": ""
+    },
+    {
+      "completed": false,
+      "completed-time": ""
+    },
+    {
+      "completed": false,
+      "completed-time": ""
+    },
+    {
+      "completed": false,
+      "completed-time": ""
+    },
+    {
+      "completed": false,
+      "completed-time": ""
+    }
+  ]
+}

@@ -27,8 +27,14 @@ require 'fsw_app'
 require 'simsat_ops_example_utils' 
 require 'simsat_recorder_mgmt' 
 require 'user_version'
-require 'cfs_kit_const'
 require 'fileutils'
+require 'osk_c_tutor_scr'
+require 'cfs_kit_const'
+require 'scsim_const'
+require 'cfsat_const'
+require 'pisat_const'
+require 'simsat_const'
+require 'sandbox_const'
 
 
 ################################################################################
@@ -36,10 +42,10 @@ require 'fileutils'
 ################################################################################
 
 # Used by file put/get command prototypes
-FLT_TEST_GET_FILE = "#{Osk::FLT_SRV_DIR}/tf_get_test_src.txt"
-FLT_TEST_PUT_FILE = "#{Osk::FLT_SRV_DIR}/tf_put_test_dst.txt"
-GND_TEST_GET_FILE = "#{Osk::GND_SRV_DIR}/tf_get_test_dst.txt"
-GND_TEST_PUT_FILE = "#{Osk::GND_SRV_DIR}/tf_put_test_src.txt"
+FLT_TEST_GET_FILE = File.join(Osk::FLT_SRV_DIR,"tf_get_test_src.txt")
+FLT_TEST_PUT_FILE = File.join(Osk::FLT_SRV_DIR,"tf_put_test_dst.txt")
+GND_TEST_GET_FILE = File.join(Osk::GND_SRV_DIR,"tf_get_test_dst.txt")
+GND_TEST_PUT_FILE = File.join(Osk::GND_SRV_DIR,"tf_put_test_src.txt")
 
 
 ################################################################################
@@ -124,9 +130,9 @@ def cfs_kit_scr_common(screen, cmd)
       when "About"
          about_str = ["<b>OpenSatKit Main Page Tabs</b>",
                       "<pre>   <b>Mission FSW</b> - Resources for developing Mission FSW using the SimSat reference mission</pre>",
-                      "<pre>   <b>cFS FSW Eng</b> - Educational resources for engineering FSW systems using the cFS</pre>",
+                      "<pre>   <b>cFS FSW Eng</b> - Resources for learning the cFE services and developing cFS apps</pre>",
                       "<pre>   <b>PiSat</b>       - Configure a Raspberry Pi with an OSK cFS distribution and connect it to COSMOS</pre>",
-                      "<pre>   <b>R&D</b>         - A collection of research and devlopment apps</pre>",
+                      "<pre>   <b>R&D</b>         - A collection of research and development apps</pre>",
                       "      ",
                       "<b>This Drop Down Menu</b>",
                       "<pre>   <b>OSK Quick Start</b>    - Guides the user for how to best use OSK to meet their needs</pre>",
@@ -155,9 +161,9 @@ def cfs_kit_scr_common(screen, cmd)
          doc_filename = nil
          case user_selection
          when "OSK Quick Start Doc"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QS_INTRO_FILE}"
+            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::OSK_QS_FILE}"
          end
-         spawn("evince #{doc_filename}") unless doc_filename.nil?
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       end
 
    else
@@ -168,11 +174,108 @@ end # def cfs_kit_scr_common()
 
 
 ################################################################################
+## cFS Education - cfsat
+################################################################################
+
+def cfs_kit_scr_cfsat(screen, cmd)
+
+   case cmd
+   
+   ## System
+   
+   when "START_CFS"
+      Osk::System.stop_n_start_cfs('cfsat')
+      
+
+   ## Docs & Videos
+
+   when "QUICK_START"
+      doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CfSat::QUICK_START_FILE)
+      Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
+
+   when "DOCS_VIDEOS"
+      user_selection = screen.get_named_widget("cfsat_docs_videos").text
+      if user_selection == "About"
+         about_str = ["<pre><b>cFS Overview Slides</b>  - Overview of cFS program, business model, and architecture</pre>",
+                      "<pre><b>cFS Overview Video</b>   - Overview of the core Flight System (cFS) architecture</pre>",
+                      "<pre><b>Building cFS Video</b>   - Shows how to compile and link the core Flight System (cFS)</pre>",
+                      "<pre><b>cFE Overview Slides</b>  - Overview of the core Flight Executive architecture and services</pre>",
+                      "                                           ",
+                      "Each screen in the <i>cFE</i> and <i>Develop cFS Apps</i> sections have links to more learning resources"]
+         cfs_kit_create_about_screen("Learn cFS",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      else 
+         doc_filename = nil
+         case user_selection
+         when "cFS Overview Video"
+            Osk::education_video(CfSat::CFS_OVERVIEW_YOUTUBE)
+         when "cFS Overview Slides"
+            doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CfSat::CFS_OVERVIEW_FILE)
+         when "Building cFS Video"
+            Osk::education_video(CfSat::CFS_BUILD_OVERVIEW_YOUTUBE)
+         when "cFE Overview Slides"
+            doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CfSat::CFE_OVERVIEW_FILE)         
+         end
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
+      end
+      
+   ## core Flight Executive
+
+   when "CFE_EVENT_SERVICE"
+      display("CFE_EVS CFE_EVS_SCREEN",50,50)
+   
+   when "CFE_EXECUTIVE_SERVICE"
+      display("CFE_ES CFE_ES_SCREEN",50,50)
+   
+   when "CFE_SOFTWARE_BUS"
+      display("CFE_SB CFE_SB_SCREEN",50,50)
+   
+   when "CFE_TABLE_SERVICE"
+      display("CFE_TBL CFE_TBL_SCREEN",50,50)
+   
+   when "CFE_TIME_SERVICE"
+      display("CFE_TIME CFE_TIME_SCREEN",50,50)
+   
+   when "CFE_USERS_GUIDE"
+      Cosmos.open_in_web_browser(File.join(Osk::CFE_UG_DIR,Osk::CFE_UG_FILE))
+   
+   ## Develop Apps
+
+   when "CFE_APP_DEV_GUIDE"
+      # cFE does not deliver PDF file so I generate it in OSK's docs directory
+      Osk::System.display_pdf(File.join(Osk::CFS_DOCS_DIR,Osk::CFE_APP_DEV_FILE))
+   
+   when "OSK_APP_DEV_GUIDE"
+      osk_app_dev_file = File.join(Osk::OSK_DOCS_DIR,Osk::OSK_APP_DEV_FILE)
+      Osk::System.display_pdf(osk_app_dev_file)
+   when "CREATE_APP"
+      display("CFSAT CREATE_APP_SCREEN",50,50)
+   
+   when "OSK_APP_TUTORIAL"
+      # Generate and display tutorial screen
+      osk_c_tutor_start
+      display("CFSAT OSK_C_TUTOR_SCR")
+   
+   when "DEV_ADC_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app from control algorithms developed in 42 simulator")   
+   
+   when "DEV_ECI_APP"
+      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the External Code Interface\nSee https://github.com/nasa/ECI")   
+   
+   else
+      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_cfsat()"
+   end # cmd case
+
+end # cfs_kit_scr_cfsat()
+
+
+################################################################################
 ## Mission FSW - simsat
 ################################################################################
 
 def cfs_kit_scr_simsat(screen, cmd)
 
+   doc_filename = nil
    case cmd
    
    ## System
@@ -188,21 +291,23 @@ def cfs_kit_scr_simsat(screen, cmd)
 
    ## Docs & Videos
 
+   when "QUICK_START"
+      doc_filename = Osk::cfg_target_dir_file("SIMSAT", "docs", SimSat::MISSION_FSW_QS_FILE)
+      Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
    when "DOCS_VIDEOS"
       user_selection = screen.get_named_widget("simsat_docs_videos").text
       case user_selection
       when "About"
-         about_str = ["<b>Develop Mission FSW</b>",
+         about_str = ["<b>Develop Mission FSW Screen</b>",
                       "<pre>   <b>System Section</b> - Manage cFS SimSat target and access OSK docs & videos</pre>",
                       "<pre>   <b>Docs & Videos</b>  - Launch system level docs and videos about mission FSW development with SimSat</pre>",
                       "<pre>   <b>App Groups</b>     - Access to resources for groups of apps that work together</pre>",
                       "<pre>   <b>Tune, Ver, Val</b> - Access to resources used to tune and test your system</pre>",
                       "      ",
                       "<b>This Drop Down Menu</b>",
-                      "<pre>   <b>Mission Quick Start</b> - Describes OSK SimSat reference mission and how to evolve for your mission FSW</pre>"]
+                      "<pre>   <b>SimSat Overview</b> - Describes OSK SimSat reference mission and how to evolve for your mission FSW</pre>"]
          cfs_kit_create_about_screen("Develop Mission FSW",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
-         doc_filename = nil
       when "About Tune, Verify, Validate"
          about_str = ["USe the following resources to tune and test the SimSat target:",
                       "                                             " ,                     
@@ -213,12 +318,9 @@ def cfs_kit_scr_simsat(screen, cmd)
                       "<pre><b>Sys&Ops Examples</b> - System functional test and ops example scripts. Uses Script Runner</pre>"]            
          cfs_kit_create_about_screen("Tune, Verify, and Validate",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
-      when "Mission FSW Quick Start Doc"
-         doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::DOCS_QS_MISSION_FSW_FILE}"
-         spawn("evince #{doc_filename}") unless doc_filename.nil?
       when "SimSat Overview Doc"
-         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)
-         spawn("evince #{doc_filename}")
+         doc_filename = Osk::cfg_target_dir_file("SIMSAT","docs",SimSat::MISSION_FSW_SIMSAT_FILE)
+         Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       end
 
    ## App Groups
@@ -290,106 +392,6 @@ end # cfs_kit_scr_simsat()
 
 
 ################################################################################
-## cFS FSW Engineering - cfsat
-################################################################################
-
-def cfs_kit_scr_cfsat(screen, cmd)
-
-   case cmd
-   
-   ## System
-   
-   when "START_CFS"
-      Osk::System.stop_n_start_cfs('cfsat')
-      
-
-   ## Docs & Videos
-
-   when "DOCS_VIDEOS"
-      user_selection = screen.get_named_widget("cfsat_docs_videos").text
-      if user_selection == "About"
-         about_str = ["<pre><b>cFS Overview Video</b>   - Overview of the core Flight System (cFS) architecture.</pre>",
-                      "<pre><b>cFS Build Video</b>      - How to compile/link the core Flight System (cFS)</pre>",
-                      "<pre><b>cFS Training Intro</b>   - Overview of cFS program, business model, and architecture.</pre>",
-                      "<pre><b>cFE Service Training</b> - Describes Core Flight Executive five services.</pre>",
-                      "<pre><b>OSK cFE Exercises</b>    - Exercises for the cFE Service Training module.</pre>",
-                      "<pre><b>cFE App Training</b>     - Describes cFE application development and runtime environment.</pre>",
-                      "<pre><b>OSK cFE Exercises</b>    - Exercises for the cFE Application Training module.</pre>"]        
-         cfs_kit_create_about_screen("Learn cFS",about_str)
-         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
-      else 
-         doc_filename = nil
-         case user_selection
-         when "cFS Overview Video"
-            Osk::education_video(CFS_KIT_YOUTUBE_CFS_OVERVIEW)
-         when "cFS Build Video"
-            Osk::education_video(CFS_KIT_YOUTUBE_CFS_BUILD_OVERVIEW)
-         when "cFS Training Intro"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFS_INTRO_FILE}"
-         when "cFE Service Training"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_SERVICE_FILE}"
-         when "OSK cFE Exercises"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_SERVICE_FILE}"
-         when "cFE App Training"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_CFE_APP_DEV_FILE}"
-         when "OSK cFE App Exercises"
-            doc_filename = "#{Osk::OSK_DOCS_DIR}/#{Osk::TRAIN_OSK_CFE_APP_DEV_FILE}"
-         end
-         spawn("evince #{doc_filename}") unless doc_filename.nil?
-      end
-      
-   ## core Flight Executive
-
-   when "CFE_EVENT_SERVICE"
-      display("CFE_EVS CFE_EVS_SCREEN",50,50)
-   
-   when "CFE_EXECUTIVE_SERVICE"
-      display("CFE_ES CFE_ES_SCREEN",50,50)
-   
-   when "CFE_SOFTWARE_BUS"
-      display("CFE_SB CFE_SB_SCREEN",50,50)
-   
-   when "CFE_TABLE_SERVICE"
-      display("CFE_TBL CFE_TBL_SCREEN",50,50)
-   
-   when "CFE_TIME_SERVICE"
-      display("CFE_TIME CFE_TIME_SCREEN",50,50)
-   
-   when "CFE_USERS_GUIDE"
-      Cosmos.open_in_web_browser("#{Osk::CFE_UG_DIR}/#{Osk::CFE_UG_FILE}")
-   
-   ## Develop Apps
-
-   when "CFE_APP_DEV_GUIDE"
-      # cFE does not deliver PDF file so I generate it in OSK's docs directory
-      spawn("evince #{Osk::OSK_DOCS_DIR}/#{Osk::CFE_APP_DEV_FILE}")
-   
-   when "OSK_APP_DEV_GUIDE"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the OSK C framework")   
-
-   when "CREATE_APP"
-      display("CFSAT CREATE_APP_SCREEN",50,50)
-   
-   when "DEV_CFS_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Hands on tutorial for creating an app using the cFS developers guide style")   
-   
-   when "DEV_OSK_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Hands on tutorial for creating an app using the OSK C framework")   
-   
-   when "DEV_ADC_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app from control algorithms developed in 42 simulator")   
-   
-   when "DEV_ECI_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app using the External Code Interface")   
-   
-   else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_cfsat()"
-   end # cmd case
-
-end # cfs_kit_scr_cfsat()
-
-
-################################################################################
 ## PiSat
 ################################################################################
 
@@ -423,6 +425,27 @@ def cfs_kit_scr_pisat(screen, cmd)
    when "ENA_TLM"
       Cosmos.run_process("ruby tools/CmdSender -p \"KIT_TO ENABLE_TELEMETRY\"")
 
+   ## Pi-Sat Docs & Videos
+   
+   when "QUICK_START"
+      doc_filename = Osk::cfg_target_dir_file("PISAT", "docs", PiSat::QUICK_START_FILE)
+      Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
+   when "DOCS_VIDEOS"
+      user_selection = screen.get_named_widget("pisat_docs_videos").text
+      case user_selection
+      when "About"
+         about_str = ["<b>Pi-Sat Screen</b>",
+                      "<pre>   <b>System Section</b> - Manage remote Pi-Sat target, configure COSMOS cmd-tlm server, and enable tlm</pre>",
+                      "<pre>   <b>Docs & Videos</b>  - Access <i>Getting Started Guide</i> and other docs and videos about using the Pi-Sat target</pre>",
+                      "<pre>   <b>Pi-Sat Screens</b> - Launch screens for specific Pi-Sat apps</pre>",
+                      "      ",
+                      "<b>This Drop Down Menu</b>",
+                      "<pre>   <b>Coming Soon...</b></pre>"]
+         cfs_kit_create_about_screen("Pi-Sat",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      end
+   ## Pi-Sat Screens
+   
    when "SENSOR_SCR"
       display("PICONTROL PISAT_SENSOR_DATA_SCREEN",50,50)
    
@@ -450,6 +473,31 @@ def cfs_kit_scr_sandbox(screen, cmd)
       if (cmd == "START_CFS_42")
          wait 3                      # Give cFS chance to start
          Osk::System.start_42(true)  # true causes 42 simulator screen to be displayed
+      end
+
+   ## Docs & Videos
+
+   when "QUICK_START"
+      doc_filename = Osk::cfg_target_dir_file("SANDBOX", "docs", Sandbox::RND_QS_FILE)
+      Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
+   when "DOCS_VIDEOS"
+      user_selection = screen.get_named_widget("rnd_docs_videos").text
+      case user_selection
+      when "About"
+         about_str = ["<b>R&D Screen</b>",
+                      "<pre>   <b>System Section</b> - Manage sandbox target and access OSK docs and videos</pre>",
+                      "<pre>   <b>Docs & Videos</b>  - Launch docs and videos about R&D apps</pre>",
+                      "<pre>   <b>Manage Apps</b>    - Add/remove pre-compiled apps and launch app mgmt screens</pre>",
+                      "<pre>   <b>Prototype Apps</b> - Launch prototype app screens. Not all apps have screens</pre>",
+                      "<pre>   <b>Bridges</b>        - Placeholder for future work</pre>",
+                      "      ",
+                      "<b>This Drop Down Menu</b>",
+                      "<pre>   <b>SCSIM Video</b>    - Shows SCSIM app being used to simulate a ground pass</pre>"]
+         cfs_kit_create_about_screen("Research & Development",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+         doc_filename = nil
+      when "SCSIM Video"
+         Osk::education_video(SCSIM_YOUTUBE_OVERVIEW)
       end
 
    ## Manage Apps
@@ -540,7 +588,7 @@ def cfs_kit_scr_sandbox(screen, cmd)
       Osk::Ops.load_app("BM") unless Osk::Ops.app_loaded?("BM")
 
    when "OSK_DEMO_APP"
-      prompt(Osk::MSG_TBD_FEATURE + "\n" + "Demonstrate demo app features")   
+      display("OSK_C_DEMO DEMO_OPS_SCREEN",50,50)
 
   
    ## Bridge Apps
@@ -642,7 +690,7 @@ end # cfs_kit_launch_app()
 #
 def cfs_kit_launch_tutorial_screen
 
-   tutorial_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+   tutorial_scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::TUTORIAL_SCR_FILE)
 
    scr_tutorial_dir = File.open(tutorial_scr_file) {|f| f.readline}
 
@@ -662,8 +710,8 @@ def cfs_kit_create_tutorial_screen
    t = Time.new 
    time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
    
-   tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
-   tutorial_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
+   tutorial_def_file = File.join(Osk::TUTORIAL_DIR,Osk::TUTORIAL_DEF_FILE)
+   tutorial_scr_file = File.join(Osk::CFS_KIT_SCR_DIR,Osk::TUTORIAL_SCR_FILE)
 
    # Directory in first line is assumed by other functions
    tutorial_scr_header = "##{Osk::CFS_KIT_SCR_DIR}
@@ -680,7 +728,9 @@ def cfs_kit_create_tutorial_screen
    #   License (GPL).
    #
    ###############################################################################
-
+   <% 
+      requie 'tutorial_screen'
+   %>
    SCREEN AUTO AUTO 0.5
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   
@@ -722,7 +772,7 @@ def cfs_kit_create_tutorial_screen
             
             tutorial_menu = "
                HORIZONTAL 10
-               BUTTON '#{tutorial["button"]}' 'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/tutorial_screen.rb\"; tutorial = combo_box(\"#{tutorial["user-prompt"]}\",#{lesson_str}); launch_tutorial(self, \"#{tutorial["directory"]}\", \"#{tutorial["format"]}\", tutorial)'
+               BUTTON '#{tutorial["button"]}' 'tutorial = combo_box(\"#{tutorial["user-prompt"]}\",#{lesson_str}); launch_tutorial(self, \"#{tutorial["directory"]}\", \"#{tutorial["format"]}\", tutorial)'
                SPACER 20 0 MAXIMUM FIXED          
                LABEL \"#{tutorial["description"]}\"
                SPACER 50 0 MINIMUMEXPANDING FIXED          
@@ -747,102 +797,6 @@ def cfs_kit_create_tutorial_screen
    
 end # cfs_kit_create_tutorial_screen()
 
-
-################################################################################
-## Create Template Info Screen
-################################################################################
-
-def cfs_kit_create_tutorial_screen
-
-   status = false
-   
-   t = Time.new 
-   time_stamp = "_#{t.year}_#{t.month}_#{t.day}_#{t.hour}#{t.min}#{t.sec}"
-   
-   tutorial_def_file = "#{Osk::TUTORIAL_DIR}/#{Osk::TUTORIAL_DEF_FILE}"
-   tutorial_scr_file = "#{Osk::CFS_KIT_SCR_DIR}/#{Osk::TUTORIAL_SCR_FILE}"
-
-   # Directory in first line is assumed by other functions
-   tutorial_scr_header = "##{Osk::CFS_KIT_SCR_DIR}
-   ###############################################################################
-   # cfs_kit Tutorial Screen
-   #
-   # Notes:
-   #   1. Do not edit this file because it is automatically generated and your
-   #      changes will not be saved.
-   #   2. File created by cfs_kit_create_tutorial_screen.rb on #{time_stamp}
-   #
-   # License:
-   #   Written by David McComas, licensed under the copyleft GNU General Public
-   #   License (GPL).
-   #
-   ###############################################################################
-
-   SCREEN AUTO AUTO 0.5
-   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
-  
-   TITLE \"Tutorials\"
-   SETTING BACKCOLOR 162 181 205
-   SETTING TEXTCOLOR black
-      
-   VERTICALBOX \"\" 10
-   "
-
-   tutorial_scr_footer = "
-   END # Vertical Box
-   "
-   begin
-      
-      json_file = File.read(tutorial_def_file)
-      json_hash = JSON.parse(json_file)
-    
-      #puts json_hash
-      #puts json_hash["tutorials"]
-      #puts json_hash["tutorials"][0]["name"]
-
-      #3/26/19 - Not seeing benefit of saving old file. If decide to keep it should go in
-      #          a temp directory and not cluttter cfs_kit/screens
-      #if File.exists? tutorial_scr_file
-      #   filename = File.basename(tutorial_scr_file, File.extname(tutorial_scr_file))
-      #   new_filename =  "#{Osk::CFS_KIT_SCR_DIR}/#{filename}#{time_stamp}"+File.extname(tutorial_scr_file)
-      #   File.rename(tutorial_scr_file, new_filename)
-      #end
-      
-      File.open(tutorial_scr_file,"w") do |f| 
-	     
-         f.write ("#{tutorial_scr_header}")
-         
-         json_hash["tutorials"].each do |tutorial|
-            
-            lesson_str = "#{tutorial["lessons"]}"
-            lesson_str = lesson_str[1,(lesson_str.length-2)]  # Remove brackets [] and keep quotes around elements
-            
-            tutorial_menu = "
-               HORIZONTAL 10
-               BUTTON '#{tutorial["button"]}' 'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/tutorial_screen.rb\"; tutorial = combo_box(\"#{tutorial["user-prompt"]}\",#{lesson_str}); launch_tutorial(self, \"#{tutorial["directory"]}\", \"#{tutorial["format"]}\", tutorial)'
-               SPACER 20 0 MAXIMUM FIXED          
-               LABEL \"#{tutorial["description"]}\"
-               SPACER 50 0 MINIMUMEXPANDING FIXED          
-               END # Horizontal"
-            
-            f.write (tutorial_menu)
-         
-         end # Tutorial
-         
-         f.write ("#{tutorial_scr_footer}")
-
-      end # File
-
-      status = true
-      
-   rescue Exception => e
-      puts e.message
-      puts e.backtrace.inspect  
-   end
-
-   return status
-   
-end # cfs_kit_create_tutorial_screen()
 
 ################################################################################
 ## Create About Info Screen
@@ -1128,7 +1082,7 @@ def cfs_kit_create_version_screen
 
    scr_header = "
    ###############################################################################
-   # Version Identififcation Screen
+   # Version Identification Screen
    #
    # Notes:
    #   1. Do not edit this file because it is automatically generated and your

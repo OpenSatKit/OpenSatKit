@@ -11,6 +11,8 @@
 ################################################################################
 
 require 'osk_global'
+require 'osk_system'
+
 
 module Osk
 
@@ -35,11 +37,11 @@ module Osk
          when Osk::TUTORIAL_HTML
             tutor_file = tutor_file + ".html"
             raise "Tutorial file '#{tutor_file}' does not exist" unless File.exists? tutor_file 
-            Cosmos.open_in_web_browser("#{tutor_file}")      
+            Cosmos.open_in_web_browser(tutor_file)      
          when Osk::TUTORIAL_PDF
             tutor_file = tutor_file + ".pdf"
             raise "Tutorial file '#{tutor_file}' does not exist" unless File.exists? tutor_file 
-            spawn("evince #{tutor_file}")
+            Osk::System.display_pdf(tutor_file)
          when Osk::TUTORIAL_SCRIPT
             tutor_file = tutor_file + ".rb"
             raise "Tutorial file '#{tutor_file}' does not exist" unless File.exists? tutor_file 

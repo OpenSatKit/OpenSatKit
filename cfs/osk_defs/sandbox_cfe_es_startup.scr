@@ -9,6 +9,7 @@ CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,       KIT_CI,        10,   16384, 
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,         TFTP,          70,   16384, 0x0, 0;
 CFE_APP, /cf/filemgr.so,      FILEMGR_AppMain,      FILEMGR,       70,   16384, 0x0, 0;
 CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,      KIT_SCH,       10,   32768, 0x0, 0;
+CFE_APP, /cf/osk_c_demo.so,   OSK_C_DEMO_AppMain,   OSK_C_DEMO,    70,   16384, 0x0, 0;
 !
 !!!! Research & Development Startup Script
 !
@@ -25,11 +26,11 @@ CFE_APP, /cf/kit_sch.so,      KIT_SCH_AppMain,      KIT_SCH,       10,   32768, 
 !
 !!!! OSK Apps - Available but not loaded by default
 !
-!CFE_APP, /cf/bm.so,            BM_AppMain,          BM,            80,   16384, 0x0, 0;
-!CFE_APP, /cf/mqtt_app.so,      MQTT_AppMain,        MQTT,          80,   32768, 0x0, 0;
-!CFE_APP, /cf/osk_c_proto.so,   OSK_C_PROTO_AppMain, OSK_C_PROTO,   120,  16384, 0x0, 0;
-!CFE_APP, /cf/osk_cpp_proto.so, OSK_CPP_PROTO_Main,  OSK_CPP_PROTO, 120,  16384, 0x0, 0;
-!CFE_APP, /cf/scsim.so,         SCSIM_AppMain,       SCSIM,         90,   16384, 0x0, 0;
+!CFE_APP, /cf/bm.so,            BM_AppMain,          BM,            70,  16384, 0x0, 0;
+!CFE_APP, /cf/mqtt_app.so,      MQTT_AppMain,        MQTT,          70,  32768, 0x0, 0;
+!CFE_APP, /cf/osk_c_proto.so,   OSK_C_PROTO_AppMain, OSK_C_PROTO,   70,  16384, 0x0, 0;
+!CFE_APP, /cf/osk_cpp_proto.so, OSK_CPP_PROTO_Main,  OSK_CPP_PROTO, 70,  16384, 0x0, 0;
+!CFE_APP, /cf/scsim.so,         SCSIM_AppMain,       SCSIM,         70,  16384, 0x0, 0;
 !
 !!!! Startup script fields:
 !

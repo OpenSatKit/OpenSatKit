@@ -1,6 +1,5 @@
 CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,         CFS_LIB,        0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,    OSK_C_FW,       0,   16384, 0x0, 0;
-CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,  OSK_42_LIB,     0,   16384, 0x0, 0;
 CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        10,   32768, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        10,   16384, 0x0, 0;
 CFE_APP, /cf/fm.so,           FM_AppMain,          FM,            70,   16384, 0x0, 0;

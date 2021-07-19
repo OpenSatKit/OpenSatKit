@@ -12,6 +12,7 @@
 
 require 'osk_ops'
 require 'osk_education'
+require 'osk_system'
 require 'cfe_sb_const'
 
 ################################################################################
@@ -60,12 +61,12 @@ def cfe_sb_scr_cmd(screen, cmd)
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
-      when "SB Training Video"
-         Osk::education_video(CFE_SB_YOUTUBE_OVERVIEW)
-      when "SB Training Slides"
-         spawn("evince #{Osk::CFE_TRAINING_DIR}/#{Osk::SB_TRAINING_SLIDES_FILE}")
-      when "SB Exercise Script"
-         Osk::education_tutorial(Osk::TUTORIAL_SCRIPT, "cfe", "SB")
+      when "Tutorial Slides"
+         Osk::System.display_pdf(Osk::cfg_target_dir_file("CFE_SB", "docs", CFE_SB_TUTORIAL_FILE))
+      when "Tutorial Video"
+         Cosmos.open_in_web_browser(CFE_SB_YOUTUBE_OVERVIEW)
+      when "Exercise Script"
+         Osk::System.start_target_script("CFE_SB",CFE_SB_TUTORIAL_SCRIPT)
       end
    
    else

@@ -11,3 +11,8 @@
 ################################################################################
 
 require 'osk_global'
+
+CFE_TIME_TUTORIAL_FILE    = "cFE-TIME-Tutorial.pdf"
+CFE_TIME_TUTORIAL_SCRIPT  = "cfe_time_tutorial.rb"
+
+CFE_TIME_YOUTUBE_OVERVIEW = ""

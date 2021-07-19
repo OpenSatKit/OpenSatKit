@@ -1,0 +1,13 @@
+{
+   "name": "SimpleSat (Simsat) Instrument Simulator (ISIM)",
+   "description": "Define parameters used to control the instrument simulation",
+   "sci-instr": {
+      "pwr-init-cycles":  20,
+      "pwr-reset-cycles":  5
+   },
+   "sci-file": {
+      "path-base-filename": "/cf/simsat/rec/isim_",
+      "file-extension":     ".txt",
+      "images-per-file":    6
+   }
+}

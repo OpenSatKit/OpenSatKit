@@ -47,6 +47,9 @@ module Osk
       @@instance = nil
       
       # Hash containing FswApps
+      attr_reader :targets
+      
+      # Hash containing FswApps
       attr_reader :app
       
       # cFE Apps
@@ -83,10 +86,11 @@ module Osk
          @app["CFE_SB"]   = @cfe_sb
          @app["CFE_TBL"]  = @cfe_tbl
          @app["CFE_TIME"] = @cfe_time
-
+         
          osk = Osk::read_target_json("CFS_KIT")
          
-         osk["cfs-targets"].each do |cfs_target|
+         @targets = osk["cfs-targets"]
+         @targets.each do |cfs_target|
             target = Osk::read_target_json(cfs_target)
             apps = target["apps"]
             apps.each do |app|

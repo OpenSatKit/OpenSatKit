@@ -1,6 +1,5 @@
 /*
-** Purpose: Define application configurations for the File Manager (FILEMGR)
-**          application
+** Purpose: Define enumeration string library
 **
 ** Notes:
 **   1. The enumeration macro design is from 

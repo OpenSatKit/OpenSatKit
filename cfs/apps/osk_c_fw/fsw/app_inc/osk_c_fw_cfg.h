@@ -57,7 +57,8 @@
 #define JSON_BASE_EID             30
 #define CHILDMGR_BASE_EID         50
 #define STATEREP_BASE_EID         70
-#define OSK_C_FW_UTILS_BASE_EID   80
+#define CJSON_BASE_EID            80
+#define OSK_C_FW_UTILS_BASE_EID   90
 #define OSK_C_FW_APP_BASE_EID    100 /* Starting ID for the App using the framework */
 
 

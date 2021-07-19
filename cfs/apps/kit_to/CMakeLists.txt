@@ -29,4 +29,4 @@ aux_source_directory(fsw/tables APP_TABLE_FILES)
 
 # Create the app module
 add_cfe_app(kit_to ${APP_SRC_FILES})
-
+target_link_libraries (kit_to m)

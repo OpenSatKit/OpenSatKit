@@ -32,7 +32,7 @@ HORIZONTAL
       LABEL "Launch tool to create new app/lib from a template"
       LABEL "2"
       BUTTON 'Edit cmake'  'cfsat_create_app(self, "EDIT_CMAKE")'
-      LABEL "Add app name to cmake target list TGT2_APPLIST"
+      LABEL "Add app name to cmake target list TGT1_APPLIST"
       LABEL "3"
       BUTTON 'Edit ES Startup'  'cfsat_create_app(self, "EDIT_STARTUP")'
       LABEL "Add app to cFE Executive Service startup script"
