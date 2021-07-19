@@ -12,5 +12,8 @@
 
 require 'osk_global'
 
+module PiSat
 
-PI_SAT_QS_FILE = "Pi-Sat-Quick-Start.pdf"
+   QUICK_START_FILE = "Pi-Sat-Quick-Start.pdf"
+
+end # PiSat

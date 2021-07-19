@@ -32,6 +32,7 @@ require 'osk_c_tutor_scr'
 require 'cfs_kit_const'
 require 'scsim_const'
 require 'cfsat_const'
+require 'pisat_const'
 require 'simsat_const'
 require 'sandbox_const'
 
@@ -189,7 +190,7 @@ def cfs_kit_scr_cfsat(screen, cmd)
    ## Docs & Videos
 
    when "QUICK_START"
-      doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CFS_EDU_QS_FILE)
+      doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CfSat::QUICK_START_FILE)
       Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
 
    when "DOCS_VIDEOS"
@@ -207,13 +208,13 @@ def cfs_kit_scr_cfsat(screen, cmd)
          doc_filename = nil
          case user_selection
          when "cFS Overview Video"
-            Osk::education_video(CFS_EDU_YOUTUBE_CFS_OVERVIEW)
+            Osk::education_video(CfSat::CFS_OVERVIEW_YOUTUBE)
          when "cFS Overview Slides"
-            doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CFS_EDU_CFS_OVERVIEW_FILE)
+            doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CfSat::CFS_OVERVIEW_FILE)
          when "Building cFS Video"
-            Osk::education_video(CFS_EDU_YOUTUBE_CFS_BUILD_OVERVIEW)
+            Osk::education_video(CfSat::CFS_BUILD_OVERVIEW_YOUTUBE)
          when "cFE Overview Slides"
-            doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CFS_EDU_CFE_OVERVIEW_FILE)         
+            doc_filename = Osk::cfg_target_dir_file("CFSAT", "docs", CfSat::CFE_OVERVIEW_FILE)         
          end
          Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
       end
@@ -253,7 +254,7 @@ def cfs_kit_scr_cfsat(screen, cmd)
    when "OSK_APP_TUTORIAL"
       # Generate and display tutorial screen
       osk_c_tutor_start
-      display("OSK_C_DEMO OSK_C_TUTOR_SCR")
+      display("CFSAT OSK_C_TUTOR_SCR")
    
    when "DEV_ADC_APP"
       prompt(Osk::MSG_TBD_FEATURE + "\n" + "Guide for creating an app from control algorithms developed in 42 simulator")   
@@ -274,6 +275,7 @@ end # cfs_kit_scr_cfsat()
 
 def cfs_kit_scr_simsat(screen, cmd)
 
+   doc_filename = nil
    case cmd
    
    ## System
@@ -306,7 +308,6 @@ def cfs_kit_scr_simsat(screen, cmd)
                       "<pre>   <b>SimSat Overview</b> - Describes OSK SimSat reference mission and how to evolve for your mission FSW</pre>"]
          cfs_kit_create_about_screen("Develop Mission FSW",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
-         doc_filename = nil
       when "About Tune, Verify, Validate"
          about_str = ["USe the following resources to tune and test the SimSat target:",
                       "                                             " ,                     
@@ -424,6 +425,27 @@ def cfs_kit_scr_pisat(screen, cmd)
    when "ENA_TLM"
       Cosmos.run_process("ruby tools/CmdSender -p \"KIT_TO ENABLE_TELEMETRY\"")
 
+   ## Pi-Sat Docs & Videos
+   
+   when "QUICK_START"
+      doc_filename = Osk::cfg_target_dir_file("PISAT", "docs", PiSat::QUICK_START_FILE)
+      Osk::System.display_pdf(doc_filename) unless doc_filename.nil?
+   when "DOCS_VIDEOS"
+      user_selection = screen.get_named_widget("pisat_docs_videos").text
+      case user_selection
+      when "About"
+         about_str = ["<b>Pi-Sat Screen</b>",
+                      "<pre>   <b>System Section</b> - Manage remote Pi-Sat target, configure COSMOS cmd-tlm server, and enable tlm</pre>",
+                      "<pre>   <b>Docs & Videos</b>  - Access <i>Getting Started Guide</i> and other docs and videos about using the Pi-Sat target</pre>",
+                      "<pre>   <b>Pi-Sat Screens</b> - Launch screens for specific Pi-Sat apps</pre>",
+                      "      ",
+                      "<b>This Drop Down Menu</b>",
+                      "<pre>   <b>Coming Soon...</b></pre>"]
+         cfs_kit_create_about_screen("Pi-Sat",about_str)
+         display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
+      end
+   ## Pi-Sat Screens
+   
    when "SENSOR_SCR"
       display("PICONTROL PISAT_SENSOR_DATA_SCREEN",50,50)
    

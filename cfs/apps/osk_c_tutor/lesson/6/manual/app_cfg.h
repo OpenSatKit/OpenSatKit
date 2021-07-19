@@ -38,16 +38,12 @@
 
 /* >>>>>>>>>>>>>>> STEP 4 <<<<<<<<<<<<<<<
 **
-** Add the following 'MSGLOG_RUN_CHILD_ALT_CMD_FC' definitons to the
+** Add the following 'MSGLOG_RUN_CHILD_ALT_CMD_FC' definiton to the
 ** "Command Macros" section. I like to annotate which functions execute
 ** within a child task so you can annotate the start/stop log/playback
-** commands with a commentif you'd like. 
+** commands with a comment if you'd like. 
 */
 
-#define MSGLOG_START_LOG_CMD_FC     (CMDMGR_APP_START_FC + 2) /* Child */
-#define MSGLOG_STOP_LOG_CMD_FC      (CMDMGR_APP_START_FC + 3) /* Child */
-#define MSGLOG_START_PLAYBK_CMD_FC  (CMDMGR_APP_START_FC + 4) /* Child */
-#define MSGLOG_STOP_PLAYBK_CMD_FC   (CMDMGR_APP_START_FC + 5) /* Child */
 
 #define MSGLOG_RUN_CHILD_ALT_CMD_FC (CMDMGR_APP_START_FC + 6) /* Child */   
 

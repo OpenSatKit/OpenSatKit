@@ -15,7 +15,7 @@
 
 /* >>>>>>>>>>>>>>> STEP 2 <<<<<<<<<<<<<<<
 **
-** In the "MSGLOG_Class" section under the "Owned Objects" comment add the
+** In the "MSGLOG_Class" section under the "Child Objects" comment add the
 ** following definition
 */
 

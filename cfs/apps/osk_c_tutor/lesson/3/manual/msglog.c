@@ -100,7 +100,7 @@ boolean MSGLOG_RunChildFuncCmd(void* DataObjPtr, const CFE_SB_MsgPtr_t MsgPtr)
 **   - LogMessages()
 **
 **   Noteworthy Design/Code
-**   - A message identify is provided in the Start Log command. When the 
+**   - A message identifier is provided in the Start Log command. When the 
 **     command is received the message is subscribed to on MsgLog's SB pipe
 **     and when the logging is stopped the message is unsubscribed.
 **   - The OSK framework utility FileUtil_GetFileInfo() is used in conjunction

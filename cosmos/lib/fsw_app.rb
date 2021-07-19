@@ -236,7 +236,7 @@ class FswApp
          cmd_valid = true
       end # validate_cmd
       
-    return cmd_valid
+      return cmd_valid
     
    end # send_cmd()
    

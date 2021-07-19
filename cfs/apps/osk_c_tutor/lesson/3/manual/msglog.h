@@ -3,7 +3,7 @@
 ** Make the changes below to osk_c_tutor/fsw/src/msglog.h created
 ** in lesson 2 to add message logging functionality.
 **
-** When developing the code it's an terative process of creating code
+** When developing the code it's an iterative process of creating code
 ** and discovering what data is needed and identifying data to support
 ** the code. In this tutorial you will be udating all of the data first
 ** and it will become clear how it is used when msglog.c is updated.

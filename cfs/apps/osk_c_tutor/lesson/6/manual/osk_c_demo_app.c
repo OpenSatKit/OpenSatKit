@@ -8,6 +8,13 @@
 
 /* >>>>>>>>>>>>>>> STEP 1 <<<<<<<<<<<<<<<
 **
+** In the convenience macro section add the following:
+*/
+
+#define  CHILDMGR_OBJ  (&(OskCDemo.ChildMgr))
+
+/* >>>>>>>>>>>>>>> STEP 2 <<<<<<<<<<<<<<<
+**
 ** In SendHousekeepingPkt() replace the child command counter code
 ** with the following code.
 */
@@ -16,7 +23,7 @@
    OskCDemo.HkPkt.ChildInvalidCmdCnt = OskCDemo.ChildMgr.InvalidCmdCnt;
 
 
-/* >>>>>>>>>>>>>>> STEP 2 <<<<<<<<<<<<<<<
+/* >>>>>>>>>>>>>>> STEP 3 <<<<<<<<<<<<<<<
 **
 ** In InitApp() in the local variable declarations below 'int32 Status'
 ** add the following line
@@ -24,12 +31,12 @@
 
    CHILDMGR_TaskInit ChildTaskInit;
    
-/* >>>>>>>>>>>>>>> STEP 3 <<<<<<<<<<<<<<<
+/* >>>>>>>>>>>>>>> STEP 4 <<<<<<<<<<<<<<<
 **
-** In InitApp() below the 'Child Manager constructor...' comment add the 
+** In InitApp() below the 'Child Manager constructor sends error events' comment add the 
 ** following code.
 **
-** Note all of the child task runtime parameters come from the app's initgraph
+** Note all of the child task runtime parameters come from the app's init table
 ** JSON file.  Passing the address of ChildMgr_TaskMainCmdDispatch() indicates
 ** means the child task execution will be command driven. 
 */
@@ -45,16 +52,16 @@
                                     &ChildTaskInit); 
                                     
 
-/* >>>>>>>>>>>>>>> STEP 4 <<<<<<<<<<<<<<<
+/* >>>>>>>>>>>>>>> STEP 5 <<<<<<<<<<<<<<<
 **
-** In InitApp() paste the following code over the follwing existing four lines
+** In InitApp() paste the following code over the following existing four lines
 **
 **      CMDMGR_RegisterFunc(CMDMGR_OBJ, MSGLOG_START_LOG_CMD_FC,    MSGLOG_OBJ, MSGLOG_StartLogCmd,    MSGLOG_START_LOG_CMD_DATA_LEN);
 **      CMDMGR_RegisterFunc(CMDMGR_OBJ, MSGLOG_STOP_LOG_CMD_FC,     MSGLOG_OBJ, MSGLOG_StopLogCmd,     MSGLOG_STOP_LOG_CMD_DATA_LEN);
 **      CMDMGR_RegisterFunc(CMDMGR_OBJ, MSGLOG_START_PLAYBK_CMD_FC, MSGLOG_OBJ, MSGLOG_StartPlaybkCmd, MSGLOG_START_PLAYBK_CMD_DATA_LEN);
 **      CMDMGR_RegisterFunc(CMDMGR_OBJ, MSGLOG_STOP_PLAYBK_CMD_FC,  MSGLOG_OBJ, MSGLOG_StopPlaybkCmd,  MSGLOG_STOP_PLAYBK_CMD_DATA_LEN);
 **
-** The new code changes the start/stop log/playback commands to dispatched as child task commands. It also registers MSGLOG_RunChildFuncCmd()
+** The new code changes the start/stop log/playback commands to be dispatched as child task commands. It also registers MSGLOG_RunChildFuncCmd()
 ** that was directly called by ProcessCommands() in previous lessons to be an alternate command (no command counter increment) that
 ** runs within the child task. 
 */
@@ -76,7 +83,7 @@
       CHILDMGR_RegisterFuncAltCnt(CHILDMGR_OBJ, MSGLOG_RUN_CHILD_ALT_CMD_FC, MSGLOG_OBJ, MSGLOG_RunChildFuncCmd);
 
 
-/* >>>>>>>>>>>>>>> STEP 5 <<<<<<<<<<<<<<<
+/* >>>>>>>>>>>>>>> STEP 6 <<<<<<<<<<<<<<<
 **
 ** In InitApp() next to the 'CFE_SB_InitMsg(&OskCDemo.HkPkt...' line paste the code below. 
 **
@@ -88,7 +95,7 @@
       CFE_SB_GenerateChecksum((CFE_SB_MsgPtr_t)&OskCDemo.MsgLogRunChildFuncCmd);
 
 
-/* >>>>>>>>>>>>>>> STEP 6 <<<<<<<<<<<<<<<
+/* >>>>>>>>>>>>>>> STEP 7 <<<<<<<<<<<<<<<
 **
 ** In ProcessCommands() replace with the code below.
 **   MSGLOG_RunChildFuncCmd (MSGLOG_OBJ, (CFE_SB_Msg_t*)&OskCDemo.MsgLogRunChildFuncCmd);

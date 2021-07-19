@@ -96,29 +96,29 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 # maintained as a separate repo. 
 # 
 
-################
-## 1 - SIMSAT ##
-################
-
-SET(TGT1_NAME simsat) 
-
-SET(TGT1_APPLIST cfs_lib osk_c_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim hc hsim)
-
-SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json f42_ctrl_tbl.json isim_ini.json isim_tbl.json)
-
-
 ###############
-## 2 - CFSAT ##
+## 1 - CFSAT ##
 ###############
 
 # cFE exercises, demos, and tutorials are designed to only depend on a minimal set of cFS community apps
 # and OSK apps that provide a runtime environment & file transfer support
 
-SET(TGT2_NAME cfsat) 
+SET(TGT1_NAME cfsat) 
 
-SET(TGT2_APPLIST cfs_lib osk_c_fw kit_ci kit_sch kit_to tftp fm md mm osk_c_tutor)
+SET(TGT1_APPLIST cfs_lib osk_c_fw kit_ci kit_sch kit_to tftp fm md mm osk_c_tutor)
 
-SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json)
+SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json)
+
+
+################
+## 2 - SIMSAT ##
+################
+
+SET(TGT2_NAME simsat) 
+
+SET(TGT2_APPLIST cfs_lib osk_c_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim hc hsim)
+
+SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json f42_ctrl_tbl.json isim_ini.json isim_tbl.json)
 
 
 #################
@@ -126,11 +126,12 @@ SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json os
 #################
 
 # The sandbox only depends on OSK apps so all tables are text-based and no external dependencies that have
-# have to be maintained
+# to be maintained
+# v3.1 - Removed SBN because cfe-sb-priv.h include intermittently failed and haven't found root cause
 
 SET(TGT3_NAME sandbox) 
 
-SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim sbn osk_c_demo)
+SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim osk_c_demo)
 
 SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json)
 

@@ -12,4 +12,3 @@ aux_source_directory(fsw/src APP_SRC_FILES)
 
 # Create the app module
 add_cfe_app(osk_c_demo ${APP_SRC_FILES})
-

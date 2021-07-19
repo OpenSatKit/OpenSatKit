@@ -201,8 +201,8 @@ def memory_mgmt_demo(screen, button)
             wait (1)
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Enable debug events
             wait (1)
-            # Stop HS app because it displays dots in the cFS console that make it hard to read some messages
-            Osk::flight.send_cmd("CFE_ES", "STOP_APP with APP_NAME HS") 
+            # Stop HS app aliveness because dots in the cFS console interfere with messages
+            Osk::flight.send_cmd("HS","DIS_ALIVENESS")
          when 2..MMD_LAST_STEP
             # Keep case statement for maintenance
          else

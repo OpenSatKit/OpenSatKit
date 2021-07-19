@@ -56,9 +56,9 @@ def cfsat_create_app(screen, cmd)
 
       case screen.get_named_widget("training_video").text
       when "Create 'Hello World' App"
-         Osk::education_video(CFS_EDU_YOUTUBE_CREATE_APP_HELLO_WORLD)
+         Osk::education_video(CfSat::CREATE_APP_HELLO_WORLD_YOUTUBE)
       when "Inspect 'Hello World' Code"
-         Osk::education_video(CFS_EDU_YOUTUBE_INSPECT_APP_HELLO_WORLD)
+         Osk::education_video(CfSat::INSPECT_APP_HELLO_WORLD_YOUTUBE)
       end
 
    else

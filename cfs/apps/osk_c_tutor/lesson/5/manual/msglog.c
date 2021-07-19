@@ -3,7 +3,6 @@
 ** Make the changes below to osk_c_tutor/fsw/src/msglog.c created
 ** in a previous lesson.
 **
-** The table 
 */
 
 
@@ -19,7 +18,8 @@ static void PlaybkMessages(void);
 
 /* >>>>>>>>>>>>>>> STEP 2 <<<<<<<<<<<<<<<
 **
-** In MSGLOG_Constructor() add the following at the end of the function
+** In MSGLOG_Constructor() add the following at the end of the function to
+** initialize the playback telemetry packet. 
 */
 
 
@@ -32,7 +32,7 @@ static void PlaybkMessages(void);
 **
 ** In MSGLOG_RunChildFuncCmd() replace the "Playback logic will go here" 
 ** comment with the code below. If the comment is missing the code should 
-** go after the 'if (MsgLog->LogEna) {' code block.
+** go after the 'if (MsgLog->LogEna) {...}' code block.
 **
 ** Noteworthy Design/Code
 **  - Now that the app has a table the playback delay value is simply defined

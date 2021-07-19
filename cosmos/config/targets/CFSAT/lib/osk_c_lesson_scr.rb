@@ -26,12 +26,11 @@ require 'cfsat_const'
 def osk_c_lesson_cmd(screen, cmd)
  
    lesson_id     = screen.get_named_widget("title").text[/\d+/]
-   tutor_doc_dir = File.join(Osk::cfg_target_dir("CFSAT", "docs"),OskCDemo::TUTOR_APP_NAME)
    
    case cmd 
    
    when "REF_SLIDES"
-      lesson_slide_file = File.join(tutor_doc_dir,"#{OskCDemo::TUTOR_APP_NAME}_lesson_#{lesson_id}.pdf")
+      lesson_slide_file = File.join(CfSat::TUTOR_DOC_DIR,"#{CfSat::TUTOR_APP_NAME}_lesson_#{lesson_id}.pdf")
       Osk::System.display_pdf(lesson_slide_file)
    
    when "REF_OSK_APP_DEV"
@@ -39,14 +38,13 @@ def osk_c_lesson_cmd(screen, cmd)
       Osk::System.display_pdf(osk_app_dev_file)
    
    when "REF_TUTORIAL"
-      tutorial_file = File.join(tutor_doc_dir,CFS_EDU_APP_TUTOR_GUIDE_FILE)
+      tutorial_file = File.join(CfSat::TUTOR_DOC_DIR,CfSat::APP_TUTOR_GUIDE_FILE)
       Osk::System.display_pdf(tutorial_file)
    
    when "LESSON_SAVE_STATUS"
    
-      lesson_base_dir = File.join(Osk::fsw_app_dir(OskCDemo::TUTOR_APP_NAME),"lesson")
-      lesson_dir      = File.join(lesson_base_dir,lesson_id.to_s)
-      user_json_file  = File.join(lesson_dir,OskCDemo::LESSON_JSON_USER_FILE)
+      lesson_dir     = File.join(CfSat::TUTOR_LESSON_DIR,lesson_id.to_s)
+      user_json_file = File.join(lesson_dir,CfSat::LESSON_JSON_USER_FILE)
       
       if (File.exists?(user_json_file))
    
@@ -75,7 +73,7 @@ def osk_c_lesson_cmd(screen, cmd)
       end
 
    when "LESSON_COMPLETE"
-      clear("OSK_C_DEMO OSK_C_LESSON_SCR")
+      clear("CFSAT OSK_C_LESSON_SCR")
       user_tutor_info = osk_c_tutor_read_user_json
       if (user_tutor_info.nil?)
          raise "Tutor/lesson JSON files corrupted."
@@ -88,33 +86,34 @@ def osk_c_lesson_cmd(screen, cmd)
          end
          osk_c_tutor_write_user_json(user_tutor_info)
          
-         clear("OSK_C_DEMO OSK_C_TUTOR_SCR")
+         clear("CFSAT OSK_C_TUTOR_SCR")
          osk_c_tutor_start
-         display("OSK_C_DEMO OSK_C_TUTOR_SCR")
+         display("CFSAT OSK_C_TUTOR_SCR")
       end
       
    when "APP_BUILD"
-      Osk::System.build_cfs("Building Lesson #{lesson_id}")
+      Osk::System.build_cfs("Building App Tutor Lesson #{lesson_id}")
    
    when "APP_RUN"
       #
       if (not Osk::System.cfs_running?)
          Osk::System.start_cfs('cfsat')
-         wait 5  # Give the cFS time to start
+         wait 4  # Give the cFS time to start
       end
-      # If Send App Info succeeds then OSK_C_DEMO is running
-      cmd_str = "SEND_APP_INFO with APP_NAME OSK_C_DEMO"
+      # If Send App Info succeeds then OSK_C_DEMO is running and the cFS must be restarted
+      # because reloading an app on Linux (OSAL 5.0.1) doesn't work
       begin
-         if (Osk::flight.cfe_es.send_cmd(cmd_str,Osk::OVERRIDE_TO_TRUE))
-            #OSAL 5.0.1: Reloading an app on Linux doesn't work so cFS must be restarted
+         Osk::flight.cfe_evs.send_cmd("DIS_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK #{Fsw::Const::CFE_EVS_ERROR_MASK}")
+         if (Osk::flight.cfe_es.send_cmd("SEND_APP_INFO with APP_NAME OSK_C_DEMO",Osk::OVERRIDE_TO_TRUE))         
             #Osk::flight.cfe_es.send_cmd("STOP_APP with APP_NAME OSK_C_DEMO")
             #wait 5  # Give time for app to stop before starting new version
             Osk::System.stop_n_start_cfs('cfsat')
-            wait 5  # Give the cFS time to start
+            wait 4  # Give the cFS time to start
          end         
       rescue
-         # Silent rescue because okay for ap not to be running
+         # Silent rescue because okay for app not to be running
       end
+      Osk::flight.cfe_evs.send_cmd("ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK #{Fsw::Const::CFE_EVS_ERROR_MASK}")
       app = Osk::flight.app["OSK_C_DEMO"]
       Osk::flight.cfe_es.send_cmd("START_APP with APP_NAME #{app.fsw_name}, APP_ENTRY_POINT #{app.entry_symbol}, APP_FILENAME #{app.obj_path_filename}, STACK_SIZE #{app.stack_size}, EXCEPTION_ACTION 0, PRIORITY #{app.priority}")
       
@@ -133,26 +132,23 @@ end # osk_c_lesson_cmd()
 
 def osk_c_lesson_src(screen, location)
  
-   lesson_id     = screen.get_named_widget("title").text[/\d+/]
-   tutor_app_dir = Osk::fsw_app_dir(OskCDemo::TUTOR_APP_NAME)
+   lesson_id = screen.get_named_widget("title").text[/\d+/]
 
-   # Use COSMOS editor for editing/updating current source files
-   # Use    
+   # Use COSMOS editor for editing/updating current source files   
    if (location == "SRC_EDIT_CURRENT")
    
-      src_dir  = File.join(tutor_app_dir,'fsw','src')
       src_file = screen.get_named_widget("current_src_file").text
-      src_pathfile = File.join(src_dir,src_file)
+      src_pathfile = File.join(CfSat::TUTOR_FSW_SRC_DIR,src_file)
       Cosmos.open_in_text_editor(src_pathfile)
    
    else 
       
       case location
       when "SRC_VIEW_LESSON"
-         src_dir  = File.join(tutor_app_dir,'lesson',lesson_id.to_s,'manual')
+         src_dir  = File.join(CfSat::TUTOR_APP_DIR,'lesson',lesson_id.to_s,'manual')
          src_file = screen.get_named_widget("lesson_src_file").text
       when "SRC_VIEW_SOLUTION"
-         src_dir  = File.join(tutor_app_dir,'lesson',lesson_id.to_s,'solution')
+         src_dir  = File.join(CfSat::TUTOR_APP_DIR,'lesson',lesson_id.to_s,'solution')
          src_file = screen.get_named_widget("solution_src_file").text
       else
          raise "Error in screen definition file. Undefined cmd '#{cmd}' sent to osk_c_lesson_cmd()"
@@ -188,8 +184,8 @@ def osk_c_lesson_create_scr(lesson_id, lesson_info)
    # based on the lesson definition  JSON file not the
    # user's current status JSON file
 
-   lesson_base_dir  = File.join(Osk::fsw_app_dir(OskCDemo::TUTOR_APP_NAME),"lesson",lesson_id.to_s)
-   base_json_file   = File.join(lesson_base_dir,OskCDemo::LESSON_JSON_BASE_FILE)
+   lesson_base_dir  = File.join(CfSat::TUTOR_LESSON_DIR,lesson_id.to_s)
+   base_json_file   = File.join(lesson_base_dir,CfSat::LESSON_JSON_BASE_FILE)
    base_lesson_json = File.read(base_json_file)
    base_lesson_info = JSON.parse(base_lesson_json)
    base_src_file    = base_lesson_info["src-file"]
@@ -254,7 +250,7 @@ def osk_c_lesson_create_scr(lesson_id, lesson_info)
          NAMED_WIDGET solution_src_file COMBOBOX #{lesson_src_dropdown}
          LABEL  '        '
 
-         BUTTON 'Edit Current'  'osk_c_lesson_src(self,\"SRC_EDIT_CURRENT\")'
+         BUTTON 'Edit Current FSW'  'osk_c_lesson_src(self,\"SRC_EDIT_CURRENT\")'
          NAMED_WIDGET current_src_file COMBOBOX 'app_cfg.h' 'osk_c_demo_app.h' 'osk_c_demo_app.c' 'msglog.h' 'msglog.c' 'msglogtbl.h' 'msglogtbl.c'
          LABEL  '        '
       END
@@ -283,7 +279,7 @@ def osk_c_lesson_create_scr(lesson_id, lesson_info)
    END # Application
    "
 
-   scr_file = Osk::cfg_target_dir_file("OSK_C_DEMO","screens","osk_c_lesson_scr.txt")
+   scr_file = Osk::cfg_target_dir_file("CFSAT","screens","osk_c_lesson_scr.txt")
    
    begin
          

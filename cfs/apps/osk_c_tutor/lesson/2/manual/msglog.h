@@ -7,7 +7,7 @@
 
 /* >>>>>>>>>>>>>>> STEP 1 <<<<<<<<<<<<<<<
 **
-** Replace the entire msglog.c content with the content below.
+** Replace the entire msglog.h content with the content below.
 */
 
 

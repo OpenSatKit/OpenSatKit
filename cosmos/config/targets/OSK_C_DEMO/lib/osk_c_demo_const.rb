@@ -39,18 +39,5 @@ module OskCDemo
    LOG_FILE_PREFIX = "/cf/msg_"
    LOG_FILE_EXT    = ".txt"
 
-   ########################
-   ## Learning Resources ##
-   ########################
-
-   # Tutorial
-   
-   TUTOR_APP_NAME = "osk_c_tutor"
-   
-   TUTOR_JSON_BASE_FILE = "tutor.json"   # Baseline file that defines tutor parameters
-   TUTOR_JSON_USER_FILE = "tutor~.json"  # Dynamic file that manages a user's progress through the lessons
-   
-   LESSON_JSON_BASE_FILE = "lesson.json"
-   LESSON_JSON_USER_FILE = "lesson~.json"
    
 end # module OskCDemo

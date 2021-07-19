@@ -236,7 +236,7 @@ module Osk
       def self.start_42(interactive=true, display_scr=false)
 
          started_42 = false
-         if (not Osk::System.check_n_start_cfs(interactive))
+         if (not Osk::System.check_n_start_cfs("prompt",interactive))
             return started_42
          end
          if tlm("I42 HK_TLM_PKT CONNECTED") == "TRUE"

@@ -247,6 +247,11 @@ VERTICAL
 
    TABITEM "Pi-Sat"
 
+      LABEL ""
+      LABEL "The <i>Getting Started Guide</i> provides instructions for using the pi-sat repo on a standalone Raspberry Pi"  
+      LABEL "<b>PiSat Control from COSMOS will be available in OSK version 3.2</b>"
+      LABEL ""
+      
       VERTICALBOX "System - Remote PiSat Target"
          HORIZONTAL
          MATRIXBYCOLUMNS 3 4 4 

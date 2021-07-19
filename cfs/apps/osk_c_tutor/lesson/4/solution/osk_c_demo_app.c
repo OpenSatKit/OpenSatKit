@@ -28,7 +28,6 @@
 #define  INITBL_OBJ    (&(OskCDemo.IniTbl))
 #define  CMDMGR_OBJ    (&(OskCDemo.CmdMgr))
 #define  TBLMGR_OBJ    (&(OskCDemo.TblMgr))
-#define  CHILDMGR_OBJ  (&(OskCDemo.ChildMgr))
 #define  MSGLOG_OBJ    (&(OskCDemo.MsgLog))
 
 
@@ -133,7 +132,6 @@ boolean OSK_C_DEMO_ResetAppCmd(void* ObjDataPtr, const CFE_SB_MsgPtr_t MsgPtr)
 
    CMDMGR_ResetStatus(CMDMGR_OBJ);
    TBLMGR_ResetStatus(TBLMGR_OBJ);
-   CHILDMGR_ResetStatus(CHILDMGR_OBJ);
    
    MSGLOG_ResetStatus();
 
