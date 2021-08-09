@@ -1,0 +1,66 @@
+###############################################################################
+# Pi-Sat GPIO Demo Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'gpio_demo_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Pi-Sat GPIO Demo"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+
+VERTICALBOX "Commands"
+   MATRIXBYCOLUMNS 4
+      BUTTON 'No Op'        'gpio_demo_cmd(self, "NOOP")'
+      BUTTON 'Reset'        'gpio_demo_cmd(self, "RESET")'
+      BUTTON 'Set On Time'  'gpio_demo_cmd(self, "SET_ON_TIME")'
+      BUTTON 'Set Off Time' 'gpio_demo_cmd(self, "SET_OFF_TIME")'      
+   END # Matrix
+END # Commands
+    
+VERTICALBOX "Status"
+   MATRIXBYCOLUMNS 6 5
+      LABEL 'Cmd Cnt'
+      VALUE GPIO_DEMO HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 8
+      LABEL 'Cmd Err'
+      VALUE GPIO_DEMO HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 8
+      LABEL '          '
+      LABEL '          '
+
+      LABEL 'GPIO Mapped'
+      VALUE GPIO_DEMO HK_TLM_PKT GPIO_MAPPED WITH_UNITS 8
+      LABEL 'GPIO Output Pin'
+      VALUE GPIO_DEMO HK_TLM_PKT GPIO_OUTPUT_PIN WITH_UNITS 8
+      LABEL '          '
+      LABEL '          '
+
+      LABEL 'LED On Time'
+      VALUE GPIO_DEMO HK_TLM_PKT CTRL_ON_TIME WITH_UNITS 8
+      LABEL 'LED Off Time'
+      VALUE GPIO_DEMO HK_TLM_PKT CTRL_OFF_TIME WITH_UNITS 8
+      LABEL '          '
+      LABEL '          '
+
+      LABEL 'LED State'
+      VALUE GPIO_DEMO HK_TLM_PKT GPIO_LED_STATE WITH_UNITS 8
+      BUTTON 'Plot LED State' 'gpio_demo_cmd(self, "PLOT_LED")'
+      LABEL '          '
+      LABEL '          '
+      LABEL '          '
+   END
+END # App Status
+SETTING BACKCOLOR 162 181 205
+         
+HORIZONTALLINE
+
+LABEL "<b>Flight Event Messages</b>"
+NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 550 30

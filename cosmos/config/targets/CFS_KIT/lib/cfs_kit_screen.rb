@@ -68,7 +68,7 @@ def cfs_kit_scr_common(screen, cmd)
    when "STOP_42"
       Osk::System.stop_42
 
-   when "CONFIG_SYS_SIMSAT", "CONFIG_SYS_CFSAT", "CONFIG_SYS_SANDBOX"
+   when "CONFIG_SYS_SIMSAT", "CONFIG_SYS_CFSAT", "CONFIG_SYS_PISAT", "CONFIG_SYS_SANDBOX"
       target = cmd.sub(/CONFIG_SYS_/,'').downcase
       user_selection = screen.get_named_widget("config_sys_#{target}").text
       if user_selection == "About"
@@ -401,20 +401,40 @@ def cfs_kit_scr_pisat(screen, cmd)
    
    ## System
 
-   when "START_CFS"
-      cmd("PICONTROL START_CFS")
-   
-   when "STOP_CFS"
-      cmd("PICONTROL STOP_CFS") 
+   when "CONFIG_SYS_PISAT"
+      # Intercept the common config cmd to allow user to specify IP address for enabling telemetry       
+      user_selection = screen.get_named_widget("config_sys_pisat").text
+      if (user_selection == "Enable Telemetry")
+         Cosmos.run_process("ruby tools/CmdSender -p \"KIT_TO ENABLE_TELEMETRY\"")
+      else
+         cfs_kit_scr_common(self,cmd)
+      end
 
-   when "REBOOT_PI"
-      cmd("PICONTROL REBOOT_PI")
+   when "CFS_START"
+      cmd("PISAT CFS_START")
    
-   when "SHUTDOWN_PI"
-      cmd("PICONTROL SHUTDOWN_PI")
+   when "CFS_STOP"
+      cmd("PISAT CFS_STOP") 
+
+   when "PI_NOOP"
+      cmd("PISAT PI_NOOP")
+   
+   when "PI_ENA_TLM"
+      cmd("PISAT PI_ENA_TLM")
+
+   when "PI_CTRL_EXIT"
+      cmd("PISAT PI_CTRL_EXIT")
+
+   when "PI_REBOOT"
+      cmd("PISAT PI_REBOOT")
+   
+   when "PI_SHUTDOWN"
+      cmd("PISAT PI_SHUTDOWN")
 
    when "CMD_TLM_SERVER"
       cmd_tlm_server = screen.get_named_widget("cmd_tlm_server").text
+      prompt("Switching between a local cFS local and a remote PiSat without restarting COSMOS is not supported at this time. See cosmos/lib/hw_target.rb for switching between targets.")
+      return
       case cmd_tlm_server
       when "PiSat"
          display("PICONTROL PISAT_CONNECT_SCREEN",50,50)
@@ -422,8 +442,6 @@ def cfs_kit_scr_pisat(screen, cmd)
          pisat_connection(screen,"SWITCH_TO_LOCAL");
       end   
    
-   when "ENA_TLM"
-      Cosmos.run_process("ruby tools/CmdSender -p \"KIT_TO ENABLE_TELEMETRY\"")
 
    ## Pi-Sat Docs & Videos
    
@@ -446,11 +464,11 @@ def cfs_kit_scr_pisat(screen, cmd)
       end
    ## Pi-Sat Screens
    
-   when "SENSOR_SCR"
-      display("PICONTROL PISAT_SENSOR_DATA_SCREEN",50,50)
+   when "GPIO_DEMO_SCR"
+      display("GPIO_DEMO GPIO_DEMO_SCREEN",50,50)
    
    else
-      raise "Error in screen definition file. Undefined command sent to cfs_kit_scr_pisat()"
+      raise "Error in screen definition file. Undefined command #{cmd} sent to cfs_kit_scr_pisat()"
    end # cmd case
 
 end # cfs_kit_scr_pisat() 

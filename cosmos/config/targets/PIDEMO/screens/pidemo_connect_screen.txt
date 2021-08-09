@@ -6,7 +6,9 @@
 #   License (GPL).
 #
 ###############################################################################
-
+<%
+   require 'pidemo_screens'
+%>
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   
@@ -22,7 +24,7 @@ VERTICALBOX
   ##LABEL 'This dialog screen is used to switched between the cFS running locally and on a PiSat'
   #LABEL '    Host IP address is only required if switching to a PiSat'
   #LABEL '   Local -> PiSat: Close the current local cFS terminal using Ctrl-C'
-  #LABEL '   PiSat -> Local: Shutdown the cFS using PiControl or manually on the PiSat'
+  #LABEL '   PiSat -> Local: Shutdown the cFS using PiDemo or manually on the PiSat'
   LABEL ' '
 
   HORIZONTALBOX "Local->PiSat"
@@ -31,8 +33,8 @@ VERTICALBOX
       NAMED_WIDGET host_ip_addr TEXTFIELD
       LABEL '   ' 
       LABEL '   ' 
-      BUTTON 'Switch to PiSat' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screens.rb"; pisat_connection(self, "SWITCH_TO_PISAT")'
-      BUTTON 'Cancel'          'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/pisat_screens.rb"; pisat_connection(self, "CANCEL")'
+      BUTTON 'Switch to PiSat' 'pidemo_connect_cmd(self, "SWITCH_TO_PISAT")'
+      BUTTON 'Cancel'          'pidemo_connect_cmd(self, "CANCEL")'
     END # Matrix
   END # Horizontal Box
  

@@ -21,10 +21,10 @@ COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_
 # FC 3: Table dump
 
 COMMAND <%= @APP_PREFIX_STR %> SET_ON_TIME <%= Osk::Cfg.processor_endian %> "Set how long LED remains on"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 2) %>
-  APPEND_PARAMETER ON_TIME 32 UINT MIN_UINT32  MAX_UINT16  3000 "Time in milliseconds"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 4) %>
+  APPEND_PARAMETER ON_TIME 32 UINT MIN_UINT32  MAX_UINT32  3000 "Time in milliseconds"
 
 COMMAND <%= @APP_PREFIX_STR %> SET_OFF_TIME <%= Osk::Cfg.processor_endian %> "Set how long LED remains off"
-  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 2) %>
-  APPEND_PARAMETER OFF_TIME 32 UINT MIN_UINT32  MAX_UINT16  3000 "Time in milliseconds"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 4) %>
+  APPEND_PARAMETER OFF_TIME 32 UINT MIN_UINT32  MAX_UINT32  3000 "Time in milliseconds"
 

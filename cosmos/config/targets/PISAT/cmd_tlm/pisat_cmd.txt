@@ -1,0 +1,26 @@
+#
+# Defines the command interface for the python tool that manages OSK's
+# pisat target https://github.com/OpenSatKit/pi-sat
+#
+# This a simple interface that uses text strings 
+#
+COMMAND PISAT CFS_START BIG_ENDIAN "Starts the cFS on the Pi"
+  APPEND_PARAMETER CMD_STRING 0 STRING "CFS_START" "Start the cFS"
+
+COMMAND PISAT CFS_STOP BIG_ENDIAN "Stop the cFS on the Pi"
+  APPEND_PARAMETER CMD_STRING 0 STRING "CFS_STOP" "Stop the cFS"
+
+COMMAND PISAT PI_REBOOT BIG_ENDIAN "Reboot the Pi"
+  APPEND_PARAMETER CMD_STRING 0 STRING "PI_REBOOT" "Reboot the Pi"
+
+COMMAND PISAT PI_SHUTDOWN BIG_ENDIAN "Shutdown the Pi"
+  APPEND_PARAMETER CMD_STRING 0 STRING "PI_SHUTDOWN" "Shutdown the Pi"
+
+COMMAND PISAT PI_CTRL_EXIT BIG_ENDIAN "Stops the PiSat control process"
+  APPEND_PARAMETER CMD_STRING 0 STRING "PI_CTRL_EXIT" "Stop the cFS"
+
+COMMAND PISAT PI_NOOP BIG_ENDIAN "No function performed - Increments the command counter"
+  APPEND_PARAMETER CMD_STRING 0 STRING "PI_NOOP" "Increments the command counter"
+
+COMMAND PISAT PI_ENA_TLM BIG_ENDIAN "Enable PiCtrl telemetery"
+  APPEND_PARAMETER CMD_STRING 0 STRING "PI_ENA_TLM" "Enable PiCtrl telemetery"

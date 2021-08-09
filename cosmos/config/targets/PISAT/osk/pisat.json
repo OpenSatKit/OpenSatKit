@@ -1,0 +1,13 @@
+{
+
+"description": [
+   "This file defines the FSW apps that are included in the pi-sat target.",
+   "Each app has a json file that provides app details so this file simply",
+   "identifies apps and should not duplicate any information about an app.",
+   "This file is named pisat.json as opposed to something like",
+   "app_targets.json to follow the OSK naming convention."
+   ],
+
+"apps": [ "GPIO_DEMO" ]
+
+}

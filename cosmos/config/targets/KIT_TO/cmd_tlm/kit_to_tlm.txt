@@ -1,68 +1,76 @@
 <% 
-  require 'osk_config' 
+   require 'osk_config' 
 
-  @APP_PREFIX_STR        = "KIT_TO"
-  @HK_TLM_MID_STR        = "KIT_TO_HK_TLM_MID"
-  @PKT_TBL_TLM_MID_STR   = "KIT_TO_PKT_TBL_TLM_MID"
-  @DATA_TYPE_TLM_MID_STR = "KIT_TO_DATA_TYPE_TLM_MID"
-  @EVT_PLBK_TLM_MID_STR  = "KIT_TO_EVT_PLBK_TLM_MID"
+   @APP_PREFIX_STR        = "KIT_TO"
+   @HK_TLM_MID_STR        = "KIT_TO_HK_TLM_MID"
+   @PKT_TBL_TLM_MID_STR   = "KIT_TO_PKT_TBL_TLM_MID"
+   @DATA_TYPE_TLM_MID_STR = "KIT_TO_DATA_TYPE_TLM_MID"
+   @EVT_PLBK_TLM_MID_STR  = "KIT_TO_EVT_PLBK_TLM_MID"
   
-  #TODO - Add data types pkt
+   #TODO - Add data types pkt
   
 %>  
 
 TELEMETRY KIT_TO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Telemetry Output Housekeeping Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
-  APPEND_ITEM CMD_VALID_COUNT      16 UINT  "Command Count"
-  APPEND_ITEM CMD_ERROR_COUNT      16 UINT  "Error Count"
-  APPEND_ITEM RUN_LOOP_DELAY       16 UINT  "Task delay(ms) used in main loop"
-  APPEND_ITEM LAST_TBL_LOAD_STATUS  8 UINT  "0=Undefined, 1=No, 1=Yes"
-  APPEND_ITEM SPARE_BYTE_1          8 UINT  ""
-  APPEND_ITEM LAST_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last table load"
-  APPEND_ITEM STATS_VALID          8 UINT  "TRUE: First stat interval complete and stats in steady state"
-    STATE False 0
-    STATE True  1
-  APPEND_ITEM SPARE_BYTE_1          8 UINT  ""
-  APPEND_ITEM PKTS_PER_SEC         16 UINT  "Average packets per second"
-  APPEND_ITEM BYTES_PER_SEC        32 UINT  "Average bytes per second"
-  APPEND_ITEM SOCKET_ID 16 UINT   "Socket identifier"
-  APPEND_ITEM IP_ADDR 128 STRING  "IP Address string"
-  APPEND_ITEM EVT_PLBK_ENA          8 UINT  "Event message playbakc enabled"
-  APPEND_ITEM EVT_PLBK_HK_PERIOD    8 UINT  "Number of HK cycles between playback updates"
+   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+   APPEND_ITEM CMD_VALID_COUNT      16 UINT  "Command Count"
+   APPEND_ITEM CMD_ERROR_COUNT      16 UINT  "Error Count"
+   APPEND_ITEM RUN_LOOP_DELAY       16 UINT  "Task delay(ms) used in main loop"
+   APPEND_ITEM LAST_TBL_LOAD_STATUS  8 UINT  "0=Undefined, 1=No, 1=Yes"
+   APPEND_ITEM SPARE_BYTE_1          8 UINT  ""
+   APPEND_ITEM LAST_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last table load"
+   APPEND_ITEM STATS_VALID          8 UINT  "TRUE: First stat interval complete and stats in steady state"
+      STATE False 0
+      STATE True  1
+   APPEND_ITEM SPARE_BYTE_1          8 UINT  ""
+   APPEND_ITEM PKTS_PER_SEC         16 UINT  "Average packets per second"
+   <%
+      pad_str = ""
+      if (HwTarget::ID == "PISAT")
+         pad_str = "
+            APPEND_ITEM PKTS_PER_SEC_PAD 16 UINT \"32-alignment pad\"
+         "
+      end
+   %>
+   <%= pad_str %>
+   APPEND_ITEM BYTES_PER_SEC        32 UINT  "Average bytes per second"
+   APPEND_ITEM SOCKET_ID 16 UINT   "Socket identifier"
+   APPEND_ITEM IP_ADDR 128 STRING  "IP Address string"
+   APPEND_ITEM EVT_PLBK_ENA          8 UINT  "Event message playbakc enabled"
+   APPEND_ITEM EVT_PLBK_HK_PERIOD    8 UINT  "Number of HK cycles between playback updates"
 
 TELEMETRY KIT_TO PKT_TLM_PKT <%= Osk::Cfg.processor_endian %> "Packet Table Entry Telemetry Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @PKT_TBL_TLM_MID_STR) %>
-  APPEND_ITEM MSG_ID          16 UINT  "First word of CCSDS primary header(Stream ID)"
-    FORMAT_STRING "0x%04X"
-  APPEND_ITEM QOS_RELIABILITY  8 UINT  "Quality of Service: Reliability"
-  APPEND_ITEM QOS_PRIORITY     8 UINT  "Quality of Service: Priority"
-  APPEND_ITEM BUF_LIM         16 UINT  "TO input buffer limit"
-  APPEND_ITEM FILTER_TYPE     16 UINT  "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
-    STATE Always <%= Fsw::Const::OSK_PKTUTIL_FILTER_ALWAYS %>
-    STATE SeqCnt <%= Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT %>
-    STATE Time   <%= Fsw::Const::OSK_PKTUTIL_FILTER_BY_TIME %>
-    STATE Never  <%= Fsw::Const::OSK_PKTUTIL_FILTER_NEVER %>
-  APPEND_ITEM FILTER_PARAM_N  16 UINT  "N = Filter will pass this many packets"
-  APPEND_ITEM FILTER_PARAM_X  16 UINT  "X = out of every group of this many packets"
-  APPEND_ITEM FILTER_PARAM_O  16 UINT  "O = starting at this offset within the group"
+   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @PKT_TBL_TLM_MID_STR) %>
+   APPEND_ITEM MSG_ID          16 UINT  "First word of CCSDS primary header(Stream ID)"
+      FORMAT_STRING "0x%04X"
+   APPEND_ITEM QOS_RELIABILITY  8 UINT  "Quality of Service: Reliability"
+   APPEND_ITEM QOS_PRIORITY     8 UINT  "Quality of Service: Priority"
+   APPEND_ITEM BUF_LIM         16 UINT  "TO input buffer limit"
+   APPEND_ITEM FILTER_TYPE     16 UINT  "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"
+      STATE Always <%= Fsw::Const::OSK_PKTUTIL_FILTER_ALWAYS %>
+      STATE SeqCnt <%= Fsw::Const::OSK_PKTUTIL_FILTER_BY_SEQ_CNT %>
+      STATE Time   <%= Fsw::Const::OSK_PKTUTIL_FILTER_BY_TIME %>
+      STATE Never  <%= Fsw::Const::OSK_PKTUTIL_FILTER_NEVER %>
+   APPEND_ITEM FILTER_PARAM_N  16 UINT  "N = Filter will pass this many packets"
+   APPEND_ITEM FILTER_PARAM_X  16 UINT  "X = out of every group of this many packets"
+   APPEND_ITEM FILTER_PARAM_O  16 UINT  "O = starting at this offset within the group"
 
 TELEMETRY KIT_TO EVT_PLBK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Event Log Playback Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @EVT_PLBK_TLM_MID_STR) %>
-  APPEND_ITEM LOG_FILENAME 512 STRING  "Name of file when event service commanded to write the event log to a file"
-  APPEND_ITEM EVT_COUNT     16 UINT    "Number of events in log file being played back"
-  APPEND_ITEM PLBK_IDX      16 UINT    "Log file index of first event in this telemetry packet (note index loops back)"
+   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @EVT_PLBK_TLM_MID_STR) %>
+   APPEND_ITEM LOG_FILENAME 512 STRING  "Name of file when event service commanded to write the event log to a file"
+   APPEND_ITEM EVT_COUNT     16 UINT    "Number of events in log file being played back"
+   APPEND_ITEM PLBK_IDX      16 UINT    "Log file index of first event in this telemetry packet (note index loops back)"
   
- <% FswConfigParam::KIT_TO_EVT_PLBK_EVENTS_PER_TLM_MSG.times do |n|  %>
-    APPEND_ITEM EVENT<%=n%>_SECONDS    32 UINT   "System time seconds field"
-    APPEND_ITEM EVENT<%=n%>_SUBSECS    32 UINT   "System time subseconds field"
-    APPEND_ITEM EVENT<%=n%>_APP_NAME  160 STRING "Application name"
-    APPEND_ITEM EVENT<%=n%>_ID         16 UINT   "Identifier"
-    APPEND_ITEM EVENT<%=n%>_TYPE       16 UINT   "Message type"
-      STATE DEBUG  <%= Fsw::Const::CFE_EVS_DEBUG %>
-      STATE INFO   <%= Fsw::Const::CFE_EVS_INFORMATION %>
-      STATE ERROR  <%= Fsw::Const::CFE_EVS_ERROR %>      RED
-      STATE CRIT   <%= Fsw::Const::CFE_EVS_CRITICAL %>   RED
-    APPEND_ITEM EVENT<%=n%>_MESSAGE   976 STRING "Message text string"
-    APPEND_ITEM EVENT<%=n%>_PAD16      16 UINT   "32-bit align pad"
-    
-  <% end %>
+   <% FswConfigParam::KIT_TO_EVT_PLBK_EVENTS_PER_TLM_MSG.times do |n|  %>
+      APPEND_ITEM EVENT<%=n%>_SECONDS    32 UINT   "System time seconds field"
+      APPEND_ITEM EVENT<%=n%>_SUBSECS    32 UINT   "System time subseconds field"
+      APPEND_ITEM EVENT<%=n%>_APP_NAME  160 STRING "Application name"
+      APPEND_ITEM EVENT<%=n%>_ID         16 UINT   "Identifier"
+      APPEND_ITEM EVENT<%=n%>_TYPE       16 UINT   "Message type"
+         STATE DEBUG  <%= Fsw::Const::CFE_EVS_DEBUG %>
+         STATE INFO   <%= Fsw::Const::CFE_EVS_INFORMATION %>
+         STATE ERROR  <%= Fsw::Const::CFE_EVS_ERROR %>      RED
+         STATE CRIT   <%= Fsw::Const::CFE_EVS_CRITICAL %>   RED
+      APPEND_ITEM EVENT<%=n%>_MESSAGE   976 STRING "Message text string"
+      APPEND_ITEM EVENT<%=n%>_PAD16      16 UINT   "32-bit align pad" 
+   <% end %> 

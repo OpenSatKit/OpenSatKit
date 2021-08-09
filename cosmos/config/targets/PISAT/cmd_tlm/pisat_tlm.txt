@@ -1,0 +1,20 @@
+<% 
+  require 'osk_global' 
+%>
+#
+# Defines the telemetry interface for the python tool that manages OSK's
+# pisat target https://github.com/OpenSatKit/pi-sat
+#
+# This a simple interface that uses text strings 
+#
+TELEMETRY PISAT EXEC_STATUS LITTLE_ENDIAN "Status from the Pi-Sat management"
+  APPEND_ID_ITEM PACKET_ID  16 UINT 0x3141 "Packet ID"
+     FORMAT_STRING "0x%04X"
+  APPEND_ITEM PKT_COUNT     16 UINT "Running counter of packets sent"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 16 UINT "Valid command count"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 16 UINT "Invalid command count"
+  APPEND_ITEM CFS_RUNNING   16 UINT "cFS running status"
+     STATE RUNNING 1 GREEN
+     STATE STOPPED 0 RED
+  APPEND_ITEM PI_EVT_MSG 1024 STRING "Last event message from PiCtrl"
+  APPEND_ITEM CFS_APPS   1024 STRING "String created from cfe_es_startup.scr that summarizes apps loaded"

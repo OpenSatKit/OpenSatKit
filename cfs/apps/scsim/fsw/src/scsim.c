@@ -315,7 +315,7 @@ boolean SCSIM_Execute(void)
       */
       case SCSIM_PHASE_INIT:
       
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_INIT: Enter");
+         CFE_EVS_SendEvent(SCSIM_EXECUTE_EID, CFE_EVS_DEBUG, "SCSIM_PHASE_INIT: Enter");
          while (ScSim->NextEvtCmd->Time == SCSIM_INIT_TIME) {
         
             SIM_ExecuteEvtCmd();
@@ -336,12 +336,12 @@ boolean SCSIM_Execute(void)
          
          }
 
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_INIT: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time.Seconds);
+         CFE_EVS_SendEvent(SCSIM_EXECUTE_EID, CFE_EVS_DEBUG, "SCSIM_PHASE_INIT: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time.Seconds);
          break;   
    
       case SCSIM_PHASE_TIME_LAPSE:
 
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Enter at SimTime %d, Next Cmd Time %d", ScSim->Time.Seconds, ScSim->NextEvtCmd->Time);
+         CFE_EVS_SendEvent(SCSIM_EXECUTE_EID, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Enter at SimTime %d, Next Cmd Time %d", ScSim->Time.Seconds, ScSim->NextEvtCmd->Time);
          while (ScSim->Time.Seconds < SCSIM_REALTIME_EPOCH && TimeLapseExeCnt < SCSIM_TIME_LAPSE_EXE_CNT) {
          
             if (ScSim->Time.Seconds >= (ScSim->NextEvtCmd->Time)) {
@@ -364,7 +364,7 @@ boolean SCSIM_Execute(void)
          SIM_SetTime(ScSim->Time.Seconds);
          if (ScSim->Time.Seconds >= SCSIM_REALTIME_EPOCH) ScSim->Phase = SCSIM_PHASE_REALTIME;
          
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time.Seconds);
+         CFE_EVS_SendEvent(SCSIM_EXECUTE_EID, CFE_EVS_DEBUG, "SCSIM_PHASE_TIME_LAPSE: Exit with next phase %d at time %d", ScSim->Phase, ScSim->Time.Seconds);
          break;   
          
       case SCSIM_PHASE_REALTIME:
@@ -851,16 +851,16 @@ static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd)
    SCSIM_EvtCmd* EvtCmd   = ScSim->NextEvtCmd;
    SCSIM_EvtCmd* NewEvtCmd;
    
-   CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, 
+   CFE_EVS_SendEvent(SCSIM_ADD_EVENT_EID, CFE_EVS_DEBUG, 
                            "Enter SIM_AddEvtCmd() for subsystem %d cmd %d added at scenario index %d",
                            NewRunTimeCmd->SubSys, NewRunTimeCmd->Id, ScSim->RunTimeCmdIdx);
-   CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, 
+   CFE_EVS_SendEvent(SCSIM_ADD_EVENT_EID, CFE_EVS_DEBUG, 
                            "NextCmd: (%d,%d) %d, %d, %d",
                            EvtCmd->Link.Prev, EvtCmd->Link.Next, EvtCmd->Time, EvtCmd->SubSys, EvtCmd->Id);
                            
    if (ScSim->RunTimeCmdIdx == SCSIM_EVT_CMD_NULL_IDX) {
       
-      CFE_EVS_SendEvent(SCSIM_EVT_ERR_EID, CFE_EVS_ERROR, 
+      CFE_EVS_SendEvent(SCSIM_EVENT_ERR_EID, CFE_EVS_ERROR, 
                         "Aborting sim due to event cmd buffer overflow while loading new subsystem %d cmd %d",
                         NewRunTimeCmd->SubSys, NewRunTimeCmd->Id);
    
@@ -877,7 +877,7 @@ static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd)
    
          if (NewEvtCmd->Time <= EvtCmd->Time) {
    
-            CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, 
+            CFE_EVS_SendEvent(SCSIM_ADD_EVENT_EID, CFE_EVS_DEBUG, 
                               "Adding command before: (%d,%d) %d, %d, %d",
                               EvtCmd->Link.Prev, EvtCmd->Link.Next, EvtCmd->Time, EvtCmd->SubSys, EvtCmd->Id);
   
@@ -905,7 +905,7 @@ static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd)
    
       if (NewCmdInserted) {
          
-         CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, 
+         CFE_EVS_SendEvent(SCSIM_ADD_EVENT_EID, CFE_EVS_DEBUG, 
                            "New subsystem %d cmd %d added at scenario index %d",
                            NewEvtCmd->SubSys, NewEvtCmd->Id, ScSim->RunTimeCmdIdx);
 
@@ -915,7 +915,7 @@ static void SIM_AddEvtCmd(SCSIM_EvtCmd* NewRunTimeCmd)
       }
       else {
 
-         CFE_EVS_SendEvent(SCSIM_EVT_ERR_EID, CFE_EVS_ERROR, 
+         CFE_EVS_SendEvent(SCSIM_EVENT_ERR_EID, CFE_EVS_ERROR, 
                            "Aborting sim due to failure to insert new runtime cmd for subsystem %d cmd %d at index %d",
                            NewRunTimeCmd->SubSys, NewRunTimeCmd->Id, ScSim->RunTimeCmdIdx);
          SIM_StopSim();        
@@ -955,7 +955,7 @@ static void SIM_DumpScenario(uint8 StartIdx, uint8 EndIdx)
 static void SIM_ExecuteEvtCmd(void)
 {
      
-   CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "Executing %s cmd %d at time %d",
+   CFE_EVS_SendEvent(SCSIM_EXECUTE_EVENT_EID, CFE_EVS_DEBUG, "Executing %s cmd %d at time %d",
                      SubSysStr[ScSim->NextEvtCmd->SubSys],ScSim->NextEvtCmd->Id,ScSim->NextEvtCmd->Time);
    
    switch (ScSim->NextEvtCmd->ScanfType) {
@@ -1035,7 +1035,8 @@ static void SIM_ExecuteEvtCmd(void)
    
    ScSim->NextEvtCmd = &(ScSim->Scenario[ScSim->NextEvtCmd->Link.Next]);
        
-   CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "Exit SIM_ExecuteEvtCmd(): Next Cmd link (%d,%d), time %d, susbsy %d, cmd %d",
+   CFE_EVS_SendEvent(SCSIM_EXECUTE_EVENT_EID, CFE_EVS_DEBUG, 
+                     "Exit SIM_ExecuteEvtCmd(): Next Cmd link (%d,%d), time %d, susbsy %d, cmd %d",
                      ScSim->NextEvtCmd->Link.Prev, ScSim->NextEvtCmd->Link.Next, ScSim->NextEvtCmd->Time, ScSim->NextEvtCmd->SubSys, ScSim->NextEvtCmd->Id);
    
 } /* End SIM_ExecuteEvtCmd() */
@@ -1425,7 +1426,7 @@ static boolean COMM_ProcessEvtCmd(COMM_Model* Comm, SCSIM_EvtCmd* EvtCmd)
    boolean RetStatus = TRUE;
    SCSIM_EvtCmd LosEvtCmd;
          
-   CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "Executing COMM cmd %d", EvtCmd->Id);
+   CFE_EVS_SendEvent(COMM_PROCESS_EVENT_EID, CFE_EVS_DEBUG, "Executing COMM cmd %d", EvtCmd->Id);
    
    switch ((COMM_EvtCmd)EvtCmd->Id) {
    
@@ -1438,7 +1439,9 @@ static boolean COMM_ProcessEvtCmd(COMM_Model* Comm, SCSIM_EvtCmd* EvtCmd)
       Comm->InContact = FALSE;
       Comm->Contact.TimeConsumed  = 0;
       Comm->Contact.TimeRemaining = 0;
-      CFE_EVS_SendEvent(999, CFE_EVS_DEBUG, "Scheduled AOS in %ds, for %ds with link type %d", Comm->Contact.TimePending, Comm->Contact.Length, Comm->Contact.Link);
+      CFE_EVS_SendEvent(COMM_PROCESS_EVENT_EID, CFE_EVS_DEBUG, 
+                        "Scheduled AOS in %ds, for %ds with link type %d", 
+                        Comm->Contact.TimePending, Comm->Contact.Length, Comm->Contact.Link);
  
       LosEvtCmd.Link.Prev = SCSIM_EVT_CMD_NULL_IDX;
       LosEvtCmd.Link.Next = SCSIM_EVT_CMD_NULL_IDX;

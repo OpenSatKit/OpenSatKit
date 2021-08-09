@@ -1,21 +1,37 @@
 <% 
-  require 'osk_config' 
+   require 'osk_config' 
 
-  @APP_PREFIX_STR = "KIT_CI"
-  @HK_TLM_MID_STR = "KIT_CI_HK_TLM_MID"
+   @APP_PREFIX_STR = "KIT_CI"
+   @HK_TLM_MID_STR = "KIT_CI_HK_TLM_MID"
   
 %>  
 
 TELEMETRY KIT_CI HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Command Ingest Housekeeping Packet"
-  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
-  APPEND_ITEM CMD_VALID_COUNT      16 UINT "Command Count"
-  APPEND_ITEM CMD_ERROR_COUNT      16 UINT "Error Count"
-  APPEND_ITEM SOCKET_CONNECTED      8 UINT "Boolean: 0=Disconnected, 1=Connected"
-  APPEND_ITEM MSG_TUNNEL_ENA        8 UINT "Boolean: 0=Disabled, 1=Enabled"
-  APPEND_ITEM SOCKET_ID            16 UINT "Socket identifier"
-  APPEND_ITEM RECV_MSG_CNT         32 UINT "Count of messgaes received on socket"
-  APPEND_ITEM RECV_MSG_ERR_CNT     32 UINT "Count of erroneous messgaes received on socket"
-  APPEND_ITEM MAPPING_CNT          16 UINT "Count of mappings performed"
-  APPEND_ITEM LAST_MAPPING_INDEX   16 UINT "Index of the last mapping defined"
-  APPEND_ITEM LAST_MAPPING_ORG_ID  16 UINT "Orginal mapping message ID"
-  APPEND_ITEM LAST_MAPPING_NEW_ID  16 UINT "New mapping message ID"
+   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+   APPEND_ITEM CMD_VALID_COUNT      16 UINT "Command Count"
+   APPEND_ITEM CMD_ERROR_COUNT      16 UINT "Error Count"
+   APPEND_ITEM SOCKET_CONNECTED      8 UINT "Boolean: 0=Disconnected, 1=Connected"
+   APPEND_ITEM MSG_TUNNEL_ENA        8 UINT "Boolean: 0=Disabled, 1=Enabled"
+   APPEND_ITEM SOCKET_ID            16 UINT "Socket identifier"
+   APPEND_ITEM RECV_MSG_CNT         32 UINT "Count of messages received on socket"
+   APPEND_ITEM RECV_MSG_ERR_CNT     32 UINT "Count of erroneous messages received on socket"
+<%
+   last_mapping_str = "
+      APPEND_ITEM MAPPING_CNT          16 UINT \"Count of mappings performed\"
+      APPEND_ITEM LAST_MAPPING_INDEX   16 UINT \"Index of the last mapping defined\"
+      APPEND_ITEM LAST_MAPPING_ORG_ID  16 UINT \"Orginal mapping message ID\"
+      APPEND_ITEM LAST_MAPPING_NEW_ID  16 UINT \"New mapping message ID\"
+   "
+   
+   if (HwTarget::ID == "PISAT")
+      last_mapping_str = "
+      APPEND_ITEM MAPPING_CNT            16 UINT \"Count of mappings performed\"
+      APPEND_ITEM MAPPING_CNT_PAD        16 UINT \"32-bit alignment with UPLINK_LastMapping struct\"
+      APPEND_ITEM LAST_MAPPING_INDEX     16 UINT \"Index of the last mapping defined\"
+      APPEND_ITEM LAST_MAPPING_INDEX_PAD 16 UINT \"32-bit alignment within UPLINK_LastMapping struct\"
+      APPEND_ITEM LAST_MAPPING_ORG_ID    32 UINT \"Orginal mapping message ID\"
+      APPEND_ITEM LAST_MAPPING_NEW_ID    32 UINT \"New mapping message ID\"
+      "
+   end
+%>
+<%= last_mapping_str %>
