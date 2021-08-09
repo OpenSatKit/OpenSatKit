@@ -58,13 +58,13 @@ VERTICAL
          LABEL "          "
 
          HORIZONTAL
-         VERTICALBOX 'Configure System'          
+         VERTICALBOX 'Configure cFS System'          
             MATRIXBYCOLUMNS 2
                BUTTON 'Send Config Cmd'   'cfs_kit_scr_common(self, "CONFIG_SYS_CFSAT")'
                NAMED_WIDGET config_sys_cfsat COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
             END # Matrix
             SETTING BACKCOLOR 162 181 205
-         End # Configure System Box
+         End # Configure cFS System Box
          SETTING BACKCOLOR 162 181 205
          VERTICALBOX "OSK Docs && Videos"
             MATRIXBYCOLUMNS 2
@@ -172,13 +172,13 @@ VERTICAL
          LABEL "          "
 
          HORIZONTAL
-         VERTICALBOX 'Configure System'          
+         VERTICALBOX 'Configure cFS System'          
             MATRIXBYCOLUMNS 2
                BUTTON 'Send Config Cmd'  'cfs_kit_scr_common(self, "CONFIG_SYS_SIMSAT")'
                NAMED_WIDGET config_sys_simsat COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
             END # Matrix
             SETTING BACKCOLOR 162 181 205
-         End # Configure System Box
+         End # Configure cFS System Box
          SETTING BACKCOLOR 162 181 205
      
          VERTICALBOX "OSK Docs && Videos"
@@ -247,50 +247,85 @@ VERTICAL
 
    TABITEM "Pi-Sat"
 
-      LABEL ""
-      LABEL "The <i>Getting Started Guide</i> provides instructions for using the pi-sat repo on a standalone Raspberry Pi"  
-      LABEL "<b>PiSat Control from COSMOS will be available in OSK version 3.2</b>"
-      LABEL ""
+      LABEL "The <b><i>Pi-Sat Getting Started Guide</i></b> provides instructions for using the pi-sat repo on a standalone Raspberry Pi"  
       
-      VERTICALBOX "System - Remote PiSat Target"
+      VERTICALBOX
          HORIZONTAL
-         MATRIXBYCOLUMNS 3 4 4 
+            VERTICAL
+               LABEL "<b>System - Remote PiSat Target</b>"
+               MATRIXBYCOLUMNS 4 4 4 
 
-            BUTTON 'Start PiSat cFS' 'cfs_kit_scr_pisat(self, "START_CFS")'
-            SETTING BACKCOLOR 0 200 0
-            BUTTON 'Reboot PiSat'    'cfs_kit_scr_pisat(self, "REBOOT_PI")'
-            LABEL "          "
-            
-            BUTTON 'Stop PiSat cFS'  'cfs_kit_scr_pisat(self, "STOP_CFS")'
-            SETTING BACKCOLOR 220 50 50
-            BUTTON 'Shutdown PiSat'  'cfs_kit_scr_pisat(self, "SHUTDOWN_PI")'
-            LABEL "          "
+                  BUTTON 'Enable Pi Tlm'   'cfs_kit_scr_pisat(self, "PI_ENA_TLM")'   
+                  SETTING BACKCOLOR 0 200 0
+                  BUTTON 'Start PiSat cFS' 'cfs_kit_scr_pisat(self, "CFS_START")'
+                  SETTING BACKCOLOR 0 200 0
+                  BUTTON 'Reboot PiSat'    'cfs_kit_scr_pisat(self, "PI_REBOOT")'
+                  LABEL "          "
+                  
+                  BUTTON 'Pi Noop Cmd'     'cfs_kit_scr_pisat(self, "PI_NOOP")'   
+                  BUTTON 'Stop PiSat cFS'  'cfs_kit_scr_pisat(self, "CFS_STOP")'
+                  SETTING BACKCOLOR 220 50 50
+                  BUTTON 'Shutdown PiSat'  'cfs_kit_scr_pisat(self, "PI_SHUTDOWN")'
+                  LABEL "          "
 
-         END # Matrix
-         MATRIXBYCOLUMNS 2 4 4
-            LABEL "          "
-            LABEL "System Time(secs)"
-            LABEL "          "
-            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
-         END # Matrix
+               END # Matrix
+            END # Vertical
+
+            VERTICAL 
+               LABEL '<b>Configure System</b>'
+               MATRIXBYCOLUMNS 2 4 4
+
+                  BUTTON 'Send cFS Cmd'  'cfs_kit_scr_pisat(self, "CONFIG_SYS_PISAT")'
+                  NAMED_WIDGET config_sys_pisat COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
+
+                  BUTTON 'Cmd-Tlm Server'  'cfs_kit_scr_pisat(self, "CMD_TLM_SERVER")'
+                  NAMED_WIDGET cmd_tlm_server COMBOBOX "PiSat" "Local cFS"
+                  
+               END # Matrix
+            END # Vertical
+ 
          END # Horizontal
-         SETTING BACKCOLOR 162 181 205
-     
-         LABEL "          "
+      
+         LABEL "<b>PiSat Control</b>"
+         MATRIXBYCOLUMNS 5 4 4
+            LABEL "Cmd Valid Cnt"
+            LABEL "Cmd Invalid Cnt"
+            LABEL "Tlm Packet Cnt"
+            LABEL "            "
+            LABEL "            "
 
-         VERTICALBOX 'Configure System'          
-            MATRIXBYCOLUMNS 4
-               BUTTON 'Cmd-Tlm Server'  'cfs_kit_scr_pisat(self, "CMD_TLM_SERVER")'
-               NAMED_WIDGET cmd_tlm_server COMBOBOX "PiSat" "Local cFS"
-               BUTTON 'Enable Tlm'  'cfs_kit_scr_pisat(self, "ENA_TLM")'   
-               LABEL "          "
-            END # Matrix
-            SETTING BACKCOLOR 162 181 205
-         End # Configure System Box
-         SETTING BACKCOLOR 162 181 205
-     
-      END # System Box      
+            VALUE PISAT EXEC_STATUS CMD_VALID_COUNT WITH_UNITS 10
+            VALUE PISAT EXEC_STATUS CMD_ERROR_COUNT WITH_UNITS 10
+            VALUE PISAT EXEC_STATUS PKT_COUNT       WITH_UNITS 10
+            LABEL "            "
+            LABEL "            "
+         END # Matrix
 
+         LABEL "<b>Last Pi Control Event</b>"
+         VALUE PISAT EXEC_STATUS PI_EVT_MSG WITH_UNITS 70
+         
+         HORIZONTALLINE
+
+         MATRIXBYCOLUMNS 5 4 4
+            LABEL "  <b>cFS Status</b>"
+            LABEL "  <b>cFS Time</b>"
+            LABEL "            "
+            LABEL "            "
+            LABEL "            "
+         
+            VALUE PISAT EXEC_STATUS CFS_RUNNING     WITH_UNITS 10
+            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS   WITH_UNITS 10
+            LABEL "            "
+            LABEL "            "
+            LABEL "            "
+         END # Matrix
+
+         LABEL "<b>cFS Apps</b>"
+         VALUE PISAT EXEC_STATUS CFS_APPS WITH_UNITS 70
+         
+      END # Vertical
+      SETTING BACKCOLOR 162 181 205
+     
       VERTICALBOX 'Pi-Sat Docs && Videos'          
          MATRIXBYCOLUMNS 4
             BUTTON 'Getting Started' 'cfs_kit_scr_pisat(self, "QUICK_START")'
@@ -306,8 +341,7 @@ VERTICAL
 
       VERTICALBOX "PiSat Screens"
          MATRIXBYCOLUMNS 4
-            BUTTON 'Sensor Screen'  'cfs_kit_scr_pisat(self, "SENSOR_SCR")'
-            LABEL "          "
+            BUTTON 'GPIO Demo Screen'  'cfs_kit_scr_pisat(self, "GPIO_DEMO_SCR")'
             LABEL "          "
             LABEL "          "
          END # Matrix
@@ -356,13 +390,13 @@ VERTICAL
          LABEL "          "
 
          HORIZONTAL
-         VERTICALBOX 'Configure System'          
+         VERTICALBOX 'Configure cFS System'          
             MATRIXBYCOLUMNS 2
                BUTTON 'Send Config Cmd'   'cfs_kit_scr_common(self, "CONFIG_SYS_SANDBOX")'
                NAMED_WIDGET config_sys_sandbox COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
             END # Matrix
             SETTING BACKCOLOR 162 181 205
-         End # Configure System Box
+         End # Configure cFS System Box
          SETTING BACKCOLOR 162 181 205
          VERTICALBOX "OSK Docs && Videos"
             MATRIXBYCOLUMNS 2

@@ -1,4 +1,4 @@
-TELEMETRY PICONTROL EXEC_STATUS LITTLE_ENDIAN "PiControl Executive Status from the Pi-Sat"
+TELEMETRY PIDEMO EXEC_STATUS LITTLE_ENDIAN "Executive Status from the Pi-Sat"
   APPEND_ID_ITEM PACKET_ID  16 UINT 0x1001 "Exec Telemetry Packet ID"
      FORMAT_STRING "0x%04X"
   APPEND_ITEM CMD_COUNT     16 UINT "Exec Command Count"
@@ -9,7 +9,7 @@ TELEMETRY PICONTROL EXEC_STATUS LITTLE_ENDIAN "PiControl Executive Status from t
   APPEND_ITEM CPU_UTIL      32 FLOAT "CPU Utilization"
      FORMAT_STRING "%3.2f"
 
-TELEMETRY PICONTROL SENSOR_TLM LITTLE_ENDIAN "PiControl Sensor Telemetry from the Pi-Sat"
+TELEMETRY PIDEMO SENSOR_TLM LITTLE_ENDIAN "Sensor Telemetry from the Pi-Sat"
   APPEND_ID_ITEM PACKET_ID  16 UINT 0x1002 "Sensor Telemetry Packet ID"
      FORMAT_STRING "0x%04X"
   APPEND_ITEM CMD_COUNT     16 UINT "Sensor Command Count"

@@ -2,7 +2,7 @@
 ## cFS - PiSat Sensor Data Screen
 ################################################################################
 <%
-  require 'pisat_screens'
+  require 'pidemo_screens'
 %>
 SCREEN AUTO AUTO 0.5
 
@@ -29,16 +29,26 @@ HORIZONTAL
     
       MATRIXBYCOLUMNS 4
       
-         LABEL "     "
-         LABEL "<b>cFS State</b>"
-         VALUE PICONTROL EXEC_STATUS CFS_RUNNING WITH_UNITS 10
-         LABEL "     "
+         BUTTON 'Send Cmd' 'pidemo_cmd(self, "TARGET_CMD")'
+         NAMED_WIDGET target_cmd COMBOBOX "Start cFS" "Stop cFS" "Reboot Pi" "Shutdown Pi" "Enable Tlm"
+         LABEL "<pre><b>    cFS State</b></pre>"
+         VALUE PIDEMO EXEC_STATUS CFS_RUNNING WITH_UNITS 10
 
          LABEL "     "
          LABEL "     "
          LABEL "     "
          LABEL "     "
+         
+         HORIZONTALLINE
+         HORIZONTALLINE
+         HORIZONTALLINE
+         HORIZONTALLINE
 
+         LABEL "     "
+         LABEL "     "
+         LABEL "     "
+         LABEL "     "
+         
          LABEL "Temperature"
          VALUE HB HK_TLM_PKT TEMP WITH_UNITS 10
          LABEL "Pressure"

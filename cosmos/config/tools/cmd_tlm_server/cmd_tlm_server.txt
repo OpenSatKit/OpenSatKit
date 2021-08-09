@@ -1,3 +1,7 @@
+<%
+   require 'hw_target'
+%>
+
 TITLE 'cFS Command and Telemetry Server'
 
 # OSK TFTP Interface
@@ -6,19 +10,60 @@ BACKGROUND_TASK tftp_task.rb
 # Visiona CFDP Interface
 BACKGROUND_TASK cfdp_engine_task.rb
 
+INTERFACE COSMOSINT cmd_tlm_server_interface.rb
+  TARGET COSMOS
+  DISABLE_DISCONNECT
+
+# Visiona CFDP Interface
+#INTERFACE_TARGET CFDP cmd_tlm_server.txt
+INTERFACE CFDP_INT interfaces/visiona_cfdp_interface.rb
+  TARGET CFDP
+  DISABLE_DISCONNECT
+  PROTOCOL READ interfaces/cfdp_test_protocol
+  PROTOCOL READ interfaces/cfdp_protocol
+  PROTOCOL WRITE interfaces/cfdp_protocol  
+  PROTOCOL WRITE interfaces/cfdp_test_protocol
+
 #PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos
   
 #AUTO_INTERFACE_TARGETS # Use cmd_tlm_server.txt from all targets declared in system.txt
 
-#INTERFACE CFS_PI_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
-#  TARGET HB
-#INTERFACE CFS_LOCAL_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
-
+###################################
+########## cFS Interface ##########
+###################################
+#
 # Can't map same target to two interfaces. Current strategy is to always connect locally
 # and allow a switch to a PiSat interface. Another option may be to start both interfaces
 # and then remap the targets.
-#INTERFACE PISAT_CFS_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil
-INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
+#
+# Uncomment the interface you want to use
+#
+#   LOCAL_CFS_INT - Default OSK configuration when cFS is running on the machine as COSMOS using localhost
+#   PISAT_CFS_INT - Remote Pi-Sat cFS target. IP address is the on used in the pi-sat Quick Start Guide
+#                   One of the Pi-Sat Control Interface below must be enabled when using a remote Pi-Sat
+#                     PiSat QS Guide = 192.168.4.1
+#                     PiSat Demo IP  = 192.168.0.1
+#
+<%
+   pisat_interface = ""
+   case HwTarget::ID
+   when "LOCAL"
+      cfs_interface = "INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil"
+   when "PISAT"
+      cfs_interface   = "INTERFACE PISAT_CFS_INT udp_cs_interface.rb 192.168.4.1 1234 1235 nil nil 128 nil nil"
+      pisat_interface = "INTERFACE PISAT_CTRL_INT udp_interface.rb 192.168.4.1 8080 8081 nil nil 128 10.0 nil
+                            TARGET PISAT"
+   when "PISAT_DEMO"
+      cfs_interface   = "INTERFACE PISAT_CFS_INT udp_cs_interface.rb 192.168.0.1 1234 1235 nil nil 128 nil nil"
+      pisat_interface = "INTERFACE PISAT_DEMO_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
+                            TARGET PIDEMO"
+   else
+      raise "Error in hw_target.rb target ID definition. #{HwTarget::ID} is not a valid cmd_tlm_server option."
+   end         
+   puts "#{cfs_interface}\n"
+%>
+<%= cfs_interface %>
+
   PROTOCOL READ interfaces/cfdp_test_protocol
   PROTOCOL READ interfaces/cfdp_protocol
   PROTOCOL WRITE interfaces/cfdp_protocol  
@@ -69,6 +114,7 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   TARGET OSK_C_DEMO
   TARGET OSK_C_PROTO
   TARGET OSK_CPP_PROTO
+  
   # CFDP Engine
   TARGET CFDP_TEST
   TARGET PDU
@@ -79,30 +125,23 @@ INTERFACE LOCAL_CFS_INT udp_cs_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil 
   
   # User Apps
 
-  #<cfs_kit>Create app tool will add target between the cfs_kit tags
+  #<cfs_kit> Create app tool adds new targets between the cfs_kit tags
 
 
   #</cfs_kit>
   
-  
-  
-INTERFACE COSMOSINT cmd_tlm_server_interface.rb
-  TARGET COSMOS
-  DISABLE_DISCONNECT
+###############################################
+########## Pi-Sat Control Interfaces ##########
+###############################################
 
+#
+# Enable (Comment the 'DONT_CONNECT' line) the Pi-Sat interface that
+# corresponds to your configuration when using PISAT_CFS_INT
+#
+#   PISAT_CTRL_INT - Interface 
+#   PISAT_DEMO_INT - Special interface to Alan Cudmore's PiSat
+#
+<%= pisat_interface %>
 
-# Visiona CFDP Interface
-#INTERFACE_TARGET CFDP cmd_tlm_server.txt
-INTERFACE CFDP_INT interfaces/visiona_cfdp_interface.rb
-  TARGET CFDP
-  DISABLE_DISCONNECT
-  PROTOCOL READ interfaces/cfdp_test_protocol
-  PROTOCOL READ interfaces/cfdp_protocol
-  PROTOCOL WRITE interfaces/cfdp_protocol  
-  PROTOCOL WRITE interfaces/cfdp_test_protocol
   
 
-INTERFACE PISAT_CONTROL_INT udp_interface.rb 192.168.0.1 8080 8081 nil nil 128 10.0 nil
-  TARGET PICONTROL
-  DONT_CONNECT
-  
