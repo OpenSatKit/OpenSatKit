@@ -150,7 +150,7 @@ end # create_app_manage_directories()
 #
 # Get the default directories from the JSON configuration file. All of the 
 # directories should be defined in the config file so the config definitions
-# are verified regardles of whether the user needs it.
+# are verified regardless of whether the user needs it.
 #
 def get_default_dirs(config)
 

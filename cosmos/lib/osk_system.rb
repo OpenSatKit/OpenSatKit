@@ -114,7 +114,7 @@ module Osk
       end 
       
       # 
-      # Force a termination of an executing cFS if one exsists. This method
+      # Force a termination of an executing cFS if one exists. This method
       # is used when user wants a clean system
       #      
       def self.stop_n_start_cfs(target, interactive = true)

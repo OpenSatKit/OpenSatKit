@@ -168,18 +168,18 @@ amt_tbl_data_addr = evt_msg[evt_msg.rindex("0x"),10]
 
 Osk::flight.send_cmd("MM","POKE_MEM with DATA_SIZE 16, MEM_TYPE 1, DATA #{DEMO_CORRUPT_DATA}, ADDR_OFFSET #{amt_tbl_data_addr}, ADDR_SYMBOL_NAME ''")
 
-status_bar("Wait for HS.AppMon_Tbl checksum failure. This could take severals seconds")
+status_bar("Wait for HS.AppMon_Tbl checksum failure. This could take several seconds")
 wait  # <Go> to continue
 
-# Step 3.4 - Confirm currupted table 
+# Step 3.4 - Confirm corrupted table 
 
 # Dump App Monitor table and look at the corrupted table values
 Osk::Ops::send_cfe_dump_tbl_cmd("HS.#{FswConfigParam::HS_APP_MON_TBL_NAME}", Osk::TBL_MGR_DEF_HS_AMT_TBL)
 
-status_bar("Wait for HS.AppMon_Tbl checksum failure. This could take severals seconds")
+status_bar("Wait for HS.AppMon_Tbl checksum failure. This could take several seconds")
 wait  # <Go> to continue
 
-# Step 3.5 - Re-baseline table checksum. This would only be done if a tableis intentionally changed 
+# Step 3.5 - Re-baseline table checksum. This would only be done if a table is intentionally changed 
 
 # Computing a new baseline checksum prevents the checksum from failing.
 #Osk::flight.send_cmd("CS","DIS_TABLES_TBL_ENTRY with TBL_NAME HS.#{FswConfigParam::HS_APP_MON_TBL_NAME}")

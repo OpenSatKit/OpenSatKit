@@ -171,7 +171,7 @@ void @TEMPLATE@_SendHousekeepingPkt(void)
    
    /*
    ** EXTBL/EXOBJ Data
-   ** - At a minimum all OBJECT variables effected by a reset must be included
+   ** - At a minimum all OBJECT variables affected by a reset must be included
    */
 
    @Template@HkPkt.LastAction       = LastTbl->LastAction;

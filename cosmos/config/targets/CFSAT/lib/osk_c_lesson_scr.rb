@@ -288,7 +288,7 @@ def osk_c_lesson_create_scr(lesson_id, lesson_info)
            
          f.write (scr_header)
 
-         # Even thought loop didn't work out, I left common screen pattern of dynamic text
+         # Even though loop didn't work out, I left common screen pattern of dynamic text
          # between header and footer strings
          scr_text = "
             NAMED_WIDGET app_cfg_h CHECKBUTTON 'app_cfg.h' #{((lesson_src_file["app_cfg.h"])["completed"] == true)? "CHECKED" : "UNCHECKED"}

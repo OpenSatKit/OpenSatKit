@@ -48,7 +48,7 @@ void @TEMPLATE@_AppMain(void)
 
     /*
     ** Perform application specific initialization
-    ** If the Intialization fails, set the RunStatus to CFE_ES_APP_ERROR
+    ** If the Initialization fails, set the RunStatus to CFE_ES_APP_ERROR
     ** and the App will not enter the RunLoop.
     */
     Status = @TEMPLATE@_AppInit();
@@ -179,7 +179,7 @@ int32 @TEMPLATE@_AppInit(void)
     @TEMPLATE@_AppData.LimitCmd  = @TEMPLATE@_LIMIT_CMD;
 
     /*
-    ** Initialize event filter table for envents we want to filter.
+    ** Initialize event filter table for events we want to filter.
     */
     @TEMPLATE@_AppData.EventFilters[0].EventID = @TEMPLATE@_PROCESS_INF_EID;
     @TEMPLATE@_AppData.EventFilters[0].Mask    = CFE_EVS_EVERY_FOURTH_ONE;
@@ -303,7 +303,7 @@ int32 @TEMPLATE@_AppInit(void)
        else
        {
           /* 
-          ** Restore Failied, Perform baseline initialization 
+          ** Restore Failed, Perform baseline initialization 
           */
           @TEMPLATE@_AppData.WorkingCriticalData.DataPtOne   = 1;
           @TEMPLATE@_AppData.WorkingCriticalData.DataPtTwo   = 2;

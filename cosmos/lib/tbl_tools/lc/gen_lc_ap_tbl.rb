@@ -13,7 +13,7 @@ require 'json'
 
 #
 # This class creates a hash from telemetry CSV file. The CSV file does not
-# have a headr row and each row contains
+# have a header row and each row contains
 #    MNEMONIC, TYPE, APID, OFFSET, MASK, DESCRIPTION
 #          
 class TlmCsv

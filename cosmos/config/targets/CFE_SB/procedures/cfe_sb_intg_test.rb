@@ -1,5 +1,5 @@
 ###############################################################################
-# Verify the cFE Softwre Bus application is fully integrated with OSK.
+# Verify the cFE Software Bus application is fully integrated with OSK.
 #
 # Notes:
 #   1. See app_intg_test.rb's prologue for a description of the purpose and

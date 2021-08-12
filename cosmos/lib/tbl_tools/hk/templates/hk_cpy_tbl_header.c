@@ -11,7 +11,7 @@
 **      at @date-time@ 
 **      and should NOT be manually modified.
 **   2. The table entry MID symbols are resolved during the table generation
-**      process so its not necessary to include headers from the apps that  
+**      process so it's not necessary to include headers from the apps that  
 **      supply the data for the combo packets.
 **
 ** Template parameters:

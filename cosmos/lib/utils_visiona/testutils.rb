@@ -22,7 +22,7 @@ def miss_pdus(*args)
 	wait(1)
 end
 
-# This function specify how long a file transaction should performn
+# This function specifies how long a file transaction should perform
 def calculateWaitTime(fileSize, link)
 
 	# fileSize should be in bytes, so...
@@ -65,7 +65,7 @@ def TO_enabled?(ip, destport, routemask, ifiledesc, default_timeout)
 end
 
 # This is a specific function that verifies if TO is available.
-# This is to be called within a test event, so it can contains
+# This is to be called within a test event, so it can contain
 # scripting commands for COSMOS.
 def TO_available?(default_timeout=5)
 
@@ -79,7 +79,7 @@ def TO_available?(default_timeout=5)
 end
 
 # This is a specific function that verifies if CF is available.
-# This is to be called within a test event, so it can contains
+# This is to be called within a test event, so it can contain
 # scripting commands for COSMOS.
 def CF_available?(default_timeout)
 
@@ -93,7 +93,7 @@ def CF_available?(default_timeout)
 	puts "CF is ok."
 end
 
-# This function return the minimal amount of PDUS that will be transfered for a given
+# This function returns the minimal amount of PDUS that will be transferred for a given
 # file. fileSize must be in kilobytes.
 def PDUS?(pdu_size, fileSize)
 
@@ -117,7 +117,7 @@ def downlinkAndCheck(check, classe, channel, priority, preserve, peerID, sourceF
 	wait(1)
 end
 
-# This function starts a file downlink transfer on satelite and
+# This function starts a file downlink transfer on satellite and
 # validate it using CF and TO HK tlm packets
 def downlinkTransfer(classe, channel, priority, preserve, peerID, sourceFileName, destFileName, waitTime)
 

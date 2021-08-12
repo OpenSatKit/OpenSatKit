@@ -4,7 +4,7 @@
 # Notes:
 #   1.  Most HS commands don't require parameters and could be sent directly
 #       from this file. However dispatching all of the commands in the same
-#       manner using a script file isolates any futur command related changes
+#       manner using a script file isolates any future command-related changes
 #       to the script file.  
 #
 # License:

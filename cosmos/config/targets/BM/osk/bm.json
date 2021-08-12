@@ -11,7 +11,7 @@
       "to run ranging from simple a Dhrystone to complex multi-app",
       "software bus message passing scenarios. Benchmarks are configurable",
       "including the number of executions. Statistical reports are generated",
-      "for when multiple runs are performd."
+      "for when multiple runs are performed."
    ],
       
    "cosmos": {

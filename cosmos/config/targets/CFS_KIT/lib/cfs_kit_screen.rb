@@ -524,7 +524,7 @@ def cfs_kit_scr_sandbox(screen, cmd)
       # 
       # Create a list of apps that have been compiled (.o file exists in /cf directory) but have
       # not been loaded. Create a new screen that allows the user to select from a list to load
-      # an app. This is a precurser to an app store
+      # an app. This is a precursor to an app store
       #
       # 1. Get current FSW apps
       #    A. Get cFE ES app log
@@ -747,7 +747,7 @@ def cfs_kit_create_tutorial_screen
    #
    ###############################################################################
    <% 
-      requie 'tutorial_screen'
+      require 'tutorial_screen'
    %>
    SCREEN AUTO AUTO 0.5
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221

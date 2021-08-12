@@ -9,7 +9,7 @@
       "KIT_SCH provides a method of generating software bus messages at pre-determined",
       "timing intervals allowing the system to operate in a Time Division Multiplexed",
       "(TDM) manner with deterministic behavior. This is very similar to the",
-      "NASA/Goddard SCH app except that it uses JSON text files as oppposed to",
+      "NASA/Goddard SCH app except that it uses JSON text files as opposed to",
       "SCH's binary tables."
    ],
 

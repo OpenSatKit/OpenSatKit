@@ -3,7 +3,7 @@
 #
 # Notes:
 #   1. Originally a rehost of the memory management screen-based demo. It may
-#      diverge as needed. This illustrate basic memory management features using
+#      diverge as needed. This illustrates basic memory management features using
 #      the Memory Management(MM) app to peek/load and poke/dump memory and the
 #      Memory Dwell(MD) app to autonomously monitor and telemeter memory
 #      locations.

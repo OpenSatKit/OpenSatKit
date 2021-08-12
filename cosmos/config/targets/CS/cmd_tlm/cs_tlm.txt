@@ -73,7 +73,7 @@ TELEMETRY CS HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping Packet St
       FORMAT_STRING  "0x%08X"
    APPEND_ITEM OS_BASELINE       32 UINT "Baseline checksum for the OS code segment"
       FORMAT_STRING  "0x%08X"
-   APPEND_ITEM CFE_CORE_BASELINE 32 UINT "Basline checksum for the cFE core"
+   APPEND_ITEM CFE_CORE_BASELINE 32 UINT "Baseline checksum for the cFE core"
       FORMAT_STRING  "0x%08X"
    APPEND_ITEM ONESHOT_ADDR      32 UINT "Address used in last one shot checksum command"
       FORMAT_STRING  "0x%08X" 

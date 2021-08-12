@@ -4,7 +4,7 @@
 # Notes:
 #   1. Abstract file transfer services so different protocols can be used
 #      Currently hard coded for TFTP.
-#   2. The orginal design concept evolved from having a single file transfer 
+#   2. The original design concept evolved from having a single file transfer 
 #      protocol to using both TFTP and CFDP. CFDP is used/configured for the
 #      reference mission and TFTP has been left in place for OSK
 #      "infrastructure". 
@@ -36,7 +36,7 @@ module Osk
    end # Class FileTransfer
    
    #
-   # The simple get/put methods are designed to be used in oeprational type
+   # The simple get/put methods are designed to be used in operational type
    # procedures that are synchronous and have user interaction. The threaded
    # get/put versions are for background tasks.
    #

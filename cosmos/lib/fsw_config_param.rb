@@ -14,7 +14,7 @@
 #      identical to the FSW #define. If the parameter is from a another
 #      header file the name may not be preserved. 
 #   4. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
-#   5. TODO - Not all defintions are config params. See MD
+#   5. TODO - Not all definitions are config params. See MD
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
