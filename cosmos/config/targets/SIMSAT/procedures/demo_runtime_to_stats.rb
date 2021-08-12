@@ -26,7 +26,7 @@ require 'fsw_config_param'
 
 # 
 # Scheduler and packet test tables are use housekeeping packets that are
-# mature and unlikely to change much in teh future
+# mature and unlikely to change much in the future
 #
 # Slot 1
 #   CFE_ES   156
@@ -89,7 +89,7 @@ spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'KIT_TO HK_TLM_PKT'")
 # - KIT_SCH and KIT_TO are not synched so the phasing of which packets are processed
 #   between each KIT_TO execution are not consistent each time the demo is 
 #   run. You'll typically see the bytes/sec bounced between two values such as
-#   201 and 219 for the 0.25Hz case so the aevrage won't be reported as 210 exactly. 
+#   201 and 219 for the 0.25Hz case so the average won't be reported as 210 exactly. 
 # - Even though KIT_TO uses OS_TaskDelay()to manage its main loop any drift is
 #   neglible for a short demo
 #
@@ -126,7 +126,7 @@ wait("KIT_TO HK_TLM_PKT STATS_VALID == 'TRUE'", RAD_STATS_TRUE_TLM_TIMEOUT)
 #
 # 3. Collect and report 1s data
 #
-wait # Review 1s configuraton. Click <Go> to collect and report 1s data
+wait # Review 1s configuration. Click <Go> to collect and report 1s data
 
 pkts_per_sec  = tlm("KIT_TO HK_TLM_PKT PKTS_PER_SEC")
 bytes_per_sec = tlm("KIT_TO HK_TLM_PKT BYTES_PER_SEC")
@@ -167,7 +167,7 @@ wait("KIT_TO HK_TLM_PKT STATS_VALID == 'TRUE'", RAD_STATS_TRUE_TLM_TIMEOUT)
 #
 # 5. Collect and report 4s data
 #
-wait # Review 4s configuraton. Click <Go> to collect and report 4s data
+wait # Review 4s configuration. Click <Go> to collect and report 4s data
 
 pkts_per_sec  = tlm("KIT_TO HK_TLM_PKT PKTS_PER_SEC")
 bytes_per_sec = tlm("KIT_TO HK_TLM_PKT BYTES_PER_SEC")

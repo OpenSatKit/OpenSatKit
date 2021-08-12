@@ -10,7 +10,7 @@
 #      Osk::flight.xxx.send_cmd(). cmd() has no verification and has faster
 #      response while the Osk method verifies the command and is slower. If
 #      a demo button is repeatedly pushes that causes an error it's good to 
-#      notify the user. If enabling debug messages fails then its no big deal.
+#      notify the user. If enabling debug messages fails then it's no big deal.
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -71,12 +71,12 @@ FMD_INSTRUCT_1 = ["The file management screen was opened. This step illustrates 
                   "<Demo> Send FM SEND_DIR_PKT cmd to display the first 10 entries of the #{Osk::FLT_SRV_DIR}",
                   "                directory",
                   "",
-                  "Notice that both the FM and child child task cmd counters increment when the",
+                  "Notice that both the FM and child task cmd counters increment when the",
                   "cmd is issued because FM's child task creates the directory listing."]
 
 FMD_INFO_1 = "\n\
 The SEND_DIR_PKT command takes an offset argument that specifies the starting index into \
-the directory listing. An offset of 0 is used through out this demo.\n\n\
+the directory listing. An offset of 0 is used throughout this demo.\n\n\
 \
 FM's WRITE_DIR_TO_FILE cmd can be used to write an entire directory listing to a file.\n\n\
 \

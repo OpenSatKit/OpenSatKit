@@ -44,7 +44,7 @@ module SimSat
    GND_SRV_DIR = "#{Osk::GND_SRV_DIR}/#{SIMSAT_DIR}"
    GND_REL_SRV_DIR = "#{Osk::REL_SRV_DIR}/#{SIMSAT_DIR}"
 
-   # CFDP App has it's own dir ending in slash conventions and defaults to simsat's needs 
+   # CFDP App has its own dir ending in slash conventions and defaults to simsat's needs 
    CFDP_FLT_DIR = FLT_REC_DIR + "/"
    CFDP_GND_DIR = GND_REL_SRV_DIR + "/"
 

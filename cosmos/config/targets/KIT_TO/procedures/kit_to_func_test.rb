@@ -101,7 +101,7 @@ class KitToFuncTest < Cosmos::Test
       # - KIT_SCH and KIT_TO are not synched so the phasing of which packets are processed
       #   between each KIT_TO execution are not consistent each time the system is 
       #   started. You'll typically see the bytes/sec bounced between two values such as
-      #   201 and 219 for the 0.25Hz case so the aevrage won't be reported as 210 exactly. 
+      #   201 and 219 for the 0.25Hz case so the average won't be reported as 210 exactly. 
       # - Note even though KIT_TO uses OS_TaskDelay()to manage its main loop any drift is
       #   neglible for a short test
       # - The approach is to collect 4 HK packets and verify the average is within

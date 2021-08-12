@@ -8,7 +8,7 @@
 #
 # License:
 #   TFTP class written by Guillaume Marcais, and distributed under the Ruby
-#   licensed. See TFTP prolue below.
+#   licensed. See TFTP protocol below.
 #
 ###############################################################################
 

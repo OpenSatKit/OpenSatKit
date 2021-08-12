@@ -1,6 +1,6 @@
 {
    "name": "Telemetry Output Test Table",
-   "description": "Send 1 of 4. Event msg are needed for setup but are not part of the test and must be disable.",
+   "description": "Send 1 of 4. Event msg are needed for setup but are not part of the test and must be disabled.",
    "packet-array": [
   
       "packet": {

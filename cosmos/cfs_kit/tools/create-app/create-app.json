@@ -7,7 +7,7 @@
       "It's not solving a complex problem so it should be very easy to use, configure,",
       "extend, and maintain.",
       
-      "The 'dir' struture defines the location of template sources and the destinations",
+      "The 'dir' structure defines the location of template sources and the destinations",
       "for generated artifacts. The '/' must be used as a path separator.",
       "   templates  - Relative path from create-app to the base template directory",
       "                The template directory contains a directory for each template",

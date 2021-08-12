@@ -143,7 +143,7 @@ VERTICAL
                VALUE DS FILE_INFO_PKT FILE1_NAME WITH_UNITS 30
             END
             HORIZONTAL
-               LABEL "Currrent science file: "
+               LABEL "Current science file: "
                VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
             END
             HORIZONTAL

@@ -27,7 +27,7 @@ require 'json'
 # Virtual base class for different keyword types. The keyword
 # class manages the conversion between the CSV entry and a 
 # string used to produce the table source file so child classes
-# shoul override teh str() method
+# shoul override the str() method
 #          
 class Keyword
   
@@ -125,7 +125,7 @@ class CsvFilterFile
    
    #
    # keyword hash keys
-   #  - CSV file can defined multiple filters so they are not constants
+   #  - CSV file can define multiple filters so they are not constants
    #  - "NIL" is not in the CSV file but is used as a hash key when the CSV
    #    entry is 'nil' object 
    #
@@ -201,7 +201,7 @@ class CsvFilterFile
    
    #
    # Process the CSV file KEYWORD row. The row is passed in as an array
-   # of strings. Raise an exception if required keywords is not found
+   # of strings. Raise an exception if required keywords are not found
    #
    def set_keyword_columns(keyword_row)
    

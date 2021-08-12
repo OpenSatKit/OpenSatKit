@@ -39,7 +39,7 @@ module ISIM
          
          #
          # These tests verify the table functionality. Other tests verify the table parameters
-         # are propoerly used. Default table values must be restored when the test exists.
+         # are properly used. Default table values must be restored when the test exists.
          #
          # 1. Dump and verify default table
          # 2. Load the default dump table to verify dump format is valid         

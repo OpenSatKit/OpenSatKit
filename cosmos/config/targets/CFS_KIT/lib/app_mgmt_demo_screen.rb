@@ -50,7 +50,7 @@ AMD_INFO_0 = Osk::DEMO_STEP_NO_INFO
 
 AMD_INSTRUCT_1 = ["The App Management and App Summary screens have been opened. Note the",
                   "number of registered apps is less than the tasks because the cFE apps are",
-                  "not part of the regsitered app count and some apps have child tasks.",
+                  "not part of the registered app count and some apps have child tasks.",
                   " ",
                   "<Demo> Send CFE_ES SEND_APP_INFO for #{AMD_INFO_APP} which is the same as the",
                   "               'Get App Info' button the App Management screen.",
@@ -59,7 +59,7 @@ AMD_INSTRUCT_1 = ["The App Management and App Summary screens have been opened. 
 AMD_INFO_1 = "\n\n\
 The App Summary window lists all of the applications that are pre-installed \n\n\
 in the kit. The #{Osk::FLT_SRV_DIR}/cfe_es_startup.src file defines which apps are loaded\n\n\
-during initialization adn these are counted as 'registered apps'. Most of the \n\n\
+during initialization and these are counted as 'registered apps'. Most of the \n\n\
 information in the registered app display comes from the startup script file:\n\n\
 File Name, App Name, Entry Point, Priority, Stack Size, and Exception Action.\n\n\
 "
@@ -81,7 +81,7 @@ as a parameter: Bit 0=Debug, 1=Info, 2=Error, 3==Critical. A one will cause the\
 command to take effect.\n\n\n\
 
 The cFE_ES and cFE_EVS debug events are enabled for this demo so more information\n\n\
-is displayed during the demoes.\n\n\n\
+is displayed during the demos.\n\n\n\
 "
 
 # 3 - Stop an app
