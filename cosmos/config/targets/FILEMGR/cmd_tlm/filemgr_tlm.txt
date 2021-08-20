@@ -37,7 +37,7 @@ TELEMETRY FM FILE_INFO_PKT <%= Osk::Cfg.processor_endian %> "Get File Info telem
   APPEND_ITEM OPEN_STATUS    8 UINT "Status indicating whether the file is open or closed"
     STATE FALSE   0
     STATE TRUE    1
-  APPEND_ITEM COMPUTE_CRC    8 UINT "Boolean flag indictaing whether to compute a CRC"
+  APPEND_ITEM COMPUTE_CRC    8 UINT "Boolean flag indicating whether to compute a CRC"
     STATE FALSE   0
     STATE TRUE    1
   APPEND_ARRAY_ITEM SPARE    8 UINT 16 "Structure padding"

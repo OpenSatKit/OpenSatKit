@@ -25,7 +25,7 @@ module CFDP
       return if content.empty?
       content = content[0]
 
-      # That means i'm creating a PDUHeader from a byte stream
+      # That means I'm creating a PDUHeader from a byte stream
       if (content.is_a?(Array))
 
         # first verify length of given pduHeader

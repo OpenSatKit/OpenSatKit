@@ -2,8 +2,8 @@
 # SimSat Ops Screen
 #
 # Notes:
-#   1. A balance was was made to include enough telemetry to follow the example
-#      ops procedure, but not too much data that it makes its difficult to
+#   1. A balance was made to include enough telemetry to follow the example
+#      ops procedure, but not too much data that it makes it difficult to
 #      digest.
 #   2. The screen is designed so it can be used standalone or as a local screen
 #      to an ops script. The keyword/comment "#local#" local is used for lines
@@ -53,7 +53,7 @@ VERTICALBOX "Instrument Sim (ISIM)"
   END # Matrix
   
   HORIZONTAL
-    LABEL "Currrent science file: "
+    LABEL "Current science file: "
     VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
   END
   

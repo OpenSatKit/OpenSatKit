@@ -1,14 +1,14 @@
 ###############################################################################
 # OCK C Demo Ops Example Script
 #
-# This script demostrates how the OSK C Demo app can be used in an operational
+# This script demonstrates how the OSK C Demo app can be used in an operational
 # script. It's for illustrative purposes to show how to use an app's command and
-# telemetry interface in a script. OSK C Demo does not have pratcical operational
+# telemetry interface in a script. OSK C Demo does not have practical operational
 # functionality. 
 #
 # Notes:
 #   1. See osk_c_demo_func_test.rb for an example functional test.
-#   2. OSK provides a scripting environment on top of COSMOS that perform
+#   2. OSK provides a scripting environment on top of COSMOS that performs
 #      higher level functionality like verifying a valid command counter
 #      increments after a command is processed.
 #

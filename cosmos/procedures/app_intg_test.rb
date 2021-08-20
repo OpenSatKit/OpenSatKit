@@ -4,11 +4,11 @@
 # Notes:
 #   1. This procedure verifies anything relevant with making the app functional
 #      within the OSK build and runtime environments. Some app functionality is
-#      exercised to achieved these goals but this test is not intended to be a
+#      exercised to achieve these goals but this test is not intended to be a
 #      comprehensive functional test.
-#   2. Something as simple as aending a noop command and verifying the event 
+#   2. Something as simple as sending a noop command and verifying the event 
 #      message reception, the app version in the event message, and the app's
-#      valid command count in its houseeping packet verifies the command mid,  
+#      valid command count in its housekeeping packet verifies the command mid,  
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public

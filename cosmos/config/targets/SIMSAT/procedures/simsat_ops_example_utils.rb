@@ -5,7 +5,7 @@
 # environment. They are contained in a single file to separate them from other
 # scripts that are more representative of 'real' test and operational scripts.
 # For example instrument management and cFS app configuration scripts are not
-# included in this file because a mission oudl typically have scripts that 
+# included in this file because a mission would typically have scripts that 
 # perform those functions so they are in their own files so they can serve as
 # examples.
 #

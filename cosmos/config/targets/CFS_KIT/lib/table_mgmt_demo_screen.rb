@@ -59,10 +59,10 @@ TMD_INFO_0 = "\n\
 The Memory Dwell(MD) application creates a telemetry packet containing the contents of memory \
 locations that are specified in its 'dwell' table. MD is typically used for in-orbit FSW \
 maintenance or for telemetry changes that occur late in a spacecraft's development lifecycle \
-when its undesirable to change a telemetry packet definition.\n\n\
+when it's undesirable to change a telemetry packet definition.\n\n\
 \
 This demo configures MD to monitor memory starting at symbol #{FswConfigParam::MM_SYMBOL} plus offset #{FswConfigParam::MM_OFFSET_W0}. \
-These are known locations that can be safety altered during the demo. \
+These are known locations that can be safely altered during the demo. \
 "
 
 # 1 - Display table registry
@@ -78,10 +78,10 @@ TMD_INFO_1 = "\n\
 The Memory Dwell(MD) application creates a telemetry packet containing the contents of memory \
 locations that are specified in its 'dwell' tables. MD is typically used for in-orbit FSW \
 maintenance or for telemetry changes that occur late in a spacecraft's development lifecycle \
-when its undesirable to change a telemetry packet definition.\n\n\
+when it's undesirable to change a telemetry packet definition.\n\n\
 \
 This demo configures MD to monitor memory starting at symbol #{FswConfigParam::MM_SYMBOL} plus offset #{FswConfigParam::MM_OFFSET_W0}. \
-These are known locations that can be safety altered during the demo. \
+These are known locations that can be safely altered during the demo. \
 "
 
 # 2 - Configure MD table and poke values in locations being monitored
@@ -95,7 +95,7 @@ TMD_INSTRUCT_2 = ["Memory Dwell's telemetry screen was opened. The commands sent
 TMD_INFO_2 = "\n\
 Jamming is a cFS term that means changing a table's content without using the normal table load \
 process. A ground command is the typical method for jamming a table. If an application autonomously \
-updates its table then the portion of table that is auonomously updated should probably be a dump-only \
+updates its table then the portion of table that is autonomously updated should probably be a dump-only \
 table or using a table may not be the best design choice. \n\n\
 \
 Memory Manager (MM) is an app that provides a ground interface for directly reading/writing memory locations. \

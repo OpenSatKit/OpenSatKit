@@ -2,12 +2,12 @@
 # SimpleSat Request Telemetry Class
 #
 # Used to as a background thread that requests status telemetry packets so 
-# DS and FM telemetry points are updatedd
+# DS and FM telemetry points are updated
 #
 # Notes:
 #   1. This script is part of a training module. It is for illustrative
 #      purposes and not intended to be an actual ops script. 
-#   2. This scrpt is ignorant of whether a ground contact is being
+#   2. This script is ignorant of whether a ground contact is being
 #      simulated as active or inactive. 
 #   3. Threading doesn't seem to be supported by ScripRunner so a new 
 #      new thread must be started from the TlmViewer script if this is
@@ -36,7 +36,7 @@ require 'simsat_isim_mgmt'
 
 #
 # The thread can be stopped in two ways:
-# 1. Direct invocation o fthe stop() method
+# 1. Direct invocation of the stop() method
 # 2. The creation of a special file SimSat::GND2FSW_STOP_OPS_FILE
 #
 class SimSatReqTlm < Thread

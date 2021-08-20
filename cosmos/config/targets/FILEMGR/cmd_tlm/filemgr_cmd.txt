@@ -34,7 +34,7 @@ COMMAND FILEMGR MOVE_FILE <%= Osk::Cfg.processor_endian %> "Move the source file
   APPEND_PARAMETER DEST_FILE  512 STRING <%= Osk::FLT_SRV_DIR_SEP %>  "Destination /path/filename"
 
 
-COMMAND FILEMGR RENAME_FILE <%= Osk::Cfg.processor_endian %> "Rename the source to the destinition file on the same file system (no data is moved). Source must exist and destination must not exist. Use copy command across file systems. Use app and child command counters for verification."
+COMMAND FILEMGR RENAME_FILE <%= Osk::Cfg.processor_endian %> "Rename the source to the destination file on the same file system (no data is moved). Source must exist and destination must not exist. Use copy command across file systems. Use app and child command counters for verification."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 6, 128) %>
   APPEND_PARAMETER SRC_FILE  512 STRING <%= Osk::FLT_SRV_DIR_SEP %> "Source /path/filename"
   APPEND_PARAMETER DEST_FILE 512 STRING <%= Osk::FLT_SRV_DIR_SEP %> "Destination /path/filename"
@@ -95,7 +95,7 @@ COMMAND FILEMGR WRITE_DIR_TO_FILE <%= Osk::Cfg.processor_endian %> "Write a dire
   APPEND_PARAMETER SIZE_TIME_MODE 16 UINT MIN_UINT16  MAX_UINT16  0 "Option to query size, time, and mode of files (CPU intensive)"
 
 
-COMMAND FILEMGR SEND_DIR_PKT <%= Osk::Cfg.processor_endian %> "Sends a 'directory listing' telemetry packet containing a irectory listing of the entries in the specified directory starting at the command specified offset. Use app and child command counters for verification."
+COMMAND FILEMGR SEND_DIR_PKT <%= Osk::Cfg.processor_endian %> "Sends a 'directory listing' telemetry packet containing a directory listing of the entries in the specified directory starting at the command specified offset. Use app and child command counters for verification."
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 17, 68) %>
   APPEND_PARAMETER DIRECTORY       512 STRING <%= Osk::FLT_SRV_DIR_SEP %>  "Directory to bee listed"
   APPEND_PARAMETER DIR_LIST_OFFSET  16 UINT MIN_UINT16 MAX_UINT16 0 "Index of 1st dir entry to put in packet"

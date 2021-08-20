@@ -257,7 +257,7 @@ public class CreateApp {
          ex.printStackTrace();
          
          // May be situations when user can't update the COSMOS file so don't
-         // treat it like an error and just retrun the status
+         // treat it like an error and just return the status
          
       }
          
