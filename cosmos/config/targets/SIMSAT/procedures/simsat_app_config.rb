@@ -12,7 +12,7 @@
 # Notes:
 #   1. This script is part of a training module. It is for illustrative
 #      purposes and not intended to be an actual ops script. The verify_noop
-#      calls ensure each ap required for the example is loaded and running.
+#      calls ensure each app required for the example is loaded and running.
 #      The noop calls are commented out if another command is sent to an app
 #      because that command will confirm the app is running.  
 #   2. The ISIM app uses more event messages than a typical flight app. The

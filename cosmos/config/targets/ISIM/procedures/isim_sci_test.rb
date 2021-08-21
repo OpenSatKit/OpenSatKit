@@ -35,7 +35,7 @@ module ISIM
          #
          # These tests verify the valid usage of the instrument science commands. Some other 
          # functions like power on/off are exercised only to the intent to verify the
-         # sceince behavior. Other tests like the power test ill completely verify these
+         # sceince behavior. Other tests like the power test will completely verify these
          # functions.
          #
          # 1. Enable science
@@ -49,7 +49,7 @@ module ISIM
                   (tlm("#{@app.target_hk_str} SCI_STATE")       == "OFF")   and
                   (tlm("#{@app.target_hk_str} FAULT_PRESENT")   == "FALSE"))
          
-            raise "ISIM Sceince Test started in non-default state" 
+            raise "ISIM Science Test started in non-default state" 
             
          end
          

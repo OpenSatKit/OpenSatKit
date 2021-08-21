@@ -162,7 +162,7 @@ void PROTO42_SendHousekeepingPkt(void)
 
    /*
    ** EXOBJ Data
-   ** - At a minimum all OBJECT variables effected by a reset must be included
+   ** - At a minimum all OBJECT variables affected by a reset must be included
    */
 
    Proto42HkPkt.ExTblLastLoadValid  = Proto42.ExTbl.LastLoadValid;

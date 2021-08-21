@@ -469,7 +469,7 @@ public class GenApp extends JFrame {
             else {
                instructions = instructions + 
                   "The COSMOS cmd_tlm_server file " + Constants.COSMOS_CONFIG_TARGET_FILE +"\n" +
-                  "was not updated. You must manually add the new app's target to the fille and\n" +
+                  "was not updated. You must manually add the new app's target to the file and\n" +
                   "restart the cmd_tlm_server for the new app to be installed.";
             }
 

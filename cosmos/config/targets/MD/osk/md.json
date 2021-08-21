@@ -6,7 +6,7 @@
    "url": "https://github.com/nasa/MD",
 
    "description": [
-      "MD monitors user-defined memory addresses accessable by the CPU. This is useful",
+      "MD monitors user-defined memory addresses accessible by the CPU. This is useful",
       "for debugging and for late mission lifecycle changes when changes to existing",
       "apps may not be desirable. MD can be used to create new telemetry packets rather",
       "than changing an existing app."

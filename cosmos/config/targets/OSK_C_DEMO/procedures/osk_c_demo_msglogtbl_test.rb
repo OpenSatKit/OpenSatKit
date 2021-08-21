@@ -31,7 +31,7 @@ module OSK_C_DEMO
       def valid
       
          #
-         # 1. Dump default table, transfer and veriy values equal osk_defs defaults
+         # 1. Dump default table, transfer and verify values equal osk_defs defaults
          # 2. Load dumped default table to verify 
          #         
 

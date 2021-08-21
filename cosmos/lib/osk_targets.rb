@@ -4,7 +4,7 @@
 # Notes:
 #   1. Most OSK target infrastructure (screens, libs, etc) is managed in the
 #      typical COSMOS manner. Some artifacts are based on the apps that are
-#      loaded during OSK intialization. This file defines functions that 
+#      loaded during OSK initialization. This file defines functions that 
 #      create those target artifacts.  
 #
 # License:

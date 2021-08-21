@@ -6,7 +6,7 @@
    "url": "https://github.com/OpenSatKit/OpenSatKit",
 
    "description": [
-      "Implement the basic file transfer protion of RFC-1350.",
+      "Implement the basic file transfer portion of RFC-1350.",
       "It does not implement the timer features."
    ],
 

@@ -129,16 +129,16 @@ simsat_isim_pwr_on
 ####################################################################
 
 #
-# Note  there's background "cheating" going on by a ruby thread
+# Note there's background "cheating" going on by a ruby thread
 # that was created when the example started.  The thread is sending
 # commands to File Manager(FM) and Data Storage(DS) to send telemetry
 # packets that are sent only in response to commands. This could be
-# automated in a stored command if needed by a mission whene there's
+# automated in a stored command if needed by a mission when there's
 # no uplink. 
 #
 # What to observe:
 # 1. The ISIM app generates a new science file every minute. ISIM
-#    simulates collecting science data at 1Hz and a new filee is 
+#    simulates collecting science data at 1Hz and a new file is 
 #    started after 60 scans.
 # 2. Data Storage creates new event and science auxiliary files
 #    every 5 minutes.
@@ -182,7 +182,7 @@ wait  # <Go> to continue
 
 ################################################################
 ## 5. Continue science ops without downlink then inject a fault
-##    and observe autonmous LC & SC response
+##    and observe autonomous LC & SC response
 ################################################################
 
 simsat_ops_status = "Simulating an instrument fault. LC/SC will respond."

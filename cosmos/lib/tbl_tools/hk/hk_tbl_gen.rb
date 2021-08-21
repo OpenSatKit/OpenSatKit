@@ -11,8 +11,8 @@
 #      they want in a combo packet so they might as well just figure out
 #      the offsets as they go. Ideally a GUI that allows a user to graphically
 #      browse telemetry packets and drag/drop them into a combo packet
-#      container would be most helpful. Alos a developer usually optimizes a
-#      table by copying continguous blocks when possible rather than creating
+#      container would be most helpful. Also a developer usually optimizes a
+#      table by copying contiguous blocks when possible rather than creating
 #      a separate table entry for each telemetry item.
 #
 #   TODO - Break this into class files. 
@@ -212,7 +212,7 @@ class HkCosmosTlmDef
    # opposed to a header and a footer file. The template has template parameter
    # @combo_pkt_1_data@ for each combo packet that needs to be loaded
    #
-   # The code needs to build a string for each combo packet that that can be
+   # The code needs to build a string for each combo packet that can be
    # substituted
    #   
    # COSMOS telemetry item format

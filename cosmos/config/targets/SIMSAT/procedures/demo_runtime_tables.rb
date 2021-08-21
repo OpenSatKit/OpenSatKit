@@ -54,7 +54,7 @@ Osk::flight.send_cmd("KIT_SCH","SEND_MSG_TBL_ENTRY with MSG_TBL_IDX 17")
 wait 
 #
 # 2. Set LC to passive mode
-#    - Enabled LC's action point evaluation but no actiosn performed
+#    - Enabled LC's action point evaluation but no actions performed
 #    - AP sample count remains static because scheduler table entry is disabled
 #
 Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE #{Fsw::Const::LC_STATE_PASSIVE}")

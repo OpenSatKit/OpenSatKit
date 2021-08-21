@@ -151,7 +151,7 @@ class FswApp
      
    end
 
-   # This should only be used by the cFE apps since they're JSON definitions are managed 
+   # This should only be used by the cFE apps since their JSON definitions are managed 
    # differently than user apps
    def set_version(version)
    

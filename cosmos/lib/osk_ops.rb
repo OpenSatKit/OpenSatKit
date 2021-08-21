@@ -27,7 +27,7 @@ module Ops
 
 
    ############################################################################
-   ##  Methods that effect global behavior
+   ##  Methods that affect global behavior
    ############################################################################
 
    @@suppress_exception = false
@@ -270,10 +270,10 @@ module Ops
    end # send_flt_bin_file_cmd()
  
    #
-   # Uses generic send_flt_bin_file_cmd() to do the heavy listing but simplifies the user interface for the common
+   # Uses generic send_flt_bin_file_cmd() to do the heavy lifting but simplifies the user interface for the common
    # task of dumping and displaying cFE tables.
    #
-   # Initial version intentionally kept simple. The interface should only be made more complex if the needed arises.
+   # Initial version intentionally kept simple. The interface should only be made more complex if the need arises.
    # 1. Always dump the active table
    # 2. Always use the ground table server location   
    #

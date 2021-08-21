@@ -6,12 +6,12 @@
 #      test inherit from Cosmos::Test so including this module is similar to 
 #      multiple inheritance or Java interfaces.
 #   2. "expected_result" is a common return status that indicates the expected
-#      test case scenario results ocurred so in an error case this would be 
+#      test case scenario results occurred so in an error case this would be 
 #      error command counters incrementing and not the valid command counters. 
 #   3. Utility functions do not raise exceptions. They pass status to the
 #      calling function that manages exceptions.
 #   4. Command counter verifications do not account for rollover. Apps do not
-#      have a consistent counter size and that the FswApp class does not captured
+#      have a consistent counter size and that the FswApp class does not capture
 #      this information. Test suites are typically run against a recent restart
 #      so this should not be a problem. 
 #

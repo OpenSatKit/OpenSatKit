@@ -85,7 +85,7 @@ MMD_INFO_1 = Osk::DEMO_STEP_NO_INFO
 # 2 - Jam & start memory dwell
 MMD_INSTRUCT_2 = ["Configure memory dwell screen have been opened.",
                   "",
-                  "<Demo> Send 4 MD JAM_DWELL commands to configure dwell tabel 1 to ",
+                  "<Demo> Send 4 MD JAM_DWELL commands to configure dwell table 1 to ",
                   "                monitor 4 32-bit words starting at #{MMD_SYMBOL}+256",
                   "",
                   "<Demo> Send MD START_DWELL ",

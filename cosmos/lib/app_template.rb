@@ -18,7 +18,7 @@ require 'osk_global'
 
 #
 # Process application template files
-# - Standard JSON file name used that contains meta-data fro processing template files
+# - Standard JSON file name used that contains meta-data from processing template files
 #
 
 class AppTemplate
