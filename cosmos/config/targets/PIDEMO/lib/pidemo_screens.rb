@@ -30,7 +30,7 @@ def pidemo_cmd(screen, cmd)
       when "Shutdown Pi" 
          cmd("PIDEMO SHUTDOWN_PI")
       when "Enable Tlm" 
-         prompt("<pre>For Alan's original PiSat:\n  StreamId = 6272\n  FuncCode = 7\n  PiAddr   = 192.168.0.6</pre>")
+         prompt("<pre>For Alan's original PiSat:\n  StreamId = 7968\n  FuncCode = 7\n  PiAddr   = 192.168.0.6</pre>")
          Cosmos.run_process("ruby tools/CmdSender -p \"KIT_TO ENABLE_TELEMETRY\"")
       else
          raise "Error in screen definition file. Undefined target command sent to pidemo_cmd()"
