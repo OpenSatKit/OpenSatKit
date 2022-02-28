@@ -1,0 +1,13 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  codeql:
+    name: Codeql
+    uses: nasa/cFS/.github/workflows/codeql-build.yml@main
+    with: 
+      make-prep: 'make prep'
+      make: 'make tools/elf2cfetbl/'

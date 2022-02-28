@@ -52,8 +52,9 @@ static F42_ADP_Class* F42Adp = NULL;
 ** Local Function Prototypes
 */
 
-static void  SensorPktToAcStruct(IF42_SensorDataPkt* SensorDataPkt);
 static void  AcStructToTlm(void);
+static void  SensorPktToAcStruct(IF42_SensorDataPkt* SensorDataPkt);
+static void  SetTakeSci(void);
 static void  TblToAcStruct(void);
 static char* GetOvrStr (uint8 State);
 
@@ -76,6 +77,10 @@ void F42_ADP_Constructor(F42_ADP_Class*  F42AdpObj) {
 
    /* If a class state variable can't default to zero then must be set after this */
    CFE_PSP_MemSet((void*)F42Adp, 0, sizeof(F42_ADP_Class));
+   
+   /* Down counters */
+   F42Adp->TakeSciInitCnt  = F42_ADP_TAKE_SCI_INIT_CNT;
+   F42Adp->TakeSciTransCnt = F42_ADP_TAKE_SCI_TRANS_CNT;
    
    for (i=F42_ADP_OVR_ID_MIN; i<F42_ADP_OVR_ID_MAX; i++) F42Adp->Override[i] = F42_ADP_OVR_USE_SIM;
      
@@ -105,7 +110,9 @@ void F42_ADP_Run42Fsw(IF42_SensorDataPkt*  SensorDataPkt) {
    
    SensorPktToAcStruct(SensorDataPkt);
 
-   if (SensorDataPkt->InitCycle == TRUE) {
+   if (SensorDataPkt->InitCycle == TRUE)
+   {
+      F42Adp->TakeSciInitCnt  = F42_ADP_TAKE_SCI_INIT_CNT;
       CFE_EVS_SendEvent(F42_ADP_INIT_CONTROLLER_EID, CFE_EVS_INFORMATION, "Initialized contoller");
       InitAC(AC42);
    }
@@ -114,6 +121,7 @@ void F42_ADP_Run42Fsw(IF42_SensorDataPkt*  SensorDataPkt) {
    ++F42Adp->CtrlExeCnt;
 
    AcStructToTlm();
+   SetTakeSci();
 
    AC42_ReleasePtr(F42Adp->Ac42);
 
@@ -449,7 +457,53 @@ static void AcStructToTlm(void)
    CFE_SB_SendMsg((CFE_SB_Msg_t *) &F42Adp->CtrlPkt);
 
 } /* End AcStructToTlm() */
+
                     
+/******************************************************************************
+** Function: SetTakeSci
+**
+** Notes:
+**   1. Checks whether control errors within sceince instrument accuracy needs
+**
+*/
+static void SetTakeSci(void)
+{
+
+   boolean TakeSci;
+
+   if (F42Adp->TakeSciInitCnt <= 0)
+   {
+   
+      TakeSci = ((fabs(F42Adp->CtrlPkt.therr[0]) < F42Adp->CtrlTbl.Data.SciThetaErrLim.X) &&
+                 (fabs(F42Adp->CtrlPkt.therr[1]) < F42Adp->CtrlTbl.Data.SciThetaErrLim.Y) &&
+                 (fabs(F42Adp->CtrlPkt.therr[2]) < F42Adp->CtrlTbl.Data.SciThetaErrLim.Z));
+
+      if (TakeSci == F42Adp->CtrlPkt.TakeSci)
+      {
+         F42Adp->TakeSciTransCnt = F42_ADP_TAKE_SCI_TRANS_CNT;
+      }
+      else
+      {
+          if (F42Adp->TakeSciTransCnt <=0)
+          {
+             F42Adp->CtrlPkt.TakeSci = TakeSci;
+             F42Adp->TakeSciTransCnt = F42_ADP_TAKE_SCI_TRANS_CNT;
+          } 
+          else
+          {
+             --F42Adp->TakeSciTransCnt;
+          }
+      }
+
+   } /* End if init cycle */
+   else
+   {
+      --F42Adp->TakeSciInitCnt;
+      F42Adp->CtrlPkt.TakeSci = FALSE;
+   }
+
+} /* End SetTakeSci()
+
 
 /******************************************************************************
 ** Function: TblToAcStruct

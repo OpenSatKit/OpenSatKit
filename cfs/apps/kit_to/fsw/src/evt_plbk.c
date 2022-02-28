@@ -275,7 +275,7 @@ static boolean LoadLogFile(void)
                ** - Only contains actual events, i.e. no null entries to pad to max entries
                */
                ReadingFile = TRUE;
-               for (i=0; ((i < CFE_PLATFORM_EVS_LOG_MAX) && ReadingFile); i++) { 
+               for (i=0; ((i < EVT_PLBK_EVS_LOG_MAX) && ReadingFile); i++) { 
                
                   ReadLength = OS_read(FileHandle, &EvsLogEventTlm, sizeof(CFE_EVS_LongEventTlm_t));
                   if (ReadLength == sizeof(CFE_EVS_LongEventTlm_t)) {
@@ -321,7 +321,7 @@ static boolean LoadLogFile(void)
             i--;
             EvtPlbk->EventLog.EventCnt = i;
             
-            while (i < CFE_PLATFORM_EVS_LOG_MAX) {
+            while (i < EVT_PLBK_EVS_LOG_MAX) {
                
                EvtPlbk->EventLog.Msg[i].Loaded = FALSE;
                TlmEvent = &EvtPlbk->EventLog.Msg[i].Tlm;
@@ -385,7 +385,7 @@ static void SendEventTlmMsg(void)
    
    for (i=0; i < EVT_PLBK_EVENTS_PER_TLM_MSG; i++) {
    
-      if (EvtPlbk->EventLog.PlbkIdx >= CFE_PLATFORM_EVS_LOG_MAX) EvtPlbk->EventLog.PlbkIdx = 0;
+      if (EvtPlbk->EventLog.PlbkIdx >= EVT_PLBK_EVS_LOG_MAX) EvtPlbk->EventLog.PlbkIdx = 0;
       if (i==0) EvtPlbk->TlmMsg.PlbkIdx = EvtPlbk->EventLog.PlbkIdx;
       
       LogEvent = &EvtPlbk->EventLog.Msg[EvtPlbk->EventLog.PlbkIdx].Tlm;

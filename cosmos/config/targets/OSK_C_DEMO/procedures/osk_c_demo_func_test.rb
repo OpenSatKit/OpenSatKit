@@ -23,17 +23,20 @@ require 'osk_c_demo_msglogtbl_test'
 
 class OskCDemoFuncTest < Cosmos::Test
  
- 
+   SRC_TEST_FILES = {tbl: "demo_test_tbl.json"}
+   
    include AppFuncTest
    
    def initialize
       
-      super()    
+      super() 
+ 
       @app = app_func_test_init("OSK_C_DEMO")
+      @gnd_test_files_dir = Osk::cfg_target_dir("OSK_C_DEMO","test_files")      
 
       @app_test       = AppFuncTest::OSK_C_DEMO::AppTest.new(@app)
       @msglog_test    = AppFuncTest::OSK_C_DEMO::MsgLogTest.new(@app)
-      @msglogtbl_test = AppFuncTest::OSK_C_DEMO::MsgLogTblTest.new(@app)
+      @msglogtbl_test = AppFuncTest::OSK_C_DEMO::MsgLogTblTest.new(@app, SRC_TEST_FILES, @gnd_test_files_dir)
 
    end # initialize()
    
@@ -42,7 +45,10 @@ class OskCDemoFuncTest < Cosmos::Test
 
       status_bar("setup")
       puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case}"
-            
+      
+      if (not load_test_files(SRC_TEST_FILES))
+         raise "OSK_C_DEMO ERROR: Failed to load test files"
+      end
    end # setup()
 
 

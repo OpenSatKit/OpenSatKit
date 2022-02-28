@@ -95,6 +95,13 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 # align with the tabs of the main page. PiSat is an exception because it is
 # maintained as a separate repo. 
 # 
+# Kludge Alert!!
+# - All of the targets use the same cFE message IDs and platform configurations. I 
+#   didn't know how to resolve this with the SIMULATION=native prep and all targets
+#   using the same Linux build toolchain so I moved the cFE configuration files
+#   to apps/cfs_lib/fsw/public_inc folder and modified app CMakeLists.txt files
+#   to include this folder in the include search path 
+#
 
 ###############
 ## 1 - CFSAT ##

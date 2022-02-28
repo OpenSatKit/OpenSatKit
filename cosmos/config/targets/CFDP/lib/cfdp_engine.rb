@@ -556,7 +556,6 @@ module CFDP
           # Read MAX_PDU_SIZE-12 chunks of data
           # Buffer can be nil if file is empty.
           until file.eof?
-
             buffer = file.read(payloadLength)
             next if buffer.nil?
 

@@ -23,7 +23,6 @@
 ** Includes
 */
 
-#include "cfe_msgids.h"
 #include "app_cfg.h"
 #include "pkttbl.h"
 #include "pktmgr.h"

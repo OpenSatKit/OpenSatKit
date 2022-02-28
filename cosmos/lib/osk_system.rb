@@ -245,18 +245,25 @@ module Osk
          end
          
          started_42 = true
+         osk_42_dir = File.join(Osk::OSK_42_DIR,"OSK")
+         include_gui = message_box("Would you like to run 42 with a GUI?", Osk::MSG_BUTTON_YES, Osk::MSG_BUTTON_NO, false)
+         if (include_gui == Osk::MSG_BUTTON_YES)
+            system("cp #{osk_42_dir}/Inp_Sim-gui.txt #{osk_42_dir}/Inp_Sim.txt")
+         else
+            system("cp #{osk_42_dir}/Inp_Sim-no_gui.txt #{osk_42_dir}/Inp_Sim.txt")
+         end
          spawn("xfce4-terminal --title=\"42 Simulator\" --default-working-directory=\"#{Cosmos::USERPATH}/#{Osk::REL_DIR_42}\" --execute ./42 OSK")
          wait(4)
          Osk::flight.send_cmd("I42","CONNECT_42")
         
-         display("CFS_KIT SIM_42_SCREEN",1500,50) if display_scr
+         display("SIMSAT SIM_42_SCREEN",1500,50) if display_scr
          
          return started_42
       
       end # start_42()
 
       # 
-      # Start the 42 simulator and connect FSW I42 app
+      # Stop the 42 simulator
       #      
       def self.stop_42
       

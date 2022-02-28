@@ -11,4 +11,4 @@ include_directories(${osk_c_fw_MISSION_DIR}/fsw/mission_inc)
 aux_source_directory(fsw/src APP_SRC_FILES)
 
 # Create the app module
-add_cfe_app(osk_c_demo ${APP_SRC_FILES})
+add_cfe_app(osk_c_tutor ${APP_SRC_FILES})

@@ -18,6 +18,10 @@
 #   General Public License (GPL).
 #
 ###############################################################################
+<%
+   require 'osk_global'
+   require 'sim_42_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -203,7 +207,7 @@ VERTICALBOX "Attitude Determination and Control"
     VALUE F42 CONTROL_PKT THERR_X WITH_UNITS 8
     VALUE F42 CONTROL_PKT THERR_Y WITH_UNITS 8
     VALUE F42 CONTROL_PKT THERR_Z WITH_UNITS 8
-    BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_ATT_ERR")'
+    BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_ATT_ERR")'
   END # Matrix
   
 END # Attitude Determination and Control

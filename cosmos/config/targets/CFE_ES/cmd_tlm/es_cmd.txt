@@ -20,8 +20,8 @@ COMMAND CFE_ES RESET <%= Osk::Cfg.processor_endian %> "Restart the cFE in one of
 
 COMMAND CFE_ES SHELL <%= Osk::Cfg.processor_endian %> "This command passes an ASCII string as a command line to the underlying realtime operating system shell. Any response to the command is both written to the shell command output file and sent as a series of shell command output telemetry packets"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 128) %>
-  APPEND_ARRAY_PARAMETER CMD_STRING        8 UINT 512 "ASCII text string containing shell command to be executed"
-  APPEND_PARAMETER       OUTPUT_FILENAME 512 STRING   "default" "Filename where shell command output is to be written"
+  APPEND_PARAMETER CMD_STRING      512 STRING  "ls"               "ASCII text string containing shell command to be executed"
+  APPEND_PARAMETER OUTPUT_FILENAME 512 STRING  "/cf/es_shell.txt" "Filename where shell command output is to be written"
 
 COMMAND CFE_ES START_APP <%= Osk::Cfg.processor_endian %> "This command starts the specified application with the specified start address, stack size, etc options"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 112) %>

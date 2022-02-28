@@ -160,13 +160,13 @@ module Fsw
       
       # Generic scheduled message
       
-      GENERIC_1HZ_MID = "0x1A00"
-      GENERIC_2HZ_MID = "0x1A01"
-      GENERIC_4HZ_MID = "0x1A02"
-      GENERIC_1S_MID  = "0x1A03"
-      GENERIC_2S_MID  = "0x1A04"
-      GENERIC_3S_MID  = "0x1A05"
-      GENERIC_4S_MID  = "0x1A06"
+      GENERIC_1HZ_MID = "0x1A00"  # 6656
+      GENERIC_2HZ_MID = "0x1A01"  # 6657
+      GENERIC_4HZ_MID = "0x1A02"  # 6658
+      GENERIC_1S_MID  = "0x1A03"  # 6659
+      GENERIC_2S_MID  = "0x1A04"  # 6660
+      GENERIC_3S_MID  = "0x1A05"  # 6661
+      GENERIC_4S_MID  = "0x1A06"  # 6662
 
       # Benchmark
   
@@ -179,6 +179,21 @@ module Fsw
       F42_HK_TLM_MID         = "0x09D0"
       F42_CTRL_TLM_MID       = "0x09D1"
       F42_CTRL_GAINS_TLM_MID = "0x09D2"
+      
+      # File Input Transfer Protocol
+  
+      FILE_IN_CMD_MID       = "0x1920"
+      FILE_IN_SEND_HK_MID   = "0x1921"
+      FILE_IN_HK_TLM_MID    = "0x0920" 
+      
+      # File Output Transfer Protocol
+  
+      FILE_OUT_CMD_MID                 = "0x1930"
+      FILE_OUT_SEND_HK_MID             = "0x1931"
+      FILE_OUT_HK_TLM_MID              = "0x0930"
+      FILE_OUT_START_TRANSFER_TLM_MID  = "0x0931"
+      FILE_OUT_DATA_SEGMENT_TLM_MID    = "0x0932"
+      FILE_OUT_FINISH_TRANSFER_TLM_MID = "0x0933"
       
       # File Manager
 

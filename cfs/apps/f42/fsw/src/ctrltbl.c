@@ -53,6 +53,7 @@ static boolean KpCallback (void* UserData, int TokenIdx);
 static boolean KrCallback (void* UserData, int TokenIdx);
 static boolean KunlCallback (void* UserData, int TokenIdx);
 static boolean HcmdLimCallback (void* UserData, int TokenIdx);
+static boolean SciLimCallback  (void* UserData, int TokenIdx);
 
 /******************************************************************************
 ** Function: CTRLTBL_Constructor
@@ -100,6 +101,12 @@ void CTRLTBL_Constructor(CTRLTBL_Class* ObjPtr,
                        HcmdLimCallback,
                        (void *)&(CtrlTbl->Data.HcmdLim));
    JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_HCMD_LIM]));
+
+   JSON_ObjConstructor(&(CtrlTbl->JsonObj[CTRLTBL_OBJ_SCI_LIM]),
+                       CTRLTBL_OBJ_NAME_SCI_LIM,
+                       SciLimCallback,
+                       (void *)&(CtrlTbl->Data.SciThetaErrLim));
+   JSON_RegContainerCallback(JSON, &(CtrlTbl->JsonObj[CTRLTBL_OBJ_SCI_LIM]));
 
 } /* End CTRLTBL_Constructor() */
 
@@ -491,3 +498,55 @@ boolean HcmdLimCallback (void* UserData, int TokenIdx)
 
 } /* HcmdLimCallback() */
 
+
+/******************************************************************************
+** Function: SciLimCallback
+**
+** Process a Science Limit table entry.
+**
+** Notes:
+**   1. This must have the same function signature as JSON_ContainerFuncPtr.
+**   2. UserData is unused.
+*/
+static boolean SciLimCallback (void* UserData, int TokenIdx)
+{
+
+   int     AxisCnt=0;
+   double  x, y, z;
+   
+   
+   CtrlTbl->JsonObj[CTRLTBL_OBJ_SCI_LIM].Modified = FALSE;   
+   
+   CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE, 
+                     "\nCTRLTBL.SciLimCallback: ObjLoadCnt %d, AttrErrCnt %d, TokenIdx %d\n",
+                     CtrlTbl->ObjLoadCnt, CtrlTbl->AttrErrCnt, TokenIdx);
+      
+   if (JSON_GetValDouble(JSON, TokenIdx, "x", &x)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "y", &y)) AxisCnt++;
+   if (JSON_GetValDouble(JSON, TokenIdx, "z", &z)) AxisCnt++;
+   
+   if (AxisCnt == 3) {
+   
+      CtrlTbl->Data.SciThetaErrLim.X = x;
+      CtrlTbl->Data.SciThetaErrLim.Y = y;
+      CtrlTbl->Data.SciThetaErrLim.Z = z;
+
+      CtrlTbl->ObjLoadCnt++;
+      CtrlTbl->JsonObj[CTRLTBL_OBJ_SCI_LIM].Modified = TRUE;
+	  
+      CFE_EVS_SendEvent(F42_INIT_DEBUG_EID, F42_INIT_EVS_TYPE,  "CTRLTBL.KpCallback: %f, %f, %f\n",
+                        CtrlTbl->Data.SciThetaErrLim.X,CtrlTbl->Data.SciThetaErrLim.Y,CtrlTbl->Data.SciThetaErrLim.Z);
+   
+   } /* End if AxisCnt == 3 */
+   else {
+	   
+      CtrlTbl->AttrErrCnt++;     
+      CFE_EVS_SendEvent(CTRLTBL_LOAD_SCI_LIM_ERR_EID, CFE_EVS_ERROR,
+                        "Invalid number of science limit axes %d. Should be 3.",
+                        AxisCnt);
+   
+   } /* End if AxisCnt != 3 */
+      
+   return CtrlTbl->JsonObj[CTRLTBL_OBJ_SCI_LIM].Modified;
+
+} /* SciLimCallback() */

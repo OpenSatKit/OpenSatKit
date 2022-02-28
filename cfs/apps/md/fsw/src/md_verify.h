@@ -32,7 +32,7 @@
 #ifndef _md_verify_h_
 #define _md_verify_h_
 
-#include "cfe_platform_cfg.h"
+//dcm #include "cfe_platform_cfg.h"
 #include "md_platform_cfg.h"
 
 /*************************************************************************

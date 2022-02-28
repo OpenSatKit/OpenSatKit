@@ -124,6 +124,21 @@ module FswConfigParam
 
   EXAMPLE_TBL_NAME = "MyFirstTbl"
   
+  ######################
+  ## App - File Input ##
+  ######################
+
+  # These are defined in file_in's app_cfg.h
+  FILE_IN_DATA_SEG_MAX_LEN  = 64
+  FILE_IN_DATA_SEG_ID_START =  1
+
+  #######################
+  ## App - File Output ##
+  #######################
+
+  # These are defined in file_out's app_cfg.h
+  
+  
   ########################
   ## App - File Manager ##
   ########################

@@ -153,7 +153,7 @@ typedef struct {
    boolean GpsValid;
    boolean StValid;  
    boolean SunValid; 
-   boolean WordAlignSpare;
+   boolean TakeSci;
 
 } OS_PACK F42_ADP_CtrlPkt;
 #define F42_ADP_TLM_CTRL_PKT_LEN sizeof (F42_ADP_CtrlPkt)
@@ -177,19 +177,6 @@ typedef struct {
 
 typedef struct {
 
-   /*
-   ** F42_ADP Data 
-   */
-   
-   uint32   CtrlExeCnt;
-
-   uint16   Override[F42_ADP_OVR_ID_CNT];
-   uint16   CtrlMode;
-   
-   float    Hcmd[AC42_NWHL]; /* TODO - 42 controller command interface */
-   
-   int32    DbgFileHandle;
-   boolean  DbgEnabled;
 
    /*
    ** Telemetry
@@ -205,6 +192,23 @@ typedef struct {
    
    AC42_Class    *Ac42;
    CTRLTBL_Class CtrlTbl;
+
+   /*
+   ** F42_ADP Data 
+   */
+   
+   uint32   CtrlExeCnt;
+
+   int16    TakeSciInitCnt;
+   int16    TakeSciTransCnt;
+
+   uint16   Override[F42_ADP_OVR_ID_CNT];
+   uint16   CtrlMode;
+   
+   float    Hcmd[AC42_NWHL]; /* TODO - 42 controller command interface */
+   
+   int32    DbgFileHandle;
+   boolean  DbgEnabled;
      
 } F42_ADP_Class;
 

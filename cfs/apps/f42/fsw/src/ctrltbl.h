@@ -43,6 +43,7 @@
 #define CTRLTBL_LOAD_KR_ERR_EID           (CTRLTBL_BASE_EID + 6)
 #define CTRLTBL_LOAD_KUNL_ERR_EID         (CTRLTBL_BASE_EID + 7)
 #define CTRLTBL_LOAD_HCMD_ERR_EID         (CTRLTBL_BASE_EID + 8)
+#define CTRLTBL_LOAD_SCI_LIM_ERR_EID      (CTRLTBL_BASE_EID + 9)
 
 /*
 ** Table Structure Objects 
@@ -52,12 +53,15 @@
 #define  CTRLTBL_OBJ_KP       1
 #define  CTRLTBL_OBJ_KUNL     2
 #define  CTRLTBL_OBJ_HCMD_LIM 3
-#define  CTRLTBL_OBJ_CNT      4
+#define  CTRLTBL_OBJ_SCI_LIM  4
+#define  CTRLTBL_OBJ_CNT      5
 
 #define  CTRLTBL_OBJ_NAME_KR       "kr"
 #define  CTRLTBL_OBJ_NAME_KP       "kp"
 #define  CTRLTBL_OBJ_NAME_KUNL     "kunl"
 #define  CTRLTBL_OBJ_NAME_HCMD_LIM "hcmd-lim"                                        
+#define  CTRLTBL_OBJ_NAME_SCI_LIM  "sci-theta-lim"    
+
 
 /**********************/
 /** Type Definitions **/
@@ -102,6 +106,9 @@ typedef struct {
    /* Momentum Unload Controller */
    HcmdLim_Struct HcmdLim;
    float          Kunl;
+   
+   /* Controller State */
+   Kp_Struct   SciThetaErrLim;
    
 } CTRLTBL_Struct;
 

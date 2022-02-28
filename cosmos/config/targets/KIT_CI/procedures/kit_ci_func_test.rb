@@ -12,6 +12,7 @@
 ###############################################################################
 
 require 'app_func_test'
+require 'kit_ci_msg_tunnel_test'
 
 class KitCiFuncTest < Cosmos::Test
 
@@ -20,6 +21,7 @@ class KitCiFuncTest < Cosmos::Test
    def initialize
       super()
       @app = app_func_test_init("KIT_CI")
+      @msg_tunnel_test = AppFuncTest::KIT_CI::MsgTunnelTest.new(@app)
    end
 
    def setup
@@ -34,8 +36,14 @@ class KitCiFuncTest < Cosmos::Test
       wait(2)
    end
 
-   def helper_method
-   end
+   def test_uplink
+      
+      puts "Running #{Cosmos::Test.current_test_suite}:#{Cosmos::Test.current_test}:#{Cosmos::Test.current_test_case} - Uplink"      
+      @file_copy_test.valid
+      @file_copy_test.invalid
+   
+   end # test_file()
+
 
 end # Class KitCiFuncTest
 

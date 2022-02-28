@@ -84,7 +84,7 @@ def simsat_recorder_playback(file_transfer)
 end # simsat_recorder_playback()
 
 #
-# Parse the recorder file listing created by File Manager and created
+# Parse the recorder file listing created by File Manager and create
 # a dictionary containing file type (ISIM, EVENTS, AUX) as
 # the keyword and an array of file names as the entry.
 #

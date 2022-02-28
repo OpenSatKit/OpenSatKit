@@ -1,6 +1,8 @@
 {
-   "name": "Standlone Controller",
-   "description": "Attitude Control Gains",
+   "name": "Attitude Control Parameters",
+   "description": ["42's acfsw.c and acapp.c functions run within a cFS app",
+                   "Default values derived from AcFsw() init routine and SC_Aura.txt",
+                   "sci-theta-lim are used to illustrate an operational 'take science' scenerio"],
    "kp": {
       "x": 2.759831372549e+01,
       "y": 2.117500000000e+01,
@@ -17,5 +19,10 @@
    "hcmd-lim": {
       "lower": -0.9,
       "upper":  0.9
+   }
+   "sci-theta-lim": {
+      "x": 0.0005,
+      "y": 0.0005,
+      "z": 0.0005
    }
 }

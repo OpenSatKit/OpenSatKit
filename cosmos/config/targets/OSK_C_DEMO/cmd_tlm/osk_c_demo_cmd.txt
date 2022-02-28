@@ -38,6 +38,6 @@ COMMAND OSK_C_DEMO START_PLAYBK <%= Osk::Cfg.processor_endian %> "Start playing 
 COMMAND OSK_C_DEMO STOP_PLAYBK <%= Osk::Cfg.processor_endian %> "Stop a play back that is in progress"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 7, 0) %>
 
-COMMAND OSK_C_DEMO RUN_CHILD_TASK <%= Osk::Cfg.processor_endian %> "Onboard command used run child task"
+COMMAND OSK_C_DEMO RUN_CHILD_TASK <%= Osk::Cfg.processor_endian %> "Onboard command used to run child task"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 8, 0) %>
 

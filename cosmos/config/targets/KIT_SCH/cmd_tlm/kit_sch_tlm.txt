@@ -18,7 +18,7 @@ TELEMETRY KIT_SCH HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Scheduler Houseke
    APPEND_ITEM SCH_TBL_LOAD_ATTR_ERRS 16 UINT  "Count of attribute errors in last msg table load"
    <%
       pad_str = ""
-      if (HwTarget::ID == "PISAT")
+      if (HwTarget::ID == "PISAT_CAELUM")
          pad_str = "
             APPEND_ITEM SCH_TBL_LOAD_ATTR_PAD 16 UINT \"32-alignment pad\"
          "

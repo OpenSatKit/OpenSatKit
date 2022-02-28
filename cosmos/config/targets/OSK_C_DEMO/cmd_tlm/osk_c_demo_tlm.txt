@@ -39,5 +39,5 @@ TELEMETRY OSK_C_DEMO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Demo App House
 
 TELEMETRY OSK_C_DEMO PLAYBK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Packet playback"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @PLAYBK_TLM_MID_STR) %>
-  APPEND_ITEM LOG_FILE_ENTRY   16 UINT   "File line number being reported in "
-  APPEND_ITEM MSG_HDR_HEX_TXT 128 STRING "Text hex presentation of the primary header"
+  APPEND_ITEM LOG_FILE_ENTRY   16 UINT   "File line number of the header in this message"
+  APPEND_ITEM MSG_HDR_HEX_TXT 128 STRING "Text hex representation of the primary header"

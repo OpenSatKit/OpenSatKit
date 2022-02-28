@@ -6,7 +6,7 @@
   
 %>  
 
-TELEMETRY KIT_CI HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Command Ingest Housekeeping Packet"
+TELEMETRY KIT_CI HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Application status and general state information"
    <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
    APPEND_ITEM CMD_VALID_COUNT      16 UINT "Command Count"
    APPEND_ITEM CMD_ERROR_COUNT      16 UINT "Error Count"
@@ -23,7 +23,7 @@ TELEMETRY KIT_CI HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Command Ingest Hou
       APPEND_ITEM LAST_MAPPING_NEW_ID  16 UINT \"New mapping message ID\"
    "
    
-   if (HwTarget::ID == "PISAT")
+   if (HwTarget::ID == "PISAT_CAELUM")
       last_mapping_str = "
       APPEND_ITEM MAPPING_CNT            16 UINT \"Count of mappings performed\"
       APPEND_ITEM MAPPING_CNT_PAD        16 UINT \"32-bit alignment with UPLINK_LastMapping struct\"

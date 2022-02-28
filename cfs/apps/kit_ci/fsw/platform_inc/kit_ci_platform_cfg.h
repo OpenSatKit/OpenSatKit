@@ -49,11 +49,14 @@
 ** - Unused message ID definition is robust. If the cFE highest definition is
 **   the maximum for a storage type then adding one will roll over (assuming
 **   unsigned).
+**
+** TODO: Should use external definition like CFE_SB_HIGHEST_VALID_MSGID, but this
+** TODO: creates issues with a _platform_cfg.h dependencies across CPUs
 */
 
 #define UPLINK_RECV_BUFF_LEN  1024
-#define UPLINK_UNUSED_MSG_ID  (CFE_SB_HIGHEST_VALID_MSGID+1)
-#define UPLINK_MSG_TUNNEL_CNT  8  /* Number of Message ID tunnels */
+#define UPLINK_UNUSED_MSG_ID  (0x1FFF+1)  /* TODO: See block comment above */ 
+#define UPLINK_MSG_TUNNEL_CNT  8          /* Number of Message ID tunnels */
 
 
 #endif /* _kit_ci_platform_cfg_ */

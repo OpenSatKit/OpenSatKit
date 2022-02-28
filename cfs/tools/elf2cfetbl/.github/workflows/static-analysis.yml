@@ -1,0 +1,12 @@
+name: Static Analysis
+
+# Run on all push and pull requests
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  static-analysis:
+    name: Run cppcheck
+    uses: nasa/cFS/.github/workflows/static-analysis.yml@main

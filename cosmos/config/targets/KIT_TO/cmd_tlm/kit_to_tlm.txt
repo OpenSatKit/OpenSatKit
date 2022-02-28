@@ -26,7 +26,7 @@ TELEMETRY KIT_TO HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Telemetry Output H
    APPEND_ITEM PKTS_PER_SEC         16 UINT  "Average packets per second"
    <%
       pad_str = ""
-      if (HwTarget::ID == "PISAT")
+      if (HwTarget::ID == "PISAT_CAELUM")
          pad_str = "
             APPEND_ITEM PKTS_PER_SEC_PAD 16 UINT \"32-alignment pad\"
          "
