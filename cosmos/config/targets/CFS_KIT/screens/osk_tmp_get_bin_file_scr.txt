@@ -3,7 +3,7 @@
    # Get and Display Binary File Screen
    #
    # Temporary screen automatically created to allow the user to get a file from
-   # the FSW, transfer the file, an ddisplay the file using teh COSMOS Table
+   # the FSW, transfer the file, and display the file using the COSMOS Table
    # Manager tool.
    #
    # License:

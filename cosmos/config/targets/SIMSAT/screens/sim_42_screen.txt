@@ -6,6 +6,10 @@
 #   License (GPL).
 #
 ###############################################################################
+<%
+   require 'osk_global'
+   require 'sim_42_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -15,17 +19,18 @@ TITLE "42 Simulation"
   SETTING TEXTCOLOR black
 
 VERTICALBOX
-  MATRIXBYCOLUMNS 3 5 5
-    BUTTON 'Start 42 Sim'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "START_42_SIM")'
+  MATRIXBYCOLUMNS 4 5 5
+    BUTTON 'Start 42 Sim'        'sim_42_send_cmd(self, "START_42_SIM")'
     SETTING BACKCOLOR 0 200 0
-    BUTTON 'Stop 42 Sim'      'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "STOP_42_SIM")'
+    BUTTON 'Stop 42 Sim'         'sim_42_send_cmd(self, "STOP_42_SIM")'
     SETTING BACKCOLOR 220 50 50
-    BUTTON 'Reconnect 42'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "RECONNECT_42")'
-    BUTTON 'Set 42 Exec Rate'    'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_42_EXEC_RATE")'
-    BUTTON 'Set Contoller Gains' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_CTRL_GAINS")'
-    BUTTON 'Configure SunValid'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "CONFIG_SUN_VALID")'
-    ##BUTTON 'Set Ctrl Mode'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_CTRL_MODE")'
-    ##BUTTON 'Set Sun Axis'   'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "SET_SUN_AXIS")'
+    BUTTON 'Reconnect 42'        'sim_42_send_cmd(self, "RECONNECT_42")'
+    BUTTON 'Set 42 Exec Rate'    'sim_42_send_cmd(self, "SET_42_EXEC_RATE")'
+    BUTTON 'Run Ops Demo'        'sim_42_send_cmd(self, "RUN_OPS_DEMO")'
+    BUTTON 'Set Ctrl Mode'       'sim_42_send_cmd(self, "SET_CTRL_MODE")'
+    BUTTON 'Set Contoller Gains' 'sim_42_send_cmd(self, "SET_CTRL_GAINS")'
+    BUTTON 'Configure SunValid'  'sim_42_send_cmd(self, "CONFIG_SUN_VALID")'
+    ##BUTTON 'Set Sun Axis'      'sim_42_send_cmd(self, "SET_SUN_AXIS")'
     ##SETTING BACKCOLOR 128 128 128
   END # Matrix
 
@@ -58,6 +63,8 @@ VERTICALBOX
         VALUE F42 CONTROL_PKT SUN_VALID FORMATTED 12
         LABEL 'OVR Sun Valid' 
         VALUE F42 HK_TLM_PKT OVR_SUN_VALID FORMATTED 12
+        LABEL 'Take Science' 
+        VALUE F42 CONTROL_PKT TAKE_SCI FORMATTED 12
       END # Matrix
     END # Vertical Box
   END # Horizontal
@@ -71,7 +78,7 @@ VERTICALBOX
       VALUE F42 CONTROL_PKT THERR_X
       VALUE F42 CONTROL_PKT THERR_Y
       VALUE F42 CONTROL_PKT THERR_Z
-      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_ATT_ERR")'
+      BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_ATT_ERR")'
       LABEL '   Rate Err X'
       LABEL '   Rate Err Y'
       LABEL '   Rate Err Z'
@@ -79,7 +86,7 @@ VERTICALBOX
       VALUE F42 CONTROL_PKT WERR_X
       VALUE F42 CONTROL_PKT WERR_Y
       VALUE F42 CONTROL_PKT WERR_Z
-      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_RATE_ERR")'
+      BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_RATE_ERR")'
       LABEL '   Torq Cmd X'
       LABEL '   Torq Cmd Y'
       LABEL '   Torq Cmd Z'
@@ -87,7 +94,7 @@ VERTICALBOX
       VALUE F42 CONTROL_PKT TRQ_CMD_X
       VALUE F42 CONTROL_PKT TRQ_CMD_Y
       VALUE F42 CONTROL_PKT TRQ_CMD_Z
-      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_TORQ_CMD")'
+      BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_TORQ_CMD")'
     END # Matrix
   END # Vertical Box
   
@@ -100,7 +107,7 @@ VERTICALBOX
       VALUE F42 CONTROL_PKT HVB_X
       VALUE F42 CONTROL_PKT HVB_Y
       VALUE F42 CONTROL_PKT HVB_Z
-      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_MOM_ERR")'
+      BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_MOM_ERR")'
       LABEL '    Mom Cmd X'
       LABEL '    Mom Cmd Y'
       LABEL '    Mom Cmd Z'
@@ -108,7 +115,7 @@ VERTICALBOX
       VALUE F42 CONTROL_PKT MOM_CMD_X
       VALUE F42 CONTROL_PKT MOM_CMD_Y
       VALUE F42 CONTROL_PKT MOM_CMD_Z
-      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_MOM_CMD")'
+      BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_MOM_CMD")'
     END # Matrix
   END # Vertical Box
 
@@ -119,7 +126,7 @@ VERTICALBOX
       LABEL '            '
       LABEL '            '
       VALUE F42 CONTROL_PKT SA_GIM_CMD
-      BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_SA_GIM_CMD")'
+      BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_SA_GIM_CMD")'
       LABEL '            '
       LABEL '            '
     END # Matrix

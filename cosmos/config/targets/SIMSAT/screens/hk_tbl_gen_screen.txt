@@ -26,7 +26,7 @@ VERTICAL
       SETTING TEXTCOLOR black
       LABEL "number of HK table entries can't exceed the HK_COPY_TABLE_ENTRIES configuration parameter. To use the FSW table you must copy the generated"
       SETTING TEXTCOLOR black
-      LABEL "table to HK's table directory and rebuild the cFS. To use the table in COMSOS you need to copy the COSMOS telmeetry definition file to HK's"
+      LABEL "table to HK's table directory and rebuild the cFS. To use the table in COMSOS you need to copy the COSMOS telemetry definition file to HK's"
       SETTING TEXTCOLOR black
       LABEL "target cmd_tlm directory and restart the COSMOS Command and Telemetry Server"
       SETTING TEXTCOLOR black

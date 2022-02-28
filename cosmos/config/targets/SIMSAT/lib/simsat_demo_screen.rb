@@ -3,7 +3,7 @@
 #
 # Notes:
 #   1. This doesn't follow the pattern of one ruby script for each screen
-#      convention since all of the SimSat screen are designed to be 
+#      convention since all of the SimSat screens are designed to be 
 #      aggregated as a whole. 
 #
 # License:
@@ -91,7 +91,7 @@ def simsat_demo_data_file(screen, cmd)
       return unless Osk::System.check_n_start_cfs('simsat')
       
       #
-      # 1. Create simsat recorder directory, can't assumes it exists
+      # 1. Create simsat recorder directory, can't assume it exists
       # 2. Configure ISIM to science mode
       # 3. Enable DS to create files
       # 4. Start background script to request FM and DS status packets

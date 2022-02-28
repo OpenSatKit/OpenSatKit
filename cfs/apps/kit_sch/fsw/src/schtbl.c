@@ -188,7 +188,7 @@ boolean SCHTBL_LoadCmd(TBLMGR_Tbl *Tbl, uint8 LoadType, const char* Filename)
                } /* End if at least one object */
                else {
                   
-                  CFE_EVS_SendEvent(SCHTBL_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"SCHTBL: Invalid table command Must have at least one slot(%d) adn activity(%d)",
+                  CFE_EVS_SendEvent(SCHTBL_LOAD_EMPTY_ERR_EID,CFE_EVS_ERROR,"SCHTBL: Invalid table command Must have at least one slot(%d) and activity(%d)",
                                     SchTbl->JsonObj[SCHTBL_OBJ_SLOT].Modified, SchTbl->JsonObj[SCHTBL_OBJ_ACTIVITY].Modified);
  
                } /* End if no objects in file */

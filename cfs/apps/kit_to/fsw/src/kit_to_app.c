@@ -352,7 +352,7 @@ static int32 InitApp(void)
 
    EVT_PLBK_Constructor(EVTPLBK_OBJ, KIT_TO_EVS_LOG_TLM_MID, 
                         EVT_PLBK_HK_CYCLE_PERIOD, EVT_PLBK_EVT_LOG_FILENAME,
-                        CFE_EVS_CMD_MID);
+                        KIT_TO_EVS_CMD_MID);
       
    /*
    ** Initialize application managers

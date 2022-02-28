@@ -1,0 +1,47 @@
+Creating Table File(s) - Using CMakeLists.txt And elf2cfetbl
+-----------------------------------------------------------
+
+reference: cFE Application Developers Guide
+ 
+
+    1. Create the default contents for the table image. "SampleTblImg.c" is the example c file.
+
+    2. Place your <source_file>.c file in your application's "src" directory. 
+
+    3. In each application's directory, there is a CMakeLists.txt
+
+           a. Open and add "add_cfe_tables(<your_table_name> <table_location_and_name>)"
+              
+                  Example: add_cfe_tables(${APPNAME}_default fsw/src/${APPNAME}_default.c)
+
+                  *Note(s): The sequence for the table search path are as follow
+                            (where TBLWE==table basename without extension):
+                                
+                                1.${MISSION_DEFS}/tables/${TGT}_${TBLWE}.c
+                                2.${MISSION_SOURCE_DIR}/tables/${TGT}_${TBLWE}.c
+                                3.${MISSION_DEFS}/tables/${TBLWE}.c
+                                4.${MISSION_SOURCE_DIR}/tables/${TBLWE}.c
+                                5.(passed-in relative path)
+
+                            The supplied path does come into play, as the fallback at the end, 
+                            if the search path fails to find anything matching within the 
+                            mission-specific directories.
+
+    4. Go to your root cFS folder. Do "make" and "make install". If there are no errors, the table 
+       file is in cFS/build/exe/cpu1/cf 
+
+
+If you want to do this manually:
+
+    1. Compile the c file and elf2cfetbl. This creates the object file from the c file. 
+
+    2. Input the object file as a parameter to elf2cfetbl. Refer to cFE Application Developers Guide for 
+       reference.
+                   
+                   Example: ./elf2cfetbl <your_object_file>.o 
+
+Note(s)
+--------  
+
+    1. If you are getting install errors when you do a "make install", make sure your table's output name
+       is consistent in all program files. 

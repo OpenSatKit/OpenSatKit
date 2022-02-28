@@ -1,0 +1,39 @@
+<% 
+  require 'fsw_config_param' 
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR = "FILE_IN"
+  @CMD_MID_STR    = "FILE_IN_CMD_MID"
+
+  # Configuration parameter assumptions
+  #   OS_MAX_PATH_LEN = 64
+  #   OS_MAX_API_NAME = 20
+  
+%>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_NOOP %> <%= Osk::Cfg.processor_endian %> "Generate an info event message with app version"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 0, 0) %>
+
+COMMAND <%= @APP_PREFIX_STR %> <%= Osk::CMD_STR_RESET %> <%= Osk::Cfg.processor_endian %> "Reset app counters and status variables, but does not impact an active file transfer"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 1, 0) %>
+
+COMMAND <%= @APP_PREFIX_STR %> START_TRANSFER <%= Osk::Cfg.processor_endian %> "Start a file transfer"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 64) %>
+  APPEND_PARAMETER DEST_FILENAME 512 STRING <%= Osk::CMD_DEF_FILENAME %>  "Complete destination /path/filename"
+
+COMMAND <%= @APP_PREFIX_STR %> DATA_SEGMENT <%= Osk::Cfg.processor_endian %> "Data segment"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 68) %>
+  APPEND_PARAMETER ID     16 UINT MIN_UINT16 MAX_UINT16 0 "Data Segment ID"
+  APPEND_PARAMETER LEN    16 UINT MIN_UINT16 MAX_UINT16 0 "Data length"
+  APPEND_PARAMETER DATA  512 BLOCK                      0 ""
+
+COMMAND <%= @APP_PREFIX_STR %> FINISH_TRANSFER <%= Osk::Cfg.processor_endian %> "Complete a file transfer"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 4, 10) %>
+  APPEND_PARAMETER FILE_LEN  32 UINT MIN_UINT32 MAX_UINT32 0 "File length"
+  APPEND_PARAMETER FILE_CRC  32 UINT MIN_UINT32 MAX_UINT32 0 "File CRC"
+  APPEND_PARAMETER LAST_DATA_SEG_ID 16 UINT MIN_UINT16 MAX_UINT16 0 "Last data segment ID"
+
+COMMAND <%= @APP_PREFIX_STR %> CANCEL_TRANSFER <%= Osk::Cfg.processor_endian %> "Cancel current transfer"
+  <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 5, 0) %>
+

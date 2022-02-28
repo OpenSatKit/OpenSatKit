@@ -98,9 +98,17 @@ TELEMETRY F42 CONTROL_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Packe
     FORMAT_STRING "%.6f"
 
   APPEND_ITEM GPS_VALID    8 UINT  "Valid GPS measurements"
+    STATE FALSE 0
+    STATE TRUE  1
   APPEND_ITEM ST_VALID     8 UINT  "Valid star tracker quaternion"
+    STATE FALSE 0
+    STATE TRUE  1
   APPEND_ITEM SUN_VALID    8 UINT  "Valid CSS/FSS sun measurement"
-  APPEND_ITEM SPARE_8      8 UINT  "Word align pad"
+    STATE FALSE 0
+    STATE TRUE  1
+  APPEND_ITEM TAKE_SCI     8 UINT  "Controller within limits for science"
+    STATE FALSE 0 RED
+    STATE TRUE  1 GREEN
 
 
 TELEMETRY F42 CONTROL_GAINS_PKT <%= Osk::Cfg.processor_endian %> "F42 Controller Gains"

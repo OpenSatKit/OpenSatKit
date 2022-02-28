@@ -154,7 +154,7 @@ wait 2
 
 Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
 
-wait  # Step 6 - ISIM's open science data fiel is listed
+wait  # Step 6 - ISIM's open science data file is listed
 
 #############
 ## Cleanup ##

@@ -58,7 +58,7 @@ end
 
 module Cosmos
   # Protocol which permanently overrides an item value such that reading the
-  # item returns the overriden value. Methods are prefixed with underscores
+  # item returns the overridden value. Methods are prefixed with underscores
   # so the API can include the original name which calls out to these
   # methods. Clearing the override requires calling normalize_tlm.
   class CfdpTestProtocol < Protocol

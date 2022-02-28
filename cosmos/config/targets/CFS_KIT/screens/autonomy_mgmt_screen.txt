@@ -31,7 +31,7 @@ HORIZONTALBOX "Stored Command(SC) App - Relative Time Sequences(RTS) "
   END # Matrix
 END # Box      
 
-VERTICALBOX "RTS Status (Enabled,Executing)" 4
+VERTICALBOX "RTS Status (Disabled,Executing)" 4
   
   MATRIXBYCOLUMNS 9 4
 
@@ -45,7 +45,7 @@ VERTICALBOX "RTS Status (Enabled,Executing)" 4
     LABEL "      7"
     LABEL "      8"
 
-    LABEL "Enabled"
+    LABEL "Disabled"
     VALUE SC HK_TLM_PKT RTS_1_DIS WITH_UNITS 5
     VALUE SC HK_TLM_PKT RTS_2_DIS WITH_UNITS 5
     VALUE SC HK_TLM_PKT RTS_3_DIS WITH_UNITS 5

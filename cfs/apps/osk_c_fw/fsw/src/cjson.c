@@ -229,7 +229,8 @@ boolean CJSON_LoadObj(CJSON_Obj* Obj, const char* Buf, size_t BufLen)
          
             if (ValueLen <= Obj->TblDataLen) {
             
-               CFE_EVS_SendEvent(CJSON_LOAD_OBJ_EID, CFE_EVS_DEBUG, "JSON string %s, len = %d", Value, ValueLen);
+               CFE_EVS_SendEvent(CJSON_LOAD_OBJ_EID, CFE_EVS_DEBUG, 
+                                 "JSON string %s, len = %ld", Value, ValueLen);
 
                strncpy(StrBuf,Value,ValueLen);
                StrBuf[ValueLen] = '\0';
@@ -241,7 +242,8 @@ boolean CJSON_LoadObj(CJSON_Obj* Obj, const char* Buf, size_t BufLen)
             }
             else {
                
-               CFE_EVS_SendEvent(CJSON_LOAD_OBJ_ERR_EID, CFE_EVS_ERROR, "JSON string length %d exceeds %s's max length %d", 
+               CFE_EVS_SendEvent(CJSON_LOAD_OBJ_ERR_EID, CFE_EVS_ERROR,
+                                 "JSON string length %ld exceeds %s's max length %ld", 
                                  ValueLen, Obj->Query.Key, Obj->TblDataLen);
             
             }
@@ -249,7 +251,8 @@ boolean CJSON_LoadObj(CJSON_Obj* Obj, const char* Buf, size_t BufLen)
    
          case JSONNumber:
          
-            CFE_EVS_SendEvent(CJSON_LOAD_OBJ_EID, CFE_EVS_DEBUG, "JSON number %s, len = %d", Value, ValueLen);
+            CFE_EVS_SendEvent(CJSON_LOAD_OBJ_EID, CFE_EVS_DEBUG,
+                              "JSON number %s, len = %ld", Value, ValueLen);
 
             strncpy(NumberBuf,Value,ValueLen);
             NumberBuf[ValueLen] = '\0';

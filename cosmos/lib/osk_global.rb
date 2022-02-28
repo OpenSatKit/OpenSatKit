@@ -301,6 +301,8 @@ module Osk
    TMP_FLT_TXT_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_TXT_FILE}"
    TMP_GND_TXT_PATH_FILE = "#{GND_SRV_DIR}/#{TMP_TXT_FILE}"
 
+   TMP_FLT_JSON_PATH_FILE = "#{FLT_SRV_DIR}/#{TMP_JSON_FILE}"
+   TMP_GND_JSON_PATH_FILE = "#{GND_SRV_TBL_DIR}/#{TMP_JSON_FILE}"
 
    #################################
    ## Demo Standard Text Strings  ## 

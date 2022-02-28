@@ -5,7 +5,14 @@
 **   1. These macros can only be built with the application and can't
 **      have a platform scope because the same file name is used for
 **      all applications following the object-based application design.
-**       
+**   TODO: KIT_TO is used in multiple targets so dependencies on platform
+**   TODO: specific parameters would require seperate build architecture &
+**   TODO: toolchains and OSK's make system is not setup for that so the
+**   TODO: following parameters with platform dependencies are defined in
+**   TODO: this header
+**   TODO:   EVT_PLBK_EVS_LOG_MAX => CFE_PLATFOMR_EVS_LOG_MAX
+**   TODO:   KIT_TO_EVS_CMD_MID   => CFE_EVS_CMD_MID
+**
 ** License:
 **   Written by David McComas, licensed under the copyleft GNU
 **   General Public License (GPL). 
@@ -23,7 +30,6 @@
 ** Includes
 */
 
-#include "cfe_platform_cfg.h"
 #include "kit_to_platform_cfg.h"
 #include "osk_c_fw.h"
 
@@ -49,7 +55,8 @@
 #define  KIT_TO_CMD_PIPE_DEPTH    10
 #define  KIT_TO_CMD_PIPE_NAME     "KIT_TO_CMD_PIPE"
 
-
+#define  KIT_TO_EVS_CMD_MID       0x1801 /* TODO: See file prologue notes */
+ 
 /******************************************************************************
 ** Command Macros
 */
@@ -119,12 +126,15 @@
 
 /******************************************************************************
 ** evt_plbk.h Configurations
+**
 */
 
-#define EVT_PLBK_EVENTS_PER_TLM_MSG   4
+#define EVT_PLBK_EVS_LOG_MAX          20   /* TODO: See file prologue notes */
 
-#define EVT_PLBK_HK_CYCLE_PERIOD      2   /* Number of HK request cycles between event tlm messages */
+#define EVT_PLBK_EVENTS_PER_TLM_MSG    4
 
-#define EVT_PLBK_EVT_LOG_FILENAME     "/cf/kit_to_evt_log.dat"
+#define EVT_PLBK_HK_CYCLE_PERIOD       2   /* Number of HK request cycles between event tlm messages */
+
+#define EVT_PLBK_EVT_LOG_FILENAME      "/cf/kit_to_evt_log.dat"
 
 #endif /* _app_cfg_ */

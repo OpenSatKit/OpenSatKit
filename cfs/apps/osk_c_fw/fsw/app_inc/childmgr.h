@@ -180,7 +180,7 @@ typedef struct CHILDMGR_Struct {
 **    2. For ChildTaskMainFunc, the caller can use one of the predefined 
 **       functions that start with "ChildMgr_TaskMain" or supply their
 **       own function. 
-**    3. The AppMainCallback function can be NULL adn is only used if the
+**    3. The AppMainCallback function can be NULL and is only used if the
 **       ChildTaskMainFunc has a callback feature.
 */
 int32 CHILDMGR_Constructor(CHILDMGR_Class* ChildMgr,

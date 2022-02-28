@@ -75,7 +75,7 @@ module Fsw
 
 
       # cs_msgdefs.h - Table & table entry states
-      # The comments for EMPTY and UNDEFINED are from the header and I find them ocnfusing
+      # The comments for EMPTY and UNDEFINED are from the header and I find them confusing
       # especially since the default table uses 'CS_STATE_EMPTY' seems to me to be unused
       # rather than an invalid state
       

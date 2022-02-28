@@ -43,7 +43,7 @@ TELEMETRY FM FILE_INFO_PKT <%= Osk::Cfg.processor_endian %> "Get File Info telem
     STATE CLOSED  FswConst::FM_NAME_IS_FILE_CLOSED
     STATE DIR     FswConst::FM_NAME_IS_DIRECTORY
 
-  APPEND_ITEM COMPUTE_CRC    8 UINT "Boolean flag indictaing whether to compute a CRC"
+  APPEND_ITEM COMPUTE_CRC    8 UINT "Boolean flag indicating whether to compute a CRC"
     STATE FALSE   0
     STATE TRUE    1
   APPEND_ARRAY_ITEM SPARE    8 UINT 16 "Structure padding"

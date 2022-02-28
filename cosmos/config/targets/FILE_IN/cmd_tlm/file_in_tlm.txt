@@ -1,0 +1,28 @@
+<% 
+  require 'fsw_config_param'
+  require 'fsw_const'
+  require 'osk_config' 
+  require 'osk_global'
+
+  @APP_PREFIX_STR = "FILE_IN"
+  @HK_TLM_MID_STR = "FILE_IN_HK_TLM_MID"  
+  
+  # Configuration parameter assumptions
+  #   OS_MAX_PATH_LEN = 64
+  #   OS_MAX_API_NAME = 20
+  
+%>
+
+TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.processor_endian %> "Housekeeping telemetry packet"
+  <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @HK_TLM_MID_STR) %>
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_VLD %> 16 UINT "Application command counter"
+  APPEND_ITEM <%= Osk::TLM_STR_CMD_ERR %> 16 UINT "Application command error counter"
+  APPEND_ITEM FILE_TRANSFER_CNT    8 UINT "Number of complete file transfers"
+  APPEND_ITEM FILE_TRANSFER_ACTIVE 8 UINT "Boolean indicating if file transfer active"
+  
+  APPEND_ITEM LAST_DATA_SEGMENT_ID  16 UINT "ID of the last data segment saved to file"
+  APPEND_ITEM DATA_SEGMENT_ERR_CNT  16 UINT "Count of data segments with errors"
+  APPEND_ITEM FILE_TRANSFER_BYTE_CNT   32 UINT "Number of file data bytes received/written"
+  APPEND_ITEM FILE_RUNNING_CRC   32 UINT "Running CRC of file data received"
+  APPEND_ITEM DEST_FILENAME     512 STRING "Destination Pathname/Filename"
+  

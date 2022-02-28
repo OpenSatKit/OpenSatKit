@@ -122,7 +122,7 @@ typedef struct {
 
    uint16 EventCnt;    /* Number of entries loaded from log file. */
    uint16 PlbkIdx;     /* Currrent index used during playback */
-   EVT_PLBK_EventLogMsg Msg[CFE_PLATFORM_EVS_LOG_MAX];
+   EVT_PLBK_EventLogMsg Msg[EVT_PLBK_EVS_LOG_MAX];
 
 } EVT_PLBK_EventLog;
 

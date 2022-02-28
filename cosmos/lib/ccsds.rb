@@ -23,22 +23,32 @@ module Ccsds
       @stream_id = stream_id
       @func_code = func_code
       @ccsds_len = data_len + 1  # How CCSDS defines packet length
-      # OSK 3.2: The PiSat cFS target uses cFE 2.8 (Bootes) and the secondary header is big endian.
-      # Once OSK can upgrade to cFE 2.8 (after NASA Goddard apps upgraded/released) this will be removed    
-      if HwTarget::ID == "PISAT"
+      # OSK 3.2: The PiSat cFS target uses cFE 6.8 (Bootes) and the secondary header is big endian.
+      # Once OSK can upgrade to cFE 6.8 (after NASA Goddard apps upgraded/released) this will be removed    
+      case HwTarget::ID
+      when "LOCAL_AQUILA"
+         t = ERB.new(CFS_CMD_HDR_3)
+      when "LOCAL_BOOTES"
+         t = ERB.new(CFS_CMD_HDR_1)
+      when "PISAT_CAELUM"
          t = ERB.new(CFS_CMD_HDR_1)
       else
-         t = ERB.new(CFS_CMD_HDR_3)
+         raise "Error in hw_target.rb target ID definition. #{HwTarget::ID} is not a valid CCSDS command configuration option."
       end
       t.result(binding)
    end
     
    def self.renderTlmHdr (stream_id)
       @stream_id = stream_id
-      if HwTarget::ID == "PISAT"
+      case HwTarget::ID
+      when "LOCAL_AQUILA"
+         t = ERB.new(CFS_TLM_HDR)
+      when "LOCAL_BOOTES"
+         t = ERB.new(CFS_TLM_HDR)
+      when "PISAT_CAELUM"
          t = ERB.new(CFS_TLM_HDR_PISAT)
       else
-         t = ERB.new(CFS_TLM_HDR)
+         raise "Error in hw_target.rb target ID definition. #{HwTarget::ID} is not a valid CCSDS command configuration option."
       end
       t.result(binding)
    end

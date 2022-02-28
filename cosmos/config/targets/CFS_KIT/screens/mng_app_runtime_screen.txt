@@ -34,7 +34,7 @@ VERTICAL
           LABEL "Data2"
           LABEL "Data3"
       
-          # Assume a cmd packet so skip MSG_DATA_WORD_0 which is the funcion code & checksum 
+          # Assume a cmd packet so skip MSG_DATA_WORD_0 which is the function code & checksum 
           VALUE KIT_SCH TBL_ENTRY_TLM_PKT SCHTBL_ENTRY_MSG_TBL_IDX   WITH_UNITS 6
           VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_STREAM_ID    WITH_UNITS 6
           VALUE KIT_SCH TBL_ENTRY_TLM_PKT MSG_SEQ_CNT      WITH_UNITS 6
@@ -124,7 +124,7 @@ VERTICAL
 
 #    LABEL "  "
    
-    HORIZONTALBOX "Telemetry Ouput"
+    HORIZONTALBOX "Telemetry Output"
     MATRIXBYCOLUMNS 4 5 5
       BUTTON 'Add TO Pkt'     'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_ADD_PKT")'
       BUTTON 'Remove TO Pkt'  'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/mng_app_runtime_screen.rb"; mng_app_runtime(self, "TO_REMOVE_PKT")'

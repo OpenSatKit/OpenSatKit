@@ -735,6 +735,8 @@ module CFDP
       writeLog("Sent #{pduPacket.pduPayload.class}: #{pduPacket.pack.to_s}")
 
       if isactive?
+        #dcm - Slow down transmission to prevent KIT_CI overrun
+        sleep(0.2)
 
         if pduPacket.pduPayload.is_a?(CFDP::PDUACK)
 

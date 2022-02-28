@@ -67,7 +67,6 @@ COMMAND KIT_TO SET_RUN_LOOP_DELAY <%= Osk::Cfg.processor_endian %> "Set the dela
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 11, 2) %>
   APPEND_PARAMETER RUN_LOOP_DELAY 16 UINT MIN_UINT16 MAX_UINT16 500 "Task delay(ms) used in main loop"
 
-
 COMMAND KIT_TO TEST_FILTER <%= Osk::Cfg.processor_endian %> "Test the packet filter algorithm"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 12, 8) %>
   APPEND_PARAMETER FILTER_TYPE    16 UINT MIN_UINT16 MAX_UINT16 1 "1=Always filter, 2=Filter by sequence, 3=Filter by time, 4=Never filter"

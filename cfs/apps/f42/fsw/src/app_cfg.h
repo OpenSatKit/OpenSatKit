@@ -88,6 +88,7 @@
 ** F42_ADP Configurations
 */
 
-
+#define F42_ADP_TAKE_SCI_INIT_CNT  30  /* Number of control cycles before start computing take science flag */ 
+#define F42_ADP_TAKE_SCI_TRANS_CNT  4  /* Number of control cycles for new value to be considered steady state for a transition */
 
 #endif /* _app_cfg_ */

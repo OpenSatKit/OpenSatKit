@@ -14,7 +14,7 @@
 #      identical to the FSW #define. If the parameter is from a another
 #      header file the name may not be preserved. 
 #   4. TODO - Modularize files. Use dictionary? Use EDS? Auto generate?
-#   5. TODO - Not all defintions are config params. See MD
+#   5. TODO - Not all definitions are config params. See MD
 # 
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -123,6 +123,21 @@ module FswConfigParam
   ###################
 
   EXAMPLE_TBL_NAME = "MyFirstTbl"
+  
+  ######################
+  ## App - File Input ##
+  ######################
+
+  # These are defined in file_in's app_cfg.h
+  FILE_IN_DATA_SEG_MAX_LEN  = 64
+  FILE_IN_DATA_SEG_ID_START =  1
+
+  #######################
+  ## App - File Output ##
+  #######################
+
+  # These are defined in file_out's app_cfg.h
+  
   
   ########################
   ## App - File Manager ##

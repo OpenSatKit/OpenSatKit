@@ -1,5 +1,5 @@
 CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,          CFS_LIB,        0,       0, 0x0, 0;
-CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,     OSK_C_FW,       0,   16384, 0x0, 0;
+CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,     OSK_C_FW,       0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_cpp_fw.so,   OSK_CPP_FW_LibInit,   OSK_CPP_FW,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,   OSK_42_LIB,     0,   16384, 0x0, 0;
 CFE_LIB, /cf/expat_lib.so,    EXPAT_Init,           EXPAT_LIB,      0,   16384, 0x0, 0;

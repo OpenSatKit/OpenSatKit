@@ -5,7 +5,7 @@
 #   1. This file manages the test suites for OSK. The following test suites are
 #      defined: Kit, cFS, and Mission. A test group is defined for each app and
 #      testcases verify specific app features (i.e. requirements). The kit test
-#      suite tests kit apps, the cFS test suite tests cFS apps, and additonal
+#      suite tests kit apps, the cFS test suite tests cFS apps, and additional
 #      apps added by the user are managed by the mission test suite.
 #
 # License:

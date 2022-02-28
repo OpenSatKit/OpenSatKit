@@ -11,7 +11,7 @@
 #      on ISIM
 #
 # Demo Steps:
-#   1. Display directories and create OSK directroy if needed
+#   1. Display directories and create OSK directory if needed
 #      - Note child task counter increments
 #   2. Create new directory in OSK's demo directory
 #      - Display new directory listing
@@ -20,7 +20,7 @@
 #      - Display new directory listing
 #      - Display file info on the new directory
 #   4. Send FSW server directory listing to a file
-#      - Transfer dirctory listing file
+#      - Transfer directory listing file
 #      - Display the directory listing using table manager
 #   5. Delete demo file directory
 #      - First attempt to delete a non-empty directory

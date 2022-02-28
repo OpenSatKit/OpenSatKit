@@ -2,8 +2,8 @@
 # SimSat Ops Screen
 #
 # Notes:
-#   1. A balance was was made to include enough telemetry to follow the example
-#      ops procedure, but not too much data that it makes its difficult to
+#   1. A balance was made to include enough telemetry to follow the example
+#      ops procedure, but not too much data that it makes it difficult to
 #      digest.
 #   2. The screen is designed so it can be used standalone or as a local screen
 #      to an ops script. The keyword/comment "#local#" local is used for lines
@@ -18,6 +18,10 @@
 #   General Public License (GPL).
 #
 ###############################################################################
+<%
+   require 'osk_global'
+   require 'sim_42_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -53,7 +57,7 @@ VERTICALBOX "Instrument Sim (ISIM)"
   END # Matrix
   
   HORIZONTAL
-    LABEL "Currrent science file: "
+    LABEL "Current science file: "
     VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
   END
   
@@ -203,7 +207,7 @@ VERTICALBOX "Attitude Determination and Control"
     VALUE F42 CONTROL_PKT THERR_X WITH_UNITS 8
     VALUE F42 CONTROL_PKT THERR_Y WITH_UNITS 8
     VALUE F42 CONTROL_PKT THERR_Z WITH_UNITS 8
-    BUTTON 'Plot' 'require "#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/sim_42_screen.rb"; sim_42_send_cmd(self, "PLOT_ATT_ERR")'
+    BUTTON 'Plot' 'sim_42_send_cmd(self, "PLOT_ATT_ERR")'
   END # Matrix
   
 END # Attitude Determination and Control

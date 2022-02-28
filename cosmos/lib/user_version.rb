@@ -8,11 +8,12 @@
 # 3.0 - Create 4 cFS targets
 # 3.1 - Added osk_c_demo app to sandbox, osk_c_tutor with lessons to cfsat, and created standalone pi-sat target
 # 3.2 - Completed COSMOS interface to pi-sat target and pi-sat quick start guide
+# 3.3 - Expanded hw_target.rb options & general maintenance
 #
 
-USER_VERSION = "OpenSatKit 3.2"  # COSMOS required string
+USER_VERSION = "OpenSatKit 3.3"  # COSMOS required string
 
-USER_VERSION_OSK  = "3.2"        # Just the version number
+USER_VERSION_OSK  = "3.3"        # Just the version number
 
 USER_VERSION_CFE  = "6.7.1.0"    # NASA/Goddard: Defined in CFE_ES
 USER_VERSION_OSAL = "5.0.1.0"

@@ -53,7 +53,7 @@ static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 /*
 ** Sample RTS Table Data
 */
-uint16 RTS_Table001[SC_RTS_BUFF_SIZE] =
+uint16 RTS_Table001[SC_RTS_BUFF_SIZE] = 
 {
   /*  cmd time,  <---------------------------- cmd pkt primary header ---------------------------->  <----- cmd pkt 2nd header ---->   <-- opt data ---> */
      CMD2_TIME,  CFE_MAKE_BIG16(SC_CMD_MID), CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(CMD2_LENGTH), ((SC_ENABLE_RTS_CC << 8) | CMD2_XSUM), 2,

@@ -23,7 +23,6 @@
 ** Includes
 */
 
-#include "cfe_platform_cfg.h"
 #include "kit_ci_platform_cfg.h"
 #include "osk_c_fw.h"
 

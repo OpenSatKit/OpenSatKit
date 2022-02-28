@@ -25,6 +25,8 @@ def sim_42_send_cmd(screen, cmd)
       if (continue == Osk::MSG_BUTTON_YES)
          Osk::flight.send_cmd("I42","CONNECT_42")
       end
+   elsif (cmd == "RUN_OPS_DEMO")
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_ctrl_take_sci.rb")
    elsif (cmd == "SET_42_EXEC_RATE")
       Osk::Ops::send_flt_cmd("I42", "CONFIG_EXECUTE")
    elsif (cmd == "SET_CTRL_GAINS")
@@ -46,12 +48,12 @@ def sim_42_send_cmd(screen, cmd)
    elsif (cmd == "MANAGE_CTRL_TBL")
       display("F42 TBL_SCREEN",50,50)
    elsif (cmd == "SET_CTRL_MODE")
-      selection = vertical_message_box("Select the new control mode",'Reset Current Mode','To Be Defined')
+      selection = vertical_message_box("Select the new control mode\n<b>Reset:</b> Reset the curren control mode\n<b>Invalid:</b> Test fault response",'Reset','Invalid')
 	   case selection
-	      when 'Reset Current Mode'
+	      when 'Reset'
 	         new_mode = 1
-	      when 'To Be Defined'
-	         new_mode = 2
+	      when 'Invalid'
+	         new_mode = 99
 	   end
 	   Osk::flight.send_cmd("F42","SET_CTRL_MODE with NEW_MODE #{new_mode}")  
    elsif (cmd == "SET_SUN_AXIS")

@@ -22,5 +22,5 @@ COMMAND PISAT PI_CTRL_EXIT BIG_ENDIAN "Stops the PiSat control process"
 COMMAND PISAT PI_NOOP BIG_ENDIAN "No function performed - Increments the command counter"
   APPEND_PARAMETER CMD_STRING 0 STRING "PI_NOOP" "Increments the command counter"
 
-COMMAND PISAT PI_ENA_TLM BIG_ENDIAN "Enable PiCtrl telemetery"
-  APPEND_PARAMETER CMD_STRING 0 STRING "PI_ENA_TLM" "Enable PiCtrl telemetery"
+COMMAND PISAT PI_ENA_TLM BIG_ENDIAN "Enable PiCtrl telemetry"
+  APPEND_PARAMETER CMD_STRING 0 STRING "PI_ENA_TLM" "Enable PiCtrl telemetry"

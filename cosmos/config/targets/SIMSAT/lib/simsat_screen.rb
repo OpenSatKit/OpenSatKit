@@ -87,7 +87,7 @@ def simsat_adc(screen, cmd)
    when "I42_DOC"
       prompt(Osk::MSG_TBD_FEATURE)
    when "FUNC_CONTROLLER_MGMT"
-      display("CFS_KIT SIM_42_SCREEN",1500,50)
+      display("SIMSAT SIM_42_SCREEN",1500,50)
    when "DEMO"
       prompt(Osk::MSG_TBD_FEATURE)
    when "TUTORIAL"
@@ -236,7 +236,7 @@ def simsat_data_file(screen, cmd)
          # Demo scripts manage screens & PacketViewer
          case screen.get_named_widget("demo").text
          when "Data-File Mgmt Script"
-            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_datafile_mgmt.rb")         
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_datafile_mgmt.rb")
          when "FM Playback Script"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_playback.rb")
          when "FM Feature Script"

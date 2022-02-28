@@ -79,7 +79,13 @@ def cfs_kit_scr_common(screen, cmd)
                       "<pre><b>Ena/Dis Gnd Cmd Verify</b> - Enable/Disable ground verification of command counters using telemetry. Command verification slows system response.</pre>",
                       "<pre><b>Config App Events</b>      - Enable/Disable event types for an application. Typically used for debugging.</pre>",
                       "<pre><b>Ena/Dis Flywheel Event</b> - Enable/Disable cFE TIME's start/stop flywheel events. Occurs freqeuntly since OSK/Linux environment is non-realtime. </pre>",
-                      "<pre><b>Ena/Dis HS Aliveness</b>   - Enable/Disable Health & Safety app's aliveness dot character output in the cFS terminal window.</pre>"]
+                      "<pre><b>Ena/Dis HS Aliveness</b>   - Enable/Disable Health & Safety app's aliveness dot character output in the cFS terminal window.</pre>",
+                      "                                                 ",
+                      "OSK Target Deployment Configurations", 
+                      "                                                 ",
+                      "<pre><b>ID</b>        = #{HwTarget::ID}                  </pre>",
+                      "<pre><b>Endian</b>    = #{HwTarget::PROCESSOR_ENDIAN}    </pre>",
+                      "<pre><b>Addr Size</b> = #{HwTarget::CPU_ADDR_SIZE} bytes </pre>"]
          cfs_kit_create_about_screen("Configure System",about_str)
          display("CFS_KIT #{File.basename(Osk::ABOUT_SCR_FILE,'.txt')}",50,50)
       else 
@@ -524,7 +530,7 @@ def cfs_kit_scr_sandbox(screen, cmd)
       # 
       # Create a list of apps that have been compiled (.o file exists in /cf directory) but have
       # not been loaded. Create a new screen that allows the user to select from a list to load
-      # an app. This is a precurser to an app store
+      # an app. This is a precursor to an app store
       #
       # 1. Get current FSW apps
       #    A. Get cFE ES app log
@@ -747,7 +753,7 @@ def cfs_kit_create_tutorial_screen
    #
    ###############################################################################
    <% 
-      requie 'tutorial_screen'
+      require 'tutorial_screen'
    %>
    SCREEN AUTO AUTO 0.5
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221

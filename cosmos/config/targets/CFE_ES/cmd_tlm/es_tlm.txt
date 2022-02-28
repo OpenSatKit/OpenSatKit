@@ -26,7 +26,7 @@ TELEMETRY CFE_ES HK_TLM_PKT <%= Osk::Cfg.processor_endian %> "Housekeeping data 
    APPEND_ITEM OSAL_MISSION_REV    8 UINT "OS Abstraction Layer MissionRevision Number."
    <%
       psp_str = ""
-      if (HwTarget::ID == "PISAT")
+      if (HwTarget::ID == "PISAT_CAELUM")
          psp_str = "
             APPEND_ITEM PSP_MAJOR_VER      8 UINT \"Platform Support Package Major Version Number.\"
             APPEND_ITEM PSP_MINOR_VER      8 UINT \"Platform Support Package Minor Version Number.\" 
@@ -124,4 +124,4 @@ TELEMETRY CFE_ES MEM_POOL_STATS_TLM_PKT BIG_ENDIAN "Memory Pool Statistics Packe
 
 TELEMETRY CFE_ES SHELL_TLM_PKT <%= Osk::Cfg.processor_endian %> "OS Shell Output Packet sent in response to a ES_SHELL command"
    <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @SHELL_TLM_MID_STR) %>
-   APPEND_ARRAY_ITEM SHELL_OUTPUT 8 UINT 512 "ASCII text string containing output from OS Shell that was received in response to an OS Shell Command."
+   APPEND_ITEM SHELL_OUTPUT 512 STRING "ASCII text string containing output from OS Shell that was received in response to an OS Shell Command."

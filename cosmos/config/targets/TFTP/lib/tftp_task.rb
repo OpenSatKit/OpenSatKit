@@ -12,10 +12,10 @@
 #      initiate file transfers by commanding the FSW TFTP app and this task
 #      supports this model. The FSW TFTP app responds to a file transfer
 #      request by sending a TFTP_TRANSFER_REQ telemetry packet. This task
-#      polls for this message and when it receievs one it initiates the
+#      polls for this message and when it receives one it initiates the
 #      file transfer, This is still not the same as implementing the TFTP
 #      protocol across the cmd/tlm link like CFDP but it allows ground
-#      an flight scripts/stored commands to initiate file transfers by
+#      and flight scripts/stored commands to initiate file transfers by
 #      commanding the TFTP FSW app.
 #
 # License:

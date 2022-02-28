@@ -36,6 +36,7 @@ static UPLINK_Class*  Uplink = NULL;
 */
 
 static void DestructorCallback(void);
+static void LogRecvBuff(uint8* RecvBuff);
 static void ProcessMsgTunnelMap(void);
 
 /******************************************************************************
@@ -168,7 +169,7 @@ int UPLINK_Read(uint16 MaxMsgRead)
 
 	unsigned int AddrLen = sizeof(Uplink->SocketAddress);
    int i = 0;
-   int Status;
+   int32 Status;
 
    if (Uplink->Connected == FALSE) return i;
 
@@ -187,19 +188,29 @@ int UPLINK_Read(uint16 MaxMsgRead)
 
             CFE_EVS_SendEvent(UPLINK_DEBUG_EID, CFE_EVS_DEBUG,
                               "UPLINK_Read: Read %d bytes from socket\n",Status);
+
+            //TODO - Make commandable:  LogRecvBuff(&Uplink->RecvBuff[i]);
+            
             Uplink->RecvMsgCnt++;
             if (Uplink->MsgTunnel.Enabled) {
                
                ProcessMsgTunnelMap();
 
             } /* End if map enabled */
-            CFE_SB_SendMsg((CFE_SB_MsgPtr_t) &(Uplink->RecvBuff[i]));
+            Status = CFE_SB_SendMsg((CFE_SB_MsgPtr_t) &(Uplink->RecvBuff[i]));
+            if (Status != CFE_SUCCESS)
+            {
+               CFE_EVS_SendEvent(UPLINK_SB_SEND_ERR_EID,CFE_EVS_ERROR,
+                                 "Error sending SB message. CCSDS Header: 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x",
+                   		         Uplink->RecvBuff[0], Uplink->RecvBuff[1], Uplink->RecvBuff[2], Uplink->RecvBuff[3],
+                                 Uplink->RecvBuff[4], Uplink->RecvBuff[5], Uplink->RecvBuff[6], Uplink->RecvBuff[7]);   
+            }
          }
          else {
             
             Uplink->RecvMsgErrCnt++;
             CFE_EVS_SendEvent(UPLINK_RECV_LEN_ERR_EID,CFE_EVS_ERROR,
-                              "Command dropped (too long). Header: 0x%02x%2x 0x%02x%2x 0x%02x%2x 0x%02x%2x",
+                              "Command dropped (too long). Header: 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x",
                 		         Uplink->RecvBuff[0], Uplink->RecvBuff[1], Uplink->RecvBuff[2], Uplink->RecvBuff[3],
                               Uplink->RecvBuff[4], Uplink->RecvBuff[5], Uplink->RecvBuff[6], Uplink->RecvBuff[7]);
          }
@@ -275,5 +286,34 @@ static void ProcessMsgTunnelMap(void)
       } /* End if tunnel enabled */
 
    } /* End map loop */
-
+   
 } /* End ProcessMsgTunnelMap() */
+
+
+/******************************************************************************
+** Function: LogRecvBuff
+**
+** TODO - Add enable/disable, file option, Msg filter
+**
+*/
+static void LogRecvBuff(uint8* RecvBuff)
+{
+
+   int    i;
+   
+   //CFE_EVS_SendEvent(UPLINK_DEBUG_EID,CFE_EVS_INFORMATION,
+   OS_printf("CCSDS Header: 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x\n",
+             RecvBuff[0], RecvBuff[1], RecvBuff[2], RecvBuff[3],
+             RecvBuff[4], RecvBuff[5], RecvBuff[6], RecvBuff[7]);
+   
+   for (i=8; i < 256; i += 16) {
+
+      OS_printf("[%03d] 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x 0x%02x%02x\n",i,
+                RecvBuff[i],    RecvBuff[i+1],  RecvBuff[i+2],  RecvBuff[i+3],
+                RecvBuff[i+4],  RecvBuff[i+5],  RecvBuff[i+6],  RecvBuff[i+7],
+                RecvBuff[i+8],  RecvBuff[i+9],  RecvBuff[i+10], RecvBuff[i+11],
+                RecvBuff[i+12], RecvBuff[i+13], RecvBuff[i+14], RecvBuff[i+15]);
+
+   } /* End data loop */
+
+} /* End LogRecvBuff() */

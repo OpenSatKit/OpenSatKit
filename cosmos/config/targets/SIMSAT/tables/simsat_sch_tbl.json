@@ -5,7 +5,7 @@
                    "A slow control law rate was chosen to keep the system simple for",
                    "demonstration purposes. The synchronization approaches can scale to",
                    "meet a more complex mission's needs as long as the CPU processing can",
-                   "accomodate it. A recent Goddard mission with a 10Hz control law uses 100",
+                   "accommodate it. A recent Goddard mission with a 10Hz control law uses 100",
                    "slots with 10 activities per slot.",
                    "Scheduling Notes:",
                    " 1. App execution control flow requests start at Activity 0 in each slot",
@@ -383,7 +383,7 @@
                "index":   11,
                "enabled": "true",
                "period":  4,
-               "offset":  0
+               "offset":  0,
                "msg-idx": 44
             }},
             
