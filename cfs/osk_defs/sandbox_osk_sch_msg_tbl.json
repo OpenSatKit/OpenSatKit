@@ -392,6 +392,15 @@
       }},
       
       {"message": {
+         "name":  "FILE_IN_SEND_HK_MID, FILE_OUT_SEND_HK_MID",
+         "descr": "0x1921(6433), 0xC000(49152), 0x0001",
+         "id": 48,
+         "stream-id": 6433,
+         "seq-seg": 49152,
+         "length": 1
+      }},
+      
+      {"message": {
          "name":  "TEST_SEND_HK_MID",
          "descr": "0x1FF1(8177), 0xC000(49152), 0x0001",
          "id": 100,

@@ -48,7 +48,7 @@ PLATFORMS
 
 DEPENDENCIES
   cosmos
-  ruby-termios (~> 0.9)
+  ruby-termios (>= 0.9)
 
 BUNDLED WITH
    1.17.3

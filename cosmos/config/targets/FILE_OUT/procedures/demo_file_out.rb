@@ -82,5 +82,5 @@ def demo_file_out_transfer(demo_filename)
    
 end # demo_file_in_transfer()
 
-demo_file_out_transfer("cfe_es_startup.scr")
+#demo_file_out_transfer("cfe_es_startup.scr")
 
