@@ -413,6 +413,16 @@
             }},
                         
            {"activity": {
+               "name":    "FILE IN/OUT Housekeeping",
+               "descr":   "Used by both FILE_IN and FILE_OUT prototypes",
+               "index":   7,
+               "enabled": "true",
+               "period":  2,
+               "offset":  0,
+               "msg-idx": 48
+            }},
+
+           {"activity": {
                "name":    "TEST",
                "descr":   "Used by Create App and available for development",
                "index":   8,

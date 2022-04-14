@@ -36,7 +36,9 @@ TELEMETRY <%= @APP_PREFIX_STR %> <%= Osk::TLM_STR_HK_PKT %> <%= Osk::Cfg.process
     STATE SEND_DATA 3
     STATE FINISHED  4
     STATE PAUSED    5
-  APPEND_ITEM PREV_SEGMENT_FAILED     8 UINT "Boolean indicating if file transfer active"
+  APPEND_ITEM PREV_SEGMENT_FAILED     8 UINT "Boolean indicating if last segment not sent in tlm"
+    STATE FALSE 0
+    STATE TRUE  1 RED
   APPEND_ITEM FILE_TRANSFER_BYTE_CNT 32 UINT "Number of file data bytes sent"
   APPEND_ITEM FILE_RUNNING_CRC       32 UINT "Running CRC of file data sent"
   APPEND_ITEM DATA_TRANSFER_LEN      32 UINT ""

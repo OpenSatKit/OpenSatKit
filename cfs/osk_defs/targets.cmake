@@ -100,7 +100,8 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 #   didn't know how to resolve this with the SIMULATION=native prep and all targets
 #   using the same Linux build toolchain so I moved the cFE configuration files
 #   to apps/cfs_lib/fsw/public_inc folder and modified app CMakeLists.txt files
-#   to include this folder in the include search path 
+#   to include this folder in the include search path
+# - Issue (v3.4): make SIMULATION=native prep not working for simsat
 #
 
 ###############
@@ -140,5 +141,5 @@ SET(TGT3_NAME sandbox)
 
 SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim osk_c_demo)
 
-SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json)
+SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json file_in_ini.json file_out_ini.json)
 

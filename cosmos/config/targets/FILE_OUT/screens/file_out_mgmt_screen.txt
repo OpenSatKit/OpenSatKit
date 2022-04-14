@@ -1,0 +1,101 @@
+###############################################################################
+# File Output Transfer (FILE_OUT) App Screen
+#
+# Notes:
+#   
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'file_out_mgmt_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "File Output Application"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+   SETTING TEXTCOLOR black
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+
+   VERTICALBOX
+      MATRIXBYCOLUMNS 4
+
+         LABEL '                '
+         BUTTON 'Noop'      'file_out_mgmt_send_cmd(self, "NOOP")'
+         BUTTON 'Reset'     'file_out_mgmt_send_cmd(self, "RESET")'
+         LABEL '                '
+
+         LABEL '                '
+         BUTTON 'Send File' 'file_out_mgmt_send_cmd(self, "SEND_FILE")'
+         BUTTON 'Cancel'    'file_out_mgmt_send_cmd(self, "CANCEL")'
+         LABEL '                '
+
+         LABEL '                '
+         BUTTON 'Pause'     'file_out_mgmt_send_cmd(self, "PAUSE")'
+         BUTTON 'Resume'    'file_out_mgmt_send_cmd(self, "RESUME")'
+         LABEL '                '
+
+      END # Matrix
+   END # VerticalBox
+
+   VERTICALBOX
+      MATRIXBYCOLUMNS 5
+
+         LABEL 'Cmd Valid'
+         VALUE FILE_OUT HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Cmd Error'
+         VALUE FILE_OUT HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 12
+
+         LABEL 'Trans Cnt'
+         VALUE FILE_OUT HK_TLM_PKT FILE_TRANSFER_CNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Trans State'
+         VALUE FILE_OUT HK_TLM_PKT FILE_TRANSFER_STATE WITH_UNITS 12
+
+         LABEL 'Paused State'
+         VALUE FILE_OUT HK_TLM_PKT PAUSED_TRANSFER_STATE WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Prev Seg Fail'
+         VALUE FILE_OUT HK_TLM_PKT PREV_SEGMENT_FAILED WITH_UNITS 12
+
+         LABEL 'File Len'
+         VALUE FILE_OUT HK_TLM_PKT FILE_LEN WITH_UNITS 12
+         LABEL '        '
+         LABEL 'File Byte Offset'
+         VALUE FILE_OUT HK_TLM_PKT FILE_BYTE_OFFSET WITH_UNITS 12
+
+         LABEL 'Send Byte Cnt'
+         VALUE FILE_OUT HK_TLM_PKT FILE_TRANSFER_BYTE_CNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Send CRC'
+         VALUE FILE_OUT HK_TLM_PKT FILE_RUNNING_CRC WITH_UNITS 12
+
+         LABEL 'Data Seg Len'
+         VALUE FILE_OUT HK_TLM_PKT DATA_SEGMENT_LEN WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Data Seg Offset'
+         VALUE FILE_OUT HK_TLM_PKT DATA_SEGMENT_OFFSET WITH_UNITS 12
+
+         LABEL 'Next Data Seg ID'
+         VALUE FILE_OUT HK_TLM_PKT NEXT_DATA_SEGMENT_ID WITH_UNITS 12
+         LABEL '        '
+         LABEL '        '
+         LABEL '        '
+
+      END # Matrix
+      LABEL "Current file: "
+      VALUE FILE_OUT HK_TLM_PKT SRC_FILENAME WITH_UNITS 50
+   END # VerticalBox
+   SETTING BACKCOLOR 162 181 205
+
+   HORIZONTALLINE
+   LABEL "Flight Event Messages"
+   NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50

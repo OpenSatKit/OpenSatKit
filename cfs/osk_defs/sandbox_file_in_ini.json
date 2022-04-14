@@ -1,0 +1,17 @@
+{
+   "title": "OSK File Input",
+   "description": [ "Define runtime configurations. See file_in::app_cfg.h for definitions"],
+   "config": {
+      
+      "APP_CFE_NAME":  "FILE_IN",
+      "APP_PERF_ID":  94,
+
+      "APP_CMD_PIPE_DEPTH":  5,
+      "APP_CMD_PIPE_NAME":   "FILE_IN_CMD",
+           
+      "APP_CMD_MID":         6432,
+      "APP_SEND_HK_MID":     6433,
+      "APP_HK_TLM_MID":      2336
+
+   }
+}
