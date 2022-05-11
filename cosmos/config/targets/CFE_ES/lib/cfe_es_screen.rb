@@ -69,20 +69,24 @@ def cfe_es_scr_cmd(screen, cmd)
       Osk::Ops::send_flt_bin_file_cmd("CFE_ES", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
       
    when "FUNC_APP_MGMT"
-      display("CFS_KIT APP_MGMT_SCREEN",1500,10)
+      display("CFE_ES APP_MGMT_SCREEN",1500,10)
    
    when "FUNC_PERF_MON"
-      display("CFS_KIT PERF_MON_SCREEN",1500,10)
+      display("CFE_ES PERF_MON_SCREEN",1500,10)
 
    when "DEMO"
+      # The screen demos are not currently used in ES screen but
+      # I've left the hooks in below
       Osk::System.check_n_start_cfs('cfsat')
       case screen.get_named_widget("demo").text
-      when "App Management Screen"
-         display("CFS_KIT APP_MGMT_DEMO_SCREEN",500,50)
-      when "Perf Monitor Screen"
-         display("CFS_KIT PERF_MON_DEMO_SCREEN",500,50)
-      when "Perf Monitor Script"
+      when "App Management"
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_app_mgmt.rb")
+      when "Perf Monitor"
          spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_perf_mon.rb")
+      when "App Management Screen"
+         display("app_mgmt_launch_app APP_MGMT_DEMO_SCREEN",500,50)
+      when "Perf Monitor Screen"
+         display("app_mgmt_launch_app PERF_MON_DEMO_SCREEN",500,50)
       end
 
    when "TUTORIAL"

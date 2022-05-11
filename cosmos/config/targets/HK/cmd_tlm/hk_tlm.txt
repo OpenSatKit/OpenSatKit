@@ -45,24 +45,22 @@ TELEMETRY HK COMBO_PKT_1 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined
 TELEMETRY HK COMBO_PKT_2 <%= Osk::Cfg.processor_endian %> "Housekeeping Combined Packet 2"
   <%= Osk::Cfg.tlm_hdr(@APP_PREFIX_STR, @COMBINED_PKT2_MID_STR) %>
   
-  #ISIM HK - Instrument Status
-  APPEND_ITEM INSTR_PWR_STATE 8 UINT  ""
+  #PL_MGR HK - Payload, Detector, and science file status
+  APPEND_ITEM PAYLOAD_POWER 8 UINT  ""
     STATE OFF    1
     STATE INIT   2
     STATE RESET  3
     STATE READY  4
 
-  APPEND_ITEM SCI_STATE 8 UINT  ""
-    STATE OFF    1
-    STATE INIT   2
-    STATE RESET  3
-    STATE READY  4
-  
-  APPEND_ITEM FAULT_PRESENT 8 UINT  ""
+  APPEND_ITEM DETECTOR_FAULT 8 UINT  ""
     STATE FALSE   0
     STATE TRUE    1 
   
-  APPEND_ITEM SPARE  8 UINT  ""
+  APPEND_ITEM SCI_FILE_OPEN 8 UINT  ""
+    STATE FALSE   0
+    STATE TRUE    1 
+  
+  APPEND_ITEM SCI_FILE_IMAGE_CNT 8 UINT  ""
 
   #F42 HK - Control Mode
   APPEND_ITEM CTRL_MODE       16 UINT "Control Mode"

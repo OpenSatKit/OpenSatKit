@@ -1,0 +1,9 @@
+{
+   "title": "Payload Simulator(PL_SIM) initialization file",
+   "description": ["Define runtime configurations"],
+   
+   "config": {
+      "PWR_INIT_CYCLES":  20,
+      "PWR_RESET_CYCLES":  5
+   }
+}

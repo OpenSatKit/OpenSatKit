@@ -230,60 +230,6 @@
       }},
 
       {"message": {
-         "name":  "BM_SEND_HK_MID",
-         "descr": "0x19F1(6641), 0xC000(49152), 0x0001",
-         "id": 30,
-         "stream-id": 6641,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-
-      {"message": {
-         "name":  "BM_WAKEUP_MID",
-         "descr": "0x19F2(6642), 0xC000(49152), 0x0001",
-         "id": 31,
-         "stream-id": 6642,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-
-      {"message": {
-         "name":  "HC_SEND_HK_MID",
-         "descr": "0x19A1(6561), 0xC000(49152), 0x0001",
-         "id": 32,
-         "stream-id": 6561,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-  
-      {"message": {
-         "name":  "HC_01HZ_WAKEUP_MID",
-         "descr": "0x19A2(6562), 0xC000(49152), 0x0001",
-         "id": 33,
-         "stream-id": 6562,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-  
-      {"message": {
-         "name":  "HSIM_SEND_HK_MID",
-         "descr": "0x19B2(6578), 0xC000(49152), 0x0001",
-         "id": 34,
-         "stream-id": 6578,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-  
-      {"message": {
-         "name":  "HSIM_SEND_DATA_MID",
-         "descr": "0x19B3(6578), 0xC000(49152), 0x0001",
-         "id": 35,
-         "stream-id": 6578,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-  
-      {"message": {
          "name":  "KIT_CI_SEND_HK_MID",
          "descr": "0x1F01(7937), 0xC000(49152), 0x0001",
          "id": 36,
@@ -342,24 +288,6 @@
          "descr": "0x19E2(6626), 0xC000(49152), 0x0001",
          "id": 42,
          "stream-id": 6626,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-
-      {"message": {
-         "name":  "ISIM_EXECUTE_MID",
-         "descr": "0x19C1(6593), 0xC000(49152), 0x0001",
-         "id": 43,
-         "stream-id": 6593,
-         "seq-seg": 49152,
-         "length": 1
-      }},
-      
-      {"message": {
-         "name":  "ISIM_SEND_HK_MID",
-         "descr": "0x19C2(6594), 0xC000(49152), 0x0001",
-         "id": 44,
-         "stream-id": 6594,
          "seq-seg": 49152,
          "length": 1
       }},

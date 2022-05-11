@@ -168,33 +168,13 @@ module Fsw
       GENERIC_3S_MID  = "0x1A05"  # 6661
       GENERIC_4S_MID  = "0x1A06"  # 6662
 
-      # Benchmark
-  
-      BM_CMD_MID     = "0x19F0"
-      BM_HK_TLM_MID	= "0x09F0"
-
       # F42 - 42 Simulator FSW
   
       F42_CMD_MID            = "0x19D0"
       F42_HK_TLM_MID         = "0x09D0"
       F42_CTRL_TLM_MID       = "0x09D1"
       F42_CTRL_GAINS_TLM_MID = "0x09D2"
-      
-      # File Input Transfer Protocol
-  
-      FILE_IN_CMD_MID       = "0x1920"
-      FILE_IN_SEND_HK_MID   = "0x1921"
-      FILE_IN_HK_TLM_MID    = "0x0920" 
-      
-      # File Output Transfer Protocol
-  
-      FILE_OUT_CMD_MID                 = "0x1930"
-      FILE_OUT_SEND_HK_MID             = "0x1931"
-      FILE_OUT_HK_TLM_MID              = "0x0930"
-      FILE_OUT_START_TRANSFER_TLM_MID  = "0x0931"
-      FILE_OUT_DATA_SEGMENT_TLM_MID    = "0x0932"
-      FILE_OUT_FINISH_TRANSFER_TLM_MID = "0x0933"
-      
+            
       # File Manager
 
       FILEMGR_CMD_MID            = "0x198C"
@@ -204,18 +184,6 @@ module Fsw
       FILEMGR_OPEN_FILES_TLM_MID = "0x098D"
       FILEMGR_FILESYS_TLM_MID    = "0x098E"
 
-      # Heater Control
-  
-      HC_CMD_MID       = "0x19A0"
-      HC_HK_TLM_MID    = "0x09A0"
-      HC_THERM_TLM_MID = "0x09A1"
-      
-      # Heater Simulation
-  
-      HSIM_CMD_MID      = "0x19B1"
-      HSIM_HK_TLM_MID   = "0x09B1"
-      HSIM_HC_DATA_MID  = "0x19B4"
-  
       # I42 - 42 Simulator Interface
   
       I42_CMD_MID    = "0x19E0"
@@ -223,13 +191,6 @@ module Fsw
       I42_SENSOR_DATA_MID       = "0x09E1"
       I42_ACTUATOR_CMD_DATA_MID = "0x09E2"
 
-      # ISIM - Simple Sat (SimSat) Instrument Simulator (Isim)
-  
-      ISIM_CMD_MID      = "0x19C0"
-      ISIM_EXECUTE_MID  = "0x19C1"
-      ISIM_SEND_HK_MID  = "0x19C2"
-      ISIM_HK_TLM_MID   = "0x09C0"
-      
       # Kit Command Ingest
   
       KIT_CI_CMD_MID    = "0x1F00"
@@ -250,12 +211,6 @@ module Fsw
       KIT_TO_DATA_TYPE_TLM_MID = "0x0F22"
       KIT_TO_EVT_PLBK_TLM_MID  = "0x0F23"
 
-      # MQTT 
-  
-      MQTT_CMD_MID       = "0x1F50"
-      MQTT_HK_TLM_MID    = "0x0F50"
-      MQTT_STR32_TLM_MID = "0x0F51"
-
       # OpenSatKit C Demo App 
   
       OSK_C_DEMO_CMD_MID        = "0x1F70"
@@ -263,17 +218,6 @@ module Fsw
       OSK_C_DEMO_SEND_HK_MID    = GENERIC_4S_MID
       OSK_C_DEMO_HK_TLM_MID     = "0x0F70"
       OSK_C_DEMO_PLAYBK_TLM_MID = "0x0F71"
-
-      # OpenSatKit C Prototype App 
-  
-      OSK_C_PROTO_CMD_MID    = "0x1F30"
-      OSK_C_PROTO_HK_TLM_MID = "0x0F30"
-      OSK_C_PROTO_FR_TLM_MID = "0x0F31"
-
-      # OpenSatKit C++ Prototype App 
-  
-      OSK_CPP_PROTO_CMD_MID    = "0x1F40"
-      OSK_CPP_PROTO_HK_TLM_MID = "0x0F40"
 
       # Create App and reserved for testing
       # - Generic scheduler messages used 
@@ -283,12 +227,25 @@ module Fsw
       OSK_TEST_CMD_MID      = "0x1FF0"
       OSK_TEST_SEND_HK_MID  = GENERIC_4S_MID
       OSK_TEST_HK_TLM_MID   = "0x0FF0"
+      
+      # PL_MGR - Payload Manager
+  
+      PL_MGR_CMD_MID      = "0x19C0"
+      PL_MGR_EXECUTE_MID  = "0x19C1"
+      PL_MGR_HK_TLM_MID   = "0x09C0"
+
+      # PL_SIM - Payload Simulator
+  
+      PL_SIM_CMD_MID      = "0x19F0"
+      PL_SIM_EXECUTE_MID  = "0x19F1"
+      PL_SIM_HK_TLM_MID   = "0x09F0"
+      
 
       # SCSIM - Spacecraft Simulator
   
       SCSIM_CMD_MID        = "0x1F60"
-      SCSIM_EXECUTE_MID    = "0x19C1"   # Same as ISIM_EXECUTE_MID
-      SCSIM_SEND_HK_MID    = "0x19C2"   # Same as ISIM_SEND_HK_MID
+      SCSIM_EXECUTE_MID    = "0x19F1"   # Same as PL_SIM_EXECUTE_MID
+      SCSIM_SEND_HK_MID    = "0x1F01"   # Same as KIT_CI_SEND_HK_MID
       SCSIM_HK_TLM_MID     = "0x0F60"
       SCSIM_MGMT_TLM_MID   = "0x0F61"
       SCSIM_MODEL_TLM_MID  = "0x0F62"

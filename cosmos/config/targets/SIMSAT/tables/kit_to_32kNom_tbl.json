@@ -363,13 +363,24 @@
    },
 
       "packet": {
-      "name": "ISIM_HK_TLM_MID",
-      "stream-id": "\u0x09C0",
-      "dec-id": 2496,
-      "priority": 0,
-      "reliability": 0,
-      "buf-limit": 4,
-      "filter": { "type": 2      , "X": 1      , "N": 1      , "O": 0}
+         "name": "PL_MGR_HK_TLM_MID",
+         "stream-id": "\u09C0",
+         "dec-id": 2496,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      },
+      
+      "packet": {
+         "name": "PL_SIM_HK_TLM_MID",
+         "stream-id": "\u09F0",
+         "dec-id": 2544,
+         "priority": 0,
+         "reliability": 0,
+         "buf-limit": 4
+         "filter": { "type": 2, "X": 1, "N": 1, "O": 0}
+      }
    },
 
       "packet": {

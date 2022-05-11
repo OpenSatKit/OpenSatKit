@@ -1,0 +1,143 @@
+###############################################################################
+# Payload Manager (PL_MGR) App Screen
+#
+# Notes:
+#   This combines the Payload Manager and Simulator apps for conveneience. In
+#   a real mission the PL_MGR interface would need to be standalone   
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'osk_global'
+   require 'pl_mgr_screen'
+   require 'pl_sim_screen'
+%>
+
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+  
+TITLE "Payload Management"
+   SETTING BACKCOLOR 162 181 205
+   SETTING TEXTCOLOR black
+   GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+   VERTICALBOX "PL_MGR Commands"
+      MATRIXBYCOLUMNS 4
+
+         LABEL '            PL_MGR App:'
+         BUTTON 'Noop'   'pl_mgr_send_cmd(self, "NOOP")'
+         BUTTON 'Reset'  'pl_mgr_send_cmd(self, "RESET")'
+         BUTTON 'Config' 'pl_mgr_send_cmd(self, "CONFIG")'
+
+         LABEL '               Science:'
+         BUTTON 'On'    'pl_mgr_send_cmd(self, "SCIENCE_ON")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Off'   'pl_mgr_send_cmd(self, "SCIENCE_OFF")'
+            SETTING BACKCOLOR 255 70 95
+         LABEL '                '
+ 
+      END # Matrix
+   END # VerticalBox Commands
+
+   VERTICALBOX "PL_MGR Telemetry"
+      MATRIXBYCOLUMNS 5
+
+         LABEL 'Cmd Valid'
+         VALUE PL_MGR HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Cmd Error'
+         VALUE PL_MGR HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 12
+
+         LABEL 'Payload Power'
+         VALUE PL_MGR HK_TLM_PKT PAYLOAD_POWER WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Detector Fault'
+         VALUE PL_MGR HK_TLM_PKT DETECTOR_FAULT WITH_UNITS 12
+
+         LABEL 'Detector Image'
+         VALUE PL_MGR HK_TLM_PKT DETECTOR_IMAGE_CNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Detector Row'
+         VALUE PL_MGR HK_TLM_PKT DETECTOR_READOUT_ROW WITH_UNITS 12
+
+         LABEL 'Sci File Open'
+         VALUE PL_MGR HK_TLM_PKT SCI_FILE_OPEN WITH_UNITS 12
+         LABEL '        '
+         LABEL 'File Image Cnt'
+         VALUE PL_MGR HK_TLM_PKT SCI_FILE_IMAGE_CNT WITH_UNITS 12
+
+      END # Matrix
+         LABEL "Current science file: "
+         VALUE PL_MGR HK_TLM_PKT SCI_FILENAME WITH_UNITS 50
+   END # VerticalBox Telemetry
+   SETTING BACKCOLOR 162 181 205
+
+   HORIZONTALLINE
+   VERTICALBOX "PL_SIM Commands"
+      MATRIXBYCOLUMNS 4
+
+         LABEL '            PL_SIM App:'
+         BUTTON 'Noop'  'pl_sim_send_cmd(self, "NOOP")'
+         BUTTON 'Reset' 'pl_sim_send_cmd(self, "RESET")'
+         LABEL '                '
+
+         LABEL '                 Power:'
+         BUTTON 'On'    'pl_sim_send_cmd(self, "POWER_ON")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Off'   'pl_sim_send_cmd(self, "POWER_OFF")'
+            SETTING BACKCOLOR 255 70 95
+         BUTTON 'Reset' 'pl_sim_send_cmd(self, "POWER_RESET")'
+#         LABEL '                '
+
+#         LABEL '                 Power:'
+#         BUTTON 'Reset' 'pl_sim_send_cmd(self, "POWER_RESET")'
+#         LABEL '                '
+#         LABEL '                '
+
+         LABEL '                   Fault:'
+         BUTTON 'On'    'pl_sim_send_cmd(self, "FAULT_ON")'
+            SETTING BACKCOLOR 70 255 95
+         BUTTON 'Off'   'pl_sim_send_cmd(self, "FAULT_OFF")'
+            SETTING BACKCOLOR 255 70 95
+         LABEL '                '
+
+      END # Matrix
+   END # VerticalBox Commands
+
+   VERTICALBOX "PL_SIM Telemetry"
+      MATRIXBYCOLUMNS 5
+
+         LABEL 'Cmd Valid'
+         VALUE PL_SIM HK_TLM_PKT CMD_VALID_COUNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Cmd Error'
+         VALUE PL_SIM HK_TLM_PKT CMD_ERROR_COUNT WITH_UNITS 12
+
+         LABEL 'Power'
+         VALUE PL_SIM HK_TLM_PKT PAYLOAD_POWER WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Fault'
+         VALUE PL_SIM HK_TLM_PKT DETECTOR_FAULT WITH_UNITS 12
+
+         LABEL 'Pwr Init Cycle'
+         VALUE PL_SIM HK_TLM_PKT POWER_INIT_CYCLE_CNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Rst Init Cycle'
+         VALUE PL_SIM HK_TLM_PKT POWER_RESET_CYCLE_CNT WITH_UNITS 12
+
+         LABEL 'Image Cnt'
+         VALUE PL_SIM HK_TLM_PKT DETECTOR_IMAGE_CNT WITH_UNITS 12
+         LABEL '        '
+         LABEL 'Detector Row'
+         VALUE PL_SIM HK_TLM_PKT DETECTOR_READOUT_ROW WITH_UNITS 12
+
+      END # Matrix
+   END # VerticalBox Telemetry
+   SETTING BACKCOLOR 162 181 205
+
+   HORIZONTALLINE
+   LABEL "Flight Event Messages"
+   NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 580 50

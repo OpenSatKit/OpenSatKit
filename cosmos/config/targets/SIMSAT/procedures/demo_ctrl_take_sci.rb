@@ -18,14 +18,14 @@ require 'fsw_const'
 require 'fsw_config_param'
 
 require 'simsat_const'
-load_utility('simsat_isim_mgmt') # Don't use 'require' to show lines since this is a demo
+load_utility('simsat_payload_mgmt') # Don't use 'require' to show lines since this is a demo
 
 ###########
 ## Setup ##
 ###########
 
 display("SIMSAT SIM_42_SCREEN")
-display("ISIM ISIM_MGMT_SCREEN")
+display("PL_MGR PL_MGR_SCREEN")
 
 restart = message_box("Would you like to restart the cFS if it's running?", Osk::MSG_BUTTON_YES, Osk::MSG_BUTTON_NO, false)
 
@@ -41,19 +41,19 @@ Osk::System.start_42(true)  # True displays I42/F42 sim screen
 
 wait_check("F42 CONTROL_PKT TAKE_SCI == 'TRUE'", 300)
 
-simsat_isim_pwr_on  # Configure ISIM to science mode
+simsat_payload_power_on  # Configure PL_SIM power on and PL_MGR to science mode
 
-status_bar("Observe science collection. <Go> will power off ISIM")
+status_bar("Observe science collection. <Go> will power off the payload")
 wait  # <Go> to continue
 
 #############
 ## Cleanup ##
 #############
 
-simsat_isim_pwr_off
+simsat_payload_power_off
 
-status_bar("Observe ISIM powered off state. <Go> will terminate the demo")
+status_bar("Observe PL_SIM powered off state. <Go> will terminate the demo")
 wait  # <Go> to continue
 
-clear("ISIM ISIM_MGMT_SCREEN")
+clear("PL_MGR PL_MGR_SCREEN")
 clear("SIMSAT SIM_42_SCREEN")

@@ -18,7 +18,7 @@ require 'fsw_config_param'
 
 require 'simsat_const'
 require 'simsat_ops_example_utils'
-require 'simsat_isim_mgmt'
+require 'simsat_payload_mgmt'
 require 'simsat_recorder_mgmt'
 require 'simsat_req_tlm'
 
@@ -39,13 +39,13 @@ Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)
 ################################
 
 #
-# 1. Configure ISIM to science mode
+# 1. Configure PL_SIM power on and PL_MGR to science mode
 # 2. Enable DS to create files
 # 3. Start background script to request FM and DS status packets
 #
 
-# 1. Configure ISIM to science mode
-simsat_isim_pwr_on
+# 1. Configure PL_SIM power on and PL_MGR to science mode
+simsat_payload_power_on
 
 # 2. Enable DS to create files
 Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 1") 
@@ -74,7 +74,7 @@ wait  # <Go> to continue
 
 Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 0") 
 wait("DS HK_TLM_PKT APP_ENA_STATE == 'DIS'", 10)
-Osk::flight.send_cmd("ISIM","STOP_SCI_DATA")
+Osk::flight.send_cmd("PL_MGR","STOP_SCIENCE")
 
 # 2. Load user selected TO downlink rate table file. Don't assume table is onboard.
 

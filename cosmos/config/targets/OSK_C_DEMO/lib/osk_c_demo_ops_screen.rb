@@ -47,7 +47,7 @@ def osk_c_demo_ops_cmd(screen, cmd)
       Osk::Ops::get_flt_txt_file(flt_path_filename, Osk::REL_SRV_TBL_DIR, gnd_filename)
    when "SCRIPT_FUNC_TEST"
       Osk::System.check_n_start_cfs('prompt_for_target')
-      test_suite = "--suite SandboxFuncTestSuite"
+      test_suite = "--suite DemoFuncTestSuite"
       test_group = "--group OskCDemoFuncTest"
       spawn("ruby #{Osk::COSMOS_TST_RUNNER} #{test_suite} #{test_group}")
    when "SCRIPT_OPS_EXAMPLE"

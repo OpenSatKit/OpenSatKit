@@ -10,7 +10,9 @@
 #   License (GPL).
 #
 ###############################################################################
-
+<% 
+   require 'cfg_app_event_screen'
+%>
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
      
@@ -37,6 +39,6 @@ END # Vertical
 HORIZONTALLINE
 
 MATRIXBYCOLUMNS 2      
-   BUTTON 'Send'   'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfg_app_event_screen.rb"; cfg_app_event_cmd(self, "CONFIG")'
+   BUTTON 'Send'   'cfg_app_event_cmd(self, "CONFIG")'
    BUTTON 'Cancel' 'clear("CFE_EVS CFG_APP_EVENT_SCREEN")'
 End # Matrix

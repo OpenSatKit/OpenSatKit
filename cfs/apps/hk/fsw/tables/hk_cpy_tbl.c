@@ -52,7 +52,7 @@
 #include "hk_tbldefs.h"
 #include "cfe_tbl_filedef.h"
 
-#include "isim_msgids.h"
+#include "pl_mgr_msgids.h"
 #include "f42_msgids.h"
 
 
@@ -66,14 +66,14 @@ hk_copy_table_entry_t      HK_CopyTable[HK_COPY_TABLE_ENTRIES] =
 /*   3 */ { CFE_TBL_HK_TLM_MID,   12,   HK_COMBINED_PKT1_MID,      24,   4, },
 /*   4 */ { CFE_TIME_HK_TLM_MID,  12,   HK_COMBINED_PKT1_MID,      28,   4, },
 
-/*   5 */ { ISIM_TLM_HK_MID,      18,   HK_COMBINED_PKT2_MID,      12,   4, },
-/*   6 */ { F42_HK_TLM_MID,       22,   HK_COMBINED_PKT2_MID,      16,   2, },
-/*   7 */ { F42_CTRL_TLM_MID,     12,   HK_COMBINED_PKT2_MID,      18,  12, },
-/*   8 */ { F42_CTRL_TLM_MID,     36,   HK_COMBINED_PKT2_MID,      30,  28, },
+/*   5 */ { PL_MGR_TLM_HK_MID,    16,   HK_COMBINED_PKT2_MID,      12,   1, }, /* Payload Power */
+/*   5 */ { PL_MGR_TLM_HK_MID,    17,   HK_COMBINED_PKT2_MID,      13,   1, }, /* Detector Fault */
+/*   6 */ { PL_MGR_TLM_HK_MID,    22,   HK_COMBINED_PKT2_MID,      14,   1, }, /* Sci File Open */
+/*   6 */ { PL_MGR_TLM_HK_MID,    23,   HK_COMBINED_PKT2_MID,      15,   1, }, /* Sci File Image Count */
+/*   7 */ { F42_HK_TLM_MID,       22,   HK_COMBINED_PKT2_MID,      16,   2, }, /* Control Mode */
+/*   8 */ { F42_CTRL_TLM_MID,     12,   HK_COMBINED_PKT2_MID,      18,  12, }, /* S/C Rates */
+/*   9 */ { F42_CTRL_TLM_MID,     36,   HK_COMBINED_PKT2_MID,      30,  28, }, /* Attitude Estimate & Error */
 
-/*   9 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },
-/*  10 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },
-/*  11 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },
 /*  12 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },
 /*  13 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },
 /*  14 */ { HK_UNDEFINED_ENTRY,    0,   HK_UNDEFINED_ENTRY,       0,   0, },

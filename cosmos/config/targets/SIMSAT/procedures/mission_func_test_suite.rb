@@ -19,7 +19,7 @@ class MissionFuncTestSuite < Cosmos::TestSuite
       super()
       add_test('F42FuncTest')
       add_test('I42FuncTest')
-      add_test('IsimFuncTest')
+      add_test('PlMgrFuncTest')
    end
   
 end

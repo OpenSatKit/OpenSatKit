@@ -8,6 +8,6 @@
    "app_targets.json to follow the OSK naming convention."
    ],
 
-"apps": [ "CF", "CS", "DS", "F42", "FM", "HC", "HK", "HS", "HSIM", "I42", "ISIM", "KIT_CI", "KIT_SCH", "KIT_TO", "LC", "MD", "MM", "SC", "TFTP" ]
+"apps": [ "CF", "CS", "DS", "F42", "FM", "HK", "HS", "I42", "KIT_CI", "KIT_SCH", "KIT_TO", "LC", "MD", "MM", "PL_MGR", "PL_SIM", "SC", "TFTP" ]
 
 }

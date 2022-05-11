@@ -1,0 +1,24 @@
+###############################################################################
+# Table Management Demo More Information Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General Public
+#   License (GPL).
+#
+###############################################################################
+<% 
+   require 'table_mgmt_demo_screen'
+%>
+
+SCREEN AUTO AUTO 1200
+
+TITLE "Table Management Demo"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+ 
+VERTICALBOX
+  NAMED_WIDGET msg_box TEXTBOX CFS_KIT PSEUDO_MSG_PKT TXT_MSG 512 300
+  BUTTON 'Press for More Information' 'table_mgmt_demo_more_info(self)'
+END # Vertical Box
+  

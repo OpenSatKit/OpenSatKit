@@ -42,7 +42,7 @@ def simsat_scr_cmd(screen, apps, cmd)
    when "RUNTIME"
       simsat_runtime(screen,cmd)
    when "FUNC_TBL_MGMT"
-      display("CFS_KIT TABLE_MGMT_SCREEN",1500,10)
+      display("CFE_TBL TABLE_MGMT_SCREEN",1500,10)
    else
       raise "Error in screen definition file. Undefined app '#{apps}' sent to simsat_src_cmd()"
    end
@@ -126,11 +126,11 @@ def simsat_autonomy(screen, cmd)
    when "SC_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/sc/docs/users_guide/html/index.html")   
    when "FUNC_AUTO_MGMT"
-      display("CFS_KIT AUTONOMY_MGMT_SCREEN",1500,10)
+      display("SIMSAT AUTONOMY_MGMT_SCREEN",1500,10)
    when "DEMO"
       # Only one option
       # case screen.get_named_widget("demo").text
-      display("CFS_KIT HEATER_CTRL_DEMO_SCREEN",500,50)
+      prompt(Osk::MSG_TBD_FEATURE)
    when "TUTORIAL"
       # Only one option
       # screen.get_named_widget("tutorial").text
@@ -222,11 +222,11 @@ def simsat_data_file(screen, cmd)
    when "TFTP_DOC" 
       prompt(Osk::MSG_TBD_FEATURE)
    when "FUNC_FILE_MGMT"
-      display("CFS_KIT FILE_MGMT_SCREEN",1500,50)
+      display("SIMSAT FILE_MGMT_SCREEN",1500,50)
    when "FUNC_RECORDER_MGMT"
-      display("CFS_KIT RECORDER_MGMT_SCREEN",1500,50)
+      display("SIMSAT RECORDER_MGMT_SCREEN",1500,50)
    when "FUNC_TBL_MGMT"
-      display("CFS_KIT TABLE_MGMT_SCREEN",1500,50)
+      display("CFE_TBL TABLE_MGMT_SCREEN",1500,50)
    when "TABLE_GEN_TOOLS"
       display("SIMSAT TBL_TOOL_SCREEN",1500,50)
    when "DEMO"
@@ -431,14 +431,14 @@ def simsat_maintenance(screen, cmd)
    when "MM_DOC"
       Cosmos.open_in_web_browser("#{Osk::OSK_CFS_DIR}/apps/mm/docs/users_guide/html/index.html")   
    when "FUNC_MEMORY_MGMT"
-      display("CFS_KIT MEMORY_MGMT_SCREEN",1500,50)
+      display("SIMSAT MEMORY_MGMT_SCREEN",1500,50)
    when "DEMO"
       if (Osk::System.check_n_start_cfs('simsat'))
          # Demo scripts manage screens & PacketViewer
          demo = screen.get_named_widget("demo").text
          case demo
          when "MM-MD Demo Screen"
-            display("CFS_KIT MEMORY_MGMT_DEMO_SCREEN",500,50)
+            display("SIMSAT MEMORY_MGMT_DEMO_SCREEN",500,50)
          when "MM-MD Demo Script"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_maint_mem_apps.rb")
          end 
@@ -502,7 +502,7 @@ def simsat_runtime(screen, cmd)
    when "FUNC_RUNTIME_MGMT"
       display("CFS_KIT MNG_APP_RUNTIME_SCREEN",1500,50)   
    when "FUNC_ES_APP_MGMT"
-      display("CFS_KIT APP_MGMT_SCREEN",1500,10)
+      display("CFE_ES APP_MGMT_SCREEN",1500,10)
    when "DEMO"
       if (Osk::System.check_n_start_cfs('simsat'))
          # Demo scripts manage screens & PacketViewer

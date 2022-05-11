@@ -21,7 +21,6 @@ module Osk
 
    SIMSAT_TARGET  = "simsat"   # Mission FSW 
    CFSAT_TARGET   = "cfsat"    # cFS Education
-   SANDBOX_TARGET = "sandbox"  # Research & Development
    PISAT_TARGET   = "pisat"    # Raspberry Pi
    
    ###########################
@@ -139,7 +138,6 @@ module Osk
    OSK_TARGETS_FILE  = "targets.cmake"
    SIMSAT_STARTUP_FILE  = "#{SIMSAT_TARGET.downcase}_#{CFE_STARTUP_FILE}"
    CFSAT_STARTUP_FILE   = "#{CFSAT_TARGET.downcase}_#{CFE_STARTUP_FILE}"
-   SANDBOX_STARTUP_FILE = "#{SANDBOX_TARGET.downcase}_#{CFE_STARTUP_FILE}"
    
    JSON_TBL_MGMT_SCR_FILE = "json_table_mgmt_scr.txt"
    
@@ -254,8 +252,6 @@ module Osk
    CFS_SIMSAT_CF_DIR    = "#{OSK_CFS_DIR}/build/exe/simsat/cf"
    CFS_CFSAT_EXE_DIR    = "#{OSK_CFS_DIR}/build/exe/cfsat"
    CFS_CFSAT_CF_DIR     = "#{OSK_CFS_DIR}/build/exe/cfsat/cf"
-   CFS_SANDBOX_EXE_DIR  = "#{OSK_CFS_DIR}/build/exe/sandbox"
-   CFS_SANDBOX_CF_DIR   = "#{OSK_CFS_DIR}/build/exe/sandbox/cf"
    
    REL_SRV_DIR     = "cfs_kit/file_server"
    REL_SRV_TBL_DIR = "cfs_kit/file_server/tables"
@@ -268,7 +264,6 @@ module Osk
    FLT_TEST_DIR    = File.join(Osk::FLT_SRV_DIR,"test")
    GND_TO_SIMSAT_SRV_DIR  = File.join(OSK_CFS_DIR,'build','exe','simsat','cf')
    GND_TO_CFSAT_SRV_DIR   = File.join(OSK_CFS_DIR,'build','exe','cfsat','cf')
-   GND_TO_SANDBOX_SRV_DIR = File.join(OSK_CFS_DIR,'build','exe','sandbox','cf')
    
    def Osk::fsw_app_dir(app)
       return File.join(Osk::OSK_CFS_DIR,'apps',app)
@@ -340,8 +335,7 @@ module Osk
    
    SIMSAT_CFS_TARGET  = { dir: CFS_SIMSAT_EXE_DIR,  exe: "core-#{SIMSAT_TARGET}"  }
    CFSAT_CFS_TARGET   = { dir: CFS_CFSAT_EXE_DIR,   exe: "core-#{CFSAT_TARGET}"   }
-   SANDBOX_CFS_TARGET = { dir: CFS_SANDBOX_EXE_DIR, exe: "core-#{SANDBOX_TARGET}" }
 
-   CFS_TARGETS = { simsat: SIMSAT_CFS_TARGET, cfsat: CFSAT_CFS_TARGET, sandbox: SANDBOX_CFS_TARGET }
+   CFS_TARGETS = { simsat: SIMSAT_CFS_TARGET, cfsat: CFSAT_CFS_TARGET}
 
 end # Module Osk

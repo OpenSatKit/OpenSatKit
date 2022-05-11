@@ -31,7 +31,6 @@ require 'osk_flight'
 require 'osk_ops'
 
 require 'simsat_const'
-require 'simsat_isim_mgmt'
 
 
 #

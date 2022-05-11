@@ -9,8 +9,8 @@
 #
 # Notes:
 #   1. This can be run with or without the 42 simulator running.
-#   2. The iSim app uses more event messages than a typical flight app. The
-#      events are used for illustrative purposes.  
+#   2. The PL_SIM and PL_MGR apps use more event messages than a typical
+#      flight app. The events are used for illustrative purposes.  
 #
 # Global Script Variables:
 #   simsat_ops_enable - Boolean indicating whether ops example is active
@@ -57,7 +57,7 @@ $SIMSAT_SCH_TBL_FLT_FILENAME = File.join(Osk::FLT_SRV_DIR,SimSat::SCH_TBL_FILENA
 simsat_ops_status = "Preparing Ops Example. Read scenario comments in Script Runner."
 load_utility('simsat_ops_example_utils.rb')
 load_utility('simsat_recorder_mgmt.rb')
-load_utility('simsat_isim_mgmt.rb')  #Provide methods for managing the instrument. E.g. power instrument on/off
+load_utility('simsat_payload_mgmt.rb')  # Provide methods for managing the payload. E.g. power instrument on/off
 
 #
 # Create ops screen dynamically so script variables can be displayed
@@ -77,11 +77,11 @@ simsat_create_ops_screen
 #          KIT_TO  - OSK default packet table with uploads as needed
 #       Data/File Management
 #          FM - No configuration required
-#          HK - OSK Default: Combo#1 cFE cmd counters, Combo#2 F42 & ISIM states  
+#          HK - OSK Default: Combo#1 cFE cmd counters, Combo#2 F42 & PL_SIM/PL_MGR states  
 #          DS - OSK Default:  
 #       Autonomy
-#          LC - Enable entire app to be in 'active' mode. Enable Action Point #2 that responds to ISIM faults.
-#          SC - Enable RTS #6 that powers of ISIM
+#          LC - Enable entire app to be in 'active' mode. Enable Action Point #2 that responds to PL_SIM faults.
+#          SC - Enable RTS #6 that powers off PL_SIM
 #       Attitude Determination and Control
 #          I42 - No configuration required
 #          F42 - No configuration required
@@ -90,7 +90,7 @@ simsat_create_ops_screen
 #       Maintenance
 #          MD and MM are running but not used for the demo
 #
-# 2. Configure the science instrument (i.e ISIM) for science
+# 2. Configure the payload manager PL_MGR to create science data files
 #       Power on the instrument and enable science data collection
 #
 # 3. Perform science ops (i.e. collect data and store to file) with downlink to illustrate FSW behavior
@@ -116,11 +116,11 @@ simsat_ops_status = "Configuring apps"
 start("simsat_app_config.rb")
 
 ###############################################################
-## 2. Configure the science instrument (i.e ISIM) for science
+## 2. Configure the payload for science
 ###############################################################
 
-simsat_ops_status = "Powering on instrument"
-simsat_isim_pwr_on
+simsat_ops_status = "Powering on payload and starting science files"
+simsat_payload_power_on
 
 ####################################################################
 ## 3. Perform automated science ops (i.e. collect data and store
@@ -137,9 +137,10 @@ simsat_isim_pwr_on
 # no uplink. 
 #
 # What to observe:
-# 1. The ISIM app generates a new science file every minute. ISIM
-#    simulates collecting science data at 1Hz and a new file is 
-#    started after 60 scans.
+# 1. The PL_MGR app generates a new science file every minute. PL_MGR
+#    default behavior is to read a detector row of data at 1Hz. Each
+#    detector 'image' has 10 rows. 10 6 images are stored in a file so
+#    a new file is started after 60 seconds.
 # 2. Data Storage creates new event and science auxiliary files
 #    every 5 minutes.
 #
@@ -151,7 +152,7 @@ simsat_isim_pwr_on
 simsat_ops_status = "5 Minutes of automated science and DS activities"
 
 # Cycle through a few apps to create different noop events
-app_list  = ["KIT_CI", "KIT_SCH", "KIT_TO", "ISIM", "I42", "F42"]
+app_list  = ["KIT_CI", "KIT_SCH", "KIT_TO", "PL_MGR", "I42", "F42"]
 app_cycle = app_list.cycle
 
 20.times do |n|
@@ -185,10 +186,10 @@ wait  # <Go> to continue
 ##    and observe autonomous LC & SC response
 ################################################################
 
-simsat_ops_status = "Simulating an instrument fault. LC/SC will respond."
-simsat_isim_set_fault
+simsat_ops_status = "Simulating a payload detector fault. LC/SC will respond."
+simsat_payload_set_fault
 
-status_bar("Observe response to ISIM fault")
+status_bar("Observe response to PL_SIM fault")
 wait  # <Go> to continue
 
 ###############################

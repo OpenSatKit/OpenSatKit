@@ -18,13 +18,13 @@ load 'kit_to_func_test.rb'
 load 'tftp_func_test.rb'
 load 'f42_func_test.rb'
 load 'i42_func_test.rb'
-load 'isim_func_test.rb'
+load 'pl_mgr_func_test.rb'
 
 class SimSatFuncTestSuiteOsk < Cosmos::TestSuite
   
    def initialize
       super()
-      add_test('IsimFuncTest')
+      add_test('PlMgrFuncTest')
       add_test('KitCiFuncTest')
       add_test('KitSchFuncTest')
       add_test('KitToFuncTest')

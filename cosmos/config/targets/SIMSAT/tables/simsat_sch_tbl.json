@@ -158,6 +158,16 @@
                "offset":  0,
                "msg-idx": 27
             }},
+
+            {"activity": {
+               "name":    "PL_SIM Execution",
+               "descr":   "",
+               "index":   4,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 44
+            }},
             
             {"activity": {
                "name":    "KIT_CI Housekeeping",
@@ -356,7 +366,17 @@
                "offset":  0,
                "msg-idx": 27
             }},
-           
+ 
+            {"activity": {
+               "name":    "PL_MGR Execution",
+               "descr":   "",
+               "index":   4,
+               "enabled": "true",
+               "period":  1,
+               "offset":  0,
+               "msg-idx": 43
+            }},
+            
             {"activity": {
                "name":    "F42 Housekeeping",
                "descr":   "",

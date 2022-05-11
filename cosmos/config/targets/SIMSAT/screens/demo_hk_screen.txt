@@ -113,10 +113,10 @@ VERTICALBOX
          LABEL "Fault Present"
          LABEL " "
 
-         LABEL "<b>ISIM</b>"
-         VALUE HK COMBO_PKT_2 INSTR_PWR_STATE
-         VALUE HK COMBO_PKT_2 SCI_STATE
-         VALUE HK COMBO_PKT_2 FAULT_PRESENT
+         LABEL "<b>PL_SIM</b>"
+         VALUE HK COMBO_PKT_2 PAYLOAD_POWER
+         VALUE HK COMBO_PKT_2 SCI_FILE_OPEN
+         VALUE HK COMBO_PKT_2 DETECTOR_FAULT
          LABEL " "
 
          LABEL " "

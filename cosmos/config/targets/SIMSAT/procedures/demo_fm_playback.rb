@@ -57,11 +57,11 @@ Osk::System.check_n_start_cfs('simsat')
 
 cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01") # Enable debug events
 
-cmd("ISIM","POWER_ON_INSTR") # Start ISIM to provide an example of an app with open files
+cmd("PL_SIM","POWER_ON") # Power on payload so science data files can be created later
 
 # Open displays
 
-display("CFS_KIT FILE_MGMT_SCREEN",1500,50)      
+display("SIMSAT FILE_MGMT_SCREEN",1500,50)      
 wait (1)
 Cosmos.run_process("ruby tools/PacketViewer -p \"FM FILE_INFO_PKT\"")
 
@@ -148,13 +148,13 @@ wait # Step 5.2 - File and directory deleted
 ## Step 6 - Send Open File Packet ##
 ####################################
 
-# Enable ISIM science data which opens a science data file
-Osk::flight.send_cmd("ISIM","START_SCI_DATA")
+# Start PL_MGR's science data creation so we have an open file
+Osk::flight.send_cmd("PL_MGR","START_SCIENCE")
 wait 2
 
 Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
 
-wait  # Step 6 - ISIM's open science data file is listed
+wait  # Step 6 - Verify PL_MGR's open science data file is listed
 
 #############
 ## Cleanup ##
@@ -164,6 +164,8 @@ cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01")   # Disable deb
 wait 1
 cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME TFTP, BITMASK 0x01") # Disable debug events
 wait 1
-cmd("ISIM","POWER_OFF_INSTR")
+Osk::flight.send_cmd("PL_MGR","STOP_SCIENCE")
+wait 1
+Osk::flight.send_cmd("PL_SIM","POWER_OFF")
    
-clear("CFS_KIT FILE_MGMT_SCREEN")
+clear("SIMSAT FILE_MGMT_SCREEN")

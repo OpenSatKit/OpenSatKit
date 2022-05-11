@@ -15,8 +15,8 @@
 #      calls ensure each app required for the example is loaded and running.
 #      The noop calls are commented out if another command is sent to an app
 #      because that command will confirm the app is running.  
-#   2. The ISIM app uses more event messages than a typical flight app. The
-#      events are used for illustrative purposes.  
+#   2. The PL_SIM and PL_MGR apps use more event messages than a typical
+#      flight app. The events are used for illustrative purposes.  
 #
 # Preconditions
 #   1. Background thread periodically requesting DS FILE_INFO_PKT packets is
@@ -130,7 +130,7 @@ wait  # <Go> to continue
 
 #verify_noop("SC")
 
-simsat_ops_status = "Enabling ISIM power off Relative Time Sequence (RTS) commands"
+simsat_ops_status = "Enabling PL_SIM power off Relative Time Sequence (RTS) commands"
 Osk::flight.send_cmd("SC","ENABLE_RTS with RTS_ID 6")
 wait("SC HK_TLM_PKT RTS_6_DIS == 'FALSE'", 10)
 
@@ -140,7 +140,7 @@ simsat_ops_status = "Setting Limit Checker to active mode"
 Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE 1")
 wait("LC HK_TLM_PKT APP_STATE == 'ACTIVE'", 10)
 
-simsat_ops_status = "Enabling ISIM Fault Action Point"
+simsat_ops_status = "Enabling PL_SIM Fault Action Point"
 Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 1")
 wait("LC HK_TLM_PKT AP_2_STATE == 'ACTIVE'", 10)
 

@@ -84,7 +84,7 @@ wait #TBL02 - Click <Go> to continue to next section
 ############################################
 
 wait #TBL03 - Click <Go> to attempt to dump inactive dwell table
-display("CFS_KIT TABLE_MGMT_SCREEN",1500,50)  
+display("CFE_TBL TABLE_MGMT_SCREEN",1500,50)  
 
 Osk::flight.cfe_tbl.send_cmd("DUMP_TBL with ACTIVE_TBL_FLAG 0, TABLE_NAME MD.DWELL_TABLE1, FILENAME #{Osk::TMP_FLT_BIN_PATH_FILE}")
 
@@ -115,4 +115,4 @@ wait #TBL03 - Click <Go> to continue to next section
 
 clear("CFS_KIT CFE_SCREEN")
 clear("MD DWELL_PKT_SCREEN")
-clear("CFS_KIT TABLE_MGMT_SCREEN")
+clear("CFE_TBL TABLE_MGMT_SCREEN")

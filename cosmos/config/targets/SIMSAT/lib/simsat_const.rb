@@ -33,7 +33,7 @@ module SimSat
 
    
    # Directories
-   # - DS and ISIM tables are dependent on recorder path definitions
+   # - DS and PL_MGR tables are dependent on recorder path definitions
    # - GND2FSW supports "cheating" because scripts can manipulate FSW directories
    #   via ground paths
    
@@ -78,8 +78,8 @@ module SimSat
    EVENT_FILENAME_BASE   = "events"
    SCI_AUX_FILENAME_BASE = "sci_aux"
    
-   # Must match isim app's filename base
-   ISIM_FILENAME_BASE = "isim"
+   # Must match PL_MGR app's filename base
+   PL_MGR_FILENAME_BASE = "pl_mgr"
    
    # Temporary file used to indicate the end of the ops example
    STOP_OPS_FILE = "simsat_stop_ops.txt"
