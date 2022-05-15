@@ -3,7 +3,7 @@
    "description": ["Define runtime configurations"],
    
    "config": {
-      "PWR_INIT_CYCLES":  20,
+      "PWR_INIT_CYCLES":  10,
       "PWR_RESET_CYCLES":  5
    }
 }

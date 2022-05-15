@@ -39,6 +39,8 @@ def simsat_scr_cmd(screen, apps, cmd)
       simsat_health_safety(screen,cmd)
    when "MAINTENANCE"
       simsat_maintenance(screen,cmd)
+   when "MISSION"
+      simsat_mission(screen,cmd)
    when "RUNTIME"
       simsat_runtime(screen,cmd)
    when "FUNC_TBL_MGMT"
@@ -234,24 +236,28 @@ def simsat_data_file(screen, cmd)
       if (Osk::System.check_n_start_cfs('simsat'))
       
          # Demo scripts manage screens & PacketViewer
+         # v4.0 removed screen-based demos from main screen
+         # but left code in place
          case screen.get_named_widget("demo").text
          when "Data-File Mgmt Script"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_datafile_mgmt.rb")
-         when "FM Playback Script"
+         when "Recorder Mgmt"
+            spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_recorder_mgmt.rb")
+         when "FM Playback"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_playback.rb")
-         when "FM Feature Script"
+         when "FM Features"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_fm_features.rb")
-         when "HK Feature Script"
+         when "HK Features"
             spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_hk_features.rb")
          else
             display_scr = nil
             case screen.get_named_widget("demo").text
             when "Data-File Mgmt Screen"
                display_scr = "SIMSAT DEMO_DATA_FILE_MGMT_SCREEN"
-            when "DS Feature Screen"
-               display_scr = "CFS_KIT RECORDER_MGMT_DEMO_SCREEN"
-            when "FM Feature Screen"
-               display_scr = "CFS_KIT FILE_MGMT_DEMO_SCREEN"
+            when "Recorder_Mgmt Screen"
+               display_scr = "SIMSAT RECORDER_MGMT_DEMO_SCREEN"
+            when "File Mgmt Screen"
+               display_scr = "SIMSAT FILE_MGMT_DEMO_SCREEN"
             end
             display(display_scr,500,50) unless display_scr.nil?
          end 
@@ -457,6 +463,53 @@ def simsat_maintenance(screen, cmd)
    end
      
 end # simsat_maintenance()
+
+
+#
+# Mission Management
+#
+def simsat_mission(screen, cmd)
+ 
+   case cmd
+   when "SC_MGR_CMD" 
+      prompt(Osk::MSG_TBD_FEATURE)
+      #TODO Osk::Ops::send_flt_cmd("SC_MGR", "#{screen.get_named_widget("sc_mgr_cmd").text}")
+   when "SC_MGR_TLM"
+      prompt(Osk::MSG_TBD_FEATURE)
+      # Only one option
+      scr_name = "HK_TLM_PKT"
+      #TODO spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'SC_MGR #{scr_name}'")
+   when "SC_MGR_DOC"
+      prompt(Osk::MSG_TBD_FEATURE)
+   when "PL_MGR_CMD" 
+      Osk::Ops::send_flt_cmd("PL_MGR", "#{screen.get_named_widget("pl_mgr_cmd").text}")
+   when "PL_MGR_TLM"
+      scr_name = "HK_TLM_PKT"
+      spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'PL_MGR #{scr_name}'")
+   when "PL_MGR_DOC"
+      prompt(Osk::MSG_TBD_FEATURE)
+   when "PL_SIM_CMD" 
+      Osk::Ops::send_flt_cmd("PL_SIM", "#{screen.get_named_widget("pl_sim_cmd").text}")
+   when "PL_SIM_TLM"
+      scr_name = "HK_TLM_PKT"
+      spawn("ruby #{Osk::COSMOS_PKT_VIEWER} -p 'PL_SIM #{scr_name}'")
+   when "PL_SIM_DOC"
+      prompt(Osk::MSG_TBD_FEATURE)
+   when "PAYLOAD_OPS"
+      display("PL_MGR PAYLOAD_OPS_SCREEN",1500,50)   
+   when "DEMO"
+      # Only one option
+      # case screen.get_named_widget("demo").text
+      prompt(Osk::MSG_TBD_FEATURE)
+   when "TUTORIAL"
+      # Only one option
+      # screen.get_named_widget("tutorial").text
+      prompt(Osk::MSG_TBD_FEATURE)
+   else
+      raise "Error in screen definition file. Undefined runtime environment screen command '#{cmd}' sent to simsat_src_cmd()"
+   end
+     
+end # simsat_mission()
 
 
 #

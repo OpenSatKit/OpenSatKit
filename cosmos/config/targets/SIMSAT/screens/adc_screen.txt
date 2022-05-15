@@ -22,7 +22,7 @@ TITLE "SimSat Attitude Determination and Control Applications"
 VERTICAL   # With 2 rows
    HORIZONTAL # Row 1
 
-      CANVAS 550 375
+      CANVAS 550 400
          CANVASIMAGE "SimSat-Bubble-ADC.png" 0 0
       END
       SETTING BACKCOLOR 255 255 255  
@@ -32,7 +32,7 @@ VERTICAL   # With 2 rows
          LABEL "    "
          LABEL "    "
 
-         VERTICALBOX "42 Simulator Flight Software Controller (F42)"
+         VERTICALBOX "42 Simulator Flight Software Controller(F42)"
          MATRIXBYCOLUMNS 2 5 2
             
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "ADC", "F42_CMD")'
@@ -49,7 +49,7 @@ VERTICAL   # With 2 rows
      
          LABEL "    "
 
-         VERTICALBOX "42 Simulator Flight Software Interface (I42)"  
+         VERTICALBOX "42 Simulator Flight Software Interface(I42)"  
          MATRIXBYCOLUMNS 2 5 2
             
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "ADC", "I42_CMD")'

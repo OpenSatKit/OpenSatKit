@@ -208,11 +208,12 @@ VERTICAL
       End # Box
    
       VERTICALBOX "Application Groups" 5
-         MATRIXBYCOLUMNS 3
+         MATRIXBYCOLUMNS 4
             BUTTON 'Runtime Environment' 'cfs_kit_scr_simsat(self, "RUNTIME_APPS")'
             BUTTON 'Data/File Mgmt'      'cfs_kit_scr_simsat(self, "DATA_FILE_APPS")'
-            BUTTON 'Autonomy'            'cfs_kit_scr_simsat(self, "AUTONOMY_APPS")'
+            BUTTON 'Mission Management'  'cfs_kit_scr_simsat(self, "MISSION_MGMT_APPS")'
             BUTTON 'Attitude Det/Ctrl'   'cfs_kit_scr_simsat(self, "ADC_APPS")'
+            BUTTON 'Autonomy'            'cfs_kit_scr_simsat(self, "AUTONOMY_APPS")'
             BUTTON 'Health & Safety'     'cfs_kit_scr_simsat(self, "HEALTH_SAFETY_APPS")'
             BUTTON 'Maintenance'         'cfs_kit_scr_simsat(self, "MAINTENANCE_APPS")'
          END # Matrix

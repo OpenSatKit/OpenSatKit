@@ -101,9 +101,12 @@ def simsat_demo_data_file(screen, cmd)
       
          # 1.  Create simsat recorder directory
          Osk::Ops.create_flt_dir(SimSat::FLT_SRV_DIR)
+         wait 1
          Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)
+         wait 1
          
-         # 2. Configure PL_SIM power on and PL_MGR to science mode
+         # 2. Configure PL_SIM power on, PL_MGR to science mode & to use recorder
+         Osk::flight.send_cmd("PL_MGR","CONFIG_SCI_FILE with PATH_BASE_FILENAME #{SimSat::FLT_REC_DIR}")
          simsat_payload_power_on
 
          # 3. Enable DS to create files

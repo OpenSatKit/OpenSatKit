@@ -334,12 +334,15 @@ def cfs_kit_scr_simsat(screen, cmd)
    when "DATA_FILE_APPS"
       display("SIMSAT DATA_FILE_SCREEN",50,50)
    
-   when "AUTONOMY_APPS"
-      display("SIMSAT AUTONOMY_SCREEN",50,50)
+   when "MISSION_MGMT_APPS"
+      display("SIMSAT MISSION_MGMT_SCREEN",50,50)
    
    when "ADC_APPS"
       display("SIMSAT ADC_SCREEN",50,50)
    
+   when "AUTONOMY_APPS"
+      display("SIMSAT AUTONOMY_SCREEN",50,50)
+
    when "MAINTENANCE_APPS"
       display("SIMSAT MAINTENANCE_SCREEN",50,50)
    
@@ -352,7 +355,8 @@ def cfs_kit_scr_simsat(screen, cmd)
       display("CFE_ES PERF_MON_SCREEN",50,50)
    
    when "PERF_MON_DEMO"
-      display("CFE_ES PERF_MON_DEMO_SCREEN",500,50)
+      spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_perf_mon.rb")
+      #display("CFE_ES PERF_MON_DEMO_SCREEN",500,50)
     
    when "UNIT_TEST"
       Osk::System.check_n_start_cfs('simsat')

@@ -73,7 +73,7 @@ wait # Step 1
 # cfE's Table Service (TBL) Housekeeping telemetry packet and TBL Service's table registry packet
 # that is sent in response to a SEND_REGISTRY command
 #
-# Send TBL SEND_REGISTRY cmd with TABLENAME #{TMD_TBL_NAME}",
+# Send TBL SEND_REGISTRY cmd with TABLENAME #{TMD_TBL_NAME}
                
 Osk::flight.cfe_tbl.send_cmd("SEND_REGISTRY with TABLE_NAME #{TMD_TBL_NAME}")
   

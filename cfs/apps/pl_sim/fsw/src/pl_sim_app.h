@@ -2,9 +2,8 @@
 ** Purpose: Define the Payload Simulator application
 **
 ** Notes:
-**   1. Demonstrates an application using the OSK C Framework. It also serves
-**      as the final app that is developed during the Code-As-You-Go(CAYG)
-**      app development tutorial.
+**   1. PL_SIM does not use performance monitor IDs because simulator apps
+**      are not part of a flight build.
 **
 ** References:
 **   1. OpenSat Application Developer's Guide

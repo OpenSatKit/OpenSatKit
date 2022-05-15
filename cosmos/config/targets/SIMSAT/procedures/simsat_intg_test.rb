@@ -43,13 +43,11 @@ require './config/targets/SC/procedures/sc_intg_test'
 # OSK Kit Apps
 
 require './config/targets/F42/procedures/f42_intg_test'
-require './config/targets/HC/procedures/hc_intg_test'
-require './config/targets/HSIM/procedures/hsim_intg_test'
 require './config/targets/I42/procedures/i42_intg_test'
-require './config/targets/PL_MGR/procedures/pl_mgr_intg_test'
 require './config/targets/KIT_CI/procedures/kit_ci_intg_test'
 require './config/targets/KIT_SCH/procedures/kit_sch_intg_test'
 require './config/targets/KIT_TO/procedures/kit_to_intg_test'
+require './config/targets/PL_MGR/procedures/pl_mgr_intg_test'
 require './config/targets/TFTP/procedures/tftp_intg_test'
 
 ###############################################################################

@@ -1,5 +1,5 @@
 ###############################################################################
-# Payload Manager (PL_MGR) App Screen
+# Payload Operations Screen
 #
 # Notes:
 #   This combines the Payload Manager and Simulator apps for conveneience. In
@@ -19,7 +19,7 @@
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   
-TITLE "Payload Management"
+TITLE "Payload Operations"
    SETTING BACKCOLOR 162 181 205
    SETTING TEXTCOLOR black
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221

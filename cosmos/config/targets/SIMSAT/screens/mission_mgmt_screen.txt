@@ -1,0 +1,121 @@
+###############################################################################
+# SimSat Mission Managament Application Screen
+#
+# License:
+#   Written by David McComas, licensed under the copyleft GNU General
+#   Public License (GPL).
+# 
+###############################################################################
+<%
+   require 'osk_global'
+   require 'simsat_screen'
+%>
+   
+SCREEN AUTO AUTO 0.5
+GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
+
+TITLE "SimSat Mission Management Applications"
+  SETTING BACKCOLOR 162 181 205
+  SETTING TEXTCOLOR black
+
+VERTICAL # With 2 rows 
+   HORIZONTAL # Row 1
+
+      CANVAS 550 150
+         CANVASIMAGE "SimSat-Bubble-Mission.png" 0 5
+      END
+      SETTING BACKCOLOR 255 255 255
+  
+      VERTICALBOX # Apps
+  
+         VERTICALBOX "Spacecraft Manager(SC_MGR)"
+         MATRIXBYCOLUMNS 2 5 2
+         
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "MISSION", "SC_MGR_CMD")'
+            NAMED_WIDGET sc_mgr_cmd COMBOBOX NOOP RESET_CTRS
+
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "MISSION", "SC_MGR_TLM")'
+            NAMED_WIDGET sc_mgr_tlm COMBOBOX HOUSEKEEPING
+
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "MISSION", "sc_mgr_DOC")'
+            LABEL "    "
+
+         END # Matrix
+         END # SC_MGR VerticalBox
+    
+         VERTICALBOX "Payload Manager(PL_MGR)"
+         MATRIXBYCOLUMNS 2 5 2
+         
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "MISSION", "PL_MGR_CMD")'
+            NAMED_WIDGET pl_mgr_cmd COMBOBOX NOOP RESET_CTRS
+
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "MISSION", "PL_MGR_TLM")'
+            NAMED_WIDGET pl_mgr_tlm COMBOBOX HOUSEKEEPING
+
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "MISSION", "PL_MGR_DOC")'
+            LABEL "    "
+
+         END # Matrix
+         END # PL_MGR VerticalBox
+
+         VERTICALBOX "Payload Simulator(PL_SIM)"
+         MATRIXBYCOLUMNS 2 5 2
+         
+            BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "MISSION", "PL_SIM_CMD")'
+            NAMED_WIDGET pl_sim_cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL ADD_PKT REMOVE_PKT REMOVE_ALL_PKTS UPDATE_FILTER SEND_PKT_TLM ENABLE_TELEMETRY SET_RUN_LOOP_DELAY
+
+            BUTTON 'Display Tlm' 'simsat_scr_cmd(self, "MISSION", "PL_SIM_TLM")'
+            NAMED_WIDGET pl_sim_tlm COMBOBOX HOUSEKEEPING
+
+            BUTTON "User's Guide" 'simsat_scr_cmd(self, "MISSION", "PL_SIM_DOC")'
+            LABEL "    "
+
+         END # Matrix
+         END # PL_SIM VerticalBox
+
+     END # App VerticalBox
+     SETTING BACKCOLOR 162 181 205
+
+   END # Row 1 Horizontal
+ 
+   HORIZONTAL # Row 2
+
+      VERTICALBOX "Functional Screens"  
+      MATRIXBYCOLUMNS 2 5 2
+
+         BUTTON 'Payload Operations' 'simsat_scr_cmd(self, "MISSION", "PAYLOAD_OPS")'
+         LABEL "    "
+         
+      END # Matrix
+      END # Function VerticalBox
+      SETTING BACKCOLOR 162 181 205
+
+      VERTICALBOX "Learning Resources"
+      MATRIXBYCOLUMNS 4 5 2
+
+         BUTTON 'Run Demo' 'simsat_scr_cmd(self, "MISSION", "DEMO")'
+         NAMED_WIDGET demo COMBOBOX 'Coming Soon'
+         LABEL "    "
+         LABEL "    "
+
+         BUTTON 'Run Tutorial' 'simsat_scr_cmd(self, "MISSION", "TUTORIAL")'
+         NAMED_WIDGET tutorial COMBOBOX  'Coming Soon'
+         LABEL "    "
+         LABEL "    "
+
+      END # Matrix
+      END # Learn VerticalBox
+      SETTING BACKCOLOR 162 181 205
+
+      VERTICALBOX # Spacer
+      MATRIXBYCOLUMNS 2 5 2
+      LABEL "    "
+      LABEL "    "
+      LABEL "    "
+      LABEL "    "
+      END # Matrix
+      END # Spacer VerticalBox
+      SETTING BACKCOLOR 162 181 205
+  
+   END # Row 2 Horizontal
+END # Vertical with 2 rows

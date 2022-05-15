@@ -35,16 +35,6 @@ VERTICALBOX
       VALUE F42 HK_TLM_PKT CMD_VALID_COUNT
       VALUE F42 HK_TLM_PKT CMD_ERROR_COUNT
     
-      LABEL "<b>HC</b> - Heater Controller"
-      VALUE HC HK_TLM_PKT CCSDS_SEQUENCE
-      VALUE HC HK_TLM_PKT CMD_VALID_COUNT
-      VALUE HC HK_TLM_PKT CMD_ERROR_COUNT
-
-      LABEL "<b>HSIM</b> - Heater Simulator"
-      VALUE HSIM HK_TLM_PKT CCSDS_SEQUENCE
-      VALUE HSIM HK_TLM_PKT CMD_VALID_COUNT
-      VALUE HSIM HK_TLM_PKT CMD_ERROR_COUNT
-
       LABEL "<b>I42</b> - 42 Simulator Interface"
       VALUE I42 HK_TLM_PKT CCSDS_SEQUENCE
       VALUE I42 HK_TLM_PKT CMD_VALID_COUNT
@@ -65,12 +55,12 @@ VERTICALBOX
       VALUE KIT_TO HK_TLM_PKT CMD_VALID_COUNT
       VALUE KIT_TO HK_TLM_PKT CMD_ERROR_COUNT
 
-      LABEL "<b>PL_MGR</b> - Instrument Simulator"
+      LABEL "<b>PL_MGR</b> - Payload Manager"
       VALUE PL_MGR HK_TLM_PKT CCSDS_SEQUENCE
       VALUE PL_MGR HK_TLM_PKT CMD_VALID_COUNT
       VALUE PL_MGR HK_TLM_PKT CMD_ERROR_COUNT
 
-      LABEL "<b>PL_SIM</b> - Instrument Simulator"
+      LABEL "<b>PL_SIM</b> - Payload Simulator"
       VALUE PL_SIM HK_TLM_PKT CCSDS_SEQUENCE
       VALUE PL_SIM HK_TLM_PKT CMD_VALID_COUNT
       VALUE PL_SIM HK_TLM_PKT CMD_ERROR_COUNT
@@ -83,7 +73,7 @@ VERTICALBOX
    END # Matrix
    
    HORIZONTALBOX
-      NAMED_WIDGET mission_app COMBOBOX F42 HC HSIM I42 KIT_CI KIT_SCH KIT_TO PL_MGR PL_SIM TFTP
+      NAMED_WIDGET mission_app COMBOBOX F42 I42 KIT_CI KIT_SCH KIT_TO PL_MGR PL_SIM TFTP
       BUTTON 'Noop'           'Osk::flight.app["#{get_named_widget("mission_app").text}"].send_cmd("#{Osk::CMD_STR_NOOP}")'
       BUTTON 'Reset Counters' 'Osk::flight.app["#{get_named_widget("mission_app").text}"].send_cmd("#{Osk::CMD_STR_RESET}")'
    END

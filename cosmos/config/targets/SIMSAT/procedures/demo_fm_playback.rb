@@ -29,6 +29,9 @@ require 'fsw_const'
 
 require 'simsat_recorder_mgmt'
 
+prompt("This script is under development and will be completed in the next release.")
+return
+
 ######################
 ## Global Variables ##
 ######################
@@ -150,7 +153,7 @@ wait # Step 5.2 - File and directory deleted
 
 # Start PL_MGR's science data creation so we have an open file
 Osk::flight.send_cmd("PL_MGR","START_SCIENCE")
-wait 2
+wait 4
 
 Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
 

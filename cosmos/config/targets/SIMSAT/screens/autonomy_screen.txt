@@ -21,7 +21,7 @@ TITLE "SimSat Autonomy Applications"
 VERTICAL # With 2 rows
    HORIZONTAL # Row 1
 
-      CANVAS 550 375
+      CANVAS 550 400
          CANVASIMAGE "SimSat-Bubble-Autonomy.png" 0 0
       END
       SETTING BACKCOLOR 255 255 255  
@@ -31,7 +31,7 @@ VERTICAL # With 2 rows
          LABEL "    "
          LABEL "    "
  
-         VERTICALBOX "Limit Checker"
+         VERTICALBOX "Limit Checker(LC)"
          MATRIXBYCOLUMNS 2 5 2
           
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "AUTONOMY", "LC_CMD")'
@@ -48,7 +48,7 @@ VERTICAL # With 2 rows
         
          LABEL "    "
 
-         VERTICALBOX "Stored Command"
+         VERTICALBOX "Stored Command(SC)"
          MATRIXBYCOLUMNS 2 5 2
          
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "AUTONOMY", "SC_CMD")'
@@ -87,7 +87,7 @@ VERTICAL # With 2 rows
       MATRIXBYCOLUMNS 3 5 2
 
          BUTTON 'Run Demo' 'simsat_scr_cmd(self, "AUTONOMY", "DEMO")'
-         NAMED_WIDGET demo COMBOBOX "Heater Sim"
+         NAMED_WIDGET demo COMBOBOX "Coming Soon"
          LABEL "    "
 
          BUTTON 'Run Tutorial' 'simsat_scr_cmd(self, "AUTONOMY", "TUTORIAL")'
