@@ -21,8 +21,8 @@ TITLE "SimSat Health and Safety Applications"
 VERTICAL   # With 2 rows
    HORIZONTAL # Row 1
 
-      CANVAS 570 375
-         CANVASIMAGE "SimSat-Bubble-Health_Safety.png" 20 0
+      CANVAS 570 400
+         CANVASIMAGE "SimSat-Bubble-Health_Safety.png" 0 0
       END
       SETTING BACKCOLOR 255 255 255  
   
@@ -80,8 +80,11 @@ VERTICAL   # With 2 rows
       MATRIXBYCOLUMNS 2 5 2
 
          BUTTON 'CS Mgmt' 'simsat_scr_cmd(self, "HEALTH_SAFETY", "FUNC_CS_MGMT")'
-         BUTTON 'HS Mgmt' 'simsat_scr_cmd(self, "HEALTH_SAFETY", "FUNC_HS_MGMT")'
+         LABEL "    "
 
+         BUTTON 'HS Mgmt' 'simsat_scr_cmd(self, "HEALTH_SAFETY", "FUNC_HS_MGMT")'
+         LABEL "    "
+         
       END # Matrix
       END # Function VerticalBox
       SETTING BACKCOLOR 162 181 205

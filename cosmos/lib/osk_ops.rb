@@ -111,6 +111,7 @@ module Ops
 
    #
    # Create a directory 
+   # - Check whether the directory exists and if not create directory via FM
    # - Note size can be 0 for an empty directory when checking if it exists so
    #   also check mod time. 
    #

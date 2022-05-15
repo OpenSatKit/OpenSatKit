@@ -33,7 +33,7 @@ require 'osk_flight'
 require 'osk_ops'
 
 require 'simsat_const'
-require 'simsat_isim_mgmt'
+require 'simsat_payload_mgmt'
 require 'simsat_req_tlm'
 
 require 'thread'
@@ -82,8 +82,8 @@ def simsat_ops_example_setup(start_cfs)
       sci_aux_file_base = File.join(SimSat::GND2FSW_REC_DIR,SimSat::SCI_AUX_FILENAME_BASE)
       Dir.glob(simsat_files).select{ |file| /^#{sci_aux_file_base}/.match file }.each { |file| File.delete(file)}
       
-      isim_file_base = File.join(SimSat::GND2FSW_REC_DIR,SimSat::ISIM_FILENAME_BASE)
-      Dir.glob(simsat_files).select{ |file| /^#{isim_file_base}/.match file }.each { |file| File.delete(file)}
+      pl_mgr_file_base = File.join(SimSat::GND2FSW_REC_DIR,SimSat::PL_MGR_FILENAME_BASE)
+      Dir.glob(simsat_files).select{ |file| /^#{pl_mgr_file_base}/.match file }.each { |file| File.delete(file)}
       
       File.delete(SimSat::GND2FSW_STOP_OPS_FILE) unless !File.exist?(SimSat::GND2FSW_STOP_OPS_FILE)
       
@@ -140,16 +140,16 @@ def simsat_ops_example_teardown
    wait 1
    Osk::flight.send_cmd("DS","SEND_FILE_INFO")
 
-   Osk::flight.send_cmd("SC","DISABLE_RTS with RTS_ID 6") # Disable ISIM power off RTS
+   Osk::flight.send_cmd("SC","DISABLE_RTS with RTS_ID 6") # Disable PL_SIM power off RTS
    wait("SC HK_TLM_PKT RTS_6_DIS == 'TRUE'", 10)
 
    Osk::flight.send_cmd("LC","SET_APP_STATE with NEW_STATE 3") # Disable Limit Checker
    wait("LC HK_TLM_PKT APP_STATE == 'DISABLED'", 10)
 
-   Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 3") # Disable ISIM Fault Action Point
+   Osk::flight.send_cmd("LC","SET_AP_STATE with AP_ID 2, NEW_STATE 3") # Disable PL_SIM Fault Action Point
    wait("LC HK_TLM_PKT AP_2_STATE == 'DISABLED'", 10)
 
-   simsat_isim_pwr_off
+   simsat_pl_sim_pwr_off
   
    # Restore default OSK scheduler table
    Osk::flight.send_cmd("KIT_SCH","LOAD_TBL with ID #{FswConfigParam::KIT_SCH_SCHTBL_ID}, TYPE #{Fsw::Const::OSK_TBLMGR_LOAD_REPLACE}, FILENAME #{$SIMSAT_SCH_TBL_FLT_FILENAME}")  

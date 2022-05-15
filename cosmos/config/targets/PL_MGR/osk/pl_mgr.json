@@ -1,0 +1,35 @@
+{ "app": {
+   
+   "title": "Payload Manager",
+   "version": "1.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "PL_MGR provides a simple example of an app that manages the data from",
+      "a payload. The payload is an instrument that outputs text data that is",
+      "that is saved to a file. PL_SIM and PL_SIM_LIB provide a simulation",
+      "of the payload hardware."
+   ],
+
+   "cosmos": {
+      "target": "PL_MGR"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/pl_mgr_app.so",
+      "entry-symbol": "PL_MGR_AppMain",
+      "name": "PL_MGR",
+      "priority": 70,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [],
+      "cmd-mid": "PL_MGR_CMD_MID"
+   }
+   
+}}
+
+

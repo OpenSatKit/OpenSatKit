@@ -17,7 +17,7 @@ require 'fsw_const'
 
 require 'simsat_const'
 require 'simsat_ops_example_utils'
-require 'simsat_isim_mgmt'
+require 'simsat_payload_mgmt'
 require 'simsat_recorder_mgmt'
 
 require 'thread'
@@ -44,7 +44,7 @@ def simsat_demo_scr_cmd(screen, apps, cmd)
    when "RUNTIME"
       simsat_demo_runtime(screen,cmd)
    when "FUNC_TBL_MGMT"
-      display("CFS_KIT TABLE_MGMT_SCREEN",1500,10)
+      display("CFE_TBL TABLE_MGMT_SCREEN",1500,10)
    else
       raise "Error in screen definition file. Undefined app '#{apps}' sent to simsat_demo_src_cmd()"
    end
@@ -92,7 +92,7 @@ def simsat_demo_data_file(screen, cmd)
       
       #
       # 1. Create simsat recorder directory, can't assume it exists
-      # 2. Configure ISIM to science mode
+      # 2. Configure PL_MGR to science mode
       # 3. Enable DS to create files
       # 4. Start background script to request FM and DS status packets
       #
@@ -101,10 +101,13 @@ def simsat_demo_data_file(screen, cmd)
       
          # 1.  Create simsat recorder directory
          Osk::Ops.create_flt_dir(SimSat::FLT_SRV_DIR)
+         wait 1
          Osk::Ops.create_flt_dir(SimSat::FLT_REC_DIR)
+         wait 1
          
-         # 2. Configure ISIM to science mode
-         simsat_isim_pwr_on
+         # 2. Configure PL_SIM power on, PL_MGR to science mode & to use recorder
+         Osk::flight.send_cmd("PL_MGR","CONFIG_SCI_FILE with PATH_BASE_FILENAME #{SimSat::FLT_REC_DIR}")
+         simsat_payload_power_on
 
          # 3. Enable DS to create files
          Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 1") 
@@ -130,7 +133,7 @@ def simsat_demo_data_file(screen, cmd)
       
       Osk::flight.send_cmd("DS","SET_APP_STATE with APP_STATE 0") 
       wait("DS HK_TLM_PKT APP_ENA_STATE == 'DIS'", 10)
-      Osk::flight.send_cmd("ISIM","STOP_SCI_DATA")
+      Osk::flight.send_cmd("PL_MGR","STOP_SCIENCE")
 
       # 2. Load user selected TO downlink rate table file. Don't assume table is onboard.
       

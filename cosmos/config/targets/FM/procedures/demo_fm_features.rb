@@ -8,7 +8,7 @@
 #      COSMOS cmd() is used instead of OSK App.send_cmd() because speed is
 #      preferred over command verification
 #   3. Starts SimSat target if cFS is not running because the demo depends
-#      on ISIM
+#      on Payload Manager(PL_MGR) and Payload_Simulator(PL_SIM)
 #
 # Demo Steps:
 #   1. Display directories and create OSK directory if needed
@@ -25,7 +25,7 @@
 #   5. Delete demo file directory
 #      - First attempt to delete a non-empty directory
 #   6. List open Files
-#      - Start ISIM science data  
+#      - Start PL_MGR science data  
 #
 # License:
 #   Written by David McComas, licensed under the copyleft GNU General Public
@@ -67,7 +67,9 @@ Osk::System.check_n_start_cfs('simsat')
 
 cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01") # Enable debug events
 
-cmd("ISIM","POWER_ON_INSTR") # Start ISIM to provide an example of an app with open files
+# Payload Manager(PL_MGR) is used to create open files for FM's open listing 
+# Power on payload via PL_SIM so it's ready by the open listing demo
+cmd("PL_SIM","POWER_ON") 
 
 # Open displays
 
@@ -175,13 +177,16 @@ wait  # <Go> to continue
 ## Step 6 - Send Open File Packet ##
 ####################################
 
-# Enable ISIM science data which opens a science data file
-Osk::flight.send_cmd("ISIM","START_SCI_DATA")
+# Enable PL_MGR science data which opens a science data file
+wait("PL_MGR HK_TLM_PKT PAYLOAD_POWER == 'READY'", 2)
+
+Osk::flight.send_cmd("PL_MGR","START_SCIENCE")
 wait 2
+wait("PL_MGR HK_TLM_PKT SCI_FILE_OPEN == 'TRUE'", 2)
 
 Osk::flight.send_cmd("FM","SEND_OPEN_FILES")
 
-status_bar("Step 6 - ISIM's open science data file is listed")
+status_bar("Step 6 - PL_MGR's open science data file should be listed")
 wait  # <Go> to continue
 
 #############
@@ -192,6 +197,8 @@ cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME FM, BITMASK 0x01")   # Disable deb
 wait 1
 cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME TFTP, BITMASK 0x01") # Disable debug events
 wait 1
-cmd("ISIM","POWER_OFF_INSTR")
+Osk::flight.send_cmd("PL_MGR","STOP_SCIENCE")
+wait 2
+cmd("PL_SIM","POWER_OFF")
    
-clear("CFS_KIT FILE_MGMT_SCREEN")
+clear("SIMSAT FILE_MGMT_SCREEN")

@@ -17,7 +17,7 @@ COMMAND OSK_C_DEMO LOAD_TBL <%= Osk::Cfg.processor_endian %> "Load packet log ta
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 2, 66) %>
   APPEND_PARAMETER ID    8  UINT 0 2 0 "Table ID: 0=Packet Log"
   APPEND_PARAMETER TYPE  8  UINT 0 1 1 "0=Replace Table, 1=Update Records"
-  APPEND_PARAMETER FILENAME 512 STRING "/cf/sandbox_osk_c_demo_tbl.json" "Full path and file name of table to be loaded"
+  APPEND_PARAMETER FILENAME 512 STRING "/cf/osk_c_demo_tbl.json" "Full path and file name of table to be loaded"
 
 COMMAND OSK_C_DEMO DUMP_TBL <%= Osk::Cfg.processor_endian %> "Dump example object table"
   <%= Osk::Cfg.cmd_hdr(@APP_PREFIX_STR, @CMD_MID_STR, 3, 66) %>

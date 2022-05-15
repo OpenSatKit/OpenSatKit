@@ -22,13 +22,13 @@ VERTICAL # With 2 rows
    HORIZONTAL # Row 1
 
       CANVAS 550 150
-         CANVASIMAGE "SimSat-Bubble-Runtime.png" 0 40
+         CANVASIMAGE "SimSat-Bubble-Runtime.png" 0 30
       END
       SETTING BACKCOLOR 255 255 255
   
       VERTICALBOX # Apps
   
-         VERTICALBOX "OSK Command Ingest (KIT_CI)"
+         VERTICALBOX "OSK Command Ingest(KIT_CI)"
          MATRIXBYCOLUMNS 2 5 2
          
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "RUNTIME", "KIT_CI_CMD")'
@@ -43,7 +43,7 @@ VERTICAL # With 2 rows
          END # Matrix
          END # KIT_CI VerticalBox
     
-         VERTICALBOX "OSK Scheduler (KIT_SCH)"
+         VERTICALBOX "OSK Scheduler(KIT_SCH)"
          MATRIXBYCOLUMNS 2 5 2
          
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "RUNTIME", "KIT_SCH_CMD")'
@@ -61,7 +61,7 @@ VERTICAL # With 2 rows
          END # Matrix
          END # KIT_SCH VerticalBox
 
-         VERTICALBOX "OSK Telemetry Output (KIT_TO)"
+         VERTICALBOX "OSK Telemetry Output(KIT_TO)"
          MATRIXBYCOLUMNS 2 5 2
          
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "RUNTIME", "KIT_TO_CMD")'

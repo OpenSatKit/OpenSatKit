@@ -7,7 +7,7 @@
 #   1. There are 3 sources of files and these are their s from
 #      from highest to lowest:
 #      A. DS event file
-#      B. ISIM science files
+#      B. PL_MGR science files
 #      C. DS auxiliary files
 #   2. Assumes filenames contain one 3 character extension
 #
@@ -85,7 +85,7 @@ end # simsat_recorder_playback()
 
 #
 # Parse the recorder file listing created by File Manager and create
-# a dictionary containing file type (ISIM, EVENTS, AUX) as
+# a dictionary containing file type (PL_MGR, EVENTS, AUX) as
 # the keyword and an array of file names as the entry.
 #
 def simsat_create_file_hash(fm_dir_file)
@@ -114,7 +114,7 @@ def simsat_create_file_hash(fm_dir_file)
          
          file_hash[:event]   = files.grep /^#{SimSat::EVENT_FILENAME_BASE}/
          file_hash[:sci_aux] = files.grep /^#{SimSat::SCI_AUX_FILENAME_BASE}/
-         file_hash[:isim]    = files.grep /^#{SimSat::ISIM_FILENAME_BASE}/
+         file_hash[:pl_mgr]  = files.grep /^#{SimSat::PL_MGR_FILENAME_BASE}/
 
       else
 

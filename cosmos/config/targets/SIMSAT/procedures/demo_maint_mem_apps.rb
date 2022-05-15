@@ -68,7 +68,7 @@ Osk::flight.send_cmd("HS", "DIS_ALIVENESS")
 
 # Open displays - Done on a per step basis
 
-display("CFS_KIT MEMORY_MGMT_SCREEN",1500,50)    
+display("SIMSAT MEMORY_MGMT_SCREEN",1500,50)    
 display("MD DWELL_PKT_SCREEN",50,50)    
 
 status_bar("Review screen content and demo steps below. ")
@@ -183,7 +183,7 @@ wait  # <Go> to continue
 cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME MM, BITMASK 0x01") # Disable debug events
 wait (1)
 cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME MD, BITMASK 0x01") # Disable debug events
-clear("CFS_KIT MEMORY_MGMT_SCREEN")    
+clear("SIMSAT MEMORY_MGMT_SCREEN")    
 clear("MD DWELL_PKT_SCREEN")    
-clear("CFS_KIT MEMORY_MGMT_DEMO_SCREEN")
-clear("CFS_KIT MEMORY_MGMT_DEMO_INFO_SCREEN")
+clear("SIMSAT MEMORY_MGMT_DEMO_SCREEN")
+clear("SIMSAT MEMORY_MGMT_DEMO_INFO_SCREEN")

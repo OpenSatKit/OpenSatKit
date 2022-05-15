@@ -6,7 +6,9 @@
 #   License (GPL).
 #
 ###############################################################################
-
+<% 
+   require 'cfe_evs_screen'
+%>
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   
@@ -19,15 +21,15 @@ VERTICALBOX "Ground Interface"
   
   MATRIXBYCOLUMNS 3 5
          
-    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "CMD")'
+    BUTTON 'Send Cmd' 'cfe_evs_scr_cmd(self, "CMD")'
     NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS ENA_EVENT_TYPE DIS_EVENT_TYPE SET_EVENT_FMT ENA_APP_EVENT_TYPE DIS_APP_EVENT_TYPE ENA_APP_EVENT_GEN DIS_APP_EVENT_GEN RESET_APP_CTRS SET_FILTER_MASK ENA_PORT DIS_PORT RESET_FILTER_CTR RESET_ALL_FILTERS ADD_EVENT_FILTER DEL_EVENT_FILTER WRITE_APP_INFO_TO_FILE WRITE_LOG_TO_FILE SET_LOG_MODE CLEAR_LOG
     LABEL "    "
     
-    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "TLM")'
+    BUTTON 'Display Tlm' 'cfe_evs_scr_cmd(self, "TLM")'
     NAMED_WIDGET tlm COMBOBOX EVENT_MSG_PKT HOUSEKEEPING 
     LABEL "    "
 
-    BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "FILE")'
+    BUTTON 'Display File' 'cfe_evs_scr_cmd(self, "FILE")'
     NAMED_WIDGET file COMBOBOX "App Event Info" "Local Event Log"
     LABEL "    "
 
@@ -39,7 +41,11 @@ VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 
-    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_EVS/lib/cfe_evs_screen.rb"; cfe_evs_scr_cmd(self, "TUTORIAL")'
+    BUTTON 'Run Demo' 'cfe_evs_scr_cmd(self, "DEMO")'
+    NAMED_WIDGET demo COMBOBOX "Event Types"
+    LABEL "    "
+
+    BUTTON 'Run Tutorial' 'cfe_evs_scr_cmd(self, "TUTORIAL")'
     NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Tutorial Video" "Exercise Script"
     LABEL "    "
 

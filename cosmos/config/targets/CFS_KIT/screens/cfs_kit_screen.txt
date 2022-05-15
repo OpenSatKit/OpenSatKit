@@ -208,11 +208,12 @@ VERTICAL
       End # Box
    
       VERTICALBOX "Application Groups" 5
-         MATRIXBYCOLUMNS 3
+         MATRIXBYCOLUMNS 4
             BUTTON 'Runtime Environment' 'cfs_kit_scr_simsat(self, "RUNTIME_APPS")'
             BUTTON 'Data/File Mgmt'      'cfs_kit_scr_simsat(self, "DATA_FILE_APPS")'
-            BUTTON 'Autonomy'            'cfs_kit_scr_simsat(self, "AUTONOMY_APPS")'
+            BUTTON 'Mission Management'  'cfs_kit_scr_simsat(self, "MISSION_MGMT_APPS")'
             BUTTON 'Attitude Det/Ctrl'   'cfs_kit_scr_simsat(self, "ADC_APPS")'
+            BUTTON 'Autonomy'            'cfs_kit_scr_simsat(self, "AUTONOMY_APPS")'
             BUTTON 'Health & Safety'     'cfs_kit_scr_simsat(self, "HEALTH_SAFETY_APPS")'
             BUTTON 'Maintenance'         'cfs_kit_scr_simsat(self, "MAINTENANCE_APPS")'
          END # Matrix
@@ -355,115 +356,6 @@ VERTICAL
       NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
 
    END # Tab PiSat
-
-   #######################################################
-
-   TABITEM "R&&D"
-
-      VERTICALBOX "System - sandbox Target"
-         HORIZONTAL
-         MATRIXBYCOLUMNS 3 4 4 
-
-            BUTTON 'Start cFS' 'cfs_kit_scr_sandbox(self, "START_CFS")'
-            SETTING BACKCOLOR 0 200 0
-            BUTTON 'Start 42 Sim' 'cfs_kit_scr_common(self, "START_42")'
-            SETTING BACKCOLOR 0 200 0
-            BUTTON 'Start cFS with 42 Sim' 'cfs_kit_scr_sandbox(self, "START_CFS_42")'
-            SETTING BACKCOLOR 0 200 0
-
-            BUTTON 'Stop cFS' 'cfs_kit_scr_common(self, "STOP_CFS")'
-            SETTING BACKCOLOR 220 50 50
-            BUTTON 'Stop 42 Sim' 'cfs_kit_scr_common(self, "STOP_42")'
-            SETTING BACKCOLOR 220 50 50
-            LABEL "          "
-
-         END # Matrix
-         MATRIXBYCOLUMNS 2 4 4
-            LABEL "          "
-            LABEL "System Time(secs)"
-            LABEL "          "
-            VALUE CFE_ES HK_TLM_PKT CCSDS_SECONDS WITH_UNITS 10
-         END # Matrix
-         END # Horizontal
-         SETTING BACKCOLOR 162 181 205
-     
-         LABEL "          "
-
-         HORIZONTAL
-         VERTICALBOX 'Configure cFS System'          
-            MATRIXBYCOLUMNS 2
-               BUTTON 'Send Config Cmd'   'cfs_kit_scr_common(self, "CONFIG_SYS_SANDBOX")'
-               NAMED_WIDGET config_sys_sandbox COMBOBOX "About" "Enable Telemetry" "Reset Time" "Ena/Dis Gnd Cmd Verify" "Config App Events" "Ena/Dis Flywheel Event" "Ena/Dis HS Aliveness"
-            END # Matrix
-            SETTING BACKCOLOR 162 181 205
-         End # Configure cFS System Box
-         SETTING BACKCOLOR 162 181 205
-         VERTICALBOX "OSK Docs && Videos"
-            MATRIXBYCOLUMNS 2
-               BUTTON 'Open Resource' 'cfs_kit_scr_common(self, "LEARN_OSK_SANDBOX")'
-               SETTING BACKCOLOR 255 255 255
-               NAMED_WIDGET learn_osk_sandbox COMBOBOX "About" "OSK Quick Start Doc" "OSK Overview Video" "OSK Version IDs"
-               #White setting washes out drop down selection: SETTING BACKCOLOR 255 255 255
-            END # Matrix
-            SETTING BACKCOLOR 162 181 205
-         End # Learn OpenSatKit Box
-         SETTING BACKCOLOR 162 181 205
-         End # HORIZONTAL
-
-      END # System Box      
-      
-      VERTICALBOX 'R&&D Docs && Videos'          
-         MATRIXBYCOLUMNS 4
-            BUTTON 'Getting Started'  'cfs_kit_scr_sandbox(self, "QUICK_START")'
-            SETTING BACKCOLOR 153 255 102
-            BUTTON 'Open Resource' 'cfs_kit_scr_sandbox(self, "DOCS_VIDEOS")'
-            SETTING BACKCOLOR 255 255 255
-            NAMED_WIDGET rnd_docs_videos COMBOBOX "About" "SCSIM Video"
-            LABEL "       "     
-         END # Matrix
-         SETTING BACKCOLOR 162 181 205
-      End # Box
-
-      VERTICALBOX "Manage Apps" 5
-         MATRIXBYCOLUMNS 4
-            BUTTON 'Add App'       'cfs_kit_scr_sandbox(self, "ADD_APP")'
-            BUTTON 'Remove App'    'cfs_kit_scr_sandbox(self, "REMOVE_APP")'
-            BUTTON 'ES App Mgmt'   'cfs_kit_scr_sandbox(self, "ES_APP_MGMT")'
-            BUTTON 'Config SCH/TO' 'cfs_kit_scr_sandbox(self, "CONFIG_SCH_TO")'
-         END # Matrix
-         SETTING BACKCOLOR 162 181 205
-      END # BOX
-
-      VERTICALBOX "Prototype Apps" 5
-         MATRIXBYCOLUMNS 4
-            
-            BUTTON 'Run Benchmarks' 'cfs_kit_scr_sandbox(self, "RUN_BENCHMARKS")'
-            BUTTON 'OSK Demo app'   'cfs_kit_scr_sandbox(self, "OSK_DEMO_APP")'
-            LABEL "    "
-            LABEL "    "
-         END # Matrix
-         SETTING BACKCOLOR 162 181 205
-      END # BOX
-
-      VERTICALBOX "Bridges" 5
-         MATRIXBYCOLUMNS 4
-            BUTTON 'SBN'     'cfs_kit_scr_sandbox(self, "SBN")'
-            SETTING BACKCOLOR 150 150 150
-            BUTTON 'ROS2'    'cfs_kit_scr_sandbox(self, "ROS2")'
-            SETTING BACKCOLOR 150 150 150
-            LABEL "          "
-            LABEL "          "
-         END # Matrix
-         SETTING BACKCOLOR 162 181 205
-      END # BOX
-
-   
-      HORIZONTALLINE
-      
-      LABEL "Flight Event Messages"
-      NAMED_WIDGET evs_msg_t TEXTBOX CFE_EVS EVENT_MSG_PKT MESSAGE 768 50
-
-   END # Tab R&D
    END # Tab Book
    
 END # Vertical

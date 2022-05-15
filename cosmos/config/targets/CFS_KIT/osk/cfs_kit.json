@@ -25,6 +25,6 @@
    "url": "https://github.com/nasa/psp"
 },
 
-"cfs-targets": ["simsat", "cfsat", "sandbox", "pisat"]
+"cfs-targets": ["simsat", "cfsat", "pisat"]
 
 }

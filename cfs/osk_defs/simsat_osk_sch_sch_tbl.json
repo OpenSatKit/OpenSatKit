@@ -67,16 +67,6 @@
             }},
 
             {"activity": {
-               "name":    "HSIM Housekeeping",
-               "descr":   "",
-               "index":   9,
-               "enabled": "true",
-               "period":  4,
-               "offset":  0,
-               "msg-idx": 34
-            }},
-
-            {"activity": {
                "name":    "cFE ES Housekeeping",
                "descr":   "",
                "index":   10,
@@ -138,7 +128,7 @@
                "name":    "LC Execution(Sample AP)",
                "descr":   "",
                "index":   0,
-               "enabled": "false",
+               "enabled": "true",
                "period":  1,
                "offset":  0,
                "msg-idx": 17
@@ -165,16 +155,6 @@
             }},
             
            {"activity": {
-               "name":    "HC Execution",
-               "descr":   "",
-               "index":   3,
-               "enabled": "true",
-               "period":  10,
-               "offset":  0,
-               "msg-idx": 33
-            }},
-                        
-           {"activity": {
                "name":    "CF Execution",
                "descr":   "",
                "index":   4,
@@ -195,13 +175,13 @@
             }},
 
             {"activity": {
-               "name":    "BM Housekeeping",
+               "name":    "PL_SIM Execution",
                "descr":   "",
                "index":   9,
                "enabled": "true",
-               "period":  4,
+               "period":  1,
                "offset":  0,
-               "msg-idx": 30
+               "msg-idx": 44
             }},
 
             {"activity": {
@@ -283,7 +263,7 @@
             }},
 
             {"activity": {
-               "name":    "ISIM Execution",
+               "name":    "PL_MGR Execution",
                "descr":   "",
                "index":   2,
                "enabled": "true",
@@ -302,16 +282,6 @@
                "msg-idx": 47
             }},
 
-
-            {"activity": {
-               "name":    "HC Housekeeping",
-               "descr":   "",
-               "index":   8,
-               "enabled": "true",
-               "period":  4,
-               "offset":  0,
-               "msg-idx": 32
-            }},
 
             {"activity": {
                "name":    "MM Housekeeping",
@@ -383,29 +353,9 @@
          "activity-array" : [
          
             {"activity": {
-               "name":    "HSIM Execution",
-               "descr":   "",
-               "index":   0,
-               "enabled": "true",
-               "period":  1,
-               "offset":  0,
-               "msg-idx": 35
-            }},
-            
-             {"activity": {
-               "name":    "BM Execution",
-               "descr":   "",
-               "index":   1,
-               "enabled": "true",
-               "period":  2,
-               "offset":  0,
-               "msg-idx": 31
-            }},
-            
-            {"activity": {
                "name":    "CF Execution",
                "descr":   "",
-               "index":   2,
+               "index":   1,
                "enabled": "true",
                "period":  1,
                "offset":  0,
@@ -415,7 +365,7 @@
            {"activity": {
                "name":    "TEST",
                "descr":   "Used by Create App and available for development",
-               "index":   8,
+               "index":   9,
                "enabled": "true",
                "period":  4,
                "offset":  0,
@@ -425,7 +375,7 @@
             {"activity": {
                "name":    "F42 Housekeeping",
                "descr":   "",
-               "index":   9,
+               "index":   10,
                "enabled": "true",
                "period":  4,
                "offset":  0,
@@ -435,21 +385,11 @@
             {"activity": {
                "name":    "I42 Housekeeping",
                "descr":   "",
-               "index":   10,
+               "index":   11,
                "enabled": "true",
                "period":  4,
                "offset":  0,
                "msg-idx": 42
-            }},
-            
-            {"activity": {
-               "name":    "ISIM Housekeeping",
-               "descr":   "",
-               "index":   11,
-               "enabled": "true",
-               "period":  4,
-               "offset":  0
-               "msg-idx": 44
             }},
             
             {"activity": {

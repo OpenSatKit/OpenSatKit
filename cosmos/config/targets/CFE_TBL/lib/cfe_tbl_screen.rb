@@ -46,12 +46,18 @@ def cfe_tbl_scr_cmd(screen, cmd)
       Osk::Ops::send_flt_bin_file_cmd("CFE_TBL", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
 
    when "FUNC_TBL_MGMT"
-      display("CFS_KIT TABLE_MGMT_SCREEN",1500,10)
+      display("CFE_TBL TABLE_MGMT_SCREEN",1500,10)
    
    when "DEMO"
-      # Only one demo
-      screen.get_named_widget("demo").text
-      display("CFS_KIT TABLE_MGMT_DEMO_SCREEN",500,50)
+      # The screen demos are not currently used in ES screen but
+      # I've left the hooks in below
+      Osk::System.check_n_start_cfs('cfsat')
+      case screen.get_named_widget("demo").text
+      when "Load/Dump Table"
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_tbl_load_dump.rb")
+      when "Load-Dump Screen"
+         display("CFE_TBL TABLE_MGMT_DEMO_SCREEN",500,50)
+      end
 
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text

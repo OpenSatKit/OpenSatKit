@@ -1,0 +1,32 @@
+{ "app": {
+   
+   "title": "Payload Simulator",
+   "version": "1.0.0",
+   "owner": "OpenSatkit",
+   "url": "https://github.com/OpenSatKit/OpenSatKit",
+
+   "description": [
+      "PL_SIM provides a command/telemetry interface to the PL_SIM_LIB."
+   ],
+
+   "cosmos": {
+      "target": "PL_SIM"
+   },
+   
+   "fsw": {
+      "cfe-type": "CFE_APP",
+      "obj-path-file": "/cf/pl_sim_app.so",
+      "entry-symbol": "PL_SIM_AppMain",
+      "name": "PL_SIM",
+      "priority": 70,
+      "stack": 16384,
+      "load_addr": 0,
+      "exception-action": 0,
+      "app-framework": "osk",
+      "tables": [],
+      "cmd-mid": "PL_SIM_CMD_MID"
+   }
+   
+}}
+
+

@@ -1,6 +1,7 @@
 CFE_LIB, /cf/cfs_lib.so,      CFS_LibInit,         CFS_LIB,        0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_c_fw.so,     OSK_C_FW_LibInit,    OSK_C_FW,       0,       0, 0x0, 0;
 CFE_LIB, /cf/osk_42_lib.so,   OSK_42_LIB_LibInit,  OSK_42_LIB,     0,   16384, 0x0, 0;
+CFE_LIB, /cf/pl_sim_lib.so,   PL_SIM_LibInit,      PL_SIM_LIB,     0,   16384, 0x0, 0;
 CFE_APP, /cf/kit_to.so,       KIT_TO_AppMain,      KIT_TO,        10,   32768, 0x0, 0;
 CFE_APP, /cf/kit_ci.so,       KIT_CI_AppMain,      KIT_CI,        10,   16384, 0x0, 0;
 CFE_APP, /cf/ds.so,           DS_AppMain,          DS,            40,   16384, 0x0, 0;
@@ -14,7 +15,8 @@ CFE_APP, /cf/hk.so,           HK_AppMain,          HK,            40,   16384, 0
 CFE_APP, /cf/tftp.so,         TFTP_AppMain,        TFTP,          70,   16384, 0x0, 0;
 CFE_APP, /cf/hc.so,           HC_AppMain,          HC,            30,   16384, 0x0, 0;
 CFE_APP, /cf/hsim.so,         SIM_AppMain,         HSIM,          70,   16384, 0x0, 0;
-CFE_APP, /cf/isim.so,         ISIM_AppMain,        ISIM,          70,   16384, 0x0, 0;
+CFE_APP, /cf/pl_sim_app.so,   PL_SIM_AppMain,      PL_SIM,        70,   16384, 0x0, 0;
+CFE_APP, /cf/pl_mgr_app.so,   PL_MGR_AppMain,      PL_MGR,        70,   16384, 0x0, 0;
 CFE_APP, /cf/f42.so,          F42_AppMain,         F42,           40,   16384, 0x0, 0;
 CFE_APP, /cf/i42.so,          I42_AppMain,         I42,           40,   80192, 0x0, 0;
 CFE_APP, /cf/cf.so,           CF_AppMain,          CF,            70,   80192, 0x0, 0;

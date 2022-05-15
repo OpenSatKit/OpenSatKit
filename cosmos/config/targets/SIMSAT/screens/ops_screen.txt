@@ -33,24 +33,24 @@ TITLE "SimSat Operations"
 #local#HORIZONTALBOX "Ops Example Script Status"
   #local#LABELVALUE LOCAL LOCAL simsat_ops_status WITH_UNITS 50
   #local#SETTING BACKCOLOR 255 255 100
-#local#END # Horizontal ISIM
+#local#END # Horizontal
 
-VERTICALBOX "Instrument Sim (ISIM)"
+VERTICALBOX "Payload Manager (PL_MGR)"
 
   MATRIXBYCOLUMNS 6 1
 
     BUTTON 'Doc' 'spawn("evince #{Osk::cfg_target_dir_file("SIMSAT","docs",Osk::SIMSAT_OVERVIEW_FILE)}")'
     SETTING BACKCOLOR 255 255 255
     LABEL "   "
-    LABEL "Instr State"
-    VALUE ISIM HK_TLM_PKT INSTR_PWR_STATE WITH_UNITS 8
-    LABEL "Fault"
-    VALUE ISIM HK_TLM_PKT FAULT_PRESENT WITH_UNITS 6
+    LABEL "            Power"
+    VALUE PL_SIM HK_TLM_PKT PAYLOAD_POWER WITH_UNITS 8
+    LABEL "            Fault"
+    VALUE PL_SIM HK_TLM_PKT DETECTOR_FAULT WITH_UNITS 6
 
-    LABEL "Sci Data"
-    VALUE ISIM HK_TLM_PKT SCI_STATE WITH_UNITS 6
-    LABEL "Sci Images"
-    VALUE ISIM HK_TLM_PKT FILE_IMAGE_CNT WITH_UNITS 8
+    LABEL "            Sci File"
+    VALUE PL_MGR HK_TLM_PKT SCI_FILE_OPEN WITH_UNITS 6
+    LABEL "            Sci Images"
+    VALUE PL_MGR HK_TLM_PKT SCI_FILE_IMAGE_CNT WITH_UNITS 8
     LABEL "   "
     LABEL "   "
 
@@ -58,10 +58,10 @@ VERTICALBOX "Instrument Sim (ISIM)"
   
   HORIZONTAL
     LABEL "Current science file: "
-    VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
+    VALUE PL_MGR HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
   END
   
-END # Vertical ISIM
+END # Vertical PL_MGR
 
   
 VERTICALBOX "Data/File Management"
@@ -152,7 +152,7 @@ VERTICALBOX "Autonomy"
     LABEL "RTS EXE Cnt"
     VALUE LC HK_TLM_PKT RTS_EXE_CNT WITH_UNITS 6
 
-    LABEL "<b>ISIM Fault Mon</b>"
+    LABEL "<b>Payload Fault Mon</b>"
     LABEL "Watch Point 12"
     VALUE LC HK_TLM_PKT WP_12_RESULT WITH_UNITS 6
     LABEL "   "
@@ -163,7 +163,7 @@ VERTICALBOX "Autonomy"
     VALUE LC HK_TLM_PKT AP_2_RESULT WITH_UNITS 6
 
     LABEL "<b>Stored Cmd</b>"
-    LABEL "Pwr Off ISIM (RTS 6)"
+    LABEL "Pwr Off PL_SIM (RTS 6)"
     VALUE SC HK_TLM_PKT RTS_6_DIS WITH_UNITS 6
     VALUE SC HK_TLM_PKT RTS_6_EXE WITH_UNITS 6
     #LABEL "RTS Dis 16..1"

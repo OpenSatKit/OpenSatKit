@@ -49,18 +49,18 @@ VERTICAL
    
    HORIZONTALLINE
    HORIZONTAL
-      VERTICALBOX "Instrument Sim (ISIM)"
+      VERTICALBOX "Payload Manager (PL_MGR)"
       MATRIXBYCOLUMNS 4 5 5
-         LABEL "Instr Power"
+         LABEL "Payload Pwr"
          LABEL "Sci Data"
          LABEL "Sci Images"
          LABEL "        "
-         VALUE ISIM HK_TLM_PKT INSTR_PWR_STATE WITH_UNITS 8
-         VALUE ISIM HK_TLM_PKT SCI_STATE       WITH_UNITS 6
-         VALUE ISIM HK_TLM_PKT FILE_IMAGE_CNT  WITH_UNITS 8
+         VALUE PL_MGR HK_TLM_PKT PAYLOAD_POWER      WITH_UNITS 8
+         VALUE PL_MGR HK_TLM_PKT SCI_FILE_OPEN      WITH_UNITS 6
+         VALUE PL_MGR HK_TLM_PKT SCI_FILE_IMAGE_CNT WITH_UNITS 8
          LABEL "        "
       END # Matrix
-      END # ISIM
+      END # PL_MGR
   
       VERTICALBOX "Housekeeping (HK)"
       MATRIXBYCOLUMNS 4 5 5
@@ -144,7 +144,7 @@ VERTICAL
             END
             HORIZONTAL
                LABEL "Current science file: "
-               VALUE ISIM HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
+               VALUE PL_MGR HK_TLM_PKT SCI_FILENAME WITH_UNITS 30
             END
             HORIZONTAL
                LABEL "Current science auxiliary file: "

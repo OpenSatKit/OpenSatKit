@@ -21,14 +21,14 @@ TITLE "SimSat Data/File Management Applications"
 VERTICAL # With 2 rows
    HORIZONTAL # Row 1
 
-      CANVAS 550 150
-         CANVASIMAGE "SimSat-Bubble-Data_File.png" 0 50
+      CANVAS 550 140
+         CANVASIMAGE "SimSat-Bubble-Data_File.png" 0 30
       END
       SETTING BACKCOLOR 255 255 255  
    
       VERTICALBOX # Apps col 1
   
-         VERTICALBOX "Data Storage"
+         VERTICALBOX "Data Storage(DS)"
          MATRIXBYCOLUMNS 2 5 2
 
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "DATA_FILE", "DS_CMD")'
@@ -46,7 +46,7 @@ VERTICAL # With 2 rows
          END # Matrix
          END # DS VerticalBox      
 
-         VERTICALBOX "File Manager"
+         VERTICALBOX "File Manager(FM)"
          MATRIXBYCOLUMNS 2 5 2
          
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "DATA_FILE", "FM_CMD")'
@@ -83,7 +83,7 @@ VERTICAL # With 2 rows
 
       VERTICALBOX # Apps col 2
    
-         VERTICALBOX "Housekeeping"
+         VERTICALBOX "Housekeeping(HK)"
          MATRIXBYCOLUMNS 2 5 2
             
             BUTTON 'Send Cmd' 'simsat_scr_cmd(self, "DATA_FILE", "HK_CMD")'
@@ -129,7 +129,7 @@ VERTICAL # With 2 rows
          MATRIXBYCOLUMNS 2 5 2
     
             BUTTON 'Run Demo' 'simsat_scr_cmd(self, "DATA_FILE", "DEMO")'
-            NAMED_WIDGET demo COMBOBOX "Data-File Mgmt Screen" "Data-File Mgmt Script" "DS Feature Screen" "FM Playback Script" "FM Feature Screen" "FM Feature Script" "HK Feature Script"
+            NAMED_WIDGET demo COMBOBOX "Data-File Mgmt Screen" "Data-File Mgmt Script" "Recorder Mgmt" "FM Playback" "FM Features""HK Features"
 
             BUTTON 'Run Tutorial' 'simsat_scr_cmd(self, "DATA_FILE", "TUTORIAL")'
             NAMED_WIDGET tutorial COMBOBOX  "Data-File Intro Slides" "Comm App Intro Video" "Data-File Intro Video" "FM App Video" "HK App Video" 

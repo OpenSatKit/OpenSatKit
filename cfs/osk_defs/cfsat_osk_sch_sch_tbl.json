@@ -67,16 +67,6 @@
             }},
 
             {"activity": {
-               "name":    "HSIM Housekeeping",
-               "descr":   "",
-               "index":   9,
-               "enabled": "false",
-               "period":  4,
-               "offset":  0,
-               "msg-idx": 34
-            }},
-
-            {"activity": {
                "name":    "cFE ES Housekeeping",
                "descr":   "",
                "index":   10,
@@ -165,16 +155,6 @@
             }},
             
            {"activity": {
-               "name":    "HC Execution",
-               "descr":   "",
-               "index":   3,
-               "enabled": "false",
-               "period":  10,
-               "offset":  0,
-               "msg-idx": 33
-            }},
-                        
-           {"activity": {
                "name":    "CF Execution",
                "descr":   "",
                "index":   4,
@@ -202,16 +182,6 @@
                "period":  4,
                "offset":  2,
                "msg-idx": 46
-            }},
-
-            {"activity": {
-               "name":    "BM Housekeeping",
-               "descr":   "",
-               "index":   9,
-               "enabled": "false",
-               "period":  4,
-               "offset":  0,
-               "msg-idx": 30
             }},
 
             {"activity": {
@@ -293,16 +263,6 @@
             }},
 
             {"activity": {
-               "name":    "ISIM Execution",
-               "descr":   "",
-               "index":   2,
-               "enabled": "false",
-               "period":  1,
-               "offset":  0,
-               "msg-idx": 43
-            }},
-            
-            {"activity": {
                "name":    "FILEMGR Housekeeping",
                "descr":   "",
                "index":   7,
@@ -312,16 +272,6 @@
                "msg-idx": 47
             }},
 
-
-            {"activity": {
-               "name":    "HC Housekeeping",
-               "descr":   "",
-               "index":   8,
-               "enabled": "false",
-               "period":  4,
-               "offset":  0,
-               "msg-idx": 32
-            }},
 
             {"activity": {
                "name":    "MM Housekeeping",
@@ -393,26 +343,6 @@
          "activity-array" : [
          
             {"activity": {
-               "name":    "HSIM Execution",
-               "descr":   "",
-               "index":   0,
-               "enabled": "false",
-               "period":  1,
-               "offset":  0,
-               "msg-idx": 35
-            }},
-            
-             {"activity": {
-               "name":    "BM Execution",
-               "descr":   "",
-               "index":   1,
-               "enabled": "false",
-               "period":  2,
-               "offset":  0,
-               "msg-idx": 31
-            }},
-            
-            {"activity": {
                "name":    "CF Execution",
                "descr":   "",
                "index":   2,
@@ -450,16 +380,6 @@
                "period":  4,
                "offset":  0,
                "msg-idx": 42
-            }},
-            
-            {"activity": {
-               "name":    "ISIM Housekeeping",
-               "descr":   "",
-               "index":   11,
-               "enabled": "false",
-               "period":  4,
-               "offset":  0
-               "msg-idx": 44
             }},
             
             {"activity": {

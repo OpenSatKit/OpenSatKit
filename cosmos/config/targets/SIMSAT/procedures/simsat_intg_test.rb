@@ -43,13 +43,11 @@ require './config/targets/SC/procedures/sc_intg_test'
 # OSK Kit Apps
 
 require './config/targets/F42/procedures/f42_intg_test'
-require './config/targets/HC/procedures/hc_intg_test'
-require './config/targets/HSIM/procedures/hsim_intg_test'
 require './config/targets/I42/procedures/i42_intg_test'
-require './config/targets/ISIM/procedures/isim_intg_test'
 require './config/targets/KIT_CI/procedures/kit_ci_intg_test'
 require './config/targets/KIT_SCH/procedures/kit_sch_intg_test'
 require './config/targets/KIT_TO/procedures/kit_to_intg_test'
+require './config/targets/PL_MGR/procedures/pl_mgr_intg_test'
 require './config/targets/TFTP/procedures/tftp_intg_test'
 
 ###############################################################################
@@ -82,7 +80,7 @@ f42_test     = F42IntgTest.new(Osk::flight.app["F42"])
 hc_test      = HcIntgTest.new(Osk::flight.app["HC"])
 hsim_test    = HsimIntgTest.new(Osk::flight.app["HSIM"])
 i42_test     = I42IntgTest.new(Osk::flight.app["I42"])
-isim_test    = IsimIntgTest.new(Osk::flight.app["ISIM"])
+pl_mgr_test  = PlMgrIntgTest.new(Osk::flight.app["PL_MGR"])
 kit_ci_test  = KitCiIntgTest.new(Osk::flight.app["KIT_CI"])
 kit_sch_test = KitSchIntgTest.new(Osk::flight.app["KIT_SCH"])
 kit_to_test  = KitToIntgTest.new(Osk::flight.app["KIT_TO"])
@@ -157,8 +155,8 @@ puts hsim_test.app.target + " " + hsim_test.result_str
 i42_test.run
 puts i42_test.app.target + " " + i42_test.result_str
 
-isim_test.run
-puts isim_test.app.target + " " + isim_test.result_str
+pl_sim_test.run
+puts pl_sim_test.app.target + " " + pl_sim_test.result_str
 
 kit_ci_test.run
 puts kit_ci_test.app.target + " " + kit_ci_test.result_str

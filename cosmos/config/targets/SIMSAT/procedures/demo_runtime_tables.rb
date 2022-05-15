@@ -40,7 +40,7 @@ require 'fsw_config_param'
 #
 
 display ("CFS_KIT MNG_APP_RUNTIME_SCREEN")
-display ("CFS_KIT AUTONOMY_MGMT_SCREEN")
+display ("SIMSAT AUTONOMY_MGMT_SCREEN")
 
 wait # Review Limit Checker configuration
 
@@ -107,4 +107,4 @@ Osk::flight.send_cmd("KIT_TO","UPDATE_FILTER with MSG_ID 0x08A7, FILTER_TYPE #{F
 wait 1
 
 clear ("CFS_KIT MNG_APP_RUNTIME_SCREEN")
-clear ("CFS_KIT AUTONOMY_MGMT_SCREEN")
+clear ("SIMSAT AUTONOMY_MGMT_SCREEN")

@@ -218,64 +218,54 @@ static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
 */
 LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] =
 {
-    /* #0 (HC: Battery Heaters) */
-    {   .DefaultState        = LC_APSTATE_DISABLED,
-        .MaxPassiveEvents    = 0,
-        .MaxPassFailEvents   = 1,
-        .MaxFailPassEvents   = 0,
-        .RTSId               = 002,
-        .MaxFailsBeforeRTS   = 5,
-        .EventType           = CFE_EVS_INFORMATION,
-        .EventID             = LC_BASE_AP_EID + 0,
-        .EventText           = { "HC: Restart Batt. heaters" },
-        .RPNEquation         = { /* (WP_0) */
-				 2, 3, 4, 5, 6, 7,
-				 LC_RPN_OR,
-				 LC_RPN_OR,
-				 LC_RPN_OR,
-				 LC_RPN_OR,
-				 LC_RPN_OR,
-                                 0,
-				 LC_RPN_AND,
-                                 LC_RPN_EQUAL
-                               }
-    },
 
-    /* #1 (HC: Propulsion Heaters) */
-    {
-        .DefaultState        = LC_APSTATE_DISABLED,
-        .MaxPassiveEvents    = 0,
-        .MaxPassFailEvents   = 1,
-        .MaxFailPassEvents   = 0,
-        .RTSId               = 002,
-        .MaxFailsBeforeRTS   = 5,
-        .EventType           = CFE_EVS_INFORMATION,
-        .EventID             = LC_BASE_AP_EID + 1,
-        .EventText           = { "HC: Restart Prop. heaters" },
-        .RPNEquation         = { /* (WP_0) */
-				 8, 9, 10, 11,
-				 LC_RPN_OR,
-				 LC_RPN_OR,
-				 LC_RPN_OR,
-				 1,
-				 LC_RPN_AND,
-                                 LC_RPN_EQUAL
-                               }
-    },
-
-    /* #2 (ISIM Fault) */
+    /* #0 (PL_SIM Fault) */
     {
         .DefaultState        = LC_APSTATE_ACTIVE,
-        .MaxPassiveEvents    = 2,
-        .MaxPassFailEvents   = 2,
-        .MaxFailPassEvents   = 2,
-        .RTSId               = 6,
+        .MaxPassiveEvents    = 0,
+        .MaxPassFailEvents   = 0,
+        .MaxFailPassEvents   = 0,
+        .RTSId               = 2,
         .MaxFailsBeforeRTS   = 3,
         .EventType           = CFE_EVS_ERROR,
-        .EventID             = LC_BASE_AP_EID + 2,
-        .EventText           = { "ISIM Fault" },
+        .EventID             = LC_BASE_AP_EID + 0,
+        .EventText           = { "PL_SIM Fault" },
         .RPNEquation         = { /* (WP_0) */
-                                 12,
+                                 0,
+                                 LC_RPN_EQUAL
+                               }
+    },
+
+    /* #1 (unused) */
+    {
+        .DefaultState        = LC_ACTION_NOT_USED,
+        .MaxPassiveEvents    = 0,
+        .MaxPassFailEvents   = 0,
+        .MaxFailPassEvents   = 0,
+        .RTSId               = 0,
+        .MaxFailsBeforeRTS   = 0,
+        .EventType           = CFE_EVS_INFORMATION,
+        .EventID             = 0,
+        .EventText           = { " " },
+        .RPNEquation         = { /* (WP_0) */
+                                 0,
+                                 LC_RPN_EQUAL
+                               }
+    },
+
+    /* #2 (unused) */
+    {
+        .DefaultState        = LC_ACTION_NOT_USED,
+        .MaxPassiveEvents    = 0,
+        .MaxPassFailEvents   = 0,
+        .MaxFailPassEvents   = 0,
+        .RTSId               = 0,
+        .MaxFailsBeforeRTS   = 0,
+        .EventType           = CFE_EVS_INFORMATION,
+        .EventID             = 0,
+        .EventText           = { " " },
+        .RPNEquation         = { /* (WP_0) */
+                                 0,
                                  LC_RPN_EQUAL
                                }
     },

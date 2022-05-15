@@ -1,0 +1,25 @@
+{
+   "title": "Spacecraft Simulator(SCSIM) initialization file",
+   "description": [ "Define runtime configurations",
+                    "EXECUTE_MID same as PL_SIM",
+                    "SEND_HK_MID set to unused PL_SIM MID. HK sent with execute"]
+   "config": {
+      
+      "APP_CFE_NAME": "SCSIM",
+      "APP_MAIN_PERF_ID": 128,
+      
+      "CMD_MID"       : 8032,
+      "EXECUTE_MID"   : 7937,
+      "SEND_HK_MID"   : 6642,
+      "HK_TLM_MID"    : 3936,
+      "MGMT_TLM_MID"  : 3937,
+      "MODEL_TLM_MID" : 3938,
+      
+      "CMD_PIPE_DEPTH": 10,
+      "CMD_PIPE_NAME":  "SCSIM_CMD_PIPE",
+
+      "TBL_LOAD_FILE": "/cf/scsim_tbl.json",
+      "TBL_DUMP_FILE": "/cf/scsim_tbl~.json"
+
+   }
+}

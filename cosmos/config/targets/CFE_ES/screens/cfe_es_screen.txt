@@ -6,7 +6,9 @@
 #   License (GPL).
 #
 ###############################################################################
-
+<% 
+   require 'cfe_es_screen'
+%>
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
   
@@ -18,15 +20,15 @@ VERTICALBOX "Ground Interface"
   
   MATRIXBYCOLUMNS 3 5
          
-    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "CMD")'
+    BUTTON 'Send Cmd' 'cfe_es_scr_cmd(self, "CMD")'
     NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS RESET SHELL START_APP STOP_APP RESTART_APP RELOAD_APP SEND_APP_INFO WRITE_APP_INFO_TO_FILE CLEAR_SYSLOG WRITE_SYSLOG_TO_FILE CLEAR_ERLOG WRITE_ERLOG_TO_FILE START_LA_DATA STOP_LA_DATA SET_LA_FILTER_MASK SET_LA_TRIG_MASK OVERWRITE_SYSLOG_MODE RESET_PR_CNT SET_MAX_PR_CNT DELETE_CDS SEND_MEM_POOL_STATS WRITE_CDS_REG_TO_FILE WRITE_TASK_INFO_TO_FILE
     LABEL "    "
     
-    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TLM")'
+    BUTTON 'Display Tlm' 'cfe_es_scr_cmd(self, "TLM")'
     NAMED_WIDGET tlm COMBOBOX APP_INFO HOUSEKEEPING MEM_POOL SHELL 
     LABEL "    "
 
-    BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "FILE")'
+    BUTTON 'Display File' 'cfe_es_scr_cmd(self, "FILE")'
     NAMED_WIDGET file COMBOBOX "App Info" "Critical Data Storage Registry" "Exception-Reset Log" "System Log" "Task Info"
     LABEL "    "
 
@@ -37,8 +39,8 @@ VERTICALBOX "Functions"
   
   MATRIXBYCOLUMNS 4
 
-    BUTTON 'App Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "FUNC_APP_MGMT")'
-    BUTTON 'Perf Mon' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "FUNC_PERF_MON")'
+    BUTTON 'App Mgmt' 'cfe_es_scr_cmd(self, "FUNC_APP_MGMT")'
+    BUTTON 'Perf Mon' 'cfe_es_scr_cmd(self, "FUNC_PERF_MON")'
     LABEL "    "
     LABEL "    "
 
@@ -49,11 +51,11 @@ VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 
-    BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "DEMO")'
-    NAMED_WIDGET demo COMBOBOX "App Management Screen" "Perf Monitor Screen" "Perf Monitor Script"
+    BUTTON 'Run Demo' 'cfe_es_scr_cmd(self, "DEMO")'
+    NAMED_WIDGET demo COMBOBOX "App Management" "Perf Monitor"
     LABEL "    "
 
-    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_ES/lib/cfe_es_screen.rb"; cfe_es_scr_cmd(self, "TUTORIAL")'
+    BUTTON 'Run Tutorial' 'cfe_es_scr_cmd(self, "TUTORIAL")'
     NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Exercise Script" "Perf Monitor Video"
     LABEL "    "
 

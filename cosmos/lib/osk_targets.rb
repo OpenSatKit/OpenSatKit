@@ -60,6 +60,8 @@ def self.create_json_table_mgmt_scr(app_list)
    ###############################################################################
    <% 
       require 'osk_global'
+      require 'table_mgmt_screen'
+      require 'json_table_mgmt_screen'
    %>
    SCREEN AUTO AUTO 0.5
    GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -74,9 +76,9 @@ def self.create_json_table_mgmt_scr(app_list)
    
    scr_part2 = "
        MATRIXBYCOLUMNS 3
-         BUTTON 'Load'    'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/json_table_mgmt_screen.rb\"; json_table_mgmt(self, \"LOAD\")'
-         BUTTON 'Dump'    'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/json_table_mgmt_screen.rb\"; json_table_mgmt(self, \"DUMP\")'
-         BUTTON 'Display' 'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/json_table_mgmt_screen.rb\"; json_table_mgmt(self, \"DISPLAY\")'
+         BUTTON 'Load'    'json_table_mgmt(self, \"LOAD\")'
+         BUTTON 'Dump'    'json_table_mgmt(self, \"DUMP\")'
+         BUTTON 'Display' 'json_table_mgmt(self, \"DISPLAY\")'
        END
      END
 
@@ -103,8 +105,8 @@ def self.create_json_table_mgmt_scr(app_list)
    VERTICALBOX \"File Transfer\"
      MATRIXBYCOLUMNS 2
        # Use table_mgmt because table file needs to be manipulated after transferred
-       BUTTON 'Put File' 'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb\"; table_mgmt_send_cmd(self, \"PUT_FILE\")'
-       BUTTON 'Get File' 'require \"#{Cosmos::USERPATH}/config/targets/CFS_KIT/lib/table_mgmt_screen.rb\"; table_mgmt_send_cmd(self, \"GET_FILE\")'
+       BUTTON 'Put File' 'table_mgmt_send_cmd(self, \"PUT_FILE\")'
+       BUTTON 'Get File' 'table_mgmt_send_cmd(self, \"GET_FILE\")'
        LABELVALUE TFTP HK_TLM_PKT PUT_FILE_COUNT
        LABELVALUE TFTP HK_TLM_PKT GET_FILE_COUNT
      END # Matrix

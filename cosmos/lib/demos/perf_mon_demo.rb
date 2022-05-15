@@ -37,8 +37,8 @@ PMD_DIR_LIST_FLT_FILE = "#{Osk::FLT_SRV_DIR}/#{PMD_DIR_LIST_FILE}"
 
 wait # 1 - 
 
-display("CFS_KIT PERF_MON_DEMO_INFO_SCREEN",500,50)  
-            display("CFS_KIT PERF_MON_SCREEN",1500,50)    
+display("CFE_ES PERF_MON_DEMO_INFO_SCREEN",500,50)  
+            display("CFE_ES PERF_MON_SCREEN",1500,50)    
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Enable debug events
 
 ################################################################################
@@ -144,7 +144,7 @@ end # perf_mon_demo_main()
 
             cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Disable debug events
             $pmd_step = 0
-            clear("CFS_KIT PERF_MON_SCREEN")
+            clear("CFE_ES PERF_MON_SCREEN")
 
 
 #
@@ -294,7 +294,7 @@ def perf_mon_demo(screen, button)
 
    if (button == "INFO")
   
-      display("CFS_KIT PERF_MON_DEMO_INFO_SCREEN",500,50)    
+      display("CFE_ES PERF_MON_DEMO_INFO_SCREEN",500,50)    
 
    elsif (button == "NEXT")
   
@@ -307,16 +307,16 @@ def perf_mon_demo(screen, button)
 
       case $pmd_step
          when 1
-            display("CFS_KIT PERF_MON_SCREEN",1500,50)    
+            display("CFE_ES PERF_MON_SCREEN",1500,50)    
             cmd("CFE_EVS ENA_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Enable debug events
          when 2..PMD_LAST_STEP
             # Keep case statement for maintenance
          else
             cmd("CFE_EVS DIS_APP_EVENT_TYPE with APP_NAME CFE_ES, BITMASK 0x01") # Disable debug events
             $pmd_step = 0
-            clear("CFS_KIT PERF_MON_SCREEN")
-            clear("CFS_KIT PERF_MON_DEMO_SCREEN")
-            clear("CFS_KIT PERF_MON_DEMO_INFO_SCREEN")
+            clear("CFE_ES PERF_MON_SCREEN")
+            clear("CFE_ES PERF_MON_DEMO_SCREEN")
+            clear("CFE_ES PERF_MON_DEMO_INFO_SCREEN")
       end # Step Case
   
    elsif (button == "DEMO")

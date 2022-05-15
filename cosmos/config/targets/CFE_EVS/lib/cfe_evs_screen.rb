@@ -50,6 +50,12 @@ def cfe_evs_scr_cmd(screen, cmd)
       end
       Osk::Ops::send_flt_bin_file_cmd("CFE_EVS", "#{cmd_name} with ", tbl_mgr_filename, flt_path_filename: File.join(Osk::FLT_SRV_DIR,bin_filename), prompt: false)
 
+   when "DEMO"
+      Osk::System.check_n_start_cfs('cfsat')
+      case screen.get_named_widget("demo").text
+      when "Event Types"
+         spawn("ruby #{Osk::COSMOS_SCR_RUNNER} demo_evs_types.rb")
+      end
    when "TUTORIAL"
       case screen.get_named_widget("tutorial").text
       when "Tutorial Slides"

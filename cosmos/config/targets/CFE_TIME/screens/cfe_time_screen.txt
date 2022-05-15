@@ -6,6 +6,9 @@
 #   License (GPL).
 #
 ###############################################################################
+<% 
+   require 'cfe_time_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -18,11 +21,11 @@ VERTICALBOX "Ground Interface"
   
   MATRIXBYCOLUMNS 3 5
          
-    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TIME/lib/cfe_time_screen.rb"; cfe_time_scr_cmd(self, "CMD")'
+    BUTTON 'Send Cmd' 'cfe_time_scr_cmd(self, "CMD")'
     NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS SEND_DIAG SET_SOURCE SET_STATE ADD_CLOCK_LAT SUB_CLOCK_LAT SET_CLOCK SET_CLOCK_MET SET_CLOCK_STCF SET_CLOCK_LEAP ADD_STCF_ADJ SUB_STCF_ADJ ADD_1HZ_STCF_ADJ SUB_1HZ_STCF_ADJ SET_SIGNAL 
     LABEL "    "
     
-    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TIME/lib/cfe_time_screen.rb"; cfe_time_scr_cmd(self, "TLM")'
+    BUTTON 'Display Tlm' 'cfe_time_scr_cmd(self, "TLM")'
     NAMED_WIDGET tlm COMBOBOX DIAGNOSTICS
     LABEL "    "
 
@@ -33,7 +36,7 @@ VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 
-    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TIME/lib/cfe_time_screen.rb"; cfe_time_scr_cmd(self, "TUTORIAL")'
+    BUTTON 'Run Tutorial' 'cfe_time_scr_cmd(self, "TUTORIAL")'
     NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Exercise Script"
     LABEL "    "
 

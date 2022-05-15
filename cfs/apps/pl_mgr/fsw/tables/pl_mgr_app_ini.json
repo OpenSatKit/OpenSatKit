@@ -1,0 +1,24 @@
+{
+   "title": "Payload Manager(PL_MGR) initialization file",
+   "description": [ "Define runtime configurations",
+                    "CMD_MID and HK_TLM_MID are also defined in pl_mgr_msgids.h so they can be included by other apps.",
+                    "SCI_FILE_EXTENSION must be 8 characters or less"],
+   "config": {
+      
+      "APP_CFE_NAME": "PL_MGR",
+      "APP_PERF_ID" : 127,
+      
+      "CMD_MID"      : 6592,
+      "EXECUTE_MID"  : 6593,
+      "TLM_MID"      : 2496,
+      "TLM_SLOW_RATE": 4,
+      
+      "CMD_PIPE_DEPTH": 10,
+      "CMD_PIPE_NAME":  "PL_MGR_CMD_PIPE",
+
+      "SCI_FILE_PATH_BASE": "/cf/pl_sci_",
+      "SCI_FILE_EXTENSION": ".txt",
+      "SCI_FILE_IMAGE_CNT": 6
+
+   }
+}

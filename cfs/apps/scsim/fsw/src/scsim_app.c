@@ -306,6 +306,7 @@ static void ProcessCommandPipe(CFE_SB_MsgId_t CmdMid, CFE_SB_MsgId_t ExecuteMid,
       else if (MsgId == ExecuteMid) {
    
          SCSIM_Execute();
+         SendHousekeepingPkt();
       
       }
       else if (MsgId == SendHkMid) {

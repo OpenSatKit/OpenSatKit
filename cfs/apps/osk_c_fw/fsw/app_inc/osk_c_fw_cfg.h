@@ -59,7 +59,8 @@
 #define STATEREP_BASE_EID         70
 #define CJSON_BASE_EID            80
 #define OSK_C_FW_UTILS_BASE_EID   90
-#define OSK_C_FW_APP_BASE_EID    100 /* Starting ID for the App using the framework */
+#define OSK_C_FW_APP_BASE_EID    100 /* Starting ID for the App using the framework   */
+#define OSK_C_FW_LIB_BASE_EID    900 /* Starting ID for a library using the framework */
 
 
 /******************************************************************************

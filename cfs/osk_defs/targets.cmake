@@ -124,22 +124,7 @@ SET(TGT1_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json os
 
 SET(TGT2_NAME simsat) 
 
-SET(TGT2_APPLIST cfs_lib osk_c_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 isim hc hsim)
+SET(TGT2_APPLIST cfs_lib osk_c_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs lc md mm sc hk tftp cf i42 f42 pl_sim_lib pl_sim pl_mgr)
 
-SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json f42_ctrl_tbl.json isim_ini.json isim_tbl.json)
-
-
-#################
-## 3 - SANDBOX ##
-#################
-
-# The sandbox only depends on OSK apps so all tables are text-based and no external dependencies that have
-# to be maintained
-# v3.1 - Removed SBN because cfe-sb-priv.h include intermittently failed and haven't found root cause
-
-SET(TGT3_NAME sandbox) 
-
-SET(TGT3_APPLIST cfs_lib expat_lib osk_c_fw osk_cpp_fw osk_42_lib mqtt_lib kit_ci kit_sch kit_to tftp filemgr i42 f42 bm osk_c_proto osk_cpp_proto mqtt scsim osk_c_demo)
-
-SET(TGT3_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json osk_c_proto_tbl.json osk_c_proto_tbl.scanf osk_c_proto_tbl.xml osk_cpp_tbl.json filemgr_ini.json mqtt_ini.json scsim_ini.json scsim_tbl.json osk_c_demo_ini.json osk_c_demo_tbl.json file_in_ini.json file_out_ini.json)
+SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json f42_ctrl_tbl.json pl_sim_lib_ini.json pl_sim_app_ini.json pl_mgr_app_ini.json)
 

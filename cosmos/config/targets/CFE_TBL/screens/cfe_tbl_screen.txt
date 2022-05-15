@@ -6,6 +6,9 @@
 #   License (GPL).
 #
 ###############################################################################
+<% 
+   require 'cfe_tbl_screen'
+%>
 
 SCREEN AUTO AUTO 0.5
 GLOBAL_SETTING BUTTON BACKCOLOR 221 221 221
@@ -18,15 +21,15 @@ VERTICALBOX "Ground Interface"
   
   MATRIXBYCOLUMNS 3 5
          
-    BUTTON 'Send Cmd' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "CMD")'
+    BUTTON 'Send Cmd' 'cfe_tbl_scr_cmd(self, "CMD")'
     NAMED_WIDGET cmd COMBOBOX NOOP RESET_CTRS LOAD_TBL DUMP_TBL VALIDATE_TBL ACTIVATE_TBL WRITE_REG_TO_FILE SEND_REGISTRY DELETE_CDS ABORT_LOAD
     LABEL "    "
     
-    BUTTON 'Display Tlm' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TLM")'
+    BUTTON 'Display Tlm' 'cfe_tbl_scr_cmd(self, "TLM")'
     NAMED_WIDGET tlm COMBOBOX HOUSEKEEPING REGISTRY 
     LABEL "    "
 
-    BUTTON 'Display File' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "FILE")'
+    BUTTON 'Display File' 'cfe_tbl_scr_cmd(self, "FILE")'
     NAMED_WIDGET file COMBOBOX Registry
     LABEL "    "
 
@@ -37,7 +40,7 @@ VERTICALBOX "Functions"
   
   MATRIXBYCOLUMNS 4
 
-    BUTTON 'Tbl Mgmt' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "FUNC_TBL_MGMT")'
+    BUTTON 'Tbl Mgmt' 'cfe_tbl_scr_cmd(self, "FUNC_TBL_MGMT")'
     LABEL "    "
     LABEL "    "
     LABEL "    "
@@ -49,11 +52,11 @@ VERTICALBOX "Learning Resources"
   
   MATRIXBYCOLUMNS 3 5
 
-    BUTTON 'Run Demo' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "DEMO")'
-    NAMED_WIDGET demo COMBOBOX "Load-Dump Screen"
+    BUTTON 'Run Demo' 'cfe_tbl_scr_cmd(self, "DEMO")'
+    NAMED_WIDGET demo COMBOBOX "Load/Dump Table"
     LABEL "    "
 
-    BUTTON 'Run Tutorial' 'require "#{Cosmos::USERPATH}/config/targets/CFE_TBL/lib/cfe_tbl_screen.rb"; cfe_tbl_scr_cmd(self, "TUTORIAL")'
+    BUTTON 'Run Tutorial' 'cfe_tbl_scr_cmd(self, "TUTORIAL")'
     NAMED_WIDGET tutorial COMBOBOX "Tutorial Slides" "Tutorial Video" "Exercise Script"
     LABEL "    "
 
