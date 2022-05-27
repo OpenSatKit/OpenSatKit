@@ -36,7 +36,7 @@ GEM
     psych (3.3.2)
     puma (3.12.6)
     qtbindings (4.8.6.5)
-    rack (2.2.3)
+    rack (2.2.3.1)
     rake (13.0.6)
     rdoc (6.3.3)
     ruby-termios (0.9.6)
