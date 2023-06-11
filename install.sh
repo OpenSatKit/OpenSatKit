@@ -5,7 +5,7 @@ BASE_DIR="$(pwd)"
 
 # Intentional order: OSK Archive, Dependencies, COSMOS, Build System 
 # - Dependencies cover OSK's needs, COSMOS may need additional ones
-# - OSK last ensures OSK COSMOS config files not overrriden
+# - OSK last ensures OSK COSMOS config files not overriden
 
 main()
 {
