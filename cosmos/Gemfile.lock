@@ -45,9 +45,7 @@ GEM
     rubyzip (1.3.0)
     snmp (1.3.2)
     uuidtools (2.2.0)
-    webrick (1.7.0)
-    yard (0.9.27)
-      webrick (~> 1.7.0)
+    yard (0.9.35)
 
 PLATFORMS
   ruby
